@@ -14,6 +14,8 @@
 Please note this integration is in the early stage of it's development. See
 [Contribution](#Contribution) section for more information.
 
+**[!!] Since this is WIP, HACS installation is unavailable yet, only manual installation for early testers**
+
 ## About
 
 Custom component that is emerging from the [community discussion](https://community.home-assistant.io/t/solution-to-track-your-google-home-alarms-and-timers-and-trigger-different-home-assistant-events/61534/74) of a need to be able to retrieve local google assistant device (like Google Home/Nest etc) authentication tokens to be able to use those tokens making API calls to retrieve Google Assistant device information.
