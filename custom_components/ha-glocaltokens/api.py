@@ -2,9 +2,9 @@
 import logging
 
 import aiohttp
+from glocaltokens.client import GLocalAuthenticationTokens
 
 from .exceptions import InvalidMasterToken
-from glocaltokens.client import GLocalAuthenticationTokens
 
 TIMEOUT = 10
 
