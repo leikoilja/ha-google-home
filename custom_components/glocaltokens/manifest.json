@@ -6,5 +6,5 @@
   "dependencies": [],
   "config_flow": true,
   "codeowners": ["@leikoilja"],
-  "requirements": ["glocaltokens"]
+  "requirements": ["glocaltokens==0.1.2"]
 }
