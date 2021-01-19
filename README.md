@@ -8,7 +8,7 @@
 
 [![Community Forum][forum-shield]][forum]
 
-# Home assistant google local authentication token fetching (Glocaltoken)
+# HA-Glocaltokens: Home Assistant Google local authentication token fetching
 
 **[!] Beta version alert.**
 Please note this integration is in the early stage of it's development. See
@@ -41,7 +41,7 @@ Sensor state example with authentication token:
 <!--  -->
 <!-- The easiest way to add this to your Homeassistant installation is using [HACS](https://hacs.xyz/). -->
 <!--  -->
-<!-- In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Google local authentication token fetching (Glocaltokens)". -->
+<!-- In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "HA-Glocaltokens". -->
 <!--  -->
 <!-- It's recommended to restart Homeassistant directly after the installation without any change to the Configuration. -->
 <!-- Homeassistant will install the dependencies during the next reboot. -->
@@ -55,7 +55,7 @@ Sensor state example with authentication token:
 4. Download _all_ the files from the `custom_components/glocaltokens/` directory (folder) in this repository.
 5. Place the files you downloaded in the new directory (folder) you created.
 6. Restart Homeassistant.
-7. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Google local authentication token fetching (Glocaltokens)".
+7. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "HA-Glocaltokens".
 
 ## Configuration
 

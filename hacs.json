@@ -1,7 +1,8 @@
 {
-  "name": "Google local authentication token fetching (Glocaltoken)",
+  "name": "HA-Glocaltokens",
   "hacs": "1.6.0",
   "domains": ["sensor"],
   "iot_class": "Cloud Polling",
-  "homeassistant": "0.118.0"
+  "homeassistant": "0.118.0",
+  "render_readme": true
 }
