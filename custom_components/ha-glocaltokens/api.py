@@ -1,10 +1,16 @@
 """Sample API Client."""
 import logging
-
+import requests
+import json
 import aiohttp
-from glocaltokens.client import GLocalAuthenticationTokens
 
+from datetime import datetime
+
+from .const import GLOCALTOKENS_ALARMS
+from .const import GLOCALTOKENS_TOKEN
+from .const import GLOCALTOKENS_TIMERS
 from .exceptions import InvalidMasterToken
+from glocaltokens.client import GLocalAuthenticationTokens
 
 TIMEOUT = 10
 
@@ -46,3 +52,57 @@ class GlocaltokensApiClient:
     def get_android_id(self):
         """Generate random android_id"""
         return self._client._get_android_id()
+
+    def get_google_devices_information(self):
+
+        devices = self._client.get_google_devices_json()
+
+        _LOGGER.error("Fetching new data...")
+
+        for x in range(len(devices)):
+            #local_token = next(item[GLOCALTOKENS_TOKEN] for item in devices)
+            local_token = devices[1][GLOCALTOKENS_TOKEN]
+
+            url = 'https://192.168.0.205:8443/setup/assistant/alarms'
+            header = {'cast-local-authorization-token': local_token,
+                      'content-type': 'application/json'}
+
+            response = requests.get(url, headers=header, verify=False, timeout=TIMEOUT)
+
+            if response.status_code != 200:
+                _LOGGER.error("API returned {}".format(response.status_code))
+                #_LOGGER.error(local_token)
+                return devices
+
+            result = response.json()
+
+            if GLOCALTOKENS_TIMERS not in result and GLOCALTOKENS_ALARMS not in result:
+                _LOGGER.error("API returned unknown json structure")
+                return devices
+
+            _LOGGER.error(result)
+
+            devices[x][GLOCALTOKENS_TIMERS] = result[GLOCALTOKENS_TIMERS]
+            for y in range(len(result[GLOCALTOKENS_TIMERS])):
+
+                timestamp_ms = result[GLOCALTOKENS_TIMERS][y]['fire_time']
+                timestamp = timestamp_ms / 1000
+                humantime = datetime.fromtimestamp(timestamp).strftime('%H:%M:%S')
+                devices[x][GLOCALTOKENS_TIMERS][y]['date_time'] = humantime
+
+                duration_ms = result[GLOCALTOKENS_TIMERS][y]['original_duration']
+                duration = duration_ms / 1000
+                humanduration = datetime.utcfromtimestamp(duration).strftime('%H:%M:%S')
+                devices[x][GLOCALTOKENS_TIMERS][y]['duration'] = humanduration
+
+            devices[x][GLOCALTOKENS_ALARMS] = result[GLOCALTOKENS_ALARMS]
+            for z in range(len(result[GLOCALTOKENS_ALARMS])):
+
+                timestamp_ms = result[GLOCALTOKENS_ALARMS][z]['fire_time']
+                timestamp = timestamp_ms / 1000
+                humantime = datetime.utcfromtimestamp(timestamp).strftime('%Y-%m-%dT%H:%M:%S.%fZ%Z')
+                localtime = datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M:%S')
+                devices[x][GLOCALTOKENS_ALARMS][z]['date_time'] = humantime
+                devices[x][GLOCALTOKENS_ALARMS][z]['local_time'] = localtime
+
+        return devices
