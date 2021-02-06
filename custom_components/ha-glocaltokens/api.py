@@ -57,13 +57,11 @@ class GlocaltokensApiClient:
 
         devices = self._client.get_google_devices_json()
 
-        _LOGGER.error("Fetching new data...")
-
         for x in range(len(devices)):
             #local_token = next(item[GLOCALTOKENS_TOKEN] for item in devices)
-            local_token = devices[1][GLOCALTOKENS_TOKEN]
+            local_token = devices[0][GLOCALTOKENS_TOKEN] # Else x
 
-            url = 'https://192.168.0.205:8443/setup/assistant/alarms'
+            url = 'https://IP OF DEVICE:8443/setup/assistant/alarms' # ONLY FOR TESTING PURPOSE - Until we find a way to retrieve ip of each device.
             header = {'cast-local-authorization-token': local_token,
                       'content-type': 'application/json'}
 
@@ -79,8 +77,6 @@ class GlocaltokensApiClient:
             if GLOCALTOKENS_TIMERS not in result and GLOCALTOKENS_ALARMS not in result:
                 _LOGGER.error("API returned unknown json structure")
                 return devices
-
-            _LOGGER.error(result)
 
             devices[x][GLOCALTOKENS_TIMERS] = result[GLOCALTOKENS_TIMERS]
             for y in range(len(result[GLOCALTOKENS_TIMERS])):
