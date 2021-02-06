@@ -30,7 +30,7 @@ CONF_PASSWORD = "password"
 CONF_MASTER_TOKEN = "master_token"
 
 # Defaults
-DEFAULT_NAME = "GlocalHome"
+DEFAULT_NAME = "GlocalHome" # SUGGESTION - Maybe another name to make it clear that it also includes other things then a token? 
 
 # Access token only lives about 1 hour
 # Update often to fetch timers in timely manner
