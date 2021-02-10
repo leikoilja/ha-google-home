@@ -23,8 +23,10 @@ from .const import CONF_PASSWORD
 from .const import CONF_USERNAME
 from .const import DOMAIN
 from .const import PLATFORMS
-from .const import TIME_BETWEEN_UPDATES
+from .const import SCAN_INTERVAL
 from .const import STARTUP_MESSAGE
+
+SCAN_INTERVAL = timedelta(seconds=SCAN_INTERVAL)
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 

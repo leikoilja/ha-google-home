@@ -70,7 +70,6 @@ class GlocaltokensAlarmSensor(GlocaltokensEntity):
         """Initialize the sensor."""
         super().__init__(coordinator, entry)
         self._name = device[GLOCALTOKENS_DEVICE_NAME]
-        self._token = device[GLOCALTOKENS_TOKEN]
         self._alarms = device[GLOCALTOKENS_ALARMS]
 
         if len(self._alarms) > 0:
@@ -115,7 +114,6 @@ class GlocaltokensTimerSensor(GlocaltokensEntity):
         """Initialize the sensor."""
         super().__init__(coordinator, entry)
         self._name = device[GLOCALTOKENS_DEVICE_NAME]
-        self._token = device[GLOCALTOKENS_TOKEN]
         self._timers = device[GLOCALTOKENS_TIMERS]
 
         if len(self._timers) > 0:
