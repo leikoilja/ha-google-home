@@ -7,8 +7,7 @@ from .const import GLOCALTOKENS_DEVICE_NAME
 from .const import GLOCALTOKENS_TOKEN
 from .const import GLOCALTOKENS_ALARMS
 from .const import GLOCALTOKENS_TIMERS
-from .const import ICON
-from .entity import GlocaltokensEntity
+from .entity import GlocaltokensEntity, GlocalTimersEntity, GlocalAlarmEntity
 
 
 async def async_setup_entry(hass, entry, async_add_devices):
@@ -28,17 +27,7 @@ class GlocaltokensSensor(GlocaltokensEntity):
         """Initialize the sensor."""
         super().__init__(coordinator, entry)
         self._name = device[GLOCALTOKENS_DEVICE_NAME]
-        self._token = device[GLOCALTOKENS_TOKEN]
-
-    @property
-    def name(self):
-        """Return the name of the sensor."""
-        return f"{DEFAULT_NAME} {self._name} token"
-
-    @property
-    def unique_id(self):
-        """Return a unique ID to use for this entity."""
-        return f"{self._name}/token"
+        self._state = device[GLOCALTOKENS_TOKEN]
 
     @property
     def device_state_attributes(self):
@@ -48,22 +37,7 @@ class GlocaltokensSensor(GlocaltokensEntity):
             "integration": DOMAIN,
         }
 
-    @property
-    def state(self):
-        """Return the state of the sensor."""
-        return self._token
-
-    @property
-    def icon(self):
-        """Return the icon of the sensor."""
-        return ICON
-
-    @property
-    def device_class(self):
-        """Return de device class of the sensor."""
-        return "glocaltokens__custom_device_class"
-
-class GlocaltokensAlarmSensor(GlocaltokensEntity):
+class GlocaltokensAlarmSensor(GlocalAlarmEntity):
     """Representation of a Sensor."""
 
     def __init__(self, coordinator, entry, device):
@@ -78,16 +52,6 @@ class GlocaltokensAlarmSensor(GlocaltokensEntity):
             self._state = STATE_OFF
 
     @property
-    def name(self):
-        """Return the name of the sensor."""
-        return f"{DEFAULT_NAME} {self._name} next alarm"
-
-    @property
-    def unique_id(self):
-        """Return a unique ID to use for this entity."""
-        return f"{self._name}/next_alarm"
-
-    @property
     def device_state_attributes(self):
         """Return the state attributes."""
         return {
@@ -96,18 +60,8 @@ class GlocaltokensAlarmSensor(GlocaltokensEntity):
             "integration": DOMAIN,
         }
 
-    @property
-    def state(self):
-        """Return the state of the sensor."""
-        return self._state
 
-    @property
-    def icon(self):
-        """Icon to use in the frontend, if any."""
-        return "mdi:alarm-multiple"
-
-
-class GlocaltokensTimerSensor(GlocaltokensEntity):
+class GlocaltokensTimerSensor(GlocalTimersEntity):
     """Representation of a Sensor."""
 
     def __init__(self, coordinator, entry, device):
@@ -122,16 +76,6 @@ class GlocaltokensTimerSensor(GlocaltokensEntity):
             self._state = STATE_OFF
 
     @property
-    def name(self):
-        """Return the name of the sensor."""
-        return f"{DEFAULT_NAME} {self._name} timers"
-
-    @property
-    def unique_id(self):
-        """Return a unique ID to use for this entity."""
-        return f"{self._name}/timers"
-
-    @property
     def device_state_attributes(self):
         """Return the state attributes."""
         return {
@@ -139,13 +83,3 @@ class GlocaltokensTimerSensor(GlocaltokensEntity):
             "device": str(self.name),
             "integration": DOMAIN,
         }
-
-    @property
-    def state(self):
-        """Return the state of the sensor."""
-        return self._state
-
-    @property
-    def icon(self):
-        """Icon to use in the frontend, if any."""
-        return "mdi:timer-sand"

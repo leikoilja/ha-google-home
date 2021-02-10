@@ -58,33 +58,50 @@ class GlocaltokensApiClient:
         """Generate random android_id"""
         return self._client._get_android_id()
 
-    def format_timer_information(device_timers, timer):
-        timestamp_ms = result[GLOCALTOKENS_TIMERS][timer][FIRE_TIME]
+    def format_timer_information(timer):
+        timestamp_ms = timer[FIRE_TIME]
         timestamp = timestamp_ms / 1000
         humantime = datetime.fromtimestamp(timestamp).strftime(SHOW_TIME_ONLY)
-        devices[x][GLOCALTOKENS_TIMERS][y][DATE_TIME] = humantime
+        timer[DATE_TIME] = humantime
 
-        duration_ms = result[GLOCALTOKENS_TIMERS][y][ORIGINAL_DURATION]
+        duration_ms = timer[ORIGINAL_DURATION]
         duration = duration_ms / 1000
         humanduration = datetime.utcfromtimestamp(duration).strftime(SHOW_TIME_ONLY)
-        devices[x][GLOCALTOKENS_TIMERS][y][DURATION] = humanduration
+        timer[DURATION] = humanduration
+        return timer
 
+    def format_alarm_information(alarm):
+        timestamp_ms = alarm[FIRE_TIME]
+        timestamp = timestamp_ms / 1000
+        humantime = datetime.utcfromtimestamp(timestamp).strftime(SHOW_DATE_TIMEZONE)
+        localtime = datetime.fromtimestamp(timestamp).strftime(SHOW_DATE_AND_TIME)
+        alarm[DATE_TIME] = humantime
+        alarm[LOCAL_TIME] = localtime
+        return alarm
+
+    def create_url(ip):
+        url = 'https://'+ ip +':'+ str(PORT) + ENDPOINT
+        return url
+
+    def get_alarms_and_timers_from(ip, token):
+
+        url = GlocaltokensApiClient.create_url(ip)
+
+        HEADERS[HEADER_CAST_LOCAL_AUTH] = token
+
+        response = requests.get(url, headers=HEADERS, verify=False, timeout=TIMEOUT)
+
+        return response
 
     def get_google_devices_information(self):
 
         devices = self._client.get_google_devices_json()
 
-        _LOGGER.error("Fetching new data...")
-
         for x in range(len(devices)):
             #local_token = next(item[GLOCALTOKENS_TOKEN] for item in devices)
             local_token = devices[1][GLOCALTOKENS_TOKEN]
 
-            url = 'https://192.168.0.205:'+ str(PORT) + ENDPOINT
-
-            HEADERS[HEADER_CAST_LOCAL_AUTH] = local_token
-
-            response = requests.get(url, headers=HEADERS, verify=False, timeout=TIMEOUT)
+            response = GlocaltokensApiClient.get_alarms_and_timers_from('192.168.0.205', local_token) # IP
 
             if response.status_code != HTTP_OK:
                 _LOGGER.error("API returned {}".format(response.status_code))
@@ -97,21 +114,12 @@ class GlocaltokensApiClient:
                 _LOGGER.error(API_RETURNED_UNKNOWN)
                 return devices
 
-            _LOGGER.error(result)
-
             devices[x][GLOCALTOKENS_TIMERS] = result[GLOCALTOKENS_TIMERS]
             for y in range(len(result[GLOCALTOKENS_TIMERS])):
-                format_timer_information(result[GLOCALTOKENS_TIMERS], y)
-
+                devices[x][GLOCALTOKENS_TIMERS][y] = GlocaltokensApiClient.format_timer_information(result[GLOCALTOKENS_TIMERS][y])
 
             devices[x][GLOCALTOKENS_ALARMS] = result[GLOCALTOKENS_ALARMS]
             for z in range(len(result[GLOCALTOKENS_ALARMS])):
-
-                timestamp_ms = result[GLOCALTOKENS_ALARMS][z][FIRE_TIME]
-                timestamp = timestamp_ms / 1000
-                humantime = datetime.utcfromtimestamp(timestamp).strftime(SHOW_DATE_TIMEZONE)
-                localtime = datetime.fromtimestamp(timestamp).strftime(SHOW_DATE_AND_TIME)
-                devices[x][GLOCALTOKENS_ALARMS][z][DATE_TIME] = humantime
-                devices[x][GLOCALTOKENS_ALARMS][z][LOCAL_TIME] = localtime
+                devices[x][GLOCALTOKENS_ALARMS][z] = GlocaltokensApiClient.format_timer_information(result[GLOCALTOKENS_ALARMS][z])
 
         return devices

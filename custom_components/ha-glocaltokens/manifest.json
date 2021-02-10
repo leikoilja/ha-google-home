@@ -1,6 +1,6 @@
 {
-  "domain": "glocaltokens",
-  "name": "Google local authentication token fetching (Glocaltokens)",
+  "domain": "ha-glocaltokens",
+  "name": "HA-Glocaltokens)",
   "documentation": "https://github.com/leikoilja/ha-glocaltokens",
   "issue_tracker": "https://github.com/leikoilja/ha-glocaltokens/issues",
   "dependencies": [],

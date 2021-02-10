@@ -12,8 +12,9 @@ ATTRIBUTION = "json"
 ISSUE_URL = "https://github.com/leikoilja/ha-glocaltokens/issues"
 
 # Icons
-ICON = "mdi:form-textbox-password"
+ICON_TOKEN = "mdi:form-textbox-password"
 ICON_ALARMS = "mdi:alarm-multiple"
+ICON_TIMERS = "mdi:timer-sand"
 
 # Device classes
 BINARY_SENSOR_DEVICE_CLASS = "connectivity"
@@ -30,7 +31,7 @@ CONF_PASSWORD = "password"
 CONF_MASTER_TOKEN = "master_token"
 
 # Defaults
-DEFAULT_NAME = "GlocalHome"
+DEFAULT_NAME = "Glocaltokens"
 
 # API
 PORT = 8443

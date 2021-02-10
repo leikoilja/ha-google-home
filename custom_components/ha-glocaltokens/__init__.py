@@ -80,7 +80,7 @@ class GlocaltokensDataUpdateCoordinator(DataUpdateCoordinator):
         self.api = client
         self.platforms = []
 
-        super().__init__(hass, _LOGGER, name=DOMAIN, update_interval=TIME_BETWEEN_UPDATES)
+        super().__init__(hass, _LOGGER, name=DOMAIN, update_interval=SCAN_INTERVAL)
 
     def _update_data(self) -> dict:
         """Fetch local auth tokens from Google via sync functions."""
