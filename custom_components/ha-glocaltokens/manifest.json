@@ -1,10 +1,10 @@
 {
   "domain": "ha-glocaltokens",
-  "name": "HA-Glocaltokens)",
+  "name": "HA-Glocaltokens",
   "documentation": "https://github.com/leikoilja/ha-glocaltokens",
   "issue_tracker": "https://github.com/leikoilja/ha-glocaltokens/issues",
   "dependencies": [],
   "config_flow": true,
   "codeowners": ["@leikoilja"],
-  "requirements": ["glocaltokens==0.1.4","requests==2.23.0","urllib3==1.25.11"]
+  "requirements": ["glocaltokens==0.1.4"]
 }

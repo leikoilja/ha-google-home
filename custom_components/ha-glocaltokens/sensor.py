@@ -1,6 +1,9 @@
 """Sensor platform for Google local authentication token fetching."""
+from .utils import convert_from_ms_to_s
+
 from homeassistant.const import STATE_OFF, STATE_ON
 
+from .const import FIRE_TIME
 from .const import DEFAULT_NAME
 from .const import DOMAIN
 from .const import GLOCALTOKENS_DEVICE_NAME
@@ -47,7 +50,7 @@ class GlocaltokensAlarmSensor(GlocalAlarmEntity):
         self._alarms = device[GLOCALTOKENS_ALARMS]
 
         if len(self._alarms) > 0:
-            self._state = self._alarms[0]['fire_time'] / 1000
+            self._state = convert_from_ms_to_s(self._alarms[0][FIRE_TIME])
         else:
             self._state = STATE_OFF
 

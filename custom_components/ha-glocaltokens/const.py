@@ -35,13 +35,13 @@ DEFAULT_NAME = "Glocaltokens"
 
 # API
 PORT = 8443
-ENDPOINT = '/setup/assistant/alarms'
+API_ENDPOINT_ALARMS = 'setup/assistant/alarms'
 HEADER_CAST_LOCAL_AUTH = 'cast-local-authorization-token'
 HEADER_CONTENT_TYPE = "content-type"
 
 HEADERS = {
     HEADER_CAST_LOCAL_AUTH: '',
-    HEADER_CONTENT_TYPE: 'application/json',
+    HEADER_CONTENT_TYPE: 'application/json; charset=UTF-8',
 }
 
 # TIMERS & ALARMS ATTRIBUTES
