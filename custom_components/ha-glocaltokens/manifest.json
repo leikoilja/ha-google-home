@@ -7,5 +7,5 @@
   "issue_tracker": "https://github.com/leikoilja/ha-glocaltokens/issues",
   "name": "HA-Glocaltokens",
   "requirements": ["glocaltokens==0.1.4"],
-  "version": "0.0.0"
+  "version": "0.1.0"
 }
