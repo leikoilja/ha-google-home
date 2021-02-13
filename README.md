@@ -1,28 +1,73 @@
+[![hacs][hacsbadge]][hacs]
 [![GitHub Release][releases-shield]][releases]
 [![GitHub Activity][commits-shield]][commits]
 [![License][license-shield]][license]
 
-[![hacs][hacsbadge]][hacs]
-[![Project Maintenance][maintenance-shield]][user_profile]
-[![BuyMeCoffee][buymecoffeebadge]][buymecoffee]
+<br />
+<p>
+  <!-- TODO: Add a logo -->
+  <!-- <a href="https://github.com/leikoilja/ha-glocaltokens"> -->
+  <!--   <img src="images/logo.png" alt="Logo" height="200"> -->
+  <!-- </a> -->
 
-[![Community Forum][forum-shield]][forum]
+  <h3 align="center">Home Assistant Google Home community integration</h3>
 
-# HA-Glocaltokens: Home Assistant Google local authentication token fetching
+  <p align="center">
+    This custom integration aims to provide plug-and-play Google Home
+    experience for Home Assistant enthusiasts.
+  </p>
+  <br />
 
 **[!] Beta version alert.**
-Please note this integration is in the early stage of it's development. See
-[Contribution](#Contribution) section for more information.
+Please note this integration is in the early stage of it's development.
+See <a href="#contribution">Contribution</a> section for more information.
 
 **[!!] Since this is WIP, HACS installation is unavailable yet, only manual installation for early testers**
 
+</p>
+
+<!-- TABLE OF CONTENTS -->
+<details open="open">
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about">About The Project</a>
+    </li>
+    <li>
+      <a href="#features">Features</a>
+    </li>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+      <ul>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <!-- <li><a href="#hacs">HACS</a></li> -->
+        <li><a href="#manual">Manual installation</a></li>
+      </ul>
+    </li>
+    <li><a href="#configuration">Configuration</a></li>
+    <li>
+      <a href="#usage">Usage</a>
+      <ul>
+        <li><a href="#google-home-alarm">Google Home alarm</a></li>
+        <li><a href="#google-home-timer">Google Home timer</a></li>
+      </ul>
+    </li>
+    <li><a href="#contribution">Contribution</a></li>
+    <li><a href="#credits">Credits</a></li>
+  </ol>
+</details>
+
 ## About
 
-Custom component that is emerging from the [community discussion](https://community.home-assistant.io/t/solution-to-track-your-google-home-alarms-and-timers-and-trigger-different-home-assistant-events/61534/74) of a need to be able to retrieve local google assistant device (like Google Home/Nest etc) authentication tokens to be able to use those tokens making API calls to retrieve Google Assistant device information.
-This custom component is fetching local google assistant authentication tokens
-every 30 minutes and saves them in Homeassistant instance as sensors.
+This is a custom component that is emerging from the
+[community discussion][community-discussion] of a need to be able to retrieve
+local google assistant device (like Google Home/Nest etc) authentication
+tokens to be able to use those tokens making API calls to retrieve
+Google Home device information.
 
-**This component will set up the following platforms:**
+## Features
+
+This component will set up the following platforms:
 
 | Platform | Description                                                 |
 | -------- | ----------------------------------------------------------- |
@@ -35,7 +80,24 @@ Sensor state example with authentication token:
 
 ![example2][exampleimg2]
 
-## Installation
+## Getting Started
+
+### Prerequisites
+
+Depending on what operating system you are running your HomeAssistant instance
+on, you might need to install additional system-wide packages/compilers in order to
+be able to build wheels for `glocaltokens` python package, that is used by this
+integration.
+
+Please SSH to your system and run:
+
+- On Raspberry Pi (which most likely runs on Alpine Linux)
+
+`apk add gcc g++ linux-headers`
+
+- On Ubuntu
+
+`sudo apt install build-essential`
 
 <!-- ### HACS -->
 <!--  -->
@@ -46,7 +108,7 @@ Sensor state example with authentication token:
 <!-- It's recommended to restart Homeassistant directly after the installation without any change to the Configuration. -->
 <!-- Homeassistant will install the dependencies during the next reboot. -->
 
-### Manual
+### Manual Installation
 
 1. Using the tool of choice open the directory (folder) for your HA configuration (where you find `configuration.yaml`).
 2. If you do not have a `custom_components` directory (folder) there, you need to create it.
@@ -55,7 +117,7 @@ Sensor state example with authentication token:
 4. Download _all_ the files from the `custom_components/ha-glocaltokens/` directory (folder) in this repository.
 5. Place the files you downloaded in the new directory (folder) you created.
 6. Restart Homeassistant.
-7. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "HA-Glocaltokens".
+7. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "HA-Glocaltokens". (Please note, it might take some time to install)
 
 ## Configuration
 
@@ -138,6 +200,7 @@ Under the hood the integration uses [glocaltokens](https://github.com/leikoilja/
 
 ---
 
+[community-discussion]: https://community.home-assistant.io/t/solution-to-track-your-google-home-alarms-and-timers-and-trigger-different-home-assistant-events/61534/74
 [integration_blueprint]: https://github.com/custom-components/integration_blueprint
 [buymecoffee]: https://www.buymeacoffee.com/leikoilja
 [buymecoffeebadge]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg?style=for-the-badge
@@ -145,13 +208,9 @@ Under the hood the integration uses [glocaltokens](https://github.com/leikoilja/
 [commits]: https://github.com/leikoilja/ha-glocaltokens/commits/main
 [hacs]: https://hacs.xyz
 [hacsbadge]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
-[exampleimg1]: example1.png
-[exampleimg2]: example2.png
-[forum-shield]: https://img.shields.io/badge/community-forum-brightgreen.svg?style=for-the-badge
-[forum]: https://community.home-assistant.io/
+[exampleimg1]: misc/images/example1.png
+[exampleimg2]: misc/images/example2.png
 [license]: https://github.com/leikoilja/ha-glocaltokens/blob/main/LICENSE
 [license-shield]: https://img.shields.io/github/license/leikoilja/ha-glocaltokens.svg?style=for-the-badge
-[maintenance-shield]: https://img.shields.io/badge/maintainer-%40leikoilja-blue.svg?style=for-the-badge
 [releases-shield]: https://img.shields.io/github/release/leikoilja/ha-glocaltokens.svg?style=for-the-badge
 [releases]: https://github.com/leikoilja/ha-glocaltokens/releases
-[user_profile]: https://github.com/leikoilja
