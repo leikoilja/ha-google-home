@@ -117,7 +117,7 @@ Please SSH to your system and run:
 4. Download _all_ the files from the `custom_components/ha-glocaltokens/` directory (folder) in this repository.
 5. Place the files you downloaded in the new directory (folder) you created.
 6. Restart Homeassistant.
-7. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "HA-Glocaltokens". (Please note, it might take some time to install)
+7. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "HA-Glocaltokens". (Please note, it might take up to 30 minutes to install on Raspberry Pi, because of underlying dependency installations)
 
 ## Configuration
 
