@@ -63,10 +63,10 @@ API_RETURNED_UNKNOWN = 'API returned unknown json structure'
 # Update often to fetch timers in timely manner
 SCAN_INTERVAL = 15 # Seconds
 
-GLOCALTOKENS_DEVICE_NAME = "deviceName"
-GLOCALTOKENS_TOKEN = "localAuthToken"
-GLOCALTOKENS_ALARMS = "alarm"
-GLOCALTOKENS_TIMERS = "timer"
+DEVICE_NAME = "deviceName"
+TOKEN = "localAuthToken"
+ALARMS = "alarm"
+TIMERS = "timer"
 
 
 STARTUP_MESSAGE = f"""

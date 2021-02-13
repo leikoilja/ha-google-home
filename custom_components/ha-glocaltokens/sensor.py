@@ -6,10 +6,10 @@ from homeassistant.const import STATE_OFF, STATE_ON
 from .const import FIRE_TIME
 from .const import DEFAULT_NAME
 from .const import DOMAIN
-from .const import GLOCALTOKENS_DEVICE_NAME
-from .const import GLOCALTOKENS_TOKEN
-from .const import GLOCALTOKENS_ALARMS
-from .const import GLOCALTOKENS_TIMERS
+from .const import DEVICE_NAME
+from .const import TOKEN
+from .const import ALARMS
+from .const import TIMERS
 from .entity import GlocaltokensEntity, GlocalTimersEntity, GlocalAlarmEntity
 
 
@@ -17,7 +17,7 @@ async def async_setup_entry(hass, entry, async_add_devices):
     """Setup sensor platform."""
     coordinator = hass.data[DOMAIN][entry.entry_id]
     for device in coordinator.data:
-        if device.get(GLOCALTOKENS_TOKEN):
+        if device.get(TOKEN):
             async_add_devices([GlocaltokensAlarmSensor(coordinator, entry, device),
                                GlocaltokensTimerSensor(coordinator, entry, device),
                                GlocaltokensSensor(coordinator, entry, device)])
@@ -29,8 +29,8 @@ class GlocaltokensSensor(GlocaltokensEntity):
     def __init__(self, coordinator, entry, device):
         """Initialize the sensor."""
         super().__init__(coordinator, entry)
-        self._name = device[GLOCALTOKENS_DEVICE_NAME]
-        self._state = device[GLOCALTOKENS_TOKEN]
+        self._name = device[DEVICE_NAME]
+        self._state = device[TOKEN]
 
     @property
     def device_state_attributes(self):
@@ -46,8 +46,8 @@ class GlocaltokensAlarmSensor(GlocalAlarmEntity):
     def __init__(self, coordinator, entry, device):
         """Initialize the sensor."""
         super().__init__(coordinator, entry)
-        self._name = device[GLOCALTOKENS_DEVICE_NAME]
-        self._alarms = device[GLOCALTOKENS_ALARMS]
+        self._name = device[DEVICE_NAME]
+        self._alarms = device[ALARMS]
 
         if len(self._alarms) > 0:
             self._state = convert_from_ms_to_s(self._alarms[0][FIRE_TIME])
@@ -70,8 +70,8 @@ class GlocaltokensTimerSensor(GlocalTimersEntity):
     def __init__(self, coordinator, entry, device):
         """Initialize the sensor."""
         super().__init__(coordinator, entry)
-        self._name = device[GLOCALTOKENS_DEVICE_NAME]
-        self._timers = device[GLOCALTOKENS_TIMERS]
+        self._name = device[DEVICE_NAME]
+        self._timers = device[TIMERS]
 
         if len(self._timers) > 0:
             self._state = STATE_ON
