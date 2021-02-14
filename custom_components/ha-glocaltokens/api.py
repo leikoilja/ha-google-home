@@ -65,7 +65,7 @@ class GlocaltokensApiClient:
 
         if response.status_code != HTTP_OK:
             _LOGGER.error("For device {device} - API returned {error}".format(device=device[DEVICE_NAME], error=response.status_code))
-            return False
+            return
         else:
             return response.json()
 
@@ -81,7 +81,7 @@ class GlocaltokensApiClient:
             device[DEVICE_IP] = '192.168.0.205' # For testing purpose only
             device[DEVICE_PORT] = PORT # For testing purpose only
             result = self.get_alarms_and_timers_from(device, API_ENDPOINT_ALARMS)
-            if result != False:
+            if result:
                 timers = result.get(TIMERS)
                 alarms = result.get(ALARMS)
 
