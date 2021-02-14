@@ -1,6 +1,4 @@
 """Constants for Google local authentication token fetching."""
-from datetime import timedelta
-
 # Base component constants
 NAME = "Google local authentication token fetching (Glocaltokens)"
 DOMAIN = "glocaltokens"
@@ -65,6 +63,8 @@ API_RETURNED_UNKNOWN = 'API returned unknown json structure'
 SCAN_INTERVAL = 15 # Seconds
 
 DEVICE_NAME = "deviceName"
+DEVICE_IP = "ip"
+DEVICE_PORT = "port"
 TOKEN = "localAuthToken"
 ALARMS = "alarm"
 TIMERS = "timer"

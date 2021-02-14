@@ -4,6 +4,7 @@ from .utils import *
 from homeassistant.const import STATE_OFF, STATE_ON
 
 from .const import FIRE_TIME
+from .const import FIRE_TIME_IN_S
 from .const import DEFAULT_NAME
 from .const import DOMAIN
 from .const import DEVICE_NAME
