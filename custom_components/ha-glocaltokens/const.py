@@ -46,6 +46,7 @@ HEADERS = {
 
 # TIMERS & ALARMS ATTRIBUTES
 FIRE_TIME = 'fire_time'
+FIRE_TIME_IN_S = 'fire_time_in_s'
 DATE_TIME = 'date_time'
 LOCAL_TIME = 'local_time'
 DURATION = 'duration'

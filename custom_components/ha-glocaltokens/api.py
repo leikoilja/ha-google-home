@@ -4,14 +4,8 @@ import requests
 import json
 import aiohttp
 
-from .utils import convert_from_ms_to_s
-
-from datetime import datetime
-
 from .const import API_RETURNED_UNKNOWN
 from .const import PORT, API_ENDPOINT_ALARMS, HEADERS, HEADER_CAST_LOCAL_AUTH
-from .const import FIRE_TIME, DATE_TIME, DURATION, ORIGINAL_DURATION, LOCAL_TIME
-from .const import SHOW_TIME_ONLY, SHOW_DATE_AND_TIME, SHOW_DATE_TIMEZONE
 from .const import ALARMS, TIMERS, TOKEN, DEVICE_NAME
 from .exceptions import InvalidMasterToken
 from glocaltokens.client import GLocalAuthenticationTokens
@@ -55,35 +49,18 @@ class GlocaltokensApiClient:
         """Generate random android_id"""
         return self._client._get_android_id()
 
-    def format_timer_information(self, timer):
-        timestamp = convert_from_ms_to_s(timer[FIRE_TIME])
-        timer[DATE_TIME] = datetime.fromtimestamp(timestamp).strftime(SHOW_TIME_ONLY)
-
-        duration = convert_from_ms_to_s(timer[ORIGINAL_DURATION])
-        timer[DURATION] = datetime.utcfromtimestamp(duration).strftime(SHOW_TIME_ONLY)
-        return timer
-
-    def format_alarm_information(self, alarm):
-        timestamp = convert_from_ms_to_s(alarm[FIRE_TIME])
-        alarm[DATE_TIME] = datetime.utcfromtimestamp(timestamp).strftime(SHOW_DATE_TIMEZONE)
-        alarm[LOCAL_TIME] = datetime.fromtimestamp(timestamp).strftime(SHOW_DATE_AND_TIME)
-        return alarm
-
-    def create_url(self, ip, api_endpoint):
+    def create_url(self, ip, port, api_endpoint):
         url = 'https://{ip}:{port}/{endpoint}'.format(
             ip=ip,
-            port=str(PORT),
+            port=port,
             endpoint=api_endpoint
         )
         return url
 
-    def get_alarms_and_timers_from(self, ip, token, endpoint):
-
-        url = self.create_url(ip, endpoint)
-
+    def get_alarms_and_timers_from(self, ip, port, token, endpoint):
+        url = self.create_url(ip, port, endpoint)
         HEADERS[HEADER_CAST_LOCAL_AUTH] = token
-
-        response = requests.get(url, headers=HEADERS, verify=False, timeout=TIMEOUT)
+        response = requests.get(url, headers=HEADERS, verify=False, timeout=TIMEOUT) # verify=False is need to avoid SSL security checks. Othervise it will fail to connect
 
         return response
 
@@ -92,12 +69,14 @@ class GlocaltokensApiClient:
         devices = self._client.get_google_devices_json()
 
         for device in devices:
-            local_token = device[TOKEN]
-
+            # To avoid keyerror's
             device[TIMERS] = []
             device[ALARMS] = []
 
-            response = self.get_alarms_and_timers_from('192.168.0.205', local_token, API_ENDPOINT_ALARMS) # IP
+            ip = '192.168.0.205'
+            port = str(PORT)
+            token = device[TOKEN]
+            response = self.get_alarms_and_timers_from(ip, port, token, API_ENDPOINT_ALARMS) # IP
 
             if response.status_code != HTTP_OK:
                 _LOGGER.error("For device {device} - API returned {error}".format(device=device[DEVICE_NAME], error=response.status_code))
@@ -109,11 +88,8 @@ class GlocaltokensApiClient:
                 _LOGGER.error("For device {device} - {error}".format(device=device[DEVICE_NAME], error=API_RETURNED_UNKNOWN))
                 continue
 
-            timers = result[TIMERS]
-            device[TIMERS] = [self.format_timer_information(timer) for timer in timers]
+            device.update(result)
+            _LOGGER.debug(device)
 
-            alarms = result[ALARMS]
-            device[ALARMS] = [self.format_alarm_information(alarm) for alarm in alarms]
-
-        _LOGGER.error(devices)
+        _LOGGER.debug(devices)
         return devices

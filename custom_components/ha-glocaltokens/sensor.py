@@ -1,5 +1,5 @@
 """Sensor platform for Google local authentication token fetching."""
-from .utils import convert_from_ms_to_s
+from .utils import *
 
 from homeassistant.const import STATE_OFF, STATE_ON
 
@@ -47,10 +47,10 @@ class GlocaltokensAlarmSensor(GlocalAlarmEntity):
         """Initialize the sensor."""
         super().__init__(coordinator, entry)
         self._name = device[DEVICE_NAME]
-        self._alarms = device[ALARMS]
+        self._alarms = [format_alarm_information(alarm) for alarm in device[ALARMS]]
 
         if len(self._alarms) > 0:
-            self._state = convert_from_ms_to_s(self._alarms[0][FIRE_TIME])
+            self._state = self._alarms[0][FIRE_TIME_IN_S]
         else:
             self._state = STATE_OFF
 
@@ -71,7 +71,7 @@ class GlocaltokensTimerSensor(GlocalTimersEntity):
         """Initialize the sensor."""
         super().__init__(coordinator, entry)
         self._name = device[DEVICE_NAME]
-        self._timers = device[TIMERS]
+        self._timers = [format_timer_information(timer) for timer in device[TIMERS]]
 
         if len(self._timers) > 0:
             self._state = STATE_ON
