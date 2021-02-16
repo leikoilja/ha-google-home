@@ -1,4 +1,6 @@
 """Adds config flow for Google local authentication token fetching."""
+import logging
+
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.core import callback
@@ -11,6 +13,9 @@ from .const import CONF_PASSWORD
 from .const import CONF_USERNAME
 from .const import DOMAIN
 from .const import PLATFORMS
+
+
+_LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
 class GlocaltokensFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
@@ -74,8 +79,8 @@ class GlocaltokensFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         try:
             master_token = await client.async_get_master_token()
             return True, master_token
-        except Exception:  # pylint: disable=broad-except
-            pass
+        except Exception as exception:
+            _LOGGER.error(exception)
         return False, None
 
 
