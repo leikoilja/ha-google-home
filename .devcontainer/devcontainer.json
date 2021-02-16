@@ -4,7 +4,7 @@
   "name": "Google local authentication token fetching integration development",
   "context": "..",
   "appPort": ["9123:8123"],
-  "postCreateCommand": "apk add gcc g++ linux-headers; container install",
+  "postCreateCommand": "apk add g++ linux-headers; container install",
   "extensions": [
     "ms-python.python",
     "github.vscode-pull-request-github",
