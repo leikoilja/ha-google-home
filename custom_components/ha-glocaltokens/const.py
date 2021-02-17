@@ -62,10 +62,10 @@ API_RETURNED_UNKNOWN = "API returned unknown json structure"
 # Update often to fetch timers in timely manner
 SCAN_INTERVAL = 15  # Seconds
 
-DEVICE_NAME = "deviceName"
+DEVICE_NAME = "device_name"
 DEVICE_IP = "ip"
 DEVICE_PORT = "port"
-TOKEN = "localAuthToken"
+TOKEN = "local_auth_token"
 ALARMS = "alarm"
 TIMERS = "timer"
 
