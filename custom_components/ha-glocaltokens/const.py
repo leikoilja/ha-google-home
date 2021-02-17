@@ -37,6 +37,7 @@ PORT = 8443
 API_ENDPOINT_ALARMS = "setup/assistant/alarms"
 HEADER_CAST_LOCAL_AUTH = "cast-local-authorization-token"
 HEADER_CONTENT_TYPE = "content-type"
+
 # HEADERS
 HEADERS = {
     HEADER_CAST_LOCAL_AUTH: "",
@@ -64,7 +65,7 @@ API_RETURNED_UNKNOWN = "API returned unknown json structure"
 # Update often to fetch timers in timely manner
 SCAN_INTERVAL = 15  # Seconds
 
-# JSON name when retrieving information fra devices
+# JSON parameter values when retrieving information from devices
 ALARMS = "alarm"
 TIMERS = "timer"
 
