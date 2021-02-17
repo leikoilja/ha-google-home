@@ -1,17 +1,18 @@
 """Sensor platform for Google local authentication token fetching."""
-from .utils import *
+from homeassistant.const import STATE_OFF
+from homeassistant.const import STATE_ON
 
-from homeassistant.const import STATE_OFF, STATE_ON
-
-from .const import FIRE_TIME
-from .const import FIRE_TIME_IN_S
-from .const import DEFAULT_NAME
-from .const import DOMAIN
-from .const import DEVICE_NAME
-from .const import TOKEN
 from .const import ALARMS
+from .const import DEVICE_NAME
+from .const import DOMAIN
+from .const import FIRE_TIME_IN_S
 from .const import TIMERS
-from .entity import GlocaltokensEntity, GlocalTimersEntity, GlocalAlarmEntity
+from .const import TOKEN
+from .entity import GlocalAlarmEntity
+from .entity import GlocalTimersEntity
+from .entity import GlocaltokensEntity
+from .utils import format_alarm_information
+from .utils import format_timer_information
 
 
 async def async_setup_entry(hass, entry, async_add_devices):
@@ -19,9 +20,13 @@ async def async_setup_entry(hass, entry, async_add_devices):
     coordinator = hass.data[DOMAIN][entry.entry_id]
     for device in coordinator.data:
         if device.get(TOKEN):
-            async_add_devices([GlocaltokensAlarmSensor(coordinator, entry, device),
-                               GlocaltokensTimerSensor(coordinator, entry, device),
-                               GlocaltokensSensor(coordinator, entry, device)])
+            async_add_devices(
+                [
+                    GlocaltokensAlarmSensor(coordinator, entry, device),
+                    GlocaltokensTimerSensor(coordinator, entry, device),
+                    GlocaltokensSensor(coordinator, entry, device),
+                ]
+            )
 
 
 class GlocaltokensSensor(GlocaltokensEntity):
@@ -41,6 +46,7 @@ class GlocaltokensSensor(GlocaltokensEntity):
             "integration": DOMAIN,
         }
 
+
 class GlocaltokensAlarmSensor(GlocalAlarmEntity):
     """Representation of a Sensor."""
 
@@ -59,7 +65,7 @@ class GlocaltokensAlarmSensor(GlocalAlarmEntity):
     def device_state_attributes(self):
         """Return the state attributes."""
         return {
-            'alarms': self._alarms,
+            "alarms": self._alarms,
             "device": str(self.name),
             "integration": DOMAIN,
         }
@@ -83,7 +89,7 @@ class GlocaltokensTimerSensor(GlocalTimersEntity):
     def device_state_attributes(self):
         """Return the state attributes."""
         return {
-            'timers': self._timers,
+            "timers": self._timers,
             "device": str(self.name),
             "integration": DOMAIN,
         }
