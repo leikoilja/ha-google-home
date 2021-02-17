@@ -71,7 +71,7 @@ class GlocaltokensApiClient:
 
     def get_google_devices_information(self):
         _LOGGER.debug("Fetching data...")
-        devices = self._client.get_google_devices_json()
+        devices = json.loads(self._client.get_google_devices_json())
 
         for device in devices:
             # To avoid keyerror's
