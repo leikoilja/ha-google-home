@@ -47,24 +47,24 @@ class GlocaltokensApiClient:
 
     def get_android_id(self):
         """Generate random android_id"""
-        return self._client._get_android_id()
+        return self._client.get_android_id()
 
     def create_url(self, ip, port, api_endpoint):
         url = 'https://{ip}:{port}/{endpoint}'.format(
             ip=ip,
-            port=str(port),
+            port=str(PORT),
             endpoint=api_endpoint
         )
         return url
 
     def get_alarms_and_timers_from(self, device, endpoint):
-        url = self.create_url(device[DEVICE_IP], device[DEVICE_PORT], endpoint)
-        _LOGGER.debug("For device {device} - {url}".format(device=device[DEVICE_NAME], url=url))
-        HEADERS[HEADER_CAST_LOCAL_AUTH] = device[TOKEN]
+        url = self.create_url(device.get(DEVICE_IP), device.get(DEVICE_PORT), endpoint)
+        _LOGGER.debug("For device {device} - {url}".format(device=device.get(DEVICE_NAME), url=url))
+        HEADERS[HEADER_CAST_LOCAL_AUTH] = device.get(TOKEN)
         response = requests.get(url, headers=HEADERS, verify=False, timeout=TIMEOUT) # verify=False is need to avoid SSL security checks. Othervise it will fail to connect
 
         if response.status_code != HTTP_OK:
-            _LOGGER.error("For device {device} - API returned {error}".format(device=device[DEVICE_NAME], error=response.status_code))
+            _LOGGER.error("For device {device} - API returned {error}".format(device=device.get(DEVICE_NAME), error=response.status_code))
             return
         else:
             return response.json()
@@ -77,16 +77,14 @@ class GlocaltokensApiClient:
             # To avoid keyerror's
             timers = []
             alarms = []
-
-            device[DEVICE_IP] = '192.168.0.205' # For testing purpose only
-            device[DEVICE_PORT] = PORT # For testing purpose only
+            
             result = self.get_alarms_and_timers_from(device, API_ENDPOINT_ALARMS)
             if result:
                 timers = result.get(TIMERS)
                 alarms = result.get(ALARMS)
 
                 if not timers and not alarms:
-                    _LOGGER.error("For device {device} - {error}".format(device=device[DEVICE_NAME], error=API_RETURNED_UNKNOWN))
+                    _LOGGER.error("For device {device} - {error}".format(device=device.get(DEVICE_NAME), error=API_RETURNED_UNKNOWN))
 
             device.update({
               TIMERS: timers,
