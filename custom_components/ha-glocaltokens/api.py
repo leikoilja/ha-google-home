@@ -12,10 +12,9 @@ from .const import API_RETURNED_UNKNOWN
 from .const import HEADER_CAST_LOCAL_AUTH
 from .const import HEADERS
 from .const import PORT
+from .const import TIMEOUT
 from .const import TIMERS
 from .exceptions import InvalidMasterToken
-
-TIMEOUT = 10
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -53,26 +52,31 @@ class GlocaltokensApiClient:
         """Generate random android_id"""
         return self._client.get_android_id()
 
-    def create_url(self, ip, port, api_endpoint):
+    @staticmethod
+    def create_url(ip, port, api_endpoint):
+        """Creates url to endpoint.
+        Note: port argument is unused because all request must be done to 8443"""
         url = "https://{ip}:{port}/{endpoint}".format(
             ip=ip, port=str(PORT), endpoint=api_endpoint
         )
         return url
 
     def get_alarms_and_timers_from(self, device, endpoint):
+        """Fetches timers and alarms from google device"""
         url = self.create_url(device.ip, device.port, endpoint)
         _LOGGER.debug(
             "For device {device} - {url}".format(device=device.device_name, url=url)
         )
+        # verify=False is need to avoid SSL security checks. Otherwise it will fail to connect"""
         HEADERS[HEADER_CAST_LOCAL_AUTH] = device.local_auth_token
-        response = requests.get(
-            url, headers=HEADERS, verify=False, timeout=TIMEOUT
-        )  # verify=False is need to avoid SSL security checks. Othervise it will fail to connect
+        response = requests.get(url, headers=HEADERS, verify=False, timeout=TIMEOUT)
 
         if response.status_code != HTTP_OK:
             _LOGGER.error(
-                "For device {device} - API returned {error}".format(
-                    device=device.device_name, error=response.status_code
+                "For device {device} - API returned {error}: {reason}".format(
+                    device=device.device_name,
+                    error=response.status_code,
+                    reason=response.text,
                 )
             )
             return
@@ -80,11 +84,12 @@ class GlocaltokensApiClient:
             return response.json()
 
     def get_google_devices_information(self):
+        """Retrieves devices from glocaltokens"""
         _LOGGER.debug("Fetching data...")
         devices = self._client.get_google_devices()
 
         for device in devices:
-            # To avoid keyerror's
+            # To avoid key error's
             timers = []
             alarms = []
 

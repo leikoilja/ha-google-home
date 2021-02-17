@@ -21,7 +21,6 @@ BINARY_SENSOR_DEVICE_CLASS = "connectivity"
 SENSOR = "sensor"
 PLATFORMS = [SENSOR]
 
-
 # Configuration and options
 CONF_ANDROID_ID = "android_id"
 CONF_USERNAME = "username"
@@ -31,18 +30,22 @@ CONF_MASTER_TOKEN = "master_token"
 # Defaults
 DEFAULT_NAME = "HA-GlocalTokens"
 
-# API
+# DEVICE PORT
 PORT = 8443
+
+# API
 API_ENDPOINT_ALARMS = "setup/assistant/alarms"
 HEADER_CAST_LOCAL_AUTH = "cast-local-authorization-token"
 HEADER_CONTENT_TYPE = "content-type"
 
+# HEADERS
 HEADERS = {
     HEADER_CAST_LOCAL_AUTH: "",
     HEADER_CONTENT_TYPE: "application/json; charset=UTF-8",
 }
+TIMEOUT = 10  # Request Timeout in seconds
 
-# TIMERS & ALARMS ATTRIBUTES
+# TIMERS & ALARMS ATTRIBUTE NAMES
 FIRE_TIME = "fire_time"
 FIRE_TIME_IN_S = "fire_time_in_s"
 DATE_TIME = "date_time"
@@ -55,17 +58,14 @@ SHOW_TIME_ONLY = "%H:%M:%S"
 SHOW_DATE_TIMEZONE = "%Y-%m-%dT%H:%M:%S.%fZ%Z"
 SHOW_DATE_AND_TIME = "%Y-%m-%d %H:%M:%S"
 
-# API Error
+# API ERROR'S
 API_RETURNED_UNKNOWN = "API returned unknown json structure"
 
 # Access token only lives about 1 hour
 # Update often to fetch timers in timely manner
 SCAN_INTERVAL = 15  # Seconds
 
-DEVICE_NAME = "deviceName"
-DEVICE_IP = "ip"
-DEVICE_PORT = "port"
-TOKEN = "localAuthToken"
+# JSON parameter values when retrieving information from devices
 ALARMS = "alarm"
 TIMERS = "timer"
 
