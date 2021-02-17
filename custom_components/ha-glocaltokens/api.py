@@ -51,8 +51,9 @@ class GlocaltokensApiClient:
     def get_android_id(self):
         """Generate random android_id"""
         return self._client.get_android_id()
-
-    def create_url(self, ip, port, api_endpoint):
+    
+    @staticmethod
+    def create_url(ip, port, api_endpoint):
         """Creates url to endpoint.
         Note: port argument is unused because all request must be done to 8443"""
         url = "https://{ip}:{port}/{endpoint}".format(
