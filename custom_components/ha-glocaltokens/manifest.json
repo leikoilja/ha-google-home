@@ -6,6 +6,6 @@
   "domain": "ha-glocaltokens",
   "issue_tracker": "https://github.com/leikoilja/ha-glocaltokens/issues",
   "name": "HA-Glocaltokens",
-  "requirements": ["glocaltokens==0.1.4"],
-  "version": "0.1.0"
+  "requirements": ["glocaltokens==0.2.0"],
+  "version": "0.0.2"
 }
