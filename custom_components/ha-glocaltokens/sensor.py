@@ -2,12 +2,8 @@
 from homeassistant.const import STATE_OFF
 from homeassistant.const import STATE_ON
 
-from .const import ALARMS
-from .const import DEVICE_NAME
 from .const import DOMAIN
 from .const import FIRE_TIME_IN_S
-from .const import TIMERS
-from .const import TOKEN
 from .entity import GlocalAlarmEntity
 from .entity import GlocalTimersEntity
 from .entity import GlocaltokensEntity
@@ -19,7 +15,7 @@ async def async_setup_entry(hass, entry, async_add_devices):
     """Setup sensor platform."""
     coordinator = hass.data[DOMAIN][entry.entry_id]
     for device in coordinator.data:
-        if device.get(TOKEN):
+        if device.local_auth_token:
             async_add_devices(
                 [
                     GlocaltokensAlarmSensor(coordinator, entry, device),
@@ -35,8 +31,8 @@ class GlocaltokensSensor(GlocaltokensEntity):
     def __init__(self, coordinator, entry, device):
         """Initialize the sensor."""
         super().__init__(coordinator, entry)
-        self._name = device[DEVICE_NAME]
-        self._state = device[TOKEN]
+        self._name = device.device_name
+        self._state = device.local_auth_token
 
     @property
     def device_state_attributes(self):
@@ -53,8 +49,8 @@ class GlocaltokensAlarmSensor(GlocalAlarmEntity):
     def __init__(self, coordinator, entry, device):
         """Initialize the sensor."""
         super().__init__(coordinator, entry)
-        self._name = device[DEVICE_NAME]
-        self._alarms = [format_alarm_information(alarm) for alarm in device[ALARMS]]
+        self._name = device.device_name
+        self._alarms = [format_alarm_information(alarm) for alarm in device.alarms]
 
         if len(self._alarms) > 0:
             self._state = self._alarms[0][FIRE_TIME_IN_S]
@@ -77,8 +73,8 @@ class GlocaltokensTimerSensor(GlocalTimersEntity):
     def __init__(self, coordinator, entry, device):
         """Initialize the sensor."""
         super().__init__(coordinator, entry)
-        self._name = device[DEVICE_NAME]
-        self._timers = [format_timer_information(timer) for timer in device[TIMERS]]
+        self._name = device.device_name
+        self._timers = [format_timer_information(timer) for timer in device.timers]
 
         if len(self._timers) > 0:
             self._state = STATE_ON
