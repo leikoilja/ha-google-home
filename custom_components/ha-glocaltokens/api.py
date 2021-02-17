@@ -88,7 +88,6 @@ class GlocaltokensApiClient:
             timers = []
             alarms = []
 
-            device.ip = "192.168.0.205"
             result = self.get_alarms_and_timers_from(device, API_ENDPOINT_ALARMS)
             if result:
                 timers = result.get(TIMERS)
