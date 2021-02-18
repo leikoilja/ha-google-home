@@ -1,5 +1,5 @@
 {
-  "name": "HA-Glocaltokens",
+  "name": "HA-Google-Home",
   "hacs": "1.6.0",
   "domains": ["sensor"],
   "iot_class": "Cloud Polling",

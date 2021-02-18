@@ -2,7 +2,7 @@
 Custom integration to integrate Google local authentication token fetching with Home Assistant.
 
 For more details about this integration, please refer to
-https://github.com/leikoilja/ha-glocaltokens
+https://github.com/leikoilja/ha-google-home
 """
 import asyncio
 import logging

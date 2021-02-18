@@ -1,13 +1,13 @@
 """Constants for Google local authentication token fetching."""
 # Base component constants
 NAME = "Google local authentication token fetching (Glocaltokens)"
-DOMAIN = "ha-glocaltokens"
+DOMAIN = "ha-google-home"
 DOMAIN_DATA = f"{DOMAIN}_data"
 VERSION = "0.0.1"
-MANUFACTURER = "ha-glocaltokens"
+MANUFACTURER = "ha-google-home"
 
 ATTRIBUTION = "json"
-ISSUE_URL = "https://github.com/leikoilja/ha-glocaltokens/issues"
+ISSUE_URL = "https://github.com/leikoilja/ha-google-home/issues"
 
 # Icons
 ICON_TOKEN = "mdi:form-textbox-password"
@@ -28,7 +28,7 @@ CONF_PASSWORD = "password"
 CONF_MASTER_TOKEN = "master_token"
 
 # Defaults
-DEFAULT_NAME = "HA-GlocalTokens"
+DEFAULT_NAME = "HA-Google-Home"
 
 # DEVICE PORT
 PORT = 8443
