@@ -1,5 +1,5 @@
 {
-  "codeowners": ["@leikoilja", "DurgNomis-drol", "ArnyminerZ"],
+  "codeowners": ["@leikoilja", "@DurgNomis-drol", "@ArnyminerZ"],
   "config_flow": true,
   "dependencies": [],
   "documentation": "https://github.com/leikoilja/ha-google-home",
