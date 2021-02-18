@@ -53,17 +53,28 @@ class GlocaltokensApiClient:
         return self._client.get_android_id()
 
     @staticmethod
+    def format_offline_devices_to_human_string(device_list):
+        device_list = str(device_list)
+        char = "[']"
+        for c in char:
+            device_list = device_list.replace(c, "")
+
+        return device_list
+
+    @staticmethod
     def create_url(ip, port, api_endpoint):
         """Creates url to endpoint.
         Note: port argument is unused because all request must be done to 8443"""
         url = "https://{ip}:{port}/{endpoint}".format(
-            ip=ip, port=str(PORT), endpoint=api_endpoint
+            ip=ip, port=str(port), endpoint=api_endpoint
         )
         return url
 
     def get_alarms_and_timers_from(self, device, endpoint):
         """Fetches timers and alarms from google device"""
-        url = self.create_url(device.ip, device.port, endpoint)
+        if device.ip is None:
+            return
+        url = self.create_url(device.ip, PORT, endpoint)
         _LOGGER.debug(
             "For device {device} - {url}".format(device=device.device_name, url=url)
         )
@@ -86,6 +97,7 @@ class GlocaltokensApiClient:
     def get_google_devices_information(self):
         """Retrieves devices from glocaltokens"""
         _LOGGER.debug("Fetching data...")
+        offline_devices = []
         devices = self._client.get_google_devices()
 
         for device in devices:
@@ -104,10 +116,26 @@ class GlocaltokensApiClient:
                             device=device.device_name, error=API_RETURNED_UNKNOWN
                         )
                     )
+            else:
+                offline_devices.append(device.device_name)
 
             device.timers = timers
             device.alarms = alarms
             _LOGGER.debug(device)
 
+        """Gives the user a warning if the device is offline, but will not remove entities or device from
+        HA device registry"""
+        if len(offline_devices) > 0:
+            if_one = (
+                "A device is " if len(offline_devices) == 1 else "Some devices are "
+            )
+            _LOGGER.warning(
+                "{one_or_more}offline, so no information could be retrieved, will try again later - {devices}".format(
+                    one_or_more=if_one,
+                    devices=self.format_offline_devices_to_human_string(
+                        offline_devices
+                    ),
+                )
+            )
         _LOGGER.debug(devices)
         return devices
