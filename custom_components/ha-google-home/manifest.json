@@ -1,0 +1,11 @@
+{
+  "codeowners": ["@leikoilja", "@DurgNomis-drol", "@ArnyminerZ"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/leikoilja/ha-google-home",
+  "domain": "ha-google-home",
+  "issue_tracker": "https://github.com/leikoilja/ha-google-home/issues",
+  "name": "HA-Google-Home",
+  "requirements": ["glocaltokens==0.2.0"],
+  "version": "0.0.2"
+}
