@@ -43,10 +43,10 @@ class GlocaltokensApiClient:
             raise InvalidMasterToken
         return master_token
 
-    def get_google_devices_json(self):
+    def get_google_devices(self):
         """Get google device authentication tokens.
         Note this method will fetch necessary access tokens if missing"""
-        return self._client.get_google_devices_json()
+        return self._client.get_google_devices(disable_discovery=True)
 
     def get_android_id(self):
         """Generate random android_id"""
