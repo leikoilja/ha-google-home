@@ -108,7 +108,7 @@ class GlocaltokensApiClient:
                             )
                         )
             else:
-                offline_devices.append(device.device_name)
+                offline_devices.append(device)
                 device.timers = timers
                 device.alarms = alarms
 
@@ -120,7 +120,7 @@ class GlocaltokensApiClient:
             for device in offline_devices:
                 _LOGGER.warning(
                     "Failed to fetch timers/alarms information from device {device}. Will try again later.".format(
-                        device=device
+                        device=device.device_name
                     )
                 )
         _LOGGER.debug(devices)
