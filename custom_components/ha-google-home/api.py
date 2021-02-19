@@ -55,14 +55,6 @@ class GlocaltokensApiClient:
         return self._client.get_android_id()
 
     @staticmethod
-    def validate_ip(ipaddress):
-        """Validates the ip we get from glocaltokens"""
-        if re.search(IP_CHECK_REGEX, ipaddress):
-            return True
-        else:
-            return
-
-    @staticmethod
     def format_offline_devices_to_human_string(device_list):
         """Removes unwanted char's from string"""
         device_list = str(device_list)
@@ -74,41 +66,38 @@ class GlocaltokensApiClient:
 
     @staticmethod
     def create_url(ip, port, api_endpoint):
-        """Creates url to endpoint.
+        """First it checks if a valid IP have been provided and then it creates a url to endpoint.
         Note: port argument is unused because all request must be done to 8443"""
-        url = "https://{ip}:{port}/{endpoint}".format(
-            ip=ip, port=str(port), endpoint=api_endpoint
-        )
-        return url
+        if re.search(IP_CHECK_REGEX, ip):
+            url = "https://{ip}:{port}/{endpoint}".format(
+                ip=ip, port=str(port), endpoint=api_endpoint
+            )
+            return url
 
     def get_alarms_and_timers_from(self, device, endpoint):
         """Fetches timers and alarms from google device"""
-        if device.ip is None or not self.validate_ip(device.ip):
-            _LOGGER.error(
-                "For device {device} - Invalid IP provided: {ip}".format(
-                    device=device.device_name, ip=device.ip
-                )
-            )
-            return
         url = self.create_url(device.ip, PORT, endpoint)
-        _LOGGER.debug(
-            "For device {device} - {url}".format(device=device.device_name, url=url)
-        )
-        # verify=False is need to avoid SSL security checks. Otherwise it will fail to connect"""
-        HEADERS[HEADER_CAST_LOCAL_AUTH] = device.local_auth_token
-        response = requests.get(url, headers=HEADERS, verify=False, timeout=TIMEOUT)
-
-        if response.status_code != HTTP_OK:
-            _LOGGER.error(
-                "For device {device} - API returned {error}: {reason}".format(
-                    device=device.device_name,
-                    error=response.status_code,
-                    reason=response.text,
-                )
+        if url:
+            _LOGGER.debug(
+                "For device {device} - {url}".format(device=device.device_name, url=url)
             )
-            return
+            # verify=False is need to avoid SSL security checks. Otherwise it will fail to connect"""
+            HEADERS[HEADER_CAST_LOCAL_AUTH] = device.local_auth_token
+            response = requests.get(url, headers=HEADERS, verify=False, timeout=TIMEOUT)
+
+            if response.status_code != HTTP_OK:
+                _LOGGER.error(
+                    "For device {device} - API returned {error}: {reason}".format(
+                        device=device.device_name,
+                        error=response.status_code,
+                        reason=response.text,
+                    )
+                )
+                return
+            else:
+                return response.json()
         else:
-            return response.json()
+            return
 
     def get_google_devices_information(self):
         """Retrieves devices from glocaltokens"""
@@ -120,18 +109,18 @@ class GlocaltokensApiClient:
             # To avoid key error's
             timers = []
             alarms = []
+            if device.ip:
+                result = self.get_alarms_and_timers_from(device, API_ENDPOINT_ALARMS)
+                if result:
+                    timers = result.get(TIMERS)
+                    alarms = result.get(ALARMS)
 
-            result = self.get_alarms_and_timers_from(device, API_ENDPOINT_ALARMS)
-            if result:
-                timers = result.get(TIMERS)
-                alarms = result.get(ALARMS)
-
-                if not timers and not alarms:
-                    _LOGGER.error(
-                        "For device {device} - {error}".format(
-                            device=device.device_name, error=API_RETURNED_UNKNOWN
+                    if not timers and not alarms:
+                        _LOGGER.error(
+                            "For device {device} - {error}".format(
+                                device=device.device_name, error=API_RETURNED_UNKNOWN
+                            )
                         )
-                    )
             else:
                 offline_devices.append(device.device_name)
 
@@ -139,19 +128,14 @@ class GlocaltokensApiClient:
             device.alarms = alarms
             _LOGGER.debug(device)
 
-        """Gives the user a warning if the device is offline, but will not remove entities or device from
-        HA device registry"""
-        if len(offline_devices) > 0:
-            if_one = (
-                "A device is " if len(offline_devices) == 1 else "Some devices are "
-            )
-            _LOGGER.warning(
-                "{one_or_more}offline, so no information could be retrieved, will try again later - {devices}".format(
-                    one_or_more=if_one,
-                    devices=self.format_offline_devices_to_human_string(
-                        offline_devices
-                    ),
+        # Gives the user a warning if the device is offline, but will not remove entities or device from
+        # HA device registry
+        if offline_devices:
+            for device in offline_devices:
+                _LOGGER.warning(
+                    "For device {device} - Is offline, so no information could be retrieved. Will try again later.".format(
+                        device=device
+                    )
                 )
-            )
         _LOGGER.debug(devices)
         return devices
