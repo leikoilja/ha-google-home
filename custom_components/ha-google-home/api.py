@@ -57,13 +57,13 @@ class GlocaltokensApiClient:
         """Creates url to endpoint.
         Note: port argument is unused because all request must be done to 8443"""
         url = "https://{ip}:{port}/{endpoint}".format(
-            ip=ip, port=str(PORT), endpoint=api_endpoint
+            ip=ip, port=str(port), endpoint=api_endpoint
         )
         return url
 
     def get_alarms_and_timers_from(self, device, endpoint):
         """Fetches timers and alarms from google device"""
-        url = self.create_url(device.ip, device.port, endpoint)
+        url = self.create_url(device.ip, PORT, endpoint)
         _LOGGER.debug(
             "For device {device} - {url}".format(device=device.device_name, url=url)
         )
@@ -86,28 +86,42 @@ class GlocaltokensApiClient:
     def get_google_devices_information(self):
         """Retrieves devices from glocaltokens"""
         _LOGGER.debug("Fetching data...")
+        offline_devices = []
         devices = self._client.get_google_devices()
 
         for device in devices:
             # To avoid key error's
             timers = []
             alarms = []
+            if device.ip:
+                result_json = self.get_alarms_and_timers_from(
+                    device, API_ENDPOINT_ALARMS
+                )
+                if result_json:
+                    timers = result_json.get(TIMERS)
+                    alarms = result_json.get(ALARMS)
 
-            result = self.get_alarms_and_timers_from(device, API_ENDPOINT_ALARMS)
-            if result:
-                timers = result.get(TIMERS)
-                alarms = result.get(ALARMS)
-
-                if not timers and not alarms:
-                    _LOGGER.error(
-                        "For device {device} - {error}".format(
-                            device=device.device_name, error=API_RETURNED_UNKNOWN
+                    if not timers and not alarms:
+                        _LOGGER.error(
+                            "For device {device} - {error}".format(
+                                device=device.device_name, error=API_RETURNED_UNKNOWN
+                            )
                         )
-                    )
+            else:
+                offline_devices.append(device)
+                device.timers = timers
+                device.alarms = alarms
 
-            device.timers = timers
-            device.alarms = alarms
             _LOGGER.debug(device)
 
+        # Gives the user a warning if the device is offline, but will not remove entities or device from
+        # HA device registry
+        if offline_devices:
+            for device in offline_devices:
+                _LOGGER.warning(
+                    "Failed to fetch timers/alarms information from device {device}. Will try again later.".format(
+                        device=device.device_name
+                    )
+                )
         _LOGGER.debug(devices)
         return devices

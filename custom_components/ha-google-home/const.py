@@ -69,7 +69,6 @@ SCAN_INTERVAL = 15  # Seconds
 ALARMS = "alarm"
 TIMERS = "timer"
 
-
 STARTUP_MESSAGE = f"""
 -------------------------------------------------------------------
 {NAME}
