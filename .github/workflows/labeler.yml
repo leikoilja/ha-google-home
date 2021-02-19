@@ -1,9 +1,9 @@
 name: Manage labels
 
 on:
-  push:
+  pull_request:
     branches:
-      - main
+      - dev
       - master
 
 jobs:

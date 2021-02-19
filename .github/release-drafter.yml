@@ -1,28 +1,37 @@
+name-template: "v$RESOLVED_VERSION"
+tag-template: "v$RESOLVED_VERSION"
 categories:
-  - title: ":boom: Breaking Changes"
-    label: "breaking"
-  - title: ":rocket: Features"
-    label: "enhancement"
-  - title: ":fire: Removals and Deprecations"
-    label: "removal"
-  - title: ":beetle: Fixes"
-    label: "bug"
-  - title: ":racehorse: Performance"
-    label: "performance"
-  - title: ":rotating_light: Testing"
-    label: "testing"
-  - title: ":construction_worker: Continuous Integration"
-    label: "ci"
-  - title: ":books: Documentation"
-    label: "documentation"
-  - title: ":hammer: Refactoring"
-    label: "refactoring"
-  - title: ":lipstick: Style"
-    label: "style"
-  - title: ":package: Dependencies"
+  - title: "🚀 Features"
     labels:
-      - "dependencies"
-      - "build"
+      - "feature"
+  - title: "🔧 Internal structure enhancement"
+    labels:
+      - "enhancement"
+      - "performance"
+      - "refactoring"
+      - "removal"
+  - title: "📄 Documentation"
+    labels:
+      - "documentation"
+  - title: "🐛 Bug Fixes"
+    labels:
+      - "bug"
+  - title: "🧰 Maintenance"
+    labels:
+      - "testing"
+change-template: "- $TITLE @$AUTHOR (#$NUMBER)"
+change-title-escapes: '\<*_&' # You can add # and @ to disable mentions, and add ` to disable code blocks.
+version-resolver:
+  major:
+    labels:
+      - "major"
+  minor:
+    labels:
+      - "minor"
+  patch:
+    labels:
+      - "patch"
+  default: patch
 template: |
   ## Changes
 
