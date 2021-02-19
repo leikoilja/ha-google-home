@@ -87,7 +87,7 @@ class GlocaltokensApiClient:
         """Retrieves devices from glocaltokens"""
         _LOGGER.debug("Fetching data...")
         offline_devices = []
-        devices = self._client.get_google_devices()
+        devices = self.get_google_devices()
 
         for device in devices:
             # To avoid key error's
