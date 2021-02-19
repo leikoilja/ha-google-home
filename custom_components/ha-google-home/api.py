@@ -1,5 +1,6 @@
 """Sample API Client."""
 import logging
+import re
 
 import aiohttp
 import requests
@@ -11,6 +12,7 @@ from .const import API_ENDPOINT_ALARMS
 from .const import API_RETURNED_UNKNOWN
 from .const import HEADER_CAST_LOCAL_AUTH
 from .const import HEADERS
+from .const import IP_CHECK_REGEX
 from .const import PORT
 from .const import TIMEOUT
 from .const import TIMERS
@@ -53,7 +55,16 @@ class GlocaltokensApiClient:
         return self._client.get_android_id()
 
     @staticmethod
+    def validate_ip(ipaddress):
+        """Validates the ip we get from glocaltokens"""
+        if re.search(IP_CHECK_REGEX, ipaddress):
+            return True
+        else:
+            return
+
+    @staticmethod
     def format_offline_devices_to_human_string(device_list):
+        """Removes unwanted char's from string"""
         device_list = str(device_list)
         char = "[']"
         for c in char:
@@ -72,7 +83,12 @@ class GlocaltokensApiClient:
 
     def get_alarms_and_timers_from(self, device, endpoint):
         """Fetches timers and alarms from google device"""
-        if device.ip is None:
+        if device.ip is None or not self.validate_ip(device.ip):
+            _LOGGER.error(
+                "For device {device} - Invalid IP provided: {ip}".format(
+                    device=device.device_name, ip=device.ip
+                )
+            )
             return
         url = self.create_url(device.ip, PORT, endpoint)
         _LOGGER.debug(
