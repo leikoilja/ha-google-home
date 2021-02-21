@@ -4,9 +4,9 @@ from homeassistant.const import STATE_ON
 
 from .const import DOMAIN
 from .const import FIRE_TIME_IN_S
-from .entity import GlocalAlarmEntity
-from .entity import GlocalTimersEntity
-from .entity import GlocaltokensEntity
+from .entity import GoogleHomeAlarmEntity
+from .entity import GoogleHomeEntity
+from .entity import GoogleHomeTimersEntity
 from .utils import format_alarm_information
 from .utils import format_timer_information
 
@@ -18,15 +18,15 @@ async def async_setup_entry(hass, entry, async_add_devices):
         if device.local_auth_token:
             async_add_devices(
                 [
-                    GlocaltokensAlarmSensor(coordinator, entry, device),
-                    GlocaltokensTimerSensor(coordinator, entry, device),
-                    GlocaltokensSensor(coordinator, entry, device),
+                    GoogleHomeAlarmSensor(coordinator, entry, device),
+                    GoogleHomeTimerSensor(coordinator, entry, device),
+                    GoogleHomeSensor(coordinator, entry, device),
                 ]
             )
 
 
-class GlocaltokensSensor(GlocaltokensEntity):
-    """glocaltokens Sensor class."""
+class GoogleHomeSensor(GoogleHomeEntity):
+    """GoogleHome Sensor class."""
 
     def __init__(self, coordinator, entry, device):
         """Initialize the sensor."""
@@ -43,7 +43,7 @@ class GlocaltokensSensor(GlocaltokensEntity):
         }
 
 
-class GlocaltokensAlarmSensor(GlocalAlarmEntity):
+class GoogleHomeAlarmSensor(GoogleHomeAlarmEntity):
     """Representation of a Sensor."""
 
     def __init__(self, coordinator, entry, device):
@@ -67,7 +67,7 @@ class GlocaltokensAlarmSensor(GlocalAlarmEntity):
         }
 
 
-class GlocaltokensTimerSensor(GlocalTimersEntity):
+class GoogleHomeTimerSensor(GoogleHomeTimersEntity):
     """Representation of a Sensor."""
 
     def __init__(self, coordinator, entry, device):
