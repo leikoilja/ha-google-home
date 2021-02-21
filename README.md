@@ -1,3 +1,5 @@
+[![GitHub Workflow Status][workflow-shield]][workflow]
+[![Contributors][contributors-shield]][contributors]
 [![hacs][hacsbadge]][hacs]
 [![GitHub Release][releases-shield]][releases]
 [![GitHub Activity][commits-shield]][commits]
@@ -200,17 +202,21 @@ Under the hood the integration uses [glocaltokens](https://github.com/leikoilja/
 
 ---
 
-[community-discussion]: https://community.home-assistant.io/t/solution-to-track-your-google-home-alarms-and-timers-and-trigger-different-home-assistant-events/61534/74
-[integration_blueprint]: https://github.com/custom-components/integration_blueprint
 [buymecoffee]: https://www.buymeacoffee.com/leikoilja
 [buymecoffeebadge]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg?style=for-the-badge
 [commits-shield]: https://img.shields.io/github/commit-activity/y/leikoilja/ha-google-home.svg?style=for-the-badge
 [commits]: https://github.com/leikoilja/ha-google-home/commits/master
-[hacs]: https://hacs.xyz
-[hacsbadge]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
+[community-discussion]: https://community.home-assistant.io/t/solution-to-track-your-google-home-alarms-and-timers-and-trigger-different-home-assistant-events/61534/74
+[contributors-shield]: https://img.shields.io/github/contributors/leikoilja/ha-google-home?style=for-the-badge
+[contributors]: https://github.com/leikoilja/ha-google-home/graphs/contributors
 [exampleimg1]: misc/images/example1.png
 [exampleimg2]: misc/images/example2.png
-[license]: https://github.com/leikoilja/ha-google-home/blob/master/LICENSE
+[hacs]: https://hacs.xyz
+[hacsbadge]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
+[integration_blueprint]: https://github.com/custom-components/integration_blueprint
 [license-shield]: https://img.shields.io/github/license/leikoilja/ha-google-home.svg?style=for-the-badge
+[license]: https://github.com/leikoilja/ha-google-home/blob/master/LICENSE
 [releases-shield]: https://img.shields.io/github/release/leikoilja/ha-google-home.svg?style=for-the-badge
 [releases]: https://github.com/leikoilja/ha-google-home/releases
+[workflow-shield]: https://img.shields.io/github/workflow/status/leikoilja/ha-google-home/Running%20tests?style=for-the-badge
+[workflow]: https://github.com/leikoilja/ha-google-home/actions
