@@ -63,6 +63,11 @@ file.
 You can use the `pre-commit` settings implemented in this repository to have
 linting tool checking your contributions (see deicated section below).
 
+When writting unittests please follow the good practises like:
+
+- Use `faker` to fake the data. See [examples](https://faker.readthedocs.io/en/master/)
+- Use `mock` to patch objects/methods. See [examples](https://realpython.com/python-mock-library/)
+
 ## Pre-commit
 
 You can use the [pre-commit](https://pre-commit.com/) settings included in the
