@@ -205,12 +205,12 @@ Under the hood the integration uses [glocaltokens](https://github.com/leikoilja/
 [buymecoffee]: https://www.buymeacoffee.com/leikoilja
 [buymecoffeebadge]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg?style=for-the-badge
 [commits-shield]: https://img.shields.io/github/commit-activity/y/leikoilja/ha-google-home.svg?style=for-the-badge
-[commits]: https://github.com/leikoilja/ha-google-home/commits/main
+[commits]: https://github.com/leikoilja/ha-google-home/commits/master
 [hacs]: https://hacs.xyz
 [hacsbadge]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
 [exampleimg1]: misc/images/example1.png
 [exampleimg2]: misc/images/example2.png
-[license]: https://github.com/leikoilja/ha-google-home/blob/main/LICENSE
+[license]: https://github.com/leikoilja/ha-google-home/blob/master/LICENSE
 [license-shield]: https://img.shields.io/github/license/leikoilja/ha-google-home.svg?style=for-the-badge
 [releases-shield]: https://img.shields.io/github/release/leikoilja/ha-google-home.svg?style=for-the-badge
 [releases]: https://github.com/leikoilja/ha-google-home/releases
