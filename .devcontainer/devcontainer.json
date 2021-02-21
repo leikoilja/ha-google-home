@@ -1,7 +1,7 @@
 // See https://aka.ms/vscode-remote/devcontainer.json for format details.
 {
   "image": "ludeeus/container:integration",
-  "name": "Google local authentication token fetching integration development",
+  "name": "Google-Home community driven integration",
   "context": "..",
   "appPort": ["9123:8123"],
   "postCreateCommand": "apk add g++ linux-headers; container install",

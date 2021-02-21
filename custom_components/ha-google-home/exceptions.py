@@ -1,4 +1,4 @@
-"""The errors of Glocaltokens integration."""
+"""The errors of GoogleHome integration."""
 from homeassistant import exceptions
 
 

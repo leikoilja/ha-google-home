@@ -1,4 +1,4 @@
-"""GlocaltokensEntity class"""
+"""GoogleHomeEntity class"""
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DEFAULT_NAME
@@ -10,7 +10,7 @@ from .const import MANUFACTURER
 from .const import VERSION
 
 
-class GlocaltokensEntity(CoordinatorEntity):
+class GoogleHomeEntity(CoordinatorEntity):
     def __init__(self, coordinator, config_entry):
         super().__init__(coordinator)
         self.config_entry = config_entry
@@ -47,10 +47,10 @@ class GlocaltokensEntity(CoordinatorEntity):
     @property
     def device_class(self):
         """Return de device class of the sensor."""
-        return "glocaltokens__custom_device_class"
+        return "google_home__custom_device_class"
 
 
-class GlocalAlarmEntity(CoordinatorEntity):
+class GoogleHomeAlarmEntity(CoordinatorEntity):
     def __init__(self, coordinator, config_entry):
         super().__init__(coordinator)
         self.config_entry = config_entry
@@ -85,7 +85,7 @@ class GlocalAlarmEntity(CoordinatorEntity):
         return self._state
 
 
-class GlocalTimersEntity(CoordinatorEntity):
+class GoogleHomeTimersEntity(CoordinatorEntity):
     def __init__(self, coordinator, config_entry):
         super().__init__(coordinator)
         self.config_entry = config_entry

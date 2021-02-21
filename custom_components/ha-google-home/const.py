@@ -1,6 +1,6 @@
 """Constants for Google local authentication token fetching."""
 # Base component constants
-NAME = "Google local authentication token fetching (Glocaltokens)"
+NAME = "Google-Home community driven integration"
 DOMAIN = "ha-google-home"
 DOMAIN_DATA = f"{DOMAIN}_data"
 VERSION = "0.0.1"

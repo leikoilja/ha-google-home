@@ -18,8 +18,8 @@ from .const import PLATFORMS
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
-class GlocaltokensFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
-    """Config flow for glocaltokens."""
+class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
+    """Config flow for GoogleHome."""
 
     VERSION = 1
     CONNECTION_CLASS = config_entries.CONN_CLASS_CLOUD_POLL
@@ -62,7 +62,7 @@ class GlocaltokensFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     @staticmethod
     @callback
     def async_get_options_flow(config_entry):
-        return GlocaltokensOptionsFlowHandler(config_entry)
+        return GoogleHomeOptionsFlowHandler(config_entry)
 
     async def _show_config_form(self, user_input):  # pylint: disable=unused-argument
         """Show the configuration form to edit location data."""
@@ -84,8 +84,8 @@ class GlocaltokensFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         return False, None
 
 
-class GlocaltokensOptionsFlowHandler(config_entries.OptionsFlow):
-    """Config flow options handler for glocaltokens."""
+class GoogleHomeOptionsFlowHandler(config_entries.OptionsFlow):
+    """Config flow options handler for GoogleHome."""
 
     def __init__(self, config_entry):
         """Initialize HACS options flow."""

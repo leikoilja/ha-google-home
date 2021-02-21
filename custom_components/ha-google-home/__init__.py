@@ -49,7 +49,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     session = async_get_clientsession(hass)
     client = GlocaltokensApiClient(username, password, session, android_id)
 
-    coordinator = GlocaltokensDataUpdateCoordinator(hass, client=client)
+    coordinator = GoogleHomeDataUpdateCoordinator(hass, client=client)
     await coordinator.async_refresh()
 
     if not coordinator.last_update_success:
@@ -68,7 +68,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     return True
 
 
-class GlocaltokensDataUpdateCoordinator(DataUpdateCoordinator):
+class GoogleHomeDataUpdateCoordinator(DataUpdateCoordinator):
     """Class to manage fetching data from the API."""
 
     def __init__(
