@@ -6,7 +6,7 @@
 <br />
 <p>
   <!-- TODO: Add a logo -->
-  <!-- <a href="https://github.com/leikoilja/ha-glocaltokens"> -->
+  <!-- <a href="https://github.com/leikoilja/ha-google-home"> -->
   <!--   <img src="images/logo.png" alt="Logo" height="200"> -->
   <!-- </a> -->
 
@@ -103,7 +103,7 @@ Please SSH to your system and run:
 <!--  -->
 <!-- The easiest way to add this to your Homeassistant installation is using [HACS](https://hacs.xyz/). -->
 <!--  -->
-<!-- In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "HA-Glocaltokens". -->
+<!-- In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "HA-Google-Home". -->
 <!--  -->
 <!-- It's recommended to restart Homeassistant directly after the installation without any change to the Configuration. -->
 <!-- Homeassistant will install the dependencies during the next reboot. -->
@@ -113,11 +113,11 @@ Please SSH to your system and run:
 1. Using the tool of choice open the directory (folder) for your HA configuration (where you find `configuration.yaml`).
 2. If you do not have a `custom_components` directory (folder) there, you need to create it.
 3. In the `custom_components` directory (folder) create a new folder called
-   `ha-glocaltokens`.
-4. Download _all_ the files from the `custom_components/ha-glocaltokens/` directory (folder) in this repository.
+   `ha-google-home`.
+4. Download _all_ the files from the `custom_components/ha-google-home/` directory (folder) in this repository.
 5. Place the files you downloaded in the new directory (folder) you created.
 6. Restart Homeassistant.
-7. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "HA-Glocaltokens". (Please note, it might take up to 30 minutes to install on Raspberry Pi, because of underlying dependency installations)
+7. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "HA-Google-Home". (Please note, it might take up to 30 minutes to install on Raspberry Pi, because of underlying dependency installations)
 
 ## Configuration
 
@@ -204,13 +204,13 @@ Under the hood the integration uses [glocaltokens](https://github.com/leikoilja/
 [integration_blueprint]: https://github.com/custom-components/integration_blueprint
 [buymecoffee]: https://www.buymeacoffee.com/leikoilja
 [buymecoffeebadge]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg?style=for-the-badge
-[commits-shield]: https://img.shields.io/github/commit-activity/y/leikoilja/ha-glocaltokens.svg?style=for-the-badge
-[commits]: https://github.com/leikoilja/ha-glocaltokens/commits/main
+[commits-shield]: https://img.shields.io/github/commit-activity/y/leikoilja/ha-google-home.svg?style=for-the-badge
+[commits]: https://github.com/leikoilja/ha-google-home/commits/main
 [hacs]: https://hacs.xyz
 [hacsbadge]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
 [exampleimg1]: misc/images/example1.png
 [exampleimg2]: misc/images/example2.png
-[license]: https://github.com/leikoilja/ha-glocaltokens/blob/main/LICENSE
-[license-shield]: https://img.shields.io/github/license/leikoilja/ha-glocaltokens.svg?style=for-the-badge
-[releases-shield]: https://img.shields.io/github/release/leikoilja/ha-glocaltokens.svg?style=for-the-badge
-[releases]: https://github.com/leikoilja/ha-glocaltokens/releases
+[license]: https://github.com/leikoilja/ha-google-home/blob/main/LICENSE
+[license-shield]: https://img.shields.io/github/license/leikoilja/ha-google-home.svg?style=for-the-badge
+[releases-shield]: https://img.shields.io/github/release/leikoilja/ha-google-home.svg?style=for-the-badge
+[releases]: https://github.com/leikoilja/ha-google-home/releases

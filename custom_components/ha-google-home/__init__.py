@@ -2,7 +2,7 @@
 Custom integration to integrate Google local authentication token fetching with Home Assistant.
 
 For more details about this integration, please refer to
-https://github.com/leikoilja/ha-glocaltokens
+https://github.com/leikoilja/ha-google-home
 """
 import asyncio
 import logging
@@ -84,12 +84,12 @@ class GlocaltokensDataUpdateCoordinator(DataUpdateCoordinator):
 
     def _update_data(self) -> dict:
         """Fetch local auth tokens from Google via sync functions."""
-        return self.api.get_google_devices_json()
+        return self.api.get_google_devices_information()
 
     async def _async_update_data(self):
         """Update data via library."""
         try:
-            async with timeout(15):
+            async with timeout(10):
                 return await self.hass.async_add_executor_job(self._update_data)
         except Exception as exception:
             raise UpdateFailed(f"Invalid response from API: {exception}") from exception
