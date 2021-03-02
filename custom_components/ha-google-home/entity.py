@@ -27,7 +27,7 @@ class GoogleHomeEntity(CoordinatorEntity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        return f"{DEFAULT_NAME} {self._name} token"
+        return f"{self._name} token"
 
     @property
     def unique_id(self):
@@ -67,7 +67,7 @@ class GoogleHomeAlarmEntity(CoordinatorEntity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        return f"{DEFAULT_NAME} {self._name} next alarm"
+        return f"{self._name} next alarm"
 
     @property
     def unique_id(self):
@@ -93,7 +93,7 @@ class GoogleHomeTimersEntity(CoordinatorEntity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        return f"{DEFAULT_NAME} {self._name} timers"
+        return f"{self._name} timers"
 
     @property
     def device_info(self):

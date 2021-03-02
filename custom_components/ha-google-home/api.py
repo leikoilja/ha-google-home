@@ -1,6 +1,6 @@
 """Sample API Client."""
 import logging
-from ssl import SSLCertVerificationError
+import ssl
 
 import aiohttp
 from glocaltokens.client import GLocalAuthenticationTokens
@@ -85,19 +85,17 @@ class GlocaltokensApiClient:
         )
         HEADERS[HEADER_CAST_LOCAL_AUTH] = device.local_auth_token
 
-        response = await self._session.get(url, headers=HEADERS, timeout=TIMEOUT)
-
-        if response.status_code != HTTP_OK:
-            _LOGGER.error(
-                "Failed to fetch {device} data, API returned {error}: {reason}".format(
-                    device=device.device_name,
-                    error=response.status_code,
-                    reason=response.text,
+        async with self._session.get(url, headers=HEADERS, timeout=TIMEOUT) as response:
+            if response.status != HTTP_OK:
+                _LOGGER.error(
+                    "Failed to fetch {device} data, API returned {error}: {reason}".format(
+                        device=device.device_name,
+                        error=response.status_code,
+                        reason=response.text,
+                    )
                 )
-            )
-            return
-        else:
-            return response.json()
+                return
+            return await response.json()
 
     async def get_google_devices_information(self, zeroconf_instance):
         """Retrieves devices from glocaltokens and fetches alarm/timer data from each of the device"""
@@ -105,8 +103,7 @@ class GlocaltokensApiClient:
         _LOGGER.debug("Fetching sensor data...")
 
         offline_devices = []
-        devices = [{"device_name": "Living Room", "ip": "192.168.88.31"}]
-        #  devices = await self.get_google_devices(zeroconf_instance)
+        devices = await self.get_google_devices(zeroconf_instance)
 
         for device in devices:
             timers = []
@@ -116,26 +113,28 @@ class GlocaltokensApiClient:
                 url = self.create_url(device.ip, PORT, API_ENDPOINT_ALARMS)
 
                 try:
-                    result_json = await self.get_alarms_and_timers(
+                    device_data_json = await self.get_alarms_and_timers(
                         url,
                         device,
                     )
 
-                    if result_json:
-                        timers = result_json.get(TIMERS)
-                        alarms = result_json.get(ALARMS)
-
-                        if not timers and not alarms:
-                            _LOGGER.error(
-                                "For device {device} - {error}".format(
-                                    device=device.device_name,
-                                    error=API_RETURNED_UNKNOWN,
-                                )
+                    if (
+                        TIMERS not in device_data_json or
+                        ALARMS not in device_data_json
+                    ):
+                        _LOGGER.error(
+                            "For device {device} - {error}".format(
+                                device=device.device_name,
+                                error=API_RETURNED_UNKNOWN,
                             )
-                except SSLCertVerificationError:
+                        )
+
+                    timers = device_data_json.get(TIMERS)
+                    alarms = device_data_json.get(ALARMS)
+                except ssl.SSLCertVerificationError as e:
                     _LOGGER.error(
-                        "Failed to fetch data from {device} due to SSL certificate validation. The {device}({url}) is most likely incompatable Google Home device ".format(
-                            device=device.device_name, url=url
+                        "Failed to fetch data from {device} due to SSL certificate validation. The {device}({url}) is most likely incompatable Google Home device. Error {error}".format(
+                            device=device.device_name, url=url, error=e
                         )
                     )
 

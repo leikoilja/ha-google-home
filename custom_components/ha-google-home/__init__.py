@@ -45,7 +45,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     password = entry.data.get(CONF_PASSWORD)
     android_id = entry.data.get(CONF_ANDROID_ID)
 
-    session = async_get_clientsession(hass)
+    session = async_get_clientsession(hass, verify_ssl=False)
 
     glocaltokens_client = GlocaltokensApiClient(
         hass, username, password, session, android_id
