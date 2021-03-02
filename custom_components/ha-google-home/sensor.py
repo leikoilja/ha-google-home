@@ -1,4 +1,6 @@
 """Sensor platform for Google local authentication token fetching."""
+import logging
+
 from homeassistant.const import STATE_OFF
 from homeassistant.const import STATE_ON
 
@@ -9,6 +11,9 @@ from .entity import GoogleHomeEntity
 from .entity import GoogleHomeTimersEntity
 from .utils import format_alarm_information
 from .utils import format_timer_information
+
+
+_LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
 async def async_setup_entry(hass, entry, async_add_devices):

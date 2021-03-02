@@ -40,7 +40,11 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             username = user_input[CONF_USERNAME]
             session = async_create_clientsession(self.hass)
             client = GlocaltokensApiClient(
-                user_input[CONF_USERNAME], user_input[CONF_PASSWORD], session, None
+                self.hass,
+                user_input[CONF_USERNAME],
+                user_input[CONF_PASSWORD],
+                session,
+                None,
             )
             valid, master_token = await self._test_credentials(client)
             if valid:
@@ -48,7 +52,7 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 data.update(
                     {
                         CONF_MASTER_TOKEN: master_token,
-                        CONF_ANDROID_ID: client.get_android_id(),
+                        CONF_ANDROID_ID: await client.get_android_id(),
                     }
                 )
                 return self.async_create_entry(title=username, data=user_input)

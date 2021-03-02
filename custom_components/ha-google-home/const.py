@@ -63,7 +63,7 @@ API_RETURNED_UNKNOWN = "API returned unknown json structure"
 
 # Access token only lives about 1 hour
 # Update often to fetch timers in timely manner
-SCAN_INTERVAL = 15  # Seconds
+UPDATE_INTERVAL = 15
 
 # JSON parameter values when retrieving information from devices
 ALARMS = "alarm"

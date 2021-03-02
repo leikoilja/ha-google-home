@@ -1,8 +1,8 @@
 """Sample API Client."""
 import logging
+from ssl import SSLCertVerificationError
 
 import aiohttp
-import requests
 from glocaltokens.client import GLocalAuthenticationTokens
 from homeassistant.const import HTTP_OK
 
@@ -16,18 +16,21 @@ from .const import TIMEOUT
 from .const import TIMERS
 from .exceptions import InvalidMasterToken
 
+
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
 class GlocaltokensApiClient:
     def __init__(
         self,
+        hass,
         username: str,
         password: str,
         session: aiohttp.ClientSession,
         android_id: str,
     ) -> None:
         """Sample API Client."""
+        self.hass = hass
         self._username = username
         self._password = password
         self._session = session
@@ -38,19 +41,31 @@ class GlocaltokensApiClient:
 
     async def async_get_master_token(self):
         """Get master API token"""
-        master_token = self._client.get_master_token()
+
+        def _get_master_token():
+            return self._client.get_master_token()
+
+        master_token = await self.hass.async_add_executor_job(_get_master_token)
         if master_token.startswith("aas_et/") is False:
             raise InvalidMasterToken
         return master_token
 
-    def get_google_devices(self):
+    async def get_google_devices(self, zeroconf_instance):
         """Get google device authentication tokens.
         Note this method will fetch necessary access tokens if missing"""
-        return self._client.get_google_devices(disable_discovery=True)
 
-    def get_android_id(self):
+        def _get_google_devices():
+            return self._client.get_google_devices(zeroconf_instance=zeroconf_instance)
+
+        return await self.hass.async_add_executor_job(_get_google_devices)
+
+    async def get_android_id(self):
         """Generate random android_id"""
-        return self._client.get_android_id()
+
+        def _get_android_id():
+            return self._client.get_android_id()
+
+        return await self.hass.async_add_executor_job(_get_android_id)
 
     @staticmethod
     def create_url(ip, port, api_endpoint):
@@ -61,19 +76,20 @@ class GlocaltokensApiClient:
         )
         return url
 
-    def get_alarms_and_timers_from(self, device, endpoint):
+    async def get_alarms_and_timers(self, url, device):
         """Fetches timers and alarms from google device"""
-        url = self.create_url(device.ip, PORT, endpoint)
         _LOGGER.debug(
-            "For device {device} - {url}".format(device=device.device_name, url=url)
+            "Fetching data from Google Home device {device} - {url}".format(
+                device=device.device_name, url=url
+            )
         )
-        # verify=False is need to avoid SSL security checks. Otherwise it will fail to connect"""
         HEADERS[HEADER_CAST_LOCAL_AUTH] = device.local_auth_token
-        response = requests.get(url, headers=HEADERS, verify=False, timeout=TIMEOUT)
+
+        response = await self._session.get(url, headers=HEADERS, timeout=TIMEOUT)
 
         if response.status_code != HTTP_OK:
             _LOGGER.error(
-                "For device {device} - API returned {error}: {reason}".format(
+                "Failed to fetch {device} data, API returned {error}: {reason}".format(
                     device=device.device_name,
                     error=response.status_code,
                     reason=response.text,
@@ -83,36 +99,51 @@ class GlocaltokensApiClient:
         else:
             return response.json()
 
-    def get_google_devices_information(self):
-        """Retrieves devices from glocaltokens"""
-        _LOGGER.debug("Fetching data...")
+    async def get_google_devices_information(self, zeroconf_instance):
+        """Retrieves devices from glocaltokens and fetches alarm/timer data from each of the device"""
+
+        _LOGGER.debug("Fetching sensor data...")
+
         offline_devices = []
-        devices = self.get_google_devices()
+        devices = [{"device_name": "Living Room", "ip": "192.168.88.31"}]
+        #  devices = await self.get_google_devices(zeroconf_instance)
 
         for device in devices:
-            # To avoid key error's
             timers = []
             alarms = []
-            if device.ip:
-                result_json = self.get_alarms_and_timers_from(
-                    device, API_ENDPOINT_ALARMS
-                )
-                if result_json:
-                    timers = result_json.get(TIMERS)
-                    alarms = result_json.get(ALARMS)
 
-                    if not timers and not alarms:
-                        _LOGGER.error(
-                            "For device {device} - {error}".format(
-                                device=device.device_name, error=API_RETURNED_UNKNOWN
+            if device.ip:
+                url = self.create_url(device.ip, PORT, API_ENDPOINT_ALARMS)
+
+                try:
+                    result_json = await self.get_alarms_and_timers(
+                        url,
+                        device,
+                    )
+
+                    if result_json:
+                        timers = result_json.get(TIMERS)
+                        alarms = result_json.get(ALARMS)
+
+                        if not timers and not alarms:
+                            _LOGGER.error(
+                                "For device {device} - {error}".format(
+                                    device=device.device_name,
+                                    error=API_RETURNED_UNKNOWN,
+                                )
                             )
+                except SSLCertVerificationError:
+                    _LOGGER.error(
+                        "Failed to fetch data from {device} due to SSL certificate validation. The {device}({url}) is most likely incompatable Google Home device ".format(
+                            device=device.device_name, url=url
                         )
+                    )
+
             else:
                 offline_devices.append(device)
-                device.timers = timers
-                device.alarms = alarms
 
-            _LOGGER.debug(device)
+            device.timers = timers
+            device.alarms = alarms
 
         # Gives the user a warning if the device is offline, but will not remove entities or device from
         # HA device registry
@@ -123,5 +154,4 @@ class GlocaltokensApiClient:
                         device=device.device_name
                     )
                 )
-        _LOGGER.debug(devices)
         return devices
