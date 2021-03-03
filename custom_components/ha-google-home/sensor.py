@@ -1,5 +1,4 @@
 """Sensor platforms for Google Home"""
-
 import logging
 
 from homeassistant.const import STATE_OFF
@@ -11,8 +10,8 @@ from .const import LABEL_ALARMS
 from .const import LABEL_TIMERS
 from .const import LABEL_TOKEN
 from .entity import GoogleHomeAlarmEntity
-from .entity import GoogleHomeTokenEntity
 from .entity import GoogleHomeTimersEntity
+from .entity import GoogleHomeTokenEntity
 from .utils import format_alarm_information
 from .utils import format_timer_information
 
@@ -67,7 +66,9 @@ class GoogleHomeAlarmSensor(GoogleHomeAlarmEntity):
         super().__init__(coordinator, entry)
         self._name = device_name
         self._alarms_timestamp = device_data[LABEL_ALARMS]
-        self._alarms = [format_alarm_information(alarm) for alarm in device_data[LABEL_ALARMS]]
+        self._alarms = [
+            format_alarm_information(alarm) for alarm in device_data[LABEL_ALARMS]
+        ]
 
         if len(self._alarms) > 0:
             self._state = self._alarms[0][FIRE_TIME_IN_S]
@@ -77,7 +78,7 @@ class GoogleHomeAlarmSensor(GoogleHomeAlarmEntity):
     @property
     def device_state_attributes(self):
         """Return the state attributes."""
-        _LOGGER.debug('ALARM ATTRIBUTE data', self.coordinator.data)
+        _LOGGER.debug("ALARM ATTRIBUTE data", self.coordinator.data)
         return {
             "device data": self.coordinator.data[self._name],
             "alarms": self._alarms,
@@ -95,7 +96,9 @@ class GoogleHomeTimerSensor(GoogleHomeTimersEntity):
         super().__init__(coordinator, entry)
         self._name = device_name
         self._timers_timestamp = device_data[LABEL_TIMERS]
-        self._timers = [format_timer_information(timer) for timer in device_data[LABEL_TIMERS]]
+        self._timers = [
+            format_timer_information(timer) for timer in device_data[LABEL_TIMERS]
+        ]
 
         if len(self._timers) > 0:
             self._state = STATE_ON

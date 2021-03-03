@@ -1,5 +1,4 @@
 """Constants for Google Home."""
-
 # Base component constants
 NAME = "Google-Home community driven integration"
 DOMAIN = "ha-google-home"

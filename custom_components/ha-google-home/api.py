@@ -1,23 +1,23 @@
 """Sample API Client."""
 import logging
-import ssl
 
 import aiohttp
 from glocaltokens.client import GLocalAuthenticationTokens
 from glocaltokens.utils.token import is_aas_et
-from homeassistant.const import HTTP_OK, HTTP_NOT_FOUND
+from homeassistant.const import HTTP_NOT_FOUND
+from homeassistant.const import HTTP_OK
 
 from .const import API_ENDPOINT_ALARMS
 from .const import API_RETURNED_UNKNOWN
 from .const import HEADER_CAST_LOCAL_AUTH
 from .const import HEADERS
-from .const import PORT
-from .const import TIMEOUT
+from .const import JSON_ALARM
+from .const import JSON_TIMER
 from .const import LABEL_ALARMS
 from .const import LABEL_TIMERS
 from .const import LABEL_TOKEN
-from .const import JSON_ALARM
-from .const import JSON_TIMER
+from .const import PORT
+from .const import TIMEOUT
 from .exceptions import InvalidMasterToken
 
 
@@ -132,10 +132,7 @@ class GlocaltokensApiClient:
                 )
 
                 if device_data_json:
-                    if (
-                        JSON_TIMER in device_data_json or
-                        JSON_ALARM in device_data_json
-                    ):
+                    if JSON_TIMER in device_data_json or JSON_ALARM in device_data_json:
                         timers = device_data_json.get(JSON_TIMER)
                         alarms = device_data_json.get(JSON_ALARM)
                     else:
