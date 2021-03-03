@@ -1,4 +1,5 @@
-"""Adds config flow for Google local authentication token fetching."""
+"""Adds config flow for Google Home"""
+
 import logging
 
 import voluptuous as vol

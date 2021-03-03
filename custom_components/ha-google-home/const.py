@@ -1,4 +1,5 @@
-"""Constants for Google local authentication token fetching."""
+"""Constants for Google Home."""
+
 # Base component constants
 NAME = "Google-Home community driven integration"
 DOMAIN = "ha-google-home"
@@ -29,6 +30,10 @@ CONF_MASTER_TOKEN = "master_token"
 
 # Defaults
 DEFAULT_NAME = "HA-Google-Home"
+
+LABEL_ALARMS = "alarms"
+LABEL_TIMERS = "timers"
+LABEL_TOKEN = "token"
 
 # DEVICE PORT
 PORT = 8443
@@ -66,8 +71,8 @@ API_RETURNED_UNKNOWN = "API returned unknown json structure"
 UPDATE_INTERVAL = 15
 
 # JSON parameter values when retrieving information from devices
-ALARMS = "alarm"
-TIMERS = "timer"
+JSON_ALARM = "alarm"
+JSON_TIMER = "timer"
 
 STARTUP_MESSAGE = f"""
 -------------------------------------------------------------------

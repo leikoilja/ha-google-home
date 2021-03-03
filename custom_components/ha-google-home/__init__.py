@@ -1,5 +1,5 @@
 """
-Custom integration to integrate Google local authentication token fetching with Home Assistant.
+Custom integration to integrate Google Home with Home Assistant.
 
 For more details about this integration, please refer to
 https://github.com/leikoilja/ha-google-home

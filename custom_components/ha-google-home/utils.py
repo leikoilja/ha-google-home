@@ -16,19 +16,21 @@ def convert_from_ms_to_s(timestamp):
     return round(timestamp / 1000)
 
 
-def format_timer_information(timer):
-    timer[FIRE_TIME_IN_S] = convert_from_ms_to_s(timer[FIRE_TIME])
+def format_timer_information(timer_timestamp):
+    timer = {}
+    timer[FIRE_TIME_IN_S] = convert_from_ms_to_s(timer_timestamp[FIRE_TIME])
     timer[DATE_TIME] = datetime.fromtimestamp(timer[FIRE_TIME_IN_S]).strftime(
         SHOW_TIME_ONLY
     )
 
-    duration = convert_from_ms_to_s(timer[ORIGINAL_DURATION])
+    duration = convert_from_ms_to_s(timer_timestamp[ORIGINAL_DURATION])
     timer[DURATION] = datetime.utcfromtimestamp(duration).strftime(SHOW_TIME_ONLY)
     return timer
 
 
-def format_alarm_information(alarm):
-    alarm[FIRE_TIME_IN_S] = convert_from_ms_to_s(alarm[FIRE_TIME])
+def format_alarm_information(alarm_timestamp):
+    alarm = {}
+    alarm[FIRE_TIME_IN_S] = convert_from_ms_to_s(alarm_timestamp[FIRE_TIME])
     alarm[DATE_TIME] = datetime.utcfromtimestamp(alarm[FIRE_TIME_IN_S]).strftime(
         SHOW_DATE_TIMEZONE
     )
