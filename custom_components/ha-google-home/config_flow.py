@@ -37,7 +37,7 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             return self.async_abort(reason="single_instance_allowed")
 
         if user_input is not None:
-            username = f"{user_input[CONF_USERNAME]}@gmail.com"
+            username = user_input[CONF_USERNAME]
             session = async_create_clientsession(self.hass)
             client = GlocaltokensApiClient(
                 user_input[CONF_USERNAME], user_input[CONF_PASSWORD], session, None
