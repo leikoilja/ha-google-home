@@ -67,7 +67,7 @@ class GoogleHomeAlarmSensor(GoogleHomeAlarmEntity):
 
     @property
     def state(self):
-        alarms = self.get_alarms_data()
+        alarms = self._get_alarms_data()
         state = alarms[0][LOCAL_TIME] if alarms else STATE_OFF
         return state
 
@@ -75,7 +75,7 @@ class GoogleHomeAlarmSensor(GoogleHomeAlarmEntity):
     def device_state_attributes(self):
         """Return the state attributes."""
         return {
-            "alarms": self.get_alarms_data(),
+            "alarms": self._get_alarms_data(),
             "device": str(self.name),
             "integration": DOMAIN,
         }
@@ -99,19 +99,19 @@ class GoogleHomeTimerSensor(GoogleHomeTimersEntity):
 
     @property
     def state(self):
-        timers = self.get_timers_data()
+        timers = self._get_timers_data()
         return timers[0][TIME_LEFT] if timers else STATE_OFF
 
     @property
     def device_state_attributes(self):
         """Return the state attributes."""
         return {
-            "timers": self.get_timers_data(),
+            "timers": self._get_timers_data(),
             "device": str(self.name),
             "integration": DOMAIN,
         }
 
-    def get_timers_data(self):
+    def _get_timers_data(self):
         """Update timers data extracting it from coordinator"""
         timers = [
             format_timer_information(timer)
