@@ -47,13 +47,6 @@ See <a href="#contribution">Contribution</a> section for more information.
       </ul>
     </li>
     <li><a href="#configuration">Configuration</a></li>
-    <li>
-      <a href="#usage">Usage</a>
-      <ul>
-        <li><a href="#google-home-alarm">Google Home alarm</a></li>
-        <li><a href="#google-home-timer">Google Home timer</a></li>
-      </ul>
-    </li>
     <li><a href="#contribution">Contribution</a></li>
     <li><a href="#credits">Credits</a></li>
   </ol>
@@ -73,7 +66,9 @@ This component will set up the following platforms:
 
 | Platform | Description                                                 |
 | -------- | ----------------------------------------------------------- |
-| `sensor` | Sensor with periodically fetched local authentication token |
+| `sensor` | Sensor with timers from the a google device                 |
+| `sensor` | Sensor with alarms from the a google device                 |
+| `sensor` | Sensor with the local authentication token for the device   |
 
 Integration page example with multiple created entities:
 ![example1][exampleimg1]
@@ -86,29 +81,11 @@ Sensor state example with authentication token:
 
 ### Prerequisites
 
-Depending on what operating system you are running your HomeAssistant instance
-on, you might need to install additional system-wide packages/compilers in order to
-be able to build wheels for `glocaltokens` python package, that is used by this
-integration.
+Use Homeassistant build 2021.3 or above.
 
-Please SSH to your system and run:
+### Installation through HACS
 
-- On Raspberry Pi (which most likely runs on Alpine Linux)
-
-`apk add gcc g++ linux-headers`
-
-- On Ubuntu
-
-`sudo apt install build-essential`
-
-<!-- ### HACS -->
-<!--  -->
-<!-- The easiest way to add this to your Homeassistant installation is using [HACS](https://hacs.xyz/). -->
-<!--  -->
-<!-- In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "HA-Google-Home". -->
-<!--  -->
-<!-- It's recommended to restart Homeassistant directly after the installation without any change to the Configuration. -->
-<!-- Homeassistant will install the dependencies during the next reboot. -->
+...
 
 ### Manual Installation
 
@@ -119,72 +96,15 @@ Please SSH to your system and run:
 4. Download _all_ the files from the `custom_components/ha-google-home/` directory (folder) in this repository.
 5. Place the files you downloaded in the new directory (folder) you created.
 6. Restart Homeassistant.
-7. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "HA-Google-Home". (Please note, it might take up to 30 minutes to install on Raspberry Pi, because of underlying dependency installations)
+7. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Google-Home".
+
+#### Running HA in Docker
+
+Make sure that you have your Homeassistant Container network set to 'host' mode. As perscribed in the official docker installation. Or else make sure you have these ports open: "NEED TO FIND PORTS"
 
 ## Configuration
 
-When adding integration using HA Installation UI type in your google username
-(Note: only the handle, without '@gmail.com') and google password. You can use
-your master google account's password, but it is highly recommended to generate
-app password and use it. It's safer/easier to generate an app password and use it instead of the actual password. It still has the same access as the regular password, but still better than using the real password while scripting. (https://myaccount.google.com/apppasswords).
-
-## Usage
-
-This custom component DOES NOT (yet) implement any [Google Home Local API](https://rithvikvibhu.github.io/GHLocalApi) directly. It simply obtains tokens for you to be able to use [Google Home Local API](https://rithvikvibhu.github.io/GHLocalApi). Basically giving you the keys to the playground to do what you wish with the api.
-
-### Example usage
-
-Now that you have local authentication token for your google home devices you
-can use them making simple [REST API](https://www.home-assistant.io/integrations/rest/) calls like the following few examples:
-
-**Important**
-Please note that in the `resource` key `https` and port `:8443` are mandatory!
-
-#### Google Home alarm
-
-```yaml
-sensor:
-  - platform: rest
-    resource: https://<IP-ADDRESS-OF-YOUR-GOOGLE-HOME>:8443/setup/assistant/alarms
-    method: GET
-    name: Google Nest alarm
-    headers:
-      cast-local-authorization-token: "{{ sensor.glocaltoken_kitchen.state }}"
-      content-type: "application/json"
-    value_template: "{{ value_json['alarm'] }}"
-    verify_ssl: false
-```
-
-Sensor state example:
-
-```yaml
-"entity_id": "sensor.google_nest_alarm"
-"state": "[{'date_pattern': {'day': 20, 'month': 1, 'year': 2021}, 'fire_time': 1611126007000.0, 'id': 'alarm/606fa170-0000-27c9-9f87-089e0823c38c', 'status': 1, 'time_pattern': {'hour': 8, 'minute': 0, 'second': 7}}]"
-```
-
-#### Google Home timer
-
-```yaml
-sensor:
-  - platform: rest
-    resource: https://<IP-ADDRESS-OF-YOUR-GOOGLE-HOME>:8443/setup/assistant/alarms
-    method: GET
-    name: Google Nest timer
-    headers:
-      cast-local-authorization-token: "{{ sensor.glocaltoken_kitchen.state }}"
-      content-type: "application/json"
-    value_template: "{{ value_json['timer'] }}"
-    verify_ssl: false
-```
-
-Sensor state example:
-
-```yaml
-"entity_id": "sensor.google_nest_timer"
-"state": "[{'fire_time': 1611126011000.0, 'id': 'timer/617764ce-0000-2170-8ab3-2405887a817c', 'original_duration': 69062000.0, 'status': 1}]"
-```
-
-If you have any good examples, please open a PR to this README to share them with others
+Configration is done through the UI.
 
 ## Contribution
 
