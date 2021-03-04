@@ -7,10 +7,11 @@
 
 <br />
 <p>
-  <!-- TODO: Add a logo -->
-  <!-- <a href="https://github.com/leikoilja/ha-google-home"> -->
-  <!--   <img src="images/logo.png" alt="Logo" height="200"> -->
-  <!-- </a> -->
+  <p align="center">
+    <a href="https://github.com/leikoilja/ha-google-home">
+      <img src="https://brands.home-assistant.io/ha-google-home/icon.png" alt="Logo" height="128">
+    </a>
+  </p>
 
   <h3 align="center">Home Assistant Google Home community integration</h3>
 
