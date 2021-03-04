@@ -42,8 +42,8 @@ See <a href="#contribution">Contribution</a> section for more information.
       <a href="#getting-started">Getting Started</a>
       <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#hacs">HACS</a></li>
-        <li><a href="#manual">Manual installation</a></li>
+        <li><a href="#hacs-installation">HACS</a></li>
+        <li><a href="#manual-installation">Manual installation</a></li>
       </ul>
     </li>
     <li><a href="#configuration">Configuration</a></li>
