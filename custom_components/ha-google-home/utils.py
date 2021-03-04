@@ -1,15 +1,15 @@
 """utils.py for google home integration"""
-from datetime import datetime
 from datetime import timedelta
-from homeassistant.util.dt import utc_from_timestamp
-from homeassistant.util.dt import as_local
 
+from homeassistant.util.dt import as_local
+from homeassistant.util.dt import utc_from_timestamp
+
+from .const import DATETIME_STR_FORMAT
 from .const import DATETIME_UTC
-from .const import TIME_LEFT
 from .const import FIRE_TIME
 from .const import LOCAL_TIME
 from .const import ORIGINAL_DURATION
-from .const import DATETIME_STR_FORMAT
+from .const import TIME_LEFT
 
 
 def convert_from_ms_to_s(timestamp):

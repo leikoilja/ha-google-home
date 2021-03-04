@@ -1,5 +1,4 @@
 """Constants for Google Home."""
-
 from homeassistant.util.dt import DATE_STR_FORMAT
 
 # Base component constants

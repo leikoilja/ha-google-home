@@ -4,11 +4,11 @@ import logging
 from homeassistant.const import STATE_OFF
 
 from .const import DOMAIN
-from .const import TIME_LEFT
 from .const import LABEL_ALARMS
-from .const import LOCAL_TIME
 from .const import LABEL_TIMERS
 from .const import LABEL_TOKEN
+from .const import LOCAL_TIME
+from .const import TIME_LEFT
 from .entity import GoogleHomeAlarmEntity
 from .entity import GoogleHomeTimersEntity
 from .entity import GoogleHomeTokenEntity
@@ -24,11 +24,19 @@ async def async_setup_entry(hass, entry, async_add_devices):
     coordinator = hass.data[DOMAIN][entry.entry_id]
     for device_name, device_data in coordinator.data.items():
         if device_data[LABEL_TOKEN]:
-            async_add_devices([
-                GoogleHomeAlarmSensor(coordinator, entry, device_name, device_data[LABEL_ALARMS]),
-                GoogleHomeTimerSensor(coordinator, entry, device_name, device_data[LABEL_TIMERS]),
-                GoogleHomeTokenSensor(coordinator, entry, device_name, device_data[LABEL_TOKEN]),
-            ])
+            async_add_devices(
+                [
+                    GoogleHomeAlarmSensor(
+                        coordinator, entry, device_name, device_data[LABEL_ALARMS]
+                    ),
+                    GoogleHomeTimerSensor(
+                        coordinator, entry, device_name, device_data[LABEL_TIMERS]
+                    ),
+                    GoogleHomeTokenSensor(
+                        coordinator, entry, device_name, device_data[LABEL_TOKEN]
+                    ),
+                ]
+            )
 
 
 class GoogleHomeTokenSensor(GoogleHomeTokenEntity):
@@ -75,7 +83,8 @@ class GoogleHomeAlarmSensor(GoogleHomeAlarmEntity):
     def get_alarms_data(self):
         """Update alarms data extracting it from coordinator"""
         alarms = [
-            format_alarm_information(alarm) for alarm in self.coordinator.data[self._name][LABEL_ALARMS]
+            format_alarm_information(alarm)
+            for alarm in self.coordinator.data[self._name][LABEL_ALARMS]
         ]
         return alarms
 
@@ -106,6 +115,7 @@ class GoogleHomeTimerSensor(GoogleHomeTimersEntity):
     def get_timers_data(self):
         """Update timers data extracting it from coordinator"""
         timers = [
-            format_timer_information(timer) for timer in self.coordinator.data[self._name][LABEL_TIMERS]
+            format_timer_information(timer)
+            for timer in self.coordinator.data[self._name][LABEL_TIMERS]
         ]
         return timers
