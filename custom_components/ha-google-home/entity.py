@@ -1,4 +1,3 @@
-"""GoogleHomeEntity class"""
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DEFAULT_NAME
@@ -6,11 +5,14 @@ from .const import DOMAIN
 from .const import ICON_ALARMS
 from .const import ICON_TIMERS
 from .const import ICON_TOKEN
+from .const import LABEL_ALARMS
+from .const import LABEL_TIMERS
+from .const import LABEL_TOKEN
 from .const import MANUFACTURER
 from .const import VERSION
 
 
-class GoogleHomeEntity(CoordinatorEntity):
+class GoogleHomeTokenEntity(CoordinatorEntity):
     def __init__(self, coordinator, config_entry):
         super().__init__(coordinator)
         self.config_entry = config_entry
@@ -27,12 +29,12 @@ class GoogleHomeEntity(CoordinatorEntity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        return f"{DEFAULT_NAME} {self._name} token"
+        return f"{self._name} {LABEL_TOKEN}"
 
     @property
     def unique_id(self):
         """Return a unique ID to use for this entity."""
-        return f"{self._name}/token"
+        return f"{self._name}/{LABEL_TOKEN}"
 
     @property
     def icon(self):
@@ -67,12 +69,12 @@ class GoogleHomeAlarmEntity(CoordinatorEntity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        return f"{DEFAULT_NAME} {self._name} next alarm"
+        return f"{self._name} {LABEL_ALARMS}"
 
     @property
     def unique_id(self):
         """Return a unique ID to use for this entity."""
-        return f"{self._name}/next_alarm"
+        return f"{self._name}/{LABEL_ALARMS}"
 
     @property
     def icon(self):
@@ -93,7 +95,7 @@ class GoogleHomeTimersEntity(CoordinatorEntity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        return f"{DEFAULT_NAME} {self._name} timers"
+        return f"{self._name} {LABEL_TIMERS}"
 
     @property
     def device_info(self):
@@ -107,7 +109,7 @@ class GoogleHomeTimersEntity(CoordinatorEntity):
     @property
     def unique_id(self):
         """Return a unique ID to use for this entity."""
-        return f"{self._name}/timers"
+        return f"{self._name}/{LABEL_TIMERS}"
 
     @property
     def icon(self):
