@@ -70,13 +70,6 @@ This component will set up the following platforms:
 | `sensor` | Sensor with alarms from the a google device                 |
 | `sensor` | Sensor with the local authentication token for the device   |
 
-Integration page example with multiple created entities:
-![example1][exampleimg1]
-
-Sensor state example with authentication token:
-
-![example2][exampleimg2]
-
 ## Getting Started
 
 ### Prerequisites
