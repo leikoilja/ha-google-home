@@ -1,4 +1,7 @@
 """Constants for Google Home."""
+
+from homeassistant.util.dt import DATE_STR_FORMAT
+
 # Base component constants
 NAME = "Google-Home community driven integration"
 DOMAIN = "ha-google-home"
@@ -51,16 +54,14 @@ TIMEOUT = 10  # Request Timeout in seconds
 
 # TIMERS & ALARMS ATTRIBUTE NAMES
 FIRE_TIME = "fire_time"
-FIRE_TIME_IN_S = "fire_time_in_s"
-DATE_TIME = "date_time"
+DATETIME_UTC = "date_time_utc"
 LOCAL_TIME = "local_time"
-DURATION = "duration"
+TIME_LEFT = "time_left"
 ORIGINAL_DURATION = "original_duration"
 
 # TIMESTRINGS
-SHOW_TIME_ONLY = "%H:%M:%S"
-SHOW_DATE_TIMEZONE = "%Y-%m-%dT%H:%M:%S.%fZ%Z"
-SHOW_DATE_AND_TIME = "%Y-%m-%d %H:%M:%S"
+TIME_STR_FORMAT = "%H:%M:%S"
+DATETIME_STR_FORMAT = f"{DATE_STR_FORMAT} {TIME_STR_FORMAT}"
 
 # API ERROR'S
 API_RETURNED_UNKNOWN = "API returned unknown json structure"
