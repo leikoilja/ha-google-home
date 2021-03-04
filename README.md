@@ -42,7 +42,7 @@ See <a href="#contribution">Contribution</a> section for more information.
       <a href="#getting-started">Getting Started</a>
       <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
-        <!-- <li><a href="#hacs">HACS</a></li> -->
+        <li><a href="#hacs">HACS</a></li>
         <li><a href="#manual">Manual installation</a></li>
       </ul>
     </li>
@@ -76,7 +76,7 @@ This component will set up the following platforms:
 
 Use Homeassistant build 2021.3 or above.
 
-### Installation through HACS
+### HACS installation
 
 ...
 
@@ -93,7 +93,7 @@ Use Homeassistant build 2021.3 or above.
 
 #### Running HA in Docker
 
-Make sure that you have your Homeassistant Container network set to 'host' mode. As perscribed in the official docker installation. Or else make sure you have these ports open: "NEED TO FIND PORTS"
+Make sure that you have your Homeassistant Container network set to 'host' mode, as perscribed in the official docker installation.
 
 ## Configuration
 
