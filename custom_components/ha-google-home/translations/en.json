@@ -2,10 +2,10 @@
   "config": {
     "step": {
       "user": {
-        "title": "Google local authentication token fetching",
+        "title": "Google Home authentication",
         "description": "If you need help with the configuration have a look here: https://github.com/leikoilja/ha-google-home. Use your google account username and app password. It's safer/easier to generate an app password and use it instead of the actual password. It still has the same access as the regular password, but still better than using the real password while scripting. (https://myaccount.google.com/apppasswords). If not, regular google account password should work.",
         "data": {
-          "username": "Google account username (without @gmail.com)",
+          "username": "Google account username",
           "password": "Google account app password"
         }
       }
