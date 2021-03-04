@@ -80,7 +80,7 @@ class GoogleHomeAlarmSensor(GoogleHomeAlarmEntity):
             "integration": DOMAIN,
         }
 
-    def get_alarms_data(self):
+    def _get_alarms_data(self):
         """Update alarms data extracting it from coordinator"""
         alarms = [
             format_alarm_information(alarm)
