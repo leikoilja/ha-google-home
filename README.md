@@ -24,8 +24,6 @@
 Please note this integration is in the early stage of it's development.
 See <a href="#contribution">Contribution</a> section for more information.
 
-**[!!] Since this is WIP, HACS installation is unavailable yet, only manual installation for early testers**
-
 </p>
 
 <!-- TABLE OF CONTENTS -->
@@ -66,8 +64,8 @@ This component will set up the following platforms:
 
 | Platform | Description                                                 |
 | -------- | ----------------------------------------------------------- |
-| `sensor` | Sensor with timers from the a google device                 |
-| `sensor` | Sensor with alarms from the a google device                 |
+| `sensor` | Sensor with timers from the device                          |
+| `sensor` | Sensor with alarms from the device                          |
 | `sensor` | Sensor with the local authentication token for the device   |
 
 ## Getting Started
@@ -78,7 +76,7 @@ Use Homeassistant build 2021.3 or above.
 
 ### HACS installation
 
-...
+**[!!] Since this is WIP, HACS installation is unavailable yet, only manual installation for early testers**
 
 ### Manual Installation
 
@@ -93,7 +91,7 @@ Use Homeassistant build 2021.3 or above.
 
 #### Running HA in Docker
 
-Make sure that you have your Homeassistant Container network set to 'host' mode, as perscribed in the official docker installation.
+Make sure that you have your Homeassistant Container network set to 'host', as perscribed in the official docker installation for homeassistant.
 
 ## Configuration
 
