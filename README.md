@@ -9,7 +9,7 @@
 <p>
   <p align="center">
     <a href="https://github.com/leikoilja/ha-google-home">
-      <img src="https://brands.home-assistant.io/ha-google-home/icon.png" alt="Logo" height="128">
+      <img src="https://brands.home-assistant.io/ha-google-home/icon.png" alt="Logo" height="200">
     </a>
   </p>
 
@@ -19,7 +19,6 @@
     This custom integration aims to provide plug-and-play Google Home
     experience for Home Assistant enthusiasts.
   </p>
-  <br />
 
 **[!] Beta version alert.**
 Please note this integration is in the early stage of it's development.
@@ -41,11 +40,14 @@ See <a href="#contribution">Contribution</a> section for more information.
       <a href="#getting-started">Getting Started</a>
       <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#hacs-installation">HACS</a></li>
-        <li><a href="#manual-installation">Manual installation</a></li>
+        <li><a href="#hacs-installation">HACS Installation</a></li>
+        <li><a href="#manual-installation">Manual Installation</a></li>
+        <li><a href="#integration-setup">Integration Setup</a></li>
+        <li><a href="#running-in-homeassistant-docker-container">
+	  Running in Homeassistant Docker container
+	</a></li>
       </ul>
     </li>
-    <li><a href="#configuration">Configuration</a></li>
     <li><a href="#contribution">Contribution</a></li>
     <li><a href="#credits">Credits</a></li>
   </ol>
@@ -56,18 +58,17 @@ See <a href="#contribution">Contribution</a> section for more information.
 This is a custom component that is emerging from the
 [community discussion][community-discussion] of a need to be able to retrieve
 local google assistant device (like Google Home/Nest etc) authentication
-tokens to be able to use those tokens making API calls to retrieve
-Google Home device information.
+tokens and use those tokens making API calls to Google Home devices.
 
 ## Features
 
 This component will set up the following platforms:
 
-| Platform | Description                                               |
-| -------- | --------------------------------------------------------- |
-| `sensor` | Sensor with timers from the device                        |
-| `sensor` | Sensor with alarms from the device                        |
-| `sensor` | Sensor with the local authentication token for the device |
+| Platform | Sample sensor               | Description                                               |
+| -------- | --------------------------- | --------------------------------------------------------- |
+| `sensor` | `sensor.living_room_timers` | Sensor with timers from the device                        |
+| `sensor` | `sensor.living_room_alarms` | Sensor with alarms from the device                        |
+| `sensor` | `sensor.living_room_token`  | Sensor with the local authentication token for the device |
 
 ## Getting Started
 
@@ -75,9 +76,13 @@ This component will set up the following platforms:
 
 Use Homeassistant build 2021.3 or above.
 
-### HACS installation
+### HACS Installation
 
-**[!!] Since this is WIP, HACS installation is unavailable yet, only manual installation for early testers**
+_Since the integration is under active development, it is not yet added to HACS default repository, only manual installation is availabe for early testers_
+
+To install the integration follow [HACS description](https://hacs.xyz/docs/faq/custom_repositories) to add custom repository.
+Provide `https://github.com/leikoilja/ha-google-home` as repository URL and select "Integration" category.
+We recommend you select the latest stable release.
 
 ### Manual Installation
 
@@ -87,16 +92,15 @@ Use Homeassistant build 2021.3 or above.
    `ha-google-home`.
 4. Download _all_ the files from the `custom_components/ha-google-home/` directory (folder) in this repository.
 5. Place the files you downloaded in the new directory (folder) you created.
-6. Restart Homeassistant.
-7. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Google-Home".
 
-#### Running HA in Docker
+### Integration Setup
+
+1. Restart Homeassistant after installation.
+2. In the Homeassistant UI go to "Configuration" -> "Integrations" click "+" and search for "Google Home".
+
+#### Running in Homeassistant Docker container
 
 Make sure that you have your Homeassistant Container network set to 'host', as perscribed in the official docker installation for homeassistant.
-
-## Configuration
-
-Configration is done through the UI.
 
 ## Contribution
 
@@ -121,8 +125,6 @@ Under the hood the integration uses [glocaltokens](https://github.com/leikoilja/
 [community-discussion]: https://community.home-assistant.io/t/solution-to-track-your-google-home-alarms-and-timers-and-trigger-different-home-assistant-events/61534/74
 [contributors-shield]: https://img.shields.io/github/contributors/leikoilja/ha-google-home?style=for-the-badge
 [contributors]: https://github.com/leikoilja/ha-google-home/graphs/contributors
-[exampleimg1]: misc/images/example1.png
-[exampleimg2]: misc/images/example2.png
 [hacs]: https://hacs.xyz
 [hacsbadge]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
 [integration_blueprint]: https://github.com/custom-components/integration_blueprint
