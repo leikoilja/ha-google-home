@@ -100,8 +100,7 @@ class GoogleHomeTimerSensor(GoogleHomeTimersEntity):
     @property
     def state(self):
         timers = self.get_timers_data()
-        state = timers[0][TIME_LEFT] if timers else STATE_OFF
-        return state
+        return timers[0][TIME_LEFT] if timers else STATE_OFF
 
     @property
     def device_state_attributes(self):
