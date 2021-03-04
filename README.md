@@ -62,11 +62,11 @@ Google Home device information.
 
 This component will set up the following platforms:
 
-| Platform | Description                                                 |
-| -------- | ----------------------------------------------------------- |
-| `sensor` | Sensor with timers from the device                          |
-| `sensor` | Sensor with alarms from the device                          |
-| `sensor` | Sensor with the local authentication token for the device   |
+| Platform | Description                                               |
+| -------- | --------------------------------------------------------- |
+| `sensor` | Sensor with timers from the device                        |
+| `sensor` | Sensor with alarms from the device                        |
+| `sensor` | Sensor with the local authentication token for the device |
 
 ## Getting Started
 
