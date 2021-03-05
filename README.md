@@ -7,10 +7,11 @@
 
 <br />
 <p>
-  <!-- TODO: Add a logo -->
-  <!-- <a href="https://github.com/leikoilja/ha-google-home"> -->
-  <!--   <img src="images/logo.png" alt="Logo" height="200"> -->
-  <!-- </a> -->
+  <p align="center">
+    <a href="https://github.com/leikoilja/ha-google-home">
+      <img src="https://brands.home-assistant.io/ha-google-home/icon.png" alt="Logo" height="200">
+    </a>
+  </p>
 
   <h3 align="center">Home Assistant Google Home community integration</h3>
 
@@ -18,13 +19,10 @@
     This custom integration aims to provide plug-and-play Google Home
     experience for Home Assistant enthusiasts.
   </p>
-  <br />
 
 **[!] Beta version alert.**
 Please note this integration is in the early stage of it's development.
 See <a href="#contribution">Contribution</a> section for more information.
-
-**[!!] Since this is WIP, HACS installation is unavailable yet, only manual installation for early testers**
 
 </p>
 
@@ -42,16 +40,18 @@ See <a href="#contribution">Contribution</a> section for more information.
       <a href="#getting-started">Getting Started</a>
       <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
-        <!-- <li><a href="#hacs">HACS</a></li> -->
-        <li><a href="#manual">Manual installation</a></li>
-      </ul>
-    </li>
-    <li><a href="#configuration">Configuration</a></li>
-    <li>
-      <a href="#usage">Usage</a>
-      <ul>
-        <li><a href="#google-home-alarm">Google Home alarm</a></li>
-        <li><a href="#google-home-timer">Google Home timer</a></li>
+        <li><a href="#hacs-installation">HACS Installation</a></li>
+        <li>
+	  <a href="#manual-installation">Manual Installation</a>
+	  <ul>
+            <li><a href="#git-clone-method">Git clone method</a></li>
+            <li><a href="#copy-method">Copy method</a></li>
+	  </ul>
+	</li>
+        <li><a href="#integration-setup">Integration Setup</a></li>
+        <li><a href="#running-in-homeassistant-docker-container">
+	  Running in Homeassistant Docker container
+	</a></li>
       </ul>
     </li>
     <li><a href="#contribution">Contribution</a></li>
@@ -64,127 +64,63 @@ See <a href="#contribution">Contribution</a> section for more information.
 This is a custom component that is emerging from the
 [community discussion][community-discussion] of a need to be able to retrieve
 local google assistant device (like Google Home/Nest etc) authentication
-tokens to be able to use those tokens making API calls to retrieve
-Google Home device information.
+tokens and use those tokens making API calls to Google Home devices.
 
 ## Features
 
 This component will set up the following platforms:
 
-| Platform | Description                                                 |
-| -------- | ----------------------------------------------------------- |
-| `sensor` | Sensor with periodically fetched local authentication token |
-
-Integration page example with multiple created entities:
-![example1][exampleimg1]
-
-Sensor state example with authentication token:
-
-![example2][exampleimg2]
+| Platform | Sample sensor               | Description                                               |
+| -------- | --------------------------- | --------------------------------------------------------- |
+| `sensor` | `sensor.living_room_timers` | Sensor with timers from the device                        |
+| `sensor` | `sensor.living_room_alarms` | Sensor with alarms from the device                        |
+| `sensor` | `sensor.living_room_token`  | Sensor with the local authentication token for the device |
 
 ## Getting Started
 
 ### Prerequisites
 
-Depending on what operating system you are running your HomeAssistant instance
-on, you might need to install additional system-wide packages/compilers in order to
-be able to build wheels for `glocaltokens` python package, that is used by this
-integration.
+Use Homeassistant build 2021.3 or above.
 
-Please SSH to your system and run:
+### HACS Installation
 
-- On Raspberry Pi (which most likely runs on Alpine Linux)
+_Since the integration is under active development, it is not yet added to HACS default repository, only manual installation is availabe for early testers_
 
-`apk add gcc g++ linux-headers`
-
-- On Ubuntu
-
-`sudo apt install build-essential`
-
-<!-- ### HACS -->
-<!--  -->
-<!-- The easiest way to add this to your Homeassistant installation is using [HACS](https://hacs.xyz/). -->
-<!--  -->
-<!-- In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "HA-Google-Home". -->
-<!--  -->
-<!-- It's recommended to restart Homeassistant directly after the installation without any change to the Configuration. -->
-<!-- Homeassistant will install the dependencies during the next reboot. -->
+To install the integration follow [HACS description](https://hacs.xyz/docs/faq/custom_repositories) to add custom repository.
+Provide `https://github.com/leikoilja/ha-google-home` as repository URL and select "Integration" category.
+We recommend you select the latest stable release.
 
 ### Manual Installation
 
 1. Using the tool of choice open the directory (folder) for your HA configuration (where you find `configuration.yaml`).
 2. If you do not have a `custom_components` directory (folder) there, you need to create it.
-3. In the `custom_components` directory (folder) create a new folder called
+
+#### Git clone method
+
+This is a preferred method of manual installation, because it allows you to keep the `git` functionality,
+allowing you to manually install updates just by running `git pull origin master` from the created directory.
+Also works better for users with non standard root directory for Homeassistant.
+
+Now you can clone the repository somewhere else and symulink it to Homeassistant like so:
+
+1. `git clone https://github.com/leikoilja/ha-google-home.git`
+2. `ln -s ha-google-home/custom_components/ha-google-home ~/.homeassistant/custom_components/ha-google-home`
+
+#### Copy method
+
+1. In the `custom_components` directory (folder) create a new folder called
    `ha-google-home`.
-4. Download _all_ the files from the `custom_components/ha-google-home/` directory (folder) in this repository.
-5. Place the files you downloaded in the new directory (folder) you created.
-6. Restart Homeassistant.
-7. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "HA-Google-Home". (Please note, it might take up to 30 minutes to install on Raspberry Pi, because of underlying dependency installations)
+2. Download _all_ the files from the `custom_components/ha-google-home/` directory (folder) in this repository.
+3. Place the files you downloaded in the new directory `ha-google-home` that you created.
 
-## Configuration
+### Integration Setup
 
-When adding integration using HA Installation UI type in your google username
-(Note: only the handle, without '@gmail.com') and google password. You can use
-your master google account's password, but it is highly recommended to generate
-app password and use it. It's safer/easier to generate an app password and use it instead of the actual password. It still has the same access as the regular password, but still better than using the real password while scripting. (https://myaccount.google.com/apppasswords).
+1. Restart Homeassistant after installation.
+2. In the Homeassistant UI go to "Configuration" -> "Integrations" click "+" and search for "Google Home".
 
-## Usage
+### Running in Homeassistant Docker container
 
-This custom component DOES NOT (yet) implement any [Google Home Local API](https://rithvikvibhu.github.io/GHLocalApi) directly. It simply obtains tokens for you to be able to use [Google Home Local API](https://rithvikvibhu.github.io/GHLocalApi). Basically giving you the keys to the playground to do what you wish with the api.
-
-### Example usage
-
-Now that you have local authentication token for your google home devices you
-can use them making simple [REST API](https://www.home-assistant.io/integrations/rest/) calls like the following few examples:
-
-**Important**
-Please note that in the `resource` key `https` and port `:8443` are mandatory!
-
-#### Google Home alarm
-
-```yaml
-sensor:
-  - platform: rest
-    resource: https://<IP-ADDRESS-OF-YOUR-GOOGLE-HOME>:8443/setup/assistant/alarms
-    method: GET
-    name: Google Nest alarm
-    headers:
-      cast-local-authorization-token: "{{ sensor.glocaltoken_kitchen.state }}"
-      content-type: "application/json"
-    value_template: "{{ value_json['alarm'] }}"
-    verify_ssl: false
-```
-
-Sensor state example:
-
-```yaml
-"entity_id": "sensor.google_nest_alarm"
-"state": "[{'date_pattern': {'day': 20, 'month': 1, 'year': 2021}, 'fire_time': 1611126007000.0, 'id': 'alarm/606fa170-0000-27c9-9f87-089e0823c38c', 'status': 1, 'time_pattern': {'hour': 8, 'minute': 0, 'second': 7}}]"
-```
-
-#### Google Home timer
-
-```yaml
-sensor:
-  - platform: rest
-    resource: https://<IP-ADDRESS-OF-YOUR-GOOGLE-HOME>:8443/setup/assistant/alarms
-    method: GET
-    name: Google Nest timer
-    headers:
-      cast-local-authorization-token: "{{ sensor.glocaltoken_kitchen.state }}"
-      content-type: "application/json"
-    value_template: "{{ value_json['timer'] }}"
-    verify_ssl: false
-```
-
-Sensor state example:
-
-```yaml
-"entity_id": "sensor.google_nest_timer"
-"state": "[{'fire_time': 1611126011000.0, 'id': 'timer/617764ce-0000-2170-8ab3-2405887a817c', 'original_duration': 69062000.0, 'status': 1}]"
-```
-
-If you have any good examples, please open a PR to this README to share them with others
+Make sure that you have your Homeassistant Container network set to 'host', as perscribed in the official docker installation for homeassistant.
 
 ## Contribution
 
@@ -209,8 +145,6 @@ Under the hood the integration uses [glocaltokens](https://github.com/leikoilja/
 [community-discussion]: https://community.home-assistant.io/t/solution-to-track-your-google-home-alarms-and-timers-and-trigger-different-home-assistant-events/61534/74
 [contributors-shield]: https://img.shields.io/github/contributors/leikoilja/ha-google-home?style=for-the-badge
 [contributors]: https://github.com/leikoilja/ha-google-home/graphs/contributors
-[exampleimg1]: misc/images/example1.png
-[exampleimg2]: misc/images/example2.png
 [hacs]: https://hacs.xyz
 [hacsbadge]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
 [integration_blueprint]: https://github.com/custom-components/integration_blueprint
