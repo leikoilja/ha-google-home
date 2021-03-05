@@ -41,7 +41,13 @@ See <a href="#contribution">Contribution</a> section for more information.
       <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
         <li><a href="#hacs-installation">HACS Installation</a></li>
-        <li><a href="#manual-installation">Manual Installation</a></li>
+        <li>
+	  <a href="#manual-installation">Manual Installation</a>
+	  <ul>
+            <li><a href="#git-clone-method">Git clone method</a></li>
+            <li><a href="#copy-method">Copy method</a></li>
+	  </ul>
+	</li>
         <li><a href="#integration-setup">Integration Setup</a></li>
         <li><a href="#running-in-homeassistant-docker-container">
 	  Running in Homeassistant Docker container
@@ -88,17 +94,31 @@ We recommend you select the latest stable release.
 
 1. Using the tool of choice open the directory (folder) for your HA configuration (where you find `configuration.yaml`).
 2. If you do not have a `custom_components` directory (folder) there, you need to create it.
-3. In the `custom_components` directory (folder) create a new folder called
+
+#### Git clone method
+
+This is a preferred method of manual installation, because it allows you to keep the `git` functionality,
+allowing you to manually install updates just by running `git pull origin master` from the created directory.
+Also works better for users with non standard root directory for Homeassistant.
+
+Now you can clone the repository somewhere else and symulink it to Homeassistant like so:
+
+1. `git clone https://github.com/leikoilja/ha-google-home.git`
+2. `ln -s ha-google-home/custom_components/ha-google-home ~/.homeassistant/custom_components/ha-google-home`
+
+#### Copy method
+
+1. In the `custom_components` directory (folder) create a new folder called
    `ha-google-home`.
-4. Download _all_ the files from the `custom_components/ha-google-home/` directory (folder) in this repository.
-5. Place the files you downloaded in the new directory (folder) you created.
+2. Download _all_ the files from the `custom_components/ha-google-home/` directory (folder) in this repository.
+3. Place the files you downloaded in the new directory `ha-google-home` that you created.
 
 ### Integration Setup
 
 1. Restart Homeassistant after installation.
 2. In the Homeassistant UI go to "Configuration" -> "Integrations" click "+" and search for "Google Home".
 
-#### Running in Homeassistant Docker container
+### Running in Homeassistant Docker container
 
 Make sure that you have your Homeassistant Container network set to 'host', as perscribed in the official docker installation for homeassistant.
 
