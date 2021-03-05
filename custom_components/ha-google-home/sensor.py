@@ -2,13 +2,12 @@
 import logging
 
 from homeassistant.const import STATE_OFF
+from homeassistant.const import STATE_ON
 
 from .const import DOMAIN
 from .const import LABEL_ALARMS
 from .const import LABEL_TIMERS
 from .const import LABEL_TOKEN
-from .const import LOCAL_TIME
-from .const import TIME_LEFT
 from .entity import GoogleHomeAlarmEntity
 from .entity import GoogleHomeTimersEntity
 from .entity import GoogleHomeTokenEntity
@@ -46,7 +45,10 @@ class GoogleHomeTokenSensor(GoogleHomeTokenEntity):
         """Initialize the sensor."""
         super().__init__(coordinator, entry)
         self._name = device_name
-        self._state = local_auth_token
+
+    @property
+    def state(self):
+        return self.coordinator.data[self._name][LABEL_TOKEN]
 
     @property
     def device_state_attributes(self):
@@ -68,7 +70,7 @@ class GoogleHomeAlarmSensor(GoogleHomeAlarmEntity):
     @property
     def state(self):
         alarms = self._get_alarms_data()
-        state = alarms[0][LOCAL_TIME] if alarms else STATE_OFF
+        state = STATE_ON if len(alarms) else STATE_OFF
         return state
 
     @property
@@ -100,7 +102,7 @@ class GoogleHomeTimerSensor(GoogleHomeTimersEntity):
     @property
     def state(self):
         timers = self._get_timers_data()
-        return timers[0][TIME_LEFT] if timers else STATE_OFF
+        return STATE_ON if len(timers) else STATE_OFF
 
     @property
     def device_state_attributes(self):

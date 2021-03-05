@@ -53,9 +53,9 @@ TIMEOUT = 10  # Request Timeout in seconds
 
 # TIMERS & ALARMS ATTRIBUTE NAMES
 FIRE_TIME = "fire_time"
-DATETIME_UTC = "date_time_utc"
 LOCAL_TIME = "local_time"
-TIME_LEFT = "time_left"
+LOCAL_TIME_ISO = "local_time_iso"
+DURATION = "duration"
 ORIGINAL_DURATION = "original_duration"
 
 # TIMESTRINGS
