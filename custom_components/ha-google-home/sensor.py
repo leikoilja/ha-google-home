@@ -45,7 +45,10 @@ class GoogleHomeTokenSensor(GoogleHomeTokenEntity):
         """Initialize the sensor."""
         super().__init__(coordinator, entry)
         self._name = device_name
-        self._state = local_auth_token
+
+    @property
+    def state(self):
+        return self.coordinator.data[self._name][LABEL_TOKEN]
 
     @property
     def device_state_attributes(self):
