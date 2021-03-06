@@ -52,6 +52,8 @@ HEADERS = {
 TIMEOUT = 10  # Request Timeout in seconds
 
 # TIMERS & ALARMS ATTRIBUTE NAMES
+ID = "id"
+RECURRENCE = "recurrence"
 FIRE_TIME = "fire_time"
 LOCAL_TIME = "local_time"
 LOCAL_TIME_ISO = "local_time_iso"
@@ -67,7 +69,7 @@ API_RETURNED_UNKNOWN = "API returned unknown json structure"
 
 # Access token only lives about 1 hour
 # Update often to fetch timers in timely manner
-UPDATE_INTERVAL = 15
+UPDATE_INTERVAL = 60 * 1  # every minute
 
 # JSON parameter values when retrieving information from devices
 JSON_ALARM = "alarm"

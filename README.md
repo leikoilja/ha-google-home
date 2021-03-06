@@ -76,6 +76,35 @@ This component will set up the following platforms:
 | `sensor` | `sensor.living_room_alarms` | Sensor with alarms from the device                        |
 | `sensor` | `sensor.living_room_token`  | Sensor with the local authentication token for the device |
 
+### Timers
+
+You can have multiple timers on your Google Home device. The Home Assistant
+timers sensor will represent all of them in the state attributes as a list "timers".
+Each of timers has the following keys:
+
+| Key              | Value type                   | Description                                                               |
+| ---------------- | ---------------------------- | ------------------------------------------------------------------------- |
+| `id`             | Google Home corresponding ID | Used to delete/modify timer                                               |
+| `fire_time`      | Seconds                      | Raw value coming from Google Home device until the timer goes off         |
+| `local_time`     | Time                         | Time when the timer goes off, in respect to the Home Assistant's timezone |
+| `local_time_iso` | Time in ISO 8601 standard    | Useful for automations                                                    |
+| `duration`       | Seconds                      | Timer duration in seconds                                                 |
+
+### Alarms
+
+You can have multiple alarms on your Google Home device. The Home Assistant
+alarms sensor will represent all of them in the state attributes as a list
+"alarms".
+Each of alarms has the following keys:
+
+| Key              | Value type                   | Description                                                                                                                                                                                             |
+| ---------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`             | Google Home corresponding ID | Used to delete/modify alarm                                                                                                                                                                             |
+| `fire_time`      | Seconds                      | Raw value coming from Google Home device until the alarm goes off                                                                                                                                       |
+| `local_time`     | Time                         | Time when the alarm goes off, in respect to the Home Assistant's timezone                                                                                                                               |
+| `local_time_iso` | Time in ISO 8601 standard    | Useful for automations                                                                                                                                                                                  |
+| `recurrence`     | List of integers             | Days of the week when the alarm will go off. Please note, respecting Google set standard, the week starts from Sunday, therefore is denoted by 0. Correspondingly, Monday is 1, Saturday is 6 and so on |
+
 ## Getting Started
 
 ### Prerequisites
