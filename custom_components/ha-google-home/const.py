@@ -5,7 +5,7 @@ from homeassistant.util.dt import DATE_STR_FORMAT
 NAME = "Google-Home community driven integration"
 DOMAIN = "ha-google-home"
 DOMAIN_DATA = f"{DOMAIN}_data"
-VERSION = "0.0.1"
+VERSION = "0.0.4"
 MANUFACTURER = "ha-google-home"
 
 ATTRIBUTION = "json"
