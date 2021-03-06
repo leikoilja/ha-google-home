@@ -130,7 +130,7 @@ class GlocaltokensApiClient:
                 )
         return resp
 
-    async def update_google_devices_information(self, zeroconf_instance):
+    async def update_google_devices_information(self):
         """Retrieves devices from google home devices"""
 
         _LOGGER.debug("Fetching sensor data...")
@@ -138,7 +138,7 @@ class GlocaltokensApiClient:
         offline_devices = []
         coordinator_data = {}
 
-        for device in self.get_google_devices():
+        for device in await self.get_google_devices():
             timers = []
             alarms = []
 
