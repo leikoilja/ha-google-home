@@ -6,6 +6,7 @@ from glocaltokens.client import GLocalAuthenticationTokens
 from glocaltokens.utils.token import is_aas_et
 from homeassistant.const import HTTP_NOT_FOUND
 from homeassistant.const import HTTP_OK
+from homeassistant.const import HTTP_UNAUTHORIZED
 
 from .const import API_ENDPOINT_ALARMS
 from .const import API_RETURNED_UNKNOWN
@@ -32,6 +33,7 @@ class GlocaltokensApiClient:
         password: str,
         session: aiohttp.ClientSession,
         android_id: str,
+        zeroconf_instance,
     ) -> None:
         """Sample API Client."""
         self.hass = hass
@@ -42,6 +44,8 @@ class GlocaltokensApiClient:
         self._client = GLocalAuthenticationTokens(
             username=username, password=password, android_id=android_id
         )
+        self.google_devices = []
+        self.zeroconf_instance = zeroconf_instance
 
     async def async_get_master_token(self):
         """Get master API token"""
@@ -54,14 +58,22 @@ class GlocaltokensApiClient:
             raise InvalidMasterToken
         return master_token
 
-    async def get_google_devices(self, zeroconf_instance):
+    async def get_google_devices(self):
         """Get google device authentication tokens.
         Note this method will fetch necessary access tokens if missing"""
 
-        def _get_google_devices():
-            return self._client.get_google_devices(zeroconf_instance=zeroconf_instance)
+        if not self.google_devices:
 
-        return await self.hass.async_add_executor_job(_get_google_devices)
+            def _get_google_devices():
+                return self._client.get_google_devices(
+                    zeroconf_instance=self.zeroconf_instance,
+                    force_homegraph_reload=True,
+                )
+
+            self.google_devices = await self.hass.async_add_executor_job(
+                _get_google_devices
+            )
+        return self.google_devices
 
     async def get_android_id(self):
         """Generate random android_id"""
@@ -93,6 +105,14 @@ class GlocaltokensApiClient:
         async with self._session.get(url, headers=HEADERS, timeout=TIMEOUT) as response:
             if response.status == HTTP_OK:
                 resp = await response.json()
+            elif response.status == HTTP_UNAUTHORIZED:
+                # If token is invalid - force reload homegraph providing new token and rerun the task
+                _LOGGER.debug(
+                    "Failed to fetch data from {device} due to invalid token. Will refresh the token and try again".format(
+                        device=device.device_name,
+                    )
+                )
+                self.google_devices = []
             elif response.status == HTTP_NOT_FOUND:
                 _LOGGER.debug(
                     "Failed to fetch data from {device}, API returned {code}: The devics is not Google Home compatable and has to alarms/timers".format(
@@ -110,16 +130,15 @@ class GlocaltokensApiClient:
                 )
         return resp
 
-    async def get_google_devices_information(self, zeroconf_instance):
-        """Retrieves devices from glocaltokens and fetches alarm/timer data from each of the device"""
+    async def update_google_devices_information(self, zeroconf_instance):
+        """Retrieves devices from google home devices"""
 
         _LOGGER.debug("Fetching sensor data...")
 
         offline_devices = []
-        devices = await self.get_google_devices(zeroconf_instance)
         coordinator_data = {}
 
-        for device in devices:
+        for device in self.get_google_devices():
             timers = []
             alarms = []
 
