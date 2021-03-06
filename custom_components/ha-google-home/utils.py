@@ -41,7 +41,8 @@ def format_alarm_information(alarm_dict):
     dt_utc = utc_from_timestamp(alarm[FIRE_TIME])
     dt_local = as_local(dt_utc)
     alarm[ID] = alarm_dict[ID]
-    alarm[RECURRENCE] = alarm_dict[RECURRENCE]
     alarm[LOCAL_TIME] = dt_local.strftime(DATETIME_STR_FORMAT)
     alarm[LOCAL_TIME_ISO] = dt_local.isoformat()
+    if alarm_dict.get(RECURRENCE):
+        alarm[RECURRENCE] = alarm_dict[RECURRENCE]
     return alarm
