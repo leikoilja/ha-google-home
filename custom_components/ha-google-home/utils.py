@@ -8,6 +8,7 @@ from .const import DATETIME_STR_FORMAT
 from .const import DURATION
 from .const import FIRE_TIME
 from .const import ID
+from .const import LABEL
 from .const import LOCAL_TIME
 from .const import LOCAL_TIME_ISO
 from .const import ORIGINAL_DURATION
@@ -27,6 +28,8 @@ def format_timer_information(timer_dict):
     dt_utc = utc_from_timestamp(timer[FIRE_TIME])
     dt_local = as_local(dt_utc)
     timer[ID] = timer_dict[ID]
+    if LABEL in timer_dict:
+        timer[LABEL] = timer_dict[LABEL]
     timer[LOCAL_TIME] = dt_local.strftime(DATETIME_STR_FORMAT)
     timer[LOCAL_TIME_ISO] = dt_local.isoformat()
     timer[DURATION] = str(timedelta(seconds=duration))
@@ -41,6 +44,8 @@ def format_alarm_information(alarm_dict):
     dt_utc = utc_from_timestamp(alarm[FIRE_TIME])
     dt_local = as_local(dt_utc)
     alarm[ID] = alarm_dict[ID]
+    if LABEL in alarm_dict:
+        alarm[LABEL] = alarm_dict[LABEL]
     alarm[LOCAL_TIME] = dt_local.strftime(DATETIME_STR_FORMAT)
     alarm[LOCAL_TIME_ISO] = dt_local.isoformat()
     if alarm_dict.get(RECURRENCE):
