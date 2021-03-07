@@ -118,7 +118,6 @@ class GoogleHomeNextAlarmEntity(CoordinatorEntity):
         return ICON_ALARMS
 
 
-
 class GoogleHomeTimersEntity(CoordinatorEntity):
     def __init__(self, coordinator, config_entry):
         super().__init__(coordinator)
