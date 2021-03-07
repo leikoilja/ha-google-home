@@ -2,7 +2,7 @@
   "after_dependencies": ["cloud", "http", "zeroconf"],
   "codeowners": ["@leikoilja", "@DurgNomis-drol", "@ArnyminerZ"],
   "config_flow": true,
-  "dependencies": [],
+  "dependencies": ["rest"],
   "documentation": "https://github.com/leikoilja/ha-google-home",
   "domain": "ha-google-home",
   "issue_tracker": "https://github.com/leikoilja/ha-google-home/issues",

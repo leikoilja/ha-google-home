@@ -1,5 +1,6 @@
 """Sample API Client."""
 import logging
+from asyncio import gather
 
 import aiohttp
 from glocaltokens.client import GLocalAuthenticationTokens
@@ -16,7 +17,6 @@ from .const import JSON_ALARM
 from .const import JSON_TIMER
 from .const import LABEL_ALARMS
 from .const import LABEL_TIMERS
-from .const import LABEL_TOKEN
 from .const import PORT
 from .const import TIMEOUT
 from .exceptions import InvalidMasterToken
@@ -92,8 +92,9 @@ class GlocaltokensApiClient:
         )
         return url
 
-    async def get_alarms_and_timers(self, url, device):
+    async def get_alarms_and_timers(self, device):
         """Fetches timers and alarms from google device"""
+        url = self.create_url(device.ip, PORT, API_ENDPOINT_ALARMS)
         _LOGGER.debug(
             "Fetching data from Google Home device {device} - {url}".format(
                 device=device.device_name, url=url
@@ -115,9 +116,10 @@ class GlocaltokensApiClient:
                 self.google_devices = []
             elif response.status == HTTP_NOT_FOUND:
                 _LOGGER.debug(
-                    "Failed to fetch data from {device}, API returned {code}: The devics is not Google Home compatable and has to alarms/timers".format(
+                    "Failed to fetch data from {device}, API returned {code}: The device(hardware='{hardware}') is not Google Home compatable and has no alarms/timers".format(
                         device=device.device_name,
                         code=response.status,
+                        hardware=device.hardware,
                     )
                 )
             else:
@@ -128,55 +130,26 @@ class GlocaltokensApiClient:
                         response=response,
                     )
                 )
-        return resp
 
-    async def update_google_devices_information(self):
-        """Retrieves devices from google home devices"""
-
-        _LOGGER.debug("Fetching sensor data...")
-
-        offline_devices = []
-        coordinator_data = {}
-
-        for device in await self.get_google_devices():
-            timers = []
-            alarms = []
-
-            if device.ip:
-                url = self.create_url(device.ip, PORT, API_ENDPOINT_ALARMS)
-
-                device_data_json = await self.get_alarms_and_timers(
-                    url,
-                    device,
-                )
-
-                if device_data_json:
-                    if JSON_TIMER in device_data_json or JSON_ALARM in device_data_json:
-                        timers = device_data_json.get(JSON_TIMER)
-                        alarms = device_data_json.get(JSON_ALARM)
-                    else:
-                        _LOGGER.error(
-                            "For device {device} - {error}".format(
-                                device=device.device_name,
-                                error=API_RETURNED_UNKNOWN,
-                            )
-                        )
+        if resp:
+            if JSON_TIMER in resp or JSON_ALARM in resp:
+                setattr(device, LABEL_TIMERS, resp.get(JSON_TIMER, []))
+                setattr(device, LABEL_ALARMS, resp.get(JSON_ALARM, []))
             else:
-                offline_devices.append(device)
-
-            coordinator_data[device.device_name] = {
-                LABEL_TOKEN: device.local_auth_token,
-                LABEL_ALARMS: alarms,
-                LABEL_TIMERS: timers,
-            }
-
-        # Gives the user a warning if the device is offline,
-        # but will not remove entities or device from HA device registry
-        if offline_devices:
-            for device in offline_devices:
-                _LOGGER.debug(
-                    "Failed to fetch timers/alarms information from device {device}. We could not determine it's IP address, the device is either offline or is not compatable Google Home device. Will try again later.".format(
-                        device=device.device_name
+                _LOGGER.error(
+                    "For device {device} - {error}".format(
+                        device=device.device_name,
+                        error=API_RETURNED_UNKNOWN,
                     )
                 )
+        return device
+
+    async def update_google_devices_information(self):
+        """Retrieves devices from glocaltokens and fetches alarm/timer data from each of the device"""
+
+        devices = await self.get_google_devices()
+        coordinator_data = {}
+        coordinator_data = await gather(
+            *[self.get_alarms_and_timers(device) for device in devices if device.ip]
+        )
         return coordinator_data
