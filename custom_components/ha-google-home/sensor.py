@@ -142,26 +142,31 @@ class GoogleHomeNextAlarmSensor(GoogleHomeSensorMixin, GoogleHomeNextAlarmEntity
 
     @property
     def state(self):
-        alarm = self._get_next_alarm_data()
-        return alarm[LOCAL_TIME_ISO]
+        alarms = self._get_alarm_data()
+        state = alarms[0][LOCAL_TIME_ISO] if len(alarms) else STATE_OFF
+        # The first one will always be the closet one
+        # as we have sorted the list in _get_alarm_data()
+        return state
 
     @property
     def device_state_attributes(self):
         """Return the state attributes."""
-        return {
-            "attributes": self._get_next_alarm_data(),
+        alarms = self._get_alarm_data()
+        attributes = alarms[0] if len(alarms) else {}  # Only list the attributes for one
+        attributes.update({
             "device": str(self.name),
             "integration": DOMAIN,
-        }
+        })
+        return attributes
 
-    def _get_next_alarm_data(self):
+    def _get_alarm_data(self):
         """Update alarms data extracting it from coordinator"""
         alarms = [
             format_alarm_information(alarm)
             for alarm in getattr(self.get_device(), LABEL_ALARMS)
         ]
-        next_alarm = sort_list_by_firetime(alarms)
-        return next_alarm[0]
+        alarms = sort_list_by_firetime(alarms)
+        return alarms
 
 
 class GoogleHomeTimerSensor(GoogleHomeSensorMixin, GoogleHomeTimersEntity):
