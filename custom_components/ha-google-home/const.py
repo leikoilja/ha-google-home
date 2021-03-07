@@ -38,10 +38,10 @@ LABEL_TOKEN = "token"
 
 # Supported Google Home devices
 SUPPORTED_HARDWARE_LIST = [
+    "Google Home",
     "Google Home Hub",
     "Google Home Max",
     "Google Home Mini",
-    "Google Home",
     "Google Nest Mini",
     "Nest Audio",
     "Nest Hub Max",

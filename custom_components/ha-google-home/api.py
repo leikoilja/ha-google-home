@@ -164,7 +164,7 @@ class GlocaltokensApiClient:
             *[
                 self.get_alarms_and_timers(device)
                 for device in devices
-                if (device.ip and device.hardware in SUPPORTED_HARDWARE_LIST)
+                if device.ip and device.hardware in SUPPORTED_HARDWARE_LIST
             ]
         )
 
