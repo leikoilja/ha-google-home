@@ -5,14 +5,17 @@ from homeassistant.const import STATE_OFF
 from homeassistant.const import STATE_ON
 
 from .const import DOMAIN
+from .const import LOCAL_TIME_ISO
 from .const import LABEL_ALARMS
 from .const import LABEL_TIMERS
 from .const import SUPPORTED_HARDWARE_LIST
 from .entity import GoogleHomeAlarmEntity
+from .entity import GoogleHomeNextAlarmEntity
 from .entity import GoogleHomeTimersEntity
 from .entity import GoogleHomeTokenEntity
 from .utils import format_alarm_information
 from .utils import format_timer_information
+from .utils import sort_list_by_firetime
 
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
@@ -27,6 +30,12 @@ async def async_setup_entry(hass, entry, async_add_devices):
                 async_add_devices(
                     [
                         GoogleHomeAlarmSensor(
+                            coordinator,
+                            entry,
+                            device.device_name,
+                            getattr(device, LABEL_ALARMS),
+                        ),
+                        GoogleHomeNextAlarmSensor(
                             coordinator,
                             entry,
                             device.device_name,
@@ -69,7 +78,7 @@ class GoogleHomeSensorMixin:
         )
 
 
-class GoogleHomeTokenSensor(GoogleHomeTokenEntity, GoogleHomeSensorMixin):
+class GoogleHomeTokenSensor(GoogleHomeSensorMixin, GoogleHomeTokenEntity):
     """GoogleHome Sensor class."""
 
     def __init__(self, coordinator, entry, device_name, local_auth_token):
@@ -90,7 +99,7 @@ class GoogleHomeTokenSensor(GoogleHomeTokenEntity, GoogleHomeSensorMixin):
         }
 
 
-class GoogleHomeAlarmSensor(GoogleHomeAlarmEntity, GoogleHomeSensorMixin):
+class GoogleHomeAlarmSensor(GoogleHomeSensorMixin, GoogleHomeAlarmEntity):
     """Representation of a Sensor."""
 
     def __init__(self, coordinator, entry, device_name, alarms):
@@ -119,10 +128,43 @@ class GoogleHomeAlarmSensor(GoogleHomeAlarmEntity, GoogleHomeSensorMixin):
             format_alarm_information(alarm)
             for alarm in getattr(self.get_device(), LABEL_ALARMS)
         ]
+        alarms = sort_list_by_firetime(alarms)
         return alarms
 
 
-class GoogleHomeTimerSensor(GoogleHomeTimersEntity, GoogleHomeSensorMixin):
+class GoogleHomeNextAlarmSensor(GoogleHomeSensorMixin, GoogleHomeNextAlarmEntity):
+    """Representation of a Sensor."""
+
+    def __init__(self, coordinator, entry, device_name, alarms):
+        """Initialize the sensor."""
+        super().__init__(coordinator, entry)
+        self._name = device_name
+
+    @property
+    def state(self):
+        alarm = self._get_next_alarm_data()
+        return alarm[LOCAL_TIME_ISO]
+
+    @property
+    def device_state_attributes(self):
+        """Return the state attributes."""
+        return {
+            "attributes": self._get_next_alarm_data(),
+            "device": str(self.name),
+            "integration": DOMAIN,
+        }
+
+    def _get_next_alarm_data(self):
+        """Update alarms data extracting it from coordinator"""
+        alarms = [
+            format_alarm_information(alarm)
+            for alarm in getattr(self.get_device(), LABEL_ALARMS)
+        ]
+        next_alarm = sort_list_by_firetime(alarms)
+        return next_alarm[0]
+
+
+class GoogleHomeTimerSensor(GoogleHomeSensorMixin, GoogleHomeTimersEntity):
     """Representation of a Sensor."""
 
     def __init__(self, coordinator, entry, device_name, timers):
@@ -150,4 +192,5 @@ class GoogleHomeTimerSensor(GoogleHomeTimersEntity, GoogleHomeSensorMixin):
             format_timer_information(timer)
             for timer in getattr(self.get_device(), LABEL_TIMERS)
         ]
+        timers = sort_list_by_firetime(timers)
         return timers

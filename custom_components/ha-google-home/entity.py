@@ -6,6 +6,7 @@ from .const import ICON_ALARMS
 from .const import ICON_TIMERS
 from .const import ICON_TOKEN
 from .const import LABEL_ALARMS
+from .const import LABEL_NEXT_ALARM
 from .const import LABEL_TIMERS
 from .const import LABEL_TOKEN
 from .const import MANUFACTURER
@@ -75,6 +76,41 @@ class GoogleHomeAlarmEntity(CoordinatorEntity):
     def unique_id(self):
         """Return a unique ID to use for this entity."""
         return f"{self._name}/{LABEL_ALARMS}"
+
+    @property
+    def icon(self):
+        """Icon to use in the frontend, if any."""
+        return ICON_ALARMS
+
+    @property
+    def state(self):
+        """Return the state of the sensor."""
+        return self._state
+
+
+class GoogleHomeNextAlarmEntity(CoordinatorEntity):
+    def __init__(self, coordinator, config_entry):
+        super().__init__(coordinator)
+        self.config_entry = config_entry
+
+    @property
+    def device_info(self):
+        return {
+            "identifiers": {(DOMAIN, self._name)},
+            "name": f"{DEFAULT_NAME} {self._name}",
+            "model": VERSION,
+            "manufacturer": MANUFACTURER,
+        }
+
+    @property
+    def name(self):
+        """Return the name of the sensor."""
+        return f"{self._name} {LABEL_NEXT_ALARM}"
+
+    @property
+    def unique_id(self):
+        """Return a unique ID to use for this entity."""
+        return f"{self._name}/{LABEL_NEXT_ALARM}"
 
     @property
     def icon(self):

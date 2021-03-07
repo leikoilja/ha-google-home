@@ -33,6 +33,7 @@ CONF_MASTER_TOKEN = "master_token"
 DEFAULT_NAME = "HA-Google-Home"
 
 LABEL_ALARMS = "alarms"
+LABEL_NEXT_ALARM = "next_alarm"
 LABEL_TIMERS = "timers"
 LABEL_TOKEN = "token"
 
