@@ -154,8 +154,13 @@ ln -s ha-google-home/custom_components/ha-google-home ~/.homeassistant/custom_co
 
 ### Integration Setup
 
-1. Restart Home Assistant after installation.
-2. In the Home Assistant UI go to "Configuration" -> "Integrations" click "+" and search for "Google Home".
+- Browse to your Home Assistant instance.
+- In the sidebar click on [Configuration](https://my.home-assistant.io/redirect/config).
+- From the configuration menu select: [Integrations](https://my.home-assistant.io/redirect/integrations).
+- In the bottom right, click on the [Add Integration](https://my.home-assistant.io/redirect/config_flow_start?domain=ha-google-home) button.
+- From the list, search and select “Google Home”.
+- Follow the instruction on screen to complete the set up.
+- After completing, the Google Home integration will be immediately available for use.
 
 ### Running in Home Assistant Docker container
 
