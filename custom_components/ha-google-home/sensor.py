@@ -204,5 +204,4 @@ class GoogleHomeTimerSensor(GoogleHomeSensorMixin, GoogleHomeTimersEntity):
             format_timer_information(timer)
             for timer in getattr(self.get_device(), LABEL_TIMERS)
         ]
-        timers = sort_list_by_firetime(timers)
-        return timers
+        return sort_list_by_firetime(timers)
