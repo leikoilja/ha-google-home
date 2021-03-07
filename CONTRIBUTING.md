@@ -15,7 +15,7 @@ Pull requests are the best way to propose changes to the codebase.
 
 1. Fork the repo and create your branch from `master`.
 2. If you've changed something, update the documentation.
-3. Make sure your code lints (using black).
+3. Make sure your code lints (using pre-commit).
 4. Test you contribution.
 5. Issue that pull request!
 
@@ -44,11 +44,11 @@ People _love_ thorough bug reports. I'm not even kidding.
 
 ## Use a Consistent Coding Style
 
-Use [black](https://github.com/ambv/black) and [prettier](https://prettier.io/)
+Install [Poetry](https://python-poetry.org/docs/#installation) to setup developer environment.
+It uses [black](https://github.com/ambv/black) and [prettier](https://prettier.io/)
 to make sure the code follows the style.
 
-Or use the `pre-commit` settings implemented in this repository
-(see dedicated section below).
+`pre-commit` can be used to run all check with one command (see dedicated section below).
 
 ## Test your code modification
 
@@ -70,14 +70,16 @@ When writting unittests please follow the good practises like:
 
 ## Pre-commit
 
-You can use the [pre-commit](https://pre-commit.com/) settings included in the
+With Poetry installed, run `poetry install` in the repo root.
+It will create virualenv with all required packages.
+
+After that you can run [pre-commit](https://pre-commit.com/) with settings included in the
 repostory to have code style and linting checks.
 
-With `pre-commit` tool already installed,
-activate the settings of the repository:
+Activate `pre-commit` git hook:
 
 ```console
-$ pre-commit install
+$ poetry run pre-commit install
 ```
 
 Now the pre-commit tests will be done every time you commit.
@@ -85,7 +87,7 @@ Now the pre-commit tests will be done every time you commit.
 You can run the tests on all repository file with the command:
 
 ```console
-$ pre-commit run --all-files
+$ poetry run pre-commit run --all-files
 ```
 
 ## License
