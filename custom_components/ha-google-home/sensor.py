@@ -143,10 +143,9 @@ class GoogleHomeNextAlarmSensor(GoogleHomeSensorMixin, GoogleHomeNextAlarmEntity
     @property
     def state(self):
         alarms = self._get_alarm_data()
-        state = alarms[0][LOCAL_TIME_ISO] if len(alarms) else STATE_OFF
-        # The first one will always be the closet one
+        # The first one will always be the closest one
         # as we have sorted the list in _get_alarm_data()
-        return state
+        return alarms[0][LOCAL_TIME_ISO] if alarms else STATE_OFF
 
     @property
     def device_state_attributes(self):
