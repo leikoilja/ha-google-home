@@ -48,6 +48,12 @@ async def async_setup_entry(hass, entry, async_add_devices):
                             device.device_name,
                             getattr(device, LABEL_TIMERS),
                         ),
+                        GoogleHomeNextTimerSensor(
+                            coordinator,
+                            entry,
+                            device.device_name,
+                            getattr(device, LABEL_TIMERS),
+                        ),
                         GoogleHomeTokenSensor(
                             coordinator,
                             entry,
