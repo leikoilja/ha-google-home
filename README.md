@@ -70,11 +70,13 @@ tokens and use those tokens making API calls to Google Home devices.
 
 This component will set up the following platforms:
 
-| Platform | Sample sensor               | Description                                               |
-| -------- | --------------------------- | --------------------------------------------------------- |
-| `sensor` | `sensor.living_room_timers` | Sensor with timers from the device                        |
-| `sensor` | `sensor.living_room_alarms` | Sensor with alarms from the device                        |
-| `sensor` | `sensor.living_room_token`  | Sensor with the local authentication token for the device |
+| Platform | Sample sensor                   | Description                                               |
+| -------- | ------------------------------- | --------------------------------------------------------- |
+| `sensor` | `sensor.living_room_timers`     | Sensor with a list of timers from the device              |
+| `sensor` | `sensor.living_room_next_timer` | Sensor with next timer from the device                    |
+| `sensor` | `sensor.living_room_alarms`     | Sensor with a list of alarms from the device              |
+| `sensor` | `sensor.living_room_next_alarm` | Sensor with next alarm from the device                    |
+| `sensor` | `sensor.living_room_token`      | Sensor with the local authentication token for the device |
 
 ### Timers
 
@@ -85,10 +87,17 @@ Each of timers has the following keys:
 | Key              | Value type                   | Description                                                               |
 | ---------------- | ---------------------------- | ------------------------------------------------------------------------- |
 | `id`             | Google Home corresponding ID | Used to delete/modify timer                                               |
+| `label`          | Name                         | Name of the timer, this can be set when making the timer                  |
 | `fire_time`      | Seconds                      | Raw value coming from Google Home device until the timer goes off         |
 | `local_time`     | Time                         | Time when the timer goes off, in respect to the Home Assistant's timezone |
 | `local_time_iso` | Time in ISO 8601 standard    | Useful for automations                                                    |
 | `duration`       | Seconds                      | Timer duration in seconds                                                 |
+
+### Next timer
+
+Will always show the next timer as timestring (ie: `2021-03-07T15:26:17+01:00`) if there is one set, else it will show off.
+
+Has the same attributes as `sensor.living_room_timers`, but only for the first timer.
 
 ### Alarms
 
@@ -100,10 +109,19 @@ Each of alarms has the following keys:
 | Key              | Value type                   | Description                                                                                                                                                                                             |
 | ---------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `id`             | Google Home corresponding ID | Used to delete/modify alarm                                                                                                                                                                             |
+| `label`          | Name                         | Name of the alarm, this can be set when making the alarm                                                                                                                                                |
 | `fire_time`      | Seconds                      | Raw value coming from Google Home device until the alarm goes off                                                                                                                                       |
 | `local_time`     | Time                         | Time when the alarm goes off, in respect to the Home Assistant's timezone                                                                                                                               |
 | `local_time_iso` | Time in ISO 8601 standard    | Useful for automations                                                                                                                                                                                  |
 | `recurrence`     | List of integers             | Days of the week when the alarm will go off. Please note, respecting Google set standard, the week starts from Sunday, therefore is denoted by 0. Correspondingly, Monday is 1, Saturday is 6 and so on |
+
+### Next alarm
+
+Will always show the next alarm as timestring (ie: `2021-03-07T15:26:17+01:00`) if there is one set, else it will show off.
+
+This sensor is formatted to have compatibly with the sensor that mobile app has `sensor.phone_next_alarm`.
+
+Has the same attributes as `sensor.living_room_alarms`, but only for the first alarm.
 
 ## Getting Started
 

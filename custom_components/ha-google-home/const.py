@@ -33,7 +33,9 @@ CONF_MASTER_TOKEN = "master_token"
 DEFAULT_NAME = "HA-Google-Home"
 
 LABEL_ALARMS = "alarms"
+LABEL_NEXT_ALARM = "next_alarm"
 LABEL_TIMERS = "timers"
+LABEL_NEXT_TIMER = "next_timer"
 LABEL_TOKEN = "token"
 
 # Supported Google Home devices
