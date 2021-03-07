@@ -172,8 +172,7 @@ class GoogleHomeNextAlarmSensor(GoogleHomeSensorMixin, GoogleHomeNextAlarmEntity
             format_alarm_information(alarm)
             for alarm in getattr(self.get_device(), LABEL_ALARMS)
         ]
-        alarms = sort_list_by_firetime(alarms)
-        return alarms
+        return sort_list_by_firetime(alarms)
 
 
 class GoogleHomeTimerSensor(GoogleHomeSensorMixin, GoogleHomeTimersEntity):
