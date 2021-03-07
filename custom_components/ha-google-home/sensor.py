@@ -5,9 +5,9 @@ from homeassistant.const import STATE_OFF
 from homeassistant.const import STATE_ON
 
 from .const import DOMAIN
-from .const import LOCAL_TIME_ISO
 from .const import LABEL_ALARMS
 from .const import LABEL_TIMERS
+from .const import LOCAL_TIME_ISO
 from .const import SUPPORTED_HARDWARE_LIST
 from .entity import GoogleHomeAlarmEntity
 from .entity import GoogleHomeNextAlarmEntity
@@ -152,11 +152,16 @@ class GoogleHomeNextAlarmSensor(GoogleHomeSensorMixin, GoogleHomeNextAlarmEntity
     def device_state_attributes(self):
         """Return the state attributes."""
         alarms = self._get_alarm_data()
-        attributes = alarms[0] if len(alarms) else {}  # Only list the attributes for one
-        attributes.update({
-            "device": str(self.name),
-            "integration": DOMAIN,
-        })
+        attributes = (
+            alarms[0] if len(alarms) else {}
+            # Only list the attributes for one
+        )
+        attributes.update(
+            {
+                "device": str(self.name),
+                "integration": DOMAIN,
+            }
+        )
         return attributes
 
     def _get_alarm_data(self):
