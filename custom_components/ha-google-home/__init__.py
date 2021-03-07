@@ -47,18 +47,16 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
     session = async_get_clientsession(hass, verify_ssl=False)
 
+    zeroconf_instance = await zeroconf.async_get_instance(hass)
     glocaltokens_client = GlocaltokensApiClient(
-        hass, username, password, session, android_id
+        hass, username, password, session, android_id, zeroconf_instance
     )
 
-    zeroconf_instance = await zeroconf.async_get_instance(hass)
     coordinator = DataUpdateCoordinator(
         hass,
         _LOGGER,
         name=SENSOR,
-        update_method=lambda: glocaltokens_client.get_google_devices_information(
-            zeroconf_instance
-        ),
+        update_method=glocaltokens_client.update_google_devices_information,
         update_interval=timedelta(seconds=UPDATE_INTERVAL),
     )
 

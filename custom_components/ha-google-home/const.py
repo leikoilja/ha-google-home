@@ -5,7 +5,7 @@ from homeassistant.util.dt import DATE_STR_FORMAT
 NAME = "Google-Home community driven integration"
 DOMAIN = "ha-google-home"
 DOMAIN_DATA = f"{DOMAIN}_data"
-VERSION = "0.0.4"
+VERSION = "v1.0.0"
 MANUFACTURER = "ha-google-home"
 
 ATTRIBUTION = "json"
@@ -35,6 +35,19 @@ DEFAULT_NAME = "HA-Google-Home"
 LABEL_ALARMS = "alarms"
 LABEL_TIMERS = "timers"
 LABEL_TOKEN = "token"
+
+# Supported Google Home devices
+SUPPORTED_HARDWARE_LIST = [
+    "Google Home",
+    "Google Home Hub",
+    "Google Home Max",
+    "Google Home Mini",
+    "Google Nest Mini",
+    "Nest Audio",
+    "Nest Hub Max",
+    "Nest Hub",
+    "Nest Mini",
+]
 
 # DEVICE PORT
 PORT = 8443
@@ -70,7 +83,7 @@ API_RETURNED_UNKNOWN = "API returned unknown json structure"
 
 # Access token only lives about 1 hour
 # Update often to fetch timers in timely manner
-UPDATE_INTERVAL = 60 * 1  # every minute
+UPDATE_INTERVAL = 10  # sec
 
 # JSON parameter values when retrieving information from devices
 JSON_ALARM = "alarm"
