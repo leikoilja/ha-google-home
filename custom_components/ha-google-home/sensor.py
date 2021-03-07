@@ -153,7 +153,9 @@ class GoogleHomeNextAlarmSensor(GoogleHomeSensorMixin, GoogleHomeNextAlarmEntity
         """Return the state attributes."""
         alarms = self._get_alarm_data()
         attributes = (
-            alarms[0] if len(alarms) else {}
+            alarms[0]
+            if len(alarms)
+            else {}
             # Only list the attributes for one
         )
         attributes.update(
