@@ -87,7 +87,7 @@ Each of timers has the following keys:
 | Key              | Value type                   | Description                                                               |
 | ---------------- | ---------------------------- | ------------------------------------------------------------------------- |
 | `id`             | Google Home corresponding ID | Used to delete/modify timer                                               |
-| `label    `      | Name                         | Name of the timer, this can be set when making the timer                  |
+| `label`          | Name                         | Name of the timer, this can be set when making the timer                  |
 | `fire_time`      | Seconds                      | Raw value coming from Google Home device until the timer goes off         |
 | `local_time`     | Time                         | Time when the timer goes off, in respect to the Home Assistant's timezone |
 | `local_time_iso` | Time in ISO 8601 standard    | Useful for automations                                                    |
@@ -109,7 +109,7 @@ Each of alarms has the following keys:
 | Key              | Value type                   | Description                                                                                                                                                                                             |
 | ---------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `id`             | Google Home corresponding ID | Used to delete/modify alarm                                                                                                                                                                             |
-| `label    `      | Name                         | Name of the alarm, this can be set when making the alarm                                                                                                                                                |
+| `label`          | Name                         | Name of the alarm, this can be set when making the alarm                                                                                                                                                |
 | `fire_time`      | Seconds                      | Raw value coming from Google Home device until the alarm goes off                                                                                                                                       |
 | `local_time`     | Time                         | Time when the alarm goes off, in respect to the Home Assistant's timezone                                                                                                                               |
 | `local_time_iso` | Time in ISO 8601 standard    | Useful for automations                                                                                                                                                                                  |
