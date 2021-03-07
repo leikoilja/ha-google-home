@@ -54,5 +54,4 @@ def format_alarm_information(alarm_dict):
 
 
 def sort_list_by_firetime(unsorted_list):
-    sorted_list = sorted(unsorted_list, key=lambda k: k[FIRE_TIME])
-    return sorted_list
+    return sorted(unsorted_list, key=lambda k: k[FIRE_TIME])
