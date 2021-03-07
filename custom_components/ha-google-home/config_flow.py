@@ -44,8 +44,6 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 username=user_input[CONF_USERNAME],
                 password=user_input[CONF_PASSWORD],
                 session=session,
-                android_id=None,
-                zeroconf_instance=None,
             )
             valid, master_token = await self._test_credentials(client)
             if valid:

@@ -8,6 +8,7 @@ from glocaltokens.utils.token import is_aas_et
 from homeassistant.const import HTTP_NOT_FOUND
 from homeassistant.const import HTTP_OK
 from homeassistant.const import HTTP_UNAUTHORIZED
+from zeroconf import Zeroconf
 
 from .const import API_ENDPOINT_ALARMS
 from .const import API_RETURNED_UNKNOWN
@@ -18,6 +19,7 @@ from .const import JSON_TIMER
 from .const import LABEL_ALARMS
 from .const import LABEL_TIMERS
 from .const import PORT
+from .const import SUPPORTED_HARDWARE_LIST
 from .const import TIMEOUT
 from .exceptions import InvalidMasterToken
 
@@ -32,8 +34,8 @@ class GlocaltokensApiClient:
         username: str,
         password: str,
         session: aiohttp.ClientSession,
-        android_id: str,
-        zeroconf_instance,
+        android_id: str = None,
+        zeroconf_instance: Zeroconf = None,
     ) -> None:
         """Sample API Client."""
         self.hass = hass
@@ -148,8 +150,22 @@ class GlocaltokensApiClient:
         """Retrieves devices from glocaltokens and fetches alarm/timer data from each of the device"""
 
         devices = await self.get_google_devices()
-        coordinator_data = {}
+
+        # Gives the user a warning if the device is offline
+        for device in devices:
+            if not device.ip:
+                _LOGGER.debug(
+                    "Failed to fetch timers/alarms information from device {device}. We could not determine it's IP address, the device is either offline or is not compatable Google Home device. Will try again later.".format(
+                        device=device.device_name
+                    )
+                )
+
         coordinator_data = await gather(
-            *[self.get_alarms_and_timers(device) for device in devices if device.ip]
+            *[
+                self.get_alarms_and_timers(device)
+                for device in devices
+                if (device.ip and device.hardware in SUPPORTED_HARDWARE_LIST)
+            ]
         )
+
         return coordinator_data
