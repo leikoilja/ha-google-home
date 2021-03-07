@@ -117,10 +117,6 @@ class GoogleHomeNextAlarmEntity(CoordinatorEntity):
         """Icon to use in the frontend, if any."""
         return ICON_ALARMS
 
-    @property
-    def state(self):
-        """Return the state of the sensor."""
-        return self._state
 
 
 class GoogleHomeTimersEntity(CoordinatorEntity):
