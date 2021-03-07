@@ -12,6 +12,7 @@ from .const import LOCAL_TIME
 from .const import LOCAL_TIME_ISO
 from .const import ORIGINAL_DURATION
 from .const import RECURRENCE
+from .const import LABEL
 
 
 def convert_from_ms_to_s(timestamp):
@@ -27,6 +28,7 @@ def format_timer_information(timer_dict):
     dt_utc = utc_from_timestamp(timer[FIRE_TIME])
     dt_local = as_local(dt_utc)
     timer[ID] = timer_dict[ID]
+    timer[LABEL] = timer_dict[LABEL]
     timer[LOCAL_TIME] = dt_local.strftime(DATETIME_STR_FORMAT)
     timer[LOCAL_TIME_ISO] = dt_local.isoformat()
     timer[DURATION] = str(timedelta(seconds=duration))
@@ -41,6 +43,7 @@ def format_alarm_information(alarm_dict):
     dt_utc = utc_from_timestamp(alarm[FIRE_TIME])
     dt_local = as_local(dt_utc)
     alarm[ID] = alarm_dict[ID]
+    alarm[LABEL] = alarm_dict[LABEL]
     alarm[LOCAL_TIME] = dt_local.strftime(DATETIME_STR_FORMAT)
     alarm[LOCAL_TIME_ISO] = dt_local.isoformat()
     if alarm_dict.get(RECURRENCE):

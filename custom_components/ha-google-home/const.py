@@ -53,6 +53,7 @@ TIMEOUT = 10  # Request Timeout in seconds
 
 # TIMERS & ALARMS ATTRIBUTE NAMES
 ID = "id"
+LABEL = "label"
 RECURRENCE = "recurrence"
 FIRE_TIME = "fire_time"
 LOCAL_TIME = "local_time"
