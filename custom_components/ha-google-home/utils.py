@@ -8,11 +8,11 @@ from .const import DATETIME_STR_FORMAT
 from .const import DURATION
 from .const import FIRE_TIME
 from .const import ID
+from .const import LABEL
 from .const import LOCAL_TIME
 from .const import LOCAL_TIME_ISO
 from .const import ORIGINAL_DURATION
 from .const import RECURRENCE
-from .const import LABEL
 
 
 def convert_from_ms_to_s(timestamp):
