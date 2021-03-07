@@ -11,6 +11,7 @@ from .const import LOCAL_TIME_ISO
 from .const import SUPPORTED_HARDWARE_LIST
 from .entity import GoogleHomeAlarmEntity
 from .entity import GoogleHomeNextAlarmEntity
+from .entity import GoogleHomeNextTimerEntity
 from .entity import GoogleHomeTimersEntity
 from .entity import GoogleHomeTokenEntity
 from .utils import format_alarm_information
@@ -42,6 +43,12 @@ async def async_setup_entry(hass, entry, async_add_devices):
                             getattr(device, LABEL_ALARMS),
                         ),
                         GoogleHomeTimerSensor(
+                            coordinator,
+                            entry,
+                            device.device_name,
+                            getattr(device, LABEL_TIMERS),
+                        ),
+                        GoogleHomeNextTimerSensor(
                             coordinator,
                             entry,
                             device.device_name,
@@ -198,6 +205,48 @@ class GoogleHomeTimerSensor(GoogleHomeSensorMixin, GoogleHomeTimersEntity):
 
     def _get_timers_data(self):
         """Update timers data extracting it from coordinator"""
+        timers = [
+            format_timer_information(timer)
+            for timer in getattr(self.get_device(), LABEL_TIMERS)
+        ]
+        return sort_list_by_firetime(timers)
+
+
+class GoogleHomeNextTimerSensor(GoogleHomeSensorMixin, GoogleHomeNextTimerEntity):
+    """Representation of a Sensor."""
+
+    def __init__(self, coordinator, entry, device_name, alarms):
+        """Initialize the sensor."""
+        super().__init__(coordinator, entry)
+        self._name = device_name
+
+    @property
+    def state(self):
+        timers = self._get_timers_data()
+        # The first one will always be the closest one
+        # as we have sorted the list in _get_alarm_data()
+        return timers[0][LOCAL_TIME_ISO] if timers else STATE_OFF
+
+    @property
+    def device_state_attributes(self):
+        """Return the state attributes."""
+        timers = self._get_timers_data()
+        attributes = (
+            timers[0]
+            if len(timers)
+            else {}
+            # Only list the attributes for one
+        )
+        attributes.update(
+            {
+                "device": str(self.name),
+                "integration": DOMAIN,
+            }
+        )
+        return attributes
+
+    def _get_timers_data(self):
+        """Update alarms data extracting it from coordinator"""
         timers = [
             format_timer_information(timer)
             for timer in getattr(self.get_device(), LABEL_TIMERS)
