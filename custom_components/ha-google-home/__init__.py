@@ -56,7 +56,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         hass,
         _LOGGER,
         name=SENSOR,
-        update_method=lambda: glocaltokens_client.update_google_devices_information(),
+        update_method=glocaltokens_client.update_google_devices_information,
         update_interval=timedelta(seconds=UPDATE_INTERVAL),
     )
 
