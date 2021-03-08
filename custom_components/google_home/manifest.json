@@ -1,6 +1,6 @@
 {
   "after_dependencies": ["cloud", "http", "zeroconf"],
-  "codeowners": ["@leikoilja"],
+  "codeowners": ["@leikoilja", "@DurgNomis-drol", "@ArnyminerZ", "@KapJI"],
   "config_flow": true,
   "dependencies": [],
   "documentation": "https://github.com/leikoilja/ha-google-home",
