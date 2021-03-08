@@ -192,9 +192,11 @@ Make sure that you have your Home Assistant Container network set to 'host', as 
 
 ## Lovelace Cards
 
-### [Google Home timers card](https://github.com/DurgNomis-drol/google_home_timers_card) by [@DurgNomis-drol]
+### [Google Home timers card](https://github.com/DurgNomis-drol/google_home_timers_card)
 
 A simple way to display your timers in a card.
+
+by [@DurgNomis-drol](https://github.com/DurgNomis-drol)
 
 ## Contribution
 
