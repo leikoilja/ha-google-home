@@ -7,7 +7,7 @@
 
 <p align="center">
   <a href="https://github.com/leikoilja/ha-google-home">
-    <img src="https://brands.home-assistant.io/ha-google-home/icon.png" alt="Logo" height="200">
+    <img src="https://brands.home-assistant.io/google_home/icon.png" alt="Logo" height="200">
   </a>
 </p>
 
