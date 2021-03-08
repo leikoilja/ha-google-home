@@ -192,7 +192,7 @@ Make sure that you have your Home Assistant Container network set to 'host', as 
 
 ## Lovelace Cards
 
-<b>Open a PR to add your card here!</b>
+**Open a PR to add your card here!**
 
 ### [Google Home timers card](https://github.com/DurgNomis-drol/google_home_timers_card)
 
