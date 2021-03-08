@@ -47,6 +47,7 @@ SUPPORTED_HARDWARE_LIST = [
     "Nest Hub Max",
     "Nest Hub",
     "Nest Mini",
+    "Lenovo Smart Clock",
 ]
 
 # DEVICE PORT
