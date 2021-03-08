@@ -45,6 +45,7 @@ SUPPORTED_HARDWARE_LIST = [
     "Google Home Max",
     "Google Home Mini",
     "Google Nest Mini",
+    "Lenovo Smart Clock",
     "Nest Audio",
     "Nest Hub Max",
     "Nest Hub",
