@@ -2,11 +2,11 @@
 from homeassistant.util.dt import DATE_STR_FORMAT
 
 # Base component constants
-NAME = "Google-Home community driven integration"
-DOMAIN = "ha-google-home"
+NAME = "Google Home community driven integration"
+DOMAIN = "google_home"
 DOMAIN_DATA = f"{DOMAIN}_data"
-VERSION = "v1.0.0"
-MANUFACTURER = "ha-google-home"
+VERSION = "v0.0.0"
+MANUFACTURER = "google_home"
 
 ATTRIBUTION = "json"
 ISSUE_URL = "https://github.com/leikoilja/ha-google-home/issues"
@@ -30,7 +30,7 @@ CONF_PASSWORD = "password"
 CONF_MASTER_TOKEN = "master_token"
 
 # Defaults
-DEFAULT_NAME = "HA-Google-Home"
+DEFAULT_NAME = "Google Home"
 
 LABEL_ALARMS = "alarms"
 LABEL_NEXT_ALARM = "next_alarm"
