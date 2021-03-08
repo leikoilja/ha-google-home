@@ -36,9 +36,9 @@ See [Contribution](#contribution) section for more information.
    - [Integration Setup](#integration-setup)
    - [Running in Home Assistant Docker container](#running-in-home-assistant-docker-container)
 4. [Lovelace Cards](#lovelace-cards)
-   - [Google Home timers card](#google-home-timers-card)
 5. [Contribution](#contribution)
 6. [Credits](#credits)
+
 </details>
 
 ## About
@@ -138,18 +138,18 @@ Now you can clone the repository somewhere else and symlink it to Home Assistant
 git clone https://github.com/leikoilja/ha-google-home.git
 ```
 
-2. Create the symlink to `ha-google-home` in the configuration directory.
+2. Create the symlink to `google_home` in the configuration directory.
    If you have non standard directory for configuration, use it instead.
 
 ```shell
-ln -s ha-google-home/custom_components/ha-google-home ~/.homeassistant/custom_components/ha-google-home
+ln -s ha-google-home/custom_components/google_home ~/.homeassistant/custom_components/google_home
 ```
 
 #### Copy method
 
 1. Download [ZIP](https://github.com/leikoilja/ha-google-home/archive/master.zip) with the code.
 2. Unpack it.
-3. Copy the `custom_components/ha-google-home/` from the unpacked archive to `custom_components`
+3. Copy the `custom_components/google_home/` from the unpacked archive to `custom_components`
    in your Home Assistant configuration directory.
 
 ### Integration Setup
@@ -170,11 +170,7 @@ Make sure that you have your Home Assistant Container network set to 'host', as 
 
 **Open a PR to add your card here!**
 
-### [Google Home timers card](https://github.com/DurgNomis-drol/google_home_timers_card)
-
-A simple way to display your timers in a card.
-
-by [@DurgNomis-drol](https://github.com/DurgNomis-drol)
+- [Google Home timers card](https://github.com/DurgNomis-drol/google_home_timers_card) by [@DurgNomis-drol](https://github.com/DurgNomis-drol)
 
 ## Contribution
 

@@ -1,10 +1,10 @@
 {
   "after_dependencies": ["cloud", "http", "zeroconf"],
-  "codeowners": ["@leikoilja", "@DurgNomis-drol", "@ArnyminerZ"],
+  "codeowners": ["@leikoilja", "@DurgNomis-drol", "@ArnyminerZ", "@KapJI"],
   "config_flow": true,
   "dependencies": [],
   "documentation": "https://github.com/leikoilja/ha-google-home",
-  "domain": "ha-google-home",
+  "domain": "google_home",
   "issue_tracker": "https://github.com/leikoilja/ha-google-home/issues",
   "name": "Google Home",
   "requirements": ["glocaltokens==0.2.4"],

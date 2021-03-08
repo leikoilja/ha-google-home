@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "ha-google-home"
+name = "google_home"
 version = "0.0.0"
 description = "Home Assistant Google Home community integration"
 authors = ["Ilja Leiko <leikoilja@gmail.com"]
