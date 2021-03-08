@@ -54,6 +54,12 @@ See <a href="#contribution">Contribution</a> section for more information.
 	</a></li>
       </ul>
     </li>
+    <li>
+      <a href="#lovelace-cards">Lovelace Cards</a>
+      <ul>
+         <li><a href="#google-home-timers-card">Google Home timers card</a></li>
+      </ul>
+    </li>
     <li><a href="#contribution">Contribution</a></li>
     <li><a href="#credits">Credits</a></li>
   </ol>
@@ -183,6 +189,12 @@ ln -s ha-google-home/custom_components/ha-google-home ~/.homeassistant/custom_co
 ### Running in Home Assistant Docker container
 
 Make sure that you have your Home Assistant Container network set to 'host', as perscribed in the official docker installation for Home Assistant.
+
+## Lovelace Cards
+
+### [Google Home timers card](https://github.com/DurgNomis-drol/google_home_timers_card) by [@DurgNomis-drol]
+
+A simple way to display your timers in a card.
 
 ## Contribution
 
