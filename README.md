@@ -162,18 +162,18 @@ Now you can clone the repository somewhere else and symlink it to Home Assistant
 git clone https://github.com/leikoilja/ha-google-home.git
 ```
 
-2. Create the symlink to `ha-google-home` in the configuration directory.
+2. Create the symlink to `google_home` in the configuration directory.
    If you have non standard directory for configuration, use it instead.
 
 ```shell
-ln -s ha-google-home/custom_components/ha-google-home ~/.homeassistant/custom_components/ha-google-home
+ln -s ha-google-home/custom_components/google_home ~/.homeassistant/custom_components/google_home
 ```
 
 #### Copy method
 
 1. Download [ZIP](https://github.com/leikoilja/ha-google-home/archive/master.zip) with the code.
 2. Unpack it.
-3. Copy the `custom_components/ha-google-home/` from the unpacked archive to `custom_components`
+3. Copy the `custom_components/google_home/` from the unpacked archive to `custom_components`
    in your Home Assistant configuration directory.
 
 ### Integration Setup
