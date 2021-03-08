@@ -5,61 +5,40 @@
 [![GitHub Activity][commits-shield]][commits]
 [![License][license-shield]][license]
 
-<br />
-<p>
-  <p align="center">
-    <a href="https://github.com/leikoilja/ha-google-home">
-      <img src="https://brands.home-assistant.io/google_home/icon.png" alt="Logo" height="200">
-    </a>
-  </p>
+<p align="center">
+  <a href="https://github.com/leikoilja/ha-google-home">
+    <img src="https://brands.home-assistant.io/google_home/icon.png" alt="Logo" height="200">
+  </a>
+</p>
 
-  <h3 align="center">Home Assistant Google Home community integration</h3>
+<h3 align="center">Home Assistant Google Home community integration</h3>
 
-  <p align="center">
-    This custom integration aims to provide plug-and-play Google Home
-    experience for Home Assistant enthusiasts.
-  </p>
+<p align="center">
+  This custom integration aims to provide plug-and-play Google Home
+  experience for Home Assistant enthusiasts.
+</p>
 
 **[!] Beta version alert.**
 Please note this integration is in the early stage of it's development.
-See <a href="#contribution">Contribution</a> section for more information.
+See [Contribution](#contribution) section for more information.
 
-</p>
-
-<!-- TABLE OF CONTENTS -->
 <details open="open">
   <summary>Table of Contents</summary>
-  <ol>
-    <li>
-      <a href="#about">About The Project</a>
-    </li>
-    <li>
-      <a href="#features">Features</a>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#hacs-installation">HACS Installation</a></li>
-        <li>
-	  <a href="#manual-installation">Manual Installation</a>
-	  <ul>
-            <li><a href="#git-clone-method">Git clone method</a></li>
-            <li><a href="#copy-method">Copy method</a></li>
-	  </ul>
-	</li>
-        <li><a href="#integration-setup">Integration Setup</a></li>
-        <li><a href="#running-in-home-assistant-docker-container">
-	  Running in Home Assistant Docker container
-	</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="#lovelace-cards">Lovelace Cards</a>
-    </li>
-    <li><a href="#contribution">Contribution</a></li>
-    <li><a href="#credits">Credits</a></li>
-  </ol>
+
+1. [About The Project](#about)
+2. [Features](#features)
+3. [Getting Started](#getting-started)
+   - [Prerequisites](#prerequisites)
+   - [HACS Installation](#hacs-installation)
+   - [Manual Installation](#manual-installation)
+     - [Git clone method](#git-clone-method)
+     - [Copy method](#copy-method)
+   - [Integration Setup](#integration-setup)
+   - [Running in Home Assistant Docker container](#running-in-home-assistant-docker-container)
+4. [Lovelace Cards](#lovelace-cards)
+5. [Contribution](#contribution)
+6. [Credits](#credits)
+
 </details>
 
 ## About
