@@ -56,9 +56,6 @@ See <a href="#contribution">Contribution</a> section for more information.
     </li>
     <li>
       <a href="#lovelace-cards">Lovelace Cards</a>
-      <ul>
-         <li><a href="#google-home-timers-card">Google Home timers card</a></li>
-      </ul>
     </li>
     <li><a href="#contribution">Contribution</a></li>
     <li><a href="#credits">Credits</a></li>
@@ -194,11 +191,7 @@ Make sure that you have your Home Assistant Container network set to 'host', as 
 
 **Open a PR to add your card here!**
 
-### [Google Home timers card](https://github.com/DurgNomis-drol/google_home_timers_card)
-
-A simple way to display your timers in a card.
-
-by [@DurgNomis-drol](https://github.com/DurgNomis-drol)
+- [Google Home timers card](https://github.com/DurgNomis-drol/google_home_timers_card) by [@DurgNomis-drol](https://github.com/DurgNomis-drol)
 
 ## Contribution
 
