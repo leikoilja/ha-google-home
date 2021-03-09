@@ -14,12 +14,11 @@ repos:
         language: system
         types: [python]
         require_serial: true
-      - id: reorder-python-imports
-        name: Reorder python imports
-        entry: poetry run reorder-python-imports
+      - id: isort
+        name: isort
+        entry: poetry run isort
         language: system
         types: [python]
-        args: [--application-directories=custom_components]
         require_serial: true
       - id: flake8
         name: flake8

@@ -1,23 +1,27 @@
 """Sensor platforms for Google Home"""
 import logging
 
-from homeassistant.const import STATE_OFF
-from homeassistant.const import STATE_ON
+from homeassistant.const import STATE_OFF, STATE_ON
 
-from .const import DOMAIN
-from .const import LABEL_ALARMS
-from .const import LABEL_TIMERS
-from .const import LOCAL_TIME_ISO
-from .const import SUPPORTED_HARDWARE_LIST
-from .entity import GoogleHomeAlarmEntity
-from .entity import GoogleHomeNextAlarmEntity
-from .entity import GoogleHomeNextTimerEntity
-from .entity import GoogleHomeTimersEntity
-from .entity import GoogleHomeTokenEntity
-from .utils import format_alarm_information
-from .utils import format_timer_information
-from .utils import sort_list_by_firetime
-
+from .const import (
+    DOMAIN,
+    LABEL_ALARMS,
+    LABEL_TIMERS,
+    LOCAL_TIME_ISO,
+    SUPPORTED_HARDWARE_LIST,
+)
+from .entity import (
+    GoogleHomeAlarmEntity,
+    GoogleHomeNextAlarmEntity,
+    GoogleHomeNextTimerEntity,
+    GoogleHomeTimersEntity,
+    GoogleHomeTokenEntity,
+)
+from .utils import (
+    format_alarm_information,
+    format_timer_information,
+    sort_list_by_firetime,
+)
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 

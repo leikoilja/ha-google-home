@@ -1,23 +1,25 @@
 """Adds config flow for Google Home"""
 import logging
 
+from requests.exceptions import RequestException
 import voluptuous as vol
+
 from homeassistant import config_entries
 from homeassistant.core import callback
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
-from requests.exceptions import RequestException
 
 from .api import GlocaltokensApiClient
-from .const import CONF_ANDROID_ID
-from .const import CONF_MASTER_TOKEN
-from .const import CONF_PASSWORD
-from .const import CONF_USERNAME
-from .const import DOMAIN  # pylint: disable=unused-import
-from .const import PLATFORMS
-from .exceptions import InvalidMasterToken
+from .const import (
+    CONF_ANDROID_ID,
+    CONF_MASTER_TOKEN,
+    CONF_PASSWORD,
+    CONF_USERNAME,
+    PLATFORMS,
+)
 
 # Pylint issue should be fixed by https://github.com/PyCQA/pylint/pull/4207
-
+from .const import DOMAIN  # pylint: disable=unused-import
+from .exceptions import InvalidMasterToken
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 

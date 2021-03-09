@@ -1,17 +1,19 @@
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DEFAULT_NAME
-from .const import DOMAIN
-from .const import ICON_ALARMS
-from .const import ICON_TIMERS
-from .const import ICON_TOKEN
-from .const import LABEL_ALARMS
-from .const import LABEL_NEXT_ALARM
-from .const import LABEL_NEXT_TIMER
-from .const import LABEL_TIMERS
-from .const import LABEL_TOKEN
-from .const import MANUFACTURER
-from .const import VERSION
+from .const import (
+    DEFAULT_NAME,
+    DOMAIN,
+    ICON_ALARMS,
+    ICON_TIMERS,
+    ICON_TOKEN,
+    LABEL_ALARMS,
+    LABEL_NEXT_ALARM,
+    LABEL_NEXT_TIMER,
+    LABEL_TIMERS,
+    LABEL_TOKEN,
+    MANUFACTURER,
+    VERSION,
+)
 
 
 class GoogleHomeTokenEntity(CoordinatorEntity):
