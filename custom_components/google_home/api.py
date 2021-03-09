@@ -120,6 +120,7 @@ class GlocaltokensApiClient:
                 )
                 self.google_devices = []
             elif response.status == HTTP_NOT_FOUND:
+                setattr(device, LABEL_AVAILABLE, False)
                 _LOGGER.debug(
                     (
                         "Failed to fetch data from %s, API returned %d. "
@@ -158,7 +159,8 @@ class GlocaltokensApiClient:
 
         # Gives the user a warning if the device is offline
         for device in devices:
-            if not device.ip:
+            if not device.ip and getattr(device, LABEL_AVAILABLE, True):
+                setattr(device, LABEL_AVAILABLE, False)
                 _LOGGER.debug(
                     (
                         "Failed to fetch timers/alarms information "
@@ -173,7 +175,7 @@ class GlocaltokensApiClient:
             *[
                 self.get_alarms_and_timers(device)
                 for device in devices
-                if device.ip and device.hardware in SUPPORTED_HARDWARE_LIST
+                if device.ip and getattr(device, LABEL_AVAILABLE, True)
             ]
         )
 

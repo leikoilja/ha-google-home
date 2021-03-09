@@ -30,51 +30,41 @@ async def async_setup_entry(hass, entry, async_add_devices):
     """Setup sensor platform."""
     coordinator = hass.data[DOMAIN][entry.entry_id]
     for device in coordinator.data:
-        if device.local_auth_token:
-            if device.hardware in SUPPORTED_HARDWARE_LIST:
-                async_add_devices(
-                    [
-                        GoogleHomeAlarmSensor(
-                            coordinator,
-                            entry,
-                            device.device_name,
-                            getattr(device, LABEL_ALARMS),
-                        ),
-                        GoogleHomeNextAlarmSensor(
-                            coordinator,
-                            entry,
-                            device.device_name,
-                            getattr(device, LABEL_ALARMS),
-                        ),
-                        GoogleHomeTimerSensor(
-                            coordinator,
-                            entry,
-                            device.device_name,
-                            getattr(device, LABEL_TIMERS),
-                        ),
-                        GoogleHomeNextTimerSensor(
-                            coordinator,
-                            entry,
-                            device.device_name,
-                            getattr(device, LABEL_TIMERS),
-                        ),
-                        GoogleHomeTokenSensor(
-                            coordinator,
-                            entry,
-                            device.device_name,
-                            device.local_auth_token,
-                        ),
-                    ]
-                )
-            else:
-                _LOGGER.warning(
-                    (
-                        "The %s device(hardware='%s') is not Google Home "
-                        "compatible and has no alarms/timers"
+        if device.local_auth_token and getattr(device, LABEL_AVAILABLE, True):
+            async_add_devices(
+                [
+                    GoogleHomeAlarmSensor(
+                        coordinator,
+                        entry,
+                        device.device_name,
+                        getattr(device, LABEL_ALARMS),
                     ),
-                    device.device_name,
-                    device.hardware,
-                )
+                    GoogleHomeNextAlarmSensor(
+                        coordinator,
+                        entry,
+                        device.device_name,
+                        getattr(device, LABEL_ALARMS),
+                    ),
+                    GoogleHomeTimerSensor(
+                        coordinator,
+                        entry,
+                        device.device_name,
+                        getattr(device, LABEL_TIMERS),
+                    ),
+                    GoogleHomeNextTimerSensor(
+                        coordinator,
+                        entry,
+                        device.device_name,
+                        getattr(device, LABEL_TIMERS),
+                    ),
+                    GoogleHomeTokenSensor(
+                        coordinator,
+                        entry,
+                        device.device_name,
+                        device.local_auth_token,
+                    ),
+                ]
+            )
 
 
 class GoogleHomeSensorMixin:

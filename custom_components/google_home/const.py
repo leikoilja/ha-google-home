@@ -33,24 +33,11 @@ CONF_MASTER_TOKEN = "master_token"
 DEFAULT_NAME = "Google Home"
 
 LABEL_ALARMS = "alarms"
+LABEL_AVAILABLE = "available"
 LABEL_NEXT_ALARM = "next_alarm"
-LABEL_TIMERS = "timers"
 LABEL_NEXT_TIMER = "next_timer"
+LABEL_TIMERS = "timers"
 LABEL_TOKEN = "token"
-
-# Supported Google Home devices
-SUPPORTED_HARDWARE_LIST = [
-    "Google Home",
-    "Google Home Hub",
-    "Google Home Max",
-    "Google Home Mini",
-    "Google Nest Mini",
-    "Lenovo Smart Clock",
-    "Nest Audio",
-    "Nest Hub Max",
-    "Nest Hub",
-    "Nest Mini",
-]
 
 # DEVICE PORT
 PORT = 8443
