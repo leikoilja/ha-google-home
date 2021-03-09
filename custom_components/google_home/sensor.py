@@ -64,7 +64,10 @@ async def async_setup_entry(hass, entry, async_add_devices):
                 )
             else:
                 _LOGGER.warning(
-                    "The {device} device(hardware='{hardware}') is not Google Home compatable and has no alarms/timers".format(
+                    (
+                        "The {device} device(hardware='{hardware}') is not Google Home "
+                        "compatible and has no alarms/timers"
+                    ).format(
                         device=device.device_name,
                         hardware=device.hardware,
                     )

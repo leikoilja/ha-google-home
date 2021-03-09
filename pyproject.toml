@@ -21,20 +21,15 @@ pylint = "^2.7.2"
 
 [tool.pylint.messages_control]
 disable = [
-    "broad-except",
-    "invalid-name",
-    "line-too-long",
     "logging-format-interpolation",
     "missing-class-docstring",
     "missing-function-docstring",
     "missing-module-docstring",
-    "no-else-return",
     "no-member",
     "too-few-public-methods",
     "too-many-arguments",
     "too-many-instance-attributes",
     "unused-argument",
-    "unused-import",
 ]
 
 [tool.pylint.format]

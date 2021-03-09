@@ -10,25 +10,25 @@ repos:
     hooks:
       - id: black
         name: black
-        entry: black
+        entry: poetry run black
         language: system
         types: [python]
         require_serial: true
       - id: reorder-python-imports
         name: Reorder python imports
-        entry: reorder-python-imports
+        entry: poetry run reorder-python-imports
         language: system
         types: [python]
         args: [--application-directories=custom_components]
         require_serial: true
       - id: flake8
         name: flake8
-        entry: flake8
+        entry: poetry run flake8
         language: system
         types: [python]
       - id: pylint
         name: pylint
-        entry: pylint
+        entry: poetry run pylint
         language: system
         types: [python]
   - repo: https://github.com/pre-commit/mirrors-prettier
