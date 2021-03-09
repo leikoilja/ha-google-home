@@ -73,6 +73,8 @@ When writting unittests please follow the good practises like:
 With Poetry installed, run `poetry install` in the repo root.
 It will create virualenv with all required packages.
 
+If GRPC fails to compile on MacOS, run `export CFLAGS="-DHAVE_UNISTD_H"` first. It should be resolved in GRPC 1.36.
+
 After that you can run [pre-commit](https://pre-commit.com/) with settings included in the
 repostory to have code style and linting checks.
 
