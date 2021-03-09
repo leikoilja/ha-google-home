@@ -5,14 +5,18 @@ import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.core import callback
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
+from requests.exceptions import RequestException
 
 from .api import GlocaltokensApiClient
 from .const import CONF_ANDROID_ID
 from .const import CONF_MASTER_TOKEN
 from .const import CONF_PASSWORD
 from .const import CONF_USERNAME
-from .const import DOMAIN
+from .const import DOMAIN  # pylint: disable=unused-import
 from .const import PLATFORMS
+from .exceptions import InvalidMasterToken
+
+# Pylint issue should be fixed by https://github.com/PyCQA/pylint/pull/4207
 
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
@@ -55,9 +59,7 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     }
                 )
                 return self.async_create_entry(title=username, data=user_input)
-            else:
-                self._errors["base"] = "auth"
-
+            self._errors["base"] = "auth"
             return await self._show_config_form(user_input)
 
         return await self._show_config_form(user_input)
@@ -82,7 +84,7 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         try:
             master_token = await client.async_get_master_token()
             return True, master_token
-        except Exception as exception:
+        except (InvalidMasterToken, RequestException) as exception:
             _LOGGER.error(exception)
         return False, None
 
