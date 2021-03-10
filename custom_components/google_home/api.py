@@ -98,9 +98,9 @@ class GlocaltokensApiClient:
         """Fetches timers and alarms from google device"""
         url = self.create_url(device.ip, PORT, API_ENDPOINT_ALARMS)
         _LOGGER.debug(
-            "Fetching data from Google Home device {device} - {url}".format(
-                device=device.device_name, url=url
-            )
+            "Fetching data from Google Home device %s - %s",
+            device.device_name,
+            url,
         )
         HEADERS[HEADER_CAST_LOCAL_AUTH] = device.local_auth_token
 
@@ -113,35 +113,29 @@ class GlocaltokensApiClient:
                 # and rerun the task.
                 _LOGGER.debug(
                     (
-                        "Failed to fetch data from {device} due to invalid token. "
+                        "Failed to fetch data from %s due to invalid token. "
                         "Will refresh the token and try again."
-                    ).format(
-                        device=device.device_name,
-                    )
+                    ),
+                    device.device_name,
                 )
                 self.google_devices = []
             elif response.status == HTTP_NOT_FOUND:
                 _LOGGER.debug(
                     (
-                        "Failed to fetch data from {device}, API returned {code}. "
-                        "The device(hardware='{hardware}') is not Google Home "
+                        "Failed to fetch data from %s, API returned %d. "
+                        "The device(hardware='%s') is not Google Home "
                         "compatable and has no alarms/timers."
-                    ).format(
-                        device=device.device_name,
-                        code=response.status,
-                        hardware=device.hardware,
-                    )
+                    ),
+                    device.device_name,
+                    response.status,
+                    device.hardware,
                 )
             else:
                 _LOGGER.error(
-                    (
-                        "Failed to fetch {device} data, "
-                        "API returned {code}: {response}"
-                    ).format(
-                        device=device.device_name,
-                        code=response.status,
-                        response=response,
-                    )
+                    "Failed to fetch %s data, API returned %d: %s",
+                    device.device_name,
+                    response.status,
+                    response,
                 )
 
         if resp:
@@ -150,10 +144,9 @@ class GlocaltokensApiClient:
                 setattr(device, LABEL_ALARMS, resp.get(JSON_ALARM, []))
             else:
                 _LOGGER.error(
-                    "For device {device} - {error}".format(
-                        device=device.device_name,
-                        error=API_RETURNED_UNKNOWN,
-                    )
+                    "For device %s - %s",
+                    device.device_name,
+                    API_RETURNED_UNKNOWN,
                 )
         return device
 
@@ -169,10 +162,11 @@ class GlocaltokensApiClient:
                 _LOGGER.debug(
                     (
                         "Failed to fetch timers/alarms information "
-                        "from device {device}. We could not determine it's IP address, "
+                        "from device %s. We could not determine it's IP address, "
                         "the device is either offline or is not compatable "
                         "Google Home device. Will try again later."
-                    ).format(device=device.device_name)
+                    ),
+                    device.device_name,
                 )
 
         coordinator_data = await gather(
