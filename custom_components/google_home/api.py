@@ -20,7 +20,6 @@ from .const import (
     LABEL_ALARMS,
     LABEL_TIMERS,
     PORT,
-    SUPPORTED_HARDWARE_LIST,
     TIMEOUT,
 )
 from .exceptions import InvalidMasterToken

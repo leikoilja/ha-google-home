@@ -8,7 +8,6 @@ from .const import (
     LABEL_ALARMS,
     LABEL_TIMERS,
     LOCAL_TIME_ISO,
-    SUPPORTED_HARDWARE_LIST,
 )
 from .entity import (
     GoogleHomeAlarmEntity,
