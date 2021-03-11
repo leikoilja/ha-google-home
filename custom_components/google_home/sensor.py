@@ -68,18 +68,6 @@ class GoogleHomeSensorMixin:
         )
 
     @staticmethod
-    def get_device_attributes(device):
-        """Device representation as dictionary"""
-        return {
-            "device_name": device.name,
-            "auth_token": device.auth_token,
-            "ip_address": device.ip_address,
-            "hardware": device.hardware,
-            "available": device.available,
-            "integration": DOMAIN,
-        }
-
-    @staticmethod
     def as_dict(obj_list):
         """Return list of objects represented as dictionaries """
         return [obj.__dict__ for obj in obj_list]
@@ -110,6 +98,18 @@ class GoogleHomeDeviceSensor(GoogleHomeSensorMixin, GoogleHomeDeviceEntity):
             self.get_device_attributes(device) if device else self.initial_attributes
         )
         return attributes
+
+    @staticmethod
+    def get_device_attributes(device):
+        """Device representation as dictionary"""
+        return {
+            "device_name": device.name,
+            "auth_token": device.auth_token,
+            "ip_address": device.ip_address,
+            "hardware": device.hardware,
+            "available": device.available,
+            "integration": DOMAIN,
+        }
 
 
 class GoogleHomeAlarmSensor(GoogleHomeSensorMixin, GoogleHomeAlarmEntity):
