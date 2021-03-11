@@ -23,7 +23,6 @@ async def async_setup_entry(hass, entry, async_add_devices):
         sensors.append(
             GoogleHomeDeviceSensor(
                 coordinator,
-                entry,
                 device.name,
                 device.auth_token,
             )
@@ -32,22 +31,18 @@ async def async_setup_entry(hass, entry, async_add_devices):
             sensors += [
                 GoogleHomeAlarmSensor(
                     coordinator,
-                    entry,
                     device.name,
                 ),
                 GoogleHomeNextAlarmSensor(
                     coordinator,
-                    entry,
                     device.name,
                 ),
                 GoogleHomeTimerSensor(
                     coordinator,
-                    entry,
                     device.name,
                 ),
                 GoogleHomeNextTimerSensor(
                     coordinator,
-                    entry,
                     device.name,
                 ),
             ]
@@ -76,10 +71,9 @@ class GoogleHomeSensorMixin:
 class GoogleHomeDeviceSensor(GoogleHomeSensorMixin, GoogleHomeDeviceEntity):
     """GoogleHome Device Sensor class."""
 
-    def __init__(self, coordinator, entry, device_name, auth_token):
+    def __init__(self, coordinator, device_name, auth_token):
         """Initialize the sensor."""
-        super().__init__(coordinator, entry)
-        self.device_name = device_name
+        super().__init__(coordinator, device_name)
         self.auth_token = auth_token
 
     @property
@@ -119,11 +113,6 @@ class GoogleHomeDeviceSensor(GoogleHomeSensorMixin, GoogleHomeDeviceEntity):
 class GoogleHomeAlarmSensor(GoogleHomeSensorMixin, GoogleHomeAlarmEntity):
     """Representation of a Sensor."""
 
-    def __init__(self, coordinator, entry, device_name):
-        """Initialize the sensor."""
-        super().__init__(coordinator, entry)
-        self.device_name = device_name
-
     @property
     def state(self):
         alarms = self._get_alarms_data()
@@ -146,11 +135,6 @@ class GoogleHomeAlarmSensor(GoogleHomeSensorMixin, GoogleHomeAlarmEntity):
 
 class GoogleHomeNextAlarmSensor(GoogleHomeSensorMixin, GoogleHomeNextAlarmEntity):
     """Representation of a Sensor."""
-
-    def __init__(self, coordinator, entry, device_name):
-        """Initialize the sensor."""
-        super().__init__(coordinator, entry)
-        self.device_name = device_name
 
     @property
     def state(self):
@@ -179,11 +163,6 @@ class GoogleHomeNextAlarmSensor(GoogleHomeSensorMixin, GoogleHomeNextAlarmEntity
 class GoogleHomeTimerSensor(GoogleHomeSensorMixin, GoogleHomeTimersEntity):
     """Representation of a Sensor."""
 
-    def __init__(self, coordinator, entry, device_name):
-        """Initialize the sensor."""
-        super().__init__(coordinator, entry)
-        self.device_name = device_name
-
     @property
     def state(self):
         timers = self._get_timers_data()
@@ -205,11 +184,6 @@ class GoogleHomeTimerSensor(GoogleHomeSensorMixin, GoogleHomeTimersEntity):
 
 class GoogleHomeNextTimerSensor(GoogleHomeSensorMixin, GoogleHomeNextTimerEntity):
     """Representation of a Sensor."""
-
-    def __init__(self, coordinator, entry, device_name):
-        """Initialize the sensor."""
-        super().__init__(coordinator, entry)
-        self.device_name = device_name
 
     @property
     def state(self):
