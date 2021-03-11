@@ -26,7 +26,7 @@ _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
 class GlocaltokensApiClient:
-    """ API client"""
+    """API client"""
 
     def __init__(
         self,
