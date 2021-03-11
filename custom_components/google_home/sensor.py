@@ -81,8 +81,6 @@ class GoogleHomeDeviceSensor(GoogleHomeSensorMixin, GoogleHomeDeviceEntity):
         super().__init__(coordinator, entry)
         self.device_name = device_name
         self.auth_token = auth_token
-        device = self.get_device()
-        self.initial_attributes = self.get_device_attributes(device)
 
     @property
     def state(self):
@@ -94,9 +92,15 @@ class GoogleHomeDeviceSensor(GoogleHomeSensorMixin, GoogleHomeDeviceEntity):
     def device_state_attributes(self):
         """Return the state attributes."""
         device = self.get_device()
-        attributes = (
-            self.get_device_attributes(device) if device else self.initial_attributes
-        )
+        attributes = {
+            "device_name": self.device_name,
+            "auth_token": None,
+            "ip_address": None,
+            "hardware": None,
+            "available": False,
+            "integration": DOMAIN,
+        }
+        attributes = self.get_device_attributes(device) if device else attributes
         return attributes
 
     @staticmethod
