@@ -1,12 +1,10 @@
 from datetime import timedelta
-import json
 from typing import Optional
 
 from homeassistant.util.dt import as_local, utc_from_timestamp
 
 from .const import (
     DATETIME_STR_FORMAT,
-    DOMAIN,
     FIRE_TIME,
     ID,
     LABEL,
@@ -36,7 +34,6 @@ class GoogleHomeDevice:
         self.available = True
         self._timers = []
         self._alarms = []
-        self.integration = DOMAIN
 
     def set_alarms(self, alarms):
         """Stores alarms as GoogleHomeAlarm objects"""
@@ -71,11 +68,6 @@ class GoogleHomeDevice:
         alarms = self.get_sorted_alarms()
         return alarms[0] if alarms else None
 
-    def get_sorted_alarms_as_dict(self):
-        """Returns list of alarms as nested dictionary"""
-        alarms = self.get_sorted_alarms()
-        return self.as_dict(alarms)
-
     def get_sorted_timers(self):
         """Returns timers in a sorted order"""
         return sorted(self._timers, key=lambda k: k.fire_time)
@@ -84,21 +76,6 @@ class GoogleHomeDevice:
         """Returns next alarm"""
         timers = self.get_sorted_timers()
         return timers[0] if timers else None
-
-    def get_sorted_timers_as_dict(self):
-        """Returns list of timers as nested dictionary"""
-        timers = self.get_sorted_timers()
-        return self.as_dict(timers)
-
-    @staticmethod
-    def as_dict(obj, flat=False):
-        """Returns object representation as dictionary
-        flat=True removes nested objects like list of alarms/timers"""
-        _dict = json.loads(json.dumps(obj, default=lambda o: o.__dict__))
-        if flat:
-            _dict.pop("_timers")
-            _dict.pop("_alarms")
-        return _dict
 
 
 class GoogleHomeTimer:

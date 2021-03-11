@@ -67,6 +67,23 @@ class GoogleHomeSensorMixin:
             None,
         )
 
+    @staticmethod
+    def get_device_attributes(device):
+        """Device representation as dictionary"""
+        return {
+            "device_name": device.name,
+            "auth_token": device.auth_token,
+            "ip_address": device.ip_address,
+            "hardware": device.hardware,
+            "available": device.available,
+            "integration": DOMAIN,
+        }
+
+    @staticmethod
+    def as_dict(obj_list):
+        """Return list of objects represented as dictionaries """
+        return [obj.__dict__ for obj in obj_list]
+
 
 class GoogleHomeDeviceSensor(GoogleHomeSensorMixin, GoogleHomeDeviceEntity):
     """GoogleHome Device Sensor class."""
@@ -77,7 +94,7 @@ class GoogleHomeDeviceSensor(GoogleHomeSensorMixin, GoogleHomeDeviceEntity):
         self.device_name = device_name
         self.auth_token = auth_token
         device = self.get_device()
-        self.initial_attributes = device.as_dict(device, flat=True)
+        self.initial_attributes = self.get_device_attributes(device)
 
     @property
     def state(self):
@@ -90,7 +107,7 @@ class GoogleHomeDeviceSensor(GoogleHomeSensorMixin, GoogleHomeDeviceEntity):
         """Return the state attributes."""
         device = self.get_device()
         attributes = (
-            device.as_dict(device, flat=True) if device else self.initial_attributes
+            self.get_device_attributes(device) if device else self.initial_attributes
         )
         return attributes
 
@@ -120,7 +137,7 @@ class GoogleHomeAlarmSensor(GoogleHomeSensorMixin, GoogleHomeAlarmEntity):
     def _get_alarms_data(self):
         """Update alarms data extracting it from coordinator"""
         device = self.get_device()
-        return device.get_sorted_alarms_as_dict()
+        return self.as_dict(device.get_sorted_alarms())
 
 
 class GoogleHomeNextAlarmSensor(GoogleHomeSensorMixin, GoogleHomeNextAlarmEntity):
@@ -179,7 +196,7 @@ class GoogleHomeTimerSensor(GoogleHomeSensorMixin, GoogleHomeTimersEntity):
     def _get_timers_data(self):
         """Update timers data extracting it from coordinator"""
         device = self.get_device()
-        return device.get_sorted_timers_as_dict()
+        return self.as_dict(device.get_sorted_timers())
 
 
 class GoogleHomeNextTimerSensor(GoogleHomeSensorMixin, GoogleHomeNextTimerEntity):
