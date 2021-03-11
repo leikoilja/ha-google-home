@@ -25,10 +25,10 @@ async def async_setup_entry(hass, entry, async_add_devices):
                 coordinator,
                 entry,
                 device.name,
-                device.token,
+                device.auth_token,
             )
         )
-        if device.token and device.available:
+        if device.auth_token and device.available:
             sensors += [
                 GoogleHomeAlarmSensor(
                     coordinator,
@@ -56,10 +56,14 @@ async def async_setup_entry(hass, entry, async_add_devices):
 
 class GoogleHomeSensorMixin:
     def get_device(self):
-        """Return the device matched by name
+        """Return the device matched by device name
         from the list of google devices in coordinator_data"""
         return next(
-            (device for device in self.coordinator.data if device.name == self._name),
+            [
+                device
+                for device in self.coordinator.data
+                if device.name == self.device_name
+            ],
             None,
         )
 
@@ -67,19 +71,19 @@ class GoogleHomeSensorMixin:
 class GoogleHomeDeviceSensor(GoogleHomeSensorMixin, GoogleHomeDeviceEntity):
     """GoogleHome Device Sensor class."""
 
-    def __init__(self, coordinator, entry, name, token):
+    def __init__(self, coordinator, entry, device_name, auth_token):
         """Initialize the sensor."""
         super().__init__(coordinator, entry)
-        self._name = name
-        self.token = token
+        self.device_name = device_name
+        self.auth_token = auth_token
         device = self.get_device()
         self.initial_attributes = device.as_dict(device, flat=True)
 
     @property
     def state(self):
         device = self.get_device()
-        token = device.token if device else self.token
-        return token
+        auth_token = device.auth_token if device else self.auth_token
+        return auth_token
 
     @property
     def device_state_attributes(self):
@@ -94,10 +98,10 @@ class GoogleHomeDeviceSensor(GoogleHomeSensorMixin, GoogleHomeDeviceEntity):
 class GoogleHomeAlarmSensor(GoogleHomeSensorMixin, GoogleHomeAlarmEntity):
     """Representation of a Sensor."""
 
-    def __init__(self, coordinator, entry, name):
+    def __init__(self, coordinator, entry, device_name):
         """Initialize the sensor."""
         super().__init__(coordinator, entry)
-        self._name = name
+        self.device_name = device_name
 
     @property
     def state(self):
@@ -116,16 +120,16 @@ class GoogleHomeAlarmSensor(GoogleHomeSensorMixin, GoogleHomeAlarmEntity):
     def _get_alarms_data(self):
         """Update alarms data extracting it from coordinator"""
         device = self.get_device()
-        return device.get_alarms_as_dict()
+        return device.get_sorted_alarms_as_dict()
 
 
 class GoogleHomeNextAlarmSensor(GoogleHomeSensorMixin, GoogleHomeNextAlarmEntity):
     """Representation of a Sensor."""
 
-    def __init__(self, coordinator, entry, name):
+    def __init__(self, coordinator, entry, device_name):
         """Initialize the sensor."""
         super().__init__(coordinator, entry)
-        self._name = name
+        self.device_name = device_name
 
     @property
     def state(self):
@@ -154,10 +158,10 @@ class GoogleHomeNextAlarmSensor(GoogleHomeSensorMixin, GoogleHomeNextAlarmEntity
 class GoogleHomeTimerSensor(GoogleHomeSensorMixin, GoogleHomeTimersEntity):
     """Representation of a Sensor."""
 
-    def __init__(self, coordinator, entry, name):
+    def __init__(self, coordinator, entry, device_name):
         """Initialize the sensor."""
         super().__init__(coordinator, entry)
-        self._name = name
+        self.device_name = device_name
 
     @property
     def state(self):
@@ -175,16 +179,16 @@ class GoogleHomeTimerSensor(GoogleHomeSensorMixin, GoogleHomeTimersEntity):
     def _get_timers_data(self):
         """Update timers data extracting it from coordinator"""
         device = self.get_device()
-        return device.get_timers_as_dict()
+        return device.get_sorted_timers_as_dict()
 
 
 class GoogleHomeNextTimerSensor(GoogleHomeSensorMixin, GoogleHomeNextTimerEntity):
     """Representation of a Sensor."""
 
-    def __init__(self, coordinator, entry, name):
+    def __init__(self, coordinator, entry, device_name):
         """Initialize the sensor."""
         super().__init__(coordinator, entry)
-        self._name = name
+        self.device_name = device_name
 
     @property
     def state(self):

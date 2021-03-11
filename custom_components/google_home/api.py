@@ -74,7 +74,7 @@ class GlocaltokensApiClient:
             self.google_devices = [
                 GoogleHomeDevice(
                     name=device.device_name,
-                    token=device.local_auth_token,
+                    auth_token=device.local_auth_token,
                     ip_address=device.ip,
                     hardware=device.hardware,
                 )
@@ -107,7 +107,7 @@ class GlocaltokensApiClient:
             device.device_name,
             url,
         )
-        HEADERS[HEADER_CAST_LOCAL_AUTH] = device.token
+        HEADERS[HEADER_CAST_LOCAL_AUTH] = device.auth_token
 
         resp = None
         async with self._session.get(url, headers=HEADERS, timeout=TIMEOUT) as response:
