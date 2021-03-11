@@ -1,7 +1,7 @@
 """Models for Google Home"""
 
 from datetime import timedelta
-from typing import Optional
+from typing import List, Optional
 
 from homeassistant.util.dt import as_local, utc_from_timestamp
 
@@ -35,8 +35,8 @@ class GoogleHomeDevice:
         self.ip_address = ip_address
         self.hardware = hardware
         self.available = True
-        self._timers = []
-        self._alarms = []
+        self._timers: List[GoogleHomeTimer] = []
+        self._alarms: List[GoogleHomeAlarm] = []
 
     def set_alarms(self, alarms):
         """Stores alarms as GoogleHomeAlarm objects"""

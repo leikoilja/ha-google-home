@@ -18,6 +18,7 @@ flake8 = "^3.8.4"
 pre-commit = "^2.10.1"
 pylint = "^2.7.2"
 isort = "^5.7.0"
+mypy = "^0.812"
 
 [tool.pylint.messages_control]
 # Reasons disabled:
