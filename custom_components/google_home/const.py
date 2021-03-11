@@ -33,24 +33,11 @@ CONF_MASTER_TOKEN = "master_token"
 DEFAULT_NAME = "Google Home"
 
 LABEL_ALARMS = "alarms"
+LABEL_AVAILABLE = "available"
 LABEL_NEXT_ALARM = "next_alarm"
-LABEL_TIMERS = "timers"
 LABEL_NEXT_TIMER = "next_timer"
-LABEL_TOKEN = "token"
-
-# Supported Google Home devices
-SUPPORTED_HARDWARE_LIST = [
-    "Google Home",
-    "Google Home Hub",
-    "Google Home Max",
-    "Google Home Mini",
-    "Google Nest Mini",
-    "Lenovo Smart Clock",
-    "Nest Audio",
-    "Nest Hub Max",
-    "Nest Hub",
-    "Nest Mini",
-]
+LABEL_TIMERS = "timers"
+LABEL_DEVICE = "device"
 
 # DEVICE PORT
 PORT = 8443
@@ -72,9 +59,6 @@ ID = "id"
 LABEL = "label"
 RECURRENCE = "recurrence"
 FIRE_TIME = "fire_time"
-LOCAL_TIME = "local_time"
-LOCAL_TIME_ISO = "local_time_iso"
-DURATION = "duration"
 ORIGINAL_DURATION = "original_duration"
 
 # TIMESTRINGS
@@ -95,7 +79,6 @@ JSON_TIMER = "timer"
 STARTUP_MESSAGE = f"""
 -------------------------------------------------------------------
 {NAME}
-Version: {VERSION}
 This is a custom integration!
 If you have any issues with this you need to open an issue here:
 {ISSUE_URL}

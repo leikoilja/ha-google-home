@@ -16,13 +16,11 @@ from .const import (
     HEADERS,
     JSON_ALARM,
     JSON_TIMER,
-    LABEL_ALARMS,
-    LABEL_TIMERS,
     PORT,
-    SUPPORTED_HARDWARE_LIST,
     TIMEOUT,
 )
 from .exceptions import InvalidMasterToken
+from .models import GoogleHomeDevice
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -72,9 +70,16 @@ class GlocaltokensApiClient:
                     force_homegraph_reload=True,
                 )
 
-            self.google_devices = await self.hass.async_add_executor_job(
-                _get_google_devices
-            )
+            google_devices = await self.hass.async_add_executor_job(_get_google_devices)
+            self.google_devices = [
+                GoogleHomeDevice(
+                    name=device.device_name,
+                    auth_token=device.local_auth_token,
+                    ip_address=device.ip,
+                    hardware=device.hardware,
+                )
+                for device in google_devices
+            ]
         return self.google_devices
 
     async def get_android_id(self):
@@ -96,13 +101,13 @@ class GlocaltokensApiClient:
 
     async def get_alarms_and_timers(self, device):
         """Fetches timers and alarms from google device"""
-        url = self.create_url(device.ip, PORT, API_ENDPOINT_ALARMS)
+        url = self.create_url(device.ip_address, PORT, API_ENDPOINT_ALARMS)
         _LOGGER.debug(
             "Fetching data from Google Home device %s - %s",
-            device.device_name,
+            device.name,
             url,
         )
-        HEADERS[HEADER_CAST_LOCAL_AUTH] = device.local_auth_token
+        HEADERS[HEADER_CAST_LOCAL_AUTH] = device.auth_token
 
         resp = None
         async with self._session.get(url, headers=HEADERS, timeout=TIMEOUT) as response:
@@ -116,36 +121,38 @@ class GlocaltokensApiClient:
                         "Failed to fetch data from %s due to invalid token. "
                         "Will refresh the token and try again."
                     ),
-                    device.device_name,
+                    device.name,
                 )
+                # We need to retry the update task instead of just cleaning the list
                 self.google_devices = []
             elif response.status == HTTP_NOT_FOUND:
+                device.available = False
                 _LOGGER.debug(
                     (
                         "Failed to fetch data from %s, API returned %d. "
                         "The device(hardware='%s') is not Google Home "
                         "compatable and has no alarms/timers."
                     ),
-                    device.device_name,
+                    device.name,
                     response.status,
                     device.hardware,
                 )
             else:
                 _LOGGER.error(
                     "Failed to fetch %s data, API returned %d: %s",
-                    device.device_name,
+                    device.name,
                     response.status,
                     response,
                 )
 
         if resp:
             if JSON_TIMER in resp or JSON_ALARM in resp:
-                setattr(device, LABEL_TIMERS, resp.get(JSON_TIMER, []))
-                setattr(device, LABEL_ALARMS, resp.get(JSON_ALARM, []))
+                device.set_timers(resp.get(JSON_TIMER))
+                device.set_alarms(resp.get(JSON_ALARM))
             else:
                 _LOGGER.error(
                     "For device %s - %s",
-                    device.device_name,
+                    device.name,
                     API_RETURNED_UNKNOWN,
                 )
         return device
@@ -158,7 +165,8 @@ class GlocaltokensApiClient:
 
         # Gives the user a warning if the device is offline
         for device in devices:
-            if not device.ip:
+            if not device.ip_address and device.available:
+                device.available = False
                 _LOGGER.debug(
                     (
                         "Failed to fetch timers/alarms information "
@@ -166,14 +174,14 @@ class GlocaltokensApiClient:
                         "the device is either offline or is not compatable "
                         "Google Home device. Will try again later."
                     ),
-                    device.device_name,
+                    device.name,
                 )
 
         coordinator_data = await gather(
             *[
                 self.get_alarms_and_timers(device)
                 for device in devices
-                if device.ip and device.hardware in SUPPORTED_HARDWARE_LIST
+                if device.ip_address and device.available
             ]
         )
 

@@ -7,16 +7,16 @@ from .const import (
     ICON_TIMERS,
     ICON_TOKEN,
     LABEL_ALARMS,
+    LABEL_DEVICE,
     LABEL_NEXT_ALARM,
     LABEL_NEXT_TIMER,
     LABEL_TIMERS,
-    LABEL_TOKEN,
     MANUFACTURER,
     VERSION,
 )
 
 
-class GoogleHomeTokenEntity(CoordinatorEntity):
+class GoogleHomeDeviceEntity(CoordinatorEntity):
     def __init__(self, coordinator, config_entry):
         super().__init__(coordinator)
         self.config_entry = config_entry
@@ -24,8 +24,8 @@ class GoogleHomeTokenEntity(CoordinatorEntity):
     @property
     def device_info(self):
         return {
-            "identifiers": {(DOMAIN, self._name)},
-            "name": f"{DEFAULT_NAME} {self._name}",
+            "identifiers": {(DOMAIN, self.device_name)},
+            "name": f"{DEFAULT_NAME} {self.device_name}",
             "model": VERSION,
             "manufacturer": MANUFACTURER,
         }
@@ -33,12 +33,12 @@ class GoogleHomeTokenEntity(CoordinatorEntity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        return f"{self._name} {LABEL_TOKEN}"
+        return f"{self.device_name} {LABEL_DEVICE}"
 
     @property
     def unique_id(self):
         """Return a unique ID to use for this entity."""
-        return f"{self._name}/{LABEL_TOKEN}"
+        return f"{self.device_name}/{LABEL_DEVICE}"
 
     @property
     def icon(self):
@@ -64,8 +64,8 @@ class GoogleHomeAlarmEntity(CoordinatorEntity):
     @property
     def device_info(self):
         return {
-            "identifiers": {(DOMAIN, self._name)},
-            "name": f"{DEFAULT_NAME} {self._name}",
+            "identifiers": {(DOMAIN, self.device_name)},
+            "name": f"{DEFAULT_NAME} {self.device_name}",
             "model": VERSION,
             "manufacturer": MANUFACTURER,
         }
@@ -73,12 +73,12 @@ class GoogleHomeAlarmEntity(CoordinatorEntity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        return f"{self._name} {LABEL_ALARMS}"
+        return f"{self.device_name} {LABEL_ALARMS}"
 
     @property
     def unique_id(self):
         """Return a unique ID to use for this entity."""
-        return f"{self._name}/{LABEL_ALARMS}"
+        return f"{self.device_name}/{LABEL_ALARMS}"
 
     @property
     def icon(self):
@@ -99,8 +99,8 @@ class GoogleHomeNextAlarmEntity(CoordinatorEntity):
     @property
     def device_info(self):
         return {
-            "identifiers": {(DOMAIN, self._name)},
-            "name": f"{DEFAULT_NAME} {self._name}",
+            "identifiers": {(DOMAIN, self.device_name)},
+            "name": f"{DEFAULT_NAME} {self.device_name}",
             "model": VERSION,
             "manufacturer": MANUFACTURER,
         }
@@ -108,12 +108,12 @@ class GoogleHomeNextAlarmEntity(CoordinatorEntity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        return f"{self._name} {LABEL_NEXT_ALARM}"
+        return f"{self.device_name} {LABEL_NEXT_ALARM}"
 
     @property
     def unique_id(self):
         """Return a unique ID to use for this entity."""
-        return f"{self._name}/{LABEL_NEXT_ALARM}"
+        return f"{self.device_name}/{LABEL_NEXT_ALARM}"
 
     @property
     def icon(self):
@@ -129,13 +129,13 @@ class GoogleHomeTimersEntity(CoordinatorEntity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        return f"{self._name} {LABEL_TIMERS}"
+        return f"{self.device_name} {LABEL_TIMERS}"
 
     @property
     def device_info(self):
         return {
-            "identifiers": {(DOMAIN, self._name)},
-            "name": f"{DEFAULT_NAME} {self._name}",
+            "identifiers": {(DOMAIN, self.device_name)},
+            "name": f"{DEFAULT_NAME} {self.device_name}",
             "model": VERSION,
             "manufacturer": MANUFACTURER,
         }
@@ -143,7 +143,7 @@ class GoogleHomeTimersEntity(CoordinatorEntity):
     @property
     def unique_id(self):
         """Return a unique ID to use for this entity."""
-        return f"{self._name}/{LABEL_TIMERS}"
+        return f"{self.device_name}/{LABEL_TIMERS}"
 
     @property
     def icon(self):
@@ -164,8 +164,8 @@ class GoogleHomeNextTimerEntity(CoordinatorEntity):
     @property
     def device_info(self):
         return {
-            "identifiers": {(DOMAIN, self._name)},
-            "name": f"{DEFAULT_NAME} {self._name}",
+            "identifiers": {(DOMAIN, self.device_name)},
+            "name": f"{DEFAULT_NAME} {self.device_name}",
             "model": VERSION,
             "manufacturer": MANUFACTURER,
         }
@@ -173,12 +173,12 @@ class GoogleHomeNextTimerEntity(CoordinatorEntity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        return f"{self._name} {LABEL_NEXT_TIMER}"
+        return f"{self.device_name} {LABEL_NEXT_TIMER}"
 
     @property
     def unique_id(self):
         """Return a unique ID to use for this entity."""
-        return f"{self._name}/{LABEL_NEXT_TIMER}"
+        return f"{self.device_name}/{LABEL_NEXT_TIMER}"
 
     @property
     def icon(self):
