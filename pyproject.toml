@@ -21,7 +21,6 @@ isort = "^5.7.0"
 
 [tool.pylint.messages_control]
 disable = [
-    "logging-format-interpolation",
     "missing-class-docstring",
     "missing-function-docstring",
     "missing-module-docstring",
