@@ -7,16 +7,16 @@ from .const import (
     ICON_TIMERS,
     ICON_TOKEN,
     LABEL_ALARMS,
+    LABEL_DEVICE,
     LABEL_NEXT_ALARM,
     LABEL_NEXT_TIMER,
     LABEL_TIMERS,
-    LABEL_TOKEN,
     MANUFACTURER,
     VERSION,
 )
 
 
-class GoogleHomeTokenEntity(CoordinatorEntity):
+class GoogleHomeDeviceEntity(CoordinatorEntity):
     def __init__(self, coordinator, config_entry):
         super().__init__(coordinator)
         self.config_entry = config_entry
@@ -33,12 +33,12 @@ class GoogleHomeTokenEntity(CoordinatorEntity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        return f"{self._name} {LABEL_TOKEN}"
+        return f"{self._name} {LABEL_DEVICE}"
 
     @property
     def unique_id(self):
         """Return a unique ID to use for this entity."""
-        return f"{self._name}/{LABEL_TOKEN}"
+        return f"{self._name}/{LABEL_DEVICE}"
 
     @property
     def icon(self):

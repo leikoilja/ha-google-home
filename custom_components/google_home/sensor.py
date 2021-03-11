@@ -3,23 +3,13 @@ import logging
 
 from homeassistant.const import STATE_OFF, STATE_ON
 
-from .const import (
-    DOMAIN,
-    LABEL_ALARMS,
-    LABEL_TIMERS,
-    LOCAL_TIME_ISO,
-)
+from .const import DOMAIN
 from .entity import (
     GoogleHomeAlarmEntity,
+    GoogleHomeDeviceEntity,
     GoogleHomeNextAlarmEntity,
     GoogleHomeNextTimerEntity,
     GoogleHomeTimersEntity,
-    GoogleHomeTokenEntity,
-)
-from .utils import (
-    format_alarm_information,
-    format_timer_information,
-    sort_list_by_firetime,
 )
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
@@ -31,7 +21,7 @@ async def async_setup_entry(hass, entry, async_add_devices):
     sensors = []
     for device in coordinator.data:
         sensors.append(
-            GoogleHomeTokenSensor(
+            GoogleHomeDeviceSensor(
                 coordinator,
                 entry,
                 device.name,
@@ -44,27 +34,22 @@ async def async_setup_entry(hass, entry, async_add_devices):
                     coordinator,
                     entry,
                     device.name,
-                    device.alarms,
                 ),
                 GoogleHomeNextAlarmSensor(
                     coordinator,
                     entry,
                     device.name,
-                    device.alarms,
                 ),
                 GoogleHomeTimerSensor(
                     coordinator,
                     entry,
                     device.name,
-                    device.timers,
                 ),
                 GoogleHomeNextTimerSensor(
                     coordinator,
                     entry,
                     device.name,
-                    device.timers,
                 ),
-
             ]
     async_add_devices(sensors)
 
@@ -74,40 +59,42 @@ class GoogleHomeSensorMixin:
         """Return the device matched by name
         from the list of google devices in coordinator_data"""
         return next(
-            (
-                device
-                for device in self.coordinator.data
-                if device.name == self._name
-            ),
+            (device for device in self.coordinator.data if device.name == self._name),
             None,
         )
 
 
-class GoogleHomeTokenSensor(GoogleHomeSensorMixin, GoogleHomeTokenEntity):
-    """GoogleHome Sensor class."""
+class GoogleHomeDeviceSensor(GoogleHomeSensorMixin, GoogleHomeDeviceEntity):
+    """GoogleHome Device Sensor class."""
 
     def __init__(self, coordinator, entry, name, token):
         """Initialize the sensor."""
         super().__init__(coordinator, entry)
         self._name = name
+        self.token = token
+        device = self.get_device()
+        self.initial_attributes = device.as_dict(device, flat=True)
 
     @property
     def state(self):
-        return self.get_device().token
+        device = self.get_device()
+        token = device.token if device else self.token
+        return token
 
     @property
     def device_state_attributes(self):
         """Return the state attributes."""
-        return {
-            "device": str(self.name),
-            "integration": DOMAIN,
-        }
+        device = self.get_device()
+        attributes = (
+            device.as_dict(device, flat=True) if device else self.initial_attributes
+        )
+        return attributes
 
 
 class GoogleHomeAlarmSensor(GoogleHomeSensorMixin, GoogleHomeAlarmEntity):
     """Representation of a Sensor."""
 
-    def __init__(self, coordinator, entry, name, alarms):
+    def __init__(self, coordinator, entry, name):
         """Initialize the sensor."""
         super().__init__(coordinator, entry)
         self._name = name
@@ -123,66 +110,51 @@ class GoogleHomeAlarmSensor(GoogleHomeSensorMixin, GoogleHomeAlarmEntity):
         """Return the state attributes."""
         return {
             "alarms": self._get_alarms_data(),
-            "device": str(self.name),
             "integration": DOMAIN,
         }
 
     def _get_alarms_data(self):
         """Update alarms data extracting it from coordinator"""
-        alarms = [
-            format_alarm_information(alarm)
-            for alarm in getattr(self.get_device(), LABEL_ALARMS)
-        ]
-        alarms = sort_list_by_firetime(alarms)
-        return alarms
+        device = self.get_device()
+        return device.get_alarms_as_dict()
 
 
 class GoogleHomeNextAlarmSensor(GoogleHomeSensorMixin, GoogleHomeNextAlarmEntity):
     """Representation of a Sensor."""
 
-    def __init__(self, coordinator, entry, name, alarms):
+    def __init__(self, coordinator, entry, name):
         """Initialize the sensor."""
         super().__init__(coordinator, entry)
         self._name = name
 
     @property
     def state(self):
-        alarms = self._get_alarm_data()
-        # The first one will always be the closest one
-        # as we have sorted the list in _get_alarm_data()
-        return alarms[0][LOCAL_TIME_ISO] if alarms else STATE_OFF
+        alarm = self._get_next_alarm()
+        return alarm.local_time_iso if alarm else STATE_OFF
 
     @property
     def device_state_attributes(self):
         """Return the state attributes."""
-        alarms = self._get_alarm_data()
-        attributes = (
-            alarms[0]
-            if len(alarms)
-            else {}
-            # Only list the attributes for one
-        )
+        alarm = self._get_next_alarm()
+        attributes = alarm.__dict__ if alarm else {}
         attributes.update(
             {
-                "device": str(self.name),
                 "integration": DOMAIN,
             }
         )
         return attributes
 
-    def _get_alarm_data(self):
+    def _get_next_alarm(self):
         """Update alarms data extracting it from coordinator"""
-        alarms = [
-            format_alarm_information(alarm)
-            for alarm in getattr(self.get_device(), LABEL_ALARMS)
-        ]
-        return sort_list_by_firetime(alarms)
+        device = self.get_device()
+        alarm = device.get_next_alarm()
+        return alarm
 
 
 class GoogleHomeTimerSensor(GoogleHomeSensorMixin, GoogleHomeTimersEntity):
     """Representation of a Sensor."""
 
-    def __init__(self, coordinator, entry, name, timers):
+    def __init__(self, coordinator, entry, name):
         """Initialize the sensor."""
         super().__init__(coordinator, entry)
         self._name = name
@@ -197,56 +169,42 @@ class GoogleHomeTimerSensor(GoogleHomeSensorMixin, GoogleHomeTimersEntity):
         """Return the state attributes."""
         return {
             "timers": self._get_timers_data(),
-            "device": str(self.name),
             "integration": DOMAIN,
         }
 
     def _get_timers_data(self):
         """Update timers data extracting it from coordinator"""
-        timers = [
-            format_timer_information(timer)
-            for timer in getattr(self.get_device(), LABEL_TIMERS)
-        ]
-        return sort_list_by_firetime(timers)
+        device = self.get_device()
+        return device.get_timers_as_dict()
 
 
 class GoogleHomeNextTimerSensor(GoogleHomeSensorMixin, GoogleHomeNextTimerEntity):
     """Representation of a Sensor."""
 
-    def __init__(self, coordinator, entry, name, alarms):
+    def __init__(self, coordinator, entry, name):
         """Initialize the sensor."""
         super().__init__(coordinator, entry)
         self._name = name
 
     @property
     def state(self):
-        timers = self._get_timers_data()
-        # The first one will always be the closest one
-        # as we have sorted the list in _get_alarm_data()
-        return timers[0][LOCAL_TIME_ISO] if timers else STATE_OFF
+        timer = self._get_next_timer()
+        return timer.local_time_iso if timer else STATE_OFF
 
     @property
     def device_state_attributes(self):
         """Return the state attributes."""
-        timers = self._get_timers_data()
-        attributes = (
-            timers[0]
-            if len(timers)
-            else {}
-            # Only list the attributes for one
-        )
+        timer = self._get_next_timer()
+        attributes = timer.__dict__ if timer else {}
         attributes.update(
             {
-                "device": str(self.name),
                 "integration": DOMAIN,
             }
         )
         return attributes
 
-    def _get_timers_data(self):
+    def _get_next_timer(self):
         """Update alarms data extracting it from coordinator"""
-        timers = [
-            format_timer_information(timer)
-            for timer in getattr(self.get_device(), LABEL_TIMERS)
-        ]
-        return sort_list_by_firetime(timers)
+        device = self.get_device()
+        timer = device.get_next_timer()
+        return timer

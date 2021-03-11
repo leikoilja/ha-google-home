@@ -7,7 +7,6 @@ from glocaltokens.client import GLocalAuthenticationTokens
 from glocaltokens.utils.token import is_aas_et
 from zeroconf import Zeroconf
 
-from typing import List, Optional
 from homeassistant.const import HTTP_NOT_FOUND, HTTP_OK, HTTP_UNAUTHORIZED
 
 from .const import (
@@ -17,32 +16,13 @@ from .const import (
     HEADERS,
     JSON_ALARM,
     JSON_TIMER,
-    LABEL_ALARMS,
-    LABEL_TIMERS,
     PORT,
     TIMEOUT,
 )
 from .exceptions import InvalidMasterToken
+from .models import GoogleHomeDevice
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
-
-
-class GoogleHomeDevice:
-    def __init__(
-        self,
-        name: str,
-        token: str,
-        ip: Optional[str] = None,
-        hardware: Optional[str] = None,
-    ) -> None:
-        """Local representation of GoogleHome device"""
-        self.name = name
-        self.token = token
-        self.ip_address = ip
-        self.hardware = hardware
-        self.available = True
-        self.timers = []
-        self.alarms = []
 
 
 class GlocaltokensApiClient:
@@ -90,16 +70,15 @@ class GlocaltokensApiClient:
                     force_homegraph_reload=True,
                 )
 
-            google_devices = await self.hass.async_add_executor_job(
-                _get_google_devices
-            )
+            google_devices = await self.hass.async_add_executor_job(_get_google_devices)
             self.google_devices = [
                 GoogleHomeDevice(
                     name=device.device_name,
                     token=device.local_auth_token,
-                    ip=device.ip,
+                    ip_address=device.ip,
                     hardware=device.hardware,
-                ) for device in google_devices
+                )
+                for device in google_devices
             ]
         return self.google_devices
 
@@ -122,7 +101,7 @@ class GlocaltokensApiClient:
 
     async def get_alarms_and_timers(self, device):
         """Fetches timers and alarms from google device"""
-        url = self.create_url(device.ip, PORT, API_ENDPOINT_ALARMS)
+        url = self.create_url(device.ip_address, PORT, API_ENDPOINT_ALARMS)
         _LOGGER.debug(
             "Fetching data from Google Home device %s - %s",
             device.device_name,
@@ -144,7 +123,7 @@ class GlocaltokensApiClient:
                     ),
                     device.device_name,
                 )
-                # TODO: Retry the update task
+                # We need to retry the update task instead of just cleaning the list
                 self.google_devices = []
             elif response.status == HTTP_NOT_FOUND:
                 device.available = False
@@ -168,8 +147,8 @@ class GlocaltokensApiClient:
 
         if resp:
             if JSON_TIMER in resp or JSON_ALARM in resp:
-                device.timers = resp.get(JSON_TIMER)
-                device.alarms = resp.get(JSON_ALARM)
+                device.set_timers(resp.get(JSON_TIMER))
+                device.set_alarms(resp.get(JSON_ALARM))
             else:
                 _LOGGER.error(
                     "For device %s - %s",
@@ -186,7 +165,7 @@ class GlocaltokensApiClient:
 
         # Gives the user a warning if the device is offline
         for device in devices:
-            if not device.ip and device.available:
+            if not device.ip_address and device.available:
                 device.available = False
                 _LOGGER.debug(
                     (
@@ -202,7 +181,7 @@ class GlocaltokensApiClient:
             *[
                 self.get_alarms_and_timers(device)
                 for device in devices
-                if device.ip and device.available
+                if device.ip_address and device.available
             ]
         )
 

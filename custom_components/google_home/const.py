@@ -37,7 +37,7 @@ LABEL_AVAILABLE = "available"
 LABEL_NEXT_ALARM = "next_alarm"
 LABEL_NEXT_TIMER = "next_timer"
 LABEL_TIMERS = "timers"
-LABEL_TOKEN = "token"
+LABEL_DEVICE = "device"
 
 # DEVICE PORT
 PORT = 8443
@@ -59,9 +59,6 @@ ID = "id"
 LABEL = "label"
 RECURRENCE = "recurrence"
 FIRE_TIME = "fire_time"
-LOCAL_TIME = "local_time"
-LOCAL_TIME_ISO = "local_time_iso"
-DURATION = "duration"
 ORIGINAL_DURATION = "original_duration"
 
 # TIMESTRINGS
