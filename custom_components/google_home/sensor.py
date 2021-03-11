@@ -59,11 +59,11 @@ class GoogleHomeSensorMixin:
         """Return the device matched by device name
         from the list of google devices in coordinator_data"""
         return next(
-            [
+            (
                 device
                 for device in self.coordinator.data
                 if device.name == self.device_name
-            ],
+            ),
             None,
         )
 

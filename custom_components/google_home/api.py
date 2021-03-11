@@ -104,7 +104,7 @@ class GlocaltokensApiClient:
         url = self.create_url(device.ip_address, PORT, API_ENDPOINT_ALARMS)
         _LOGGER.debug(
             "Fetching data from Google Home device %s - %s",
-            device.device_name,
+            device.name,
             url,
         )
         HEADERS[HEADER_CAST_LOCAL_AUTH] = device.auth_token
@@ -121,7 +121,7 @@ class GlocaltokensApiClient:
                         "Failed to fetch data from %s due to invalid token. "
                         "Will refresh the token and try again."
                     ),
-                    device.device_name,
+                    device.name,
                 )
                 # We need to retry the update task instead of just cleaning the list
                 self.google_devices = []
@@ -133,14 +133,14 @@ class GlocaltokensApiClient:
                         "The device(hardware='%s') is not Google Home "
                         "compatable and has no alarms/timers."
                     ),
-                    device.device_name,
+                    device.name,
                     response.status,
                     device.hardware,
                 )
             else:
                 _LOGGER.error(
                     "Failed to fetch %s data, API returned %d: %s",
-                    device.device_name,
+                    device.name,
                     response.status,
                     response,
                 )
@@ -152,7 +152,7 @@ class GlocaltokensApiClient:
             else:
                 _LOGGER.error(
                     "For device %s - %s",
-                    device.device_name,
+                    device.name,
                     API_RETURNED_UNKNOWN,
                 )
         return device
@@ -174,7 +174,7 @@ class GlocaltokensApiClient:
                         "the device is either offline or is not compatable "
                         "Google Home device. Will try again later."
                     ),
-                    device.device_name,
+                    device.name,
                 )
 
         coordinator_data = await gather(
