@@ -1,3 +1,5 @@
+"""Models for Google Home"""
+
 from datetime import timedelta
 from typing import Optional
 
@@ -14,6 +16,7 @@ from .const import (
 
 
 def convert_from_ms_to_s(timestamp):
+    """Converts from milliseconds to seconds"""
     return round(timestamp / 1000)
 
 

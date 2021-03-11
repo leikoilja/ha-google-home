@@ -1,3 +1,5 @@
+"""Defines base entities for Google Home"""
+
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import (
@@ -17,6 +19,7 @@ from .const import (
 
 
 class GoogleHomeDeviceEntity(CoordinatorEntity):
+    """Entity base for device sensor"""
     def __init__(self, coordinator, device_name):
         super().__init__(coordinator)
         self.device_name = device_name
@@ -52,6 +55,7 @@ class GoogleHomeDeviceEntity(CoordinatorEntity):
 
 
 class GoogleHomeAlarmEntity(CoordinatorEntity):
+    """Entity base for Alarm sensor"""
     def __init__(self, coordinator, device_name):
         super().__init__(coordinator)
         self.device_name = device_name
@@ -82,6 +86,7 @@ class GoogleHomeAlarmEntity(CoordinatorEntity):
 
 
 class GoogleHomeNextAlarmEntity(CoordinatorEntity):
+    """Entity base for next alarm sensor"""
     def __init__(self, coordinator, device_name):
         super().__init__(coordinator)
         self.device_name = device_name
@@ -112,6 +117,7 @@ class GoogleHomeNextAlarmEntity(CoordinatorEntity):
 
 
 class GoogleHomeTimersEntity(CoordinatorEntity):
+    """Entity base for timers sensor"""
     def __init__(self, coordinator, device_name):
         super().__init__(coordinator)
         self.device_name = device_name
@@ -142,6 +148,7 @@ class GoogleHomeTimersEntity(CoordinatorEntity):
 
 
 class GoogleHomeNextTimerEntity(CoordinatorEntity):
+    """Entity base for next timer sensor"""
     def __init__(self, coordinator, device_name):
         super().__init__(coordinator)
         self.device_name = device_name
