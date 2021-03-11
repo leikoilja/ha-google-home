@@ -51,6 +51,7 @@ async def async_setup_entry(hass, entry, async_add_devices):
 
 class GoogleHomeSensorMixin:
     """Adds basic functions to sensors"""
+
     def get_device(self):
         """Return the device matched by device name
         from the list of google devices in coordinator_data"""
