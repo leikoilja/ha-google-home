@@ -20,6 +20,11 @@ repos:
         language: system
         types: [python]
         require_serial: true
+      - id: mypy
+        name: mypy
+        entry: poetry run mypy
+        language: system
+        types: [python]
       - id: flake8
         name: flake8
         entry: poetry run flake8

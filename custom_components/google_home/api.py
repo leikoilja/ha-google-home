@@ -1,6 +1,7 @@
 """Sample API Client."""
 from asyncio import gather
 import logging
+from typing import List
 
 import aiohttp
 from glocaltokens.client import GLocalAuthenticationTokens
@@ -46,7 +47,7 @@ class GlocaltokensApiClient:
         self._client = GLocalAuthenticationTokens(
             username=username, password=password, android_id=android_id
         )
-        self.google_devices = []
+        self.google_devices: List[GoogleHomeDevice] = []
         self.zeroconf_instance = zeroconf_instance
 
     async def async_get_master_token(self):

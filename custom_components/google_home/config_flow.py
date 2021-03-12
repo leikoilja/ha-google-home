@@ -24,7 +24,8 @@ from .exceptions import InvalidMasterToken
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
-class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
+# Need typed homeassistant stubs to fix this for mypy
+class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):  # type: ignore
     """Config flow for GoogleHome."""
 
     VERSION = 1
