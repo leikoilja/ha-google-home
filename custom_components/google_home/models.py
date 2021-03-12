@@ -1,7 +1,9 @@
 """Models for Google Home"""
 
+from __future__ import annotations
+
 from datetime import timedelta
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 from homeassistant.util.dt import as_local, utc_from_timestamp
 
@@ -15,7 +17,7 @@ from .const import (
 )
 
 
-def convert_from_ms_to_s(timestamp):
+def convert_from_ms_to_s(timestamp: int) -> int:
     """Converts from milliseconds to seconds"""
     return round(timestamp / 1000)
 
@@ -29,7 +31,7 @@ class GoogleHomeDevice:
         auth_token: str,
         ip_address: Optional[str] = None,
         hardware: Optional[str] = None,
-    ) -> None:
+    ):
         self.name = name
         self.auth_token = auth_token
         self.ip_address = ip_address
@@ -38,7 +40,7 @@ class GoogleHomeDevice:
         self._timers: List[GoogleHomeTimer] = []
         self._alarms: List[GoogleHomeAlarm] = []
 
-    def set_alarms(self, alarms):
+    def set_alarms(self, alarms: List[Dict[str, Any]]) -> None:
         """Stores alarms as GoogleHomeAlarm objects"""
         self._alarms = [
             GoogleHomeAlarm(
@@ -50,7 +52,7 @@ class GoogleHomeDevice:
             for alarm in alarms
         ]
 
-    def set_timers(self, timers):
+    def set_timers(self, timers: List[Dict[str, Any]]) -> None:
         """Stores timers as GoogleHomeTimer objects"""
         self._timers = [
             GoogleHomeTimer(
@@ -62,20 +64,20 @@ class GoogleHomeDevice:
             for timer in timers
         ]
 
-    def get_sorted_alarms(self):
+    def get_sorted_alarms(self) -> List[GoogleHomeAlarm]:
         """Returns alarms in a sorted order"""
         return sorted(self._alarms, key=lambda k: k.fire_time)
 
-    def get_next_alarm(self):
+    def get_next_alarm(self) -> Optional[GoogleHomeAlarm]:
         """Returns next alarm"""
         alarms = self.get_sorted_alarms()
         return alarms[0] if alarms else None
 
-    def get_sorted_timers(self):
+    def get_sorted_timers(self) -> List[GoogleHomeTimer]:
         """Returns timers in a sorted order"""
         return sorted(self._timers, key=lambda k: k.fire_time)
 
-    def get_next_timer(self):
+    def get_next_timer(self) -> Optional[GoogleHomeTimer]:
         """Returns next alarm"""
         timers = self.get_sorted_timers()
         return timers[0] if timers else None
@@ -86,10 +88,10 @@ class GoogleHomeTimer:
 
     def __init__(
         self,
-        timer_id,
-        fire_time,
-        duration,
-        label,
+        timer_id: str,
+        fire_time: int,
+        duration: int,
+        label: Optional[str],
     ) -> None:
         self.timer_id = timer_id
         self.duration = str(timedelta(seconds=convert_from_ms_to_s(duration)))
@@ -105,7 +107,13 @@ class GoogleHomeTimer:
 class GoogleHomeAlarm:
     """Local representation of Google Home alarm"""
 
-    def __init__(self, alarm_id, fire_time, label, recurrence) -> None:
+    def __init__(
+        self,
+        alarm_id: str,
+        fire_time: int,
+        label: Optional[str],
+        recurrence: Optional[str],
+    ) -> None:
         self.alarm_id = alarm_id
         self.recurrence = recurrence
         self.fire_time = convert_from_ms_to_s(fire_time)
