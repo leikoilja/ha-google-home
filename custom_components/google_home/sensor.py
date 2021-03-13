@@ -1,7 +1,14 @@
 """Sensor platforms for Google Home"""
 import logging
+from typing import Any, Dict, Iterable, List
 
+from typing_extensions import Protocol
+
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import STATE_OFF, STATE_ON
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity import Entity
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .const import DOMAIN
 from .entity import (
@@ -15,7 +22,18 @@ from .entity import (
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
-async def async_setup_entry(hass, entry, async_add_devices):
+class AddEntitiesCallback(Protocol):
+    """Protocol type for async_setup_entry callback"""
+
+    def __call__(
+        self, new_entities: Iterable[Entity], update_before_add: bool = False
+    ) -> None:
+        ...
+
+
+async def async_setup_entry(
+    hass: HomeAssistant, entry: ConfigEntry, async_add_devices: AddEntitiesCallback
+) -> bool:
     """Setup sensor platform."""
     coordinator = hass.data[DOMAIN][entry.entry_id]
     sensors = []
@@ -47,6 +65,7 @@ async def async_setup_entry(hass, entry, async_add_devices):
                 ),
             ]
     async_add_devices(sensors)
+    return True
 
 
 class GoogleHomeSensorMixin:
@@ -65,7 +84,7 @@ class GoogleHomeSensorMixin:
         )
 
     @staticmethod
-    def as_dict(obj_list):
+    def as_dict(obj_list: List[Any]) -> List[Dict[Any, Any]]:
         """Return list of objects represented as dictionaries """
         return [obj.__dict__ for obj in obj_list]
 
@@ -73,13 +92,15 @@ class GoogleHomeSensorMixin:
 class GoogleHomeDeviceSensor(GoogleHomeSensorMixin, GoogleHomeDeviceEntity):
     """GoogleHome Device Sensor class."""
 
-    def __init__(self, coordinator, device_name, auth_token):
+    def __init__(
+        self, coordinator: DataUpdateCoordinator, device_name: str, auth_token: str
+    ):
         """Initialize the sensor."""
         super().__init__(coordinator, device_name)
         self.auth_token = auth_token
 
     @property
-    def state(self):
+    def state(self) -> str:
         device = self.get_device()
         auth_token = device.auth_token if device else self.auth_token
         return auth_token
@@ -116,7 +137,7 @@ class GoogleHomeAlarmSensor(GoogleHomeSensorMixin, GoogleHomeAlarmEntity):
     """Representation of a Sensor."""
 
     @property
-    def state(self):
+    def state(self) -> str:
         alarms = self._get_alarms_data()
         state = STATE_ON if len(alarms) else STATE_OFF
         return state
@@ -129,7 +150,7 @@ class GoogleHomeAlarmSensor(GoogleHomeSensorMixin, GoogleHomeAlarmEntity):
             "integration": DOMAIN,
         }
 
-    def _get_alarms_data(self):
+    def _get_alarms_data(self) -> List[Dict[Any, Any]]:
         """Update alarms data extracting it from coordinator"""
         device = self.get_device()
         return self.as_dict(device.get_sorted_alarms())
@@ -139,7 +160,7 @@ class GoogleHomeNextAlarmSensor(GoogleHomeSensorMixin, GoogleHomeNextAlarmEntity
     """Representation of a Sensor."""
 
     @property
-    def state(self):
+    def state(self) -> str:
         alarm = self._get_next_alarm()
         return alarm.local_time_iso if alarm else STATE_OFF
 
@@ -166,7 +187,7 @@ class GoogleHomeTimerSensor(GoogleHomeSensorMixin, GoogleHomeTimersEntity):
     """Representation of a Sensor."""
 
     @property
-    def state(self):
+    def state(self) -> str:
         timers = self._get_timers_data()
         return STATE_ON if len(timers) else STATE_OFF
 
@@ -178,7 +199,7 @@ class GoogleHomeTimerSensor(GoogleHomeSensorMixin, GoogleHomeTimersEntity):
             "integration": DOMAIN,
         }
 
-    def _get_timers_data(self):
+    def _get_timers_data(self) -> List[Dict[Any, Any]]:
         """Update timers data extracting it from coordinator"""
         device = self.get_device()
         return self.as_dict(device.get_sorted_timers())
@@ -188,7 +209,7 @@ class GoogleHomeNextTimerSensor(GoogleHomeSensorMixin, GoogleHomeNextTimerEntity
     """Representation of a Sensor."""
 
     @property
-    def state(self):
+    def state(self) -> str:
         timer = self._get_next_timer()
         return timer.local_time_iso if timer else STATE_OFF
 

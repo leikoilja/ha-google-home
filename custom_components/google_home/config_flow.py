@@ -1,10 +1,14 @@
 """Adds config flow for Google Home"""
+from __future__ import annotations
+
 import logging
+from typing import Any, Dict, Optional, Tuple
 
 from requests.exceptions import RequestException
 import voluptuous as vol
 
 from homeassistant import config_entries
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import callback
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
 
@@ -31,9 +35,9 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):  # type: 
     VERSION = 1
     CONNECTION_CLASS = config_entries.CONN_CLASS_CLOUD_POLL
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize."""
-        self._errors = {}
+        self._errors: Dict[str, str] = {}
 
     async def async_step_user(self, user_input=None):
         """Handle a flow initialized by the user."""
@@ -69,10 +73,12 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):  # type: 
 
     @staticmethod
     @callback
-    def async_get_options_flow(config_entry):
+    def async_get_options_flow(
+        config_entry: ConfigEntry,
+    ) -> GoogleHomeOptionsFlowHandler:
         return GoogleHomeOptionsFlowHandler(config_entry)
 
-    async def _show_config_form(self, user_input):  # pylint: disable=unused-argument
+    async def _show_config_form(self, _user_input):
         """Show the configuration form to edit location data."""
         return self.async_show_form(
             step_id="user",
@@ -82,7 +88,7 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):  # type: 
             errors=self._errors,
         )
 
-    async def _test_credentials(self, client):
+    async def _test_credentials(self, client) -> Tuple[bool, Optional[str]]:
         """Returns true and master token if credentials are valid."""
         try:
             master_token = await client.async_get_master_token()
@@ -95,16 +101,16 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):  # type: 
 class GoogleHomeOptionsFlowHandler(config_entries.OptionsFlow):
     """Config flow options handler for GoogleHome."""
 
-    def __init__(self, config_entry):
+    def __init__(self, config_entry: ConfigEntry):
         """Initialize HACS options flow."""
         self.config_entry = config_entry
         self.options = dict(config_entry.options)
 
-    async def async_step_init(self, user_input=None):  # pylint: disable=unused-argument
+    async def async_step_init(self, _user_input=None):
         """Manage the options."""
         return await self.async_step_user()
 
-    async def async_step_user(self, user_input=None):
+    async def async_step_user(self, user_input=None) -> Dict[str, Any]:
         """Handle a flow initialized by the user."""
         if user_input is not None:
             self.options.update(user_input)
