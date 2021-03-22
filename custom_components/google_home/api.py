@@ -151,7 +151,7 @@ class GlocaltokensApiClient:
                         response.status,
                         response,
                     )
-        except Exception as ex:  # pylint: disable=broad-except
+        except aiohttp.ClientError as ex:
             # Make sure that we log the exception if one occurred.
             # The only reason we do this broad is so we easily can
             # debug the application.
