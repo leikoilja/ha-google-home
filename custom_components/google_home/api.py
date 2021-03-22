@@ -153,7 +153,8 @@ class GlocaltokensApiClient:
                     )
         except Exception as exc:  # pylint: disable=broad-except
             # Make sure that we log the exception if one occurred.
-            # The only reason we do this broad is so we easily can debug the application.
+            # The only reason we do this broad is so we easily can
+            # debug the application.
             _LOGGER.error(
                 "Request error: %s",
                 exc,
