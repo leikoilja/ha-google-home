@@ -9,10 +9,12 @@ DO NOT DELETE ANYTHING FROM THIS TEMPLATE.
 
 Issues not containing the minimum requirements will be closed:
 
-- Issues without a description (using the header is not good enough) will be closed.
-- Issues without a Google version wil be closed
-- Issues without any log will be closed
-- Issues without debug logging will be closed.
+There will be a better change of resolving this issue if the following requirement is met:
+- A good description that describes in details what the issue is.
+- Version of the integration.
+- Version of glocaltokens package.
+- Logs. The more the better.
+- Debug logs.
 
 -->
 
@@ -30,9 +32,9 @@ If you are unsure about the version check the const.py file.
 Add version here.
 ```
 
-## Glocaltokens Version (Underlaying package)
+## Glocaltokens Version (Underlying package)
 
-<!-- Current installed version of the underlaying package that Google Home integration relays on.
+<!-- Current installed version of the underlying package that Google Home integration rely on.
 Please run `pip show glocaltokens` in the commandline and paste the information below.
 -->
 
