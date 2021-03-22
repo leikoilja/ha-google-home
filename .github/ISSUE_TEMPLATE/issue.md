@@ -20,7 +20,7 @@ Issues not containing the minimum requirements will be closed:
 
 <!-- A clear and concise description of what the bug is. -->
 
-## Version of the custom_component
+## Version of the integration
 
 <!-- If you are not using the newest version, download and try that before opening an issue
 If you are unsure about the version check the const.py file.
@@ -52,6 +52,6 @@ Add your logs here.
 
 ```text
 
-Add your logs here.
+Add your debug logs here.
 
 ```
