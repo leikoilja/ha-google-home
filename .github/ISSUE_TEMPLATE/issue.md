@@ -10,11 +10,11 @@ DO NOT DELETE ANYTHING FROM THIS TEMPLATE.
 Issues not containing the minimum requirements will be closed:
 
 To help us to resolve this issue please include the following information:
-- A good description that describes in details what the issue is.
-- Version of the integration.
-- Version of glocaltokens package.
-- Logs. The more the better.
-- Debug logs.
+- Describe the issue in detail.
+- Provide steps to reproduce this issue.
+- Add version of the `google_home` integration.
+- Add version of `glocaltokens` package.
+- Attach logs. The more the better. Enable debug logs for the integration.
 
 -->
 
