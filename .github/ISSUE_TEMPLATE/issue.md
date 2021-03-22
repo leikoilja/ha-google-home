@@ -35,7 +35,7 @@ Add version here.
 ## Glocaltokens Version (Underlying package)
 
 <!-- Current installed version of the underlying package that Google Home integration relies on.
-Please run `pip show glocaltokens` in the commandline and paste the information below.
+Please run `pip show glocaltokens` in the command line and paste the information below.
 -->
 
 ```text
