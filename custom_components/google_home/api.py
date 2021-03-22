@@ -113,51 +113,63 @@ class GlocaltokensApiClient:
         HEADERS[HEADER_CAST_LOCAL_AUTH] = device.auth_token
 
         resp = None
-        async with self._session.get(url, headers=HEADERS, timeout=TIMEOUT) as response:
-            if response.status == HTTP_OK:
-                resp = await response.json()
-            elif response.status == HTTP_UNAUTHORIZED:
-                # If token is invalid - force reload homegraph providing new token
-                # and rerun the task.
-                _LOGGER.debug(
-                    (
-                        "Failed to fetch data from %s due to invalid token. "
-                        "Will refresh the token and try again."
-                    ),
-                    device.name,
-                )
-                # We need to retry the update task instead of just cleaning the list
-                self.google_devices = []
-            elif response.status == HTTP_NOT_FOUND:
-                device.available = False
-                _LOGGER.debug(
-                    (
-                        "Failed to fetch data from %s, API returned %d. "
-                        "The device(hardware='%s') is not Google Home "
-                        "compatable and has no alarms/timers."
-                    ),
-                    device.name,
-                    response.status,
-                    device.hardware,
-                )
-            else:
-                _LOGGER.error(
-                    "Failed to fetch %s data, API returned %d: %s",
-                    device.name,
-                    response.status,
-                    response,
-                )
 
-        if resp:
-            if JSON_TIMER in resp or JSON_ALARM in resp:
-                device.set_timers(resp.get(JSON_TIMER))
-                device.set_alarms(resp.get(JSON_ALARM))
-            else:
-                _LOGGER.error(
-                    "For device %s - %s",
-                    device.name,
-                    API_RETURNED_UNKNOWN,
-                )
+        try:
+            async with self._session.get(
+                url, headers=HEADERS, timeout=TIMEOUT
+            ) as response:
+                if response.status == HTTP_OK:
+                    resp = await response.json()
+                elif response.status == HTTP_UNAUTHORIZED:
+                    # If token is invalid - force reload homegraph providing new token
+                    # and rerun the task.
+                    _LOGGER.debug(
+                        (
+                            "Failed to fetch data from %s due to invalid token. "
+                            "Will refresh the token and try again."
+                        ),
+                        device.name,
+                    )
+                    # We need to retry the update task instead of just cleaning the list
+                    self.google_devices = []
+                elif response.status == HTTP_NOT_FOUND:
+                    device.available = False
+                    _LOGGER.debug(
+                        (
+                            "Failed to fetch data from %s, API returned %d. "
+                            "The device(hardware='%s') is not Google Home "
+                            "compatable and has no alarms/timers."
+                        ),
+                        device.name,
+                        response.status,
+                        device.hardware,
+                    )
+                else:
+                    _LOGGER.error(
+                        "Failed to fetch %s data, API returned %d: %s",
+                        device.name,
+                        response.status,
+                        response,
+                    )
+        except aiohttp.ClientError as ex:
+            # Make sure that we log the exception if one occurred.
+            # The only reason we do this broad is so we easily can
+            # debug the application.
+            _LOGGER.error(
+                "Request error: %s",
+                ex,
+            )
+        finally:
+            if resp:
+                if JSON_TIMER in resp or JSON_ALARM in resp:
+                    device.set_timers(resp.get(JSON_TIMER))
+                    device.set_alarms(resp.get(JSON_ALARM))
+                else:
+                    _LOGGER.error(
+                        "For device %s - %s",
+                        device.name,
+                        API_RETURNED_UNKNOWN,
+                    )
         return device
 
     async def update_google_devices_information(self):
