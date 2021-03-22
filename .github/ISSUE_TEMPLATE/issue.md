@@ -5,13 +5,20 @@ about: Create a report to help us improve
 
 <!-- Before you open a new issue, search through the existing issues to see if others have had the same problem.
 
+DO NOT DELETE ANYTHING FROM THIS TEMPLATE.
+
 Issues not containing the minimum requirements will be closed:
 
 - Issues without a description (using the header is not good enough) will be closed.
+- Issues without a Google version wil be closed
+- Issues without any log will be closed
 - Issues without debug logging will be closed.
-- Issues without configuration will be closed
 
 -->
+
+## Describe the bug
+
+<!-- A clear and concise description of what the bug is. -->
 
 ## Version of the custom_component
 
@@ -19,15 +26,25 @@ Issues not containing the minimum requirements will be closed:
 If you are unsure about the version check the const.py file.
 -->
 
-## Configuration
-
-```yaml
-Add your logs here.
+```text
+Add version here.
 ```
 
-## Describe the bug
+## Glocaltokens Version (Underlaying package)
 
-A clear and concise description of what the bug is.
+<!-- Current installed version of the underlaying package that Google Home integration relays on.
+Please run `pip show glocaltokens` in the commandline and paste the information below.
+-->
+
+```text
+Add pip information here.
+```
+
+## Logs
+
+```text
+Add your logs here.
+```
 
 ## Debug log
 
