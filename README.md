@@ -113,11 +113,7 @@ Use Home Assistant build 2021.3 or above.
 
 ### HACS Installation
 
-_Since the integration is under active development, it is not yet added to HACS default repository, only manual installation is availabe for early testers_
-
-To install the integration follow [HACS description](https://hacs.xyz/docs/faq/custom_repositories) to add custom repository.
-Provide `https://github.com/leikoilja/ha-google-home` as repository URL and select "Integration" category.
-We recommend you select the latest stable release.
+You can find it in the default HACS repo. Just search `Google Home`.
 
 ### Manual Installation
 
