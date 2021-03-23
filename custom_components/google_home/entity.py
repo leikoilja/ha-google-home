@@ -66,7 +66,7 @@ class GoogleHomeDeviceEntity(CoordinatorEntity):
 
     @property
     def device_class(self) -> str:
-        """Return de device class of the sensor."""
+        """Return the device class of the sensor."""
         return "google_home__custom_device_class"
 
 
@@ -135,7 +135,7 @@ class GoogleHomeNextAlarmEntity(CoordinatorEntity):
 
     @property
     def device_class(self) -> str:
-        """Return de device class of the sensor."""
+        """Return the device class of the sensor."""
         return DEVICE_CLASS_TIMESTAMP
 
 
@@ -204,5 +204,5 @@ class GoogleHomeNextTimerEntity(CoordinatorEntity):
 
     @property
     def device_class(self) -> str:
-        """Return de device class of the sensor."""
+        """Return the device class of the sensor."""
         return DEVICE_CLASS_TIMESTAMP
