@@ -2,6 +2,7 @@
 
 from typing import Set, Tuple, TypedDict
 
+from homeassistant.const import DEVICE_CLASS_TIMESTAMP
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
     DataUpdateCoordinator,
@@ -132,6 +133,11 @@ class GoogleHomeNextAlarmEntity(CoordinatorEntity):
         """Icon to use in the frontend, if any."""
         return ICON_ALARMS
 
+    @property
+    def device_class(self) -> str:
+        """Return de device class of the sensor."""
+        return DEVICE_CLASS_TIMESTAMP
+
 
 class GoogleHomeTimersEntity(CoordinatorEntity):
     """Entity base for timers sensor"""
@@ -195,3 +201,8 @@ class GoogleHomeNextTimerEntity(CoordinatorEntity):
     def icon(self) -> str:
         """Icon to use in the frontend, if any."""
         return ICON_TIMERS
+
+    @property
+    def device_class(self) -> str:
+        """Return de device class of the sensor."""
+        return DEVICE_CLASS_TIMESTAMP
