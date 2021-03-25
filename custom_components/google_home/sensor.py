@@ -1,11 +1,11 @@
 """Sensor platforms for Google Home"""
 import logging
-from typing import Any, Dict, Iterable, List
+from typing import Any, Dict, Iterable, List, Optional
 
 from typing_extensions import Protocol
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import DEVICE_CLASS_TIMESTAMP, STATE_OFF, STATE_ON
+from homeassistant.const import DEVICE_CLASS_TIMESTAMP, STATE_OFF
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import Entity
 
@@ -16,8 +16,6 @@ from .const import (
     ICON_TOKEN,
     LABEL_ALARMS,
     LABEL_DEVICE,
-    LABEL_NEXT_ALARM,
-    LABEL_NEXT_TIMER,
     LABEL_TIMERS,
 )
 from .entity import GoogleHomeBaseEntity
@@ -53,15 +51,7 @@ async def async_setup_entry(
                     coordinator,
                     device.name,
                 ),
-                GoogleHomeNextAlarmSensor(
-                    coordinator,
-                    device.name,
-                ),
                 GoogleHomeTimersSensor(
-                    coordinator,
-                    device.name,
-                ),
-                GoogleHomeNextTimerSensor(
                     coordinator,
                     device.name,
                 ),
@@ -84,7 +74,7 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
         return ICON_TOKEN
 
     @property
-    def state(self) -> str:
+    def state(self) -> Optional[str]:
         device = self.get_device()
         return device.auth_token if device else None
 
@@ -100,8 +90,7 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
             "available": False,
             "integration": DOMAIN,
         }
-        attributes = self.get_device_attributes(device) if device else attributes
-        return attributes
+        return self.get_device_attributes(device) if device else attributes
 
     @staticmethod
     def get_device_attributes(device):
@@ -130,10 +119,17 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
         return ICON_ALARMS
 
     @property
-    def state(self) -> str:
-        alarms = self._get_alarms_data()
-        state = STATE_ON if len(alarms) else STATE_OFF
-        return state
+    def device_class(self) -> str:
+        """Return the device class of the sensor."""
+        return DEVICE_CLASS_TIMESTAMP
+
+    @property
+    def state(self) -> Optional[str]:
+        device = self.get_device()
+        if not device:
+            return None
+        next_alarm = device.get_next_alarm()
+        return next_alarm.local_time_iso if next_alarm else STATE_OFF
 
     @property
     def device_state_attributes(self):
@@ -146,49 +142,7 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
     def _get_alarms_data(self) -> List[Dict[Any, Any]]:
         """Update alarms data extracting it from coordinator"""
         device = self.get_device()
-        return self.as_dict(device.get_sorted_alarms())
-
-
-class GoogleHomeNextAlarmSensor(GoogleHomeBaseEntity):
-    """Google Home Next Alarm sensor."""
-
-    @property
-    def label(self) -> str:
-        """Label to use for name and unique id."""
-        return LABEL_NEXT_ALARM
-
-    @property
-    def icon(self) -> str:
-        """Icon to use in the frontend."""
-        return ICON_ALARMS
-
-    @property
-    def device_class(self) -> str:
-        """Return the device class of the sensor."""
-        return DEVICE_CLASS_TIMESTAMP
-
-    @property
-    def state(self) -> str:
-        alarm = self._get_next_alarm()
-        return alarm.local_time_iso if alarm else STATE_OFF
-
-    @property
-    def device_state_attributes(self):
-        """Return the state attributes."""
-        alarm = self._get_next_alarm()
-        attributes = alarm.__dict__ if alarm else {}
-        attributes.update(
-            {
-                "integration": DOMAIN,
-            }
-        )
-        return attributes
-
-    def _get_next_alarm(self):
-        """Update alarms data extracting it from coordinator"""
-        device = self.get_device()
-        alarm = device.get_next_alarm()
-        return alarm
+        return self.as_dict(device.get_sorted_alarms()) if device else []
 
 
 class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
@@ -205,9 +159,17 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
         return ICON_TIMERS
 
     @property
-    def state(self) -> str:
-        timers = self._get_timers_data()
-        return STATE_ON if len(timers) else STATE_OFF
+    def device_class(self) -> str:
+        """Return the device class of the sensor."""
+        return DEVICE_CLASS_TIMESTAMP
+
+    @property
+    def state(self) -> Optional[str]:
+        device = self.get_device()
+        if not device:
+            return None
+        timer = device.get_next_timer()
+        return timer.local_time_iso if timer else STATE_OFF
 
     @property
     def device_state_attributes(self):
@@ -220,46 +182,4 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
     def _get_timers_data(self) -> List[Dict[Any, Any]]:
         """Update timers data extracting it from coordinator"""
         device = self.get_device()
-        return self.as_dict(device.get_sorted_timers())
-
-
-class GoogleHomeNextTimerSensor(GoogleHomeBaseEntity):
-    """Google Home Next Timer sensor."""
-
-    @property
-    def label(self) -> str:
-        """Label to use for name and unique id."""
-        return LABEL_NEXT_TIMER
-
-    @property
-    def icon(self) -> str:
-        """Icon to use in the frontend."""
-        return ICON_TIMERS
-
-    @property
-    def device_class(self) -> str:
-        """Return the device class of the sensor."""
-        return DEVICE_CLASS_TIMESTAMP
-
-    @property
-    def state(self) -> str:
-        timer = self._get_next_timer()
-        return timer.local_time_iso if timer else STATE_OFF
-
-    @property
-    def device_state_attributes(self):
-        """Return the state attributes."""
-        timer = self._get_next_timer()
-        attributes = timer.__dict__ if timer else {}
-        attributes.update(
-            {
-                "integration": DOMAIN,
-            }
-        )
-        return attributes
-
-    def _get_next_timer(self):
-        """Update alarms data extracting it from coordinator"""
-        device = self.get_device()
-        timer = device.get_next_timer()
-        return timer
+        return self.as_dict(device.get_sorted_timers()) if device else []
