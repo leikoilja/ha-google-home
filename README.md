@@ -35,8 +35,9 @@ See [Contribution](#contribution) section for more information.
    - [Running in Home Assistant Docker container](#running-in-home-assistant-docker-container)
 4. [Lovelace Cards](#lovelace-cards)
 5. [Diagnostic Data Collection](#diagnostic-data-collection)
-6. [Contribution](#contribution)
-7. [Credits](#credits)
+6. [Troubleshooting](#troubleshooting)
+7. [Contribution](#contribution)
+8. [Credits](#credits)
 
 </details>
 
@@ -165,6 +166,64 @@ working on catching and fixing errors before the user even knows about them.
 To do so, we are implementing anonymous diagnostic data collection.
 We will never collect any user sensitive data, only integration related
 warnings and errors. See related [developers discussion](https://github.com/leikoilja/ha-google-home/discussions/116).
+
+## Troubleshooting
+
+### Collecting useful log data
+
+Here are the steps to generate useful log data:
+
+1. Temporary log level change.
+    1. Visit [![Open your Home Assistant instance and show your service developer tools.](https://my.home-assistant.io/badges/developer_services.svg)](https://my.home-assistant.io/redirect/developer_services/)
+    2. Choose `Logger: Set level` from  the **Service** menu.
+    3. Under **Service data** paste the following:
+        ```yaml
+        custom_components.google_home: debug
+        glocaltokens: debug
+        ```
+    4. Click **Call Service**.
+2. Read the log information.
+    1. Visit [![Open your Home Assistant instance and show your Home Assistant logs.](https://my.home-assistant.io/badges/logs.svg)](https://my.home-assistant.io/redirect/logs/)
+    2. Click **Load Full Home Assistant Log**.
+    3. Look for all `google_home` entries.
+    4. Also look for all `glocaltokens` entries.
+3. Requesting help with the log information.
+    1. Copy the log entries.
+    2. Paste them into a discussion forum or bug report between the following two lines:
+        >\```
+        >
+        >\```
+
+> Advanced tips:
+> * Adding ` ```python ` to the beginning of your code block instead of just ` ``` ` adds color coding to make the logs easier for developers to read.
+> * Use [LogExpert](https://github.com/zarunbal/LogExpert/) to make finding log entries quicker.
+>   1. Open home-assistant.log in your config folder.
+>   2. Use `glocaltokens|google_home` as your _Text filter_ to include logs from both _glocaltokens_ and _google_home_.
+
+### "Username/Password is incorrect"
+If you get this error:
+1. First verify you are using the correct Username and Password combination for that Google account.
+2. Have you enabled 2 Factor Authentication on thant Google account? _If so read the [2 Factor Authentication](#2-factor-authentication) section to continue._
+3. After ruling out #1 and #2: _Read the [Collecting useful log data](#collecting-useful-log-data) section._
+
+### 2 Factor Authentication / App Passwords
+#### Error: "The setting you are looking for is not available for your account." at https://myaccount.google.com/apppasswords.
+This error will occur if you do not have 2 Factor Authentication (2FA) setup on your Google account.
+
+  Here are the steps to correct this issue:
+  1. If you have multiple Google accounts go to [Google.com](https://google.com) and log out of every accout!
+  (_This causes a lot of confusion! You may think you have enabled 2FA only to be enabling it on an alternate Google account!_)
+  2. Go to [Google.com](https://google.com) and **only** log into the Google Home account you want to control with the Google Home Integration.
+  3. Visit https://myaccount.google.com/apppasswords
+      1. Click **Select app** and enter a descriptive name such as _Google Home Integration for Home Assistant_.
+      2. Click the **Generate** button.
+      3. Copy the password and return to the Google Home Configuration screen.
+  4. Return to [![Open your Home Assistant instance and show your integrations.](https://my.home-assistant.io/badges/integrations.svg)](https://my.home-assistant.io/redirect/integrations/) page.
+      1. Click **Configure** on the Google Home integration.
+      2. Enter your Google account username (including @gmail.com).
+      3. Paste the password into the "_Google account app password_" field.
+      4. Click **Submit**.
+>>>>>>> README.md: Add TROUBLESHOOTING section
 
 ## Contribution
 
