@@ -74,7 +74,7 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
     """Google Home Device sensor."""
 
     @property
-    def label(self):
+    def label(self) -> str:
         """Label to use for name and unique id."""
         return LABEL_DEVICE
 
@@ -120,7 +120,7 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
     """Google Home Alarms sensor."""
 
     @property
-    def label(self):
+    def label(self) -> str:
         """Label to use for name and unique id."""
         return LABEL_ALARMS
 
@@ -153,7 +153,7 @@ class GoogleHomeNextAlarmSensor(GoogleHomeBaseEntity):
     """Google Home Next Alarm sensor."""
 
     @property
-    def label(self):
+    def label(self) -> str:
         """Label to use for name and unique id."""
         return LABEL_NEXT_ALARM
 
@@ -195,7 +195,7 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
     """Google Home Timers sensor."""
 
     @property
-    def label(self):
+    def label(self) -> str:
         """Label to use for name and unique id."""
         return LABEL_TIMERS
 
@@ -227,7 +227,7 @@ class GoogleHomeNextTimerSensor(GoogleHomeBaseEntity):
     """Google Home Next Timer sensor."""
 
     @property
-    def label(self):
+    def label(self) -> str:
         """Label to use for name and unique id."""
         return LABEL_NEXT_TIMER
 

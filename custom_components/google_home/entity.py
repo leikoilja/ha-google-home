@@ -28,7 +28,7 @@ class GoogleHomeBaseEntity(CoordinatorEntity, ABC):
 
     @property
     @abstractmethod
-    def label(self):
+    def label(self) -> str:
         """Label to use for name and unique id."""
         ...
 
