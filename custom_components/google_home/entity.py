@@ -54,7 +54,9 @@ class GoogleHomeBaseEntity(CoordinatorEntity, ABC):
         """Return the device matched by device name
         from the list of google devices in coordinator_data"""
         matched_devices = [
-            device for device in self.coordinator if device.name == self.device_name
+            device
+            for device in self.coordinator.data
+            if device.name == self.device_name
         ]
         return matched_devices[0] if matched_devices else None
 
