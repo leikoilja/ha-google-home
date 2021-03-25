@@ -33,8 +33,6 @@ DEFAULT_NAME = "Google Home"
 
 LABEL_ALARMS = "alarms"
 LABEL_AVAILABLE = "available"
-LABEL_NEXT_ALARM = "next_alarm"
-LABEL_NEXT_TIMER = "next_timer"
 LABEL_TIMERS = "timers"
 LABEL_DEVICE = "device"
 
