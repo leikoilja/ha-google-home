@@ -5,19 +5,22 @@ from typing import Any, Dict, Iterable, List
 from typing_extensions import Protocol
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import STATE_OFF, STATE_ON
+from homeassistant.const import DEVICE_CLASS_TIMESTAMP, STATE_OFF, STATE_ON
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import Entity
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from .const import DOMAIN
-from .entity import (
-    GoogleHomeAlarmEntity,
-    GoogleHomeDeviceEntity,
-    GoogleHomeNextAlarmEntity,
-    GoogleHomeNextTimerEntity,
-    GoogleHomeTimersEntity,
+from .const import (
+    DOMAIN,
+    ICON_ALARMS,
+    ICON_TIMERS,
+    ICON_TOKEN,
+    LABEL_ALARMS,
+    LABEL_DEVICE,
+    LABEL_NEXT_ALARM,
+    LABEL_NEXT_TIMER,
+    LABEL_TIMERS,
 )
+from .entity import GoogleHomeBaseEntity
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -42,12 +45,11 @@ async def async_setup_entry(
             GoogleHomeDeviceSensor(
                 coordinator,
                 device.name,
-                device.auth_token,
             )
         )
         if device.auth_token and device.available:
             sensors += [
-                GoogleHomeAlarmSensor(
+                GoogleHomeAlarmsSensor(
                     coordinator,
                     device.name,
                 ),
@@ -55,7 +57,7 @@ async def async_setup_entry(
                     coordinator,
                     device.name,
                 ),
-                GoogleHomeTimerSensor(
+                GoogleHomeTimersSensor(
                     coordinator,
                     device.name,
                 ),
@@ -68,42 +70,28 @@ async def async_setup_entry(
     return True
 
 
-class GoogleHomeSensorMixin:
-    """Adds basic functions to sensors"""
+class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
+    """Google Home Device sensor."""
 
-    def get_device(self):
-        """Return the device matched by device name
-        from the list of google devices in coordinator_data"""
-        return next(
-            (
-                device
-                for device in self.coordinator.data
-                if device.name == self.device_name
-            ),
-            None,
-        )
+    @property
+    def name(self) -> str:
+        """Return the name of the sensor."""
+        return f"{self.device_name} {LABEL_DEVICE}"
 
-    @staticmethod
-    def as_dict(obj_list: List[Any]) -> List[Dict[Any, Any]]:
-        """Return list of objects represented as dictionaries """
-        return [obj.__dict__ for obj in obj_list]
+    @property
+    def unique_id(self) -> str:
+        """Return a unique ID to use for this entity."""
+        return f"{self.device_name}/{LABEL_DEVICE}"
 
-
-class GoogleHomeDeviceSensor(GoogleHomeSensorMixin, GoogleHomeDeviceEntity):
-    """GoogleHome Device Sensor class."""
-
-    def __init__(
-        self, coordinator: DataUpdateCoordinator, device_name: str, auth_token: str
-    ):
-        """Initialize the sensor."""
-        super().__init__(coordinator, device_name)
-        self.auth_token = auth_token
+    @property
+    def icon(self) -> str:
+        """Return the icon of the sensor."""
+        return ICON_TOKEN
 
     @property
     def state(self) -> str:
         device = self.get_device()
-        auth_token = device.auth_token if device else self.auth_token
-        return auth_token
+        return device.auth_token if device else None
 
     @property
     def device_state_attributes(self):
@@ -133,8 +121,23 @@ class GoogleHomeDeviceSensor(GoogleHomeSensorMixin, GoogleHomeDeviceEntity):
         }
 
 
-class GoogleHomeAlarmSensor(GoogleHomeSensorMixin, GoogleHomeAlarmEntity):
-    """Representation of a Sensor."""
+class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
+    """Google Home Alarms sensor."""
+
+    @property
+    def name(self) -> str:
+        """Return the name of the sensor."""
+        return f"{self.device_name} {LABEL_ALARMS}"
+
+    @property
+    def unique_id(self) -> str:
+        """Return a unique ID to use for this entity."""
+        return f"{self.device_name}/{LABEL_ALARMS}"
+
+    @property
+    def icon(self) -> str:
+        """Icon to use in the frontend."""
+        return ICON_ALARMS
 
     @property
     def state(self) -> str:
@@ -156,8 +159,28 @@ class GoogleHomeAlarmSensor(GoogleHomeSensorMixin, GoogleHomeAlarmEntity):
         return self.as_dict(device.get_sorted_alarms())
 
 
-class GoogleHomeNextAlarmSensor(GoogleHomeSensorMixin, GoogleHomeNextAlarmEntity):
-    """Representation of a Sensor."""
+class GoogleHomeNextAlarmSensor(GoogleHomeBaseEntity):
+    """Google Home Next Alarm sensor."""
+
+    @property
+    def name(self) -> str:
+        """Return the name of the sensor."""
+        return f"{self.device_name} {LABEL_NEXT_ALARM}"
+
+    @property
+    def unique_id(self) -> str:
+        """Return a unique ID to use for this entity."""
+        return f"{self.device_name}/{LABEL_NEXT_ALARM}"
+
+    @property
+    def icon(self) -> str:
+        """Icon to use in the frontend."""
+        return ICON_ALARMS
+
+    @property
+    def device_class(self) -> str:
+        """Return the device class of the sensor."""
+        return DEVICE_CLASS_TIMESTAMP
 
     @property
     def state(self) -> str:
@@ -183,8 +206,23 @@ class GoogleHomeNextAlarmSensor(GoogleHomeSensorMixin, GoogleHomeNextAlarmEntity
         return alarm
 
 
-class GoogleHomeTimerSensor(GoogleHomeSensorMixin, GoogleHomeTimersEntity):
-    """Representation of a Sensor."""
+class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
+    """Google Home Timers sensor."""
+
+    @property
+    def name(self) -> str:
+        """Return the name of the sensor."""
+        return f"{self.device_name} {LABEL_TIMERS}"
+
+    @property
+    def unique_id(self) -> str:
+        """Return a unique ID to use for this entity."""
+        return f"{self.device_name}/{LABEL_TIMERS}"
+
+    @property
+    def icon(self) -> str:
+        """Icon to use in the frontend."""
+        return ICON_TIMERS
 
     @property
     def state(self) -> str:
@@ -205,8 +243,28 @@ class GoogleHomeTimerSensor(GoogleHomeSensorMixin, GoogleHomeTimersEntity):
         return self.as_dict(device.get_sorted_timers())
 
 
-class GoogleHomeNextTimerSensor(GoogleHomeSensorMixin, GoogleHomeNextTimerEntity):
-    """Representation of a Sensor."""
+class GoogleHomeNextTimerSensor(GoogleHomeBaseEntity):
+    """Google Home Next Timer sensor."""
+
+    @property
+    def name(self) -> str:
+        """Return the name of the sensor."""
+        return f"{self.device_name} {LABEL_NEXT_TIMER}"
+
+    @property
+    def unique_id(self) -> str:
+        """Return a unique ID to use for this entity."""
+        return f"{self.device_name}/{LABEL_NEXT_TIMER}"
+
+    @property
+    def icon(self) -> str:
+        """Icon to use in the frontend."""
+        return ICON_TIMERS
+
+    @property
+    def device_class(self) -> str:
+        """Return the device class of the sensor."""
+        return DEVICE_CLASS_TIMESTAMP
 
     @property
     def state(self) -> str:
