@@ -174,7 +174,7 @@ warnings and errors. See related [developers discussion](https://github.com/leik
 Here are the steps to generate useful log data:
 
 1. Temporary log level change.
-    1. Visit [![Open your Home Assistant instance and show your service developer tools.](https://my.home-assistant.io/badges/developer_services.svg)](https://my.home-assistant.io/redirect/developer_services/)
+    1. Visit Home Assistant Developer Services Tool at [my.home-assistant.io/redirect/developer_services](https://my.home-assistant.io/redirect/developer_services/).
     2. Choose `Logger: Set level` from the **Service** menu.
     3. Under **Service data** paste the following:
         ```yaml
@@ -183,7 +183,7 @@ Here are the steps to generate useful log data:
         ```
     4. Click **Call Service**.
 2. Read the log information.
-    1. Visit [![Open your Home Assistant instance and show your Home Assistant logs.](https://my.home-assistant.io/badges/logs.svg)](https://my.home-assistant.io/redirect/logs/)
+    1. Visit Home Assistant Logs at [my.home-assistant.io/redirect/logs](https://my.home-assistant.io/redirect/logs/).
     2. Click **Load Full Home Assistant Log**.
     3. Look for all `google_home` entries.
     4. Also look for all `glocaltokens` entries.
@@ -194,10 +194,10 @@ Here are the steps to generate useful log data:
         >
         >\```
 
-> Advanced tips:
-> * Adding ` ```python ` to the beginning of your code block instead of just ` ``` ` adds color coding to make the logs easier for developers to read.
-> * Use [LogExpert](https://github.com/zarunbal/LogExpert/) to make finding log entries quicker.
->   1. Open home-assistant.log in your config folder.
+> Advanced Windows user tip:
+>
+> Install [LogExpert](https://github.com/zarunbal/LogExpert/) to make finding log entries quicker.
+>   1. Using LogExpert: Open home-assistant.log in your config folder.
 >   2. Use `glocaltokens|google_home` as your _Text filter_ to include logs from both _glocaltokens_ and _google_home_.
 
 ### "Username/Password is incorrect"
@@ -207,18 +207,20 @@ If you get this error:
 3. After ruling out #1 and #2: _Read the [Collecting useful log data](#collecting-useful-log-data) section._
 
 ### 2 Factor Authentication / App Passwords
-#### Error: "The setting you are looking for is not available for your account." at https://myaccount.google.com/apppasswords.
+
+#### Error: "The setting you are looking for is not available for your account." at [myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords).
+
 This error will occur if you do not have 2 Factor Authentication (2FA) setup on your Google account.
 
   Here are the steps to correct this issue:
-  1. If you have multiple Google accounts go to [Google.com](https://google.com) and log out of every accout!
+  1. (Optional) If you have multiple Google accounts it _might_ help to _temporarily_ and log out of every [Google account](https://google.com)!
   (_This causes a lot of confusion! You may think you have enabled 2FA only to be enabling it on an alternate Google account!_)
-  2. Go to [Google.com](https://google.com) and **only** log into the Google Home account you want to control with the Google Home Integration.
-  3. Visit https://myaccount.google.com/apppasswords
+  2. Go to [Google.com](https://google.com) and log into the Google Home account you want to control with the Google Home Integration.
+  3. Visit [myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords). (At this point if you get the above mentioned error, please preform the _Optional_ step #1.)
       1. Click **Select app** and enter a descriptive name such as _Google Home Integration for Home Assistant_.
       2. Click the **Generate** button.
       3. Copy the password and return to the Google Home Configuration screen.
-  4. Return to [![Open your Home Assistant instance and show your integrations.](https://my.home-assistant.io/badges/integrations.svg)](https://my.home-assistant.io/redirect/integrations/) page.
+  4. Return to Integrations at [my.home-assistant.io/redirect/integrations](https://my.home-assistant.io/redirect/integrations/).
       1. Click **Configure** on the Google Home integration.
       2. Enter your Google account username.
       3. Paste the password into the "_Google account app password_" field.
