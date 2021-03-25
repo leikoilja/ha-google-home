@@ -203,7 +203,7 @@ Here are the steps to generate useful log data:
 ### "Username/Password is incorrect"
 If you get this error:
 1. First verify you are using the correct Username and Password combination for that Google account.
-2. Have you enabled 2 Factor Authentication on thant Google account? _If so read the [2 Factor Authentication](#2-factor-authentication--app-passwords) section to continue._
+2. Have you enabled 2 Factor Authentication on that Google account? _If so read the [2 Factor Authentication](#2-factor-authentication--app-passwords) section to continue._
 3. After ruling out #1 and #2: _Read the [Collecting useful log data](#collecting-useful-log-data) section._
 
 ### 2 Factor Authentication / App Passwords
