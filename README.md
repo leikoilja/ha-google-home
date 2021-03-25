@@ -220,7 +220,7 @@ This error will occur if you do not have 2 Factor Authentication (2FA) setup on 
       3. Copy the password and return to the Google Home Configuration screen.
   4. Return to [![Open your Home Assistant instance and show your integrations.](https://my.home-assistant.io/badges/integrations.svg)](https://my.home-assistant.io/redirect/integrations/) page.
       1. Click **Configure** on the Google Home integration.
-      2. Enter your Google account username (including @gmail.com).
+      2. Enter your Google account username.
       3. Paste the password into the "_Google account app password_" field.
       4. Click **Submit**.
 >>>>>>> README.md: Add TROUBLESHOOTING section
