@@ -44,11 +44,12 @@ class GlocaltokensApiClient:
         self._password = password
         self._session = session
         self._android_id = android_id
+        verbose = _LOGGER.level == logging.DEBUG
         self._client = GLocalAuthenticationTokens(
             username=username,
             password=password,
             android_id=android_id,
-            verbose=_LOGGER.level,
+            verbose=verbose,
         )
         self.google_devices: List[GoogleHomeDevice] = []
         self.zeroconf_instance = zeroconf_instance
