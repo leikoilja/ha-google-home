@@ -3,34 +3,22 @@
 from __future__ import annotations
 
 from datetime import timedelta
-from typing import List, Optional, TypedDict
+from typing import List, Optional
 
 from homeassistant.util.dt import as_local, utc_from_timestamp
 
 from .const import DATETIME_STR_FORMAT
+from .types import (
+    AlarmJsonDict,
+    GoogleHomeAlarmDict,
+    GoogleHomeTimerDict,
+    TimerJsonDict,
+)
 
 
 def convert_from_ms_to_s(timestamp: int) -> int:
     """Converts from milliseconds to seconds"""
     return round(timestamp / 1000)
-
-
-class AlarmJsonDict(TypedDict, total=False):
-    """Typed dict for JSON representation of alarm returned by Google Home API"""
-
-    id: str
-    fire_time: int
-    label: Optional[str]
-    recurrence: Optional[str]
-
-
-class TimerJsonDict(TypedDict, total=False):
-    """Typed dict for JSON representation of timer returned by Google Home API"""
-
-    id: str
-    fire_time: int
-    original_duration: int
-    label: Optional[str]
 
 
 class GoogleHomeDevice:
@@ -94,15 +82,6 @@ class GoogleHomeDevice:
         return timers[0] if timers else None
 
 
-class GoogleHomeTimerDict(TypedDict):
-    """Typed dict representation of Google Home time"""
-
-    timer_id: str
-    fire_time: int
-    duration: str
-    label: Optional[str]
-
-
 class GoogleHomeTimer:
     """Local representation of Google Home timer"""
 
@@ -131,15 +110,6 @@ class GoogleHomeTimer:
             "duration": self.duration,
             "label": self.label,
         }
-
-
-class GoogleHomeAlarmDict(TypedDict):
-    """Typed dict representation of Google Home alarm"""
-
-    alarm_id: str
-    fire_time: int
-    label: Optional[str]
-    recurrence: Optional[str]
 
 
 class GoogleHomeAlarm:

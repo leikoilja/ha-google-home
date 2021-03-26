@@ -1,7 +1,6 @@
 """Defines base entities for Google Home"""
 
 from abc import ABC, abstractmethod
-from typing import Set, Tuple, TypedDict
 
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
@@ -10,14 +9,7 @@ from homeassistant.helpers.update_coordinator import (
 
 from .const import DEFAULT_NAME, DOMAIN, MANUFACTURER
 from .models import GoogleHomeDevice
-
-
-class DeviceInfo(TypedDict):
-    """Typed dict for device_info"""
-
-    identifiers: Set[Tuple[str, str]]
-    name: str
-    manufacturer: str
+from .types import DeviceInfo
 
 
 class GoogleHomeBaseEntity(CoordinatorEntity, ABC):

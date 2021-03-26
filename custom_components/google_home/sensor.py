@@ -1,13 +1,10 @@
 """Sensor platforms for Google Home"""
 import logging
-from typing import Iterable, List, Optional, TypedDict
-
-from typing_extensions import Protocol
+from typing import List, Optional
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import DEVICE_CLASS_TIMESTAMP, STATE_OFF
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.entity import Entity
 
 from .const import (
     DOMAIN,
@@ -20,17 +17,14 @@ from .const import (
 )
 from .entity import GoogleHomeBaseEntity
 from .models import GoogleHomeAlarmDict, GoogleHomeDevice, GoogleHomeTimerDict
+from .types import (
+    AddEntitiesCallback,
+    AlarmsAttributes,
+    DeviceAttributes,
+    TimersAttributes,
+)
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
-
-
-class AddEntitiesCallback(Protocol):
-    """Protocol type for async_setup_entry callback"""
-
-    def __call__(
-        self, new_entities: Iterable[Entity], update_before_add: bool = False
-    ) -> None:
-        ...
 
 
 async def async_setup_entry(
@@ -59,17 +53,6 @@ async def async_setup_entry(
             ]
     async_add_devices(sensors)
     return True
-
-
-class DeviceAttributes(TypedDict):
-    """Typed dict for device attributes"""
-
-    device_name: str
-    auth_token: Optional[str]
-    ip_address: Optional[str]
-    hardware: Optional[str]
-    available: bool
-    integration: str
 
 
 class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
@@ -117,13 +100,6 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
         }
 
 
-class AlarmsAttributes(TypedDict):
-    """Typed dict for alarms attributes"""
-
-    alarms: List[GoogleHomeAlarmDict]
-    integration: str
-
-
 class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
     """Google Home Alarms sensor."""
 
@@ -164,13 +140,6 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
         return (
             [alarm.as_dict() for alarm in device.get_sorted_alarms()] if device else []
         )
-
-
-class TimersAttributes(TypedDict):
-    """Typed dict for timers attributes"""
-
-    timers: List[GoogleHomeTimerDict]
-    integration: str
 
 
 class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
