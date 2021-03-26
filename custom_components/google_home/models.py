@@ -3,23 +3,34 @@
 from __future__ import annotations
 
 from datetime import timedelta
-from typing import Any, Dict, List, Optional, TypedDict
+from typing import List, Optional, TypedDict
 
 from homeassistant.util.dt import as_local, utc_from_timestamp
 
-from .const import (
-    DATETIME_STR_FORMAT,
-    FIRE_TIME,
-    ID,
-    LABEL,
-    ORIGINAL_DURATION,
-    RECURRENCE,
-)
+from .const import DATETIME_STR_FORMAT
 
 
 def convert_from_ms_to_s(timestamp: int) -> int:
     """Converts from milliseconds to seconds"""
     return round(timestamp / 1000)
+
+
+class AlarmJsonDict(TypedDict, total=False):
+    """Typed dict for JSON representation of alarm returned by Google Home API"""
+
+    id: str
+    fire_time: int
+    label: Optional[str]
+    recurrence: Optional[str]
+
+
+class TimerJsonDict(TypedDict, total=False):
+    """Typed dict for JSON representation of timer returned by Google Home API"""
+
+    id: str
+    fire_time: int
+    original_duration: int
+    label: Optional[str]
 
 
 class GoogleHomeDevice:
@@ -40,26 +51,26 @@ class GoogleHomeDevice:
         self._timers: List[GoogleHomeTimer] = []
         self._alarms: List[GoogleHomeAlarm] = []
 
-    def set_alarms(self, alarms: List[Dict[str, Any]]) -> None:
+    def set_alarms(self, alarms: List[AlarmJsonDict]) -> None:
         """Stores alarms as GoogleHomeAlarm objects"""
         self._alarms = [
             GoogleHomeAlarm(
-                alarm_id=alarm[ID],
-                fire_time=alarm[FIRE_TIME],
-                label=alarm.get(LABEL),
-                recurrence=alarm.get(RECURRENCE),
+                alarm_id=alarm["id"],
+                fire_time=alarm["fire_time"],
+                label=alarm.get("label"),
+                recurrence=alarm.get("recurrence"),
             )
             for alarm in alarms
         ]
 
-    def set_timers(self, timers: List[Dict[str, Any]]) -> None:
+    def set_timers(self, timers: List[TimerJsonDict]) -> None:
         """Stores timers as GoogleHomeTimer objects"""
         self._timers = [
             GoogleHomeTimer(
-                timer_id=timer[ID],
-                fire_time=timer[FIRE_TIME],
-                duration=timer[ORIGINAL_DURATION],
-                label=timer.get(LABEL),
+                timer_id=timer["id"],
+                fire_time=timer["fire_time"],
+                duration=timer["original_duration"],
+                label=timer.get("label"),
             )
             for timer in timers
         ]
