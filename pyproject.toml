@@ -10,7 +10,7 @@ readme = "README.md"
 python = "^3.8"
 zeroconf = "^0.28.8"
 homeassistant = "^2021.3.2"
-glocaltokens = "0.2.6"
+glocaltokens = "0.2.7"
 
 [tool.poetry.dev-dependencies]
 black = "^20.8b1"

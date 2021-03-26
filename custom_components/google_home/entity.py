@@ -9,6 +9,7 @@ from homeassistant.helpers.update_coordinator import (
 )
 
 from .const import DEFAULT_NAME, DOMAIN, MANUFACTURER
+from .models import GoogleHomeDevice
 
 
 class DeviceInfo(TypedDict):
@@ -50,7 +51,7 @@ class GoogleHomeBaseEntity(CoordinatorEntity, ABC):
             "manufacturer": MANUFACTURER,
         }
 
-    def get_device(self):
+    def get_device(self) -> GoogleHomeDevice:
         """Return the device matched by device name
         from the list of google devices in coordinator_data"""
         matched_devices = [
