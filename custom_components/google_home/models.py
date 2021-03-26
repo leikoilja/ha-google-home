@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from datetime import timedelta
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, TypedDict
 
 from homeassistant.util.dt import as_local, utc_from_timestamp
 
@@ -83,6 +83,15 @@ class GoogleHomeDevice:
         return timers[0] if timers else None
 
 
+class GoogleHomeTimerDict(TypedDict):
+    """Typed dict representation of Google Home time"""
+
+    timer_id: str
+    fire_time: int
+    duration: str
+    label: Optional[str]
+
+
 class GoogleHomeTimer:
     """Local representation of Google Home timer"""
 
@@ -102,6 +111,24 @@ class GoogleHomeTimer:
         dt_local = as_local(dt_utc)
         self.local_time = dt_local.strftime(DATETIME_STR_FORMAT)
         self.local_time_iso = dt_local.isoformat()
+
+    def as_dict(self) -> GoogleHomeTimerDict:
+        """Return typed dict representation."""
+        return {
+            "timer_id": self.timer_id,
+            "fire_time": self.fire_time,
+            "duration": self.duration,
+            "label": self.label,
+        }
+
+
+class GoogleHomeAlarmDict(TypedDict):
+    """Typed dict representation of Google Home alarm"""
+
+    alarm_id: str
+    fire_time: int
+    label: Optional[str]
+    recurrence: Optional[str]
 
 
 class GoogleHomeAlarm:
@@ -123,3 +150,12 @@ class GoogleHomeAlarm:
         dt_local = as_local(dt_utc)
         self.local_time = dt_local.strftime(DATETIME_STR_FORMAT)
         self.local_time_iso = dt_local.isoformat()
+
+    def as_dict(self) -> GoogleHomeAlarmDict:
+        """Return typed dict representation."""
+        return {
+            "alarm_id": self.alarm_id,
+            "fire_time": self.fire_time,
+            "label": self.label,
+            "recurrence": self.recurrence,
+        }

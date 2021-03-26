@@ -1,7 +1,7 @@
 """Defines base entities for Google Home"""
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Set, Tuple, TypedDict
+from typing import Set, Tuple, TypedDict
 
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
@@ -60,8 +60,3 @@ class GoogleHomeBaseEntity(CoordinatorEntity, ABC):
             if device.name == self.device_name
         ]
         return matched_devices[0] if matched_devices else None
-
-    @staticmethod
-    def as_dict(obj_list: List[Any]) -> List[Dict[Any, Any]]:
-        """Return list of objects represented as dictionaries """
-        return [obj.__dict__ for obj in obj_list]

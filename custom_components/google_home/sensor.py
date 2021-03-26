@@ -1,6 +1,6 @@
 """Sensor platforms for Google Home"""
 import logging
-from typing import Any, Dict, Iterable, List, Optional, TypedDict
+from typing import Iterable, List, Optional, TypedDict
 
 from typing_extensions import Protocol
 
@@ -19,7 +19,7 @@ from .const import (
     LABEL_TIMERS,
 )
 from .entity import GoogleHomeBaseEntity
-from .models import GoogleHomeDevice
+from .models import GoogleHomeAlarmDict, GoogleHomeDevice, GoogleHomeTimerDict
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -120,7 +120,7 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
 class AlarmsAttributes(TypedDict):
     """Typed dict for alarms attributes"""
 
-    alarms: List[Dict[Any, Any]]
+    alarms: List[GoogleHomeAlarmDict]
     integration: str
 
 
@@ -158,16 +158,18 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
             "integration": DOMAIN,
         }
 
-    def _get_alarms_data(self) -> List[Dict[Any, Any]]:
+    def _get_alarms_data(self) -> List[GoogleHomeAlarmDict]:
         """Update alarms data extracting it from coordinator"""
         device = self.get_device()
-        return self.as_dict(device.get_sorted_alarms()) if device else []
+        return (
+            [alarm.as_dict() for alarm in device.get_sorted_alarms()] if device else []
+        )
 
 
 class TimersAttributes(TypedDict):
     """Typed dict for timers attributes"""
 
-    timers: List[Dict[Any, Any]]
+    timers: List[GoogleHomeTimerDict]
     integration: str
 
 
@@ -205,7 +207,9 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
             "integration": DOMAIN,
         }
 
-    def _get_timers_data(self) -> List[Dict[Any, Any]]:
+    def _get_timers_data(self) -> List[GoogleHomeTimerDict]:
         """Update timers data extracting it from coordinator"""
         device = self.get_device()
-        return self.as_dict(device.get_sorted_timers()) if device else []
+        return (
+            [timer.as_dict() for timer in device.get_sorted_timers()] if device else []
+        )
