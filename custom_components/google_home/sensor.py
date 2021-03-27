@@ -5,7 +5,7 @@ from typing import Any, Dict, Iterable, List, Optional
 from typing_extensions import Protocol
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import DEVICE_CLASS_TIMESTAMP, STATE_OFF
+from homeassistant.const import DEVICE_CLASS_TIMESTAMP, STATE_UNAVAILABLE
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import Entity
 
@@ -129,7 +129,7 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
         if not device:
             return None
         next_alarm = device.get_next_alarm()
-        return next_alarm.local_time_iso if next_alarm else STATE_OFF
+        return next_alarm.local_time_iso if next_alarm else STATE_UNAVAILABLE
 
     @property
     def device_state_attributes(self):
@@ -169,7 +169,7 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
         if not device:
             return None
         timer = device.get_next_timer()
-        return timer.local_time_iso if timer else STATE_OFF
+        return timer.local_time_iso if timer else STATE_UNAVAILABLE
 
     @property
     def device_state_attributes(self):
