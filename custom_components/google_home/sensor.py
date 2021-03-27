@@ -1,13 +1,10 @@
 """Sensor platforms for Google Home"""
 import logging
-from typing import Any, Dict, Iterable, List, Optional
-
-from typing_extensions import Protocol
+from typing import List, Optional
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import DEVICE_CLASS_TIMESTAMP, STATE_OFF
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.entity import Entity
 
 from .const import (
     DOMAIN,
@@ -19,17 +16,15 @@ from .const import (
     LABEL_TIMERS,
 )
 from .entity import GoogleHomeBaseEntity
+from .models import GoogleHomeAlarmDict, GoogleHomeDevice, GoogleHomeTimerDict
+from .types import (
+    AddEntitiesCallback,
+    AlarmsAttributes,
+    DeviceAttributes,
+    TimersAttributes,
+)
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
-
-
-class AddEntitiesCallback(Protocol):
-    """Protocol type for async_setup_entry callback"""
-
-    def __call__(
-        self, new_entities: Iterable[Entity], update_before_add: bool = False
-    ) -> None:
-        ...
 
 
 async def async_setup_entry(
@@ -79,10 +74,10 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
         return device.auth_token if device else None
 
     @property
-    def device_state_attributes(self):
+    def device_state_attributes(self) -> DeviceAttributes:
         """Return the state attributes."""
         device = self.get_device()
-        attributes = {
+        attributes: DeviceAttributes = {
             "device_name": self.device_name,
             "auth_token": None,
             "ip_address": None,
@@ -93,7 +88,7 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
         return self.get_device_attributes(device) if device else attributes
 
     @staticmethod
-    def get_device_attributes(device):
+    def get_device_attributes(device: GoogleHomeDevice) -> DeviceAttributes:
         """Device representation as dictionary"""
         return {
             "device_name": device.name,
@@ -132,17 +127,19 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
         return next_alarm.local_time_iso if next_alarm else STATE_OFF
 
     @property
-    def device_state_attributes(self):
+    def device_state_attributes(self) -> AlarmsAttributes:
         """Return the state attributes."""
         return {
             "alarms": self._get_alarms_data(),
             "integration": DOMAIN,
         }
 
-    def _get_alarms_data(self) -> List[Dict[Any, Any]]:
+    def _get_alarms_data(self) -> List[GoogleHomeAlarmDict]:
         """Update alarms data extracting it from coordinator"""
         device = self.get_device()
-        return self.as_dict(device.get_sorted_alarms()) if device else []
+        return (
+            [alarm.as_dict() for alarm in device.get_sorted_alarms()] if device else []
+        )
 
 
 class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
@@ -172,14 +169,16 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
         return timer.local_time_iso if timer else STATE_OFF
 
     @property
-    def device_state_attributes(self):
+    def device_state_attributes(self) -> TimersAttributes:
         """Return the state attributes."""
         return {
             "timers": self._get_timers_data(),
             "integration": DOMAIN,
         }
 
-    def _get_timers_data(self) -> List[Dict[Any, Any]]:
+    def _get_timers_data(self) -> List[GoogleHomeTimerDict]:
         """Update timers data extracting it from coordinator"""
         device = self.get_device()
-        return self.as_dict(device.get_sorted_timers()) if device else []
+        return (
+            [timer.as_dict() for timer in device.get_sorted_timers()] if device else []
+        )

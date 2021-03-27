@@ -1,7 +1,6 @@
 """Defines base entities for Google Home"""
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Set, Tuple, TypedDict
 
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
@@ -9,14 +8,8 @@ from homeassistant.helpers.update_coordinator import (
 )
 
 from .const import DEFAULT_NAME, DOMAIN, MANUFACTURER
-
-
-class DeviceInfo(TypedDict):
-    """Typed dict for device_info"""
-
-    identifiers: Set[Tuple[str, str]]
-    name: str
-    manufacturer: str
+from .models import GoogleHomeDevice
+from .types import DeviceInfo
 
 
 class GoogleHomeBaseEntity(CoordinatorEntity, ABC):
@@ -50,7 +43,7 @@ class GoogleHomeBaseEntity(CoordinatorEntity, ABC):
             "manufacturer": MANUFACTURER,
         }
 
-    def get_device(self):
+    def get_device(self) -> GoogleHomeDevice:
         """Return the device matched by device name
         from the list of google devices in coordinator_data"""
         matched_devices = [
@@ -59,8 +52,3 @@ class GoogleHomeBaseEntity(CoordinatorEntity, ABC):
             if device.name == self.device_name
         ]
         return matched_devices[0] if matched_devices else None
-
-    @staticmethod
-    def as_dict(obj_list: List[Any]) -> List[Dict[Any, Any]]:
-        """Return list of objects represented as dictionaries """
-        return [obj.__dict__ for obj in obj_list]

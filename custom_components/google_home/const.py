@@ -51,13 +51,6 @@ HEADERS = {
 }
 TIMEOUT = 10  # Request Timeout in seconds
 
-# TIMERS & ALARMS ATTRIBUTE NAMES
-ID = "id"
-LABEL = "label"
-RECURRENCE = "recurrence"
-FIRE_TIME = "fire_time"
-ORIGINAL_DURATION = "original_duration"
-
 # TIMESTRINGS
 TIME_STR_FORMAT = "%H:%M:%S"
 DATETIME_STR_FORMAT = f"{DATE_STR_FORMAT} {TIME_STR_FORMAT}"
