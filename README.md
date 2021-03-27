@@ -74,7 +74,8 @@ Each of the alarms has the following keys:
 | `local_time_iso` | Time in ISO 8601 standard    | Useful for automations                                                                                                                                                                                  |
 | `recurrence`     | List of integers             | Days of the week when the alarm will go off. Please note, respecting Google set standard, the week starts from Sunday, therefore is denoted by 0. Correspondingly, Monday is 1, Saturday is 6 and so on |
 
-The state value shows the next alarm as a timestring (i.e.: `2021-03-07T15:26:17+01:00`) if there is at least one alarm set, otherwise it is set to `off`.
+The state value shows the next alarm as a timestring (i.e.: `2021-03-07T15:26:17+01:00`) if there is at least one alarm set, otherwise it is set to `unavailable`.
+This matches state format of [standard next alarm sensor](https://companion.home-assistant.io/docs/core/sensors/#next-alarm-sensor) provided by `mobile_app`.
 
 This sensor is formatted to be compatible with the mobile app sensor, e.g. `sensor.phone_next_alarm`.
 
@@ -93,7 +94,7 @@ Each of the timers has the following keys:
 | `local_time_iso` | Time in ISO 8601 standard    | Useful for automations                                                    |
 | `duration`       | Seconds                      | Timer duration in seconds                                                 |
 
-The state value shows the next timer as a timestring (i.e.: `2021-03-07T15:26:17+01:00`) if there is at least one timer set, otherwise it is set to `off`.
+The state value shows the next timer as a timestring (i.e.: `2021-03-07T15:26:17+01:00`) if there is at least one timer set, otherwise it is set to `unavailable`.
 
 ## Getting Started
 
