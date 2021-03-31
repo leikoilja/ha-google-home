@@ -18,11 +18,9 @@ from .const import (
     CONF_MASTER_TOKEN,
     CONF_PASSWORD,
     CONF_USERNAME,
+    DOMAIN,
     PLATFORMS,
 )
-
-# Pylint issue should be fixed by https://github.com/PyCQA/pylint/pull/4207
-from .const import DOMAIN  # pylint: disable=unused-import
 from .exceptions import InvalidMasterToken
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
