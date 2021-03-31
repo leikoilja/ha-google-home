@@ -1,10 +1,11 @@
 """Sensor platforms for Google Home"""
 import logging
-from typing import List, Optional
+from typing import Callable, Iterable, List, Optional
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import DEVICE_CLASS_TIMESTAMP, STATE_UNAVAILABLE
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity import Entity
 
 from .const import (
     DOMAIN,
@@ -17,22 +18,19 @@ from .const import (
 )
 from .entity import GoogleHomeBaseEntity
 from .models import GoogleHomeAlarmDict, GoogleHomeDevice, GoogleHomeTimerDict
-from .types import (
-    AddEntitiesCallback,
-    AlarmsAttributes,
-    DeviceAttributes,
-    TimersAttributes,
-)
+from .types import AlarmsAttributes, DeviceAttributes, TimersAttributes
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
 async def async_setup_entry(
-    hass: HomeAssistant, entry: ConfigEntry, async_add_devices: AddEntitiesCallback
+    hass: HomeAssistant,
+    entry: ConfigEntry,
+    async_add_devices: Callable[[Iterable[Entity]], None],
 ) -> bool:
     """Setup sensor platform."""
     coordinator = hass.data[DOMAIN][entry.entry_id]
-    sensors = []
+    sensors: List[Entity] = []
     for device in coordinator.data:
         sensors.append(
             GoogleHomeDeviceSensor(

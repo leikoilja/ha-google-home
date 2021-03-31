@@ -1,6 +1,6 @@
 """The errors of GoogleHome integration."""
-from homeassistant import exceptions
+from homeassistant.exceptions import HomeAssistantError
 
 
-class InvalidMasterToken(exceptions.HomeAssistantError):
+class InvalidMasterToken(HomeAssistantError):
     """Error to indicate the master token is invalid."""

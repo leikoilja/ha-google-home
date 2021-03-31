@@ -61,8 +61,8 @@ class GlocaltokensApiClient:
     async def async_get_master_token(self) -> str:
         """Get master API token"""
 
-        def _get_master_token() -> Optional[str]:
-            return self._client.get_master_token()
+        def _get_master_token() -> str:
+            return self._client.get_master_token() or ""
 
         master_token = await self.hass.async_add_executor_job(_get_master_token)
         if is_aas_et(master_token) is False:
@@ -111,7 +111,7 @@ class GlocaltokensApiClient:
         return url
 
     async def get_alarms_and_timers(
-        self, device: GoogleHomeDevice, ip_address: str
+        self, device: GoogleHomeDevice, ip_address: str, auth_token: str
     ) -> GoogleHomeDevice:
         """Fetches timers and alarms from google device"""
         url = self.create_url(ip_address, PORT, API_ENDPOINT_ALARMS)
@@ -120,7 +120,7 @@ class GlocaltokensApiClient:
             device.name,
             url,
         )
-        HEADERS[HEADER_CAST_LOCAL_AUTH] = device.auth_token
+        HEADERS[HEADER_CAST_LOCAL_AUTH] = auth_token
 
         resp = None
 
@@ -221,9 +221,9 @@ class GlocaltokensApiClient:
 
         coordinator_data = await gather(
             *[
-                self.get_alarms_and_timers(device, device.ip_address)
+                self.get_alarms_and_timers(device, device.ip_address, device.auth_token)
                 for device in devices
-                if device.ip_address
+                if device.ip_address and device.auth_token
             ]
         )
         return coordinator_data
