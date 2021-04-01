@@ -49,8 +49,8 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):  # type: 
             username = user_input[CONF_USERNAME]
             session = async_create_clientsession(self.hass)
             client = GlocaltokensApiClient(
-                self.hass,
-                session,
+                hass=self.hass,
+                session=session,
                 username=user_input[CONF_USERNAME],
                 password=user_input[CONF_PASSWORD],
             )
