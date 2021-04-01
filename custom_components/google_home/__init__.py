@@ -10,6 +10,7 @@ import logging
 
 from homeassistant.components import zeroconf
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import Config, HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
@@ -18,8 +19,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from .api import GlocaltokensApiClient
 from .const import (
     CONF_ANDROID_ID,
-    CONF_PASSWORD,
-    CONF_USERNAME,
+    CONF_MASTER_TOKEN,
     DOMAIN,
     PLATFORMS,
     SENSOR,
@@ -44,12 +44,19 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     username = entry.data.get(CONF_USERNAME)
     password = entry.data.get(CONF_PASSWORD)
     android_id = entry.data.get(CONF_ANDROID_ID)
+    master_token = entry.data.get(CONF_MASTER_TOKEN)
 
     session = async_get_clientsession(hass, verify_ssl=False)
 
     zeroconf_instance = await zeroconf.async_get_instance(hass)
     glocaltokens_client = GlocaltokensApiClient(
-        hass, username, password, session, android_id, zeroconf_instance
+        hass=hass,
+        session=session,
+        username=username,
+        password=password,
+        master_token=master_token,
+        android_id=android_id,
+        zeroconf_instance=zeroconf_instance,
     )
 
     coordinator = DataUpdateCoordinator(

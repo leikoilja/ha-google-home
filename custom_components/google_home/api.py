@@ -33,9 +33,10 @@ class GlocaltokensApiClient:
     def __init__(
         self,
         hass: HomeAssistant,
-        username: str,
-        password: str,
         session: aiohttp.ClientSession,
+        username: Optional[str] = None,
+        password: Optional[str] = None,
+        master_token: Optional[str] = None,
         android_id: Optional[str] = None,
         zeroconf_instance: Optional[Zeroconf] = None,
     ):
@@ -49,6 +50,7 @@ class GlocaltokensApiClient:
         self._client = GLocalAuthenticationTokens(
             username=username,
             password=password,
+            master_token=master_token,
             android_id=android_id,
             verbose=verbose,
         )
