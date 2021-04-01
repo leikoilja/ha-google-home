@@ -18,8 +18,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from .api import GlocaltokensApiClient
 from .const import (
     CONF_ANDROID_ID,
-    CONF_PASSWORD,
-    CONF_USERNAME,
+    CONF_MASTER_TOKEN,
     DOMAIN,
     PLATFORMS,
     SENSOR,
@@ -41,15 +40,18 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass.data.setdefault(DOMAIN, {})
         _LOGGER.info(STARTUP_MESSAGE)
 
-    username = entry.data.get(CONF_USERNAME)
-    password = entry.data.get(CONF_PASSWORD)
     android_id = entry.data.get(CONF_ANDROID_ID)
+    master_token = entry.data.get(CONF_MASTER_TOKEN)
 
     session = async_get_clientsession(hass, verify_ssl=False)
 
     zeroconf_instance = await zeroconf.async_get_instance(hass)
     glocaltokens_client = GlocaltokensApiClient(
-        hass, username, password, session, android_id, zeroconf_instance
+        hass,
+        session,
+        master_token=master_token,
+        android_id=android_id,
+        zeroconf_instance=zeroconf_instance,
     )
 
     coordinator = DataUpdateCoordinator(

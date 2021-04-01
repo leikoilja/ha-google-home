@@ -49,10 +49,10 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):  # type: 
             username = user_input[CONF_USERNAME]
             session = async_create_clientsession(self.hass)
             client = GlocaltokensApiClient(
-                hass=self.hass,
+                self.hass,
+                session,
                 username=user_input[CONF_USERNAME],
                 password=user_input[CONF_PASSWORD],
-                session=session,
             )
             valid, master_token = await self._test_credentials(client)
             if valid:
