@@ -198,7 +198,7 @@ Here are the steps to generate useful log data:
 >
 > Install [LogExpert](https://github.com/zarunbal/LogExpert/) to make finding log entries quicker.
 >   1. Using LogExpert: Open `home-assistant.log` in your config folder.
->   2. Use `glocaltokens|google_home` as your _Text filter_ to include logs from both _glocaltokens_ and _google_home_.
+>   2. Use `glocaltokens|google_home` as your _Text filter_ and check `Regex` to include logs from both _glocaltokens_ and _google_home_.
 
 ### "Username/Password is incorrect"
 If you get this error:
