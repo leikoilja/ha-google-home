@@ -16,10 +16,6 @@
   experience for Home Assistant enthusiasts.
 </p>
 
-**[!] Beta version alert.**
-Please note this integration is in the early stage of it's development.
-See [Contribution](#contribution) section for more information.
-
 <details open="open">
   <summary>Table of Contents</summary>
 
