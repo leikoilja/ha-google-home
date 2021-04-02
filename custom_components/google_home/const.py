@@ -9,6 +9,7 @@ MANUFACTURER = "google_home"
 
 ATTRIBUTION = "json"
 ISSUE_URL = "https://github.com/leikoilja/ha-google-home/issues"
+CONF_DATA_COLLECTION = "data_collection"
 
 # Icons
 ICON_TOKEN = "mdi:form-textbox-password"

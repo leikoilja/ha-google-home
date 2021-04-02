@@ -15,6 +15,7 @@ from homeassistant.helpers.aiohttp_client import async_create_clientsession
 from .api import GlocaltokensApiClient
 from .const import (
     CONF_ANDROID_ID,
+    CONF_DATA_COLLECTION,
     CONF_MASTER_TOKEN,
     CONF_PASSWORD,
     CONF_USERNAME,
@@ -81,7 +82,11 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):  # type: 
         return self.async_show_form(
             step_id="user",
             data_schema=vol.Schema(
-                {vol.Required(CONF_USERNAME): str, vol.Required(CONF_PASSWORD): str}
+                {
+                    vol.Required(CONF_USERNAME): str,
+                    vol.Required(CONF_PASSWORD): str,
+                    vol.Optional(CONF_DATA_COLLECTION, default=False): bool,
+                }
             ),
             errors=self._errors,
         )

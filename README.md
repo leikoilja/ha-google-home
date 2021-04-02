@@ -34,8 +34,9 @@ See [Contribution](#contribution) section for more information.
    - [Integration Setup](#integration-setup)
    - [Running in Home Assistant Docker container](#running-in-home-assistant-docker-container)
 4. [Lovelace Cards](#lovelace-cards)
-5. [Contribution](#contribution)
-6. [Credits](#credits)
+5. [Diagnostic Data Collection](#diagnostic-data-collection)
+6. [Contribution](#contribution)
+7. [Credits](#credits)
 
 </details>
 
@@ -156,6 +157,14 @@ Make sure that you have your Home Assistant Container network set to 'host', as 
 **Open a PR to add your card here!**
 
 - [Google Home timers card](https://github.com/DurgNomis-drol/google_home_timers_card) by [@DurgNomis-drol](https://github.com/DurgNomis-drol)
+
+## Diagnostic Data Collection
+
+To make the integration better we are trying to be one step ahead of the game,
+working on catching and fixing errors before the user even knows about them.
+To do so, we are implementing anonymous diagnostic data collection.
+We will never collect any user sensitive data, only integration related
+warnings and errors. See related [developers discussion](https://github.com/leikoilja/ha-google-home/discussions/116).
 
 ## Contribution
 
