@@ -15,7 +15,7 @@ Pull requests are the best way to propose changes to the codebase.
 
 1. Fork the repo and create your branch from `master`.
 2. If you've changed something, update the documentation.
-3. Make sure your code lints (using `pre-commit`).
+3. Make sure your code passes lint checks (using `pre-commit`).
 4. Test you contribution.
 5. Issue that pull request!
 
