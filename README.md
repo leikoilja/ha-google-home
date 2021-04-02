@@ -194,7 +194,7 @@ Here are the steps to generate useful log data:
         >
         >\```
 
-> Advanced Windows user tip:
+> Advanced tip for Windows users:
 >
 > Install [LogExpert](https://github.com/zarunbal/LogExpert/) to make finding log entries quicker.
 >   1. Using LogExpert: Open `home-assistant.log` in your config folder.
