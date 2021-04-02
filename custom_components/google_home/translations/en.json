@@ -11,7 +11,7 @@
       }
     },
     "error": {
-      "auth": "Username/Password is incorrect. If your google account has 2FA enabled please generate app password (https://myaccount.google.com/apppasswords)"
+      "auth": "Username/Password is incorrect. If your google account has 2FA enabled please generate app password (https://myaccount.google.com/apppasswords). If authentication still fails please see README in the project's github repository."
     },
     "abort": {
       "single_instance_allowed": "Only a single instance is allowed."
@@ -21,9 +21,7 @@
     "step": {
       "user": {
         "data": {
-          "binary_sensor": "Binary sensor enabled",
-          "sensor": "Sensor enabled",
-          "switch": "Switch enabled"
+          "data_collection": "Allow anonymous diagnostic data collection (See https://github.com/leikoilja/ha-google-home#diagnostic-data-collection). Restart required."
         }
       }
     }
