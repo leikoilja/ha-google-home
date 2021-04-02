@@ -174,56 +174,60 @@ warnings and errors. See related [developers discussion](https://github.com/leik
 Here are the steps to generate useful log data:
 
 1. Temporary log level change.
-    1. Visit [Home Assistant Developer Services Tool](https://my.home-assistant.io/redirect/developer_services/).
-    2. Choose `Logger: Set level` from the **Service** menu.
-    3. Under **Service data** paste the following:
-        ```yaml
-        custom_components.google_home: debug
-        glocaltokens: debug
-        ```
-    4. Click **Call Service**.
+   1. Visit [Home Assistant Developer Services Tool](https://my.home-assistant.io/redirect/developer_services/).
+   2. Choose `Logger: Set level` from the **Service** menu.
+   3. Under **Service data** paste the following:
+      ```yaml
+      custom_components.google_home: debug
+      glocaltokens: debug
+      ```
+   4. Click **Call Service**.
 2. Read the log information.
-    1. Visit [Home Assistant Logs](https://my.home-assistant.io/redirect/logs/).
-    2. Click **Load Full Home Assistant Log**.
-    3. Look for all `google_home` entries.
-    4. Also look for all `glocaltokens` entries.
+   1. Visit [Home Assistant Logs](https://my.home-assistant.io/redirect/logs/).
+   2. Click **Load Full Home Assistant Log**.
+   3. Look for all `google_home` entries.
+   4. Also look for all `glocaltokens` entries.
 3. Requesting help with the log information.
-    1. Copy the log entries.
-    2. Paste them into a discussion forum or bug report between the following two lines:
-        >\```
-        >
-        >\```
+   1. Copy the log entries.
+   2. Paste them into a discussion forum or bug report between the following two lines:
+      > \```
+      >
+      > \```
 
 > Advanced tip for Windows users:
 >
 > Install [LogExpert](https://github.com/zarunbal/LogExpert/) to make finding log entries quicker.
->   1. Using LogExpert: Open `home-assistant.log` in your config folder.
->   2. Use `glocaltokens|google_home` as your _Text filter_ and check `Regex` to include logs from both _glocaltokens_ and _google_home_.
+>
+> 1. Using LogExpert: Open `home-assistant.log` in your config folder.
+> 2. Use `glocaltokens|google_home` as your _Text filter_ and check `Regex` to include logs from both _glocaltokens_ and _google_home_.
 
 ### "Username/Password is incorrect"
+
 If you get this error:
+
 1. First verify you are using the correct Username and Password combination for that Google account.
 2. Have you enabled 2 Factor Authentication on that Google account? _If so read the [2 Factor Authentication](#2-factor-authentication--app-passwords) section to continue._
 3. After ruling out #1 and #2: _Read the [Collecting useful log data](#collecting-useful-log-data) section._
 
 ### 2 Factor Authentication / App Passwords
 
-#### Error: "The setting you are looking for is not available for your account." at [myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords).
-This error will occur if you do not have 2 Factor Authentication (2FA) enabled on your Google account.
+The Error: "The setting you are looking for is not available for your account."
+will occur if you do not have 2 Factor Authentication (2FA) enabled on your Google account.
 
-  Here are the steps to resolve this issue:
-  1. Open [Google Account settings](https://myaccount.google.com/).
-  2. On the top right corner click the profile photo and select the account which you would like to use.
-  3. Go to [Security](https://myaccount.google.com/security) page and make sure you have **2-Step Verification** turned on in **Signing in to Google** section.
-  4. Then visit [App passwords](https://myaccount.google.com/apppasswords).
-      1. Click **Select app** and enter a descriptive name such as _Google Home Integration for Home Assistant_.
-      2. Click the **Generate** button.
-      3. Copy the password and return to the Google Home Configuration screen.
-  4. Return to [Integrations](https://my.home-assistant.io/redirect/integrations/).
-      1. Click **Configure** on the Google Home integration.
-      2. Enter your Google account username.
-      3. Paste the password into the **Google account app password** field.
-      4. Click **Submit**.
+Here are the steps to resolve this issue:
+
+1. Open [Google Account settings](https://myaccount.google.com/).
+2. On the top right corner click the profile photo and select the account which you would like to use.
+3. Go to [Security](https://myaccount.google.com/security) page and make sure you have **2-Step Verification** turned on in **Signing in to Google** section.
+4. Then visit [App passwords](https://myaccount.google.com/apppasswords).
+   1. Click **Select app** and enter a descriptive name such as _Google Home Integration for Home Assistant_.
+   2. Click the **Generate** button.
+   3. Copy the password and return to the Google Home Configuration screen.
+5. Return to [Integrations](https://my.home-assistant.io/redirect/integrations/).
+   1. Click **Configure** on the Google Home integration.
+   2. Enter your Google account username.
+   3. Paste the password into the **Google account app password** field.
+   4. Click **Submit**.
 
 ## Contribution
 
