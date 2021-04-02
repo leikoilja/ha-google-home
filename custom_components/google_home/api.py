@@ -3,7 +3,8 @@ from asyncio import gather
 import logging
 from typing import List, Optional
 
-import aiohttp
+from aiohttp import ClientError, ClientSession
+from aiohttp.client_exceptions import ClientConnectorError
 from glocaltokens.client import Device, GLocalAuthenticationTokens
 from glocaltokens.utils.token import is_aas_et
 from zeroconf import Zeroconf
@@ -33,7 +34,7 @@ class GlocaltokensApiClient:
     def __init__(
         self,
         hass: HomeAssistant,
-        session: aiohttp.ClientSession,
+        session: ClientSession,
         username: Optional[str] = None,
         password: Optional[str] = None,
         master_token: Optional[str] = None,
@@ -160,7 +161,16 @@ class GlocaltokensApiClient:
                         response.status,
                         response,
                     )
-        except aiohttp.ClientError as ex:
+        except ClientConnectorError:
+            # Check if this is where we are getting with incorrect token
+            _LOGGER.debug(
+                (
+                    "Failed to connect to %s device. "
+                    "The device is probably offline. Will retry later."
+                ),
+                device.name,
+            )
+        except ClientError as ex:
             # Make sure that we log the exception if one occurred.
             # The only reason we do this broad is so we easily can
             # debug the application.
