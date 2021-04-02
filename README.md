@@ -183,7 +183,7 @@ Here are the steps to generate useful log data:
         ```
     4. Click **Call Service**.
 2. Read the log information.
-    1. Visit Home Assistant Logs at [my.home-assistant.io/redirect/logs](https://my.home-assistant.io/redirect/logs/).
+    1. Visit [Home Assistant Logs](https://my.home-assistant.io/redirect/logs/).
     2. Click **Load Full Home Assistant Log**.
     3. Look for all `google_home` entries.
     4. Also look for all `glocaltokens` entries.
