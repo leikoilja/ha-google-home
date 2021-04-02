@@ -171,10 +171,6 @@ Code template was mainly taken from [@Ludeeus](https://github.com/ludeeus)'s [in
 
 Under the hood the integration uses [glocaltokens](https://github.com/leikoilja/glocaltokens) python package.
 
----
-
-[buymecoffee]: https://www.buymeacoffee.com/leikoilja
-[buymecoffeebadge]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg?style=for-the-badge
 [commits-shield]: https://img.shields.io/github/commit-activity/y/leikoilja/ha-google-home.svg?style=for-the-badge
 [commits]: https://github.com/leikoilja/ha-google-home/commits/master
 [community-discussion]: https://community.home-assistant.io/t/solution-to-track-your-google-home-alarms-and-timers-and-trigger-different-home-assistant-events/61534/74
