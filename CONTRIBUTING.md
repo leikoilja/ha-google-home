@@ -15,7 +15,7 @@ Pull requests are the best way to propose changes to the codebase.
 
 1. Fork the repo and create your branch from `master`.
 2. If you've changed something, update the documentation.
-3. Make sure your code lints (using pre-commit).
+3. Make sure your code lints (using `pre-commit`).
 4. Test you contribution.
 5. Issue that pull request!
 
@@ -48,7 +48,7 @@ Install [Poetry](https://python-poetry.org/docs/#installation) to setup develope
 It uses [black](https://github.com/ambv/black) and [prettier](https://prettier.io/)
 to make sure the code follows the style.
 
-`pre-commit` can be used to run all check with one command (see dedicated section below).
+`pre-commit` can be used to run all checks with one command (see dedicated section below).
 
 ## Test your code modification
 
@@ -91,7 +91,3 @@ You can run the tests on all repository file with the command:
 ```console
 $ poetry run pre-commit run --all-files
 ```
-
-## License
-
-By contributing, you agree that your contributions will be licensed under its MIT License.
