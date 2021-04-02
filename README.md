@@ -209,14 +209,13 @@ If you get this error:
 ### 2 Factor Authentication / App Passwords
 
 #### Error: "The setting you are looking for is not available for your account." at [myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords).
+This error will occur if you do not have 2 Factor Authentication (2FA) enabled on your Google account.
 
-This error will occur if you do not have 2 Factor Authentication (2FA) setup on your Google account.
-
-  Here are the steps to correct this issue:
-  1. (Optional) If you have multiple Google accounts it _might_ help to _temporarily_ and log out of every [Google account](https://google.com)!
-  (_This causes a lot of confusion! You may think you have enabled 2FA only to be enabling it on an alternate Google account!_)
-  2. Go to [Google.com](https://google.com) and log into the Google Home account you want to control with the Google Home Integration.
-  3. Visit [myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords). (At this point if you get the above mentioned error, please preform the _Optional_ step #1.)
+  Here are the steps to resolve this issue:
+  1. Open [Google Account settings](https://myaccount.google.com/).
+  2. On the top right corner click the profile photo and select the account which you would like to use.
+  3. Go to [Security](https://myaccount.google.com/security) page and make sure you have **2-Step Verification** turned on in **Signing in to Google** section.
+  4. Then visit [App passwords](https://myaccount.google.com/apppasswords).
       1. Click **Select app** and enter a descriptive name such as _Google Home Integration for Home Assistant_.
       2. Click the **Generate** button.
       3. Copy the password and return to the Google Home Configuration screen.
@@ -225,7 +224,6 @@ This error will occur if you do not have 2 Factor Authentication (2FA) setup on 
       2. Enter your Google account username.
       3. Paste the password into the "_Google account app password_" field.
       4. Click **Submit**.
->>>>>>> README.md: Add TROUBLESHOOTING section
 
 ## Contribution
 
