@@ -143,6 +143,7 @@ class GlocaltokensApiClient:
                     # We need to retry the update task instead of just cleaning the list
                     self.google_devices = []
                 elif response.status == HTTP_NOT_FOUND:
+                    device.available = False
                     _LOGGER.debug(
                         (
                             "Failed to fetch data from %s, API returned %d. "
