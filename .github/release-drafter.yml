@@ -13,7 +13,6 @@ categories:
       - "documentation"
   - title: "🔧 Internal structure enhancement"
     labels:
-      - "enhancement"
       - "refactoring"
       - "removal"
   - title: "🧰 Maintenance"
