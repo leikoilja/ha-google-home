@@ -1,7 +1,7 @@
 [![GitHub Workflow Status][workflow-shield]][workflow]
-[![Contributors][contributors-shield]][contributors]
-[![hacs][hacsbadge]][hacs]
 [![GitHub Release][releases-shield]][releases]
+[![hacs][hacsbadge]][hacs]
+[![Contributors][contributors-shield]][contributors]
 [![GitHub Activity][commits-shield]][commits]
 [![License][license-shield]][license]
 
@@ -183,7 +183,7 @@ Under the hood the integration uses [glocaltokens](https://github.com/leikoilja/
 [contributors-shield]: https://img.shields.io/github/contributors/leikoilja/ha-google-home?style=for-the-badge
 [contributors]: https://github.com/leikoilja/ha-google-home/graphs/contributors
 [hacs]: https://hacs.xyz
-[hacsbadge]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
+[hacsbadge]: https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge
 [integration_blueprint]: https://github.com/custom-components/integration_blueprint
 [license-shield]: https://img.shields.io/github/license/leikoilja/ha-google-home.svg?style=for-the-badge
 [license]: https://github.com/leikoilja/ha-google-home/blob/master/LICENSE
