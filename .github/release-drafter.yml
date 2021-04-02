@@ -4,6 +4,7 @@ categories:
   - title: "🚀 Features"
     labels:
       - "feature"
+      - "performance"
   - title: "🐛 Bug Fixes"
     labels:
       - "bug"
@@ -13,7 +14,6 @@ categories:
   - title: "🔧 Internal structure enhancement"
     labels:
       - "enhancement"
-      - "performance"
       - "refactoring"
       - "removal"
   - title: "🧰 Maintenance"
