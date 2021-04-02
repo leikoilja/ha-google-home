@@ -18,9 +18,10 @@ from .const import (
     CONF_DATA_COLLECTION,
     CONF_MASTER_TOKEN,
     CONF_PASSWORD,
+    CONF_UPDATE_INTERVAL,
     CONF_USERNAME,
     DOMAIN,
-    PLATFORMS,
+    UPDATE_INTERVAL,
 )
 from .exceptions import InvalidMasterToken
 
@@ -85,7 +86,6 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):  # type: 
                 {
                     vol.Required(CONF_USERNAME): str,
                     vol.Required(CONF_PASSWORD): str,
-                    vol.Optional(CONF_DATA_COLLECTION, default=False): bool,
                 }
             ),
             errors=self._errors,
@@ -123,8 +123,11 @@ class GoogleHomeOptionsFlowHandler(config_entries.OptionsFlow):
             step_id="user",
             data_schema=vol.Schema(
                 {
-                    vol.Required(x, default=self.options.get(x, True)): bool
-                    for x in sorted(PLATFORMS)
+                    vol.Optional(CONF_DATA_COLLECTION, default=True): bool,
+                    vol.Optional(
+                        CONF_UPDATE_INTERVAL,
+                        default=self.options.get(CONF_UPDATE_INTERVAL, UPDATE_INTERVAL),
+                    ): int,
                 }
             ),
         )
