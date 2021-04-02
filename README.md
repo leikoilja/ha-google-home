@@ -185,21 +185,10 @@ Here are the steps to generate useful log data:
 2. Read the log information.
    1. Visit [Home Assistant Logs](https://my.home-assistant.io/redirect/logs/).
    2. Click **Load Full Home Assistant Log**.
-   3. Look for all `google_home` entries.
-   4. Also look for all `glocaltokens` entries.
+   3. Look for all `google_home` and `glocaltokens` entries.
 3. Requesting help with the log information.
    1. Copy the log entries.
-   2. Paste them into a discussion forum or bug report between the following two lines:
-      > \```
-      >
-      > \```
-
-> Advanced tip for Windows users:
->
-> Install [LogExpert](https://github.com/zarunbal/LogExpert/) to make finding log entries quicker.
->
-> 1. Using LogExpert: Open `home-assistant.log` in your config folder.
-> 2. Use `glocaltokens|google_home` as your _Text filter_ and check `Regex` to include logs from both _glocaltokens_ and _google_home_.
+   2. Paste them into a discussion forum or bug report. Make sure to use quotation block.
 
 ### "Username/Password is incorrect"
 
@@ -207,7 +196,8 @@ If you get this error:
 
 1. First verify you are using the correct Username and Password combination for that Google account.
 2. Have you enabled 2 Factor Authentication on that Google account? _If so read the [2 Factor Authentication](#2-factor-authentication--app-passwords) section to continue._
-3. After ruling out #1 and #2: _Read the [Collecting useful log data](#collecting-useful-log-data) section._
+3. We have seen some other custom components break the dependencies causing `ha-google-home` to fail authentication process. For more information please see [this issue](https://github.com/leikoilja/ha-google-home/issues/95).
+4. After ruling out #1, #2 and #3 collect relevant logs and open a new issue.
 
 ### 2 Factor Authentication / App Passwords
 
