@@ -4,18 +4,18 @@ categories:
   - title: "🚀 Features"
     labels:
       - "feature"
+  - title: "🐛 Bug Fixes"
+    labels:
+      - "bug"
+  - title: "📄 Documentation"
+    labels:
+      - "documentation"
   - title: "🔧 Internal structure enhancement"
     labels:
       - "enhancement"
       - "performance"
       - "refactoring"
       - "removal"
-  - title: "📄 Documentation"
-    labels:
-      - "documentation"
-  - title: "🐛 Bug Fixes"
-    labels:
-      - "bug"
   - title: "🧰 Maintenance"
     labels:
       - "testing"
