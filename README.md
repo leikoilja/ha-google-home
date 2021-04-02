@@ -174,7 +174,7 @@ warnings and errors. See related [developers discussion](https://github.com/leik
 Here are the steps to generate useful log data:
 
 1. Temporary log level change.
-    1. Visit Home Assistant Developer Services Tool at [my.home-assistant.io/redirect/developer_services](https://my.home-assistant.io/redirect/developer_services/).
+    1. Visit [Home Assistant Developer Services Tool](https://my.home-assistant.io/redirect/developer_services/).
     2. Choose `Logger: Set level` from the **Service** menu.
     3. Under **Service data** paste the following:
         ```yaml
