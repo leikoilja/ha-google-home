@@ -1,9 +1,7 @@
 [![GitHub Workflow Status][workflow-shield]][workflow]
 [![GitHub Release][releases-shield]][releases]
 [![hacs][hacsbadge]][hacs]
-[![Contributors][contributors-shield]][contributors]
 [![GitHub Activity][commits-shield]][commits]
-[![License][license-shield]][license]
 
 <p align="center">
   <a href="https://github.com/leikoilja/ha-google-home">
@@ -180,13 +178,9 @@ Under the hood the integration uses [glocaltokens](https://github.com/leikoilja/
 [commits-shield]: https://img.shields.io/github/commit-activity/y/leikoilja/ha-google-home.svg?style=for-the-badge
 [commits]: https://github.com/leikoilja/ha-google-home/commits/master
 [community-discussion]: https://community.home-assistant.io/t/solution-to-track-your-google-home-alarms-and-timers-and-trigger-different-home-assistant-events/61534/74
-[contributors-shield]: https://img.shields.io/github/contributors/leikoilja/ha-google-home?style=for-the-badge
-[contributors]: https://github.com/leikoilja/ha-google-home/graphs/contributors
 [hacs]: https://hacs.xyz
 [hacsbadge]: https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge
 [integration_blueprint]: https://github.com/custom-components/integration_blueprint
-[license-shield]: https://img.shields.io/github/license/leikoilja/ha-google-home.svg?style=for-the-badge
-[license]: https://github.com/leikoilja/ha-google-home/blob/master/LICENSE
 [releases-shield]: https://img.shields.io/github/release/leikoilja/ha-google-home.svg?style=for-the-badge
 [releases]: https://github.com/leikoilja/ha-google-home/releases
 [workflow-shield]: https://img.shields.io/github/workflow/status/leikoilja/ha-google-home/Running%20tests?style=for-the-badge
