@@ -149,7 +149,7 @@ ln -s ha-google-home/custom_components/google_home ~/.homeassistant/custom_compo
 
 ### Running in Home Assistant Docker container
 
-Make sure that you have your Home Assistant Container network set to 'host', as perscribed in the official docker installation for Home Assistant.
+Make sure that you have your Home Assistant Container network set to `"host"`, as perscribed in the official docker installation for Home Assistant.
 
 ## Lovelace Cards
 
@@ -161,15 +161,13 @@ Make sure that you have your Home Assistant Container network set to 'host', as 
 
 This integration is still in the early stage of it's development. Please use it
 at your own risk. If you encounter issues or have any suggestions consider
-opening issues and contributing through PR. If you are ready to contribute to this please read the [Contribution guidelines](CONTRIBUTING.md)
+opening issues and contributing through PR. If you are ready to contribute to this please read the [Contribution guidelines](CONTRIBUTING.md).
 
 ## Credits
 
-This project was generated from [@oncleben31](https://github.com/oncleben31)'s [Home Assistant Custom Component Cookiecutter](https://github.com/oncleben31/cookiecutter-homeassistant-custom-component) template.
-
-Code template was mainly taken from [@Ludeeus](https://github.com/ludeeus)'s [integration_blueprint][integration_blueprint] template.
-
-Under the hood the integration uses [glocaltokens](https://github.com/leikoilja/glocaltokens) python package.
+- This project was generated from [@oncleben31](https://github.com/oncleben31)'s [Home Assistant Custom Component Cookiecutter](https://github.com/oncleben31/cookiecutter-homeassistant-custom-component) template.
+- Code template was mainly taken from [@Ludeeus](https://github.com/ludeeus)'s [integration_blueprint][integration_blueprint] template.
+- Under the hood the integration uses [glocaltokens](https://github.com/leikoilja/glocaltokens) python package.
 
 [commits-shield]: https://img.shields.io/github/commit-activity/y/leikoilja/ha-google-home.svg?style=for-the-badge
 [commits]: https://github.com/leikoilja/ha-google-home/commits/master
