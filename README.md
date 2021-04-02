@@ -149,7 +149,7 @@ ln -s ha-google-home/custom_components/google_home ~/.homeassistant/custom_compo
 
 ### Running in Home Assistant Docker container
 
-Make sure that you have your Home Assistant Container network set to `"host"`, as perscribed in the official docker installation for Home Assistant.
+Make sure that you have your Home Assistant Container network set to `host`, as perscribed in the official docker installation for Home Assistant.
 
 ## Lovelace Cards
 
