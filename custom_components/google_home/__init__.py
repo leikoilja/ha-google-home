@@ -20,7 +20,6 @@ from .api import GlocaltokensApiClient
 from .const import (
     CONF_ANDROID_ID,
     CONF_MASTER_TOKEN,
-    CONF_UPDATE_INTERVAL,
     DOMAIN,
     PLATFORMS,
     SENSOR,
@@ -46,7 +45,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     password = entry.data.get(CONF_PASSWORD)
     android_id = entry.data.get(CONF_ANDROID_ID)
     master_token = entry.data.get(CONF_MASTER_TOKEN)
-    update_interval = entry.options.get(CONF_UPDATE_INTERVAL, UPDATE_INTERVAL)
 
     session = async_get_clientsession(hass, verify_ssl=False)
 
@@ -66,7 +64,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         _LOGGER,
         name=SENSOR,
         update_method=glocaltokens_client.update_google_devices_information,
-        update_interval=timedelta(seconds=update_interval),
+        update_interval=timedelta(seconds=UPDATE_INTERVAL),
     )
 
     await coordinator.async_refresh()

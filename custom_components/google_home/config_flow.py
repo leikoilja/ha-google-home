@@ -18,10 +18,8 @@ from .const import (
     CONF_DATA_COLLECTION,
     CONF_MASTER_TOKEN,
     CONF_PASSWORD,
-    CONF_UPDATE_INTERVAL,
     CONF_USERNAME,
     DOMAIN,
-    UPDATE_INTERVAL,
 )
 from .exceptions import InvalidMasterToken
 
@@ -124,10 +122,6 @@ class GoogleHomeOptionsFlowHandler(config_entries.OptionsFlow):
             data_schema=vol.Schema(
                 {
                     vol.Optional(CONF_DATA_COLLECTION, default=True): bool,
-                    vol.Optional(
-                        CONF_UPDATE_INTERVAL,
-                        default=self.options.get(CONF_UPDATE_INTERVAL, UPDATE_INTERVAL),
-                    ): int,
                 }
             ),
         )

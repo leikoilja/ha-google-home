@@ -27,7 +27,6 @@ PLATFORMS = [SENSOR]
 CONF_ANDROID_ID = "android_id"
 CONF_USERNAME = "username"
 CONF_PASSWORD = "password"
-CONF_UPDATE_INTERVAL = "update_interval"
 CONF_MASTER_TOKEN = "master_token"
 
 # Defaults

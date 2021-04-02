@@ -21,8 +21,7 @@
     "step": {
       "user": {
         "data": {
-          "data_collection": "Allow anonymous diagnostic data collection (See https://github.com/leikoilja/ha-google-home#diagnostic-data-collection). Restart required.",
-          "update_interval": "Update interval how often to fetch google device information (sec). Restart required."
+          "data_collection": "Allow anonymous diagnostic data collection (See https://github.com/leikoilja/ha-google-home#diagnostic-data-collection). Restart required."
         }
       }
     }
