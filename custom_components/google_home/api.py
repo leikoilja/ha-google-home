@@ -130,6 +130,21 @@ class GlocaltokensApiClient:
             ) as response:
                 if response.status == HTTP_OK:
                     resp = await response.json()
+                    device.available = True
+                    if resp:
+                        if JSON_TIMER in resp or JSON_ALARM in resp:
+                            device.set_timers(resp.get(JSON_TIMER))
+                            device.set_alarms(resp.get(JSON_ALARM))
+                        else:
+                            _LOGGER.error(
+                                (
+                                    "Failed to parse fetched data for device %s - %s. "
+                                    "Received = %s"
+                                ),
+                                device.name,
+                                API_RETURNED_UNKNOWN,
+                                resp,
+                            )
                 elif response.status == HTTP_UNAUTHORIZED:
                     # If token is invalid - force reload homegraph providing new token
                     # and rerun the task.
@@ -142,18 +157,20 @@ class GlocaltokensApiClient:
                     )
                     # We need to retry the update task instead of just cleaning the list
                     self.google_devices = []
-                elif response.status == HTTP_NOT_FOUND:
                     device.available = False
+                elif response.status == HTTP_NOT_FOUND:
                     _LOGGER.debug(
                         (
                             "Failed to fetch data from %s, API returned %d. "
-                            "The device(hardware='%s') is not Google Home "
-                            "compatable and has no alarms/timers."
+                            "The device(hardware='%s') is possibly not Google Home "
+                            "compatable and has no alarms/timers. "
+                            "Will retry later."
                         ),
                         device.name,
                         response.status,
                         device.hardware,
                     )
+                    device.available = False
                 else:
                     _LOGGER.error(
                         "Failed to fetch %s data, API returned %d: %s",
@@ -161,8 +178,8 @@ class GlocaltokensApiClient:
                         response.status,
                         response,
                     )
+                    device.available = False
         except ClientConnectorError:
-            # Check if this is where we are getting with incorrect token
             _LOGGER.debug(
                 (
                     "Failed to connect to %s device. "
@@ -170,6 +187,7 @@ class GlocaltokensApiClient:
                 ),
                 device.name,
             )
+            device.available = False
         except ClientError as ex:
             # Make sure that we log the exception if one occurred.
             # The only reason we do this broad is so we easily can
@@ -178,17 +196,7 @@ class GlocaltokensApiClient:
                 "Request error: %s",
                 ex,
             )
-        finally:
-            if resp:
-                if JSON_TIMER in resp or JSON_ALARM in resp:
-                    device.set_timers(resp.get(JSON_TIMER))
-                    device.set_alarms(resp.get(JSON_ALARM))
-                else:
-                    _LOGGER.error(
-                        "For device %s - %s",
-                        device.name,
-                        API_RETURNED_UNKNOWN,
-                    )
+            device.available = False
         return device
 
     async def update_google_devices_information(self) -> List[GoogleHomeDevice]:
@@ -215,8 +223,7 @@ class GlocaltokensApiClient:
             *[
                 self.get_alarms_and_timers(device, device.ip_address)
                 for device in devices
-                if device.ip_address and device.available
+                if device.ip_address
             ]
         )
-
         return coordinator_data
