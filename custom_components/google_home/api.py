@@ -147,9 +147,8 @@ class GlocaltokensApiClient:
                     _LOGGER.debug(
                         (
                             "Failed to fetch data from %s, API returned %d. "
-                            "The device(hardware='%s') is possibly not Google Home "
-                            "compatable and has no alarms/timers. "
-                            "Will retry later."
+                            "The device(hardware='%s') is not Google Home "
+                            "compatable and has no alarms/timers."
                         ),
                         device.name,
                         response.status,
