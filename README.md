@@ -196,7 +196,7 @@ If you get this error:
 
 1. First verify you are using the correct Username and Password combination for that Google account.
 2. Have you enabled 2 Factor Authentication on that Google account? _If so read the [2 Factor Authentication](#2-factor-authentication--app-passwords) section to continue._
-3. We have seen some other custom components break the dependencies causing `ha-google-home` to fail authentication process. For more information please see [this issue](https://github.com/leikoilja/ha-google-home/issues/95).
+3. We have seen some other custom components break the dependencies causing `google_home` to fail authentication process. For more information please see [this issue](https://github.com/leikoilja/ha-google-home/issues/95).
 4. After ruling out #1, #2 and #3 collect relevant logs and open a new issue.
 
 ### 2 Factor Authentication / App Passwords
