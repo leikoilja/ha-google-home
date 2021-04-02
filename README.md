@@ -35,8 +35,9 @@ See [Contribution](#contribution) section for more information.
    - [Running in Home Assistant Docker container](#running-in-home-assistant-docker-container)
 4. [Lovelace Cards](#lovelace-cards)
 5. [Diagnostic Data Collection](#diagnostic-data-collection)
-6. [Contribution](#contribution)
-7. [Credits](#credits)
+6. [Troubleshooting](#troubleshooting)
+7. [Contribution](#contribution)
+8. [Credits](#credits)
 
 </details>
 
@@ -165,6 +166,58 @@ working on catching and fixing errors before the user even knows about them.
 To do so, we are implementing anonymous diagnostic data collection.
 We will never collect any user sensitive data, only integration related
 warnings and errors. See related [developers discussion](https://github.com/leikoilja/ha-google-home/discussions/116).
+
+## Troubleshooting
+
+### Collecting useful log data
+
+Here are the steps to generate useful log data:
+
+1. Temporary log level change.
+   1. Visit [Home Assistant Developer Services Tool](https://my.home-assistant.io/redirect/developer_services/).
+   2. Choose `Logger: Set level` from the **Service** menu.
+   3. Under **Service data** paste the following:
+      ```yaml
+      custom_components.google_home: debug
+      glocaltokens: debug
+      ```
+   4. Click **Call Service**.
+2. Read the log information.
+   1. Visit [Home Assistant Logs](https://my.home-assistant.io/redirect/logs/).
+   2. Click **Load Full Home Assistant Log**.
+   3. Look for all `google_home` and `glocaltokens` entries.
+3. Requesting help with the log information.
+   1. Copy the log entries.
+   2. Paste them into a discussion forum or bug report. Make sure to use quotation block.
+
+### "Username/Password is incorrect"
+
+If you get this error:
+
+1. First verify you are using the correct Username and Password combination for that Google account.
+2. Have you enabled 2 Factor Authentication on that Google account? _If so read the [2 Factor Authentication](#2-factor-authentication--app-passwords) section to continue._
+3. We have seen some other custom components break the dependencies causing `google_home` to fail authentication process. For more information please see [this issue](https://github.com/leikoilja/ha-google-home/issues/95).
+4. After ruling out #1, #2 and #3 collect relevant logs and open a new issue.
+
+### 2 Factor Authentication / App Passwords
+
+The Error: "The setting you are looking for is not available for your account."
+will occur if you do not have 2 Factor Authentication (2FA) enabled on your Google account.
+
+Here are the steps to resolve this issue:
+
+1. Open [Google Account settings](https://myaccount.google.com/).
+2. On the top right corner click the profile photo and select the account which you would like to use.
+3. Go to [Security](https://myaccount.google.com/security) page and make sure you have **2-Step Verification** turned on in **Signing in to Google** section.
+4. Then visit [App passwords](https://myaccount.google.com/apppasswords).
+   1. Click **Select app** and enter a descriptive name such as _Google Home Integration for Home Assistant_.
+   2. Click the **Generate** button.
+   3. Copy the password and return to the Google Home Configuration screen.
+5. Return to [Integrations](https://my.home-assistant.io/redirect/integrations/).
+   1. Click **Configure** on the Google Home integration.
+   2. Enter your Google account username.
+   3. Paste the password into the **Google account app password** field.
+   4. Click **Submit**.
 
 ## Contribution
 
