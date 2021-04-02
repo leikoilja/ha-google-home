@@ -159,9 +159,10 @@ Make sure that you have your Home Assistant Container network set to `"host"`, a
 
 ## Contribution
 
-This integration is still in the early stage of it's development. Please use it
-at your own risk. If you encounter issues or have any suggestions consider
-opening issues and contributing through PR. If you are ready to contribute to this please read the [Contribution guidelines](CONTRIBUTING.md).
+This integration is still in the early stage of its development.
+Please use it at your own risk. 
+If you encounter issues or have any suggestions consider opening issues and contributing through PR.
+If you are ready to contribute to this please read the [Contribution guidelines](CONTRIBUTING.md).
 
 ## Credits
 
