@@ -1,20 +1,16 @@
-name: Manage labels
+name: Labeler
 
 on:
   pull_request_target:
     branches:
-      - dev
       - master
 
 jobs:
-  labeler:
-    name: Labeler
+  triage:
+    name: Triage
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the repository
-        uses: actions/checkout@v2
-
-      - name: Run Labeler
-        uses: crazy-max/ghaction-github-labeler@v3.1.0
+      - name: Run Pull Request Labeler
+        uses: actions/labeler@main
         with:
-          skip-delete: true
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"

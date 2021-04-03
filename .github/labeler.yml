@@ -1,5 +1,8 @@
-test:
-  - tests/*
+dependencies:
+  - poetry.lock
 
-github_structure:
+documentation:
+  - "*.md"
+
+github structure:
   - .github/*
