@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import timedelta
+from enum import Enum
 from typing import List, Optional
 
 from homeassistant.util.dt import as_local, utc_from_timestamp
@@ -45,6 +46,7 @@ class GoogleHomeDevice:
             GoogleHomeAlarm(
                 alarm_id=alarm["id"],
                 fire_time=alarm["fire_time"],
+                status=alarm["status"],
                 label=alarm.get("label"),
                 recurrence=alarm.get("recurrence"),
             )
@@ -58,6 +60,7 @@ class GoogleHomeDevice:
                 timer_id=timer["id"],
                 fire_time=timer["fire_time"],
                 duration=timer["original_duration"],
+                status=timer["status"],
                 label=timer.get("label"),
             )
             for timer in timers
@@ -90,11 +93,13 @@ class GoogleHomeTimer:
         timer_id: str,
         fire_time: int,
         duration: int,
+        status: int,
         label: Optional[str],
     ) -> None:
         self.timer_id = timer_id
         self.duration = str(timedelta(seconds=convert_from_ms_to_s(duration)))
         self.fire_time = convert_from_ms_to_s(fire_time)
+        self.status = GoogleHomeTimerStatus(status)
         self.label = label
 
         dt_utc = utc_from_timestamp(self.fire_time)
@@ -108,6 +113,7 @@ class GoogleHomeTimer:
             "timer_id": self.timer_id,
             "fire_time": self.fire_time,
             "duration": self.duration,
+            "status": self.status.name.lower(),
             "label": self.label,
         }
 
@@ -119,12 +125,14 @@ class GoogleHomeAlarm:
         self,
         alarm_id: str,
         fire_time: int,
+        status: int,
         label: Optional[str],
         recurrence: Optional[str],
     ) -> None:
         self.alarm_id = alarm_id
         self.recurrence = recurrence
         self.fire_time = convert_from_ms_to_s(fire_time)
+        self.status = GoogleHomeAlarmStatus(status)
         self.label = label
 
         dt_utc = utc_from_timestamp(self.fire_time)
@@ -137,6 +145,24 @@ class GoogleHomeAlarm:
         return {
             "alarm_id": self.alarm_id,
             "fire_time": self.fire_time,
+            "status": self.status.name.lower(),
             "label": self.label,
             "recurrence": self.recurrence,
         }
+
+
+class GoogleHomeAlarmStatus(Enum):
+    """Definition of Google Home alarm status"""
+
+    NONE = 0
+    SET = 1
+    RINGING = 2
+    SNOOZED = 3
+
+
+class GoogleHomeTimerStatus(Enum):
+    """Definition of Google Home timer status"""
+
+    NONE = 0
+    SET = 1
+    RINGING = 3

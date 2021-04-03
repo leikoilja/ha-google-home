@@ -16,7 +16,13 @@ from .const import (
     LABEL_TIMERS,
 )
 from .entity import GoogleHomeBaseEntity
-from .models import GoogleHomeAlarmDict, GoogleHomeDevice, GoogleHomeTimerDict
+from .models import (
+    GoogleHomeAlarmDict,
+    GoogleHomeAlarmStatus,
+    GoogleHomeDevice,
+    GoogleHomeTimerDict,
+    GoogleHomeTimerStatus,
+)
 from .types import (
     AddEntitiesCallback,
     AlarmsAttributes,
@@ -130,9 +136,20 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
     def device_state_attributes(self) -> AlarmsAttributes:
         """Return the state attributes."""
         return {
+            "next_alarm_status": self._get_next_alarm_status(),
             "alarms": self._get_alarms_data(),
             "integration": DOMAIN,
         }
+
+    def _get_next_alarm_status(self) -> str:
+        """Update next alarm status from coordinator"""
+        device = self.get_device()
+        next_alarm = device.get_next_alarm() if device else None
+        return (
+            next_alarm.status.name.lower()
+            if next_alarm
+            else GoogleHomeAlarmStatus.NONE.name.lower()
+        )
 
     def _get_alarms_data(self) -> List[GoogleHomeAlarmDict]:
         """Update alarms data extracting it from coordinator"""
@@ -172,9 +189,20 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
     def device_state_attributes(self) -> TimersAttributes:
         """Return the state attributes."""
         return {
+            "next_timer_status": self._get_next_timer_status(),
             "timers": self._get_timers_data(),
             "integration": DOMAIN,
         }
+
+    def _get_next_timer_status(self) -> str:
+        """Update next timer status from coordinator"""
+        device = self.get_device()
+        next_timer = device.get_next_timer() if device else None
+        return (
+            next_timer.status.name.lower()
+            if next_timer
+            else GoogleHomeTimerStatus.NONE.name.lower()
+        )
 
     def _get_timers_data(self) -> List[GoogleHomeTimerDict]:
         """Update timers data extracting it from coordinator"""
