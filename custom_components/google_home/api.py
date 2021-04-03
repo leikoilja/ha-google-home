@@ -61,11 +61,11 @@ class GlocaltokensApiClient:
     async def async_get_master_token(self) -> str:
         """Get master API token"""
 
-        def _get_master_token() -> str:
-            return self._client.get_master_token() or ""
+        def _get_master_token() -> Optional[str]:
+            return self._client.get_master_token()
 
         master_token = await self.hass.async_add_executor_job(_get_master_token)
-        if is_aas_et(master_token) is False:
+        if master_token is None or is_aas_et(master_token) is False:
             raise InvalidMasterToken
         return master_token
 

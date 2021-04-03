@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Optional
 
 from requests.exceptions import RequestException
 import voluptuous as vol
@@ -53,8 +53,8 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 username=user_input[CONF_USERNAME],
                 password=user_input[CONF_PASSWORD],
             )
-            valid, master_token = await self._test_credentials(client)
-            if valid:
+            master_token = await self._test_credentials(client)
+            if master_token is not None:
                 data = user_input
                 data.update(
                     {
@@ -88,14 +88,14 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             errors=self._errors,
         )
 
-    async def _test_credentials(self, client) -> Tuple[bool, Optional[str]]:
+    async def _test_credentials(self, client) -> Optional[str]:
         """Returns true and master token if credentials are valid."""
         try:
             master_token = await client.async_get_master_token()
-            return True, master_token
+            return master_token
         except (InvalidMasterToken, RequestException) as exception:
             _LOGGER.error(exception)
-        return False, None
+        return None
 
 
 class GoogleHomeOptionsFlowHandler(config_entries.OptionsFlow):
