@@ -233,7 +233,9 @@ class GlocaltokensApiClient:
     async def delete_timer_or_alarm(
         self, device: GoogleHomeDevice, item_to_delete: str
     ) -> None:
-        """Deletes a timer or alarm, can also delete multiple if a list is provided"""
+        """Deletes a timer or alarm,
+        can also delete multiple if a list is provided (Not implemented yet)."""
+
         url = self.create_url(str(device.ip_address), PORT, API_ENDPOINT_DELETE)
 
         # We need to remove charset=UTF-8 or else it will return a 400 BAD request.

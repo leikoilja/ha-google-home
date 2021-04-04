@@ -186,6 +186,19 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
     async def async_delete_alarm(self, alarm: str) -> None:
         """Service call to delete alarm on device"""
         device = self.get_device()
+
+        def is_alarm(item: str) -> bool:
+            return (
+                isinstance(item, str) and item.startswith("alarm/") and len(item) == 42
+            )
+
+        if not is_alarm(alarm):
+            _LOGGER.error(
+                "Wrong id format! Please provide a valid alarm id. "
+                "See services tab for more info."
+            )
+            return
+
         await self.client.delete_timer_or_alarm(device=device, item_to_delete=alarm)
 
 
@@ -244,4 +257,17 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
     async def async_delete_timer(self, timer: str) -> None:
         """Service call to delete alarm on device"""
         device = self.get_device()
+
+        def is_timer(item: str) -> bool:
+            return (
+                isinstance(item, str) and item.startswith("timer/") and len(item) == 42
+            )
+
+        if not is_timer(timer):
+            _LOGGER.error(
+                "Wrong id format! Please provide a valid timer id. "
+                "See services tab for more info."
+            )
+            return
+
         await self.client.delete_timer_or_alarm(device=device, item_to_delete=timer)
