@@ -12,8 +12,8 @@ delete_alarm:
         text:
     alarm:
       name: Alarm ID
-      description: ID of a alarm (alarm/xxx).
-      example: "alarm/adafhjdsljfsdkfjsdfnsdjlf"
+      description: ID of an alarm (alarm/xxx).
+      example: "alarm/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51"
       required: true
       selector:
         text:
@@ -31,7 +31,7 @@ delete_timer:
     timer:
       name: Timer ID
       description: ID of a timer (timer/xxx).
-      example: "timer/adafhjdsljfsdkfjsdfnsdjlf"
+      example: "timer/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51"
       required: true
       selector:
         text:
