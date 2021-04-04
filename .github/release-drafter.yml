@@ -13,6 +13,7 @@ categories:
       - "documentation"
   - title: "🔧 Internal structure enhancement"
     labels:
+      - "github structure"
       - "refactoring"
       - "removal"
   - title: "🧰 Maintenance"
