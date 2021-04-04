@@ -232,7 +232,7 @@ class GlocaltokensApiClient:
 
     async def delete_timer_or_alarm(
         self, device: GoogleHomeDevice, item_to_delete: str
-    ) -> bool:
+    ) -> None:
         """Deletes a timer or alarm, can also delete multiple if a list is provided"""
         url = self.create_url(str(device.ip_address), PORT, API_ENDPOINT_DELETE)
 
@@ -257,8 +257,6 @@ class GlocaltokensApiClient:
             data,
         )
 
-        success = False
-
         try:
             async with self._session.post(
                 url, json=data, headers=HEADERS, timeout=TIMEOUT
@@ -268,7 +266,6 @@ class GlocaltokensApiClient:
                     if resp:
                         if "success" in resp:
                             if resp["success"]:
-                                success = True
                                 _LOGGER.debug(
                                     "Successfully deleted %s for %s",
                                     item_type,
@@ -318,4 +315,3 @@ class GlocaltokensApiClient:
                 ex,
             )
             device.available = False
-        return success
