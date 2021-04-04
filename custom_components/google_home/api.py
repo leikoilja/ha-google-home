@@ -305,7 +305,6 @@ class GlocaltokensApiClient:
                 ),
                 device.name,
             )
-            device.available = False
         except ClientError as ex:
             # Make sure that we log the exception if one occurred.
             # The only reason we do this broad is so we easily can
@@ -314,4 +313,3 @@ class GlocaltokensApiClient:
                 "Request error: %s",
                 ex,
             )
-            device.available = False
