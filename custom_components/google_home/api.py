@@ -242,7 +242,7 @@ class GlocaltokensApiClient:
         # I think this is because of the character "/" in the id string.
         HEADERS.update(
             {
-                HEADER_CAST_LOCAL_AUTH: device.auth_token,
+                HEADER_CAST_LOCAL_AUTH: str(device.auth_token),
                 HEADER_CONTENT_TYPE: "application/json",
             }
         )
