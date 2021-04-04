@@ -8,6 +8,10 @@
   description: Something isn't working
   color: d73a4a
 
+- name: dependencies
+  description: Pull requests that update a dependency file
+  color: 0366d6
+
 - name: documentation
   description: Improvements or additions to documentation
   color: 0075ca
@@ -20,7 +24,7 @@
   description: New feature or request
   color: a2eeef
 
-- name: github_structure
+- name: github structure
   description: Pull requests that update Github actions/workflow code
   color: "000000"
 
@@ -35,6 +39,18 @@
 - name: invalid
   description: This doesn't seem right
   color: e4e669
+
+- name: major
+  description: Major changes. Used for release bump
+  color: 16970B
+
+- name: minor
+  description: Minor changes. Used for release bump
+  color: 16970B
+
+- name: patch
+  description: Patch changes. Used for release bump
+  color: 16970B
 
 - name: performance
   description: Performance
@@ -59,15 +75,3 @@
 - name: wontfix
   description: This will not be worked on
   color: ffffff
-
-- name: major
-  description: Major changes. Used for release bump
-  color: 16970B
-
-- name: minor
-  description: minor changes. Used for release bump
-  color: 16970B
-
-- name: patch
-  description: Patch changes. Used for release bump
-  color: 16970B

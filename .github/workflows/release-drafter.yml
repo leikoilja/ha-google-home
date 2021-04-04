@@ -1,9 +1,10 @@
 name: Draft a release note
+
 on:
   push:
     branches:
-      - dev
       - master
+
 jobs:
   draft_release:
     name: Release Drafter
