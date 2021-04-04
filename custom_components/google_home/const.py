@@ -11,6 +11,9 @@ ATTRIBUTION = "json"
 ISSUE_URL = "https://github.com/leikoilja/ha-google-home/issues"
 CONF_DATA_COLLECTION = "data_collection"
 
+DATA_CLIENT = "client"
+DATA_COORDINATOR = "coordinator"
+
 # Icons
 ICON_TOKEN = "mdi:form-textbox-password"
 ICON_ALARMS = "mdi:alarm-multiple"
@@ -22,6 +25,12 @@ BINARY_SENSOR_DEVICE_CLASS = "connectivity"
 # Platforms
 SENSOR = "sensor"
 PLATFORMS = [SENSOR]
+
+# Services
+SERVICE_DELETE_ALARM = "delete_alarm"
+SERVICE_DELETE_TIMER = "delete_timer"
+SERVICE_ATTR_ID_ALARM = "alarm"
+SERVICE_ATTR_ID_TIMER = "timer"
 
 # Configuration and options
 CONF_ANDROID_ID = "android_id"
@@ -42,6 +51,7 @@ PORT = 8443
 
 # API
 API_ENDPOINT_ALARMS = "setup/assistant/alarms"
+API_ENDPOINT_DELETE = "setup/assistant/alarms/delete"
 HEADER_CAST_LOCAL_AUTH = "cast-local-authorization-token"
 HEADER_CONTENT_TYPE = "content-type"
 

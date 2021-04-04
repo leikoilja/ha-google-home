@@ -2,12 +2,17 @@
 import logging
 from typing import Callable, Iterable, List, Optional
 
+import voluptuous as vol
+
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import DEVICE_CLASS_TIMESTAMP, STATE_UNAVAILABLE
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import Entity
+from homeassistant.helpers import config_validation as cv, entity_platform
 
 from .const import (
+    DATA_CLIENT,
+    DATA_COORDINATOR,
     DOMAIN,
     ICON_ALARMS,
     ICON_TIMERS,
@@ -15,6 +20,10 @@ from .const import (
     LABEL_ALARMS,
     LABEL_DEVICE,
     LABEL_TIMERS,
+    SERVICE_ATTR_ID_ALARM,
+    SERVICE_ATTR_ID_TIMER,
+    SERVICE_DELETE_ALARM,
+    SERVICE_DELETE_TIMER,
 )
 from .entity import GoogleHomeBaseEntity
 from .models import (
@@ -35,12 +44,14 @@ async def async_setup_entry(
     async_add_devices: Callable[[Iterable[Entity]], None],
 ) -> bool:
     """Setup sensor platform."""
-    coordinator = hass.data[DOMAIN][entry.entry_id]
+    client = hass.data[DOMAIN][entry.entry_id][DATA_CLIENT]
+    coordinator = hass.data[DOMAIN][entry.entry_id][DATA_COORDINATOR]
     sensors: List[Entity] = []
     for device in coordinator.data:
         sensors.append(
             GoogleHomeDeviceSensor(
                 coordinator,
+                client,
                 device.name,
             )
         )
@@ -48,14 +59,30 @@ async def async_setup_entry(
             sensors += [
                 GoogleHomeAlarmsSensor(
                     coordinator,
+                    client,
                     device.name,
                 ),
                 GoogleHomeTimersSensor(
                     coordinator,
+                    client,
                     device.name,
                 ),
             ]
     async_add_devices(sensors)
+
+    platform = entity_platform.current_platform.get()
+
+    platform.async_register_entity_service(
+        SERVICE_DELETE_ALARM,
+        {vol.Required(SERVICE_ATTR_ID_ALARM): cv.string},
+        "async_delete_alarm",
+    )
+    platform.async_register_entity_service(
+        SERVICE_DELETE_TIMER,
+        {vol.Required(SERVICE_ATTR_ID_TIMER): cv.string},
+        "async_delete_timer",
+    )
+
     return True
 
 
@@ -156,6 +183,11 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
             [alarm.as_dict() for alarm in device.get_sorted_alarms()] if device else []
         )
 
+    async def async_delete_alarm(self, alarm: str) -> None:
+        """Service call to delete alarm on device"""
+        device = self.get_device()
+        await self.client.delete_timer_or_alarm(device=device, item_to_delete=alarm)
+
 
 class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
     """Google Home Timers sensor."""
@@ -208,3 +240,8 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
         return (
             [timer.as_dict() for timer in device.get_sorted_timers()] if device else []
         )
+
+    async def async_delete_timer(self, timer: str) -> None:
+        """Service call to delete alarm on device"""
+        device = self.get_device()
+        await self.client.delete_timer_or_alarm(device=device, item_to_delete=timer)

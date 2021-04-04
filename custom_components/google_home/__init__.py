@@ -20,6 +20,8 @@ from .api import GlocaltokensApiClient
 from .const import (
     CONF_ANDROID_ID,
     CONF_MASTER_TOKEN,
+    DATA_CLIENT,
+    DATA_COORDINATOR,
     DOMAIN,
     PLATFORMS,
     SENSOR,
@@ -72,7 +74,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if not coordinator.last_update_success:
         raise ConfigEntryNotReady
 
-    hass.data[DOMAIN][entry.entry_id] = coordinator
+    hass.data[DOMAIN][entry.entry_id] = {
+        DATA_CLIENT: glocaltokens_client,
+        DATA_COORDINATOR: coordinator,
+    }
 
     # Offload the loading of entities to the platform
     for platform in PLATFORMS:
@@ -86,6 +91,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Handle removal of an entry."""
+
     unloaded = all(
         await asyncio.gather(
             *[
