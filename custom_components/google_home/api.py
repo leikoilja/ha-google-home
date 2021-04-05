@@ -230,7 +230,7 @@ class GlocaltokensApiClient:
         )
         return coordinator_data
 
-    async def delete_timer_or_alarm(
+    async def delete_alarm_or_timer(
         self, device: GoogleHomeDevice, item_to_delete: str
     ) -> None:
         """Deletes a timer or alarm.
