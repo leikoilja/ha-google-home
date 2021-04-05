@@ -14,6 +14,8 @@ CONF_DATA_COLLECTION = "data_collection"
 DATA_CLIENT = "client"
 DATA_COORDINATOR = "coordinator"
 
+ALARM_AND_TIMER_ID_LENGTH = 42
+
 # Icons
 ICON_TOKEN = "mdi:form-textbox-password"
 ICON_ALARMS = "mdi:alarm-multiple"
@@ -29,8 +31,8 @@ PLATFORMS = [SENSOR]
 # Services
 SERVICE_DELETE_ALARM = "delete_alarm"
 SERVICE_DELETE_TIMER = "delete_timer"
-SERVICE_ATTR_ID_ALARM = "alarm"
-SERVICE_ATTR_ID_TIMER = "timer"
+SERVICE_ATTR_ID_ALARM = "alarm_id"
+SERVICE_ATTR_ID_TIMER = "timer_id"
 
 # Configuration and options
 CONF_ANDROID_ID = "android_id"

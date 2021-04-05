@@ -11,6 +11,7 @@ from homeassistant.helpers import config_validation as cv, entity_platform
 from homeassistant.helpers.entity import Entity
 
 from .const import (
+    ALARM_AND_TIMER_ID_LENGTH,
     DATA_CLIENT,
     DATA_COORDINATOR,
     DOMAIN,
@@ -183,23 +184,27 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
             [alarm.as_dict() for alarm in device.get_sorted_alarms()] if device else []
         )
 
-    async def async_delete_alarm(self, alarm: str) -> None:
+    @staticmethod
+    def is_valid_alarm_id(alarm_id: str) -> bool:
+        """Checks if the alarm id provided is valid."""
+        return (
+            isinstance(alarm_id, str)
+            and alarm_id.startswith("alarm/")
+            and len(alarm_id) == ALARM_AND_TIMER_ID_LENGTH
+        )
+
+    async def async_delete_alarm(self, alarm_id: str) -> None:
         """Service call to delete alarm on device"""
         device = self.get_device()
 
-        def is_alarm(item: str) -> bool:
-            return (
-                isinstance(item, str) and item.startswith("alarm/") and len(item) == 42
-            )
-
-        if not is_alarm(alarm):
+        if not self.is_valid_alarm_id(alarm_id):
             _LOGGER.error(
                 "Incorrect ID format! Please provide a valid alarm ID. "
                 "See services tab for more info."
             )
             return
 
-        await self.client.delete_timer_or_alarm(device=device, item_to_delete=alarm)
+        await self.client.delete_alarm_or_timer(device=device, item_to_delete=alarm_id)
 
 
 class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
@@ -254,20 +259,24 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
             [timer.as_dict() for timer in device.get_sorted_timers()] if device else []
         )
 
-    async def async_delete_timer(self, timer: str) -> None:
+    @staticmethod
+    def is_valid_timer_id(timer_id: str) -> bool:
+        """Checks if the timer id provided is valid."""
+        return (
+            isinstance(timer_id, str)
+            and timer_id.startswith("timer/")
+            and len(timer_id) == ALARM_AND_TIMER_ID_LENGTH
+        )
+
+    async def async_delete_timer(self, timer_id: str) -> None:
         """Service call to delete alarm on device"""
         device = self.get_device()
 
-        def is_timer(item: str) -> bool:
-            return (
-                isinstance(item, str) and item.startswith("timer/") and len(item) == 42
-            )
-
-        if not is_timer(timer):
+        if not self.is_valid_timer_id(timer_id):
             _LOGGER.error(
                 "Incorrect ID format! Please provide a valid timer ID. "
                 "See services tab for more info."
             )
             return
 
-        await self.client.delete_timer_or_alarm(device=device, item_to_delete=timer)
+        await self.client.delete_alarm_or_timer(device=device, item_to_delete=timer_id)

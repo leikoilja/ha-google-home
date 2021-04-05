@@ -236,7 +236,15 @@ class GlocaltokensApiClient:
         """Deletes a timer or alarm.
         Can also delete multiple if a list is provided (Not implemented yet)."""
 
-        url = self.create_url(str(device.ip_address), PORT, API_ENDPOINT_DELETE)
+        if device.ip_address is None:
+            _LOGGER.error("Device %s doesn't have IP address!", device.name)
+            return
+
+        if device.auth_token is None:
+            _LOGGER.error("Device %s doesn't have a auth token!", device.name)
+            return
+
+        url = self.create_url(device.ip_address, PORT, API_ENDPOINT_DELETE)
 
         # We need to remove charset=UTF-8 or else it will return a 400 Bad Request.
         # I think this is because of the character "/" in the id string.
@@ -301,10 +309,7 @@ class GlocaltokensApiClient:
                     )
         except ClientConnectorError:
             _LOGGER.warning(
-                (
-                    "Failed to connect to %s device. "
-                    "The device is probably offline."
-                ),
+                ("Failed to connect to %s device. " "The device is probably offline."),
                 device.name,
             )
         except ClientError as ex:

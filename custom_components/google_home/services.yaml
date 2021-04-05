@@ -10,7 +10,7 @@ delete_alarm:
       required: true
       selector:
         text:
-    alarm:
+    alarm_id:
       name: Alarm ID
       description: ID of an alarm (alarm/xxx).
       example: "alarm/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51"
@@ -28,7 +28,7 @@ delete_timer:
       required: true
       selector:
         text:
-    timer:
+    timer_id:
       name: Timer ID
       description: ID of a timer (timer/xxx).
       example: "timer/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51"
