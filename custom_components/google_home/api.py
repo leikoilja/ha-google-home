@@ -282,7 +282,7 @@ class GlocaltokensApiClient:
                                     device.name,
                                 )
                             else:
-                                _LOGGER.warning(
+                                _LOGGER.error(
                                     "Couldn't delete %s for %s - %s",
                                     item_type,
                                     device.name,
