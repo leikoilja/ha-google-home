@@ -300,7 +300,7 @@ class GlocaltokensApiClient:
                         response,
                     )
         except ClientConnectorError:
-            _LOGGER.debug(
+            _LOGGER.warning(
                 (
                     "Failed to connect to %s device. "
                     "The device is probably offline."
