@@ -194,7 +194,7 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
 
         if not is_alarm(alarm):
             _LOGGER.error(
-                "Wrong id format! Please provide a valid alarm id. "
+                "Incorrect ID format! Please provide a valid alarm ID. "
                 "See services tab for more info."
             )
             return
