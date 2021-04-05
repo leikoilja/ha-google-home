@@ -44,7 +44,7 @@ This is a custom component that is emerging from the
 local google assistant device (like Google Home/Nest etc) authentication
 tokens and use those tokens making API calls to Google Home devices.
 
-## Features
+## Sensors
 
 This component will set up the following platforms:
 
@@ -105,44 +105,48 @@ Both alarms and timers have a property called status. The status of the next ala
 
 Note that timers lack the additional `snoozed` state due to a limitation of the API. If you actually snooze a timer it will just reset itself to the state `set` again.
 
-### Services
+## Services
 
 It is possible to delete an alarm or a timer with the `google_home.delete_alarm` or `google_home.delete_timer` services.
 You can check it out in [Home Assistant Developer Services Tool](https://my.home-assistant.io/redirect/developer_services/).
 
-See below for more detailed information.
+See below for the more detailed information.
 
-#### Delete alarm example
+### Delete alarm
+
+#### Example
 
 ```yaml
 service: google_home.delete_alarm
 data:
-  entity_id: sensor.kokken_alarms
+  entity_id: sensor.kitchen_alarms
   timer_id: alarm/47dc1fa0-5ec0-2cc7-9ead-a94b85e22769
 ```
 
 #### Key Descriptions
 
-| Key         | Example                                      | Description                                 |
-| ----------- | -------------------------------------------- | ------------------------------------------- |
-| `entity_id` | `sensor.kitchen_alarms`                      | Entity name of a Google Home alarms sensor. |
-| `alarm_id`  | `alarm/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51` | Id of an alarm. See tables above.           |
+| Key         | Example                                      | Description                                    |
+| ----------- | -------------------------------------------- | ---------------------------------------------- |
+| `entity_id` | `sensor.kitchen_alarms`                      | Entity name of a Google Home alarms sensor.    |
+| `alarm_id`  | `alarm/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51` | Id of an alarm. See alarms descriptions above. |
 
-#### Delete timer example
+### Delete timer
+
+#### Example
 
 ```yaml
 service: google_home.delete_timer
 data:
-  entity_id: sensor.kokken_timers
+  entity_id: sensor.kitchen_timers
   timer_id: timer/47dc1fa0-5ec0-2cc7-9ead-a94b85e22769
 ```
 
 #### Key Descriptions
 
-| Key         | Example                                      | Description                                 |
-| ----------- | -------------------------------------------- | ------------------------------------------- |
-| `entity_id` | `sensor.kitchen_timers`                      | Entity name of a Google Home timers sensor. |
-| `timer_id`  | `timer/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51` | Id of an timer. See tables above.           |
+| Key         | Example                                      | Description                                    |
+| ----------- | -------------------------------------------- | ---------------------------------------------- |
+| `entity_id` | `sensor.kitchen_timers`                      | Entity name of a Google Home timers sensor.    |
+| `timer_id`  | `timer/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51` | Id of an timer. See timers descriptions above. |
 
 ## Getting Started
 
