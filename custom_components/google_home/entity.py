@@ -7,6 +7,7 @@ from homeassistant.helpers.update_coordinator import (
     DataUpdateCoordinator,
 )
 
+from .api import GlocaltokensApiClient
 from .const import DEFAULT_NAME, DOMAIN, MANUFACTURER
 from .models import GoogleHomeDevice
 from .types import DeviceInfo
@@ -15,8 +16,14 @@ from .types import DeviceInfo
 class GoogleHomeBaseEntity(CoordinatorEntity, ABC):
     """Base entity base for Google Home sensors"""
 
-    def __init__(self, coordinator: DataUpdateCoordinator, device_name: str):
+    def __init__(
+        self,
+        coordinator: DataUpdateCoordinator,
+        client: GlocaltokensApiClient,
+        device_name: str,
+    ):
         super().__init__(coordinator)
+        self.client = client
         self.device_name = device_name
 
     @property

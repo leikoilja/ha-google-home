@@ -14,8 +14,10 @@ from homeassistant.core import HomeAssistant
 
 from .const import (
     API_ENDPOINT_ALARMS,
+    API_ENDPOINT_DELETE,
     API_RETURNED_UNKNOWN,
     HEADER_CAST_LOCAL_AUTH,
+    HEADER_CONTENT_TYPE,
     HEADERS,
     JSON_ALARM,
     JSON_TIMER,
@@ -227,3 +229,92 @@ class GlocaltokensApiClient:
             ]
         )
         return coordinator_data
+
+    async def delete_alarm_or_timer(
+        self, device: GoogleHomeDevice, item_to_delete: str
+    ) -> None:
+        """Deletes a timer or alarm.
+        Can also delete multiple if a list is provided (Not implemented yet)."""
+
+        if device.ip_address is None:
+            _LOGGER.warning("Device %s doesn't have IP address!", device.name)
+            return
+
+        if device.auth_token is None:
+            _LOGGER.warning("Device %s doesn't have a auth token!", device.name)
+            return
+
+        url = self.create_url(device.ip_address, PORT, API_ENDPOINT_DELETE)
+
+        # We need to remove charset=UTF-8 or else it will return a 400 Bad Request.
+        # I think this is because of the character "/" in the id string.
+        HEADERS.update(
+            {
+                HEADER_CAST_LOCAL_AUTH: device.auth_token,
+                HEADER_CONTENT_TYPE: "application/json",
+            }
+        )
+
+        data = {"ids": [item_to_delete]}
+
+        item_type = item_to_delete.split("/")[0]
+
+        _LOGGER.debug(
+            "Deleting %s from Google Home device %s - %s - Raw data: %s",
+            item_type,
+            device.name,
+            url,
+            data,
+        )
+
+        try:
+            async with self._session.post(
+                url, json=data, headers=HEADERS, timeout=TIMEOUT
+            ) as response:
+                if response.status == HTTP_OK:
+                    resp = await response.json()
+                    if resp:
+                        if "success" in resp:
+                            if resp["success"]:
+                                _LOGGER.debug(
+                                    "Successfully deleted %s for %s",
+                                    item_type,
+                                    device.name,
+                                )
+                            else:
+                                _LOGGER.error(
+                                    "Couldn't delete %s for %s - %s",
+                                    item_type,
+                                    device.name,
+                                    resp,
+                                )
+                        else:
+                            _LOGGER.error(
+                                (
+                                    "Failed to get a confirmation that the %s"
+                                    "was deleted for device %s. "
+                                    "Received = %s"
+                                ),
+                                item_type,
+                                device.name,
+                                resp,
+                            )
+                else:
+                    _LOGGER.error(
+                        "Failed to delete %s for %s, API returned" " %d: %s",
+                        item_type,
+                        device.name,
+                        response.status,
+                        response,
+                    )
+        except ClientConnectorError:
+            _LOGGER.warning(
+                "Failed to connect to %s device. The device is probably offline.",
+                device.name,
+            )
+        except ClientError as ex:
+            # Make sure that we log the exception if one occurred.
+            _LOGGER.error(
+                "Request error: %s",
+                ex,
+            )

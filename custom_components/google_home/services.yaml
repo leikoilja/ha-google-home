@@ -1,0 +1,37 @@
+# Services.yaml for google_home integration
+
+delete_alarm:
+  description: Delete an alarm from a Google Home device.
+  fields:
+    entity_id:
+      name: Entity
+      description: Represents a Google Home device.
+      example: "sensor.kitchen_alarms"
+      required: true
+      selector:
+        text:
+    alarm_id:
+      name: Alarm ID
+      description: ID of an alarm (alarm/xxx).
+      example: "alarm/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51"
+      required: true
+      selector:
+        text:
+
+delete_timer:
+  description: Delete a timer from a Google Home device.
+  fields:
+    entity_id:
+      name: Entity
+      description: Represents a Google Home device.
+      example: "sensor.kitchen_timers"
+      required: true
+      selector:
+        text:
+    timer_id:
+      name: Timer ID
+      description: ID of a timer (timer/xxx).
+      example: "timer/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51"
+      required: true
+      selector:
+        text:

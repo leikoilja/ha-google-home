@@ -20,8 +20,9 @@
   <summary>Table of Contents</summary>
 
 1. [About The Project](#about)
-2. [Features](#features)
-3. [Getting Started](#getting-started)
+2. [Sensors](#sensors)
+3. [Services](#services)
+4. [Getting Started](#getting-started)
    - [Prerequisites](#prerequisites)
    - [HACS Installation](#hacs-installation)
    - [Manual Installation](#manual-installation)
@@ -29,11 +30,11 @@
      - [Copy method](#copy-method)
    - [Integration Setup](#integration-setup)
    - [Running in Home Assistant Docker container](#running-in-home-assistant-docker-container)
-4. [Lovelace Cards](#lovelace-cards)
-5. [Diagnostic Data Collection](#diagnostic-data-collection)
-6. [Troubleshooting](#troubleshooting)
-7. [Contribution](#contribution)
-8. [Credits](#credits)
+5. [Lovelace Cards](#lovelace-cards)
+6. [Diagnostic Data Collection](#diagnostic-data-collection)
+7. [Troubleshooting](#troubleshooting)
+8. [Contribution](#contribution)
+9. [Credits](#credits)
 
 </details>
 
@@ -44,7 +45,7 @@ This is a custom component that is emerging from the
 local google assistant device (like Google Home/Nest etc) authentication
 tokens and use those tokens making API calls to Google Home devices.
 
-## Features
+## Sensors
 
 This component will set up the following platforms:
 
@@ -63,13 +64,13 @@ Each of the alarms has the following keys:
 
 | Key              | Value type                   | Description                                                                                                                                                                                             |
 | ---------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `id`             | Google Home corresponding ID | Used to delete/modify alarm                                                                                                                                                                             |
+| `id`             | Google Home corresponding ID | Used to identify the alarm                                                                                                                                                                              |
 | `label`          | Name                         | Name of the alarm, this can be set when making the alarm                                                                                                                                                |
 | `fire_time`      | Seconds                      | Raw value coming from Google Home device until the alarm goes off                                                                                                                                       |
 | `local_time`     | Time                         | Time when the alarm goes off, in respect to the Home Assistant's timezone                                                                                                                               |
 | `local_time_iso` | Time in ISO 8601 standard    | Useful for automations                                                                                                                                                                                  |
-| `status`         | Status (string)              | The current status of the alarm, either `none`, `set`, `ringing` or `snoozed`                                                                                                                           |
 | `recurrence`     | List of integers             | Days of the week when the alarm will go off. Please note, respecting Google set standard, the week starts from Sunday, therefore is denoted by 0. Correspondingly, Monday is 1, Saturday is 6 and so on |
+| `status`         | Status (string)              | The current status of the alarm, either `none`, `set`, `ringing` or `snoozed`                                                                                                                           |
 
 The state value shows the next alarm as a timestring (i.e.: `2021-03-07T15:26:17+01:00`) if there is at least one alarm set, otherwise it is set to `unavailable`.
 This matches state format of [standard next alarm sensor](https://companion.home-assistant.io/docs/core/sensors/#next-alarm-sensor) provided by `mobile_app`.
@@ -84,7 +85,7 @@ Each of the timers has the following keys:
 
 | Key              | Value type                   | Description                                                               |
 | ---------------- | ---------------------------- | ------------------------------------------------------------------------- |
-| `id`             | Google Home corresponding ID | Used to delete/modify timer                                               |
+| `id`             | Google Home corresponding ID | Used to identify the timer                                                |
 | `label`          | Name                         | Name of the timer, this can be set when making the timer                  |
 | `fire_time`      | Seconds                      | Raw value coming from Google Home device until the timer goes off         |
 | `local_time`     | Time                         | Time when the timer goes off, in respect to the Home Assistant's timezone |
@@ -106,6 +107,49 @@ Both alarms and timers have a property called status. The status of the next ala
 | `snoozed` | Alarm was ringing and has been snoozed (only available for alarms) |
 
 Note that timers lack the additional `snoozed` state due to a limitation of the API. If you actually snooze a timer it will just reset itself to the state `set` again.
+
+## Services
+
+It is possible to delete an alarm or a timer with the `google_home.delete_alarm` or `google_home.delete_timer` services.
+You can check it out in [Home Assistant Developer Services Tool](https://my.home-assistant.io/redirect/developer_services/).
+
+See below for the more detailed information.
+
+### Delete alarm
+
+#### Example
+
+```yaml
+service: google_home.delete_alarm
+data:
+  entity_id: sensor.kitchen_alarms
+  timer_id: alarm/47dc1fa0-5ec0-2cc7-9ead-a94b85e22769
+```
+
+#### Key Descriptions
+
+| Key         | Example                                      | Description                                   |
+| ----------- | -------------------------------------------- | --------------------------------------------- |
+| `entity_id` | `sensor.kitchen_alarms`                      | Entity name of a Google Home alarms sensor.   |
+| `alarm_id`  | `alarm/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51` | ID of an alarm. See alarms description above. |
+
+### Delete timer
+
+#### Example
+
+```yaml
+service: google_home.delete_timer
+data:
+  entity_id: sensor.kitchen_timers
+  timer_id: timer/47dc1fa0-5ec0-2cc7-9ead-a94b85e22769
+```
+
+#### Key Descriptions
+
+| Key         | Example                                      | Description                                  |
+| ----------- | -------------------------------------------- | -------------------------------------------- |
+| `entity_id` | `sensor.kitchen_timers`                      | Entity name of a Google Home timers sensor.  |
+| `timer_id`  | `timer/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51` | ID of a timer. See timers description above. |
 
 ## Getting Started
 
