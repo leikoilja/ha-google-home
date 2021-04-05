@@ -61,7 +61,7 @@ Home Assistant instance running and already configured with the included
 file.
 
 You can use the `pre-commit` settings implemented in this repository to have
-linting tools check your contributions (see deicated section below).
+linting tools check your contributions (see dedicated section below).
 
 When writting unittests please follow the good practises like:
 
@@ -86,7 +86,7 @@ $ poetry run pre-commit install
 
 Now the pre-commit tests will be done every time you commit.
 
-You can run the tests on all repository file with the command:
+You can also run the tests on all repository files manually with this command:
 
 ```console
 $ poetry run pre-commit run --all-files
