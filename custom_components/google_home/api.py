@@ -238,7 +238,7 @@ class GlocaltokensApiClient:
 
         url = self.create_url(str(device.ip_address), PORT, API_ENDPOINT_DELETE)
 
-        # We need to remove charset=UTF-8 or else it will return a 400 BAD request.
+        # We need to remove charset=UTF-8 or else it will return a 400 Bad Request.
         # I think this is because of the character "/" in the id string.
         HEADERS.update(
             {
