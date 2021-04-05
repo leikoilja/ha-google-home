@@ -21,8 +21,8 @@ from .const import (
     LABEL_ALARMS,
     LABEL_DEVICE,
     LABEL_TIMERS,
-    SERVICE_ATTR_ID_ALARM,
-    SERVICE_ATTR_ID_TIMER,
+    SERVICE_ATTR_ALARM_ID,
+    SERVICE_ATTR_TIMER_ID,
     SERVICE_DELETE_ALARM,
     SERVICE_DELETE_TIMER,
 )
@@ -75,12 +75,12 @@ async def async_setup_entry(
 
     platform.async_register_entity_service(
         SERVICE_DELETE_ALARM,
-        {vol.Required(SERVICE_ATTR_ID_ALARM): cv.string},
+        {vol.Required(SERVICE_ATTR_ALARM_ID): cv.string},
         "async_delete_alarm",
     )
     platform.async_register_entity_service(
         SERVICE_DELETE_TIMER,
-        {vol.Required(SERVICE_ATTR_ID_TIMER): cv.string},
+        {vol.Required(SERVICE_ATTR_TIMER_ID): cv.string},
         "async_delete_timer",
     )
 
@@ -188,9 +188,7 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
     def is_valid_alarm_id(alarm_id: str) -> bool:
         """Checks if the alarm id provided is valid."""
         return (
-            isinstance(alarm_id, str)
-            and alarm_id.startswith("alarm/")
-            and len(alarm_id) == ALARM_AND_TIMER_ID_LENGTH
+            alarm_id.startswith("alarm/") and len(alarm_id) == ALARM_AND_TIMER_ID_LENGTH
         )
 
     async def async_delete_alarm(self, alarm_id: str) -> None:
@@ -263,9 +261,7 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
     def is_valid_timer_id(timer_id: str) -> bool:
         """Checks if the timer id provided is valid."""
         return (
-            isinstance(timer_id, str)
-            and timer_id.startswith("timer/")
-            and len(timer_id) == ALARM_AND_TIMER_ID_LENGTH
+            timer_id.startswith("timer/") and len(timer_id) == ALARM_AND_TIMER_ID_LENGTH
         )
 
     async def async_delete_timer(self, timer_id: str) -> None:

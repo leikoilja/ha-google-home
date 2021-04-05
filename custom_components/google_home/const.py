@@ -31,8 +31,8 @@ PLATFORMS = [SENSOR]
 # Services
 SERVICE_DELETE_ALARM = "delete_alarm"
 SERVICE_DELETE_TIMER = "delete_timer"
-SERVICE_ATTR_ID_ALARM = "alarm_id"
-SERVICE_ATTR_ID_TIMER = "timer_id"
+SERVICE_ATTR_ALARM_ID = "alarm_id"
+SERVICE_ATTR_TIMER_ID = "timer_id"
 
 # Configuration and options
 CONF_ANDROID_ID = "android_id"

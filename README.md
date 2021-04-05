@@ -20,8 +20,9 @@
   <summary>Table of Contents</summary>
 
 1. [About The Project](#about)
-2. [Features](#features)
-3. [Getting Started](#getting-started)
+2. [Sensors](#sensors)
+3. [Services](#services)
+4. [Getting Started](#getting-started)
    - [Prerequisites](#prerequisites)
    - [HACS Installation](#hacs-installation)
    - [Manual Installation](#manual-installation)
@@ -29,11 +30,11 @@
      - [Copy method](#copy-method)
    - [Integration Setup](#integration-setup)
    - [Running in Home Assistant Docker container](#running-in-home-assistant-docker-container)
-4. [Lovelace Cards](#lovelace-cards)
-5. [Diagnostic Data Collection](#diagnostic-data-collection)
-6. [Troubleshooting](#troubleshooting)
-7. [Contribution](#contribution)
-8. [Credits](#credits)
+5. [Lovelace Cards](#lovelace-cards)
+6. [Diagnostic Data Collection](#diagnostic-data-collection)
+7. [Troubleshooting](#troubleshooting)
+8. [Contribution](#contribution)
+9. [Credits](#credits)
 
 </details>
 
@@ -69,6 +70,7 @@ Each of the alarms has the following keys:
 | `local_time`     | Time                         | Time when the alarm goes off, in respect to the Home Assistant's timezone                                                                                                                               |
 | `local_time_iso` | Time in ISO 8601 standard    | Useful for automations                                                                                                                                                                                  |
 | `recurrence`     | List of integers             | Days of the week when the alarm will go off. Please note, respecting Google set standard, the week starts from Sunday, therefore is denoted by 0. Correspondingly, Monday is 1, Saturday is 6 and so on |
+| `status`         | Status (string)              | The current status of the alarm, either `none`, `set`, `ringing` or `snoozed`                                                                                                                           |
 
 The state value shows the next alarm as a timestring (i.e.: `2021-03-07T15:26:17+01:00`) if there is at least one alarm set, otherwise it is set to `unavailable`.
 This matches state format of [standard next alarm sensor](https://companion.home-assistant.io/docs/core/sensors/#next-alarm-sensor) provided by `mobile_app`.
@@ -89,6 +91,7 @@ Each of the timers has the following keys:
 | `local_time`     | Time                         | Time when the timer goes off, in respect to the Home Assistant's timezone |
 | `local_time_iso` | Time in ISO 8601 standard    | Useful for automations                                                    |
 | `duration`       | Seconds                      | Timer duration in seconds                                                 |
+| `status`         | Status (string)              | The current status of the timer, either `none`, `set`, or `ringing`       |
 
 The state value shows the next timer as a timestring (i.e.: `2021-03-07T15:26:17+01:00`) if there is at least one timer set, otherwise it is set to `unavailable`.
 
@@ -125,10 +128,10 @@ data:
 
 #### Key Descriptions
 
-| Key         | Example                                      | Description                                    |
-| ----------- | -------------------------------------------- | ---------------------------------------------- |
-| `entity_id` | `sensor.kitchen_alarms`                      | Entity name of a Google Home alarms sensor.    |
-| `alarm_id`  | `alarm/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51` | Id of an alarm. See alarms descriptions above. |
+| Key         | Example                                      | Description                                   |
+| ----------- | -------------------------------------------- | --------------------------------------------- |
+| `entity_id` | `sensor.kitchen_alarms`                      | Entity name of a Google Home alarms sensor.   |
+| `alarm_id`  | `alarm/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51` | ID of an alarm. See alarms description above. |
 
 ### Delete timer
 
@@ -143,10 +146,10 @@ data:
 
 #### Key Descriptions
 
-| Key         | Example                                      | Description                                    |
-| ----------- | -------------------------------------------- | ---------------------------------------------- |
-| `entity_id` | `sensor.kitchen_timers`                      | Entity name of a Google Home timers sensor.    |
-| `timer_id`  | `timer/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51` | Id of an timer. See timers descriptions above. |
+| Key         | Example                                      | Description                                   |
+| ----------- | -------------------------------------------- | --------------------------------------------- |
+| `entity_id` | `sensor.kitchen_timers`                      | Entity name of a Google Home timers sensor.   |
+| `timer_id`  | `timer/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51` | ID of an timer. See timers description above. |
 
 ## Getting Started
 
