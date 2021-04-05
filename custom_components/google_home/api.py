@@ -249,7 +249,7 @@ class GlocaltokensApiClient:
 
         data = {"ids": [item_to_delete]}
 
-        item_type = item_to_delete[:5]
+        item_type = item_to_delete.split("/")[0]
 
         _LOGGER.debug(
             "Deleting %s from Google Home device %s - %s - " "Raw data: %s",
