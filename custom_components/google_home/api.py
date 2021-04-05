@@ -303,7 +303,7 @@ class GlocaltokensApiClient:
             _LOGGER.debug(
                 (
                     "Failed to connect to %s device. "
-                    "The device is probably offline. Will retry later."
+                    "The device is probably offline."
                 ),
                 device.name,
             )
