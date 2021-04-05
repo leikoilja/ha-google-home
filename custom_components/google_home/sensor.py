@@ -265,7 +265,7 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
 
         if not is_timer(timer):
             _LOGGER.error(
-                "Wrong id format! Please provide a valid timer id. "
+                "Incorrect ID format! Please provide a valid timer ID. "
                 "See services tab for more info."
             )
             return
