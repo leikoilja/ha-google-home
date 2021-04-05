@@ -7,7 +7,7 @@ from homeassistant.helpers.update_coordinator import (
     DataUpdateCoordinator,
 )
 
-from . import GlocaltokensApiClient
+from .api import GlocaltokensApiClient
 from .const import DEFAULT_NAME, DOMAIN, MANUFACTURER
 from .models import GoogleHomeDevice
 from .types import DeviceInfo
