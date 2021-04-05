@@ -5,7 +5,7 @@ delete_alarm:
   fields:
     entity_id:
       name: Entity
-      description: Represents a google home device.
+      description: Represents a Google Home device.
       example: "sensor.kitchen_alarms"
       required: true
       selector:
