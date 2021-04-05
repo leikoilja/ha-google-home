@@ -28,7 +28,7 @@ class GoogleHomeDevice:
     def __init__(
         self,
         name: str,
-        auth_token: str,
+        auth_token: Optional[str],
         ip_address: Optional[str] = None,
         hardware: Optional[str] = None,
     ):

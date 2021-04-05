@@ -1,18 +1,5 @@
 """Various types used in type hints."""
-from typing import Iterable, List, Optional, Set, Tuple, TypedDict
-
-from typing_extensions import Protocol
-
-from homeassistant.helpers.entity import Entity
-
-
-class AddEntitiesCallback(Protocol):
-    """Protocol type for async_setup_entry callback"""
-
-    def __call__(
-        self, new_entities: Iterable[Entity], update_before_add: bool = False
-    ) -> None:
-        ...
+from typing import List, Optional, Set, Tuple, TypedDict
 
 
 class AlarmJsonDict(TypedDict, total=False):

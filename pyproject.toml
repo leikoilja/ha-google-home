@@ -19,6 +19,7 @@ pre-commit = "^2.11.1"
 pylint = "^2.7.4"
 isort = "^5.8.0"
 mypy = "^0.812"
+homeassistant-stubs = "^2021.4.0b3"
 
 [tool.pylint.messages_control]
 # Reasons disabled:
