@@ -149,7 +149,7 @@ data:
 | Key         | Example                                      | Description                                   |
 | ----------- | -------------------------------------------- | --------------------------------------------- |
 | `entity_id` | `sensor.kitchen_timers`                      | Entity name of a Google Home timers sensor.   |
-| `timer_id`  | `timer/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51` | ID of an timer. See timers description above. |
+| `timer_id`  | `timer/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51` | ID of a timer. See timers description above. |
 
 ## Getting Started
 
