@@ -19,7 +19,7 @@ delete_alarm:
         text:
 
 delete_timer:
-  description: Delete a timer from a google home device.
+  description: Delete a timer from a Google Home device.
   fields:
     entity_id:
       name: Entity
