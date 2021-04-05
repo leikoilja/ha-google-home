@@ -1,7 +1,7 @@
 # Services.yaml for google_home integration
 
 delete_alarm:
-  description: Delete a alarm from a google home device.
+  description: Delete an alarm from a Google Home device.
   fields:
     entity_id:
       name: Entity
