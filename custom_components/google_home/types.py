@@ -7,6 +7,7 @@ class AlarmJsonDict(TypedDict, total=False):
 
     id: str
     fire_time: int
+    status: int
     label: Optional[str]
     recurrence: Optional[str]
 
@@ -17,6 +18,7 @@ class TimerJsonDict(TypedDict, total=False):
     id: str
     fire_time: int
     original_duration: int
+    status: int
     label: Optional[str]
 
 
@@ -25,16 +27,18 @@ class GoogleHomeAlarmDict(TypedDict):
 
     alarm_id: str
     fire_time: int
+    status: str
     label: Optional[str]
     recurrence: Optional[str]
 
 
 class GoogleHomeTimerDict(TypedDict):
-    """Typed dict representation of Google Home time"""
+    """Typed dict representation of Google Home timer"""
 
     timer_id: str
     fire_time: int
     duration: str
+    status: str
     label: Optional[str]
 
 
@@ -52,6 +56,7 @@ class DeviceAttributes(TypedDict):
 class AlarmsAttributes(TypedDict):
     """Typed dict for alarms attributes"""
 
+    next_alarm_status: str
     alarms: List[GoogleHomeAlarmDict]
     integration: str
 
@@ -59,6 +64,7 @@ class AlarmsAttributes(TypedDict):
 class TimersAttributes(TypedDict):
     """Typed dict for timers attributes"""
 
+    next_timer_status: str
     timers: List[GoogleHomeTimerDict]
     integration: str
 
