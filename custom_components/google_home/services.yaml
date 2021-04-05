@@ -23,7 +23,7 @@ delete_timer:
   fields:
     entity_id:
       name: Entity
-      description: Represents a google home device.
+      description: Represents a Google Home device.
       example: "sensor.kitchen_timers"
       required: true
       selector:
