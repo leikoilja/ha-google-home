@@ -1,6 +1,7 @@
 """Defines base entities for Google Home"""
 
 from abc import ABC, abstractmethod
+from typing import List, Optional
 
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
@@ -50,10 +51,10 @@ class GoogleHomeBaseEntity(CoordinatorEntity, ABC):
             "manufacturer": MANUFACTURER,
         }
 
-    def get_device(self) -> GoogleHomeDevice:
+    def get_device(self) -> Optional[GoogleHomeDevice]:
         """Return the device matched by device name
         from the list of google devices in coordinator_data"""
-        matched_devices = [
+        matched_devices: List[GoogleHomeDevice] = [
             device
             for device in self.coordinator.data
             if device.name == self.device_name

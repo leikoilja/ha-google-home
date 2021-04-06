@@ -27,14 +27,14 @@ from .const import (
     SERVICE_DELETE_TIMER,
 )
 from .entity import GoogleHomeBaseEntity
-from .models import (
+from .models import GoogleHomeAlarmStatus, GoogleHomeDevice, GoogleHomeTimerStatus
+from .types import (
+    AlarmsAttributes,
+    DeviceAttributes,
     GoogleHomeAlarmDict,
-    GoogleHomeAlarmStatus,
-    GoogleHomeDevice,
     GoogleHomeTimerDict,
-    GoogleHomeTimerStatus,
+    TimersAttributes,
 )
-from .types import AlarmsAttributes, DeviceAttributes, TimersAttributes
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -195,6 +195,10 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
         """Service call to delete alarm on device"""
         device = self.get_device()
 
+        if device is None:
+            _LOGGER.error("Device %s is not found.", self.device_name)
+            return
+
         if not self.is_valid_alarm_id(alarm_id):
             _LOGGER.error(
                 "Incorrect ID format! Please provide a valid alarm ID. "
@@ -267,6 +271,10 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
     async def async_delete_timer(self, timer_id: str) -> None:
         """Service call to delete alarm on device"""
         device = self.get_device()
+
+        if device is None:
+            _LOGGER.error("Device %s is not found.", self.device_name)
+            return
 
         if not self.is_valid_timer_id(timer_id):
             _LOGGER.error(
