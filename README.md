@@ -26,8 +26,6 @@
    - [Prerequisites](#prerequisites)
    - [HACS Installation](#hacs-installation)
    - [Manual Installation](#manual-installation)
-     - [Git clone method](#git-clone-method)
-     - [Copy method](#copy-method)
    - [Integration Setup](#integration-setup)
    - [Running in Home Assistant Docker container](#running-in-home-assistant-docker-container)
 5. [Lovelace Cards](#lovelace-cards)
