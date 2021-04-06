@@ -36,7 +36,9 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         """Initialize."""
         self._errors: Dict[str, str] = {}
 
-    async def async_step_user(self, user_input=None):
+    async def async_step_user(
+        self, user_input: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """Handle a flow initialized by the user."""
         self._errors = {}
 
@@ -75,7 +77,9 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     ) -> GoogleHomeOptionsFlowHandler:
         return GoogleHomeOptionsFlowHandler(config_entry)
 
-    async def _show_config_form(self, _user_input):
+    async def _show_config_form(
+        self, _user_input: Optional[Dict[str, Any]]
+    ) -> Dict[str, Any]:
         """Show the configuration form to edit location data."""
         return self.async_show_form(
             step_id="user",
@@ -88,7 +92,7 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             errors=self._errors,
         )
 
-    async def _test_credentials(self, client) -> Optional[str]:
+    async def _test_credentials(self, client: GlocaltokensApiClient) -> Optional[str]:
         """Returns true and master token if credentials are valid."""
         try:
             master_token = await client.async_get_master_token()
@@ -106,11 +110,15 @@ class GoogleHomeOptionsFlowHandler(config_entries.OptionsFlow):
         self.config_entry = config_entry
         self.options = dict(config_entry.options)
 
-    async def async_step_init(self, _user_input=None):
+    async def async_step_init(
+        self, _user_input: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """Manage the options."""
         return await self.async_step_user()
 
-    async def async_step_user(self, user_input=None) -> Dict[str, Any]:
+    async def async_step_user(
+        self, user_input: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
         """Handle a flow initialized by the user."""
         if user_input is not None:
             self.options.update(user_input)
@@ -125,7 +133,7 @@ class GoogleHomeOptionsFlowHandler(config_entries.OptionsFlow):
             ),
         )
 
-    async def _update_options(self):
+    async def _update_options(self) -> Dict[str, Any]:
         """Update config entry options."""
         return self.async_create_entry(
             title=self.config_entry.data.get(CONF_USERNAME), data=self.options
