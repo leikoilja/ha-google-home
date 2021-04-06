@@ -238,11 +238,11 @@ class GlocaltokensApiClient:
         Can also delete multiple if a list is provided (Not implemented yet)."""
 
         if device.ip_address is None:
-            _LOGGER.warning("Device %s doesn't have IP address!", device.name)
+            _LOGGER.warning("Device %s doesn't have an IP address!", device.name)
             return
 
         if device.auth_token is None:
-            _LOGGER.warning("Device %s doesn't have a auth token!", device.name)
+            _LOGGER.warning("Device %s doesn't have an auth token!", device.name)
             return
 
         url = self.create_url(device.ip_address, PORT, API_ENDPOINT_DELETE)
@@ -321,14 +321,14 @@ class GlocaltokensApiClient:
             )
 
     async def reboot_google_device(self, device: GoogleHomeDevice) -> None:
-        """Reboots a Google Home device if supported."""
+        """Reboots a Google Home device if it supports this."""
 
         if device.ip_address is None:
-            _LOGGER.warning("Device %s doesn't have IP address!", device.name)
+            _LOGGER.warning("Device %s doesn't have an IP address!", device.name)
             return
 
         if device.auth_token is None:
-            _LOGGER.warning("Device %s doesn't have a auth token!", device.name)
+            _LOGGER.warning("Device %s doesn't have an auth token!", device.name)
             return
 
         url = self.create_url(device.ip_address, PORT, API_ENDPOINT_REBOOT)

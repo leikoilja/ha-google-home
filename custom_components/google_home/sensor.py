@@ -141,7 +141,7 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
         }
 
     async def async_reboot_device(self) -> None:
-        """Reboot device"""
+        """Reboot the device."""
         device = self.get_device()
 
         if device is None:
