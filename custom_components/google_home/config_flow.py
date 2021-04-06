@@ -34,13 +34,13 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
     def __init__(self) -> None:
         """Initialize."""
-        self.errors: Dict[str, str] = {}
+        self._errors: Dict[str, str] = {}
 
     async def async_step_user(
         self, user_input: Optional[Dict[str, Any]] = None
     ) -> Dict[str, Any]:
         """Handle a flow initialized by the user."""
-        self.errors = {}
+        self._errors = {}
 
         # Only a single instance of the integration is allowed:
         if self._async_current_entries():
@@ -65,7 +65,7 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     }
                 )
                 return self.async_create_entry(title=username, data=user_input)
-            self.errors["base"] = "auth"
+            self._errors["base"] = "auth"
             return await self._show_config_form(user_input)
 
         return await self._show_config_form(user_input)
@@ -89,7 +89,7 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     vol.Required(CONF_PASSWORD): str,
                 }
             ),
-            errors=self.errors,
+            errors=self._errors,
         )
 
     async def _test_credentials(self, client: GlocaltokensApiClient) -> Optional[str]:
