@@ -25,6 +25,7 @@ from .const import (
     SERVICE_ATTR_TIMER_ID,
     SERVICE_DELETE_ALARM,
     SERVICE_DELETE_TIMER,
+    SERVICE_REBOOT,
 )
 from .entity import GoogleHomeBaseEntity
 from .models import GoogleHomeAlarmStatus, GoogleHomeDevice, GoogleHomeTimerStatus
@@ -73,15 +74,23 @@ async def async_setup_entry(
 
     platform = entity_platform.current_platform.get()
 
+    # Services
     platform.async_register_entity_service(
         SERVICE_DELETE_ALARM,
         {vol.Required(SERVICE_ATTR_ALARM_ID): cv.string},
         "async_delete_alarm",
     )
+
     platform.async_register_entity_service(
         SERVICE_DELETE_TIMER,
         {vol.Required(SERVICE_ATTR_TIMER_ID): cv.string},
         "async_delete_timer",
+    )
+
+    platform.async_register_entity_service(
+        SERVICE_REBOOT,
+        {},
+        "async_reboot_device",
     )
 
     return True
@@ -130,6 +139,16 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
             "available": device.available,
             "integration": DOMAIN,
         }
+
+    async def async_reboot_device(self) -> None:
+        """Reboot device"""
+        device = self.get_device()
+
+        if device is None:
+            _LOGGER.error("Device %s is not found.", self.device_name)
+            return
+
+        await self.client.reboot_google_device(device)
 
 
 class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):

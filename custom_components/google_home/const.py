@@ -29,6 +29,7 @@ SENSOR = "sensor"
 PLATFORMS = [SENSOR]
 
 # Services
+SERVICE_REBOOT = "reboot_device"
 SERVICE_DELETE_ALARM = "delete_alarm"
 SERVICE_DELETE_TIMER = "delete_timer"
 SERVICE_ATTR_ALARM_ID = "alarm_id"
@@ -54,6 +55,7 @@ PORT = 8443
 # API
 API_ENDPOINT_ALARMS = "setup/assistant/alarms"
 API_ENDPOINT_DELETE = "setup/assistant/alarms/delete"
+API_ENDPOINT_REBOOT = "setup/reboot"
 HEADER_CAST_LOCAL_AUTH = "cast-local-authorization-token"
 HEADER_CONTENT_TYPE = "content-type"
 

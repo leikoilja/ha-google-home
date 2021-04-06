@@ -15,6 +15,7 @@ from homeassistant.core import HomeAssistant
 from .const import (
     API_ENDPOINT_ALARMS,
     API_ENDPOINT_DELETE,
+    API_ENDPOINT_REBOOT,
     API_RETURNED_UNKNOWN,
     HEADER_CAST_LOCAL_AUTH,
     HEADER_CONTENT_TYPE,
@@ -313,7 +314,66 @@ class GlocaltokensApiClient:
                 device.name,
             )
         except ClientError as ex:
-            # Make sure that we log the exception if one occurred.
+            # Make sure that we log the exception from the client if one occurred.
+            _LOGGER.error(
+                "Request error: %s",
+                ex,
+            )
+
+    async def reboot_google_device(self, device: GoogleHomeDevice) -> None:
+        """Reboots a Google Home device if supported."""
+
+        if device.ip_address is None:
+            _LOGGER.warning("Device %s doesn't have IP address!", device.name)
+            return
+
+        if device.auth_token is None:
+            _LOGGER.warning("Device %s doesn't have a auth token!", device.name)
+            return
+
+        url = self.create_url(device.ip_address, PORT, API_ENDPOINT_REBOOT)
+
+        # We need to remove charset=UTF-8 or else it will return a 400 Bad Request.
+        HEADERS.update(
+            {
+                HEADER_CAST_LOCAL_AUTH: device.auth_token,
+                HEADER_CONTENT_TYPE: "application/json",
+            }
+        )
+
+        # "now" means reboot and "fdr" means factory reset (Not implemented).
+        data = {"params": "now"}
+
+        _LOGGER.debug(
+            "Trying to reboot Google Home device %s - %s",
+            device.name,
+            url,
+        )
+
+        try:
+            async with self._session.post(
+                url, json=data, headers=HEADERS, timeout=TIMEOUT
+            ) as response:
+                if response.status == HTTP_OK:
+                    # It will return 200 even if the device does not support rebooting.
+                    _LOGGER.info(
+                        "Successfully asked %s to reboot.",
+                        device.name,
+                    )
+                else:
+                    _LOGGER.error(
+                        "Failed to reboot %s, API returned" " %d: %s",
+                        device.name,
+                        response.status,
+                        response,
+                    )
+        except ClientConnectorError:
+            _LOGGER.warning(
+                "Failed to connect to %s device. The device is probably offline.",
+                device.name,
+            )
+        except ClientError as ex:
+            # Make sure that we log the exception from the client if one occurred.
             _LOGGER.error(
                 "Request error: %s",
                 ex,
