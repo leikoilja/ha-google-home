@@ -214,7 +214,7 @@ class GlocaltokensApiClient:
     async def collect_data_from_endpoints(
         self, device: GoogleHomeDevice, ip_address: str, auth_token: str
     ) -> GoogleHomeDevice:
-        """Collects data from different endpoints."""
+        """Collect data from different endpoints."""
 
         # This could properly be down in a better and cleaner way.
         device = await self.get_alarms_and_timers(device, ip_address, auth_token)

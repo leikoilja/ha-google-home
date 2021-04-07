@@ -37,7 +37,7 @@ class GoogleHomeDevice:
         self.ip_address = ip_address
         self.hardware = hardware
         self.available = True
-        self.do_not_disturb = False
+        self._do_not_disturb = False
         self._timers: List[GoogleHomeTimer] = []
         self._alarms: List[GoogleHomeAlarm] = []
 
@@ -86,12 +86,12 @@ class GoogleHomeDevice:
         return timers[0] if timers else None
 
     def set_do_not_disturb_status(self, status: str) -> None:
-        """Stores Do Not Disturb status."""
-        self.do_not_disturb = bool(status)
+        """Set Do Not Disturb status."""
+        self._do_not_disturb = bool(status)
 
     def get_do_not_disturb_status(self) -> bool:
-        """Returns Do Not Disturb status."""
-        return self.do_not_disturb
+        """Return Do Not Disturb status."""
+        return self._do_not_disturb
 
 
 class GoogleHomeTimer:

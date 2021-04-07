@@ -21,18 +21,19 @@
 
 1. [About The Project](#about)
 2. [Sensors](#sensors)
-3. [Services](#services)
-4. [Getting Started](#getting-started)
+3. [Switches](#switches)
+4. [Services](#services)
+5. [Getting Started](#getting-started)
    - [Prerequisites](#prerequisites)
    - [HACS Installation](#hacs-installation)
    - [Manual Installation](#manual-installation)
    - [Integration Setup](#integration-setup)
    - [Running in Home Assistant Docker container](#running-in-home-assistant-docker-container)
-5. [Lovelace Cards](#lovelace-cards)
-6. [Diagnostic Data Collection](#diagnostic-data-collection)
-7. [Troubleshooting](#troubleshooting)
-8. [Contribution](#contribution)
-9. [Credits](#credits)
+6. [Lovelace Cards](#lovelace-cards)
+7. [Diagnostic Data Collection](#diagnostic-data-collection)
+8. [Troubleshooting](#troubleshooting)
+9. [Contribution](#contribution)
+10. [Credits](#credits)
 
 </details>
 
@@ -110,9 +111,9 @@ Note that timers lack the additional `snoozed` state due to a limitation of the 
 
 This component will set up the following switches:
 
-| Platform | Sample switch                  | Description                                         |
-| -------- | ------------------------------ | --------------------------------------------------- |
-| `sensor` | `switch.living_do_not_disturb` | Toggles Do Not Disturb mode on a Google Home device |
+| Platform | Sample switch                  | Description                                        |
+| -------- | ------------------------------ | -------------------------------------------------- |
+| `switch` | `switch.living_do_not_disturb` | Toggle Do Not Disturb mode on a Google Home device |
 
 ## Services
 
