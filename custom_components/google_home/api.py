@@ -2,7 +2,7 @@
 from asyncio import gather
 import json
 import logging
-from typing import Any, List, Optional
+from typing import Dict, List, Optional
 
 from aiohttp import ClientError, ClientSession
 from aiohttp.client_exceptions import ClientConnectorError, ContentTypeError
@@ -301,9 +301,9 @@ class GlocaltokensApiClient:
                 device.name,
             )
 
-    async def post(  # type: ignore[misc]
+    async def post(
         self, endpoint: str, data: str, device: GoogleHomeDevice
-    ) -> Any:
+    ) -> Optional[Dict[str, str]]:
         """Shared post request"""
 
         if device.ip_address is None:
