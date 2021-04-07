@@ -166,7 +166,7 @@ class GlocaltokensApiClient:
                         (
                             "Failed to fetch data from %s, API returned %d. "
                             "The device(hardware='%s') is possibly not Google Home "
-                            "compatable and has no alarms/timers. "
+                            "compatible and has no alarms/timers. "
                             "Will retry later."
                         ),
                         device.name,
@@ -216,7 +216,7 @@ class GlocaltokensApiClient:
                     (
                         "Failed to fetch timers/alarms information "
                         "from device %s. We could not determine it's IP address, "
-                        "the device is either offline or is not compatable "
+                        "the device is either offline or is not compatible "
                         "Google Home device. Will try again later."
                     ),
                     device.name,
