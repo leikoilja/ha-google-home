@@ -364,7 +364,7 @@ class GlocaltokensApiClient:
                     is_enabled,
                 )
 
-                device.set_do_not_disturb_status(is_enabled)
+                device.set_do_not_disturb_status(bool(is_enabled))
             else:
                 _LOGGER.debug(
                     "Response not expected from Google Home device %s - %s",
