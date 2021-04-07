@@ -338,13 +338,13 @@ class GlocaltokensApiClient:
                 device.name,
             )
         elif enable:
-            data = {"notifications_enabled": True}
+            data = {"notifications_enabled": False}
             _LOGGER.debug(
                 "Setting Do Not Disturb setting to True on Google Home device %s",
                 device.name,
             )
         elif enable is False:
-            data = {"notifications_enabled": False}
+            data = {"notifications_enabled": True}
             _LOGGER.debug(
                 "Setting Do Not Disturb setting to False on Google Home device %s",
                 device.name,
@@ -364,12 +364,12 @@ class GlocaltokensApiClient:
                 )
 
                 device.set_do_not_disturb_status(is_enabled)
-
-            _LOGGER.debug(
-                "Response not expected from Google Home device %s - %s",
-                device.name,
-                response,
-            )
+            else:
+                _LOGGER.debug(
+                    "Response not expected from Google Home device %s - %s",
+                    device.name,
+                    response,
+                )
 
         return device
 
@@ -408,6 +408,18 @@ class GlocaltokensApiClient:
                         resp = await response.json()
                     except ContentTypeError:
                         resp = True
+                elif response.status == HTTP_NOT_FOUND:
+                    _LOGGER.debug(
+                        (
+                            "Failed to post data to %s, API returned %d. "
+                            "The device(hardware='%s') is possibly not Google Home "
+                            "compatible and has no alarms/timers. "
+                            "Will retry later."
+                        ),
+                        device.name,
+                        response.status,
+                        device.hardware,
+                    )
                 else:
                     _LOGGER.error(
                         "Failed to access %s, API returned" " %d: %s",
