@@ -45,7 +45,7 @@ tokens and use those tokens making API calls to Google Home devices.
 
 ## Sensors
 
-This component will set up the following platforms:
+This component will set up the following sensors:
 
 | Platform | Sample sensor               | Description                                               |
 | -------- | --------------------------- | --------------------------------------------------------- |
@@ -105,6 +105,14 @@ Both alarms and timers have a property called status. The status of the next ala
 | `snoozed` | Alarm was ringing and has been snoozed (only available for alarms) |
 
 Note that timers lack the additional `snoozed` state due to a limitation of the API. If you actually snooze a timer it will just reset itself to the state `set` again.
+
+## Switches
+
+This component will set up the following switches:
+
+| Platform | Sample sensor                  | Description                                         |
+| -------- | ------------------------------ | --------------------------------------------------- |
+| `sensor` | `switch.living_do_not_disturb` | Toggles Do Not Disturb mode on a Google Home device |
 
 ## Services
 
