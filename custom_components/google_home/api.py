@@ -108,10 +108,7 @@ class GlocaltokensApiClient:
     def create_url(ip_address: str, port: int, api_endpoint: str) -> str:
         """Creates url to endpoint.
         Note: port argument is unused because all request must be done to 8443"""
-        url = "https://{ip_address}:{port}/{endpoint}".format(
-            ip_address=ip_address, port=str(port), endpoint=api_endpoint
-        )
-        return url
+        return f"https://{ip_address}:{port}/{api_endpoint}"
 
     async def get_alarms_and_timers(
         self, device: GoogleHomeDevice, ip_address: str, auth_token: str
