@@ -149,6 +149,24 @@ data:
 | `entity_id` | `sensor.kitchen_timers`                      | Entity name of a Google Home timers sensor.  |
 | `timer_id`  | `timer/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51` | ID of a timer. See timers description above. |
 
+### Reboot device
+
+Note: Not all devices this integration supports can be rebooted, even if you get the message "Successfully asked xxxxx to reboot."
+
+#### Example
+
+```yaml
+service: google_home.reboot_device
+data:
+  entity_id: sensor.kitchen_device
+```
+
+#### Key Descriptions
+
+| Key         | Example                 | Description                                 |
+| ----------- | ----------------------- | ------------------------------------------- |
+| `entity_id` | `sensor.kitchen_device` | Entity name of a Google Home device sensor. |
+
 ## Getting Started
 
 ### Prerequisites
