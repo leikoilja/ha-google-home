@@ -289,31 +289,31 @@ test = ["coverage (>=4.0.0,<5.0.0)", "pytest (>=4)", "pytest-cov (>=2)", "flake8
 
 [[package]]
 name = "glocaltokens"
-version = "0.2.8"
+version = "0.3.0"
 description = "Tool to extract Google device local authentication tokens in Python"
 category = "main"
 optional = false
 python-versions = ">=3.8,<4.0"
 
 [package.dependencies]
-gpsoauth = ">=0.4.3,<0.5.0"
+gpsoauth = ">=1.0.0,<2.0.0"
 grpcio = "1.31.0"
 grpcio-tools = "1.31.0"
 requests = ">=2.25.1,<3.0.0"
 simplejson = ">=3.17.2,<4.0.0"
-zeroconf = ">=0.28.8,<0.29.0"
+zeroconf = ">=0.28.8,<0.30.0"
 
 [[package]]
 name = "gpsoauth"
-version = "0.4.3"
+version = "1.0.0"
 description = "A python client library for Google Play Services OAuth."
 category = "main"
 optional = false
-python-versions = "*"
+python-versions = ">=3.8,<4.0"
 
 [package.dependencies]
 pycryptodomex = ">=3.0"
-requests = "*"
+requests = ">=2.0.0"
 
 [[package]]
 name = "grpcio"
@@ -861,7 +861,7 @@ ifaddr = ">=0.1.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "b3cc39d39414bb9ed1b3d31dfd65c74bcb5d3e978ca63321007db0269a9c3a99"
+content-hash = "8c00ca9261dc347a78cd530ba9a07751897475048f501ee85b6240e3c21b70a6"
 
 [metadata.files]
 aiohttp = [
@@ -1061,11 +1061,12 @@ flake8-use-fstring = [
     {file = "flake8-use-fstring-1.1.tar.gz", hash = "sha256:a0eea849ffe33fb6903c210c243c0f418da86a530e46cb13e64f1bdb045f22dc"},
 ]
 glocaltokens = [
-    {file = "glocaltokens-0.2.8-py3-none-any.whl", hash = "sha256:6b7b00e3009252acddb842d95bae0f365df15c6c1db6e39d0804c526097e6de7"},
-    {file = "glocaltokens-0.2.8.tar.gz", hash = "sha256:f71e03807b4189c13a0e2ca0372d00c201f91b13aa87509902ea28d32ce9f6fa"},
+    {file = "glocaltokens-0.3.0-py3-none-any.whl", hash = "sha256:bfb0f4704e8014511a60314a9691e66da67aef13c3a5e98312bf216192dfe162"},
+    {file = "glocaltokens-0.3.0.tar.gz", hash = "sha256:dadff172de7900701da23fa93142e7b71b1ae64c6a474cadde310e302894c22f"},
 ]
 gpsoauth = [
-    {file = "gpsoauth-0.4.3.tar.gz", hash = "sha256:b38f654450ec55f130c9414d457355d78030a2c29c5ad8f20b28304a9fc8fad7"},
+    {file = "gpsoauth-1.0.0-py3-none-any.whl", hash = "sha256:149c374863eec17cdac5279d57e4905592a9cd74cc34b7e58671cb19f9238f39"},
+    {file = "gpsoauth-1.0.0.tar.gz", hash = "sha256:1c4d6a980625b8ab6f6f1cf3e30d9b10a6c61ababb2b60bfe4870649e9c82be0"},
 ]
 grpcio = [
     {file = "grpcio-1.31.0-cp27-cp27m-macosx_10_9_x86_64.whl", hash = "sha256:e8c3264b0fd728aadf3f0324471843f65bd3b38872bdab2a477e31ffb685dd5b"},
