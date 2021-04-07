@@ -1,10 +1,11 @@
 """Sample API Client."""
 from asyncio import gather
+import json
 import logging
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from aiohttp import ClientError, ClientSession
-from aiohttp.client_exceptions import ClientConnectorError
+from aiohttp.client_exceptions import ClientConnectorError, ContentTypeError
 from glocaltokens.client import Device, GLocalAuthenticationTokens
 from glocaltokens.utils.token import is_aas_et
 from zeroconf import Zeroconf
@@ -15,9 +16,9 @@ from homeassistant.core import HomeAssistant
 from .const import (
     API_ENDPOINT_ALARMS,
     API_ENDPOINT_DELETE,
+    API_ENDPOINT_REBOOT,
     API_RETURNED_UNKNOWN,
     HEADER_CAST_LOCAL_AUTH,
-    HEADER_CONTENT_TYPE,
     HEADERS,
     JSON_ALARM,
     JSON_TIMER,
@@ -236,73 +237,108 @@ class GlocaltokensApiClient:
         """Deletes a timer or alarm.
         Can also delete multiple if a list is provided (Not implemented yet)."""
 
-        if device.ip_address is None:
-            _LOGGER.warning("Device %s doesn't have IP address!", device.name)
-            return
-
-        if device.auth_token is None:
-            _LOGGER.warning("Device %s doesn't have a auth token!", device.name)
-            return
-
-        url = self.create_url(device.ip_address, PORT, API_ENDPOINT_DELETE)
-
-        # We need to remove charset=UTF-8 or else it will return a 400 Bad Request.
-        # I think this is because of the character "/" in the id string.
-        HEADERS.update(
-            {
-                HEADER_CAST_LOCAL_AUTH: device.auth_token,
-                HEADER_CONTENT_TYPE: "application/json",
-            }
-        )
-
         data = {"ids": [item_to_delete]}
 
         item_type = item_to_delete.split("/")[0]
 
         _LOGGER.debug(
-            "Deleting %s from Google Home device %s - %s - Raw data: %s",
+            "Deleting %s from Google Home device %s - Raw data: %s",
             item_type,
             device.name,
-            url,
             data,
         )
 
-        try:
-            async with self._session.post(
-                url, json=data, headers=HEADERS, timeout=TIMEOUT
-            ) as response:
-                if response.status == HTTP_OK:
-                    resp = await response.json()
-                    if resp:
-                        if "success" in resp:
-                            if resp["success"]:
-                                _LOGGER.debug(
-                                    "Successfully deleted %s for %s",
-                                    item_type,
-                                    device.name,
-                                )
-                            else:
-                                _LOGGER.error(
-                                    "Couldn't delete %s for %s - %s",
-                                    item_type,
-                                    device.name,
-                                    resp,
-                                )
-                        else:
-                            _LOGGER.error(
-                                (
-                                    "Failed to get a confirmation that the %s"
-                                    "was deleted for device %s. "
-                                    "Received = %s"
-                                ),
-                                item_type,
-                                device.name,
-                                resp,
-                            )
+        response = await self.post(
+            endpoint=API_ENDPOINT_DELETE, data=json.dumps(data), device=device
+        )
+
+        if response:
+            if "success" in response:
+                if response["success"]:
+                    _LOGGER.debug(
+                        "Successfully deleted %s for %s",
+                        item_type,
+                        device.name,
+                    )
                 else:
                     _LOGGER.error(
-                        "Failed to delete %s for %s, API returned" " %d: %s",
+                        "Couldn't delete %s for %s - %s",
                         item_type,
+                        device.name,
+                        response,
+                    )
+            else:
+                _LOGGER.error(
+                    (
+                        "Failed to get a confirmation that the %s"
+                        "was deleted for device %s. "
+                        "Received = %s"
+                    ),
+                    item_type,
+                    device.name,
+                    response,
+                )
+
+    async def reboot_google_device(self, device: GoogleHomeDevice) -> None:
+        """Reboots a Google Home device if it supports this."""
+
+        # "now" means reboot and "fdr" means factory reset (Not implemented).
+        data = {"params": "now"}
+
+        _LOGGER.debug(
+            "Trying to reboot Google Home device %s",
+            device.name,
+        )
+
+        response = await self.post(
+            endpoint=API_ENDPOINT_REBOOT, data=json.dumps(data), device=device
+        )
+
+        if response:
+            # It will return true even if the device does not support rebooting.
+            _LOGGER.info(
+                "Successfully asked %s to reboot.",
+                device.name,
+            )
+
+    async def post(
+        self, endpoint: str, data: str, device: GoogleHomeDevice
+    ) -> Optional[Dict[str, str]]:
+        """Shared post request"""
+
+        if device.ip_address is None:
+            _LOGGER.warning("Device %s doesn't have an IP address!", device.name)
+            return None
+
+        if device.auth_token is None:
+            _LOGGER.warning("Device %s doesn't have an auth token!", device.name)
+            return None
+
+        url = self.create_url(device.ip_address, PORT, endpoint)
+
+        HEADERS[HEADER_CAST_LOCAL_AUTH] = device.auth_token
+
+        _LOGGER.debug(
+            "Requesting endpoint %s for Google Home device %s - %s",
+            endpoint,
+            device.name,
+            url,
+        )
+
+        resp = None
+
+        try:
+            async with self._session.post(
+                url, data=data, headers=HEADERS, timeout=TIMEOUT
+            ) as response:
+                if response.status == HTTP_OK:
+                    try:
+                        resp = await response.json()
+                    except ContentTypeError:
+                        resp = True
+                else:
+                    _LOGGER.error(
+                        "Failed to access %s, API returned" " %d: %s",
                         device.name,
                         response.status,
                         response,
@@ -313,8 +349,10 @@ class GlocaltokensApiClient:
                 device.name,
             )
         except ClientError as ex:
-            # Make sure that we log the exception if one occurred.
+            # Make sure that we log the exception from the client if one occurred.
             _LOGGER.error(
                 "Request error: %s",
                 ex,
             )
+
+        return resp

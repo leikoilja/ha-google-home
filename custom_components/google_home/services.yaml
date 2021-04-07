@@ -1,11 +1,22 @@
 # Services.yaml for google_home integration
 
+reboot_device:
+  description: Reboot a Google Home device.
+  fields:
+    entity_id:
+      name: Entity
+      description: Represents a Google Home device (sensor.xxxx_device).
+      example: "sensor.kitchen_device"
+      required: true
+      selector:
+        text:
+
 delete_alarm:
   description: Delete an alarm from a Google Home device.
   fields:
     entity_id:
       name: Entity
-      description: Represents a Google Home device.
+      description: Represents a Google Home device (sensor.xxxx_alarms).
       example: "sensor.kitchen_alarms"
       required: true
       selector:
@@ -23,7 +34,7 @@ delete_timer:
   fields:
     entity_id:
       name: Entity
-      description: Represents a Google Home device.
+      description: Represents a Google Home device (sensor.xxxx_timers).
       example: "sensor.kitchen_timers"
       required: true
       selector:
