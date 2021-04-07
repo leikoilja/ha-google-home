@@ -110,7 +110,7 @@ Note that timers lack the additional `snoozed` state due to a limitation of the 
 
 This component will set up the following switches:
 
-| Platform | Sample sensor                  | Description                                         |
+| Platform | Sample switch                  | Description                                         |
 | -------- | ------------------------------ | --------------------------------------------------- |
 | `sensor` | `switch.living_do_not_disturb` | Toggles Do Not Disturb mode on a Google Home device |
 
