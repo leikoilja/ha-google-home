@@ -50,7 +50,7 @@ LABEL_ALARMS = "alarms"
 LABEL_AVAILABLE = "available"
 LABEL_TIMERS = "timers"
 LABEL_DEVICE = "device"
-LABEL_DO_NOT_DISTURB = "do_not_disturb"
+LABEL_DO_NOT_DISTURB = "Do Not Disturb"
 
 # DEVICE PORT
 PORT = 8443

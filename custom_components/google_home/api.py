@@ -90,7 +90,7 @@ class GlocaltokensApiClient:
                 GoogleHomeDevice(
                     name=device.device_name,
                     auth_token=device.local_auth_token,
-                    ip_address=device.ip_address,
+                    ip_address=device.ip,
                     hardware=device.hardware,
                 )
                 for device in google_devices
@@ -216,6 +216,7 @@ class GlocaltokensApiClient:
     ) -> GoogleHomeDevice:
         """Collects data from different endpoints."""
 
+        # This could properly be down in a better and cleaner way.
         device = await self.get_alarms_and_timers(device, ip_address, auth_token)
 
         device = await self.get_or_set_do_not_disturb(device)
@@ -340,13 +341,13 @@ class GlocaltokensApiClient:
         elif enable:
             data = {"notifications_enabled": False}
             _LOGGER.debug(
-                "Setting Do Not Disturb setting to True on Google Home device %s",
+                "Setting Do Not Disturb setting to False on Google Home device %s",
                 device.name,
             )
         elif enable is False:
             data = {"notifications_enabled": True}
             _LOGGER.debug(
-                "Setting Do Not Disturb setting to False on Google Home device %s",
+                "Setting Do Not Disturb setting to True on Google Home device %s",
                 device.name,
             )
 

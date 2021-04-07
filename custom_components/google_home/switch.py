@@ -67,7 +67,7 @@ class DoNotDisturbSwitch(GoogleHomeBaseEntity, SwitchEntity):
 
         is_enabled = device.get_do_not_disturb_status()
 
-        return is_enabled
+        return not is_enabled
 
     async def async_turn_on(self, **kwargs: Any) -> None:  # type: ignore[misc]
         """Turn the entity on."""
