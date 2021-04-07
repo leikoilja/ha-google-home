@@ -7,7 +7,7 @@ license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-glocaltokens = "0.2.8"
+glocaltokens = "0.3.0"
 homeassistant = "^2021.3.4"
 python = "^3.8"
 zeroconf = "^0.28.8"

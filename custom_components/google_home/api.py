@@ -89,7 +89,7 @@ class GlocaltokensApiClient:
                 GoogleHomeDevice(
                     name=device.device_name,
                     auth_token=device.local_auth_token,
-                    ip_address=device.ip,
+                    ip_address=device.ip_address,
                     hardware=device.hardware,
                 )
                 for device in google_devices
