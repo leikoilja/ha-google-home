@@ -75,3 +75,9 @@ class DeviceInfo(TypedDict):
     identifiers: Set[Tuple[str, str]]
     name: str
     manufacturer: str
+
+
+class OptionsFlowDict(TypedDict):
+    """Typed dict for options flow handler"""
+
+    data_collection: bool

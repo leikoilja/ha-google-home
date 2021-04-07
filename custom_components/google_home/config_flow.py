@@ -22,6 +22,7 @@ from .const import (
     DOMAIN,
 )
 from .exceptions import InvalidMasterToken
+from .types import OptionsFlowDict
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -57,17 +58,10 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             )
             master_token = await self._test_credentials(client)
             if master_token is not None:
-                data = user_input
-                data.update(
-                    {
-                        CONF_MASTER_TOKEN: master_token,
-                        CONF_ANDROID_ID: await client.get_android_id(),
-                    }
-                )
+                user_input[CONF_MASTER_TOKEN] = master_token
+                user_input[CONF_ANDROID_ID] = await client.get_android_id()
                 return self.async_create_entry(title=username, data=user_input)
             self._errors["base"] = "auth"
-            return await self._show_config_form(user_input)
-
         return await self._show_config_form(user_input)
 
     @staticmethod
@@ -106,18 +100,18 @@ class GoogleHomeOptionsFlowHandler(config_entries.OptionsFlow):
     """Config flow options handler for GoogleHome."""
 
     def __init__(self, config_entry: ConfigEntry):
-        """Initialize HACS options flow."""
+        """Initialize options flow."""
         self.config_entry = config_entry
-        self.options = dict(config_entry.options)
+        self.options = config_entry.options
 
     async def async_step_init(
-        self, _user_input: Optional[Dict[str, Any]] = None
+        self, _user_input: Optional[OptionsFlowDict] = None
     ) -> Dict[str, Any]:
         """Manage the options."""
         return await self.async_step_user()
 
     async def async_step_user(
-        self, user_input: Optional[Dict[str, Any]] = None
+        self, user_input: Optional[OptionsFlowDict] = None
     ) -> Dict[str, Any]:
         """Handle a flow initialized by the user."""
         if user_input is not None:
