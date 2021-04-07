@@ -16,6 +16,7 @@ from homeassistant.core import HomeAssistant
 from .const import (
     API_ENDPOINT_ALARMS,
     API_ENDPOINT_DELETE,
+    API_ENDPOINT_DO_NOT_DISTURB,
     API_ENDPOINT_REBOOT,
     API_RETURNED_UNKNOWN,
     HEADER_CAST_LOCAL_AUTH,
@@ -210,6 +211,17 @@ class GlocaltokensApiClient:
 
         return device
 
+    async def collect_data_from_endpoints(
+        self, device: GoogleHomeDevice, ip_address: str, auth_token: str
+    ) -> GoogleHomeDevice:
+        """Collects data from different endpoints."""
+
+        device = await self.get_alarms_and_timers(device, ip_address, auth_token)
+
+        device = await self.get_or_set_do_not_disturb(device)
+
+        return device
+
     async def update_google_devices_information(self) -> List[GoogleHomeDevice]:
         """Retrieves devices from glocaltokens and
         fetches alarm/timer data from each of the device"""
@@ -232,7 +244,11 @@ class GlocaltokensApiClient:
 
         coordinator_data = await asyncio.gather(
             *[
-                self.get_alarms_and_timers(device, device.ip_address, device.auth_token)
+                self.collect_data_from_endpoints(
+                    device=device,
+                    ip_address=device.ip_address,
+                    auth_token=device.auth_token,
+                )
                 for device in devices
                 if device.ip_address and device.auth_token
             ]
@@ -308,6 +324,54 @@ class GlocaltokensApiClient:
                 "Successfully asked %s to reboot.",
                 device.name,
             )
+
+    async def get_or_set_do_not_disturb(
+        self, device: GoogleHomeDevice, enable: Optional[bool] = None
+    ) -> GoogleHomeDevice:
+        """Gets or sets the do not disturb setting on a Google Home device."""
+
+        data = None
+
+        if enable is None:
+            _LOGGER.debug(
+                "Getting Do Not Disturb setting from Google Home device %s",
+                device.name,
+            )
+        elif enable:
+            data = {"notifications_enabled": True}
+            _LOGGER.debug(
+                "Setting Do Not Disturb setting to True on Google Home device %s",
+                device.name,
+            )
+        elif enable is False:
+            data = {"notifications_enabled": False}
+            _LOGGER.debug(
+                "Setting Do Not Disturb setting to False on Google Home device %s",
+                device.name,
+            )
+
+        response = await self.post(
+            endpoint=API_ENDPOINT_DO_NOT_DISTURB, data=json.dumps(data), device=device
+        )
+        if response:
+            if "notifications_enabled" in response:
+                is_enabled = response["notifications_enabled"]
+                _LOGGER.debug(
+                    "Got Do Not Disturb setting from Google Home device %s"
+                    " - Enabled: %s",
+                    device.name,
+                    is_enabled,
+                )
+
+                device.set_do_not_disturb_status(is_enabled)
+
+            _LOGGER.debug(
+                "Response not expected from Google Home device %s - %s",
+                device.name,
+                response,
+            )
+
+        return device
 
     async def post(
         self, endpoint: str, data: str, device: GoogleHomeDevice
