@@ -1,8 +1,8 @@
 """Sample API Client."""
-import sys
 from asyncio import gather
 import json
 import logging
+import sys
 from typing import Dict, List, Optional
 
 from aiohttp import ClientError, ClientSession
@@ -198,8 +198,11 @@ class GlocaltokensApiClient:
                 ex,
             )
             device.available = False
-        except:
-            _LOGGER.error(" /!\ ERROR: %s", sys.exc_info()[0])
+        except Exception:
+            _LOGGER.error(
+                " Other error: %s", 
+                sys.exc_info()[0],
+            )
             raise
         return device
 
