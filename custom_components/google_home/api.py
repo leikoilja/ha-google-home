@@ -130,10 +130,6 @@ class GlocaltokensApiClient:
                 url, headers=HEADERS, timeout=TIMEOUT
             ) as response:
                 if response.status == HTTP_OK:
-                    _LOGGER.debug(
-                        "Fetch data OK from Google Home device %s - %s",
-                        device.name,
-                        url,)
                     resp = await response.json()
                     device.available = True
                     if resp:
@@ -214,7 +210,6 @@ class GlocaltokensApiClient:
         devices = await self.get_google_devices()
         # Gives the user a warning if the device is offline
         for device in devices:
-            _LOGGER.debug("available device: %s - %s",device.name,device.hardware)
             if not device.ip_address and device.available:
                 device.available = False
                 _LOGGER.debug(
@@ -234,7 +229,6 @@ class GlocaltokensApiClient:
                 if device.ip_address and device.auth_token
             ]
         )
-        _LOGGER.debug("Coordinator gather OK")
         return coordinator_data
 
     async def delete_alarm_or_timer(
