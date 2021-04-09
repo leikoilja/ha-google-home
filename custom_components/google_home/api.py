@@ -197,6 +197,10 @@ class GlocaltokensApiClient:
                 ex,
             )
             device.available = False
+        except Exception as e:
+            import sys
+            _LOGGER.error(" /!\ ERROR: %s", sys.exc_info()[0])
+            raise
         return device
 
     async def update_google_devices_information(self) -> List[GoogleHomeDevice]:
