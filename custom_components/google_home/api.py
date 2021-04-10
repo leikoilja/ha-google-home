@@ -1,5 +1,5 @@
 """Sample API Client."""
-from asyncio import gather
+import asyncio
 import json
 import logging
 from typing import Dict, List, Optional
@@ -135,6 +135,9 @@ class GlocaltokensApiClient:
                         if JSON_TIMER in resp or JSON_ALARM in resp:
                             device.set_timers(resp.get(JSON_TIMER))
                             device.set_alarms(resp.get(JSON_ALARM))
+                            _LOGGER.debug(
+                                "Succesfully retrieved data from %s.", device.name
+                            )
                         else:
                             _LOGGER.error(
                                 (
@@ -193,10 +196,18 @@ class GlocaltokensApiClient:
             # The only reason we do this broad is so we easily can
             # debug the application.
             _LOGGER.error(
-                "Request error: %s",
+                "Request error from %s device: %s",
+                device.name,
                 ex,
             )
             device.available = False
+        except asyncio.TimeoutError:
+            _LOGGER.debug(
+                "%s device timed out while trying to get alarms and timers.",
+                device.name,
+            )
+            device.available = False
+
         return device
 
     async def update_google_devices_information(self) -> List[GoogleHomeDevice]:
@@ -219,7 +230,7 @@ class GlocaltokensApiClient:
                     device.name,
                 )
 
-        coordinator_data = await gather(
+        coordinator_data = await asyncio.gather(
             *[
                 self.get_alarms_and_timers(device, device.ip_address, device.auth_token)
                 for device in devices
