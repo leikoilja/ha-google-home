@@ -1,5 +1,5 @@
 """Sample API Client."""
-from asyncio import gather
+import asyncio
 import json
 import logging
 from typing import Dict, List, Optional
@@ -196,15 +196,16 @@ class GlocaltokensApiClient:
             # The only reason we do this broad is so we easily can
             # debug the application.
             _LOGGER.error(
-                "Request error: %s",
+                "Request error from %s device: %s",
+                device.name,
                 ex,
             )
             device.available = False
-
-        # For some reason aiohttp returns a empty exception
-        # even if we set raise_for_status to False. (Throws exception if over 400).
-        except Exception as ex:  # pylint: disable=broad-except
-            _LOGGER.debug(ex)
+        except asyncio.TimeoutError:
+            _LOGGER.debug(
+                "%s device timed out while trying to get alarms and timers.",
+                device.name,
+            )
 
         return device
 
@@ -228,7 +229,7 @@ class GlocaltokensApiClient:
                     device.name,
                 )
 
-        coordinator_data = await gather(
+        coordinator_data = await asyncio.gather(
             *[
                 self.get_alarms_and_timers(device, device.ip_address, device.auth_token)
                 for device in devices

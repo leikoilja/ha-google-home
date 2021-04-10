@@ -64,7 +64,7 @@ HEADERS = {
     HEADER_CAST_LOCAL_AUTH: "",
     HEADER_CONTENT_TYPE: "application/json",
 }
-TIMEOUT = 5  # Request Timeout in seconds
+TIMEOUT = 2  # Request Timeout in seconds
 
 # TIMESTRINGS
 TIME_STR_FORMAT = "%H:%M:%S"
