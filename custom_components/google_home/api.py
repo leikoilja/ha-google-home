@@ -1,5 +1,5 @@
 """Sample API Client."""
-import asyncio
+from asyncio import gather
 import json
 import logging
 from typing import Dict, List, Optional
@@ -182,7 +182,6 @@ class GlocaltokensApiClient:
                         response,
                     )
                     device.available = False
-
         except ClientConnectorError:
             _LOGGER.debug(
                 (
@@ -229,14 +228,13 @@ class GlocaltokensApiClient:
                     device.name,
                 )
 
-        coordinator_data = await asyncio.gather(
+        coordinator_data = await gather(
             *[
                 self.get_alarms_and_timers(device, device.ip_address, device.auth_token)
                 for device in devices
                 if device.ip_address and device.auth_token
             ]
         )
-
         return coordinator_data
 
     async def delete_alarm_or_timer(
