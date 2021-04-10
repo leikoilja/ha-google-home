@@ -85,11 +85,11 @@ class GoogleHomeDevice:
         timers = self.get_sorted_timers()
         return timers[0] if timers else None
 
-    def set_do_not_disturb_status(self, status: bool) -> None:
+    def set_do_not_disturb(self, status: bool) -> None:
         """Set Do Not Disturb status."""
         self._do_not_disturb = status
 
-    def get_do_not_disturb_status(self) -> bool:
+    def get_do_not_disturb(self) -> bool:
         """Return Do Not Disturb status."""
         return self._do_not_disturb
 

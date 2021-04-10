@@ -65,24 +65,23 @@ class DoNotDisturbSwitch(GoogleHomeBaseEntity, SwitchEntity):
         if device is None:
             return False
 
-        is_enabled = device.get_do_not_disturb_status()
+        is_enabled = device.get_do_not_disturb()
 
         return not is_enabled
 
-    async def async_turn_on(self, **kwargs: Any) -> None:  # type: ignore[misc]
-        """Turn the entity on."""
+    async def set_do_not_disturb(self, enable: bool) -> None:
+        """Sets Do Not Disturb mode."""
         device = self.get_device()
         if device is None:
             _LOGGER.error("Device %s is not found.", self.device_name)
             return
 
-        await self.client.get_or_set_do_not_disturb(device=device, enable=True)
+        await self.client.get_or_set_do_not_disturb(device=device, enable=enable)
+
+    async def async_turn_on(self, **kwargs: Any) -> None:  # type: ignore[misc]
+        """Turn the entity on."""
+        await self.set_do_not_disturb(True)
 
     async def async_turn_off(self, **kwargs: Any) -> None:  # type: ignore[misc]
         """Turn the entity off."""
-        device = self.get_device()
-        if device is None:
-            _LOGGER.error("Device %s is not found.", self.device_name)
-            return
-
-        await self.client.get_or_set_do_not_disturb(device=device, enable=False)
+        await self.set_do_not_disturb(False)

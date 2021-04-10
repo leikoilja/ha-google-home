@@ -111,7 +111,7 @@ class GlocaltokensApiClient:
         Note: port argument is unused because all request must be done to 8443"""
         return f"https://{ip_address}:{port}/{api_endpoint}"
 
-    async def get_alarms_and_timers(
+    async def update_alarms_and_timers(
         self, device: GoogleHomeDevice, ip_address: str, auth_token: str
     ) -> GoogleHomeDevice:
         """Fetches timers and alarms from google device"""
@@ -216,8 +216,7 @@ class GlocaltokensApiClient:
     ) -> GoogleHomeDevice:
         """Collect data from different endpoints."""
 
-        # This could properly be down in a better and cleaner way.
-        device = await self.get_alarms_and_timers(device, ip_address, auth_token)
+        device = await self.update_alarms_and_timers(device, ip_address, auth_token)
 
         device = await self.get_or_set_do_not_disturb(device)
 
@@ -338,16 +337,11 @@ class GlocaltokensApiClient:
                 "Getting Do Not Disturb setting from Google Home device %s",
                 device.name,
             )
-        elif enable:
-            data = {"notifications_enabled": False}
+        else:
+            data = {"notifications_enabled": not enable}
             _LOGGER.debug(
-                "Setting Do Not Disturb setting to False on Google Home device %s",
-                device.name,
-            )
-        elif enable is False:
-            data = {"notifications_enabled": True}
-            _LOGGER.debug(
-                "Setting Do Not Disturb setting to True on Google Home device %s",
+                "Setting Do Not Disturb setting to %s on Google Home device %s",
+                not enable,
                 device.name,
             )
 
@@ -356,15 +350,15 @@ class GlocaltokensApiClient:
         )
         if response:
             if "notifications_enabled" in response:
-                is_enabled = response["notifications_enabled"]
+                is_enabled = bool(response["notifications_enabled"])
                 _LOGGER.debug(
-                    "Got Do Not Disturb setting from Google Home device %s"
+                    "Received Do Not Disturb setting from Google Home device %s"
                     " - Enabled: %s",
                     device.name,
-                    is_enabled,
+                    not is_enabled,
                 )
 
-                device.set_do_not_disturb_status(bool(is_enabled))
+                device.set_do_not_disturb(is_enabled)
             else:
                 _LOGGER.debug(
                     "Response not expected from Google Home device %s - %s",
@@ -438,6 +432,12 @@ class GlocaltokensApiClient:
             _LOGGER.error(
                 "Request error: %s",
                 ex,
+            )
+        except asyncio.TimeoutError:
+            _LOGGER.debug(
+                "%s device timed out while trying to post data to it - Raw data: %s",
+                device.name,
+                data,
             )
 
         return resp
