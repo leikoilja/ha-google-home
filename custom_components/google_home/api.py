@@ -332,16 +332,16 @@ class GlocaltokensApiClient:
 
         data = None
 
-        if enable is None:
-            _LOGGER.debug(
-                "Getting Do Not Disturb setting from Google Home device %s",
-                device.name,
-            )
-        else:
+        if enable is not None:
             data = {"notifications_enabled": not enable}
             _LOGGER.debug(
                 "Setting Do Not Disturb setting to %s on Google Home device %s",
-                not enable,
+                enable,
+                device.name,
+            )
+        else:
+            _LOGGER.debug(
+                "Getting Do Not Disturb setting from Google Home device %s",
                 device.name,
             )
 
@@ -350,15 +350,15 @@ class GlocaltokensApiClient:
         )
         if response:
             if "notifications_enabled" in response:
-                notifications_enabled = bool(response["notifications_enabled"])
+                enabled = not bool(response["notifications_enabled"])
                 _LOGGER.debug(
                     "Received Do Not Disturb setting from Google Home device %s"
                     " - Enabled: %s",
                     device.name,
-                    not notifications_enabled,
+                    enabled,
                 )
 
-                device.set_do_not_disturb(not notifications_enabled)
+                device.set_do_not_disturb(enabled)
             else:
                 _LOGGER.debug(
                     "Response not expected from Google Home device %s - %s",
@@ -396,7 +396,7 @@ class GlocaltokensApiClient:
 
         try:
             async with self._session.post(
-                url, data=data, headers=HEADERS, timeout=TIMEOUT
+                url, json=data, headers=HEADERS, timeout=TIMEOUT
             ) as response:
                 if response.status == HTTP_OK:
                     try:
