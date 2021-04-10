@@ -21,6 +21,7 @@ from .const import (
     HEADER_CAST_LOCAL_AUTH,
     HEADERS,
     JSON_ALARM,
+    JSON_NOTIFICATION_ENABLED,
     JSON_TIMER,
     PORT,
     TIMEOUT,
@@ -333,7 +334,8 @@ class GlocaltokensApiClient:
         data = None
 
         if enable is not None:
-            data = {"notifications_enabled": not enable}
+            # Setting is inverted on device
+            data = {JSON_NOTIFICATION_ENABLED: not enable}
             _LOGGER.debug(
                 "Setting Do Not Disturb setting to %s on Google Home device %s",
                 enable,
@@ -349,8 +351,8 @@ class GlocaltokensApiClient:
             endpoint=API_ENDPOINT_DO_NOT_DISTURB, data=data, device=device
         )
         if response:
-            if "notifications_enabled" in response:
-                enabled = not bool(response["notifications_enabled"])
+            if JSON_NOTIFICATION_ENABLED in response:
+                enabled = not bool(response[JSON_NOTIFICATION_ENABLED])
                 _LOGGER.debug(
                     "Received Do Not Disturb setting from Google Home device %s"
                     " - Enabled: %s",
