@@ -206,6 +206,7 @@ class GlocaltokensApiClient:
                 "%s device timed out while trying to get alarms and timers.",
                 device.name,
             )
+            device.available = False
 
         return device
 
