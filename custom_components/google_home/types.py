@@ -1,5 +1,7 @@
 """Various types used in type hints."""
-from typing import List, Optional, Set, Tuple, TypedDict
+from typing import List, Mapping, Optional, Set, Tuple, TypedDict, Union
+
+JsonDict = Mapping[str, Union[bool, int, str, List[str]]]
 
 
 class AlarmJsonDict(TypedDict, total=False):

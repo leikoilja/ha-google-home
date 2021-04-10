@@ -27,10 +27,10 @@ async def async_setup_entry(
     client = hass.data[DOMAIN][entry.entry_id][DATA_CLIENT]
     coordinator = hass.data[DOMAIN][entry.entry_id][DATA_COORDINATOR]
 
-    switch: List[SwitchEntity] = []
+    switches: List[SwitchEntity] = []
     for device in coordinator.data:
         if device.auth_token and device.available:
-            switch.append(
+            switches.append(
                 DoNotDisturbSwitch(
                     coordinator,
                     client,
@@ -38,8 +38,8 @@ async def async_setup_entry(
                 )
             )
 
-    if switch:
-        async_add_devices(switch)
+    if switches:
+        async_add_devices(switches)
 
     return True
 
@@ -59,7 +59,7 @@ class DoNotDisturbSwitch(GoogleHomeBaseEntity, SwitchEntity):
 
     @property
     def is_on(self) -> bool:
-        """Return true if switch is on."""
+        """Return true if Do Not Disturb Mode is on."""
         device = self.get_device()
 
         if device is None:
@@ -67,7 +67,7 @@ class DoNotDisturbSwitch(GoogleHomeBaseEntity, SwitchEntity):
 
         is_enabled = device.get_do_not_disturb()
 
-        return not is_enabled
+        return is_enabled
 
     async def set_do_not_disturb(self, enable: bool) -> None:
         """Sets Do Not Disturb mode."""
@@ -76,7 +76,7 @@ class DoNotDisturbSwitch(GoogleHomeBaseEntity, SwitchEntity):
             _LOGGER.error("Device %s is not found.", self.device_name)
             return
 
-        await self.client.get_or_set_do_not_disturb(device=device, enable=enable)
+        await self.client.update_do_not_disturb(device=device, enable=enable)
 
     async def async_turn_on(self, **kwargs: Any) -> None:  # type: ignore[misc]
         """Turn the entity on."""

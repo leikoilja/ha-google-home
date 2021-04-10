@@ -1,6 +1,5 @@
 """Sample API Client."""
 import asyncio
-import json
 import logging
 from typing import Dict, List, Optional
 
@@ -28,6 +27,7 @@ from .const import (
 )
 from .exceptions import InvalidMasterToken
 from .models import GoogleHomeDevice
+from .types import JsonDict
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -111,7 +111,7 @@ class GlocaltokensApiClient:
         Note: port argument is unused because all request must be done to 8443"""
         return f"https://{ip_address}:{port}/{api_endpoint}"
 
-    async def update_alarms_and_timers(
+    async def get_alarms_and_timers(
         self, device: GoogleHomeDevice, ip_address: str, auth_token: str
     ) -> GoogleHomeDevice:
         """Fetches timers and alarms from google device"""
@@ -216,9 +216,9 @@ class GlocaltokensApiClient:
     ) -> GoogleHomeDevice:
         """Collect data from different endpoints."""
 
-        device = await self.update_alarms_and_timers(device, ip_address, auth_token)
+        device = await self.get_alarms_and_timers(device, ip_address, auth_token)
 
-        device = await self.get_or_set_do_not_disturb(device)
+        device = await self.update_do_not_disturb(device)
 
         return device
 
@@ -273,7 +273,7 @@ class GlocaltokensApiClient:
         )
 
         response = await self.post(
-            endpoint=API_ENDPOINT_DELETE, data=json.dumps(data), device=device
+            endpoint=API_ENDPOINT_DELETE, data=data, device=device
         )
 
         if response:
@@ -315,7 +315,7 @@ class GlocaltokensApiClient:
         )
 
         response = await self.post(
-            endpoint=API_ENDPOINT_REBOOT, data=json.dumps(data), device=device
+            endpoint=API_ENDPOINT_REBOOT, data=data, device=device
         )
 
         if response:
@@ -325,7 +325,7 @@ class GlocaltokensApiClient:
                 device.name,
             )
 
-    async def get_or_set_do_not_disturb(
+    async def update_do_not_disturb(
         self, device: GoogleHomeDevice, enable: Optional[bool] = None
     ) -> GoogleHomeDevice:
         """Gets or sets the do not disturb setting on a Google Home device."""
@@ -346,19 +346,19 @@ class GlocaltokensApiClient:
             )
 
         response = await self.post(
-            endpoint=API_ENDPOINT_DO_NOT_DISTURB, data=json.dumps(data), device=device
+            endpoint=API_ENDPOINT_DO_NOT_DISTURB, data=data, device=device
         )
         if response:
             if "notifications_enabled" in response:
-                is_enabled = bool(response["notifications_enabled"])
+                notifications_enabled = bool(response["notifications_enabled"])
                 _LOGGER.debug(
                     "Received Do Not Disturb setting from Google Home device %s"
                     " - Enabled: %s",
                     device.name,
-                    not is_enabled,
+                    not notifications_enabled,
                 )
 
-                device.set_do_not_disturb(is_enabled)
+                device.set_do_not_disturb(not notifications_enabled)
             else:
                 _LOGGER.debug(
                     "Response not expected from Google Home device %s - %s",
@@ -369,7 +369,7 @@ class GlocaltokensApiClient:
         return device
 
     async def post(
-        self, endpoint: str, data: str, device: GoogleHomeDevice
+        self, endpoint: str, data: Optional[JsonDict], device: GoogleHomeDevice
     ) -> Optional[Dict[str, str]]:
         """Shared post request"""
 
