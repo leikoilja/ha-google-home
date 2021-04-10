@@ -1,4 +1,4 @@
-"""Sensor platforms for Google Home"""
+"""Sensor platform for Google Home"""
 import logging
 from typing import Callable, Iterable, List, Optional
 
