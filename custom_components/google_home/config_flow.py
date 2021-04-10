@@ -102,33 +102,27 @@ class GoogleHomeOptionsFlowHandler(config_entries.OptionsFlow):
     def __init__(self, config_entry: ConfigEntry):
         """Initialize options flow."""
         self.config_entry = config_entry
-        self.options = config_entry.options
+        # Cast from MappingProxy to dict to allow update.
+        self.options = dict(config_entry.options)
 
     async def async_step_init(
-        self, _user_input: Optional[OptionsFlowDict] = None
-    ) -> Dict[str, Any]:
-        """Manage the options."""
-        return await self.async_step_user()
-
-    async def async_step_user(
         self, user_input: Optional[OptionsFlowDict] = None
     ) -> Dict[str, Any]:
-        """Handle a flow initialized by the user."""
+        """Manage the options."""
         if user_input is not None:
             self.options.update(user_input)
-            return await self._update_options()
+            return self.async_create_entry(title="", data=self.options)
 
         return self.async_show_form(
-            step_id="user",
+            step_id="init",
             data_schema=vol.Schema(
                 {
-                    vol.Optional(CONF_DATA_COLLECTION, default=True): bool,
+                    vol.Optional(
+                        CONF_DATA_COLLECTION,
+                        default=self.config_entry.options.get(
+                            CONF_DATA_COLLECTION, True
+                        ),
+                    ): bool,
                 }
             ),
-        )
-
-    async def _update_options(self) -> Dict[str, Any]:
-        """Update config entry options."""
-        return self.async_create_entry(
-            title=self.config_entry.data.get(CONF_USERNAME), data=self.options
         )

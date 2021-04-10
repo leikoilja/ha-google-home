@@ -19,7 +19,7 @@
   },
   "options": {
     "step": {
-      "user": {
+      "init": {
         "data": {
           "data_collection": "Allow anonymous diagnostic data collection (See https://github.com/leikoilja/ha-google-home#diagnostic-data-collection). Restart required."
         }
