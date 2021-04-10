@@ -84,6 +84,7 @@ UPDATE_INTERVAL = 10  # sec
 # JSON parameter values when retrieving information from devices
 JSON_ALARM = "alarm"
 JSON_TIMER = "timer"
+JSON_NOTIFICATIONS_ENABLED = "notifications_enabled"
 
 STARTUP_MESSAGE = f"""
 -------------------------------------------------------------------

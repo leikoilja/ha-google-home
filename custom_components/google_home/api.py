@@ -21,6 +21,7 @@ from .const import (
     HEADER_CAST_LOCAL_AUTH,
     HEADERS,
     JSON_ALARM,
+    JSON_NOTIFICATIONS_ENABLED,
     JSON_TIMER,
     PORT,
     TIMEOUT,
@@ -332,16 +333,17 @@ class GlocaltokensApiClient:
 
         data = None
 
-        if enable is None:
+        if enable is not None:
+            # Setting is inverted on device
+            data = {JSON_NOTIFICATIONS_ENABLED: not enable}
             _LOGGER.debug(
-                "Getting Do Not Disturb setting from Google Home device %s",
+                "Setting Do Not Disturb setting to %s on Google Home device %s",
+                enable,
                 device.name,
             )
         else:
-            data = {"notifications_enabled": not enable}
             _LOGGER.debug(
-                "Setting Do Not Disturb setting to %s on Google Home device %s",
-                not enable,
+                "Getting Do Not Disturb setting from Google Home device %s",
                 device.name,
             )
 
@@ -349,16 +351,16 @@ class GlocaltokensApiClient:
             endpoint=API_ENDPOINT_DO_NOT_DISTURB, data=data, device=device
         )
         if response:
-            if "notifications_enabled" in response:
-                notifications_enabled = bool(response["notifications_enabled"])
+            if JSON_NOTIFICATIONS_ENABLED in response:
+                enabled = not bool(response[JSON_NOTIFICATIONS_ENABLED])
                 _LOGGER.debug(
                     "Received Do Not Disturb setting from Google Home device %s"
                     " - Enabled: %s",
                     device.name,
-                    not notifications_enabled,
+                    enabled,
                 )
 
-                device.set_do_not_disturb(not notifications_enabled)
+                device.set_do_not_disturb(enabled)
             else:
                 _LOGGER.debug(
                     "Response not expected from Google Home device %s - %s",
@@ -396,7 +398,7 @@ class GlocaltokensApiClient:
 
         try:
             async with self._session.post(
-                url, data=data, headers=HEADERS, timeout=TIMEOUT
+                url, json=data, headers=HEADERS, timeout=TIMEOUT
             ) as response:
                 if response.status == HTTP_OK:
                     try:
