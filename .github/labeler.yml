@@ -3,7 +3,7 @@ dependencies:
 
 documentation:
   - any: ["*.md"]
-    all: ["!*.py"]
+    all: ["!*.py", "!.github/*"]
 
 github structure:
   - any: [".github/*"]
