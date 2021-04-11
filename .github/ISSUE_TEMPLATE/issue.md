@@ -36,7 +36,6 @@ Add version here.
 ## Logs
 
 <!-- To enable debug logs, put the below snippet in your configuration.yaml file.
-You can delete the below snippet before you submit this issue.
 
 logger:
   default: debug
