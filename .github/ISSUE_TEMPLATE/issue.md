@@ -38,12 +38,10 @@ Add version here.
 <!-- To enable debug logs, put the below snippet in your configuration.yaml file.
 You can delete the below snippet before you submit this issue.
 
-```yaml
 logger:
   default: debug
   logs:
     custom_components.google_home: debug
-```
 -->
 
 <!-- Paste logs below here-->
