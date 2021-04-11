@@ -49,7 +49,5 @@ logger:
 <!-- Paste logs below here-->
 
 ```text
-
 Add your logs here.
-
 ```
