@@ -33,16 +33,6 @@ If you are unsure about the version check the [github release here](https://gith
 Add version here.
 ```
 
-## Glocaltokens Version (Underlying package)
-
-<!-- Currently installed version of the underlying package that Google Home integration relies on.
-Please run `pip show glocaltokens` in the command line and paste the information below.
--->
-
-```text
-Add pip information here.
-```
-
 ## Logs
 
 ```text
