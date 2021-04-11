@@ -33,39 +33,18 @@ If you are unsure about the version check the [github release here](https://gith
 Add version here.
 ```
 
-## Glocaltokens Version (Underlying package)
-
-<!-- Currently installed version of the underlying package that Google Home integration relies on.
-Please run `pip show glocaltokens` in the command line and paste the information below.
--->
-
-```text
-Add pip information here.
-```
-
 ## Logs
 
-```text
-Add your logs here.
-```
-
-## Debug log
-
 <!-- To enable debug logs, put the below snippet in your configuration.yaml file.
-You can delete the below snippet before you submit this issue.
--->
 
-```yaml
 logger:
   default: debug
   logs:
     custom_components.google_home: debug
-```
+-->
 
 <!-- Paste logs below here-->
 
 ```text
-
-Add your debug logs here.
-
+Add your logs here.
 ```
