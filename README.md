@@ -281,8 +281,7 @@ If you get this error:
 
 ### 2 Factor Authentication / App Passwords
 
-The Error: "The setting you are looking for is not available for your account."
-will occur if you do not have 2 Factor Authentication (2FA) enabled on your Google account.
+The error "The setting you are looking for is not available for your account" will occur if you do not have 2 Factor Authentication (2FA) enabled on your Google account.
 
 Here are the steps to resolve this issue:
 
