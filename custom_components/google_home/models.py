@@ -169,7 +169,7 @@ class GoogleHomeAlarmStatus(Enum):
     SNOOZED = 3
     # We need to find out what this state means
     # See: https://github.com/leikoilja/ha-google-home/issues/176
-    UNKNOWN = 4
+    STATE_FOUR = 4
 
 
 class GoogleHomeTimerStatus(Enum):
