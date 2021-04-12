@@ -60,7 +60,7 @@ class GoogleHomeDevice:
         self._timers = [
             GoogleHomeTimer(
                 timer_id=timer["id"],
-                fire_time=timer["fire_time"] if "fire_time" in timer else None,
+                fire_time=timer.get("fire_time"),
                 duration=timer["original_duration"],
                 status=timer["status"],
                 label=timer.get("label"),
