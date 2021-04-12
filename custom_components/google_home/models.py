@@ -167,6 +167,9 @@ class GoogleHomeAlarmStatus(Enum):
     SET = 1
     RINGING = 2
     SNOOZED = 3
+    # We need to find out what this state means
+    # See: https://github.com/leikoilja/ha-google-home/issues/176
+    STATE_FOUR = 4
 
 
 class GoogleHomeTimerStatus(Enum):
