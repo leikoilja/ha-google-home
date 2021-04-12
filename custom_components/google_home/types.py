@@ -29,6 +29,8 @@ class GoogleHomeAlarmDict(TypedDict):
 
     alarm_id: str
     fire_time: int
+    local_time: str
+    local_time_iso: str
     status: str
     label: Optional[str]
     recurrence: Optional[str]
@@ -38,7 +40,9 @@ class GoogleHomeTimerDict(TypedDict):
     """Typed dict representation of Google Home timer"""
 
     timer_id: str
-    fire_time: int
+    fire_time: Optional[int]
+    local_time: Optional[str]
+    local_time_iso: Optional[str]
     duration: str
     status: str
     label: Optional[str]
