@@ -302,7 +302,7 @@ Here are the steps to resolve this issue:
 
 If the debug logs list your devices, but then show `Successfully initialized 0 Google Home devices` make sure you are logged into the correct Google account.
 Your account has to be able to access the devices in your Home.
-If unsure, you can check what account you are using in the *Google Home* app.
+If unsure, you can check what account you are using in the _Google Home_ app.
 
 ## Contribution
 
