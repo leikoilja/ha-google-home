@@ -239,6 +239,12 @@ Make sure that you have your Home Assistant Container network set to `host`, as 
 
 - [Google Home timers card](https://github.com/DurgNomis-drol/google_home_timers_card) by [@DurgNomis-drol](https://github.com/DurgNomis-drol)
 
+## Node-RED Flows
+
+**Open a PR to add your flow here!**
+
+- [Alarms & timers as actionable notifications](https://dev.to/mattieha/get-google-home-alarms-timers-as-notifications-i0m) by [@mattieha](https://github.com/mattieha)
+
 ## Diagnostic Data Collection
 
 To make the integration better we are trying to be one step ahead of the game,
