@@ -351,7 +351,7 @@ class GlocaltokensApiClient:
                     else:
                         _LOGGER.warning(
                             "Failed to send the request to %s due to invalid token. "
-                            "Please try again.",
+                            "Token will be refreshed, please try again later.",
                             device.name,
                         )
                     # We need to retry the update task instead of just cleaning the list
@@ -360,7 +360,7 @@ class GlocaltokensApiClient:
                 elif response.status == HTTP_NOT_FOUND:
                     _LOGGER.debug(
                         (
-                            "Failed to post data to %s, API returned %d. "
+                            "Failed to perform request to %s, API returned %d. "
                             "The device(hardware='%s') is possibly not Google Home "
                             "compatible and has no alarms/timers. "
                             "Will retry later."
@@ -395,7 +395,7 @@ class GlocaltokensApiClient:
             device.available = False
         except asyncio.TimeoutError:
             _LOGGER.debug(
-                "%s device timed out while trying to post data to it - Raw data: %s",
+                "%s device timed out while performing a request to it - Raw data: %s",
                 device.name,
                 data,
             )
