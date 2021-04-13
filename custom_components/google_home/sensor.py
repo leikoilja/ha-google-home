@@ -252,7 +252,11 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
         if not device:
             return None
         timer = device.get_next_timer()
-        return timer.local_time_iso if timer else STATE_UNAVAILABLE
+        return (
+            timer.local_time_iso
+            if timer and timer.local_time_iso
+            else STATE_UNAVAILABLE
+        )
 
     @property
     def device_state_attributes(self) -> TimersAttributes:

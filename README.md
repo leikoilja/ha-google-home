@@ -63,13 +63,13 @@ Each of the alarms has the following keys:
 
 | Key              | Value type                   | Description                                                                                                                                                                                             |
 | ---------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `id`             | Google Home corresponding ID | Used to identify the alarm                                                                                                                                                                              |
-| `label`          | Name                         | Name of the alarm, this can be set when making the alarm                                                                                                                                                |
+| `alarm_id`       | Google Home corresponding ID | Used to identify the alarm                                                                                                                                                                              |
 | `fire_time`      | Seconds                      | Raw value coming from Google Home device until the alarm goes off                                                                                                                                       |
 | `local_time`     | Time                         | Time when the alarm goes off, in respect to the Home Assistant's timezone                                                                                                                               |
 | `local_time_iso` | Time in ISO 8601 standard    | Useful for automations                                                                                                                                                                                  |
+| `status`         | Status (string)              | The current status of the alarm, either `none`, `set`, `ringing`, `snoozed` or `inactive`                                                                                                               |
+| `label`          | Name                         | Name of the alarm, this can be set when making the alarm                                                                                                                                                |
 | `recurrence`     | List of integers             | Days of the week when the alarm will go off. Please note, respecting Google set standard, the week starts from Sunday, therefore is denoted by 0. Correspondingly, Monday is 1, Saturday is 6 and so on |
-| `status`         | Status (string)              | The current status of the alarm, either `none`, `set`, `ringing` or `snoozed`                                                                                                                           |
 
 The state value shows the next alarm as a timestring (i.e.: `2021-03-07T15:26:17+01:00`) if there is at least one alarm set, otherwise it is set to `unavailable`.
 This matches state format of [standard next alarm sensor](https://companion.home-assistant.io/docs/core/sensors/#next-alarm-sensor) provided by `mobile_app`.
@@ -82,15 +82,15 @@ You can have multiple timers on your Google Home device. Home Assistant
 timers sensor will represent all of them in the state attributes as a list `timers`.
 Each of the timers has the following keys:
 
-| Key              | Value type                   | Description                                                               |
-| ---------------- | ---------------------------- | ------------------------------------------------------------------------- |
-| `id`             | Google Home corresponding ID | Used to identify the timer                                                |
-| `label`          | Name                         | Name of the timer, this can be set when making the timer                  |
-| `fire_time`      | Seconds                      | Raw value coming from Google Home device until the timer goes off         |
-| `local_time`     | Time                         | Time when the timer goes off, in respect to the Home Assistant's timezone |
-| `local_time_iso` | Time in ISO 8601 standard    | Useful for automations                                                    |
-| `duration`       | Seconds                      | Timer duration in seconds                                                 |
-| `status`         | Status (string)              | The current status of the timer, either `none`, `set`, or `ringing`       |
+| Key              | Value type                   | Description                                                                  |
+| ---------------- | ---------------------------- | ---------------------------------------------------------------------------- |
+| `timer_id`       | Google Home corresponding ID | Used to identify the timer                                                   |
+| `fire_time`      | Seconds                      | Raw value coming from Google Home device until the timer goes off            |
+| `local_time`     | Time                         | Time when the timer goes off, in respect to the Home Assistant's timezone    |
+| `local_time_iso` | Time in ISO 8601 standard    | Useful for automations                                                       |
+| `duration`       | Seconds                      | Timer duration in seconds                                                    |
+| `status`         | Status (string)              | The current status of the timer, either `none`, `set`, `ringing` or `paused` |
+| `label`          | Name                         | Name of the timer, this can be set when making the timer                     |
 
 The state value shows the next timer as a timestring (i.e.: `2021-03-07T15:26:17+01:00`) if there is at least one timer set, otherwise it is set to `unavailable`.
 
@@ -281,8 +281,7 @@ If you get this error:
 
 ### 2 Factor Authentication / App Passwords
 
-The Error: "The setting you are looking for is not available for your account."
-will occur if you do not have 2 Factor Authentication (2FA) enabled on your Google account.
+The error "The setting you are looking for is not available for your account" will occur if you do not have 2 Factor Authentication (2FA) enabled on your Google account.
 
 Here are the steps to resolve this issue:
 
