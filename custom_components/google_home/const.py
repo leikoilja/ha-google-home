@@ -74,9 +74,6 @@ TIMEOUT = 2  # Request Timeout in seconds
 TIME_STR_FORMAT = "%H:%M:%S"
 DATETIME_STR_FORMAT = f"{DATE_STR_FORMAT} {TIME_STR_FORMAT}"
 
-# API ERROR'S
-API_RETURNED_UNKNOWN = "API returned unknown json structure"
-
 # Access token only lives about 1 hour
 # Update often to fetch timers in timely manner
 UPDATE_INTERVAL = 10  # sec

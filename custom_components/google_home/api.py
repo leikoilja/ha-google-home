@@ -1,7 +1,7 @@
 """Sample API Client."""
 import asyncio
 import logging
-from typing import Dict, List, Optional
+from typing import List, Optional, cast
 
 from aiohttp import ClientError, ClientSession
 from aiohttp.client_exceptions import ClientConnectorError, ContentTypeError
@@ -17,7 +17,6 @@ from .const import (
     API_ENDPOINT_DELETE,
     API_ENDPOINT_DO_NOT_DISTURB,
     API_ENDPOINT_REBOOT,
-    API_RETURNED_UNKNOWN,
     HEADER_CAST_LOCAL_AUTH,
     HEADERS,
     JSON_ALARM,
@@ -28,7 +27,7 @@ from .const import (
 )
 from .exceptions import InvalidMasterToken
 from .models import GoogleHomeDevice
-from .types import JsonDict
+from .types import AlarmJsonDict, JsonDict, TimerJsonDict
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -112,117 +111,6 @@ class GlocaltokensApiClient:
         Note: port argument is unused because all request must be done to 8443"""
         return f"https://{ip_address}:{port}/{api_endpoint}"
 
-    async def get_alarms_and_timers(
-        self, device: GoogleHomeDevice, ip_address: str, auth_token: str
-    ) -> GoogleHomeDevice:
-        """Fetches timers and alarms from google device"""
-        url = self.create_url(ip_address, PORT, API_ENDPOINT_ALARMS)
-        _LOGGER.debug(
-            "Fetching data from Google Home device %s - %s",
-            device.name,
-            url,
-        )
-        HEADERS[HEADER_CAST_LOCAL_AUTH] = auth_token
-
-        resp = None
-
-        try:
-            async with self._session.get(
-                url, headers=HEADERS, timeout=TIMEOUT
-            ) as response:
-                if response.status == HTTP_OK:
-                    resp = await response.json()
-                    device.available = True
-                    if resp:
-                        if JSON_TIMER in resp or JSON_ALARM in resp:
-                            device.set_timers(resp.get(JSON_TIMER))
-                            device.set_alarms(resp.get(JSON_ALARM))
-                            _LOGGER.debug(
-                                "Succesfully retrieved data from %s.", device.name
-                            )
-                        else:
-                            _LOGGER.error(
-                                (
-                                    "Failed to parse fetched data for device %s - %s. "
-                                    "Received = %s"
-                                ),
-                                device.name,
-                                API_RETURNED_UNKNOWN,
-                                resp,
-                            )
-                elif response.status == HTTP_UNAUTHORIZED:
-                    # If token is invalid - force reload homegraph providing new token
-                    # and rerun the task.
-                    _LOGGER.debug(
-                        (
-                            "Failed to fetch data from %s due to invalid token. "
-                            "Will refresh the token and try again."
-                        ),
-                        device.name,
-                    )
-                    # We need to retry the update task instead of just cleaning the list
-                    self.google_devices = []
-                    device.available = False
-                elif response.status == HTTP_NOT_FOUND:
-                    _LOGGER.debug(
-                        (
-                            "Failed to fetch data from %s, API returned %d. "
-                            "The device(hardware='%s') is possibly not Google Home "
-                            "compatible and has no alarms/timers. "
-                            "Will retry later."
-                        ),
-                        device.name,
-                        response.status,
-                        device.hardware,
-                    )
-                    device.available = False
-                else:
-                    _LOGGER.error(
-                        "Failed to fetch %s data, API returned %d: %s",
-                        device.name,
-                        response.status,
-                        response,
-                    )
-                    device.available = False
-        except ClientConnectorError:
-            _LOGGER.debug(
-                (
-                    "Failed to connect to %s device. "
-                    "The device is probably offline. Will retry later."
-                ),
-                device.name,
-            )
-            device.available = False
-        except ClientError as ex:
-            # Make sure that we log the exception if one occurred.
-            # The only reason we do this broad is so we easily can
-            # debug the application.
-            _LOGGER.error(
-                "Request error from %s device: %s",
-                device.name,
-                ex,
-            )
-            device.available = False
-        except asyncio.TimeoutError:
-            _LOGGER.debug(
-                "%s device timed out while trying to get alarms and timers.",
-                device.name,
-            )
-            device.available = False
-
-        return device
-
-    async def collect_data_from_endpoints(
-        self, device: GoogleHomeDevice, ip_address: str, auth_token: str
-    ) -> GoogleHomeDevice:
-        """Collect data from different endpoints."""
-
-        device = await self.get_alarms_and_timers(device, ip_address, auth_token)
-
-        device = await self.update_do_not_disturb(device)
-
-        return device
-
     async def update_google_devices_information(self) -> List[GoogleHomeDevice]:
         """Retrieves devices from glocaltokens and
         fetches alarm/timer data from each of the device"""
@@ -247,14 +135,45 @@ class GlocaltokensApiClient:
             *[
                 self.collect_data_from_endpoints(
                     device=device,
-                    ip_address=device.ip_address,
-                    auth_token=device.auth_token,
                 )
                 for device in devices
                 if device.ip_address and device.auth_token
             ]
         )
         return coordinator_data
+
+    async def collect_data_from_endpoints(
+        self, device: GoogleHomeDevice
+    ) -> GoogleHomeDevice:
+        """Collect data from different endpoints."""
+        device = await self.update_alarms_and_timers(device)
+        device = await self.update_do_not_disturb(device)
+        return device
+
+    async def update_alarms_and_timers(
+        self, device: GoogleHomeDevice
+    ) -> GoogleHomeDevice:
+        """Fetches timers and alarms from google device"""
+        response = await self.post(
+            endpoint=API_ENDPOINT_ALARMS, device=device, polling=True
+        )
+
+        if response is not None:
+            if JSON_TIMER in response and JSON_ALARM in response:
+                device.set_timers(cast(List[TimerJsonDict], response[JSON_TIMER]))
+                device.set_alarms(cast(List[AlarmJsonDict], response[JSON_ALARM]))
+                _LOGGER.debug("Succesfully retrieved data from %s.", device.name)
+            else:
+                _LOGGER.error(
+                    (
+                        "Failed to parse fetched data for device %s - "
+                        "API returned unknown json structure. "
+                        "Received = %s"
+                    ),
+                    device.name,
+                    response,
+                )
+        return device
 
     async def delete_alarm_or_timer(
         self, device: GoogleHomeDevice, item_to_delete: str
@@ -274,10 +193,10 @@ class GlocaltokensApiClient:
         )
 
         response = await self.post(
-            endpoint=API_ENDPOINT_DELETE, data=data, device=device
+            endpoint=API_ENDPOINT_DELETE, device=device, data=data
         )
 
-        if response:
+        if response is not None:
             if "success" in response:
                 if response["success"]:
                     _LOGGER.debug(
@@ -316,10 +235,10 @@ class GlocaltokensApiClient:
         )
 
         response = await self.post(
-            endpoint=API_ENDPOINT_REBOOT, data=data, device=device
+            endpoint=API_ENDPOINT_REBOOT, device=device, data=data
         )
 
-        if response:
+        if response is not None:
             # It will return true even if the device does not support rebooting.
             _LOGGER.info(
                 "Successfully asked %s to reboot.",
@@ -332,6 +251,7 @@ class GlocaltokensApiClient:
         """Gets or sets the do not disturb setting on a Google Home device."""
 
         data = None
+        polling = False
 
         if enable is not None:
             # Setting is inverted on device
@@ -342,15 +262,19 @@ class GlocaltokensApiClient:
                 device.name,
             )
         else:
+            polling = True
             _LOGGER.debug(
                 "Getting Do Not Disturb setting from Google Home device %s",
                 device.name,
             )
 
         response = await self.post(
-            endpoint=API_ENDPOINT_DO_NOT_DISTURB, data=data, device=device
+            endpoint=API_ENDPOINT_DO_NOT_DISTURB,
+            device=device,
+            data=data,
+            polling=polling,
         )
-        if response:
+        if response is not None:
             if JSON_NOTIFICATIONS_ENABLED in response:
                 enabled = not bool(response[JSON_NOTIFICATIONS_ENABLED])
                 _LOGGER.debug(
@@ -371,8 +295,12 @@ class GlocaltokensApiClient:
         return device
 
     async def post(
-        self, endpoint: str, data: Optional[JsonDict], device: GoogleHomeDevice
-    ) -> Optional[Dict[str, str]]:
+        self,
+        endpoint: str,
+        device: GoogleHomeDevice,
+        data: Optional[JsonDict] = None,
+        polling: bool = False,
+    ) -> Optional[JsonDict]:
         """Shared post request"""
 
         if device.ip_address is None:
@@ -404,7 +332,28 @@ class GlocaltokensApiClient:
                     try:
                         resp = await response.json()
                     except ContentTypeError:
-                        resp = True
+                        resp = {}
+                    device.available = True
+                elif response.status == HTTP_UNAUTHORIZED:
+                    # If token is invalid - force reload homegraph providing new token
+                    # and rerun the task.
+                    if polling:
+                        _LOGGER.debug(
+                            (
+                                "Failed to fetch data from %s due to invalid token. "
+                                "Will refresh the token and try again."
+                            ),
+                            device.name,
+                        )
+                    else:
+                        _LOGGER.warning(
+                            "Failed to send the request to %s dut to invalid token. "
+                            "Please try again.",
+                            device.name,
+                        )
+                    # We need to retry the update task instead of just cleaning the list
+                    self.google_devices = []
+                    device.available = False
                 elif response.status == HTTP_NOT_FOUND:
                     _LOGGER.debug(
                         (
@@ -417,6 +366,7 @@ class GlocaltokensApiClient:
                         response.status,
                         device.hardware,
                     )
+                    device.available = False
                 else:
                     _LOGGER.error(
                         "Failed to access %s, API returned" " %d: %s",
@@ -424,22 +374,28 @@ class GlocaltokensApiClient:
                         response.status,
                         response,
                     )
+                    device.available = False
         except ClientConnectorError:
-            _LOGGER.warning(
+            logger_func = _LOGGER.debug if polling else _LOGGER.warning
+            logger_func(
                 "Failed to connect to %s device. The device is probably offline.",
                 device.name,
             )
+            device.available = False
         except ClientError as ex:
             # Make sure that we log the exception from the client if one occurred.
             _LOGGER.error(
-                "Request error: %s",
+                "Request from %s device error: %s",
+                device.name,
                 ex,
             )
+            device.available = False
         except asyncio.TimeoutError:
             _LOGGER.debug(
                 "%s device timed out while trying to post data to it - Raw data: %s",
                 device.name,
                 data,
             )
+            device.available = False
 
         return resp
