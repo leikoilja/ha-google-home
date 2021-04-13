@@ -18,7 +18,7 @@ from .const import (
     API_ENDPOINT_DO_NOT_DISTURB,
     API_ENDPOINT_REBOOT,
     HEADER_CAST_LOCAL_AUTH,
-    HEADERS,
+    HEADER_CONTENT_TYPE,
     JSON_ALARM,
     JSON_NOTIFICATIONS_ENABLED,
     JSON_TIMER,
@@ -315,8 +315,10 @@ class GlocaltokensApiClient:
 
         url = self.create_url(device.ip_address, PORT, endpoint)
 
-        headers = cast(Dict[str, str], HEADERS.copy())
-        headers[HEADER_CAST_LOCAL_AUTH] = device.auth_token
+        headers: Dict[str, str] = {
+            HEADER_CAST_LOCAL_AUTH: device.auth_token,
+            HEADER_CONTENT_TYPE: "application/json",
+        }
 
         _LOGGER.debug(
             "Requesting endpoint %s for Google Home device %s - %s",

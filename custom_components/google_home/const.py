@@ -1,5 +1,5 @@
 """Constants for Google Home."""
-from typing import Dict, Final, List, Literal
+from typing import Final, List
 
 from homeassistant.util.dt import DATE_STR_FORMAT
 
@@ -62,14 +62,11 @@ API_ENDPOINT_ALARMS: Final[str] = "setup/assistant/alarms"
 API_ENDPOINT_DELETE: Final[str] = "setup/assistant/alarms/delete"
 API_ENDPOINT_REBOOT: Final[str] = "setup/reboot"
 API_ENDPOINT_DO_NOT_DISTURB: Final[str] = "setup/assistant/notifications"
+
+# HEADERS
 HEADER_CAST_LOCAL_AUTH: Final[str] = "cast-local-authorization-token"
 HEADER_CONTENT_TYPE: Final[str] = "content-type"
 
-# HEADERS
-HEADERS: Final[Dict[str, Literal["", "application/json"]]] = {
-    HEADER_CAST_LOCAL_AUTH: "",
-    HEADER_CONTENT_TYPE: "application/json",
-}
 TIMEOUT: Final[int] = 2  # Request Timeout in seconds
 
 # TIMESTRINGS
