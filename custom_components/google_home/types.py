@@ -1,8 +1,6 @@
 """Various types used in type hints."""
 from typing import List, Mapping, Optional, Set, Tuple, TypedDict, Union
 
-JsonDict = Mapping[str, Union[bool, int, str, List[str]]]
-
 
 class AlarmJsonDict(TypedDict, total=False):
     """Typed dict for JSON representation of alarm returned by Google Home API"""
@@ -87,3 +85,8 @@ class OptionsFlowDict(TypedDict):
     """Typed dict for options flow handler"""
 
     data_collection: bool
+
+
+JsonDict = Mapping[
+    str, Union[bool, int, str, List[str], List[AlarmJsonDict], List[TimerJsonDict]]
+]
