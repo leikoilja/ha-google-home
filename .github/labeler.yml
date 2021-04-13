@@ -1,10 +1,10 @@
 dependencies:
-  - all: ["poetry.lock", "!*.py"]
+  - all: ["poetry.lock", "!**/*.py"]
 
 documentation:
-  - any: ["*.md"]
-    all: ["!*.py", "!.github/*"]
+  - any: ["**/*.md"]
+    all: ["!**/*.py", "!.github/**/*"]
 
 github structure:
-  - any: [".github/*"]
-    all: ["!*.py"]
+  - any: [".github/**/*"]
+    all: ["!**/*.py"]
