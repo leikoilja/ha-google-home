@@ -298,6 +298,12 @@ Here are the steps to resolve this issue:
    3. Paste the password into the **Google account app password** field.
    4. Click **Submit**.
 
+### Devices found, but not initialized
+
+If the debug logs list your devices, but then show `Successfully initialized 0 Google Home devices` make sure you are logged into the correct Google account.
+The account you are using with the integration must have access to your Home.
+If unsure, please check what account you are using in the _Google Home_ app and if your devices are listed there.
+
 ## Contribution
 
 If you encounter issues or have any suggestions consider opening issues and contributing through PR.
