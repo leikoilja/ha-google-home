@@ -30,10 +30,11 @@
    - [Integration Setup](#integration-setup)
    - [Running in Home Assistant Docker container](#running-in-home-assistant-docker-container)
 6. [Lovelace Cards](#lovelace-cards)
-7. [Diagnostic Data Collection](#diagnostic-data-collection)
-8. [Troubleshooting](#troubleshooting)
-9. [Contribution](#contribution)
-10. [Credits](#credits)
+7. [Node-RED Flows](#node-red-flows)
+8. [Diagnostic Data Collection](#diagnostic-data-collection)
+9. [Troubleshooting](#troubleshooting)
+10. [Contribution](#contribution)
+11. [Credits](#credits)
 
 </details>
 
@@ -238,6 +239,12 @@ Make sure that you have your Home Assistant Container network set to `host`, as 
 **Open a PR to add your card here!**
 
 - [Google Home timers card](https://github.com/DurgNomis-drol/google_home_timers_card) by [@DurgNomis-drol](https://github.com/DurgNomis-drol)
+
+## Node-RED Flows
+
+**Open a PR to add your flow here!**
+
+- [Alarms & timers as actionable notifications](https://dev.to/mattieha/get-google-home-alarms-timers-as-notifications-i0m) by [@mattieha](https://github.com/mattieha)
 
 ## Diagnostic Data Collection
 
