@@ -1,7 +1,7 @@
 """Sample API Client."""
 import asyncio
 import logging
-from typing import List, Optional, cast
+from typing import Dict, List, Literal, Optional, cast
 
 from aiohttp import ClientError, ClientSession
 from aiohttp.client_exceptions import ClientConnectorError, ContentTypeError
@@ -154,8 +154,8 @@ class GlocaltokensApiClient:
         self, device: GoogleHomeDevice
     ) -> GoogleHomeDevice:
         """Fetches timers and alarms from google device"""
-        response = await self.post(
-            endpoint=API_ENDPOINT_ALARMS, device=device, polling=True
+        response = await self.request(
+            method="GET", endpoint=API_ENDPOINT_ALARMS, device=device, polling=True
         )
 
         if response is not None:
@@ -192,8 +192,8 @@ class GlocaltokensApiClient:
             data,
         )
 
-        response = await self.post(
-            endpoint=API_ENDPOINT_DELETE, device=device, data=data
+        response = await self.request(
+            method="POST", endpoint=API_ENDPOINT_DELETE, device=device, data=data
         )
 
         if response is not None:
@@ -234,8 +234,8 @@ class GlocaltokensApiClient:
             device.name,
         )
 
-        response = await self.post(
-            endpoint=API_ENDPOINT_REBOOT, device=device, data=data
+        response = await self.request(
+            method="POST", endpoint=API_ENDPOINT_REBOOT, device=device, data=data
         )
 
         if response is not None:
@@ -268,7 +268,8 @@ class GlocaltokensApiClient:
                 device.name,
             )
 
-        response = await self.post(
+        response = await self.request(
+            method="POST",
             endpoint=API_ENDPOINT_DO_NOT_DISTURB,
             device=device,
             data=data,
@@ -294,14 +295,15 @@ class GlocaltokensApiClient:
 
         return device
 
-    async def post(
+    async def request(
         self,
+        method: Literal["GET", "POST"],
         endpoint: str,
         device: GoogleHomeDevice,
         data: Optional[JsonDict] = None,
         polling: bool = False,
     ) -> Optional[JsonDict]:
-        """Shared post request"""
+        """Shared request method"""
 
         if device.ip_address is None:
             _LOGGER.warning("Device %s doesn't have an IP address!", device.name)
@@ -313,7 +315,8 @@ class GlocaltokensApiClient:
 
         url = self.create_url(device.ip_address, PORT, endpoint)
 
-        HEADERS[HEADER_CAST_LOCAL_AUTH] = device.auth_token
+        headers = cast(Dict[str, str], HEADERS.copy())
+        headers[HEADER_CAST_LOCAL_AUTH] = device.auth_token
 
         _LOGGER.debug(
             "Requesting endpoint %s for Google Home device %s - %s",
@@ -325,8 +328,8 @@ class GlocaltokensApiClient:
         resp = None
 
         try:
-            async with self._session.post(
-                url, json=data, headers=HEADERS, timeout=TIMEOUT
+            async with self._session.request(
+                method, url, json=data, headers=headers, timeout=TIMEOUT
             ) as response:
                 if response.status == HTTP_OK:
                     try:
@@ -347,7 +350,7 @@ class GlocaltokensApiClient:
                         )
                     else:
                         _LOGGER.warning(
-                            "Failed to send the request to %s dut to invalid token. "
+                            "Failed to send the request to %s due to invalid token. "
                             "Please try again.",
                             device.name,
                         )
