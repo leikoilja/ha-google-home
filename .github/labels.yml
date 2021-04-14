@@ -56,6 +56,11 @@
   description: Performance
   color: "016175"
 
+# Prevent Dependabot from adding version labels
+- name: skip-release
+  description: Skip release
+  color: "000000"
+
 - name: question
   description: Further information is requested
   color: d876e3
