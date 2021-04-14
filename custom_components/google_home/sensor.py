@@ -175,7 +175,11 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
         if not device:
             return None
         next_alarm = device.get_next_alarm()
-        return next_alarm.local_time_iso if next_alarm else STATE_UNAVAILABLE
+        return (
+            next_alarm.local_time_iso
+            if next_alarm and next_alarm.status != GoogleHomeAlarmStatus.INACTIVE
+            else STATE_UNAVAILABLE
+        )
 
     @property
     def device_state_attributes(self) -> AlarmsAttributes:

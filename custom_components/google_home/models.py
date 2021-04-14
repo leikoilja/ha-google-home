@@ -69,8 +69,13 @@ class GoogleHomeDevice:
         ]
 
     def get_sorted_alarms(self) -> List[GoogleHomeAlarm]:
-        """Returns alarms in a sorted order"""
-        return sorted(self._alarms, key=lambda k: k.fire_time)
+        """Returns alarms in a sorted order. Inactive alarms are in the end."""
+        return sorted(
+            self._alarms,
+            key=lambda k: k.fire_time
+            if k.status != GoogleHomeAlarmStatus.INACTIVE
+            else k.fire_time + sys.maxsize,
+        )
 
     def get_next_alarm(self) -> Optional[GoogleHomeAlarm]:
         """Returns next alarm"""
