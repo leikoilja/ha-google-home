@@ -24,6 +24,7 @@ from .const import (
     JSON_TIMER,
     PORT,
     TIMEOUT,
+    HARDWARE_CHROMECAST,
 )
 from .exceptions import InvalidMasterToken
 from .models import GoogleHomeDevice
@@ -130,6 +131,16 @@ class GlocaltokensApiClient:
                     ),
                     device.name,
                 )
+            if device.hardware in HARDWARE_CHROMECAST :
+                device.available = False 
+                _LOGGER.debug(
+                    (
+                        "The device %s (hardware='%s') is not Google Home "
+                        "compatible and is currently unsupported. "
+                    ),
+                    device.name,
+                    device.hardware,
+                )
 
         coordinator_data = await asyncio.gather(
             *[
@@ -137,7 +148,7 @@ class GlocaltokensApiClient:
                     device=device,
                 )
                 for device in devices
-                if device.ip_address and device.auth_token
+                if device.ip_address and device.auth_token and device.available
             ]
         )
         return coordinator_data
