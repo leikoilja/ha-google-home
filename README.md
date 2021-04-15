@@ -245,6 +245,7 @@ Make sure that you have your Home Assistant Container network set to `host`, as 
 **Open a PR to add your flow here!**
 
 - [Alarms & timers as actionable notifications](https://dev.to/mattieha/get-google-home-alarms-timers-as-notifications-i0m) by [@mattieha](https://github.com/mattieha)
+- [Broadcast ringing alarms & timers to other devices](https://dev.to/mattieha/broadcast-google-home-alarms-timers-3c13) by [@mattieha](https://github.com/mattieha)
 
 ## Diagnostic Data Collection
 
