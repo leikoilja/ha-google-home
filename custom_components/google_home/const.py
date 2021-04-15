@@ -25,7 +25,7 @@ ICON_TIMERS: Final[str] = "mdi:timer-sand"
 ICON_DO_NOT_DISTURB: Final[str] = "mdi:minus-circle"
 
 # Hardware
-HARDWARE_CHROMECAST: Final[List[str]] = ["Chromecast","Chromecast Ultra"]
+HARDWARE_CHROMECAST: Final[List[str]] = ["Chromecast", "Chromecast Ultra"]
 
 # Device classes
 BINARY_SENSOR_DEVICE_CLASS: Final[str] = "connectivity"
