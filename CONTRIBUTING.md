@@ -63,7 +63,7 @@ file.
 You can use the `pre-commit` settings implemented in this repository to have
 linting tools check your contributions (see dedicated section below).
 
-When writting unittests please follow the good practises like:
+When writing unittests please follow the good practises like:
 
 - Use `faker` to fake the data. See [examples](https://faker.readthedocs.io/en/master/)
 - Use `mock` to patch objects/methods. See [examples](https://realpython.com/python-mock-library/)

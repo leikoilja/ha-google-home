@@ -162,7 +162,7 @@ class GlocaltokensApiClient:
             if JSON_TIMER in response and JSON_ALARM in response:
                 device.set_timers(cast(List[TimerJsonDict], response[JSON_TIMER]))
                 device.set_alarms(cast(List[AlarmJsonDict], response[JSON_ALARM]))
-                _LOGGER.debug("Succesfully retrieved data from %s.", device.name)
+                _LOGGER.debug("Successfully retrieved data from %s.", device.name)
             else:
                 _LOGGER.error(
                     (
