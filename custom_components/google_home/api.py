@@ -17,6 +17,7 @@ from .const import (
     API_ENDPOINT_DELETE,
     API_ENDPOINT_DO_NOT_DISTURB,
     API_ENDPOINT_REBOOT,
+    HARDWARE_CHROMECAST,
     HEADER_CAST_LOCAL_AUTH,
     HEADER_CONTENT_TYPE,
     JSON_ALARM,
@@ -24,7 +25,6 @@ from .const import (
     JSON_TIMER,
     PORT,
     TIMEOUT,
-    HARDWARE_CHROMECAST,
 )
 from .exceptions import InvalidMasterToken
 from .models import GoogleHomeDevice
@@ -131,8 +131,8 @@ class GlocaltokensApiClient:
                     ),
                     device.name,
                 )
-            if device.hardware in HARDWARE_CHROMECAST :
-                device.available = False 
+            if device.hardware in HARDWARE_CHROMECAST:
+                device.available = False
                 _LOGGER.debug(
                     (
                         "The device %s (hardware='%s') is not Google Home "
