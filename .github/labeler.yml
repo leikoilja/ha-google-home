@@ -1,5 +1,6 @@
 dependencies:
-  - all: ["poetry.lock", "!**/*.py"]
+  - any: ["poetry.lock"]
+    all: ["!**/*.py"]
 
 documentation:
   - any: ["**/*.md"]
