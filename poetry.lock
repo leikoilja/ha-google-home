@@ -301,7 +301,7 @@ test = ["coverage (>=4.0.0,<5.0.0)", "pytest (>=4)", "pytest-cov (>=2)", "flake8
 
 [[package]]
 name = "glocaltokens"
-version = "0.3.0"
+version = "0.3.1"
 description = "Tool to extract Google device local authentication tokens in Python"
 category = "main"
 optional = false
@@ -873,7 +873,7 @@ ifaddr = ">=0.1.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "3c9f0954784a9a2d2f45abc0b3d8ac9b1194ca5bfcbf7deb2bcb2335ff316b17"
+content-hash = "c834f6178be5398b13d5023f6c48264929dbf7bb67d8d38121c0bd39c49f26b6"
 
 [metadata.files]
 aiohttp = [
@@ -1077,8 +1077,8 @@ flake8-use-fstring = [
     {file = "flake8-use-fstring-1.1.tar.gz", hash = "sha256:a0eea849ffe33fb6903c210c243c0f418da86a530e46cb13e64f1bdb045f22dc"},
 ]
 glocaltokens = [
-    {file = "glocaltokens-0.3.0-py3-none-any.whl", hash = "sha256:bfb0f4704e8014511a60314a9691e66da67aef13c3a5e98312bf216192dfe162"},
-    {file = "glocaltokens-0.3.0.tar.gz", hash = "sha256:dadff172de7900701da23fa93142e7b71b1ae64c6a474cadde310e302894c22f"},
+    {file = "glocaltokens-0.3.1-py3-none-any.whl", hash = "sha256:fd6ccaf6e756d9b63856f8c7b49cf4405371ca14d6872e16e27935118e0499a6"},
+    {file = "glocaltokens-0.3.1.tar.gz", hash = "sha256:69f9a376973e465c65f5057243222d2919d17aa1b881d0b55c97584d656e0864"},
 ]
 gpsoauth = [
     {file = "gpsoauth-1.0.0-py3-none-any.whl", hash = "sha256:149c374863eec17cdac5279d57e4905592a9cd74cc34b7e58671cb19f9238f39"},
