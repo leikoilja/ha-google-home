@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict, Optional
+from typing import Any
 
 from requests.exceptions import RequestException
 import voluptuous as vol
@@ -35,11 +35,11 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
     def __init__(self) -> None:
         """Initialize."""
-        self._errors: Dict[str, str] = {}
+        self._errors: dict[str, str] = {}
 
     async def async_step_user(
-        self, user_input: Optional[Dict[str, Any]] = None
-    ) -> Dict[str, Any]:
+        self, user_input: dict[str, Any] | None = None
+    ) -> dict[str, Any]:
         """Handle a flow initialized by the user."""
         self._errors = {}
 
@@ -72,8 +72,8 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         return GoogleHomeOptionsFlowHandler(config_entry)
 
     async def _show_config_form(
-        self, _user_input: Optional[Dict[str, Any]]
-    ) -> Dict[str, Any]:
+        self, _user_input: dict[str, Any] | None
+    ) -> dict[str, Any]:
         """Show the configuration form to edit location data."""
         return self.async_show_form(
             step_id="user",
@@ -86,7 +86,7 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             errors=self._errors,
         )
 
-    async def _test_credentials(self, client: GlocaltokensApiClient) -> Optional[str]:
+    async def _test_credentials(self, client: GlocaltokensApiClient) -> str | None:
         """Returns true and master token if credentials are valid."""
         try:
             master_token = await client.async_get_master_token()
@@ -106,8 +106,8 @@ class GoogleHomeOptionsFlowHandler(config_entries.OptionsFlow):
         self.options = dict(config_entry.options)
 
     async def async_step_init(
-        self, user_input: Optional[OptionsFlowDict] = None
-    ) -> Dict[str, Any]:
+        self, user_input: OptionsFlowDict | None = None
+    ) -> dict[str, Any]:
         """Manage the options."""
         if user_input is not None:
             self.options.update(user_input)
