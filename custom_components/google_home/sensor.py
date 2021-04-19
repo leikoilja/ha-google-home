@@ -1,6 +1,8 @@
 """Sensor platform for Google Home"""
+from __future__ import annotations
+
 import logging
-from typing import Callable, Iterable, List, Optional
+from typing import Callable, Iterable
 
 import voluptuous as vol
 
@@ -48,7 +50,7 @@ async def async_setup_entry(
     """Setup sensor platform."""
     client = hass.data[DOMAIN][entry.entry_id][DATA_CLIENT]
     coordinator = hass.data[DOMAIN][entry.entry_id][DATA_COORDINATOR]
-    sensors: List[Entity] = []
+    sensors: list[Entity] = []
     for device in coordinator.data:
         sensors.append(
             GoogleHomeDeviceSensor(
@@ -110,7 +112,7 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
         return ICON_TOKEN
 
     @property
-    def state(self) -> Optional[str]:
+    def state(self) -> str | None:
         device = self.get_device()
         return device.auth_token if device else None
 
@@ -170,7 +172,7 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
         return DEVICE_CLASS_TIMESTAMP
 
     @property
-    def state(self) -> Optional[str]:
+    def state(self) -> str | None:
         device = self.get_device()
         if not device:
             return None
@@ -200,7 +202,7 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
             else GoogleHomeAlarmStatus.NONE.name.lower()
         )
 
-    def _get_alarms_data(self) -> List[GoogleHomeAlarmDict]:
+    def _get_alarms_data(self) -> list[GoogleHomeAlarmDict]:
         """Update alarms data extracting it from coordinator"""
         device = self.get_device()
         return (
@@ -251,7 +253,7 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
         return DEVICE_CLASS_TIMESTAMP
 
     @property
-    def state(self) -> Optional[str]:
+    def state(self) -> str | None:
         device = self.get_device()
         if not device:
             return None
@@ -281,7 +283,7 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
             else GoogleHomeTimerStatus.NONE.name.lower()
         )
 
-    def _get_timers_data(self) -> List[GoogleHomeTimerDict]:
+    def _get_timers_data(self) -> list[GoogleHomeTimerDict]:
         """Update timers data extracting it from coordinator"""
         device = self.get_device()
         return (

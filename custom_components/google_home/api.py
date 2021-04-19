@@ -1,7 +1,9 @@
 """Sample API Client."""
+from __future__ import annotations
+
 import asyncio
 import logging
-from typing import Dict, List, Literal, Optional, cast
+from typing import List, Literal, cast
 
 from aiohttp import ClientError, ClientSession
 from aiohttp.client_exceptions import ClientConnectorError, ContentTypeError
@@ -39,11 +41,11 @@ class GlocaltokensApiClient:
         self,
         hass: HomeAssistant,
         session: ClientSession,
-        username: Optional[str] = None,
-        password: Optional[str] = None,
-        master_token: Optional[str] = None,
-        android_id: Optional[str] = None,
-        zeroconf_instance: Optional[Zeroconf] = None,
+        username: str | None = None,
+        password: str | None = None,
+        master_token: str | None = None,
+        android_id: str | None = None,
+        zeroconf_instance: Zeroconf | None = None,
     ):
         """Sample API Client."""
         self.hass = hass
@@ -59,13 +61,13 @@ class GlocaltokensApiClient:
             android_id=android_id,
             verbose=verbose,
         )
-        self.google_devices: List[GoogleHomeDevice] = []
+        self.google_devices: list[GoogleHomeDevice] = []
         self.zeroconf_instance = zeroconf_instance
 
     async def async_get_master_token(self) -> str:
         """Get master API token"""
 
-        def _get_master_token() -> Optional[str]:
+        def _get_master_token() -> str | None:
             return self._client.get_master_token()
 
         master_token = await self.hass.async_add_executor_job(_get_master_token)
@@ -73,13 +75,13 @@ class GlocaltokensApiClient:
             raise InvalidMasterToken
         return master_token
 
-    async def get_google_devices(self) -> List[GoogleHomeDevice]:
+    async def get_google_devices(self) -> list[GoogleHomeDevice]:
         """Get google device authentication tokens.
         Note this method will fetch necessary access tokens if missing"""
 
         if not self.google_devices:
 
-            def _get_google_devices() -> List[Device]:
+            def _get_google_devices() -> list[Device]:
                 return self._client.get_google_devices(
                     zeroconf_instance=self.zeroconf_instance,
                     force_homegraph_reload=True,
@@ -97,10 +99,10 @@ class GlocaltokensApiClient:
             ]
         return self.google_devices
 
-    async def get_android_id(self) -> Optional[str]:
+    async def get_android_id(self) -> str | None:
         """Generate random android_id"""
 
-        def _get_android_id() -> Optional[str]:
+        def _get_android_id() -> str | None:
             return self._client.get_android_id()
 
         return await self.hass.async_add_executor_job(_get_android_id)
@@ -111,7 +113,7 @@ class GlocaltokensApiClient:
         Note: port argument is unused because all request must be done to 8443"""
         return f"https://{ip_address}:{port}/{api_endpoint}"
 
-    async def update_google_devices_information(self) -> List[GoogleHomeDevice]:
+    async def update_google_devices_information(self) -> list[GoogleHomeDevice]:
         """Retrieves devices from glocaltokens and
         fetches alarm/timer data from each of the device"""
 
@@ -246,7 +248,7 @@ class GlocaltokensApiClient:
             )
 
     async def update_do_not_disturb(
-        self, device: GoogleHomeDevice, enable: Optional[bool] = None
+        self, device: GoogleHomeDevice, enable: bool | None = None
     ) -> GoogleHomeDevice:
         """Gets or sets the do not disturb setting on a Google Home device."""
 
@@ -300,9 +302,9 @@ class GlocaltokensApiClient:
         method: Literal["GET", "POST"],
         endpoint: str,
         device: GoogleHomeDevice,
-        data: Optional[JsonDict] = None,
+        data: JsonDict | None = None,
         polling: bool = False,
-    ) -> Optional[JsonDict]:
+    ) -> JsonDict | None:
         """Shared request method"""
 
         if device.ip_address is None:
@@ -315,7 +317,7 @@ class GlocaltokensApiClient:
 
         url = self.create_url(device.ip_address, PORT, endpoint)
 
-        headers: Dict[str, str] = {
+        headers: dict[str, str] = {
             HEADER_CAST_LOCAL_AUTH: device.auth_token,
             HEADER_CONTENT_TYPE: "application/json",
         }
