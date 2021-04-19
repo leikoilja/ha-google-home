@@ -32,15 +32,6 @@ from .const import (
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
-# Remove after updating to 2021.4.0
-async def async_setup(
-    _hass: HomeAssistant,
-    _config: dict,  # type: ignore[type-arg]
-) -> bool:
-    """Set up this integration using YAML is not supported."""
-    return True
-
-
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up this integration using UI."""
     if hass.data.get(DOMAIN) is None:

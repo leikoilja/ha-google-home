@@ -363,7 +363,7 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "homeassistant"
-version = "2021.4.0b3"
+version = "2021.4.0"
 description = "Open-source home automation platform running on Python 3."
 category = "main"
 optional = false
@@ -393,14 +393,14 @@ yarl = "1.6.3"
 
 [[package]]
 name = "homeassistant-stubs"
-version = "2021.4.0b3"
+version = "2021.4.0"
 description = "PEP 484 typing stubs for Home Assistant Core"
 category = "dev"
 optional = false
 python-versions = ">=3.8,<4.0"
 
 [package.dependencies]
-homeassistant = "2021.4.0b3"
+homeassistant = "2021.4.0"
 
 [[package]]
 name = "httpcore"
@@ -873,7 +873,7 @@ ifaddr = ">=0.1.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "3a4c8e3179eae83bbf6b28ad8183afc1c6981219a7888dcd9f0ea59d9cd71fc3"
+content-hash = "d1df158629c37b6d2f8f89f399438090035398311c6a84ef83405c0c42e6e3eb"
 
 [metadata.files]
 aiohttp = [
@@ -1171,12 +1171,12 @@ h11 = [
     {file = "h11-0.12.0.tar.gz", hash = "sha256:47222cb6067e4a307d535814917cd98fd0a57b6788ce715755fa2b6c28b56042"},
 ]
 homeassistant = [
-    {file = "homeassistant-2021.4.0b3-py3-none-any.whl", hash = "sha256:93de906e6e95b3875f300a9e792be93ef5f80577d5d6754affa3cd1a902b45a3"},
-    {file = "homeassistant-2021.4.0b3.tar.gz", hash = "sha256:9a05d1cb64bbaf8f08b57eec1ce8887806ff86cf36b35a870b1ea41706972e9f"},
+    {file = "homeassistant-2021.4.0-py3-none-any.whl", hash = "sha256:66fe23d2affba6235bf04c306f8b26f8d894f40c8dfa3b8cb4c0c69512a5e26b"},
+    {file = "homeassistant-2021.4.0.tar.gz", hash = "sha256:0c7de8c51941a4ec905e2fef44dd80186c54a12abdb8ce7e9d05ac66f2c61382"},
 ]
 homeassistant-stubs = [
-    {file = "homeassistant-stubs-2021.4.0b3.tar.gz", hash = "sha256:6490591f79bb280756573be9c2c25d7c51daa527fdb0139e364eb66ca64ed133"},
-    {file = "homeassistant_stubs-2021.4.0b3-py3-none-any.whl", hash = "sha256:7c89160bc862fe64f96b6e7416005a53c32ba3086130059f42340c799e7f4935"},
+    {file = "homeassistant-stubs-2021.4.0.tar.gz", hash = "sha256:c3f53c3548bd513b2c17fb636b9fea233b4b0f91a0b82f094b372d371515130e"},
+    {file = "homeassistant_stubs-2021.4.0-py3-none-any.whl", hash = "sha256:249918477d893a2c94729b06cb457e293d96c396beefbf1e75a8cf4c1eaa1618"},
 ]
 httpcore = [
     {file = "httpcore-0.12.3-py3-none-any.whl", hash = "sha256:93e822cd16c32016b414b789aeff4e855d0ccbfc51df563ee34d4dbadbb3bcdc"},
