@@ -181,7 +181,7 @@ data:
 
 ### Prerequisites
 
-Use Home Assistant build 2021.3 or above.
+Use Home Assistant v2021.4.0 or above.
 
 ### HACS Installation
 
