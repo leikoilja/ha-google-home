@@ -23,7 +23,7 @@ homeassistant-stubs = "2021.4.0"
 isort = "^5.8.0"
 mypy = "^0.812"
 pre-commit = "^2.12.1"
-pylint = "^2.8.1"
+pylint = "^2.8.2"
 codespell = "^2.0.0"
 
 [tool.pylint.messages_control]
