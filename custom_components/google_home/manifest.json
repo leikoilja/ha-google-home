@@ -9,5 +9,6 @@
   "name": "Google Home",
   "requirements": ["glocaltokens==0.3.1"],
   "version": "1.4.3",
-  "zeroconf": ["_googlecast._tcp.local."]
+  "zeroconf": ["_googlecast._tcp.local."],
+  "iot_class": "cloud_polling"
 }
