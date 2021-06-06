@@ -25,6 +25,10 @@ ICON_TOKEN: Final[str] = "mdi:form-textbox-password"
 ICON_ALARMS: Final[str] = "mdi:alarm-multiple"
 ICON_TIMERS: Final[str] = "mdi:timer-sand"
 ICON_DO_NOT_DISTURB: Final[str] = "mdi:minus-circle"
+ICON_ALARM_VOLUME_LOW: Final[str] = "mdi:volume-low"
+ICON_ALARM_VOLUME_MID: Final[str] = "mdi:volume-medium"
+ICON_ALARM_VOLUME_HIGH: Final[str] = "mdi:volume-high"
+ICON_ALARM_VOLUME_OFF: Final[str] = "mdi:volume-off"
 
 # Device classes
 BINARY_SENSOR_DEVICE_CLASS: Final[str] = "connectivity"
@@ -51,6 +55,7 @@ CONF_MASTER_TOKEN: Final[str] = "master_token"
 DEFAULT_NAME: Final[str] = "Google Home"
 
 LABEL_ALARMS: Final[str] = "alarms"
+LABEL_ALARM_VOLUME: Final[str] = "alarm_volume"
 LABEL_AVAILABLE: Final[str] = "available"
 LABEL_TIMERS: Final[str] = "timers"
 LABEL_DEVICE: Final[str] = "device"
@@ -85,6 +90,9 @@ JSON_ALARM: Final[str] = "alarm"
 JSON_TIMER: Final[str] = "timer"
 JSON_NOTIFICATIONS_ENABLED: Final[str] = "notifications_enabled"
 JSON_ALARM_VOLUME: Final[str] = "volume"
+
+# Device class names
+DEVICE_CLASS_ALARM_VOLUME = "google_home__alarm_volume"
 
 STARTUP_MESSAGE: Final[
     str
