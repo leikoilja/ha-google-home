@@ -1,26 +1,27 @@
 """Number Platform for Google Home"""
 
 import logging
-from typing import Callable, Iterable, List
+from typing import Callable, Iterable, List, Optional
 
 from homeassistant.components.number import NumberEntity
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import PERCENTAGE
 from homeassistant.core import HomeAssistant
 
 from .const import (
-    DOMAIN,
-    DEVICE_CLASS_ALARM_VOLUME,
     DATA_CLIENT,
     DATA_COORDINATOR,
-    LABEL_ALARM_VOLUME,
-    ICON_ALARM_VOLUME_OFF,
+    DEVICE_CLASS_ALARM_VOLUME,
+    DOMAIN,
+    ICON_ALARM_VOLUME_HIGH,
     ICON_ALARM_VOLUME_LOW,
     ICON_ALARM_VOLUME_MID,
-    ICON_ALARM_VOLUME_HIGH,
+    ICON_ALARM_VOLUME_OFF,
+    LABEL_ALARM_VOLUME,
 )
+from .entity import GoogleHomeBaseEntity
 from .models import GOOGLE_HOME_ALARM_DEFAULT_VALUE
 from .types import AlarmVolumeAttributes
-from .entity import GoogleHomeBaseEntity
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -60,6 +61,11 @@ class AlarmVolumeNumber(GoogleHomeBaseEntity, NumberEntity):
         return LABEL_ALARM_VOLUME
 
     @property
+    def unit_of_measurement(self) -> Optional[str]:
+        """The unit of measurement for the entity"""
+        return PERCENTAGE
+
+    @property
     def icon(self) -> str:
         """Return the icon of the sensor."""
         device = self.get_device()
@@ -87,7 +93,7 @@ class AlarmVolumeNumber(GoogleHomeBaseEntity, NumberEntity):
     @property
     def step(self) -> float:
         """Return the step value for the volume"""
-        return .01
+        return 0.01
 
     @property
     def value(self) -> float:

@@ -4,7 +4,7 @@ from __future__ import annotations
 from datetime import timedelta
 from enum import Enum
 import sys
-from typing import Final, Optional, List
+from typing import Final, List, Optional
 
 from homeassistant.util.dt import as_local, utc_from_timestamp
 

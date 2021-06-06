@@ -2,12 +2,12 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from typing import List, Optional
 
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
     DataUpdateCoordinator,
 )
-from typing import List, Optional
 
 from .api import GlocaltokensApiClient
 from .const import DEFAULT_NAME, DOMAIN, MANUFACTURER

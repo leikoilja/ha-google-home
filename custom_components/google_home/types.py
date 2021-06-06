@@ -1,7 +1,7 @@
 """Various types used in type hints."""
 from __future__ import annotations
 
-from typing import List, Mapping, TypedDict, Union, Set, Tuple, Optional
+from typing import List, Mapping, Optional, Set, Tuple, TypedDict, Union
 
 
 class AlarmJsonDict(TypedDict, total=False):
@@ -97,5 +97,6 @@ class OptionsFlowDict(TypedDict):
 
 
 JsonDict = Mapping[
-    str, Union[bool, float, int, str, List[str], List[AlarmJsonDict], List[TimerJsonDict]]
+    str,
+    Union[bool, float, int, str, List[str], List[AlarmJsonDict], List[TimerJsonDict]],
 ]

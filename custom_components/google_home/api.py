@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from typing import Dict, List, Literal, Optional, cast, SupportsFloat, Union, SupportsIndex, SupportsInt
+from typing import Dict, List, Literal, Optional, cast
 
 from aiohttp import ClientError, ClientSession
 from aiohttp.client_exceptions import ClientConnectorError, ContentTypeError
@@ -331,23 +331,16 @@ class GlocaltokensApiClient:
         )
         if response is not None:
             if JSON_NOTIFICATIONS_ENABLED in response:
-                volume_raw = response[JSON_ALARM_VOLUME]
-                if volume_raw is Union[SupportsFloat, SupportsIndex, SupportsInt, str]:
-                    loaded_volume = float(volume_raw)
-                    _LOGGER.debug(
-                        "Received Alarm Volume setting from Google Home device %s"
-                        " - Volume: %f",
-                        device.name,
-                        loaded_volume,
-                    )
+                volume_raw: str = str(response[JSON_ALARM_VOLUME])
+                loaded_volume: float = float(volume_raw)
+                _LOGGER.debug(
+                    "Received Alarm Volume setting from Google Home device %s"
+                    " - Volume: %f",
+                    device.name,
+                    loaded_volume,
+                )
 
-                    device.set_alarm_volume(loaded_volume)
-                else:
-                    _LOGGER.warning(
-                        "Response from Google Home device %s contains an invalid volume - %s",
-                        device.name,
-                        str(volume_raw),
-                    )
+                device.set_alarm_volume(loaded_volume)
             else:
                 _LOGGER.debug(
                     "Response not expected from Google Home device %s - %s",

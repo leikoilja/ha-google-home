@@ -30,7 +30,12 @@ from .const import (
     SERVICE_REBOOT,
 )
 from .entity import GoogleHomeBaseEntity
-from .models import GoogleHomeAlarmStatus, GoogleHomeDevice, GoogleHomeTimerStatus, GOOGLE_HOME_ALARM_DEFAULT_VALUE
+from .models import (
+    GOOGLE_HOME_ALARM_DEFAULT_VALUE,
+    GoogleHomeAlarmStatus,
+    GoogleHomeDevice,
+    GoogleHomeTimerStatus,
+)
 from .types import (
     AlarmsAttributes,
     DeviceAttributes,
@@ -206,11 +211,7 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
         """Update alarm volume status from coordinator"""
         device = self.get_device()
         alarm_volume = device.get_alarm_volume() if device else None
-        return (
-            alarm_volume
-            if alarm_volume
-            else GOOGLE_HOME_ALARM_DEFAULT_VALUE
-        )
+        return alarm_volume if alarm_volume else GOOGLE_HOME_ALARM_DEFAULT_VALUE
 
     def _get_alarms_data(self) -> List[GoogleHomeAlarmDict]:
         """Update alarms data extracting it from coordinator"""
