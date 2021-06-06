@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from typing import List, Literal, cast, Optional, Mapping, Union, Dict
+from typing import List, Literal, cast, Optional, Dict
 
 from aiohttp import ClientError, ClientSession
 from aiohttp.client_exceptions import ClientConnectorError, ContentTypeError
@@ -309,7 +309,7 @@ class GlocaltokensApiClient:
             # Setting is inverted on device
             data = {JSON_ALARM_VOLUME: volume}
             _LOGGER.debug(
-                "Setting Alarm Volume setting to %s on Google Home device %s",
+                "Setting Alarm Volume setting to %d on Google Home device %s",
                 volume,
                 device.name,
             )
@@ -332,7 +332,7 @@ class GlocaltokensApiClient:
                 volume = float(response[JSON_ALARM_VOLUME])
                 _LOGGER.debug(
                     "Received Alarm Volume setting from Google Home device %s"
-                    " - Volume: %d",
+                    " - Volume: %f",
                     device.name,
                     volume,
                 )

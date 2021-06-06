@@ -7,7 +7,7 @@ from homeassistant.components.number import NumberEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
-from const import (
+from .const import (
     DOMAIN,
     DEVICE_CLASS_ALARM_VOLUME,
     DATA_CLIENT,
@@ -68,12 +68,11 @@ class AlarmVolumeNumber(GoogleHomeBaseEntity, NumberEntity):
         volume = device.get_alarm_volume()
         if volume == 0:
             return ICON_ALARM_VOLUME_OFF
-        elif volume <= 0.3:
+        if volume <= 0.3:
             return ICON_ALARM_VOLUME_LOW
-        elif volume <= 0.6:
+        if volume <= 0.6:
             return ICON_ALARM_VOLUME_MID
-        else:
-            return ICON_ALARM_VOLUME_HIGH
+        return ICON_ALARM_VOLUME_HIGH
 
     @property
     def min_value(self) -> float:
