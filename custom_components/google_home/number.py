@@ -1,7 +1,7 @@
 """Number Platform for Google Home"""
 
 import logging
-from typing import Callable, Iterable
+from typing import Callable, Iterable, List
 
 from homeassistant.components.number import NumberEntity
 from homeassistant.config_entries import ConfigEntry
@@ -18,9 +18,9 @@ from const import (
     ICON_ALARM_VOLUME_MID,
     ICON_ALARM_VOLUME_HIGH,
 )
-from models import GOOGLE_HOME_ALARM_DEFAULT_VALUE
-from custom_components.google_home.types import AlarmVolumeAttributes
-from entity import GoogleHomeBaseEntity
+from .models import GOOGLE_HOME_ALARM_DEFAULT_VALUE
+from .types import AlarmVolumeAttributes
+from .entity import GoogleHomeBaseEntity
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -34,7 +34,7 @@ async def async_setup_entry(
     client = hass.data[DOMAIN][entry.entry_id][DATA_CLIENT]
     coordinator = hass.data[DOMAIN][entry.entry_id][DATA_COORDINATOR]
 
-    numbers: list[NumberEntity] = []
+    numbers: List[NumberEntity] = []
     for device in coordinator.data:
         if device.auth_token and device.available:
             numbers.append(

@@ -1,7 +1,7 @@
 """Various types used in type hints."""
 from __future__ import annotations
 
-from typing import List, Mapping, TypedDict, Union
+from typing import List, Mapping, TypedDict, Union, Set, Tuple, Optional
 
 
 class AlarmJsonDict(TypedDict, total=False):
@@ -10,8 +10,8 @@ class AlarmJsonDict(TypedDict, total=False):
     id: str
     fire_time: int
     status: int
-    label: str | None
-    recurrence: str | None
+    label: Optional[str]
+    recurrence: Optional[str]
 
 
 class TimerJsonDict(TypedDict, total=False):
@@ -21,7 +21,7 @@ class TimerJsonDict(TypedDict, total=False):
     fire_time: int
     original_duration: int
     status: int
-    label: str | None
+    label: Optional[str]
 
 
 class GoogleHomeAlarmDict(TypedDict):
@@ -32,29 +32,29 @@ class GoogleHomeAlarmDict(TypedDict):
     local_time: str
     local_time_iso: str
     status: str
-    label: str | None
-    recurrence: str | None
+    label: Optional[str]
+    recurrence: Optional[str]
 
 
 class GoogleHomeTimerDict(TypedDict):
     """Typed dict representation of Google Home timer"""
 
     timer_id: str
-    fire_time: int | None
-    local_time: str | None
-    local_time_iso: str | None
+    fire_time: Optional[int]
+    local_time: Optional[str]
+    local_time_iso: Optional[str]
     duration: str
     status: str
-    label: str | None
+    label: Optional[str]
 
 
 class DeviceAttributes(TypedDict):
     """Typed dict for device attributes"""
 
     device_name: str
-    auth_token: str | None
-    ip_address: str | None
-    hardware: str | None
+    auth_token: Optional[str]
+    ip_address: Optional[str]
+    hardware: Optional[str]
     available: bool
     integration: str
 
@@ -63,7 +63,7 @@ class AlarmsAttributes(TypedDict):
     """Typed dict for alarms attributes"""
 
     next_alarm_status: str
-    alarms: list[GoogleHomeAlarmDict]
+    alarms: List[GoogleHomeAlarmDict]
     integration: str
 
 
@@ -78,14 +78,14 @@ class TimersAttributes(TypedDict):
     """Typed dict for timers attributes"""
 
     next_timer_status: str
-    timers: list[GoogleHomeTimerDict]
+    timers: List[GoogleHomeTimerDict]
     integration: str
 
 
 class DeviceInfo(TypedDict):
     """Typed dict for device_info"""
 
-    identifiers: set[tuple[str, str]]
+    identifiers: Set[Tuple[str, str]]
     name: str
     manufacturer: str
 

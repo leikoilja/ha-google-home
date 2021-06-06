@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Callable, Iterable
+from typing import Any, Callable, Iterable, List
 
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
@@ -29,7 +29,7 @@ async def async_setup_entry(
     client = hass.data[DOMAIN][entry.entry_id][DATA_CLIENT]
     coordinator = hass.data[DOMAIN][entry.entry_id][DATA_COORDINATOR]
 
-    switches: list[SwitchEntity] = []
+    switches: List[SwitchEntity] = []
     for device in coordinator.data:
         if device.auth_token and device.available:
             switches.append(
