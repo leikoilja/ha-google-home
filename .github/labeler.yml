@@ -9,3 +9,6 @@ documentation:
 github structure:
   - any: [".github/**/*"]
     all: ["!**/*.py"]
+
+localization:
+  - any: ["custom_components/google_home/translations/*"]
