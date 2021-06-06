@@ -61,7 +61,8 @@ PORT: Final[int] = 8443
 
 # API
 API_ENDPOINT_ALARMS: Final[str] = "setup/assistant/alarms"
-API_ENDPOINT_DELETE: Final[str] = "setup/assistant/alarms/delete"
+API_ENDPOINT_ALARM_DELETE: Final[str] = "setup/assistant/alarms/delete"
+API_ENDPOINT_ALARM_VOLUME: Final[str] = "setup/assistant/alarms/volume"
 API_ENDPOINT_REBOOT: Final[str] = "setup/reboot"
 API_ENDPOINT_DO_NOT_DISTURB: Final[str] = "setup/assistant/notifications"
 
@@ -83,6 +84,7 @@ UPDATE_INTERVAL: Final[int] = 10  # sec
 JSON_ALARM: Final[str] = "alarm"
 JSON_TIMER: Final[str] = "timer"
 JSON_NOTIFICATIONS_ENABLED: Final[str] = "notifications_enabled"
+JSON_ALARM_VOLUME: Final[str] = "volume"
 
 STARTUP_MESSAGE: Final[
     str
