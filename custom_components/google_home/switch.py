@@ -14,8 +14,12 @@ from .const import (
     DOMAIN,
     ICON_DO_NOT_DISTURB,
     LABEL_DO_NOT_DISTURB,
+    DEVICE_CLASS_DO_NOT_DISTURB,
 )
 from .entity import GoogleHomeBaseEntity
+from .types import (
+    DoNotDisturbAttributes,
+)
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -70,6 +74,14 @@ class DoNotDisturbSwitch(GoogleHomeBaseEntity, SwitchEntity):
         is_enabled = device.get_do_not_disturb()
 
         return is_enabled
+
+    @property
+    def device_state_attributes(self) -> DoNotDisturbAttributes:
+        attributes = {
+            "device_class": DEVICE_CLASS_DO_NOT_DISTURB,
+            "integration": DOMAIN,
+        }
+        return attributes
 
     async def set_do_not_disturb(self, enable: bool) -> None:
         """Sets Do Not Disturb mode."""

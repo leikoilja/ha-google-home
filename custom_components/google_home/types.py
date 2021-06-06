@@ -52,6 +52,7 @@ class DeviceAttributes(TypedDict):
     """Typed dict for device attributes"""
 
     device_name: str
+    device_class: str
     auth_token: str | None
     ip_address: str | None
     hardware: str | None
@@ -72,6 +73,13 @@ class TimersAttributes(TypedDict):
 
     next_timer_status: str
     timers: list[GoogleHomeTimerDict]
+    integration: str
+
+
+class DoNotDisturbAttributes(TypedDict):
+    """Typed dict for do not disturb switch attributes"""
+
+    device_class: str
     integration: str
 
 

@@ -84,6 +84,11 @@ JSON_ALARM: Final[str] = "alarm"
 JSON_TIMER: Final[str] = "timer"
 JSON_NOTIFICATIONS_ENABLED: Final[str] = "notifications_enabled"
 
+DEVICE_CLASS_DEVICE: Final[str] = "google_home__device"
+DEVICE_CLASS_ALARMS: Final[str] = "google_home__alarms"
+DEVICE_CLASS_TIMERS: Final[str] = "google_home__timers"
+DEVICE_CLASS_DO_NOT_DISTURB: Final[str] = "google_home__do_not_disturb"
+
 STARTUP_MESSAGE: Final[
     str
 ] = f"""

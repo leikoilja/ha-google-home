@@ -28,6 +28,9 @@ from .const import (
     SERVICE_DELETE_ALARM,
     SERVICE_DELETE_TIMER,
     SERVICE_REBOOT,
+    DEVICE_CLASS_DEVICE,
+    DEVICE_CLASS_ALARMS,
+    DEVICE_CLASS_TIMERS,
 )
 from .entity import GoogleHomeBaseEntity
 from .models import GoogleHomeAlarmStatus, GoogleHomeDevice, GoogleHomeTimerStatus
@@ -122,6 +125,7 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
         device = self.get_device()
         attributes: DeviceAttributes = {
             "device_name": self.device_name,
+            "device_class": DEVICE_CLASS_DEVICE,
             "auth_token": None,
             "ip_address": None,
             "hardware": None,
@@ -135,6 +139,7 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
         """Device representation as dictionary"""
         return {
             "device_name": device.name,
+            "device_class": DEVICE_CLASS_DEVICE,
             "auth_token": device.auth_token,
             "ip_address": device.ip_address,
             "hardware": device.hardware,
@@ -187,6 +192,7 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
     def device_state_attributes(self) -> AlarmsAttributes:
         """Return the state attributes."""
         return {
+            "device_class": DEVICE_CLASS_ALARMS,
             "next_alarm_status": self._get_next_alarm_status(),
             "alarms": self._get_alarms_data(),
             "integration": DOMAIN,
@@ -268,6 +274,7 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
     def device_state_attributes(self) -> TimersAttributes:
         """Return the state attributes."""
         return {
+            "device_class": DEVICE_CLASS_TIMERS,
             "next_timer_status": self._get_next_timer_status(),
             "timers": self._get_timers_data(),
             "integration": DOMAIN,
