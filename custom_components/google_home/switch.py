@@ -11,15 +11,13 @@ from homeassistant.core import HomeAssistant
 from .const import (
     DATA_CLIENT,
     DATA_COORDINATOR,
+    DEVICE_CLASS_DO_NOT_DISTURB,
     DOMAIN,
     ICON_DO_NOT_DISTURB,
     LABEL_DO_NOT_DISTURB,
-    DEVICE_CLASS_DO_NOT_DISTURB,
 )
 from .entity import GoogleHomeBaseEntity
-from .types import (
-    DoNotDisturbAttributes,
-)
+from .types import DoNotDisturbAttributes
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -77,7 +75,7 @@ class DoNotDisturbSwitch(GoogleHomeBaseEntity, SwitchEntity):
 
     @property
     def device_state_attributes(self) -> DoNotDisturbAttributes:
-        attributes = {
+        attributes: DoNotDisturbAttributes = {
             "device_class": DEVICE_CLASS_DO_NOT_DISTURB,
             "integration": DOMAIN,
         }

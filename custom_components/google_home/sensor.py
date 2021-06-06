@@ -16,6 +16,9 @@ from .const import (
     ALARM_AND_TIMER_ID_LENGTH,
     DATA_CLIENT,
     DATA_COORDINATOR,
+    DEVICE_CLASS_ALARMS,
+    DEVICE_CLASS_DEVICE,
+    DEVICE_CLASS_TIMERS,
     DOMAIN,
     ICON_ALARMS,
     ICON_TIMERS,
@@ -28,9 +31,6 @@ from .const import (
     SERVICE_DELETE_ALARM,
     SERVICE_DELETE_TIMER,
     SERVICE_REBOOT,
-    DEVICE_CLASS_DEVICE,
-    DEVICE_CLASS_ALARMS,
-    DEVICE_CLASS_TIMERS,
 )
 from .entity import GoogleHomeBaseEntity
 from .models import GoogleHomeAlarmStatus, GoogleHomeDevice, GoogleHomeTimerStatus

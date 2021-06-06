@@ -63,6 +63,7 @@ class DeviceAttributes(TypedDict):
 class AlarmsAttributes(TypedDict):
     """Typed dict for alarms attributes"""
 
+    device_class: str
     next_alarm_status: str
     alarms: list[GoogleHomeAlarmDict]
     integration: str
@@ -71,6 +72,7 @@ class AlarmsAttributes(TypedDict):
 class TimersAttributes(TypedDict):
     """Typed dict for timers attributes"""
 
+    device_class: str
     next_timer_status: str
     timers: list[GoogleHomeTimerDict]
     integration: str
