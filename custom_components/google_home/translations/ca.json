@@ -11,10 +11,10 @@
       }
     },
     "error": {
-      "auth": "La combinació Nom d'usuari/Contrassenya és incorrecta. Si el teu compte té l'autentificació en dos passes habilitada, per favor, genera una contrassenya d'aplicació (https://myaccount.google.com/apppasswords). Si tot i així no pots iniciar sessió, per favor accedeix a https://github.com/leikoilja/ha-google-home#troubleshooting (en anglès).",
+      "auth": "La combinació Nom d'usuari/Contrassenya és incorrecta. Si el teu compte té l'autentificació en dos passes habilitada, per favor, genera una contrassenya d'aplicació (https://myaccount.google.com/apppasswords). Si tot i així no pots iniciar sessió, per favor accedeix a https://github.com/leikoilja/ha-google-home#troubleshooting (en anglès)."
     },
     "abort": {
-      "single_instance_allowed": "Solament està permesa una única instància",
+      "single_instance_allowed": "Solament està permesa una única instància"
     }
   },
   "options": {
