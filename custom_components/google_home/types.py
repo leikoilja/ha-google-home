@@ -97,5 +97,5 @@ class OptionsFlowDict(TypedDict):
 
 
 JsonDict = Mapping[
-    str, Union[bool, int, str, List[str], List[AlarmJsonDict], List[TimerJsonDict]]
+    str, Union[bool, float, int, str, List[str], List[AlarmJsonDict], List[TimerJsonDict]]
 ]

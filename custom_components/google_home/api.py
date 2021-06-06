@@ -331,15 +331,15 @@ class GlocaltokensApiClient:
         )
         if response is not None:
             if JSON_NOTIFICATIONS_ENABLED in response:
-                volume = float(response[JSON_ALARM_VOLUME])
+                loaded_volume = float(response[JSON_ALARM_VOLUME])
                 _LOGGER.debug(
                     "Received Alarm Volume setting from Google Home device %s"
                     " - Volume: %f",
                     device.name,
-                    volume,
+                    loaded_volume,
                 )
 
-                device.set_alarm_volume(volume)
+                device.set_alarm_volume(loaded_volume)
             else:
                 _LOGGER.debug(
                     "Response not expected from Google Home device %s - %s",
