@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from typing import List, Literal, cast, Optional, Dict
+from typing import Dict, List, Literal, Optional, cast
 
 from aiohttp import ClientError, ClientSession
 from aiohttp.client_exceptions import ClientConnectorError, ContentTypeError
@@ -15,17 +15,19 @@ from homeassistant.const import HTTP_NOT_FOUND, HTTP_OK, HTTP_UNAUTHORIZED
 from homeassistant.core import HomeAssistant
 
 from .const import (
-    API_ENDPOINT_ALARMS,
     API_ENDPOINT_ALARM_DELETE,
+    API_ENDPOINT_ALARM_VOLUME,
+    API_ENDPOINT_ALARMS,
     API_ENDPOINT_DO_NOT_DISTURB,
     API_ENDPOINT_REBOOT,
     HEADER_CAST_LOCAL_AUTH,
     HEADER_CONTENT_TYPE,
     JSON_ALARM,
+    JSON_ALARM_VOLUME,
     JSON_NOTIFICATIONS_ENABLED,
     JSON_TIMER,
     PORT,
-    TIMEOUT, JSON_ALARM_VOLUME, API_ENDPOINT_ALARM_VOLUME,
+    TIMEOUT,
 )
 from .exceptions import InvalidMasterToken
 from .models import GoogleHomeDevice
@@ -248,7 +250,7 @@ class GlocaltokensApiClient:
             )
 
     async def update_do_not_disturb(
-            self, device: GoogleHomeDevice, enable: Optional[bool] = None
+        self, device: GoogleHomeDevice, enable: Optional[bool] = None
     ) -> GoogleHomeDevice:
         """Gets or sets the do not disturb setting on a Google Home device."""
 
@@ -309,7 +311,7 @@ class GlocaltokensApiClient:
             # Setting is inverted on device
             data = {JSON_ALARM_VOLUME: volume}
             _LOGGER.debug(
-                "Setting Alarm Volume setting to %d on Google Home device %s",
+                "Setting Alarm Volume setting to %f on Google Home device %s",
                 volume,
                 device.name,
             )
