@@ -1,7 +1,7 @@
 """Constants for Google Home."""
 from __future__ import annotations
 
-from typing import Final, List
+from typing import Final
 
 from homeassistant.util.dt import DATE_STR_FORMAT
 
@@ -36,7 +36,7 @@ BINARY_SENSOR_DEVICE_CLASS: Final[str] = "connectivity"
 # Platforms
 SENSOR: Final[str] = "sensor"
 SWITCH: Final[str] = "switch"
-PLATFORMS: Final[List[str]] = [SENSOR, SWITCH]
+PLATFORMS: Final[list[str]] = [SENSOR, SWITCH]
 
 # Services
 SERVICE_REBOOT: Final[str] = "reboot_device"

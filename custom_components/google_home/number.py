@@ -1,7 +1,8 @@
 """Number Platform for Google Home"""
+from __future__ import annotations
 
 import logging
-from typing import Callable, Iterable, List, Optional
+from typing import Callable, Iterable
 
 from homeassistant.components.number import NumberEntity
 from homeassistant.config_entries import ConfigEntry
@@ -35,7 +36,7 @@ async def async_setup_entry(
     client = hass.data[DOMAIN][entry.entry_id][DATA_CLIENT]
     coordinator = hass.data[DOMAIN][entry.entry_id][DATA_COORDINATOR]
 
-    numbers: List[NumberEntity] = []
+    numbers: list[NumberEntity] = []
     for device in coordinator.data:
         if device.auth_token and device.available:
             numbers.append(
@@ -61,7 +62,7 @@ class AlarmVolumeNumber(GoogleHomeBaseEntity, NumberEntity):
         return LABEL_ALARM_VOLUME
 
     @property
-    def unit_of_measurement(self) -> Optional[str]:
+    def unit_of_measurement(self) -> str | None:
         """The unit of measurement for the entity"""
         return PERCENTAGE
 

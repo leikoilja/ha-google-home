@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from typing import Dict, List, Literal, Optional, cast
+from typing import List, Literal, cast
 
 from aiohttp import ClientError, ClientSession
 from aiohttp.client_exceptions import ClientConnectorError, ContentTypeError
@@ -250,7 +250,7 @@ class GlocaltokensApiClient:
             )
 
     async def update_do_not_disturb(
-        self, device: GoogleHomeDevice, enable: Optional[bool] = None
+        self, device: GoogleHomeDevice, enable: bool | None = None
     ) -> GoogleHomeDevice:
         """Gets or sets the do not disturb setting on a Google Home device."""
 
@@ -300,7 +300,7 @@ class GlocaltokensApiClient:
         return device
 
     async def update_alarm_volume(
-        self, device: GoogleHomeDevice, volume: Optional[float] = None
+        self, device: GoogleHomeDevice, volume: float | None = None
     ) -> GoogleHomeDevice:
         """Gets or sets the alarm volume setting on a Google Home device."""
 
@@ -370,7 +370,7 @@ class GlocaltokensApiClient:
 
         url = self.create_url(device.ip_address, PORT, endpoint)
 
-        headers: Dict[str, str] = {
+        headers: dict[str, str] = {
             HEADER_CAST_LOCAL_AUTH: device.auth_token,
             HEADER_CONTENT_TYPE: "application/json",
         }

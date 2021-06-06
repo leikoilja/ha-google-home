@@ -4,7 +4,7 @@ from __future__ import annotations
 from datetime import timedelta
 from enum import Enum
 import sys
-from typing import Final, List, Optional
+from typing import Final
 
 from homeassistant.util.dt import as_local, utc_from_timestamp
 
@@ -28,9 +28,9 @@ class GoogleHomeDevice:
     def __init__(
         self,
         name: str,
-        auth_token: Optional[str],
-        ip_address: Optional[str] = None,
-        hardware: Optional[str] = None,
+        auth_token: str | None,
+        ip_address: str | None = None,
+        hardware: str | None = None,
     ):
         self.name = name
         self.auth_token = auth_token
@@ -39,10 +39,10 @@ class GoogleHomeDevice:
         self.available = True
         self._do_not_disturb = False
         self._alarm_volume = GOOGLE_HOME_ALARM_DEFAULT_VALUE
-        self._timers: List[GoogleHomeTimer] = []
-        self._alarms: List[GoogleHomeAlarm] = []
+        self._timers: list[GoogleHomeTimer] = []
+        self._alarms: list[GoogleHomeAlarm] = []
 
-    def set_alarms(self, alarms: List[AlarmJsonDict]) -> None:
+    def set_alarms(self, alarms: list[AlarmJsonDict]) -> None:
         """Stores alarms as GoogleHomeAlarm objects"""
         self._alarms = [
             GoogleHomeAlarm(
@@ -55,7 +55,7 @@ class GoogleHomeDevice:
             for alarm in alarms
         ]
 
-    def set_timers(self, timers: List[TimerJsonDict]) -> None:
+    def set_timers(self, timers: list[TimerJsonDict]) -> None:
         """Stores timers as GoogleHomeTimer objects"""
         self._timers = [
             GoogleHomeTimer(
@@ -68,7 +68,7 @@ class GoogleHomeDevice:
             for timer in timers
         ]
 
-    def get_sorted_alarms(self) -> List[GoogleHomeAlarm]:
+    def get_sorted_alarms(self) -> list[GoogleHomeAlarm]:
         """Returns alarms in a sorted order. Inactive alarms are in the end."""
         return sorted(
             self._alarms,
@@ -77,19 +77,19 @@ class GoogleHomeDevice:
             else k.fire_time + sys.maxsize,
         )
 
-    def get_next_alarm(self) -> Optional[GoogleHomeAlarm]:
+    def get_next_alarm(self) -> GoogleHomeAlarm | None:
         """Returns next alarm"""
         alarms = self.get_sorted_alarms()
         return alarms[0] if alarms else None
 
-    def get_sorted_timers(self) -> List[GoogleHomeTimer]:
+    def get_sorted_timers(self) -> list[GoogleHomeTimer]:
         """Returns timers in a sorted order. If timer is paused, put it in the end."""
         return sorted(
             self._timers,
             key=lambda k: k.fire_time if k.fire_time is not None else sys.maxsize,
         )
 
-    def get_next_timer(self) -> Optional[GoogleHomeTimer]:
+    def get_next_timer(self) -> GoogleHomeTimer | None:
         """Returns next alarm"""
         timers = self.get_sorted_timers()
         return timers[0] if timers else None
@@ -117,10 +117,10 @@ class GoogleHomeTimer:
     def __init__(
         self,
         timer_id: str,
-        fire_time: Optional[int],
+        fire_time: int | None,
         duration: int,
         status: int,
-        label: Optional[str],
+        label: str | None,
     ) -> None:
         self.timer_id = timer_id
         self.duration = str(timedelta(seconds=convert_from_ms_to_s(duration)))
@@ -159,8 +159,8 @@ class GoogleHomeAlarm:
         alarm_id: str,
         fire_time: int,
         status: int,
-        label: Optional[str],
-        recurrence: Optional[str],
+        label: str | None,
+        recurrence: str | None,
     ) -> None:
         self.alarm_id = alarm_id
         self.recurrence = recurrence
