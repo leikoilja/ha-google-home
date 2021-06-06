@@ -193,6 +193,7 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
         """Return the state attributes."""
         return {
             "next_alarm_status": self._get_next_alarm_status(),
+            "alarm_volume": self._get_alarm_volume(),
             "alarms": self._get_alarms_data(),
             "integration": DOMAIN,
         }

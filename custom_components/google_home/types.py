@@ -63,6 +63,7 @@ class AlarmsAttributes(TypedDict):
     """Typed dict for alarms attributes"""
 
     next_alarm_status: str
+    alarm_volume: float
     alarms: list[GoogleHomeAlarmDict]
     integration: str
 
