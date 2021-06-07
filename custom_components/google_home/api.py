@@ -329,7 +329,7 @@ class GlocaltokensApiClient:
             data=data,
             polling=polling,
         )
-        if response is not None:
+        if response:
             if JSON_NOTIFICATIONS_ENABLED in response:
                 volume_raw = str(response[JSON_ALARM_VOLUME])
                 loaded_volume = float(volume_raw)
