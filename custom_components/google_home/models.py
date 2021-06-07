@@ -4,11 +4,10 @@ from __future__ import annotations
 from datetime import timedelta
 from enum import Enum
 import sys
-from typing import Final
 
 from homeassistant.util.dt import as_local, utc_from_timestamp
 
-from .const import DATETIME_STR_FORMAT
+from .const import DATETIME_STR_FORMAT, GOOGLE_HOME_ALARM_DEFAULT_VALUE
 from .types import (
     AlarmJsonDict,
     GoogleHomeAlarmDict,
@@ -203,6 +202,3 @@ class GoogleHomeTimerStatus(Enum):
     SET = 1
     PAUSED = 2
     RINGING = 3
-
-
-GOOGLE_HOME_ALARM_DEFAULT_VALUE: Final[float] = 1

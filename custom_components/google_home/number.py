@@ -8,12 +8,15 @@ from homeassistant.components.number import NumberEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import PERCENTAGE
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
+from .api import GlocaltokensApiClient
 from .const import (
     DATA_CLIENT,
     DATA_COORDINATOR,
     DEVICE_CLASS_ALARM_VOLUME,
     DOMAIN,
+    GOOGLE_HOME_ALARM_DEFAULT_VALUE,
     ICON_ALARM_VOLUME_HIGH,
     ICON_ALARM_VOLUME_LOW,
     ICON_ALARM_VOLUME_MID,
@@ -21,7 +24,6 @@ from .const import (
     LABEL_ALARM_VOLUME,
 )
 from .entity import GoogleHomeBaseEntity
-from .models import GOOGLE_HOME_ALARM_DEFAULT_VALUE
 from .types import AlarmVolumeAttributes
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
@@ -33,8 +35,10 @@ async def async_setup_entry(
     async_add_devices: Callable[[Iterable[NumberEntity]], None],
 ) -> bool:
     """Setup switch platform."""
-    client = hass.data[DOMAIN][entry.entry_id][DATA_CLIENT]
-    coordinator = hass.data[DOMAIN][entry.entry_id][DATA_COORDINATOR]
+    client: GlocaltokensApiClient = hass.data[DOMAIN][entry.entry_id][DATA_CLIENT]
+    coordinator: DataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id][
+        DATA_COORDINATOR
+    ]
 
     numbers: list[NumberEntity] = []
     for device in coordinator.data:
@@ -71,7 +75,7 @@ class AlarmVolumeNumber(GoogleHomeBaseEntity, NumberEntity):
         """Return the icon of the sensor."""
         device = self.get_device()
         if device is None:
-            return ICON_ALARM_VOLUME_HIGH
+            return ICON_ALARM_VOLUME_OFF
         volume = device.get_alarm_volume()
         if volume == 0:
             return ICON_ALARM_VOLUME_OFF
@@ -108,7 +112,7 @@ class AlarmVolumeNumber(GoogleHomeBaseEntity, NumberEntity):
         return volume
 
     @property
-    def device_state_attributes(self) -> AlarmVolumeAttributes:
+    def extra_state_attributes(self) -> AlarmVolumeAttributes:
         """Return the state attributes."""
         return {
             "device_class": DEVICE_CLASS_ALARM_VOLUME,

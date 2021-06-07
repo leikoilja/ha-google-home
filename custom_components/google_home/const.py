@@ -53,6 +53,7 @@ CONF_MASTER_TOKEN: Final[str] = "master_token"
 
 # Defaults
 DEFAULT_NAME: Final[str] = "Google Home"
+GOOGLE_HOME_ALARM_DEFAULT_VALUE: Final[float] = 0
 
 LABEL_ALARMS: Final[str] = "alarms"
 LABEL_ALARM_VOLUME: Final[str] = "alarm_volume"

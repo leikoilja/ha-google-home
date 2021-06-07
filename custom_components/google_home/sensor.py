@@ -17,6 +17,7 @@ from .const import (
     DATA_CLIENT,
     DATA_COORDINATOR,
     DOMAIN,
+    GOOGLE_HOME_ALARM_DEFAULT_VALUE,
     ICON_ALARMS,
     ICON_TIMERS,
     ICON_TOKEN,
@@ -30,12 +31,7 @@ from .const import (
     SERVICE_REBOOT,
 )
 from .entity import GoogleHomeBaseEntity
-from .models import (
-    GOOGLE_HOME_ALARM_DEFAULT_VALUE,
-    GoogleHomeAlarmStatus,
-    GoogleHomeDevice,
-    GoogleHomeTimerStatus,
-)
+from .models import GoogleHomeAlarmStatus, GoogleHomeDevice, GoogleHomeTimerStatus
 from .types import (
     AlarmsAttributes,
     DeviceAttributes,
