@@ -49,11 +49,11 @@ tokens and use those tokens making API calls to Google Home devices.
 
 This component will set up the following sensors:
 
-| Platform | Sample sensor               | Description                                               |
-| -------- | --------------------------- | --------------------------------------------------------- |
-| `sensor` | `sensor.living_room_alarms` | Sensor with a list of alarms from the device              |
-| `sensor` | `sensor.living_room_timers` | Sensor with a list of timers from the device              |
-| `sensor` | `sensor.living_room_token`  | Sensor with the local authentication token for the device |
+| Platform | Sample sensor               | Description                                                                |
+| -------- | --------------------------- | -------------------------------------------------------------------------- |
+| `sensor` | `sensor.living_room_alarms` | Sensor with a list of alarms from the device                               |
+| `sensor` | `sensor.living_room_timers` | Sensor with a list of timers from the device                               |
+| `sensor` | `sensor.living_room_device` | Sensor with the IP address for the device, as well as some info attributes |
 
 ### Alarms
 
