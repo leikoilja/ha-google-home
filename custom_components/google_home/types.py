@@ -68,13 +68,6 @@ class AlarmsAttributes(TypedDict):
     integration: str
 
 
-class AlarmVolumeAttributes(TypedDict):
-    """Typed dict for alarm volume attributes"""
-
-    device_class: str
-    integration: str
-
-
 class TimersAttributes(TypedDict):
     """Typed dict for timers attributes"""
 

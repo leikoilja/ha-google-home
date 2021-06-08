@@ -92,9 +92,6 @@ JSON_TIMER: Final[str] = "timer"
 JSON_NOTIFICATIONS_ENABLED: Final[str] = "notifications_enabled"
 JSON_ALARM_VOLUME: Final[str] = "volume"
 
-# Device class names
-DEVICE_CLASS_ALARM_VOLUME = "google_home__alarm_volume"
-
 STARTUP_MESSAGE: Final[
     str
 ] = f"""

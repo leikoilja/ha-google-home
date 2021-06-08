@@ -14,7 +14,6 @@ from .api import GlocaltokensApiClient
 from .const import (
     DATA_CLIENT,
     DATA_COORDINATOR,
-    DEVICE_CLASS_ALARM_VOLUME,
     DOMAIN,
     GOOGLE_HOME_ALARM_DEFAULT_VALUE,
     ICON_ALARM_VOLUME_HIGH,
@@ -24,7 +23,6 @@ from .const import (
     LABEL_ALARM_VOLUME,
 )
 from .entity import GoogleHomeBaseEntity
-from .types import AlarmVolumeAttributes
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -110,14 +108,6 @@ class AlarmVolumeNumber(GoogleHomeBaseEntity, NumberEntity):
 
         volume = device.get_alarm_volume()
         return volume
-
-    @property
-    def extra_state_attributes(self) -> AlarmVolumeAttributes:
-        """Return the state attributes."""
-        return {
-            "device_class": DEVICE_CLASS_ALARM_VOLUME,
-            "integration": DOMAIN,
-        }
 
     async def async_set_value(self, value: float) -> None:
         """Sets the alarm volume"""
