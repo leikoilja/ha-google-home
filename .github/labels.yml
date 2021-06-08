@@ -65,6 +65,10 @@
   description: Further information is requested
   color: d876e3
 
+- name: glocaltokens
+  description: For fixes related with the glocaltokens dependency
+  color: 0118f0
+
 - name: refactoring
   description: Refactoring
   color: ef67c4
