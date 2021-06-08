@@ -312,6 +312,10 @@ If the debug logs list your devices, but then show `Successfully initialized 0 G
 The account you are using with the integration must have access to your Home.
 If unsure, please check what account you are using in the _Google Home_ app and if your devices are listed there.
 
+### Devices found and initialized, but no alarms/timers sensor (#231)
+
+If you can see your devices, and they all seem correct, but the alarms/timers sensors do not appear, or appear empty try restarting the Google Home device, Home Assistant, and reinstalling the integration.
+
 ## Contribution
 
 If you encounter issues or have any suggestions consider opening issues and contributing through PR.
