@@ -1,5 +1,7 @@
 # Localization
+
 If you want to translate the Integration to your own language, the only thing you have to do is:
+
 1. Fork this project
 2. Go to the directory [`custom_components/google_home/translations`](/custom_components/google_home/translations)
 3. Create a new `.json` file with the name of your desired language in the [BCP47](https://www.rfc-editor.org/info/bcp47) format.
@@ -35,6 +37,6 @@ If you want to translate the Integration to your own language, the only thing yo
      }
    }
    ```
- 5. Commit your modifications.
- 6. Open a PR.
- 7. Enjoy.
+5. Commit your modifications.
+6. Open a PR.
+7. Enjoy.
