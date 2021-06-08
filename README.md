@@ -49,11 +49,11 @@ tokens and use those tokens making API calls to Google Home devices.
 
 This component will set up the following sensors:
 
-| Platform | Sample sensor               | Description                                               |
-| -------- | --------------------------- | --------------------------------------------------------- |
-| `sensor` | `sensor.living_room_alarms` | Sensor with a list of alarms from the device              |
-| `sensor` | `sensor.living_room_timers` | Sensor with a list of timers from the device              |
-| `sensor` | `sensor.living_room_token`  | Sensor with the local authentication token for the device |
+| Platform | Sample sensor               | Description                                                                |
+| -------- | --------------------------- | -------------------------------------------------------------------------- |
+| `sensor` | `sensor.living_room_alarms` | Sensor with a list of alarms from the device                               |
+| `sensor` | `sensor.living_room_timers` | Sensor with a list of timers from the device                               |
+| `sensor` | `sensor.living_room_device` | Sensor with the IP address for the device, as well as some info attributes |
 
 ### Alarms
 
@@ -311,6 +311,10 @@ Here are the steps to resolve this issue:
 If the debug logs list your devices, but then show `Successfully initialized 0 Google Home devices` make sure you are logged into the correct Google account.
 The account you are using with the integration must have access to your Home.
 If unsure, please check what account you are using in the _Google Home_ app and if your devices are listed there.
+
+### Devices found and initialized, but no alarms/timers sensor (#231)
+
+If you can see your devices, and they all seem correct, but the alarms/timers sensors do not appear, or appear empty try restarting the Google Home device, Home Assistant, and reinstalling the integration.
 
 ## Contribution
 

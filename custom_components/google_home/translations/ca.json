@@ -1,0 +1,30 @@
+{
+  "title": "Google Home",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Autenticació a Google Home",
+        "description": "Si necessites ajuda amb la configuració fes una ullada ací (en anglés): https://github.com/leikoilja/ha-google-home. Utilitza el teu compte de Google, i contrassenya d'aplicació. És més segur i senzill utilitzar una contrassenya d'aplicació en comptes de la teua contrassenya real. Té el mateix nivell d'accés que la contrassenya habitual, però Google recomana aquesta forma per a scripts. (https://myaccount.google.com/apppasswords). De totes maneres, la contrassenya habitual del teu compte de Google deuria funcionar.",
+        "data": {
+          "username": "Nom d'usuari de Google",
+          "password": "Contrassenya d'aplicació de Google"
+        }
+      }
+    },
+    "error": {
+      "auth": "La combinació Nom d'usuari/Contrassenya és incorrecta. Si el teu compte té l'autentificació en dos passes habilitada, per favor, genera una contrassenya d'aplicació (https://myaccount.google.com/apppasswords). Si tot i així no pots iniciar sessió, per favor accedeix a https://github.com/leikoilja/ha-google-home#troubleshooting (en anglès)."
+    },
+    "abort": {
+      "single_instance_allowed": "Solament està permesa una única instància"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "data_collection": "Permet la recol·lecta de dades de diagnòstic anònimes. Visita https://github.com/leikoilja/ha-google-home#diagnostic-data-collection (en anglès) per a més informació. Reinici necessari."
+        }
+      }
+    }
+  }
+}
