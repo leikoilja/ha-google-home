@@ -73,10 +73,6 @@
   description: Removals and Deprecations
   color: 9ae7ea
 
-- name: localization
-  description: Additions, removals and fixes on translation files
-  color: C4FDBD
-
 - name: testing
   description: Testing
   color: b1fc6f
