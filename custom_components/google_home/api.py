@@ -151,6 +151,7 @@ class GlocaltokensApiClient:
     ) -> GoogleHomeDevice:
         """Collect data from different endpoints."""
         device = await self.update_alarms_and_timers(device)
+        device = await self.update_alarm_volume(device)
         device = await self.update_do_not_disturb(device)
         return device
 
