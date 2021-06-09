@@ -1,6 +1,6 @@
 # Localization
 
-If you want to translate the Integration to your own language, the only thing you have to do is:
+Help us translate the integration to your own language using the following steps:
 
 1. Fork this project
 2. Go to the directory [`custom_components/google_home/translations`](/custom_components/google_home/translations)
