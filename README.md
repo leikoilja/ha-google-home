@@ -22,20 +22,21 @@
 1. [About The Project](#about)
 2. [Sensors](#sensors)
 3. [Switches](#switches)
-4. [Services](#services)
-5. [Getting Started](#getting-started)
+4. [Numbers](#numbers)
+5. [Services](#services)
+6. [Getting Started](#getting-started)
    - [Prerequisites](#prerequisites)
    - [HACS Installation](#hacs-installation)
    - [Manual Installation](#manual-installation)
    - [Integration Setup](#integration-setup)
    - [Running in Home Assistant Docker container](#running-in-home-assistant-docker-container)
-6. [Lovelace Cards](#lovelace-cards)
-7. [Node-RED Flows](#node-red-flows)
-8. [Diagnostic Data Collection](#diagnostic-data-collection)
-9. [Troubleshooting](#troubleshooting)
-10. [Contribution](#contribution)
-11. [Localization](#localization)
-12. [Credits](#credits)
+7. [Lovelace Cards](#lovelace-cards)
+8. [Node-RED Flows](#node-red-flows)
+9. [Diagnostic Data Collection](#diagnostic-data-collection)
+10. [Troubleshooting](#troubleshooting)
+11. [Contribution](#contribution)
+12. [Localization](#localization)
+13. [Credits](#credits)
 
 </details>
 
@@ -116,6 +117,14 @@ This component will set up the following switches:
 | Platform | Sample switch                       | Description                                        |
 | -------- | ----------------------------------- | -------------------------------------------------- |
 | `switch` | `switch.living_room_do_not_disturb` | Toggle Do Not Disturb mode on a Google Home device |
+
+## Numbers
+
+This component will set up the following numbers:
+
+| Platform | Sample number                     | Description                                      |
+| -------- | --------------------------------- | ------------------------------------------------ |
+| `number` | `number.living_room_alarm_volume` | Control the alarm volume on a Google Home device |
 
 ## Services
 

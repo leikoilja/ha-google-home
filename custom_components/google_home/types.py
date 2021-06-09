@@ -63,6 +63,7 @@ class AlarmsAttributes(TypedDict):
     """Typed dict for alarms attributes"""
 
     next_alarm_status: str
+    alarm_volume: float
     alarms: list[GoogleHomeAlarmDict]
     integration: str
 
@@ -90,5 +91,6 @@ class OptionsFlowDict(TypedDict):
 
 
 JsonDict = Mapping[
-    str, Union[bool, int, str, List[str], List[AlarmJsonDict], List[TimerJsonDict]]
+    str,
+    Union[bool, float, int, str, List[str], List[AlarmJsonDict], List[TimerJsonDict]],
 ]

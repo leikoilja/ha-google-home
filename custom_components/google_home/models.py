@@ -7,7 +7,7 @@ import sys
 
 from homeassistant.util.dt import as_local, utc_from_timestamp
 
-from .const import DATETIME_STR_FORMAT
+from .const import DATETIME_STR_FORMAT, GOOGLE_HOME_ALARM_DEFAULT_VALUE
 from .types import (
     AlarmJsonDict,
     GoogleHomeAlarmDict,
@@ -37,6 +37,7 @@ class GoogleHomeDevice:
         self.hardware = hardware
         self.available = True
         self._do_not_disturb = False
+        self._alarm_volume = GOOGLE_HOME_ALARM_DEFAULT_VALUE
         self._timers: list[GoogleHomeTimer] = []
         self._alarms: list[GoogleHomeAlarm] = []
 
@@ -99,6 +100,14 @@ class GoogleHomeDevice:
     def get_do_not_disturb(self) -> bool:
         """Return Do Not Disturb status."""
         return self._do_not_disturb
+
+    def set_alarm_volume(self, volume: float) -> None:
+        """Set Alarm Volume status."""
+        self._alarm_volume = volume
+
+    def get_alarm_volume(self) -> float:
+        """Return Alarm Volume status."""
+        return self._alarm_volume
 
 
 class GoogleHomeTimer:
