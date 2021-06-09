@@ -115,7 +115,7 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
     @property
     def state(self) -> str | None:
         device = self.get_device()
-        return device.auth_token if device else None
+        return device.ip_address if device else None
 
     @property
     def device_state_attributes(self) -> DeviceAttributes:

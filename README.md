@@ -30,11 +30,12 @@
    - [Manual Installation](#manual-installation)
    - [Integration Setup](#integration-setup)
    - [Running in Home Assistant Docker container](#running-in-home-assistant-docker-container)
-7. [Lovelace Cards](#lovelace-cards)
-8. [Node-RED Flows](#node-red-flows)
-9. [Diagnostic Data Collection](#diagnostic-data-collection)
-10. [Troubleshooting](#troubleshooting)
-11. [Contribution](#contribution)
+6. [Lovelace Cards](#lovelace-cards)
+7. [Node-RED Flows](#node-red-flows)
+8. [Diagnostic Data Collection](#diagnostic-data-collection)
+9. [Troubleshooting](#troubleshooting)
+10. [Contribution](#contribution)
+11. [Localization](#localization)
 12. [Credits](#credits)
 
 </details>
@@ -50,11 +51,11 @@ tokens and use those tokens making API calls to Google Home devices.
 
 This component will set up the following sensors:
 
-| Platform | Sample sensor               | Description                                               |
-| -------- | --------------------------- | --------------------------------------------------------- |
-| `sensor` | `sensor.living_room_alarms` | Sensor with a list of alarms from the device              |
-| `sensor` | `sensor.living_room_timers` | Sensor with a list of timers from the device              |
-| `sensor` | `sensor.living_room_token`  | Sensor with the local authentication token for the device |
+| Platform | Sample sensor               | Description                                                                |
+| -------- | --------------------------- | -------------------------------------------------------------------------- |
+| `sensor` | `sensor.living_room_alarms` | Sensor with a list of alarms from the device                               |
+| `sensor` | `sensor.living_room_timers` | Sensor with a list of timers from the device                               |
+| `sensor` | `sensor.living_room_device` | Sensor with the IP address for the device, as well as some info attributes |
 
 ### Alarms
 
@@ -329,6 +330,11 @@ If you can see your devices, and they all seem correct, but the alarms/timers se
 
 If you encounter issues or have any suggestions consider opening issues and contributing through PR.
 If you are ready to contribute to this please read the [Contribution guidelines](CONTRIBUTING.md).
+
+## Localization
+
+Currently the integration supports English and Catalan languages.
+If you want to translate the project to your own language, follow the [Localization guide](LOCALIZATION.md).
 
 ## Credits
 
