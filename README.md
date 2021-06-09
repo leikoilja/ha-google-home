@@ -34,7 +34,8 @@
 8. [Diagnostic Data Collection](#diagnostic-data-collection)
 9. [Troubleshooting](#troubleshooting)
 10. [Contribution](#contribution)
-11. [Credits](#credits)
+11. [Localization](#localization)
+12. [Credits](#credits)
 
 </details>
 
@@ -320,6 +321,11 @@ If you can see your devices, and they all seem correct, but the alarms/timers se
 
 If you encounter issues or have any suggestions consider opening issues and contributing through PR.
 If you are ready to contribute to this please read the [Contribution guidelines](CONTRIBUTING.md).
+
+## Localization
+
+Currently the integration supports English and Catalan languages.
+If you want to translate the project to your own language, follow the [Localization guide](LOCALIZATION.md).
 
 ## Credits
 
