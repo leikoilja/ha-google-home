@@ -30,13 +30,13 @@
    - [Manual Installation](#manual-installation)
    - [Integration Setup](#integration-setup)
    - [Running in Home Assistant Docker container](#running-in-home-assistant-docker-container)
-6. [Lovelace Cards](#lovelace-cards)
-7. [Node-RED Flows](#node-red-flows)
-8. [Diagnostic Data Collection](#diagnostic-data-collection)
-9. [Troubleshooting](#troubleshooting)
-10. [Contribution](#contribution)
-11. [Localization](#localization)
-12. [Credits](#credits)
+7. [Lovelace Cards](#lovelace-cards)
+8. [Node-RED Flows](#node-red-flows)
+9. [Diagnostic Data Collection](#diagnostic-data-collection)
+10. [Troubleshooting](#troubleshooting)
+11. [Contribution](#contribution)
+12. [Localization](#localization)
+13. [Credits](#credits)
 
 </details>
 
