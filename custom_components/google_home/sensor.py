@@ -17,6 +17,7 @@ from .const import (
     DATA_CLIENT,
     DATA_COORDINATOR,
     DOMAIN,
+    GOOGLE_HOME_ALARM_DEFAULT_VALUE,
     ICON_ALARMS,
     ICON_TIMERS,
     ICON_TOKEN,
@@ -114,7 +115,7 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
     @property
     def state(self) -> str | None:
         device = self.get_device()
-        return device.auth_token if device else None
+        return device.ip_address if device else None
 
     @property
     def device_state_attributes(self) -> DeviceAttributes:
@@ -188,6 +189,7 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
         """Return the state attributes."""
         return {
             "next_alarm_status": self._get_next_alarm_status(),
+            "alarm_volume": self._get_alarm_volume(),
             "alarms": self._get_alarms_data(),
             "integration": DOMAIN,
         }
@@ -201,6 +203,12 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
             if next_alarm
             else GoogleHomeAlarmStatus.NONE.name.lower()
         )
+
+    def _get_alarm_volume(self) -> float:
+        """Update alarm volume status from coordinator"""
+        device = self.get_device()
+        alarm_volume = device.get_alarm_volume() if device else None
+        return alarm_volume if alarm_volume else GOOGLE_HOME_ALARM_DEFAULT_VALUE
 
     def _get_alarms_data(self) -> list[GoogleHomeAlarmDict]:
         """Update alarms data extracting it from coordinator"""

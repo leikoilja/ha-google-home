@@ -86,7 +86,8 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             errors=self._errors,
         )
 
-    async def _test_credentials(self, client: GlocaltokensApiClient) -> str | None:
+    @staticmethod
+    async def _test_credentials(client: GlocaltokensApiClient) -> str | None:
         """Returns true and master token if credentials are valid."""
         try:
             master_token = await client.async_get_master_token()

@@ -22,19 +22,21 @@
 1. [About The Project](#about)
 2. [Sensors](#sensors)
 3. [Switches](#switches)
-4. [Services](#services)
-5. [Getting Started](#getting-started)
+4. [Numbers](#numbers)
+5. [Services](#services)
+6. [Getting Started](#getting-started)
    - [Prerequisites](#prerequisites)
    - [HACS Installation](#hacs-installation)
    - [Manual Installation](#manual-installation)
    - [Integration Setup](#integration-setup)
    - [Running in Home Assistant Docker container](#running-in-home-assistant-docker-container)
-6. [Lovelace Cards](#lovelace-cards)
-7. [Node-RED Flows](#node-red-flows)
-8. [Diagnostic Data Collection](#diagnostic-data-collection)
-9. [Troubleshooting](#troubleshooting)
-10. [Contribution](#contribution)
-11. [Credits](#credits)
+7. [Lovelace Cards](#lovelace-cards)
+8. [Node-RED Flows](#node-red-flows)
+9. [Diagnostic Data Collection](#diagnostic-data-collection)
+10. [Troubleshooting](#troubleshooting)
+11. [Contribution](#contribution)
+12. [Localization](#localization)
+13. [Credits](#credits)
 
 </details>
 
@@ -49,11 +51,11 @@ tokens and use those tokens making API calls to Google Home devices.
 
 This component will set up the following sensors:
 
-| Platform | Sample sensor               | Description                                               |
-| -------- | --------------------------- | --------------------------------------------------------- |
-| `sensor` | `sensor.living_room_alarms` | Sensor with a list of alarms from the device              |
-| `sensor` | `sensor.living_room_timers` | Sensor with a list of timers from the device              |
-| `sensor` | `sensor.living_room_token`  | Sensor with the local authentication token for the device |
+| Platform | Sample sensor               | Description                                                                |
+| -------- | --------------------------- | -------------------------------------------------------------------------- |
+| `sensor` | `sensor.living_room_alarms` | Sensor with a list of alarms from the device                               |
+| `sensor` | `sensor.living_room_timers` | Sensor with a list of timers from the device                               |
+| `sensor` | `sensor.living_room_device` | Sensor with the IP address for the device, as well as some info attributes |
 
 ### Alarms
 
@@ -115,6 +117,14 @@ This component will set up the following switches:
 | Platform | Sample switch                       | Description                                        |
 | -------- | ----------------------------------- | -------------------------------------------------- |
 | `switch` | `switch.living_room_do_not_disturb` | Toggle Do Not Disturb mode on a Google Home device |
+
+## Numbers
+
+This component will set up the following numbers:
+
+| Platform | Sample number                     | Description                                      |
+| -------- | --------------------------------- | ------------------------------------------------ |
+| `number` | `number.living_room_alarm_volume` | Control the alarm volume on a Google Home device |
 
 ## Services
 
@@ -312,10 +322,19 @@ If the debug logs list your devices, but then show `Successfully initialized 0 G
 The account you are using with the integration must have access to your Home.
 If unsure, please check what account you are using in the _Google Home_ app and if your devices are listed there.
 
+### Devices found and initialized, but no alarms/timers sensor (#231)
+
+If you can see your devices, and they all seem correct, but the alarms/timers sensors do not appear, or appear empty try restarting the Google Home device, Home Assistant, and reinstalling the integration.
+
 ## Contribution
 
 If you encounter issues or have any suggestions consider opening issues and contributing through PR.
 If you are ready to contribute to this please read the [Contribution guidelines](CONTRIBUTING.md).
+
+## Localization
+
+Currently the integration supports English, Catalan and Norwegian (bokmål and nynorsk) languages.
+If you want to translate the project to your own language, follow the [Localization guide](LOCALIZATION.md).
 
 ## Credits
 
