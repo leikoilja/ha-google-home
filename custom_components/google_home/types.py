@@ -187,9 +187,5 @@ JsonElem = Union[
     List[TimerJsonDict],
     JsonChildrenDict,
 ]
-JsonDict = Mapping[
-    str,
-    Union[bool, float, int, str, List[str], List[AlarmJsonDict], List[TimerJsonDict]],
-]
 
 JsonDict = Mapping[str, JsonElem]
