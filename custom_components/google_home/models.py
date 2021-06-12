@@ -110,6 +110,14 @@ class GoogleHomeDevice:
         """Return Do Not Disturb status."""
         return self._do_not_disturb
 
+    def set_alarm_volume(self, volume: float) -> None:
+        """Set Alarm Volume status."""
+        self._alarm_volume = volume
+
+    def get_alarm_volume(self) -> float:
+        """Return Alarm Volume status."""
+        return self._alarm_volume
+
     def set_eureka(self, eureka: GoogleHomeEureka) -> None:
         """Stores the Eureka data"""
         self._eureka = eureka
@@ -118,13 +126,15 @@ class GoogleHomeDevice:
         """Returns the Eureka data"""
         return self._eureka
 
-    def set_alarm_volume(self, volume: float) -> None:
-        """Set Alarm Volume status."""
-        self._alarm_volume = volume
-
-    def get_alarm_volume(self) -> float:
-        """Return Alarm Volume status."""
-        return self._alarm_volume
+    def is_compatible(self, function_name: str) -> bool:
+        """Checks if a function is compatible. If Eureka is not loaded, returns false"""
+        if (
+            not self._eureka
+            or not self._eureka.device_info
+            or not self._eureka.device_info.compatibility
+        ):
+            return False
+        return function_name in self._eureka.device_info.compatibility.as_dict()
 
 
 class GoogleHomeTimer:
