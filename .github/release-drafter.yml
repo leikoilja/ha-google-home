@@ -16,6 +16,9 @@ categories:
       - "github structure"
       - "refactoring"
       - "removal"
+  - title: "🈵 Translations"
+    labels:
+      - "translation"
   - title: "🧰 Maintenance"
     labels:
       - "testing"
