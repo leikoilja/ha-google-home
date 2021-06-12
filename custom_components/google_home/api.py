@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from typing import List, Literal, cast
+from typing import List, Literal, Mapping, cast
 
 from aiohttp import ClientError, ClientSession
 from aiohttp.client_exceptions import ClientConnectorError, ContentTypeError
@@ -18,7 +18,12 @@ from .const import (
     API_ENDPOINT_ALARMS,
     API_ENDPOINT_DELETE,
     API_ENDPOINT_DO_NOT_DISTURB,
+    API_ENDPOINT_EUREKA,
     API_ENDPOINT_REBOOT,
+    EUREKA_KEY_OPTIONS,
+    EUREKA_KEY_PARAMS,
+    EUREKA_OPTIONS,
+    EUREKA_PARAMS,
     HEADER_CAST_LOCAL_AUTH,
     HEADER_CONTENT_TYPE,
     JSON_ALARM,
@@ -28,8 +33,8 @@ from .const import (
     TIMEOUT,
 )
 from .exceptions import InvalidMasterToken
-from .models import GoogleHomeDevice
-from .types import AlarmJsonDict, JsonDict, TimerJsonDict
+from .models import EurekaDeviceInfo, GoogleHomeDevice, GoogleHomeEureka
+from .types import AlarmJsonDict, JsonDict, JsonElem, TimerJsonDict
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -150,6 +155,7 @@ class GlocaltokensApiClient:
         """Collect data from different endpoints."""
         device = await self.update_alarms_and_timers(device)
         device = await self.update_do_not_disturb(device)
+        device = await self.update_eureka(device)
         return device
 
     async def update_alarms_and_timers(
@@ -295,6 +301,42 @@ class GlocaltokensApiClient:
                     response,
                 )
 
+        return device
+
+    async def update_eureka(self, device: GoogleHomeDevice) -> GoogleHomeDevice:
+        """Fetches the Eureka data from google device"""
+        data = {
+            EUREKA_KEY_PARAMS: EUREKA_PARAMS,
+            EUREKA_KEY_OPTIONS: EUREKA_OPTIONS,
+        }
+
+        response = await self.request(
+            method="GET",
+            endpoint=API_ENDPOINT_EUREKA,
+            device=device,
+            polling=True,
+            data=data,
+        )
+
+        if response is not None:
+            device_info_dict: JsonElem = response["device_info"]
+
+            device_info = (
+                EurekaDeviceInfo(device_info_dict)
+                if isinstance(device_info_dict, Mapping)
+                else None
+            )
+            if device_info is not None:
+                eureka = GoogleHomeEureka(device_info) if device_info else None
+
+                if eureka is not None:
+                    device.set_eureka(eureka)
+
+                    _LOGGER.debug("Successfully retrieved data from %s.", device.name)
+                else:
+                    _LOGGER.error("Failed to parse Eureka API response. Step: eureka")
+            else:
+                _LOGGER.error("Failed to parse Eureka API response. Step: device_info")
         return device
 
     async def request(
