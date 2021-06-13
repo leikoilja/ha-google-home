@@ -11,5 +11,4 @@ github structure:
     all: ["!**/*.py"]
 
 translation:
-  - any: ["custom_components/google_home/translations/*"]
-    all: ["!**/*.py"]
+  - any: ["custom_components/google_home/translations/*.json"]
