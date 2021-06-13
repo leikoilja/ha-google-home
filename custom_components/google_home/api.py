@@ -21,6 +21,7 @@ from .const import (
     API_ENDPOINT_DO_NOT_DISTURB,
     API_ENDPOINT_EUREKA,
     API_ENDPOINT_REBOOT,
+    EUREKA_JSON_DINFO_CAPABILITIES_REBOOT,
     EUREKA_KEY_OPTIONS,
     EUREKA_KEY_PARAMS,
     EUREKA_OPTIONS,
@@ -237,24 +238,27 @@ class GlocaltokensApiClient:
     async def reboot_google_device(self, device: GoogleHomeDevice) -> None:
         """Reboots a Google Home device if it supports this."""
 
-        # "now" means reboot and "fdr" means factory reset (Not implemented).
-        data = {"params": "now"}
+        if device.is_compatible(EUREKA_JSON_DINFO_CAPABILITIES_REBOOT):
+            # "now" means reboot and "fdr" means factory reset (Not implemented).
+            data = {"params": "now"}
 
-        _LOGGER.debug(
-            "Trying to reboot Google Home device %s",
-            device.name,
-        )
-
-        response = await self.request(
-            method="POST", endpoint=API_ENDPOINT_REBOOT, device=device, data=data
-        )
-
-        if response is not None:
-            # It will return true even if the device does not support rebooting.
-            _LOGGER.info(
-                "Successfully asked %s to reboot.",
+            _LOGGER.debug(
+                "Trying to reboot Google Home device %s",
                 device.name,
             )
+
+            response = await self.request(
+                method="POST", endpoint=API_ENDPOINT_REBOOT, device=device, data=data
+            )
+
+            if response is not None:
+                # It will return true even if the device does not support rebooting.
+                _LOGGER.info(
+                    "Successfully asked %s to reboot.",
+                    device.name,
+                )
+        else:
+            _LOGGER.info("Google Home device doesn't support reboot %s", device.name)
 
     async def update_do_not_disturb(
         self, device: GoogleHomeDevice, enable: bool | None = None
