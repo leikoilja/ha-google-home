@@ -333,7 +333,13 @@ If you are ready to contribute to this please read the [Contribution guidelines]
 
 ## Localization
 
-Currently the integration supports English, Catalan and Norwegian (bokmål and nynorsk) languages.
+Currently the integration supports the following languages:
+
+- English
+- Catalan
+- Norwegian (bokmål and nynorsk)
+- Russian
+
 If you want to translate the project to your own language, follow the [Localization guide](LOCALIZATION.md).
 
 ## Credits
