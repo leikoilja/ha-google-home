@@ -235,8 +235,9 @@ class GlocaltokensApiClient:
                     response,
                 )
 
-    async def reboot_google_device(self, device: GoogleHomeDevice) -> None:
-        """Reboots a Google Home device if it supports this."""
+    async def reboot_google_device(self, device: GoogleHomeDevice) -> bool:
+        """Reboots a Google Home device if it supports this.
+        Returns false if not compatible"""
 
         if device.is_compatible(EUREKA_JSON_DINFO_CAPABILITIES_REBOOT):
             # "now" means reboot and "fdr" means factory reset (Not implemented).
@@ -257,8 +258,10 @@ class GlocaltokensApiClient:
                     "Successfully asked %s to reboot.",
                     device.name,
                 )
-        else:
-            _LOGGER.info("Google Home device doesn't support reboot %s", device.name)
+            return True
+
+        _LOGGER.info("Google Home device doesn't support reboot %s", device.name)
+        return False
 
     async def update_do_not_disturb(
         self, device: GoogleHomeDevice, enable: bool | None = None
