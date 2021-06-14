@@ -21,7 +21,7 @@
     "step": {
       "init": {
         "data": {
-          "data_collection": "Tillat at anonym diagnostikkdata vert samla (sjå https://github.com/leikoilja/ha-google-home#diagnostic-data-collection). Dette krev ein omstart."
+          "data_collection": "Tillat at anonym diagnostikkdata vert samla (sjå https://github.com/leikoilja/ha-google-home#diagnostic-data-collection)."
         }
       }
     }
