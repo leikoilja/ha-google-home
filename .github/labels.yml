@@ -84,3 +84,7 @@
 - name: wontfix
   description: This will not be worked on
   color: ffffff
+
+- name: translation
+  description: Translations
+  color: eb9234
