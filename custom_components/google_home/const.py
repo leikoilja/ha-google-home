@@ -62,6 +62,8 @@ LABEL_TIMERS: Final[str] = "timers"
 LABEL_DEVICE: Final[str] = "device"
 LABEL_DO_NOT_DISTURB: Final[str] = "Do Not Disturb"
 
+STATE_NONE = "none"
+
 # DEVICE PORT
 PORT: Final[int] = 8443
 

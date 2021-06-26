@@ -7,7 +7,7 @@ from typing import Callable, Iterable
 import voluptuous as vol
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import DEVICE_CLASS_TIMESTAMP, STATE_UNAVAILABLE
+from homeassistant.const import DEVICE_CLASS_TIMESTAMP
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import config_validation as cv, entity_platform
 from homeassistant.helpers.entity import Entity
@@ -29,6 +29,7 @@ from .const import (
     SERVICE_DELETE_ALARM,
     SERVICE_DELETE_TIMER,
     SERVICE_REBOOT,
+    STATE_NONE,
 )
 from .entity import GoogleHomeBaseEntity
 from .models import GoogleHomeAlarmStatus, GoogleHomeDevice, GoogleHomeTimerStatus
@@ -181,7 +182,7 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
         return (
             next_alarm.local_time_iso
             if next_alarm and next_alarm.status != GoogleHomeAlarmStatus.INACTIVE
-            else STATE_UNAVAILABLE
+            else STATE_NONE
         )
 
     @property
@@ -269,7 +270,7 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
         return (
             timer.local_time_iso
             if timer and timer.local_time_iso
-            else STATE_UNAVAILABLE
+            else STATE_NONE
         )
 
     @property
