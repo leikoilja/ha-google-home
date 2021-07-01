@@ -23,7 +23,7 @@ homeassistant-stubs = "2021.4.0"
 isort = "^5.9.1"
 mypy = "^0.910"
 pre-commit = "^2.13.0"
-pylint = "^2.9.1"
+pylint = "^2.9.3"
 codespell = "^2.1.0"
 types-requests = "^2.25.0"
 

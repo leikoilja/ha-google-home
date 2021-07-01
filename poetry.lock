@@ -637,7 +637,7 @@ test = ["pytest (>=4.0.1,<5.0.0)", "pytest-cov (>=2.6.0,<3.0.0)", "pytest-runner
 
 [[package]]
 name = "pylint"
-version = "2.9.1"
+version = "2.9.3"
 description = "python code static checker"
 category = "dev"
 optional = false
@@ -872,7 +872,7 @@ ifaddr = ">=0.1.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "595606b0d80ac82516a55ef14ec9e7c249a0224b4fa64b432de5c8f092b0dca8"
+content-hash = "d93072a78bba6cbe9296bc7bf1d9c933911f8686eb1e4b2df855181c19f2bea2"
 
 [metadata.files]
 aiohttp = [
@@ -1453,8 +1453,8 @@ pyjwt = [
     {file = "PyJWT-1.7.1.tar.gz", hash = "sha256:8d59a976fb773f3e6a39c85636357c4f0e242707394cadadd9814f5cbaa20e96"},
 ]
 pylint = [
-    {file = "pylint-2.9.1-py3-none-any.whl", hash = "sha256:647fa5882fd49d7f34d07d0a23702689d5cf10a81dcd74e79bd524603d40b371"},
-    {file = "pylint-2.9.1.tar.gz", hash = "sha256:d8f9e6ff7bc2e64a724b1b4409f0a30014891fc006ffbf68b590015e364322ec"},
+    {file = "pylint-2.9.3-py3-none-any.whl", hash = "sha256:5d46330e6b8886c31b5e3aba5ff48c10f4aa5e76cbf9002c6544306221e63fbc"},
+    {file = "pylint-2.9.3.tar.gz", hash = "sha256:23a1dc8b30459d78e9ff25942c61bb936108ccbe29dd9e71c01dc8274961709a"},
 ]
 python-slugify = [
     {file = "python-slugify-4.0.1.tar.gz", hash = "sha256:69a517766e00c1268e5bbfc0d010a0a8508de0b18d30ad5a1ff357f8ae724270"},
