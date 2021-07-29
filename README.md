@@ -340,6 +340,7 @@ Currently the integration supports the following languages:
 - Norwegian (bokmål and nynorsk)
 - Russian
 - Portuguese (Portugal)
+- German (Germany)
 
 If you want to translate the project to your own language, follow the [Localization guide](LOCALIZATION.md).
 
