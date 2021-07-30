@@ -335,12 +335,12 @@ If you are ready to contribute to this please read the [Contribution guidelines]
 
 Currently the integration supports the following languages:
 
-- English
 - Catalan
-- Norwegian (bokmål and nynorsk)
-- Russian
-- Portuguese (Portugal)
+- English
 - German (Germany)
+- Norwegian (bokmål and nynorsk)
+- Portuguese (Portugal)
+- Russian
 
 If you want to translate the project to your own language, follow the [Localization guide](LOCALIZATION.md).
 
