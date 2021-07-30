@@ -25,7 +25,7 @@ mypy = "^0.910"
 pre-commit = "^2.13.0"
 pylint = "^2.9.5"
 codespell = "^2.1.0"
-types-requests = "^2.25.0"
+types-requests = "^2.25.1"
 
 [tool.pylint.messages_control]
 # Reasons disabled:
