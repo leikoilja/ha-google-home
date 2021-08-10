@@ -14,6 +14,7 @@ MANUFACTURER: Final[str] = "google_home"
 ATTRIBUTION: Final[str] = "json"
 ISSUE_URL: Final[str] = "https://github.com/leikoilja/ha-google-home/issues"
 CONF_DATA_COLLECTION: Final[str] = "data_collection"
+CONF_UPDATE_INTERVAL: Final[str] = "update_interval"
 
 DATA_CLIENT: Final[str] = "client"
 DATA_COORDINATOR: Final[str] = "coordinator"
@@ -84,7 +85,7 @@ DATETIME_STR_FORMAT: Final[str] = f"{DATE_STR_FORMAT} {TIME_STR_FORMAT}"
 
 # Access token only lives about 1 hour
 # Update often to fetch timers in timely manner
-UPDATE_INTERVAL: Final[int] = 10  # sec
+UPDATE_INTERVAL: Final[int] = 180  # sec
 
 # JSON parameter values when retrieving information from devices
 JSON_ALARM: Final[str] = "alarm"
