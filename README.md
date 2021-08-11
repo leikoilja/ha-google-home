@@ -47,6 +47,16 @@ This is a custom component that is emerging from the
 local google assistant device (like Google Home/Nest etc) authentication
 tokens and use those tokens making API calls to Google Home devices.
 
+## IMPORTANT!!
+
+With version 1.6 we have changed the update interval from 10 seconds to 180 seconds.
+This is due to this [#202](https://github.com/leikoilja/ha-google-home/issues/202) issue. This because of some people
+experincing devices timing out when trying to get data from them.
+
+It is possible to manually change the update interval by pressing the `configure` button on the integration
+page. Default is 180 seconds. Change this at your own risk!. If your devices are timing out,
+please increase this until it is stable again.
+
 ## Sensors
 
 This component will set up the following sensors:
