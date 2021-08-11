@@ -21,7 +21,8 @@
     "step": {
       "init": {
         "data": {
-          "data_collection": "Tillat at anonym diagnostikkdata vert samla (sjå https://github.com/leikoilja/ha-google-home#diagnostic-data-collection)."
+          "data_collection": "Tillat at anonym diagnostikkdata vert samla (sjå https://github.com/leikoilja/ha-google-home#diagnostic-data-collection).",
+          "update_interval": "Endre oppdateringsintervall. Øk dette hvis du lider av tidsavbrudd for enheter. Standard: 180 (sekunder)"
         }
       }
     }
