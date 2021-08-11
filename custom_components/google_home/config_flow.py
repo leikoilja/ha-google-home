@@ -1,6 +1,7 @@
 """Adds config flow for Google Home"""
 from __future__ import annotations
 
+from datetime import timedelta
 import logging
 from typing import Any
 
@@ -18,8 +19,11 @@ from .const import (
     CONF_DATA_COLLECTION,
     CONF_MASTER_TOKEN,
     CONF_PASSWORD,
+    CONF_UPDATE_INTERVAL,
     CONF_USERNAME,
+    DATA_COORDINATOR,
     DOMAIN,
+    UPDATE_INTERVAL,
 )
 from .exceptions import InvalidMasterToken
 from .types import OptionsFlowDict
@@ -74,7 +78,7 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     async def _show_config_form(
         self, _user_input: dict[str, Any] | None
     ) -> dict[str, Any]:
-        """Show the configuration form to edit location data."""
+        """Show the configuration form to edit login information."""
         return self.async_show_form(
             step_id="user",
             data_schema=vol.Schema(
@@ -112,12 +116,28 @@ class GoogleHomeOptionsFlowHandler(config_entries.OptionsFlow):
         """Manage the options."""
         if user_input is not None:
             self.options.update(user_input)
-            return self.async_create_entry(title="", data=self.options)
+            coordinator = self.hass.data[DOMAIN][self.config_entry.entry_id][
+                DATA_COORDINATOR
+            ]
+            update_interval = timedelta(
+                seconds=self.options.get(CONF_UPDATE_INTERVAL, UPDATE_INTERVAL)
+            )
+            _LOGGER.debug("Updating coordinator, update_interval: %s", update_interval)
+            coordinator.update_interval = update_interval
+            return self.async_create_entry(
+                title=self.config_entry.data.get(CONF_USERNAME), data=self.options
+            )
 
         return self.async_show_form(
             step_id="init",
             data_schema=vol.Schema(
                 {
+                    vol.Optional(
+                        CONF_UPDATE_INTERVAL,
+                        default=self.config_entry.options.get(
+                            CONF_UPDATE_INTERVAL, UPDATE_INTERVAL
+                        ),
+                    ): int,
                     vol.Optional(
                         CONF_DATA_COLLECTION,
                         default=self.config_entry.options.get(
