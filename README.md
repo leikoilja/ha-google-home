@@ -50,8 +50,8 @@ tokens and use those tokens making API calls to Google Home devices.
 ## IMPORTANT
 
 With version 1.6 we have changed the update interval from 10 seconds to 180 seconds.
-This is due to this [#202](https://github.com/leikoilja/ha-google-home/issues/202) issue. This because of some people
-experincing devices timing out when trying to get data from them.
+This is due to [#202](https://github.com/leikoilja/ha-google-home/issues/202). Some people are
+experiencing devices timing out when trying to fetch data from them.
 
 It is possible to manually change the update interval by pressing the `configure` button on the integration
 page. Default is 180 seconds. Change this at your own risk!. If your devices are timing out,
