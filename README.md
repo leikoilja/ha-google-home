@@ -47,7 +47,7 @@ This is a custom component that is emerging from the
 local google assistant device (like Google Home/Nest etc) authentication
 tokens and use those tokens making API calls to Google Home devices.
 
-## IMPORTANT!!
+## IMPORTANT
 
 With version 1.6 we have changed the update interval from 10 seconds to 180 seconds.
 This is due to this [#202](https://github.com/leikoilja/ha-google-home/issues/202) issue. This because of some people
