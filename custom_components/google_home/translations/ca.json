@@ -22,7 +22,8 @@
     "step": {
       "init": {
         "data": {
-          "data_collection": "Permet la recol·lecta de dades de diagnòstic anònimes. Visita https://github.com/leikoilja/ha-google-home#diagnostic-data-collection (en anglès) per a més informació. Reinici necessari."
+          "data_collection": "Permet la recol·lecta de dades de diagnòstic anònimes. Visita https://github.com/leikoilja/ha-google-home#diagnostic-data-collection (en anglès) per a més informació. Reinici necessari.",
+          "update_interval": "Canvia l'interval d'actualització. Augmenteu-ho si teniu temps d’espera dels dispositius. Valor per defecte: 180 (segons)"
         }
       }
     }
