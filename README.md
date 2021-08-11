@@ -54,7 +54,7 @@ This is due to [#202](https://github.com/leikoilja/ha-google-home/issues/202). S
 experiencing devices timing out when trying to fetch data from them.
 
 It is possible to manually change the update interval by pressing the `configure` button on the integration
-page. Default is 180 seconds. Change this at your own risk!. If your devices are timing out,
+page. Default is 180 seconds. Change this at your own risk! If your devices are timing out,
 please increase this until it is stable again.
 
 ## Sensors
