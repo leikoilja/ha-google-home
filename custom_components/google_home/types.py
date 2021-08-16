@@ -51,6 +51,7 @@ class GoogleHomeTimerDict(TypedDict):
 class DeviceAttributes(TypedDict):
     """Typed dict for device attributes"""
 
+    device_id: str | None
     device_name: str
     auth_token: str | None
     ip_address: str | None

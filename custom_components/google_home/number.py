@@ -45,6 +45,7 @@ async def async_setup_entry(
                 AlarmVolumeNumber(
                     coordinator,
                     client,
+                    device.device_id,
                     device.name,
                 )
             )

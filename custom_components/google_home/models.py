@@ -26,11 +26,13 @@ class GoogleHomeDevice:
 
     def __init__(
         self,
+        device_id: str,
         name: str,
         auth_token: str | None,
         ip_address: str | None = None,
         hardware: str | None = None,
     ):
+        self.device_id = device_id
         self.name = name
         self.auth_token = auth_token
         self.ip_address = ip_address
