@@ -92,6 +92,7 @@ class GlocaltokensApiClient:
             google_devices = await self.hass.async_add_executor_job(_get_google_devices)
             self.google_devices = [
                 GoogleHomeDevice(
+                    device_id=device.device_id,
                     name=device.device_name,
                     auth_token=device.local_auth_token,
                     ip_address=device.ip_address,

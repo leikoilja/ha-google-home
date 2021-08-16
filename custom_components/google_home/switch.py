@@ -36,6 +36,7 @@ async def async_setup_entry(
                 DoNotDisturbSwitch(
                     coordinator,
                     client,
+                    device.device_id,
                     device.name,
                 )
             )

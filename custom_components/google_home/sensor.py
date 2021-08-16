@@ -57,6 +57,7 @@ async def async_setup_entry(
             GoogleHomeDeviceSensor(
                 coordinator,
                 client,
+                device.device_id,
                 device.name,
             )
         )
@@ -65,11 +66,13 @@ async def async_setup_entry(
                 GoogleHomeAlarmsSensor(
                     coordinator,
                     client,
+                    device.device_id,
                     device.name,
                 ),
                 GoogleHomeTimersSensor(
                     coordinator,
                     client,
+                    device.device_id,
                     device.name,
                 ),
             ]
@@ -122,6 +125,7 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
         """Return the state attributes."""
         device = self.get_device()
         attributes: DeviceAttributes = {
+            "device_id": None,
             "device_name": self.device_name,
             "auth_token": None,
             "ip_address": None,
@@ -135,6 +139,7 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
     def get_device_attributes(device: GoogleHomeDevice) -> DeviceAttributes:
         """Device representation as dictionary"""
         return {
+            "device_id": device.device_id,
             "device_name": device.name,
             "auth_token": device.auth_token,
             "ip_address": device.ip_address,

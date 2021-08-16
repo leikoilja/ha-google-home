@@ -21,10 +21,12 @@ class GoogleHomeBaseEntity(CoordinatorEntity, ABC):
         self,
         coordinator: DataUpdateCoordinator,
         client: GlocaltokensApiClient,
+        device_id: str,
         device_name: str,
     ):
         super().__init__(coordinator)
         self.client = client
+        self.device_id = device_id
         self.device_name = device_name
 
     @property
@@ -41,7 +43,7 @@ class GoogleHomeBaseEntity(CoordinatorEntity, ABC):
     @property
     def unique_id(self) -> str:
         """Return a unique ID to use for this entity."""
-        return f"{self.device_name}/{self.label}"
+        return f"{self.device_id}/{self.label}"
 
     @property
     def device_info(self) -> DeviceInfo:
