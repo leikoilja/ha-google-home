@@ -9,7 +9,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.8"
 glocaltokens = "0.4.0"
-homeassistant = "2021.4.0"
+homeassistant = "2021.8.0"
 zeroconf = "^0.29.0"
 
 [tool.poetry.dev-dependencies]
@@ -19,7 +19,7 @@ flake8-bugbear = "^21.4.3"
 flake8-comprehensions = "^3.6.1"
 flake8-simplify = "^0.14.1"
 flake8-use-fstring = "^1.1"
-homeassistant-stubs = "2021.4.0"
+homeassistant-stubs = "2021.8.0"
 isort = "^5.9.3"
 mypy = "^0.910"
 pre-commit = "^2.15.0"

@@ -2,11 +2,12 @@
 from __future__ import annotations
 
 import logging
-from typing import Any, Callable, Iterable
+from typing import Any
 
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import (
     DATA_CLIENT,
@@ -23,7 +24,7 @@ _LOGGER: logging.Logger = logging.getLogger(__package__)
 async def async_setup_entry(
     hass: HomeAssistant,
     entry: ConfigEntry,
-    async_add_devices: Callable[[Iterable[SwitchEntity]], None],
+    async_add_devices: AddEntitiesCallback,
 ) -> bool:
     """Setup switch platform."""
     client = hass.data[DOMAIN][entry.entry_id][DATA_CLIENT]

@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import logging
-from typing import Callable, Iterable
 
 import voluptuous as vol
 
@@ -11,6 +10,7 @@ from homeassistant.const import DEVICE_CLASS_TIMESTAMP, STATE_UNAVAILABLE
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import config_validation as cv, entity_platform
 from homeassistant.helpers.entity import Entity
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import (
     ALARM_AND_TIMER_ID_LENGTH,
@@ -46,7 +46,7 @@ _LOGGER: logging.Logger = logging.getLogger(__package__)
 async def async_setup_entry(
     hass: HomeAssistant,
     entry: ConfigEntry,
-    async_add_devices: Callable[[Iterable[Entity]], None],
+    async_add_devices: AddEntitiesCallback,
 ) -> bool:
     """Setup sensor platform."""
     client = hass.data[DOMAIN][entry.entry_id][DATA_CLIENT]

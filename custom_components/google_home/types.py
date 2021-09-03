@@ -85,10 +85,18 @@ class DeviceInfo(TypedDict):
     manufacturer: str
 
 
+class ConfigFlowDict(TypedDict):
+    """Typed dict for config flow handler"""
+
+    username: str
+    password: str
+
+
 class OptionsFlowDict(TypedDict):
     """Typed dict for options flow handler"""
 
     data_collection: bool
+    update_interval: int
 
 
 JsonDict = Mapping[
