@@ -2,12 +2,12 @@
 from __future__ import annotations
 
 import logging
-from typing import Callable, Iterable
 
 from homeassistant.components.number import NumberEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import PERCENTAGE
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .api import GlocaltokensApiClient
@@ -30,7 +30,7 @@ _LOGGER: logging.Logger = logging.getLogger(__package__)
 async def async_setup_entry(
     hass: HomeAssistant,
     entry: ConfigEntry,
-    async_add_devices: Callable[[Iterable[NumberEntity]], None],
+    async_add_devices: AddEntitiesCallback,
 ) -> bool:
     """Setup switch platform."""
     client: GlocaltokensApiClient = hass.data[DOMAIN][entry.entry_id][DATA_CLIENT]
