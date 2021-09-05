@@ -21,7 +21,6 @@
     "step": {
       "init": {
         "data": {
-          "data_collection": "Разрешить анонимный сбор данных для диагностики (см. https://github.com/leikoilja/ha-google-home#diagnostic-data-collection).",
           "update_interval": "Изменить интервал обновления. Увеличьте это значение, если у вас истекло время ожидания устройств. По умолчанию: 180 (секунд)"
         }
       }

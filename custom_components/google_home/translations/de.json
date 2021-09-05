@@ -21,7 +21,6 @@
     "step": {
       "init": {
         "data": {
-          "data_collection": "Stimme der anonymen Datenerfassung zu (weitere Informationen: https://github.com/leikoilja/ha-google-home#diagnostic-data-collection).",
           "update_interval": "Aktualisierungsintervall ändern. Erhöhen Sie diesen Wert, wenn Sie unter Zeitüberschreitungen der Geräte leiden. Standard: 180 (Sekunden)"
         }
       }
