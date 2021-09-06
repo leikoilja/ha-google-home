@@ -7,7 +7,7 @@
   "domain": "google_home",
   "issue_tracker": "https://github.com/leikoilja/ha-google-home/issues",
   "name": "Google Home",
-  "requirements": ["glocaltokens==0.4.0"],
+  "requirements": ["glocaltokens==0.5.0"],
   "version": "1.7.0",
   "zeroconf": ["_googlecast._tcp.local."],
   "iot_class": "cloud_polling"
