@@ -36,12 +36,17 @@ def update_version(repo: Repository, version: str) -> None:
     manifest_json = json.loads(manifest.decoded_content)
     manifest_json["version"] = version
     updated_manifest = json.dumps(manifest_json, indent=2) + "\n"
+    branch = repo.get_branch("master")
+    # Disable branch protection before commit
+    branch.edit_protection(enforce_admins=False)
     repo.update_file(
         path=manifest.path,
         message=f"Release v{version}",
         content=updated_manifest,
         sha=manifest.sha,
     )
+    # Re-enable branch protection
+    branch.edit_protection(enforce_admins=True)
 
 
 def publish_release(release: GitRelease) -> None:
