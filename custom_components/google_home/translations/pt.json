@@ -21,7 +21,6 @@
     "step": {
       "init": {
         "data": {
-          "data_collection": "Permitir a recolha anónima de dados de diagnóstico (Ver https://github.com/leikoilja/ha-google-home#diagnostic-data-collection).",
           "update_interval": "Altere o intervalo de atualização. Aumente isso se você estiver sofrendo de tempo limite dos dispositivos. Padrão: 180 (segundos)"
         }
       }

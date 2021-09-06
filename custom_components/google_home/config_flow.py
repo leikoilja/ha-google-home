@@ -16,7 +16,6 @@ from homeassistant.helpers.aiohttp_client import async_create_clientsession
 from .api import GlocaltokensApiClient
 from .const import (
     CONF_ANDROID_ID,
-    CONF_DATA_COLLECTION,
     CONF_MASTER_TOKEN,
     CONF_PASSWORD,
     CONF_UPDATE_INTERVAL,
@@ -138,12 +137,6 @@ class GoogleHomeOptionsFlowHandler(config_entries.OptionsFlow):
                             CONF_UPDATE_INTERVAL, UPDATE_INTERVAL
                         ),
                     ): int,
-                    vol.Optional(
-                        CONF_DATA_COLLECTION,
-                        default=self.config_entry.options.get(
-                            CONF_DATA_COLLECTION, True
-                        ),
-                    ): bool,
                 }
             ),
         )

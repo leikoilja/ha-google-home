@@ -21,7 +21,6 @@
     "step": {
       "init": {
         "data": {
-          "data_collection": "Allow anonymous diagnostic data collection (See https://github.com/leikoilja/ha-google-home#diagnostic-data-collection).",
           "update_interval": "Change update interval. Increase this if you are suffering from devices timing out. Default: 180 (Seconds)"
         }
       }

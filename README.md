@@ -32,11 +32,10 @@
    - [Running in Home Assistant Docker container](#running-in-home-assistant-docker-container)
 7. [Lovelace Cards](#lovelace-cards)
 8. [Node-RED Flows](#node-red-flows)
-9. [Diagnostic Data Collection](#diagnostic-data-collection)
-10. [Troubleshooting](#troubleshooting)
-11. [Contribution](#contribution)
-12. [Localization](#localization)
-13. [Credits](#credits)
+9. [Troubleshooting](#troubleshooting)
+10. [Contribution](#contribution)
+11. [Localization](#localization)
+12. [Credits](#credits)
 
 </details>
 
@@ -266,14 +265,6 @@ Make sure that you have your Home Assistant Container network set to `host`, as 
 
 - [Alarms & timers as actionable notifications](https://dev.to/mattieha/get-google-home-alarms-timers-as-notifications-i0m) by [@mattieha](https://github.com/mattieha)
 - [Broadcast ringing alarms & timers to other devices](https://dev.to/mattieha/broadcast-google-home-alarms-timers-3c13) by [@mattieha](https://github.com/mattieha)
-
-## Diagnostic Data Collection
-
-To make the integration better we are trying to be one step ahead of the game,
-working on catching and fixing errors before the user even knows about them.
-To do so, we are implementing anonymous diagnostic data collection.
-We will never collect any user sensitive data, only integration related
-warnings and errors. See related [developers discussion](https://github.com/leikoilja/ha-google-home/discussions/116).
 
 ## Troubleshooting
 

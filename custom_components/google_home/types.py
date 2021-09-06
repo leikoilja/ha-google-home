@@ -95,7 +95,6 @@ class ConfigFlowDict(TypedDict):
 class OptionsFlowDict(TypedDict):
     """Typed dict for options flow handler"""
 
-    data_collection: bool
     update_interval: int
 
 
