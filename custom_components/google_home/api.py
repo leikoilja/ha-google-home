@@ -167,14 +167,14 @@ class GlocaltokensApiClient:
                 device.set_timers(cast(List[TimerJsonDict], response[JSON_TIMER]))
                 device.set_alarms(cast(List[AlarmJsonDict], response[JSON_ALARM]))
                 _LOGGER.debug(
-                    "Successfully retrieved data from %s. Response: %s",
+                    "Successfully retrieved alarms and timers from %s. Response: %s",
                     device.name,
                     response,
                 )
             else:
                 _LOGGER.error(
                     (
-                        "Failed to parse fetched data for device %s - "
+                        "Failed to parse fetched alarms and timers for device %s - "
                         "API returned unknown json structure. "
                         "Received = %s"
                     ),
