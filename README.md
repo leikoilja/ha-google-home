@@ -359,5 +359,5 @@ If you want to translate the project to your own language, follow the [Localizat
 [integration_blueprint]: https://github.com/custom-components/integration_blueprint
 [releases-shield]: https://img.shields.io/github/release/leikoilja/ha-google-home.svg?style=for-the-badge
 [releases]: https://github.com/leikoilja/ha-google-home/releases
-[workflow-shield]: https://img.shields.io/github/workflow/status/leikoilja/ha-google-home/Running%20tests?style=for-the-badge
+[workflow-shield]: https://img.shields.io/github/workflow/status/leikoilja/ha-google-home/Linting?style=for-the-badge
 [workflow]: https://github.com/leikoilja/ha-google-home/actions
