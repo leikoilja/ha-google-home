@@ -3,6 +3,7 @@ repos:
     rev: v3.4.0
     hooks:
       - id: check-added-large-files
+      - id: check-json
       - id: check-yaml
       - id: end-of-file-fixer
       - id: trailing-whitespace
@@ -45,6 +46,7 @@ repos:
     rev: v2.2.1
     hooks:
       - id: prettier
+        exclude: ^custom_components/google_home/manifest\.json$
   - repo: https://github.com/cdce8p/python-typing-update
     rev: v0.3.3
     hooks:
