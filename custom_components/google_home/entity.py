@@ -48,7 +48,7 @@ class GoogleHomeBaseEntity(CoordinatorEntity, ABC):
     @property
     def device_info(self) -> DeviceInfo:
         return {
-            "identifiers": {(DOMAIN, self.device_name)},
+            "identifiers": {(DOMAIN, self.device_id)},
             "name": f"{DEFAULT_NAME} {self.device_name}",
             "manufacturer": MANUFACTURER,
         }
@@ -59,6 +59,6 @@ class GoogleHomeBaseEntity(CoordinatorEntity, ABC):
         matched_devices: list[GoogleHomeDevice] = [
             device
             for device in self.coordinator.data
-            if device.name == self.device_name
+            if device.device_id == self.device_id
         ]
         return matched_devices[0] if matched_devices else None
