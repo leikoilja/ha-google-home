@@ -31,4 +31,4 @@ jobs:
         run: |
           poetry run python script/publish_release.py
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.ADMIN_TOKEN }}
