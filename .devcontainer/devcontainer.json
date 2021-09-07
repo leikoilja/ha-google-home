@@ -1,4 +1,3 @@
-// See https://aka.ms/vscode-remote/devcontainer.json for format details.
 {
   "image": "ludeeus/container:integration",
   "name": "Google-Home community driven integration",
