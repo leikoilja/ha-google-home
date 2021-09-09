@@ -17,7 +17,7 @@
   "issue_tracker": "https://github.com/leikoilja/ha-google-home/issues",
   "name": "Google Home",
   "requirements": [
-    "glocaltokens==0.5.0"
+    "glocaltokens==0.5.1"
   ],
   "version": "1.8.0",
   "zeroconf": [
