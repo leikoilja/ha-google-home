@@ -2,6 +2,7 @@
 [![GitHub Release][releases-shield]][releases]
 [![hacs][hacsbadge]][hacs]
 [![GitHub Activity][commits-shield]][commits]
+[![Installs][installs-shield]][installs]
 
 <p align="center">
   <a href="https://github.com/leikoilja/ha-google-home">
@@ -361,3 +362,5 @@ If you want to translate the project to your own language, follow the [Localizat
 [releases]: https://github.com/leikoilja/ha-google-home/releases
 [workflow-shield]: https://img.shields.io/github/workflow/status/leikoilja/ha-google-home/Linting?style=for-the-badge
 [workflow]: https://github.com/leikoilja/ha-google-home/actions
+[installs-shield]: https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fgoogle-home-installs-for-shield-io-g5spbids0d66.runkit.sh%2F
+[installs]: https://analytics.home-assistant.io/custom_integrations.json
