@@ -353,6 +353,7 @@ Currently the integration supports the following languages:
 - German (Germany)
 - Norwegian (bokmål and nynorsk)
 - Portuguese (Portugal)
+- Spanish (Spain)
 - Russian
 
 If you want to translate the project to your own language, follow the [Localization guide](LOCALIZATION.md).

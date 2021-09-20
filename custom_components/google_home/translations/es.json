@@ -1,0 +1,30 @@
+{
+  "title": "Google Home",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Identificarse en Google Home",
+        "description": "Si necesitas ayuda con la configuración revisa la documentación aquí (en inglés): https://github.com/leikoilja/ha-google-home. Por tu propia seguridad, utilitza el tu cuenta de Google, con contraseñas de aplicación. Es más seguro y facil de utilizar contraseñas de aplicación, en lugar de tu contraseña habitual. Tendrá el mismo nivel de acceso que la contaseña habitual, sin embargo Google recomienda las contraseñas de aplicación para los Scripts/Automatismos. (https://myaccount.google.com/apppasswords). De todas formas, tu contraseña habitual de la cuenta Google debería funcionar.",
+        "data": {
+          "username": "Nombre de usuario de Google",
+          "password": "Contraseña de apliación de Google"
+        }
+      }
+    },
+    "error": {
+      "auth": "La combinación de Nombre de usuario/Contraseña no es correcta. Si tu cuenta tiene doble factor de autentificación habilitado, por favor, genera una contraseña de aplicación (https://myaccount.google.com/apppasswords). Si aún así no puedes iniciar sesión, por favor accede a https://github.com/leikoilja/ha-google-home#troubleshooting (en inglés)."
+    },
+    "abort": {
+      "single_instance_allowed": "Solo se permite una única instancia."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "update_interval": "Cambia el intervalo de actualización. Aumentalo si obtiene tiempos de espera (Time Out) en los dispositivos. Valor por defecto: 180 (segundos)"
+        }
+      }
+    }
+  }
+}
