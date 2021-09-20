@@ -38,7 +38,7 @@ repos:
         types: [python]
       - id: codespell
         name: codespell
-        entry: poetry run codespell
+        entry: poetry run codespell --write-changes
         language: system
         pass_filenames: false
         always_run: true

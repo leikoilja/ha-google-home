@@ -203,6 +203,17 @@ data:
 
 Use Home Assistant v2021.8.0 or above.
 
+### Google Account security
+
+This integration uses your google account username and app password.
+See [2 Factor Authentication](#2-factor-authentication--app-passwords) section for tips
+how to setup app password. However, we strongly recommend protection your main
+google account by not exposing it to the Home Assistant for automation purposes.
+We encourage you to create a separate Google account and add it to your Google Home.
+Your second account would not have access to anything other than Google Home, so even if it
+gets compromised, it's not as severe as losing your main google account.
+See more discussion [here](https://github.com/leikoilja/ha-google-home/issues/124#issuecomment-921773489)
+
 ### HACS Installation
 
 You can find it in the default HACS repo. Just search `Google Home`.
