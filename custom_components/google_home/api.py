@@ -20,6 +20,10 @@ from .const import (
     API_ENDPOINT_ALARMS,
     API_ENDPOINT_DO_NOT_DISTURB,
     API_ENDPOINT_REBOOT,
+    # Added
+    API_ENDPOINT_BLUETOOTH_SCAN,
+    API_ENDPOINT_BLUETOOTH_RESULTS,
+    # Original
     HEADER_CAST_LOCAL_AUTH,
     HEADER_CONTENT_TYPE,
     JSON_ALARM,
@@ -31,7 +35,7 @@ from .const import (
 )
 from .exceptions import InvalidMasterToken
 from .models import GoogleHomeDevice
-from .types import AlarmJsonDict, JsonDict, TimerJsonDict
+from .types import AlarmJsonDict, JsonDict, TimerJsonDict, BTJsonDict
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -152,6 +156,10 @@ class GlocaltokensApiClient:
         device = await self.update_alarms_and_timers(device)
         device = await self.update_alarm_volume(device)
         device = await self.update_do_not_disturb(device)
+        device = await self.update_bluetooth_list(device)
+
+        await self.request_bluetooth_scan(device)
+        
         return device
 
     async def update_alarms_and_timers(
@@ -231,6 +239,56 @@ class GlocaltokensApiClient:
                     response,
                 )
 
+    async def request_bluetooth_scan(self, device: GoogleHomeDevice) -> None:
+        """Rescans for visible bluetooth devices."""
+
+        data = {
+                "enable": True,
+                "clear_results": True,
+                "timeout": 90
+            }
+
+        _LOGGER.debug(
+            "Trying to scan for Bluetooth device list on Google Home device %s",
+            device.name,
+        )
+
+        response = await self.request(
+            method="POST", endpoint=API_ENDPOINT_BLUETOOTH_SCAN, device=device, data=data
+        )
+
+        if response is not None:
+            # It will return true even if the device does not support rebooting.
+            _LOGGER.info(
+                "Successfully asked %s For Bluetooth device list scan.",
+                device.name,
+            )
+
+    async def update_bluetooth_list(
+        self, device: GoogleHomeDevice
+    ) -> GoogleHomeDevice:
+        """Fetches bluettooth items list from google device"""
+
+        _LOGGER.info("Reading bluetooth info for %s",
+                device.name)
+
+        response = await self.request(
+            method="GET", endpoint=API_ENDPOINT_BLUETOOTH_RESULTS, device=device, polling=True
+        )
+
+        if response is not None:
+
+            device.set_bt(cast(List[BTJsonDict], response))
+            
+            _LOGGER.info(
+                "Successfully retrieved some data from %s. Response: %s",
+                device.name,
+                response,
+            )
+
+        return device
+
+
     async def reboot_google_device(self, device: GoogleHomeDevice) -> None:
         """Reboots a Google Home device if it supports this."""
 
@@ -252,6 +310,7 @@ class GlocaltokensApiClient:
                 "Successfully asked %s to reboot.",
                 device.name,
             )
+
 
     async def update_do_not_disturb(
         self, device: GoogleHomeDevice, enable: bool | None = None

@@ -24,6 +24,7 @@ ALARM_AND_TIMER_ID_LENGTH: Final = 42
 ICON_TOKEN: Final = "mdi:form-textbox-password"
 ICON_ALARMS: Final = "mdi:alarm-multiple"
 ICON_TIMERS: Final = "mdi:timer-sand"
+ICON_BT_DEVICES: Final = "mdi:bluetooth"
 ICON_DO_NOT_DISTURB: Final = "mdi:minus-circle"
 ICON_ALARM_VOLUME_LOW: Final = "mdi:volume-low"
 ICON_ALARM_VOLUME_MID: Final = "mdi:volume-medium"
@@ -44,6 +45,7 @@ SERVICE_DELETE_ALARM: Final = "delete_alarm"
 SERVICE_DELETE_TIMER: Final = "delete_timer"
 SERVICE_ATTR_ALARM_ID: Final = "alarm_id"
 SERVICE_ATTR_TIMER_ID: Final = "timer_id"
+SERVICE_UPDATE_BLUETOOTH: Final = "update_bluetooth"
 
 # Configuration and options
 CONF_ANDROID_ID: Final = "android_id"
@@ -60,6 +62,7 @@ LABEL_ALARM_VOLUME: Final = "alarm_volume"
 LABEL_AVAILABLE: Final = "available"
 LABEL_TIMERS: Final = "timers"
 LABEL_DEVICE: Final = "device"
+LABEL_BT_DEVICES: Final = "bt_devices"
 LABEL_DO_NOT_DISTURB: Final = "Do Not Disturb"
 
 # DEVICE PORT
@@ -71,6 +74,11 @@ API_ENDPOINT_ALARM_DELETE: Final = "setup/assistant/alarms/delete"
 API_ENDPOINT_ALARM_VOLUME: Final = "setup/assistant/alarms/volume"
 API_ENDPOINT_REBOOT: Final = "setup/reboot"
 API_ENDPOINT_DO_NOT_DISTURB: Final = "setup/assistant/notifications"
+
+#Added
+API_ENDPOINT_BLUETOOTH_SCAN: Final = "setup/bluetooth/scan"
+API_ENDPOINT_BLUETOOTH_RESULTS: Final = "setup/bluetooth/scan_results"
+
 
 # HEADERS
 HEADER_CAST_LOCAL_AUTH: Final = "cast-local-authorization-token"

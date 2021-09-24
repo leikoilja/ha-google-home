@@ -11,6 +11,17 @@ reboot_device:
       selector:
         text:
 
+update_bluetooth:
+  description: Update bluetooth device list of a Google Home device.
+  fields:
+    entity_id:
+      name: Entity
+      description: Represents a Google Home device (sensor.xxxx_device).
+      example: "sensor.kitchen_device"
+      required: true
+      selector:
+        text:
+
 delete_alarm:
   description: Delete an alarm from a Google Home device.
   fields:

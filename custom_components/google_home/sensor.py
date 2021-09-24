@@ -21,14 +21,17 @@ from .const import (
     ICON_ALARMS,
     ICON_TIMERS,
     ICON_TOKEN,
+    ICON_BT_DEVICES,
     LABEL_ALARMS,
     LABEL_DEVICE,
     LABEL_TIMERS,
+    LABEL_BT_DEVICES,
     SERVICE_ATTR_ALARM_ID,
     SERVICE_ATTR_TIMER_ID,
     SERVICE_DELETE_ALARM,
     SERVICE_DELETE_TIMER,
     SERVICE_REBOOT,
+    SERVICE_UPDATE_BLUETOOTH,
 )
 from .entity import GoogleHomeBaseEntity
 from .models import GoogleHomeAlarmStatus, GoogleHomeDevice, GoogleHomeTimerStatus
@@ -37,6 +40,7 @@ from .types import (
     DeviceAttributes,
     GoogleHomeAlarmDict,
     GoogleHomeTimerDict,
+    GoogleHomeBTDeviceDict,
     TimersAttributes,
 )
 
@@ -75,6 +79,12 @@ async def async_setup_entry(
                     device.device_id,
                     device.name,
                 ),
+                GoogleHomeBTDevicesSensor(
+                    coordinator,
+                    client,
+                    device.device_id,
+                    device.name,
+                )
             ]
     async_add_devices(sensors)
 
@@ -98,6 +108,12 @@ async def async_setup_entry(
         {},
         "async_reboot_device",
     )
+
+
+    platform.async_register_entity_service(
+        SERVICE_UPDATE_BLUETOOTH,
+        {},
+        "async_update_bluetooth")
 
     return True
 
@@ -157,6 +173,59 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
             return
 
         await self.client.reboot_google_device(device)
+
+
+    async def async_update_bluetooth(self) -> None:
+        """Service call to delete alarm on device"""
+        device = self.get_device()
+
+        if device is None:
+            _LOGGER.error("Device %s is not found.", self.device_name)
+            return
+
+        await self.client.request_bluetooth_scan(device=device)
+
+
+class GoogleHomeBTDevicesSensor(GoogleHomeBaseEntity):
+    """Google Home Alarms sensor."""
+
+    @property
+    def label(self) -> str:
+        """Label to use for name and unique id."""
+        return LABEL_BT_DEVICES
+
+    @property
+    def icon(self) -> str:
+        """Icon to use in the frontend."""
+        return ICON_BT_DEVICES
+
+    @property
+    def state(self) -> str | None:
+        device = self.get_device()
+        if not device:
+            return None
+        closest_device = device.get_closest_device()
+        return (
+            closest_device.mac_address
+            if closest_device 
+            else STATE_UNAVAILABLE
+        )
+
+    @property
+    def device_state_attributes(self) -> BTDeviceAttributes:
+        """Return the state attributes."""
+        return {
+            "bt_devices": self._get_bt_device_data(),
+            "integration": DOMAIN,
+        }
+
+
+    def _get_bt_device_data(self) -> list[GoogleHomeBTDeviceDict]:
+        """Update bt device data extracting it from coordinator"""
+        device = self.get_device()
+        return (
+            [bt_device.as_dict() for bt_device in device.get_sorted_bt_devices()] if device else []
+        )
 
 
 class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
@@ -245,7 +314,6 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
             return
 
         await self.client.delete_alarm_or_timer(device=device, item_to_delete=alarm_id)
-
 
 class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
     """Google Home Timers sensor."""
