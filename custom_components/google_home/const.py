@@ -36,7 +36,8 @@ BINARY_SENSOR_DEVICE_CLASS: Final = "connectivity"
 # Platforms
 SENSOR: Final = "sensor"
 SWITCH: Final = "switch"
-PLATFORMS: Final = [SENSOR, SWITCH]
+NUMBER: Final = "number"
+PLATFORMS: Final = [SENSOR, SWITCH, NUMBER]
 
 # Services
 SERVICE_REBOOT: Final = "reboot_device"
