@@ -108,7 +108,7 @@ class AlarmVolumeNumber(GoogleHomeBaseEntity, NumberEntity):
             return GOOGLE_HOME_ALARM_DEFAULT_VALUE
 
         volume = device.get_alarm_volume()
-        return volume
+        return round(volume * 100)
 
     async def async_set_value(self, value: float) -> None:
         """Sets the alarm volume"""
