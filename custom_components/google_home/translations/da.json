@@ -1,0 +1,29 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Google Home login",
+        "description": "Vis du har brug for hjælp til at konfigurere, klik her: https://github.com/leikoilja/ha-google-home. Brug din Google kontos brugernavn og app-adgangskode. Det er sikre at generere en app-adgangskode i stedet for at bruge din normale adgangskode. App-adgangskode har adgang til det samme, men er bedre end din normale adgangskode når man bruger den i scripts. (https://myaccount.google.com/apppasswords). Du kan også bruge din normale adgangskode.",
+        "data": {
+          "username": "Google konto brugernavn",
+          "password": "Google konto app-adgangskode"
+        }
+      }
+    },
+    "error": {
+      "auth": "Brugernavn/adgangskode er forkert. Vis din Google konto har 2FA aktiveret, skal du bruge en app-adgangskode i stedet (https://myaccount.google.com/apppasswords). Vis du stadig ikke kan logge in, så kik her for hjælp https://github.com/leikoilja/ha-google-home#troubleshooting"
+    },
+    "abort": {
+      "single_instance_allowed": "Kun en enkelt forekomst er tilladt."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "update_interval": "Ændre opdaterings interval. Hæv dette vis du lider af timeout fejl. Standard: 180 (Sekunder)"
+        }
+      }
+    }
+  }
+}
