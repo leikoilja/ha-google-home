@@ -349,6 +349,7 @@ If you are ready to contribute to this please read the [Contribution guidelines]
 Currently the integration supports the following languages:
 
 - Catalan
+- Danish
 - English
 - German (Germany)
 - Norwegian (bokmål and nynorsk)
