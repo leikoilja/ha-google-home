@@ -319,7 +319,7 @@ class GlocaltokensApiClient:
             volume_float = float(volume / 100)
             data = {JSON_ALARM_VOLUME: volume_float}
             _LOGGER.debug(
-                "Setting alarm volume setting to %d(float=%f) on Google Home device %s",
+                "Setting alarm volume to %d(float=%f) on Google Home device %s",
                 volume,
                 volume_float,
                 device.name,
@@ -327,7 +327,7 @@ class GlocaltokensApiClient:
         else:
             polling = True
             _LOGGER.debug(
-                "Getting alarm volume setting from Google Home device %s",
+                "Getting alarm volume from Google Home device %s",
                 device.name,
             )
 
@@ -344,7 +344,7 @@ class GlocaltokensApiClient:
                     volume_raw = str(response[JSON_ALARM_VOLUME])
                     volume_int = int(float(volume_raw) * 100)
                     _LOGGER.debug(
-                        "Received alarm volume setting from Google Home device %s"
+                        "Received alarm volume from Google Home device %s"
                         " - Volume: %d(raw=%s)",
                         device.name,
                         volume_int,
@@ -353,7 +353,7 @@ class GlocaltokensApiClient:
                 else:
                     volume_int = volume  # type: ignore
                     _LOGGER.debug(
-                        "Successfully set alarm volume setting to %d "
+                        "Successfully set alarm volume to %d "
                         "on Google Home device %s",
                         volume,
                         device.name,
