@@ -103,11 +103,11 @@ class GoogleHomeDevice:
         """Return Do Not Disturb status."""
         return self._do_not_disturb
 
-    def set_alarm_volume(self, volume: float) -> None:
+    def set_alarm_volume(self, volume: int) -> None:
         """Set Alarm Volume status."""
         self._alarm_volume = volume
 
-    def get_alarm_volume(self) -> float:
+    def get_alarm_volume(self) -> int:
         """Return Alarm Volume status."""
         return self._alarm_volume
 
