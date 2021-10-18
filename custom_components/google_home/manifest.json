@@ -1,27 +1,14 @@
 {
-  "after_dependencies": [
-    "cloud",
-    "http",
-    "zeroconf"
-  ],
-  "codeowners": [
-    "@leikoilja",
-    "@DurgNomis-drol",
-    "@ArnyminerZ",
-    "@KapJI"
-  ],
+  "after_dependencies": ["cloud", "http", "zeroconf"],
+  "codeowners": ["@leikoilja", "@DurgNomis-drol", "@ArnyminerZ", "@KapJI"],
   "config_flow": true,
   "dependencies": [],
   "documentation": "https://github.com/leikoilja/ha-google-home",
   "domain": "google_home",
   "issue_tracker": "https://github.com/leikoilja/ha-google-home/issues",
   "name": "Google Home",
-  "requirements": [
-    "glocaltokens==0.5.1"
-  ],
+  "requirements": ["glocaltokens==0.5.2"],
   "version": "1.8.2",
-  "zeroconf": [
-    "_googlecast._tcp.local."
-  ],
+  "zeroconf": ["_googlecast._tcp.local."],
   "iot_class": "cloud_polling"
 }
