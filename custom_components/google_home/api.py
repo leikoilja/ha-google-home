@@ -307,7 +307,7 @@ class GlocaltokensApiClient:
         return device
 
     async def update_alarm_volume(
-        self, device: GoogleHomeDevice, volume: float | None = None
+        self, device: GoogleHomeDevice, volume: int | None = None
     ) -> GoogleHomeDevice:
         """Gets or sets the alarm volume setting on a Google Home device."""
 
@@ -316,16 +316,18 @@ class GlocaltokensApiClient:
 
         if volume is not None:
             # Setting is inverted on device
-            data = {JSON_ALARM_VOLUME: volume}
+            volume_float = float(volume / 100)
+            data = {JSON_ALARM_VOLUME: volume_float}
             _LOGGER.debug(
-                "Setting Alarm Volume setting to %f on Google Home device %s",
+                "Setting alarm volume to %d(float=%f) on Google Home device %s",
                 volume,
+                volume_float,
                 device.name,
             )
         else:
             polling = True
             _LOGGER.debug(
-                "Getting Alarm Volume setting from Google Home device %s",
+                "Getting alarm volume from Google Home device %s",
                 device.name,
             )
 
@@ -338,16 +340,25 @@ class GlocaltokensApiClient:
         )
         if response:
             if JSON_ALARM_VOLUME in response:
-                volume_raw = str(response[JSON_ALARM_VOLUME])
-                loaded_volume = float(volume_raw)
-                _LOGGER.debug(
-                    "Received Alarm Volume setting from Google Home device %s"
-                    " - Volume: %f",
-                    device.name,
-                    loaded_volume,
-                )
-
-                device.set_alarm_volume(loaded_volume)
+                if polling:
+                    volume_raw = str(response[JSON_ALARM_VOLUME])
+                    volume_int = int(float(volume_raw) * 100)
+                    _LOGGER.debug(
+                        "Received alarm volume from Google Home device %s"
+                        " - Volume: %d(raw=%s)",
+                        device.name,
+                        volume_int,
+                        volume_raw,
+                    )
+                else:
+                    volume_int = volume  # type: ignore
+                    _LOGGER.debug(
+                        "Successfully set alarm volume to %d "
+                        "on Google Home device %s",
+                        volume,
+                        device.name,
+                    )
+                device.set_alarm_volume(volume_int)
             else:
                 _LOGGER.debug(
                     (

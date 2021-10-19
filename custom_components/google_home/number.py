@@ -78,29 +78,29 @@ class AlarmVolumeNumber(GoogleHomeBaseEntity, NumberEntity):
         volume = device.get_alarm_volume()
         if volume == 0:
             return ICON_ALARM_VOLUME_OFF
-        if volume <= 0.3:
+        if volume <= 30:
             return ICON_ALARM_VOLUME_LOW
-        if volume <= 0.6:
+        if volume <= 60:
             return ICON_ALARM_VOLUME_MID
         return ICON_ALARM_VOLUME_HIGH
 
     @property
-    def min_value(self) -> float:
+    def min_value(self) -> int:
         """Return the minimum value for the volume"""
         return 0
 
     @property
-    def max_value(self) -> float:
+    def max_value(self) -> int:
         """Return the minimum value for the volume"""
+        return 100
+
+    @property
+    def step(self) -> int:
+        """Return the step value for the volume"""
         return 1
 
     @property
-    def step(self) -> float:
-        """Return the step value for the volume"""
-        return 0.01
-
-    @property
-    def value(self) -> float:
+    def value(self) -> int:
         """Return the current volume value"""
         device = self.get_device()
 
@@ -110,7 +110,7 @@ class AlarmVolumeNumber(GoogleHomeBaseEntity, NumberEntity):
         volume = device.get_alarm_volume()
         return volume
 
-    async def async_set_value(self, value: float) -> None:
+    async def async_set_value(self, value: int) -> None:  # type: ignore
         """Sets the alarm volume"""
         device = self.get_device()
         if device is None:
