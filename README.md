@@ -356,6 +356,7 @@ Currently the integration supports the following languages:
 - Portuguese (Portugal)
 - Spanish (Spain)
 - Russian
+- Ukrainian
 
 If you want to translate the project to your own language, follow the [Localization guide](LOCALIZATION.md).
 
