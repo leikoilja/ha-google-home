@@ -342,7 +342,7 @@ class GlocaltokensApiClient:
             if JSON_ALARM_VOLUME in response:
                 if polling:
                     volume_raw = str(response[JSON_ALARM_VOLUME])
-                    volume_int = int(float(volume_raw) * 100)
+                    volume_int = round(float(volume_raw) * 100)
                     _LOGGER.debug(
                         "Received alarm volume from Google Home device %s"
                         " - Volume: %d(raw=%s)",
