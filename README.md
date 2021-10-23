@@ -352,6 +352,7 @@ Currently the integration supports the following languages:
 - Danish
 - English
 - German (Germany)
+- Italian (Italy)
 - Norwegian (bokmål and nynorsk)
 - Portuguese (Portugal)
 - Spanish (Spain)
