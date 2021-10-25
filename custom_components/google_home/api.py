@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import asyncio
+from http import HTTPStatus
 import logging
 from typing import List, Literal, cast
 
@@ -11,7 +12,6 @@ from glocaltokens.client import Device, GLocalAuthenticationTokens
 from glocaltokens.utils.token import is_aas_et
 from zeroconf import Zeroconf
 
-from homeassistant.const import HTTP_NOT_FOUND, HTTP_OK, HTTP_UNAUTHORIZED
 from homeassistant.core import HomeAssistant
 
 from .const import (
@@ -409,13 +409,13 @@ class GlocaltokensApiClient:
             async with self._session.request(
                 method, url, json=data, headers=headers, timeout=TIMEOUT
             ) as response:
-                if response.status == HTTP_OK:
+                if response.status == HTTPStatus.OK:
                     try:
                         resp = await response.json()
                     except ContentTypeError:
                         resp = {}
                     device.available = True
-                elif response.status == HTTP_UNAUTHORIZED:
+                elif response.status == HTTPStatus.UNAUTHORIZED:
                     # If token is invalid - force reload homegraph providing new token
                     # and rerun the task.
                     if polling:
@@ -435,7 +435,7 @@ class GlocaltokensApiClient:
                     # We need to retry the update task instead of just cleaning the list
                     self.google_devices = []
                     device.available = False
-                elif response.status == HTTP_NOT_FOUND:
+                elif response.status == HTTPStatus.NOT_FOUND:
                     _LOGGER.debug(
                         (
                             "Failed to perform request to %s, API returned %d. "
