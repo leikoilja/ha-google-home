@@ -337,17 +337,17 @@ flake8 = ">=3.7"
 
 [[package]]
 name = "flake8-use-fstring"
-version = "1.1"
+version = "1.3"
 description = "Flake8 plugin for string formatting style."
 category = "dev"
 optional = false
 python-versions = ">=3.6"
 
 [package.dependencies]
-flake8 = ">=3.0.0,<4.0.0"
+flake8 = ">=3"
 
 [package.extras]
-ci = ["coverage (>=4.0.0,<5.0.0)", "pytest (>=4)", "pytest-cov (>=2)", "flake8-builtins", "flake8-commas", "flake8-fixme", "flake8-print", "flake8-quotes", "flake8-todo", "python-coveralls"]
+ci = ["coverage (>=4.0.0,<5.0.0)", "pytest (>=4)", "pytest-cov (>=2)", "flake8-builtins", "flake8-commas", "flake8-fixme", "flake8-print", "flake8-quotes", "flake8-todo", "coveralls"]
 dev = ["coverage (>=4.0.0,<5.0.0)", "pytest (>=4)", "pytest-cov (>=2)", "flake8-builtins", "flake8-commas", "flake8-fixme", "flake8-print", "flake8-quotes", "flake8-todo"]
 test = ["coverage (>=4.0.0,<5.0.0)", "pytest (>=4)", "pytest-cov (>=2)", "flake8-builtins", "flake8-commas", "flake8-fixme", "flake8-print", "flake8-quotes", "flake8-todo"]
 
@@ -964,7 +964,7 @@ ifaddr = ">=0.1.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "69c44c80a732bf0bcd481af1c48915cc32733caa86fdd56d05788b7cb1dff5c7"
+content-hash = "7a58388d17eafe105091a6dc6aaa31f48b9d821020c87ba214f9b7ff650b9747"
 
 [metadata.files]
 aiohttp = [
@@ -1200,7 +1200,7 @@ flake8-simplify = [
     {file = "flake8_simplify-0.14.2.tar.gz", hash = "sha256:4a8f103607195c3d0743a2fd8beeebe24926e19fb3e24521042cfc35771a8d4d"},
 ]
 flake8-use-fstring = [
-    {file = "flake8-use-fstring-1.1.tar.gz", hash = "sha256:a0eea849ffe33fb6903c210c243c0f418da86a530e46cb13e64f1bdb045f22dc"},
+    {file = "flake8-use-fstring-1.3.tar.gz", hash = "sha256:1bd4a409adbb93e64e711fdd26b88759c33792e3899f174edc68ddf7307e81b6"},
 ]
 glocaltokens = [
     {file = "glocaltokens-0.5.1-py3-none-any.whl", hash = "sha256:d56d2a0feb609315c334ab4312d2f6b2a477fe1018dd3c0d36d4e56c0a317c3f"},
