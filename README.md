@@ -31,6 +31,7 @@
    - [Manual Installation](#manual-installation)
    - [Integration Setup](#integration-setup)
    - [Running in Home Assistant Docker container](#running-in-home-assistant-docker-container)
+   - [ARM Docker Container Dependencies (Workaround)](#arm-docker-container-dependencies-workaround)
 7. [Lovelace Cards](#lovelace-cards)
 8. [Node-RED Flows](#node-red-flows)
 9. [Troubleshooting](#troubleshooting)
@@ -264,6 +265,30 @@ ln -s ha-google-home/custom_components/google_home ~/.homeassistant/custom_compo
 ### Running in Home Assistant Docker container
 
 Make sure that you have your Home Assistant Container network set to `host`, as perscribed in the official docker installation for Home Assistant.
+
+### ARM Docker Container Dependencies Workaround
+
+If on installing the integration on an ARM based Home Assistant container (Raspberry Pi, Synology, etc), an error occurs: 
+
+```
+ERROR: Cannot install glocaltokens==0.3.1
+```
+This can be installed manually by accessing the commandline of the HA Docker container and running:
+
+```
+apk add gcc
+apk add g++
+```
+then
+```
+pip3 install glocaltokens
+```
+
+This will need to be done each time the image is updated unfortunately. Alternatively you can add the command to the container startup:
+
+```
+command: /bin/bash -c "apk add gcc g++; pip3 install --upgrade pip; pip3 install pymysql glocaltokens==0.3.1; /init"
+```
 
 ## Lovelace Cards
 
