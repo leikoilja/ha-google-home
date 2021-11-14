@@ -274,7 +274,7 @@ If you are installing this integration on an ARM based device (Like Raspberry Pi
 ```
 ERROR: Cannot install glocaltokens==0.3.1
 ```
-This can be installed manually by accessing the commandline of the HA Docker container and running:
+Please run the following command in the Home Assistant container to add the missing dependencies for `glocaltokens`:
 
 ```
 apk add gcc
