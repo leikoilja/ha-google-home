@@ -31,7 +31,8 @@
    - [Manual Installation](#manual-installation)
    - [Integration Setup](#integration-setup)
    - [Running in Home Assistant Docker container](#running-in-home-assistant-docker-container)
-   - [ARM Docker Container Dependencies (Workaround)](#arm-docker-container-dependencies-workaround)
+   - [Installing ARM Docker Container Dependencies (Workaround)](#arm-docker-container-dependencies-workaround)
+```
 7. [Lovelace Cards](#lovelace-cards)
 8. [Node-RED Flows](#node-red-flows)
 9. [Troubleshooting](#troubleshooting)
