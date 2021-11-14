@@ -277,7 +277,7 @@ ERROR: Cannot install glocaltokens==0.3.1
 Please run the following command in the Home Assistant container to add the missing dependencies for `glocaltokens`:
 
 ```
-apk add gcc
+apk add gcc g++
 apk add g++
 ```
 then
