@@ -280,7 +280,7 @@ Please run the following command in the Home Assistant container to add the miss
 apk add gcc g++
 apk add g++
 ```
-then
+then you can install `glocaltokens` manually like this:
 ```
 pip3 install glocaltokens
 ```
