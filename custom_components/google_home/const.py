@@ -9,7 +9,7 @@ from homeassistant.util.dt import DATE_STR_FORMAT
 NAME: Final = "Google Home community driven integration"
 DOMAIN: Final = "google_home"
 DOMAIN_DATA: Final = f"{DOMAIN}_data"
-MANUFACTURER: Final = "google_home"
+MANUFACTURER: Final = "Google Home"
 
 ATTRIBUTION: Final = "json"
 ISSUE_URL: Final = "https://github.com/leikoilja/ha-google-home/issues"

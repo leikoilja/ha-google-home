@@ -55,9 +55,7 @@ class DeviceAttributes(TypedDict):
     device_name: str
     auth_token: str | None
     ip_address: str | None
-    hardware: str | None
     available: bool
-    integration: str
 
 
 class AlarmsAttributes(TypedDict):
@@ -66,7 +64,6 @@ class AlarmsAttributes(TypedDict):
     next_alarm_status: str
     alarm_volume: float
     alarms: list[GoogleHomeAlarmDict]
-    integration: str
 
 
 class TimersAttributes(TypedDict):
@@ -74,7 +71,6 @@ class TimersAttributes(TypedDict):
 
     next_timer_status: str
     timers: list[GoogleHomeTimerDict]
-    integration: str
 
 
 class DeviceInfo(TypedDict):
@@ -83,6 +79,7 @@ class DeviceInfo(TypedDict):
     identifiers: set[tuple[str, str]]
     name: str
     manufacturer: str
+    model: str
 
 
 class ConfigFlowDict(TypedDict):

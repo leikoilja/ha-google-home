@@ -23,11 +23,13 @@ class GoogleHomeBaseEntity(CoordinatorEntity, ABC):
         client: GlocaltokensApiClient,
         device_id: str,
         device_name: str,
+        device_model: str,
     ):
         super().__init__(coordinator)
         self.client = client
         self.device_id = device_id
         self.device_name = device_name
+        self.device_model = device_model
 
     @property
     @abstractmethod
@@ -51,6 +53,7 @@ class GoogleHomeBaseEntity(CoordinatorEntity, ABC):
             "identifiers": {(DOMAIN, self.device_id)},
             "name": f"{DEFAULT_NAME} {self.device_name}",
             "manufacturer": MANUFACTURER,
+            "model": self.device_model,
         }
 
     def get_device(self) -> GoogleHomeDevice | None:
