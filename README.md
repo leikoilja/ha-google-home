@@ -269,7 +269,7 @@ Make sure that you have your Home Assistant Container network set to `host`, as 
 
 ### ARM Docker Container Dependencies Workaround
 
-If on installing the integration on an ARM based Home Assistant container (Raspberry Pi, Synology, etc), an error occurs: 
+If you are installing this integration on an ARM based device (Like Raspberry Pi, Synology, etc), you may need to do the following if you get this error:
 
 ```
 ERROR: Cannot install glocaltokens==0.3.1
