@@ -288,7 +288,7 @@ pip3 install glocaltokens
 This will need to be done each time the image is updated unfortunately. Alternatively you can add the command to the container startup:
 
 ```
-command: /bin/bash -c "apk add gcc g++; pip3 install --upgrade pip; pip3 install pymysql glocaltokens==0.3.1; /init"
+command: /bin/bash -c "apk add gcc g++; pip3 install --upgrade pip; pip3 install glocaltokens; /init"
 ```
 
 ## Lovelace Cards
