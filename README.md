@@ -284,7 +284,7 @@ then you can install `glocaltokens` manually like this:
 pip3 install glocaltokens
 ```
 
-This will need to be done each time the image is updated unfortunately. Alternatively you can add the command to the container startup:
+Unfortunately, this will need to be done each time the image is updated. Alternatively you can add the command to the container startup:
 
 ```
 command: /bin/bash -c "apk add gcc g++; pip3 install --upgrade pip; pip3 install glocaltokens; /init"
