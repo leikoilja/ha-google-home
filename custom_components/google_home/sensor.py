@@ -59,6 +59,7 @@ async def async_setup_entry(
                 client,
                 device.device_id,
                 device.name,
+                device.hardware,
             )
         )
         if device.auth_token and device.available:
@@ -68,12 +69,14 @@ async def async_setup_entry(
                     client,
                     device.device_id,
                     device.name,
+                    device.hardware,
                 ),
                 GoogleHomeTimersSensor(
                     coordinator,
                     client,
                     device.device_id,
                     device.name,
+                    device.hardware,
                 ),
             ]
     async_add_devices(sensors)
@@ -129,9 +132,7 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
             "device_name": self.device_name,
             "auth_token": None,
             "ip_address": None,
-            "hardware": None,
             "available": False,
-            "integration": DOMAIN,
         }
         return self.get_device_attributes(device) if device else attributes
 
@@ -143,9 +144,7 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
             "device_name": device.name,
             "auth_token": device.auth_token,
             "ip_address": device.ip_address,
-            "hardware": device.hardware,
             "available": device.available,
-            "integration": DOMAIN,
         }
 
     async def async_reboot_device(self) -> None:
@@ -196,7 +195,6 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
             "next_alarm_status": self._get_next_alarm_status(),
             "alarm_volume": self._get_alarm_volume(),
             "alarms": self._get_alarms_data(),
-            "integration": DOMAIN,
         }
 
     def _get_next_alarm_status(self) -> str:
@@ -283,7 +281,6 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
         return {
             "next_timer_status": self._get_next_timer_status(),
             "timers": self._get_timers_data(),
-            "integration": DOMAIN,
         }
 
     def _get_next_timer_status(self) -> str:

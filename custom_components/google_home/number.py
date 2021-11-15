@@ -43,10 +43,7 @@ async def async_setup_entry(
         if device.auth_token and device.available:
             numbers.append(
                 AlarmVolumeNumber(
-                    coordinator,
-                    client,
-                    device.device_id,
-                    device.name,
+                    coordinator, client, device.device_id, device.name, device.hardware
                 )
             )
 
