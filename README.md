@@ -32,7 +32,8 @@
    - [Integration Setup](#integration-setup)
    - [Running in Home Assistant Docker container](#running-in-home-assistant-docker-container)
    - [Installing ARM Docker Container Dependencies (Workaround)](#arm-docker-container-dependencies-workaround)
-```
+
+````
 7. [Lovelace Cards](#lovelace-cards)
 8. [Node-RED Flows](#node-red-flows)
 9. [Troubleshooting](#troubleshooting)
@@ -154,7 +155,7 @@ service: google_home.delete_alarm
 data:
   entity_id: sensor.kitchen_alarms
   timer_id: alarm/47dc1fa0-5ec0-2cc7-9ead-a94b85e22769
-```
+````
 
 #### Key Descriptions
 
@@ -274,12 +275,15 @@ If you are installing this integration on an ARM based device (Like Raspberry Pi
 ```
 ERROR: Cannot install glocaltokens==0.3.1
 ```
+
 Please run the following command in the Home Assistant container to add the missing dependencies for `glocaltokens`:
 
 ```
 apk add gcc g++
 ```
+
 then you can install `glocaltokens` manually like this:
+
 ```
 pip3 install glocaltokens
 ```
