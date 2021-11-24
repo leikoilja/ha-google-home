@@ -6,6 +6,7 @@ from typing import Any
 
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import ENTITY_CATEGORY_CONFIG
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
@@ -52,15 +53,13 @@ async def async_setup_entry(
 class DoNotDisturbSwitch(GoogleHomeBaseEntity, SwitchEntity):
     """Google Home Do Not Disturb switch."""
 
+    _attr_icon = ICON_DO_NOT_DISTURB
+    _attr_entity_category = ENTITY_CATEGORY_CONFIG
+
     @property
     def label(self) -> str:
         """Label to use for name and unique id."""
         return LABEL_DO_NOT_DISTURB
-
-    @property
-    def icon(self) -> str:
-        """Return the icon of the sensor."""
-        return ICON_DO_NOT_DISTURB
 
     @property
     def is_on(self) -> bool:

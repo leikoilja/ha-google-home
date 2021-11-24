@@ -5,7 +5,7 @@ import logging
 
 from homeassistant.components.number import NumberEntity
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import PERCENTAGE
+from homeassistant.const import ENTITY_CATEGORY_CONFIG, PERCENTAGE
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
@@ -56,15 +56,13 @@ async def async_setup_entry(
 class AlarmVolumeNumber(GoogleHomeBaseEntity, NumberEntity):
     """Google Home Alarm Volume Number entity."""
 
+    _attr_unit_of_measurement = PERCENTAGE
+    _attr_entity_category = ENTITY_CATEGORY_CONFIG
+
     @property
     def label(self) -> str:
         """Label to use for name and unique id."""
         return LABEL_ALARM_VOLUME
-
-    @property
-    def unit_of_measurement(self) -> str | None:
-        """The unit of measurement for the entity"""
-        return PERCENTAGE
 
     @property
     def icon(self) -> str:
