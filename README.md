@@ -367,6 +367,16 @@ If unsure, please check what account you are using in the _Google Home_ app and 
 
 If you can see your devices, and they all seem correct, but the alarms/timers sensors do not appear, or appear empty try restarting the Google Home device, Home Assistant, and reinstalling the integration.
 
+### Device offline or not compatible message (#402)
+
+If you get the following error for all of your devices:
+```
+2021-11-28 16:13:20 DEBUG (MainThread) [custom_components.google_home] Failed to fetch timers/alarms information from device xxx. We could not determine its IP address, the device is either offline or is not compatible Google Home device. Will try again later.
+```
+I may be that your device and Home Assistant's installation are not on the same network.
+
+The integration works by connecting to the Google's servers to authenticate and get the authorisation keys for controlling the devices, but after that, all the requests are made locally, so it's required that the server and devices are on the same network. You can use a VPN to overcome this issue.
+
 ## Contribution
 
 If you encounter issues or have any suggestions consider opening issues and contributing through PR.
