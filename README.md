@@ -369,7 +369,7 @@ If you can see your devices, and they all seem correct, but the alarms/timers se
 
 ### Device offline or not compatible message (#402)
 
-If you get the following error for all of your devices:
+If you get the following error for ***all*** of your devices:
 
 ```
 2021-11-28 16:13:20 DEBUG (MainThread) [custom_components.google_home] Failed to fetch timers/alarms information from device xxx. We could not determine its IP address, the device is either offline or is not compatible Google Home device. Will try again later.
