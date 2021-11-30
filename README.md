@@ -377,7 +377,7 @@ If you get the following error for ***all*** of your devices:
 
 I may be that your device and Home Assistant's installation are not on the same network.
 
-The integration works by connecting to the Google's servers to authenticate and get the authorisation keys for controlling the devices, but after that, all the requests are made locally, so it's required that the server and devices are on the same network. You can use a VPN to overcome this issue.
+The integration works by connecting to the Google's servers to authenticate and get the authorisation keys for controlling these devices, but after that, all the requests are made locally, so it's required that the server and devices are on the same network. You can use a VPN or setup routing between each network to overcome this issue.
 
 ## Contribution
 
