@@ -126,7 +126,7 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
         return device.ip_address if device else None
 
     @property
-    def device_state_attributes(self) -> DeviceAttributes:
+    def extra_state_attributes(self) -> DeviceAttributes:
         """Return the state attributes."""
         device = self.get_device()
         attributes: DeviceAttributes = {
@@ -184,7 +184,7 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
         )
 
     @property
-    def device_state_attributes(self) -> AlarmsAttributes:
+    def extra_state_attributes(self) -> AlarmsAttributes:
         """Return the state attributes."""
         return {
             "next_alarm_status": self._get_next_alarm_status(),
@@ -264,7 +264,7 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
         )
 
     @property
-    def device_state_attributes(self) -> TimersAttributes:
+    def extra_state_attributes(self) -> TimersAttributes:
         """Return the state attributes."""
         return {
             "next_timer_status": self._get_next_timer_status(),
