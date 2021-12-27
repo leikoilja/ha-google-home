@@ -390,6 +390,7 @@ Currently the integration supports the following languages:
 
 - Catalan
 - Danish
+- Dutch
 - English
 - German (Germany)
 - Italian (Italy)
