@@ -112,12 +112,14 @@ The state value shows the next timer as a timestring (i.e.: `2021-03-07T15:26:17
 
 Both alarms and timers have a property called status. The status of the next alarm/timer (which is used as sensor state value) is also available through sensor state attributes `next_alarm_status` and `next_timer_status` respectively.
 
-| Status    | Meaning                                                            |
-| --------- | ------------------------------------------------------------------ |
-| `none`    | Alarm or timer does not exist                                      |
-| `set`     | Alarm or timer has been set                                        |
-| `ringing` | Alarm or timer is ringing right now                                |
-| `snoozed` | Alarm was ringing and has been snoozed (only available for alarms) |
+| Status     | Meaning                                                            |
+|------------|--------------------------------------------------------------------|
+| `none`     | Alarm or timer does not exist                                      |
+| `set`      | Alarm or timer has been set                                        |
+| `ringing`  | Alarm or timer is ringing right now                                |
+| `snoozed`  | Alarm was ringing and has been snoozed (only available for alarms) |
+| `inactive` | Alarm is inactive (only available for alarms)                      |
+| `missed`   | Alarm was missed (only available for alarms)                       |               
 
 Note that timers lack the additional `snoozed` state due to a limitation of the API. If you actually snooze a timer it will just reset itself to the state `set` again.
 

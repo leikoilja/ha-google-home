@@ -195,6 +195,7 @@ class GoogleHomeAlarmStatus(Enum):
     RINGING = 2
     SNOOZED = 3
     INACTIVE = 4
+    MISSED = 5
 
 
 class GoogleHomeTimerStatus(Enum):
