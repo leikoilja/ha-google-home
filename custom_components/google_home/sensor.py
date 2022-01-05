@@ -179,7 +179,9 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
         next_alarm = device.get_next_alarm()
         return (
             next_alarm.local_time_iso
-            if next_alarm and next_alarm.status != GoogleHomeAlarmStatus.INACTIVE
+            if next_alarm
+            and next_alarm.status
+            not in (GoogleHomeAlarmStatus.INACTIVE, GoogleHomeAlarmStatus.MISSED)
             else STATE_UNAVAILABLE
         )
 

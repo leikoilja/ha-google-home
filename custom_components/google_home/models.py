@@ -70,11 +70,12 @@ class GoogleHomeDevice:
         ]
 
     def get_sorted_alarms(self) -> list[GoogleHomeAlarm]:
-        """Returns alarms in a sorted order. Inactive alarms are in the end."""
+        """Returns alarms in a sorted order. Inactive & missed alarms are at the end."""
         return sorted(
             self._alarms,
             key=lambda k: k.fire_time
-            if k.status != GoogleHomeAlarmStatus.INACTIVE
+            if k.status
+            not in (GoogleHomeAlarmStatus.INACTIVE, GoogleHomeAlarmStatus.MISSED)
             else k.fire_time + sys.maxsize,
         )
 
@@ -195,6 +196,7 @@ class GoogleHomeAlarmStatus(Enum):
     RINGING = 2
     SNOOZED = 3
     INACTIVE = 4
+    MISSED = 5
 
 
 class GoogleHomeTimerStatus(Enum):
