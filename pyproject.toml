@@ -15,7 +15,7 @@ zeroconf = "^0.36.13"
 [tool.poetry.dev-dependencies]
 black = "^21.12b0"
 flake8 = "^4.0.1"
-flake8-bugbear = "^21.11.29"
+flake8-bugbear = "^22.1.11"
 flake8-comprehensions = "^3.8.0"
 flake8-simplify = "^0.14.5"
 flake8-use-fstring = "^1.3"
