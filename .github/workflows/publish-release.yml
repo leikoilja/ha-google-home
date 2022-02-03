@@ -8,7 +8,7 @@ jobs:
     name: Update manifest and publish
     strategy:
       matrix:
-        python-version: [3.8]
+        python-version: [3.9]
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repository
