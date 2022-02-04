@@ -22,7 +22,7 @@ def main() -> int:
     if not release.draft:
         print("The latest release is not a draft!")
         return 1
-    version = release.title.lstrip("v")
+    version = release.title.split()[-1].lstrip("v")
     update_version(repo, version)
     publish_release(release)
     return 0
@@ -53,7 +53,7 @@ def publish_release(release: GitRelease) -> None:
     """Publish draft release"""
     print("Publishing new release...")
     release.update_release(
-        name=release.title,
+        name=release.title.split()[-1],
         message=release.body,
         draft=False,
     )
