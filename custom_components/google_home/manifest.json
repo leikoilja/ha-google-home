@@ -19,6 +19,7 @@
   "requirements": [
     "glocaltokens==0.6.2"
   ],
+  "requirements": ["glocaltokens==0.6.3", "google-api-python-client==2.38.0"],
   "version": "1.9.7",
   "zeroconf": [
     "_googlecast._tcp.local."
