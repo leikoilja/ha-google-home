@@ -360,7 +360,7 @@ python-versions = ">=3.7"
 
 [[package]]
 name = "glocaltokens"
-version = "0.6.2"
+version = "0.6.3"
 description = "Tool to extract Google device local authentication tokens in Python"
 category = "main"
 optional = false
