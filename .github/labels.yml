@@ -88,3 +88,7 @@
 - name: translation
   description: Translations
   color: eb9234
+
+- name: wip
+  description: This issue is being addressed and will be fixed ASAP. May have a linked PR.
+  color: 0e8a16
