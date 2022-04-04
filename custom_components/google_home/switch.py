@@ -6,8 +6,8 @@ from typing import Any
 
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import ENTITY_CATEGORY_CONFIG
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import (
@@ -54,7 +54,7 @@ class DoNotDisturbSwitch(GoogleHomeBaseEntity, SwitchEntity):
     """Google Home Do Not Disturb switch."""
 
     _attr_icon = ICON_DO_NOT_DISTURB
-    _attr_entity_category = ENTITY_CATEGORY_CONFIG
+    _attr_entity_category = EntityCategory.CONFIG
 
     @property
     def label(self) -> str:
