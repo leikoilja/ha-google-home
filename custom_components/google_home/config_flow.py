@@ -53,7 +53,7 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             username = user_input[CONF_USERNAME]
             password = user_input[CONF_PASSWORD]
             session = async_create_clientsession(self.hass)
-            
+
             if len(password) >= 100:
                 self._errors["base"] = "pass-len"
             else:
