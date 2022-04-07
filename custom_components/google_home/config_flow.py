@@ -22,8 +22,8 @@ from .const import (
     CONF_USERNAME,
     DATA_COORDINATOR,
     DOMAIN,
-    UPDATE_INTERVAL,
     MAX_PASSWORD_LENGTH,
+    UPDATE_INTERVAL,
 )
 from .exceptions import InvalidMasterToken
 from .types import ConfigFlowDict, OptionsFlowDict
