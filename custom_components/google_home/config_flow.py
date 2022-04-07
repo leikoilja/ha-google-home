@@ -23,6 +23,7 @@ from .const import (
     DATA_COORDINATOR,
     DOMAIN,
     UPDATE_INTERVAL,
+    MAX_PASSWORD_LENGTH,
 )
 from .exceptions import InvalidMasterToken
 from .types import ConfigFlowDict, OptionsFlowDict
@@ -54,9 +55,7 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             password = user_input[CONF_PASSWORD]
             session = async_create_clientsession(self.hass)
 
-            if len(password) >= 100:
-                self._errors["base"] = "pass-len"
-            else:
+            if len(password) < MAX_PASSWORD_LENGTH:
                 client = GlocaltokensApiClient(
                     hass=self.hass,
                     session=session,
@@ -72,6 +71,8 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     config_data[CONF_ANDROID_ID] = await client.get_android_id()
                     return self.async_create_entry(title=username, data=config_data)
                 self._errors["base"] = "auth"
+            else:
+                self._errors["base"] = "pass-len"
         return await self._show_config_form()
 
     @staticmethod
