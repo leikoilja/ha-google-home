@@ -20,6 +20,8 @@ DATA_COORDINATOR: Final = "coordinator"
 
 ALARM_AND_TIMER_ID_LENGTH: Final = 42
 
+MAX_PASSWORD_LENGTH: Final = 100
+
 # Icons
 ICON_TOKEN: Final = "mdi:form-textbox-password"
 ICON_ALARMS: Final = "mdi:alarm-multiple"
