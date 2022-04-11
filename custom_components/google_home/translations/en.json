@@ -11,7 +11,8 @@
       }
     },
     "error": {
-      "auth": "Username/Password is incorrect. If your google account has 2FA enabled please generate app password (https://myaccount.google.com/apppasswords). If authentication still fails refer to https://github.com/leikoilja/ha-google-home#troubleshooting"
+      "auth": "Username/Password is incorrect. If your google account has 2FA enabled please generate app password (https://myaccount.google.com/apppasswords). If authentication still fails refer to https://github.com/leikoilja/ha-google-home#troubleshooting",
+      "pass-len": "Password length is limited to 100 characters by Google Policy (https://support.google.com/a/answer/139399). Please, change your password or use an app password (https://myaccount.google.com/apppasswords)."
     },
     "abort": {
       "single_instance_allowed": "Only a single instance is allowed."
