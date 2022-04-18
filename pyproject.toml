@@ -26,7 +26,7 @@ mypy = "^0.942"
 pre-commit = "^2.18.1"
 PyGithub = "^1.54.1"
 pylint = "^2.13.5"
-types-requests = "^2.27.16"
+types-requests = "^2.27.19"
 
 [tool.pylint.messages_control]
 # Reasons disabled:
