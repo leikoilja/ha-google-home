@@ -25,7 +25,7 @@ isort = "^5.10.1"
 mypy = "^0.950"
 pre-commit = "^2.18.1"
 PyGithub = "^1.54.1"
-pylint = "^2.13.7"
+pylint = "^2.13.8"
 types-requests = "^2.27.25"
 
 [tool.pylint.messages_control]
