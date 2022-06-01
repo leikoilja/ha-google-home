@@ -1,6 +1,5 @@
 {
   "name": "Google Home",
-  "domains": ["number", "sensor", "switch"],
   "homeassistant": "2022.2.0",
   "render_readme": true
 }
