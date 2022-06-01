@@ -398,6 +398,7 @@ Currently the integration supports the following languages:
 - Italian (Italy)
 - Norwegian (bokmål and nynorsk)
 - Portuguese (Portugal)
+- Portuguese (Brazil)
 - Spanish (Spain)
 - Russian
 - Ukrainian

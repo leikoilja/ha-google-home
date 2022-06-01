@@ -1,0 +1,30 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Autenticação do Google Home",
+        "description": "Se precisar de ajuda com a configuração, dê uma olhada aqui: https://github.com/leikoilja/ha-google-home. Use o nome de usuário da sua conta do Google e a senha do aplicativo. É mais seguro/fácil gerar uma senha de aplicativo e usá-la em vez da senha real. Ele ainda tem o mesmo acesso que a senha normal, mas ainda melhor do que usar a senha real durante o script. (https://myaccount.google.com/apppasswords). Caso contrário, a senha normal da conta do Google deve funcionar.",
+        "data": {
+          "username": "Nome de usuário da conta Google",
+          "password": "Senha do aplicativo da conta do Google"
+        }
+      }
+    },
+    "error": {
+      "auth": "O nome de usuário/senha está incorreto. Se sua conta do Google tiver o 2FA ativado, gere a senha do aplicativo (https://myaccount.google.com/apppasswords). Se a autenticação ainda falhar, consulte https://github.com/leikoilja/ha-google-home#troubleshooting",
+      "pass-len": "O comprimento da senha é limitado a 100 caracteres pela Política do Google (https://support.google.com/a/answer/139399). Por favor, altere sua senha ou use uma senha de aplicativo (https://myaccount.google.com/apppasswords)."
+    },
+    "abort": {
+      "single_instance_allowed": "Apenas uma única instância é permitida."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "update_interval": "Altere o intervalo de atualização. Aumente isso se você estiver sofrendo com o tempo limite dos dispositivos. Padrão: 180 (segundos)"
+        }
+      }
+    }
+  }
+}
