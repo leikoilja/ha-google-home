@@ -450,7 +450,7 @@ class GlocaltokensApiClient:
                     device.available = False
                 else:
                     _LOGGER.error(
-                        "Failed to access %s, API returned" " %d: %s",
+                        "Failed to access %s, API returned %d: %s",
                         device.name,
                         response.status,
                         response,
