@@ -2,6 +2,7 @@
 """Update manifest.json and create new Github Release."""
 from __future__ import annotations
 
+from importlib.metadata import version as package_version
 import json
 import os
 import sys
@@ -35,6 +36,10 @@ def update_version(repo: Repository, version: str) -> None:
     assert isinstance(manifest, ContentFile)
     manifest_json = json.loads(manifest.decoded_content)
     manifest_json["version"] = version
+    manifest_json["requirements"] = [
+        f"glocaltokens=={package_version('glocaltokens')}",
+        "google-api-python-client==2.38.0",
+    ]
     updated_manifest = json.dumps(manifest_json, indent=2) + "\n"
     branch = repo.get_branch("master")
     # Disable branch protection before commit
