@@ -7,7 +7,7 @@ import json
 import os
 import sys
 
-from github import Github
+from github import Github, InputGitTreeElement
 from github.ContentFile import ContentFile
 from github.GitRelease import GitRelease
 from github.Repository import Repository
@@ -24,13 +24,13 @@ def main() -> int:
         print("The latest release is not a draft!")
         return 1
     version = release.title.split()[-1].lstrip("v")
-    update_version(repo, version)
+    update_manifests(repo, version)
     publish_release(release)
     return 0
 
 
-def update_version(repo: Repository, version: str) -> None:
-    """Update manifest.json with the new version"""
+def update_manifests(repo: Repository, version: str) -> None:
+    """Update manifest.json and hacs.json"""
     print("Updating manifest.json...")
     manifest = repo.get_contents("custom_components/google_home/manifest.json")
     assert isinstance(manifest, ContentFile)
@@ -41,15 +41,38 @@ def update_version(repo: Repository, version: str) -> None:
         "google-api-python-client==2.38.0",
     ]
     updated_manifest = json.dumps(manifest_json, indent=2) + "\n"
+
+    print("Updating hacs.json...")
+    hacs_config = repo.get_contents("hacs.json")
+    assert isinstance(hacs_config, ContentFile)
+    hacs_json = json.loads(hacs_config.decoded_content)
+    hacs_json["homeassistant"] = package_version("homeassistant")
+    updated_hacs_config = json.dumps(hacs_json, indent=2) + "\n"
+
     branch = repo.get_branch("master")
+
     # Disable branch protection before commit
     branch.remove_admin_enforcement()
-    repo.update_file(
-        path=manifest.path,
-        message=f"Release v{version}",
-        content=updated_manifest,
-        sha=manifest.sha,
-    )
+
+    # Create commit
+    elements = []
+    for file_path, content in [
+        (manifest.path, updated_manifest),
+        (hacs_config.path, updated_hacs_config),
+    ]:
+        blob = repo.create_git_blob(content, "utf-8")
+        element = InputGitTreeElement(
+            path=file_path, mode="100644", type="blob", sha=blob.sha
+        )
+        elements.append(element)
+    head_sha = branch.commit.sha
+    base_tree = repo.get_git_tree(sha=head_sha)
+    tree = repo.create_git_tree(elements, base_tree)
+    parent = repo.get_git_commit(sha=head_sha)
+    commit = repo.create_git_commit(f"Release v{version}", tree, [parent])
+    master_ref = repo.get_git_ref(f"heads/{branch.name}")
+    master_ref.edit(sha=commit.sha)
+
     # Re-enable branch protection
     branch.set_admin_enforcement()
 
