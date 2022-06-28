@@ -38,7 +38,6 @@ def update_manifests(repo: Repository, version: str) -> None:
     manifest_json["version"] = version
     manifest_json["requirements"] = [
         f"glocaltokens=={package_version('glocaltokens')}",
-        "google-api-python-client==2.38.0",
     ]
     updated_manifest = json.dumps(manifest_json, indent=2) + "\n"
 
