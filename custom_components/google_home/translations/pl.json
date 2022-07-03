@@ -1,0 +1,31 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Autoryzacja Google Home",
+        "description": "Jeśli potrzebujesz pomocy przejdź na: https://github.com/leikoilja/ha-google-home. Uzyj swoich danych konta Google. Bezpieczniej/łatwiej jest wygenerować hasło do aplikacji i użyć go zamiast rzeczywistego hasła. Nadal masz taki sam dostęp jak przy zwykłym haśle, ale jest to lepsze niż używanie prawdziwego hasła podczas pisania skryptów (https://myaccount.google.com/apppasswords). 
+        Jeśli nie chcesz, zwykłe hasło do konta Google powinno działać.",
+        "data": {
+          "username": "Użytkownik konta Google",
+          "password": "Hasło aplikacji konta Google"
+        }
+      }
+    },
+    "error": {
+      "auth": "Użytkowni lub hasło jest niepoprawne. Jeśli używasz dwuskładnikowej autoryzacji proszę wygeneruj hasło aplikacji (https://myaccount.google.com/apppasswords). Jeśli nadal będą występować problemy zapraszam na https://github.com/leikoilja/ha-google-home#troubleshooting",
+      "pass-len": "Długość hasła nie może przekraczać 100 znaków zgodnie z polityką Gooogle (https://support.google.com/a/answer/139399). Proszę zmień hasło aplbo użyj hasło aplikacji (https://myaccount.google.com/apppasswords)."
+    },
+    "abort": {
+      "single_instance_allowed": "Tylko pojedyńcza konfiguracja jest dozwolona."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "update_interval": "Zmień czas aktualizacji. Uzyj tej opcji jeśli masz problem z prekroczeniem limitum czasu. Domyślnie: 180 (sekund)"
+        }
+      }
+    }
+  }
+}
