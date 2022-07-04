@@ -3,8 +3,7 @@
     "step": {
       "user": {
         "title": "Autoryzacja Google Home",
-        "description": "Jeśli potrzebujesz pomocy przejdź na: https://github.com/leikoilja/ha-google-home. Uzyj swoich danych konta Google. Bezpieczniej/łatwiej jest wygenerować hasło do aplikacji i użyć go zamiast rzeczywistego hasła. Nadal masz taki sam dostęp jak przy zwykłym haśle, ale jest to lepsze niż używanie prawdziwego hasła podczas pisania skryptów (https://myaccount.google.com/apppasswords). 
-        Jeśli nie chcesz, zwykłe hasło do konta Google powinno działać.",
+        "description": "Jeśli potrzebujesz pomocy przejdź na: https://github.com/leikoilja/ha-google-home. Uzyj swoich danych konta Google. Bezpieczniej/łatwiej jest wygenerować hasło do aplikacji i użyć go zamiast rzeczywistego hasła. Nadal masz taki sam dostęp jak przy zwykłym haśle, ale jest to lepsze niż używanie prawdziwego hasła podczas pisania skryptów (https://myaccount.google.com/apppasswords). Jeśli nie chcesz, zwykłe hasło do konta Google powinno działać.",
         "data": {
           "username": "Użytkownik konta Google",
           "password": "Hasło aplikacji konta Google"
