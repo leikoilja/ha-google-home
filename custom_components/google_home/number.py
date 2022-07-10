@@ -61,7 +61,7 @@ class AlarmVolumeNumber(GoogleHomeBaseEntity, NumberEntity):
     _attr_entity_category = EntityCategory.CONFIG
     _attr_native_min_value, _attr_native_max_value = (0, 100)
     _attr_native_step = 1
-    
+
     @property
     def label(self) -> str:
         """Label to use for name and unique id."""
@@ -93,7 +93,7 @@ class AlarmVolumeNumber(GoogleHomeBaseEntity, NumberEntity):
         volume = device.get_alarm_volume()
         return volume
 
-    async def async_set_native_value(self, value: int) -> None:  # type: ignore
+    async def async_set_native_value(self, value: int) -> None:
         """Sets the alarm volume"""
         device = self.get_device()
         if device is None:
@@ -101,4 +101,3 @@ class AlarmVolumeNumber(GoogleHomeBaseEntity, NumberEntity):
             return
 
         await self.client.update_alarm_volume(device=device, volume=value)
-
