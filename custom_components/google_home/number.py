@@ -57,8 +57,11 @@ async def async_setup_entry(
 class AlarmVolumeNumber(GoogleHomeBaseEntity, NumberEntity):
     """Google Home Alarm Volume Number entity."""
 
-    _attr_unit_of_measurement = PERCENTAGE
+    _attr_native_unit_of_measurement = PERCENTAGE
     _attr_entity_category = EntityCategory.CONFIG
+    _attr_native_min_value = 0
+    _attr_native_max_value = 100
+    _attr_native_step = 1
 
     @property
     def label(self) -> str:
@@ -81,23 +84,8 @@ class AlarmVolumeNumber(GoogleHomeBaseEntity, NumberEntity):
         return ICON_ALARM_VOLUME_HIGH
 
     @property
-    def min_value(self) -> int:
-        """Return the minimum value for the volume"""
-        return 0
-
-    @property
-    def max_value(self) -> int:
-        """Return the minimum value for the volume"""
-        return 100
-
-    @property
-    def step(self) -> int:
-        """Return the step value for the volume"""
-        return 1
-
-    @property
-    def value(self) -> int:
-        """Return the current volume value"""
+    def native_value(self) -> float:
+        """Return the current volume value."""
         device = self.get_device()
 
         if device is None:
@@ -106,7 +94,7 @@ class AlarmVolumeNumber(GoogleHomeBaseEntity, NumberEntity):
         volume = device.get_alarm_volume()
         return volume
 
-    async def async_set_value(self, value: int) -> None:  # type: ignore
+    async def async_set_native_value(self, value: int) -> None:
         """Sets the alarm volume"""
         device = self.get_device()
         if device is None:
