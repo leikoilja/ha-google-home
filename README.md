@@ -397,6 +397,7 @@ Currently the integration supports the following languages:
 - German (Germany)
 - Italian (Italy)
 - Norwegian (bokmål and nynorsk)
+- Polish
 - Portuguese (Portugal)
 - Portuguese (Brazil)
 - Spanish (Spain)
