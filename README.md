@@ -381,6 +381,15 @@ It may be that your device and Home Assistant installation are not on the same n
 
 The integration works by connecting to the Google's servers to authenticate and get the authorisation keys for controlling these devices, but after that, all the requests are made locally, so it's required that the server and devices are on the same network. You can use a VPN or setup routing between each network to overcome this issue.
 
+### "version GLIBC_2.34 not found"
+
+Your system has old version of GLIBC and therefore not compatible with pre-compiled version of grpcio.
+But you can build it from sources for your system. For that in HA virtualenv run (use the version of `grpcio` from [glocaltokens](https://github.com/leikoilja/glocaltokens/blob/master/pyproject.toml)):
+
+```
+pip install -U grpcio==1.46.1 --no-binary=grpcio --force-reinstall
+```
+
 ## Contribution
 
 If you encounter issues or have any suggestions consider opening issues and contributing through PR.
