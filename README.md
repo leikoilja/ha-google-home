@@ -62,11 +62,12 @@ please increase this until it is stable again.
 
 This component will set up the following sensors:
 
-| Platform | Sample sensor               | Description                                                                |
-| -------- | --------------------------- | -------------------------------------------------------------------------- |
-| `sensor` | `sensor.living_room_alarms` | Sensor with a list of alarms from the device                               |
-| `sensor` | `sensor.living_room_timers` | Sensor with a list of timers from the device                               |
-| `sensor` | `sensor.living_room_device` | Sensor with the IP address for the device, as well as some info attributes |
+| Platform | Sample sensor                   | Description                                                                |
+| -------- | ------------------------------- | -------------------------------------------------------------------------- |
+| `sensor` | `sensor.living_room_alarms`     | Sensor with a list of alarms from the device                               |
+| `sensor` | `sensor.living_room_timers`     | Sensor with a list of timers from the device                               |
+| `sensor` | `sensor.living_room_bt_devices` | Sensor with a list of bluetooth devices in range                           |
+| `sensor` | `sensor.living_room_device`     | Sensor with the IP address for the device, as well as some info attributes |
 
 ### Alarms
 
