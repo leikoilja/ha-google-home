@@ -31,6 +31,7 @@
    - [Manual Installation](#manual-installation)
    - [Integration Setup](#integration-setup)
    - [Running in Home Assistant Docker container](#running-in-home-assistant-docker-container)
+   - [Installing ARM Docker Container Dependencies (Workaround)](#arm-docker-container-dependencies-workaround)
 7. [Lovelace Cards](#lovelace-cards)
 8. [Node-RED Flows](#node-red-flows)
 9. [Troubleshooting](#troubleshooting)
@@ -111,12 +112,14 @@ The state value shows the next timer as a timestring (i.e.: `2021-03-07T15:26:17
 
 Both alarms and timers have a property called status. The status of the next alarm/timer (which is used as sensor state value) is also available through sensor state attributes `next_alarm_status` and `next_timer_status` respectively.
 
-| Status    | Meaning                                                            |
-| --------- | ------------------------------------------------------------------ |
-| `none`    | Alarm or timer does not exist                                      |
-| `set`     | Alarm or timer has been set                                        |
-| `ringing` | Alarm or timer is ringing right now                                |
-| `snoozed` | Alarm was ringing and has been snoozed (only available for alarms) |
+| Status     | Meaning                                                            |
+| ---------- | ------------------------------------------------------------------ |
+| `none`     | Alarm or timer does not exist                                      |
+| `set`      | Alarm or timer has been set                                        |
+| `ringing`  | Alarm or timer is ringing right now                                |
+| `snoozed`  | Alarm was ringing and has been snoozed (only available for alarms) |
+| `inactive` | Alarm is inactive (only available for alarms)                      |
+| `missed`   | Alarm was missed (only available for alarms)                       |
 
 Note that timers lack the additional `snoozed` state due to a limitation of the API. If you actually snooze a timer it will just reset itself to the state `set` again.
 
@@ -201,7 +204,7 @@ data:
 
 ### Prerequisites
 
-Use Home Assistant v2021.8.0 or above.
+Use Home Assistant v2022.6.0 or above.
 
 ### Google Account security
 
@@ -265,6 +268,32 @@ ln -s ha-google-home/custom_components/google_home ~/.homeassistant/custom_compo
 
 Make sure that you have your Home Assistant Container network set to `host`, as perscribed in the official docker installation for Home Assistant.
 
+### ARM Docker Container Dependencies Workaround
+
+If you are installing this integration on an ARM based device (Like Raspberry Pi, Synology, etc), you may need to do the following if you get this error:
+
+```
+ERROR: Cannot install glocaltokens==0.3.1
+```
+
+Please run the following command in the Home Assistant container to add the missing dependencies for `glocaltokens`:
+
+```
+apk add gcc g++
+```
+
+then you can install `glocaltokens` manually like this:
+
+```
+pip3 install glocaltokens
+```
+
+Unfortunately, this will need to be done each time the image is updated. Alternatively you can add the command to the container startup:
+
+```
+command: /bin/bash -c "apk add gcc g++; pip3 install --upgrade pip; pip3 install glocaltokens; /init"
+```
+
 ## Lovelace Cards
 
 **Open a PR to add your card here!**
@@ -286,11 +315,12 @@ Here are the steps to generate useful log data:
 
 1. Temporary log level change.
    1. Visit [Home Assistant Developer Services Tool](https://my.home-assistant.io/redirect/developer_services/).
-   2. Choose `Logger: Set level` from the **Service** menu.
-   3. Under **Service data** paste the following:
+   2. Choose `Logger: Set level` from the **Service** menu. (the [Logger service](https://www.home-assistant.io/integrations/logger/) needs to be enabled for this)
+   3. Go to YAML mode and paste the following (starting on line 2):
       ```yaml
-      custom_components.google_home: debug
-      glocaltokens: debug
+      data:
+        custom_components.google_home: debug
+        glocaltokens: debug
       ```
    4. Click **Call Service**.
 2. Read the log information.
@@ -339,6 +369,27 @@ If unsure, please check what account you are using in the _Google Home_ app and 
 
 If you can see your devices, and they all seem correct, but the alarms/timers sensors do not appear, or appear empty try restarting the Google Home device, Home Assistant, and reinstalling the integration.
 
+### Device offline or not compatible message (#402)
+
+If you get the following error for **_all_** of your devices:
+
+```
+2021-11-28 16:13:20 DEBUG (MainThread) [custom_components.google_home] Failed to fetch timers/alarms information from device xxx. We could not determine its IP address, the device is either offline or is not compatible Google Home device. Will try again later.
+```
+
+It may be that your device and Home Assistant installation are not on the same network.
+
+The integration works by connecting to the Google's servers to authenticate and get the authorisation keys for controlling these devices, but after that, all the requests are made locally, so it's required that the server and devices are on the same network. You can use a VPN or setup routing between each network to overcome this issue.
+
+### "version GLIBC_2.34 not found"
+
+Your system has old version of GLIBC and therefore not compatible with pre-compiled version of grpcio.
+But you can build it from sources for your system. For that in HA virtualenv run (use the version of `grpcio` from [glocaltokens](https://github.com/leikoilja/glocaltokens/blob/master/pyproject.toml)):
+
+```
+pip install -U grpcio==1.46.1 --no-binary=grpcio --force-reinstall
+```
+
 ## Contribution
 
 If you encounter issues or have any suggestions consider opening issues and contributing through PR.
@@ -349,12 +400,18 @@ If you are ready to contribute to this please read the [Contribution guidelines]
 Currently the integration supports the following languages:
 
 - Catalan
+- Danish
+- Dutch
 - English
 - German (Germany)
+- Italian (Italy)
 - Norwegian (bokmål and nynorsk)
+- Polish
 - Portuguese (Portugal)
+- Portuguese (Brazil)
 - Spanish (Spain)
 - Russian
+- Ukrainian
 
 If you want to translate the project to your own language, follow the [Localization guide](LOCALIZATION.md).
 
@@ -374,5 +431,5 @@ If you want to translate the project to your own language, follow the [Localizat
 [releases]: https://github.com/leikoilja/ha-google-home/releases
 [workflow-shield]: https://img.shields.io/github/workflow/status/leikoilja/ha-google-home/Linting?style=for-the-badge
 [workflow]: https://github.com/leikoilja/ha-google-home/actions
-[installs-shield]: https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fgoogle-home-installs-for-shield-io-g5spbids0d66.runkit.sh%2F
+[installs-shield]: https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Frunkit.io%2Fkapji%2Fgoogle-home-installs-for-shield-io%2F3.0.0
 [installs]: https://analytics.home-assistant.io/custom_integrations.json

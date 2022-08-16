@@ -1,30 +1,30 @@
-name-template: "v$RESOLVED_VERSION"
+name-template: "RELEASE WITH GITHUB ACTIONS! v$RESOLVED_VERSION"
 tag-template: "v$RESOLVED_VERSION"
 categories:
   - title: "🚀 Features"
     labels:
       - "feature"
       - "performance"
+  - title: "🈵 Translations"
+    labels:
+      - "translation"
   - title: "🐛 Bug Fixes"
     labels:
       - "bug"
   - title: "📄 Documentation"
     labels:
       - "documentation"
+  - title: "🧱 Dependency Updates"
+    labels:
+      - "dependencies"
   - title: "🔧 Internal structure enhancement"
     labels:
       - "github structure"
       - "refactoring"
       - "removal"
-  - title: "🈵 Translations"
-    labels:
-      - "translation"
   - title: "🧰 Maintenance"
     labels:
       - "testing"
-  - title: "🧱 Dependency Updates"
-    labels:
-      - "dependencies"
 change-template: "- $TITLE @$AUTHOR (#$NUMBER)"
 change-title-escapes: '\<*_&' # You can add # and @ to disable mentions, and add ` to disable code blocks.
 version-resolver:

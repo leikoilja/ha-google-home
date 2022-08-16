@@ -1,0 +1,29 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Autenticazione Google Home",
+        "description": "Se hai bisogno di aiuto con la configurazione dai un'occhiata qui: https://github.com/leikoilja/ha-google-home. Usa l'utente e la password per le app del tuo account Google. È più sicuro/più facile generare una password per le app e usarla al posto della password effettiva. Ha ancora gli stessi privilegi di accesso della password normale, ma è comunque più sicura rispetto all'utilizzo della password reale durante lo scripting. (https://myaccount.google.com/apppasswords). In caso contrario, la normale password dell'account Google dovrebbe funzionare.",
+        "data": {
+          "username": "Google account username",
+          "password": "Google account password per le app"
+        }
+      }
+    },
+    "error": {
+      "auth": "Username o password errati. Se il tuo account Google ha la 2FA abilitata genera una passoword per le app (https://myaccount.google.com/apppasswords). Se l'autenticazione continua a fallire, fai riferimento a https://github.com/leikoilja/ha-google-home#troubleshooting"
+    },
+    "abort": {
+      "single_instance_allowed": "È consentita una sola istanza."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "update_interval": "Modifica l'intervallo di update. Aumenta l'intervallo se sperimenti un timeout dei dispositivi. Default: 180 (Secondi)"
+        }
+      }
+    }
+  }
+}

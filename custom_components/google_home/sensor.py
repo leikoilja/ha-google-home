@@ -9,7 +9,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import DEVICE_CLASS_TIMESTAMP, STATE_UNAVAILABLE
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import config_validation as cv, entity_platform
-from homeassistant.helpers.entity import Entity
+from homeassistant.helpers.entity import Entity, EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import (
@@ -63,6 +63,7 @@ async def async_setup_entry(
                 client,
                 device.device_id,
                 device.name,
+                device.hardware,
             )
         )
         if device.auth_token and device.available:
@@ -72,12 +73,14 @@ async def async_setup_entry(
                     client,
                     device.device_id,
                     device.name,
+                    device.hardware,
                 ),
                 GoogleHomeTimersSensor(
                     coordinator,
                     client,
                     device.device_id,
                     device.name,
+                    device.hardware,
                 ),
                 GoogleHomeBTDevicesSensor(
                     coordinator,
@@ -121,15 +124,13 @@ async def async_setup_entry(
 class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
     """Google Home Device sensor."""
 
+    _attr_icon = ICON_TOKEN
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+
     @property
     def label(self) -> str:
         """Label to use for name and unique id."""
         return LABEL_DEVICE
-
-    @property
-    def icon(self) -> str:
-        """Return the icon of the sensor."""
-        return ICON_TOKEN
 
     @property
     def state(self) -> str | None:
@@ -137,7 +138,7 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
         return device.ip_address if device else None
 
     @property
-    def device_state_attributes(self) -> DeviceAttributes:
+    def extra_state_attributes(self) -> DeviceAttributes:
         """Return the state attributes."""
         device = self.get_device()
         attributes: DeviceAttributes = {
@@ -145,9 +146,7 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
             "device_name": self.device_name,
             "auth_token": None,
             "ip_address": None,
-            "hardware": None,
             "available": False,
-            "integration": DOMAIN,
         }
         return self.get_device_attributes(device) if device else attributes
 
@@ -159,9 +158,7 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
             "device_name": device.name,
             "auth_token": device.auth_token,
             "ip_address": device.ip_address,
-            "hardware": device.hardware,
             "available": device.available,
-            "integration": DOMAIN,
         }
 
     async def async_reboot_device(self) -> None:
@@ -231,20 +228,13 @@ class GoogleHomeBTDevicesSensor(GoogleHomeBaseEntity):
 class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
     """Google Home Alarms sensor."""
 
+    _attr_icon = ICON_ALARMS
+    _attr_device_class = DEVICE_CLASS_TIMESTAMP
+
     @property
     def label(self) -> str:
         """Label to use for name and unique id."""
         return LABEL_ALARMS
-
-    @property
-    def icon(self) -> str:
-        """Icon to use in the frontend."""
-        return ICON_ALARMS
-
-    @property
-    def device_class(self) -> str:
-        """Return the device class of the sensor."""
-        return DEVICE_CLASS_TIMESTAMP
 
     @property
     def state(self) -> str | None:
@@ -254,18 +244,19 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
         next_alarm = device.get_next_alarm()
         return (
             next_alarm.local_time_iso
-            if next_alarm and next_alarm.status != GoogleHomeAlarmStatus.INACTIVE
+            if next_alarm
+            and next_alarm.status
+            not in (GoogleHomeAlarmStatus.INACTIVE, GoogleHomeAlarmStatus.MISSED)
             else STATE_UNAVAILABLE
         )
 
     @property
-    def device_state_attributes(self) -> AlarmsAttributes:
+    def extra_state_attributes(self) -> AlarmsAttributes:
         """Return the state attributes."""
         return {
             "next_alarm_status": self._get_next_alarm_status(),
             "alarm_volume": self._get_alarm_volume(),
             "alarms": self._get_alarms_data(),
-            "integration": DOMAIN,
         }
 
     def _get_next_alarm_status(self) -> str:
@@ -318,20 +309,13 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
 class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
     """Google Home Timers sensor."""
 
+    _attr_icons = ICON_TIMERS
+    _attr_device_class = DEVICE_CLASS_TIMESTAMP
+
     @property
     def label(self) -> str:
         """Label to use for name and unique id."""
         return LABEL_TIMERS
-
-    @property
-    def icon(self) -> str:
-        """Icon to use in the frontend."""
-        return ICON_TIMERS
-
-    @property
-    def device_class(self) -> str:
-        """Return the device class of the sensor."""
-        return DEVICE_CLASS_TIMESTAMP
 
     @property
     def state(self) -> str | None:
@@ -346,12 +330,11 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
         )
 
     @property
-    def device_state_attributes(self) -> TimersAttributes:
+    def extra_state_attributes(self) -> TimersAttributes:
         """Return the state attributes."""
         return {
             "next_timer_status": self._get_next_timer_status(),
             "timers": self._get_timers_data(),
-            "integration": DOMAIN,
         }
 
     def _get_next_timer_status(self) -> str:

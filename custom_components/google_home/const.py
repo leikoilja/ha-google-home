@@ -9,7 +9,7 @@ from homeassistant.util.dt import DATE_STR_FORMAT
 NAME: Final = "Google Home community driven integration"
 DOMAIN: Final = "google_home"
 DOMAIN_DATA: Final = f"{DOMAIN}_data"
-MANUFACTURER: Final = "google_home"
+MANUFACTURER: Final = "Google Home"
 
 ATTRIBUTION: Final = "json"
 ISSUE_URL: Final = "https://github.com/leikoilja/ha-google-home/issues"
@@ -19,6 +19,8 @@ DATA_CLIENT: Final = "client"
 DATA_COORDINATOR: Final = "coordinator"
 
 ALARM_AND_TIMER_ID_LENGTH: Final = 42
+
+MAX_PASSWORD_LENGTH: Final = 100
 
 # Icons
 ICON_TOKEN: Final = "mdi:form-textbox-password"
@@ -37,7 +39,8 @@ BINARY_SENSOR_DEVICE_CLASS: Final = "connectivity"
 # Platforms
 SENSOR: Final = "sensor"
 SWITCH: Final = "switch"
-PLATFORMS: Final = [SENSOR, SWITCH]
+NUMBER: Final = "number"
+PLATFORMS: Final = [SENSOR, SWITCH, NUMBER]
 
 # Services
 SERVICE_REBOOT: Final = "reboot_device"
@@ -55,10 +58,10 @@ CONF_MASTER_TOKEN: Final = "master_token"
 
 # Defaults
 DEFAULT_NAME: Final = "Google Home"
-GOOGLE_HOME_ALARM_DEFAULT_VALUE: Final = 0.0
+GOOGLE_HOME_ALARM_DEFAULT_VALUE: Final = 0
 
 LABEL_ALARMS: Final = "alarms"
-LABEL_ALARM_VOLUME: Final = "alarm_volume"
+LABEL_ALARM_VOLUME: Final = "alarm volume"
 LABEL_AVAILABLE: Final = "available"
 LABEL_TIMERS: Final = "timers"
 LABEL_DEVICE: Final = "device"

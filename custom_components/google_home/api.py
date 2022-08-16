@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import asyncio
+from http import HTTPStatus
 import logging
 from typing import List, Literal, cast
 
@@ -11,7 +12,6 @@ from glocaltokens.client import Device, GLocalAuthenticationTokens
 from glocaltokens.utils.token import is_aas_et
 from zeroconf import Zeroconf
 
-from homeassistant.const import HTTP_NOT_FOUND, HTTP_OK, HTTP_UNAUTHORIZED
 from homeassistant.core import HomeAssistant
 
 from .const import (
@@ -364,7 +364,7 @@ class GlocaltokensApiClient:
         return device
 
     async def update_alarm_volume(
-        self, device: GoogleHomeDevice, volume: float | None = None
+        self, device: GoogleHomeDevice, volume: int | None = None
     ) -> GoogleHomeDevice:
         """Gets or sets the alarm volume setting on a Google Home device."""
 
@@ -373,16 +373,18 @@ class GlocaltokensApiClient:
 
         if volume is not None:
             # Setting is inverted on device
-            data = {JSON_ALARM_VOLUME: volume}
+            volume_float = float(volume / 100)
+            data = {JSON_ALARM_VOLUME: volume_float}
             _LOGGER.debug(
-                "Setting Alarm Volume setting to %f on Google Home device %s",
+                "Setting alarm volume to %d(float=%f) on Google Home device %s",
                 volume,
+                volume_float,
                 device.name,
             )
         else:
             polling = True
             _LOGGER.debug(
-                "Getting Alarm Volume setting from Google Home device %s",
+                "Getting alarm volume from Google Home device %s",
                 device.name,
             )
 
@@ -395,16 +397,25 @@ class GlocaltokensApiClient:
         )
         if response:
             if JSON_ALARM_VOLUME in response:
-                volume_raw = str(response[JSON_ALARM_VOLUME])
-                loaded_volume = float(volume_raw)
-                _LOGGER.debug(
-                    "Received Alarm Volume setting from Google Home device %s"
-                    " - Volume: %f",
-                    device.name,
-                    loaded_volume,
-                )
-
-                device.set_alarm_volume(loaded_volume)
+                if polling:
+                    volume_raw = str(response[JSON_ALARM_VOLUME])
+                    volume_int = round(float(volume_raw) * 100)
+                    _LOGGER.debug(
+                        "Received alarm volume from Google Home device %s"
+                        " - Volume: %d(raw=%s)",
+                        device.name,
+                        volume_int,
+                        volume_raw,
+                    )
+                else:
+                    volume_int = volume  # type: ignore
+                    _LOGGER.debug(
+                        "Successfully set alarm volume to %d "
+                        "on Google Home device %s",
+                        volume,
+                        device.name,
+                    )
+                device.set_alarm_volume(volume_int)
             else:
                 _LOGGER.debug(
                     (
@@ -455,13 +466,13 @@ class GlocaltokensApiClient:
             async with self._session.request(
                 method, url, json=data, headers=headers, timeout=TIMEOUT
             ) as response:
-                if response.status == HTTP_OK:
+                if response.status == HTTPStatus.OK:
                     try:
                         resp = await response.json()
                     except ContentTypeError:
                         resp = {}
                     device.available = True
-                elif response.status == HTTP_UNAUTHORIZED:
+                elif response.status == HTTPStatus.UNAUTHORIZED:
                     # If token is invalid - force reload homegraph providing new token
                     # and rerun the task.
                     if polling:
@@ -481,7 +492,7 @@ class GlocaltokensApiClient:
                     # We need to retry the update task instead of just cleaning the list
                     self.google_devices = []
                     device.available = False
-                elif response.status == HTTP_NOT_FOUND:
+                elif response.status == HTTPStatus.NOT_FOUND:
                     _LOGGER.debug(
                         (
                             "Failed to perform request to %s, API returned %d. "
@@ -496,7 +507,7 @@ class GlocaltokensApiClient:
                     device.available = False
                 else:
                     _LOGGER.error(
-                        "Failed to access %s, API returned" " %d: %s",
+                        "Failed to access %s, API returned %d: %s",
                         device.name,
                         response.status,
                         response,

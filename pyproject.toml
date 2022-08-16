@@ -7,36 +7,36 @@ license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.8"
-glocaltokens = "0.5.1"
-homeassistant = "2021.8.0"
-zeroconf = "^0.36.7"
+python = "^3.9"
+glocaltokens = "^0.6.7"
+homeassistant = "2022.6.0"
 
 [tool.poetry.dev-dependencies]
-black = "^21.9b0"
-flake8 = "^3.9.2"
-flake8-bugbear = "^21.9.1"
-flake8-comprehensions = "^3.6.1"
-flake8-simplify = "^0.14.2"
-flake8-use-fstring = "^1.1"
-homeassistant-stubs = "2021.8.0"
-isort = "^5.9.3"
-mypy = "^0.910"
-pre-commit = "^2.15.0"
-pylint = "^2.11.1"
+black = "^22.3"
 codespell = "^2.1.0"
-types-requests = "^2.25.8"
+flake8 = "^5.0.4"
+flake8-bugbear = "^22.7.1"
+flake8-comprehensions = "^3.10.0"
+flake8-simplify = "^0.19.3"
+flake8-use-fstring = "^1.4"
+homeassistant-stubs = "^2022.6.0"
+isort = "^5.10.1"
+mypy = "^0.971"
+pre-commit = "^2.20.0"
 PyGithub = "^1.54.1"
+pylint = "^2.14.5"
+types-requests = "^2.28.8"
 
 [tool.pylint.messages_control]
 # Reasons disabled:
 # too-many-* - not enforced for the sake of readability
 # too-few-* - same as too-many-*
 disable = [
+    "duplicate-code",
     "too-few-public-methods",
     "too-many-arguments",
     "too-many-instance-attributes",
-    "duplicate-code",
+    "too-many-locals",
 ]
 
 [tool.pylint.format]

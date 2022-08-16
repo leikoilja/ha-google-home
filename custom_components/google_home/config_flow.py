@@ -22,6 +22,7 @@ from .const import (
     CONF_USERNAME,
     DATA_COORDINATOR,
     DOMAIN,
+    MAX_PASSWORD_LENGTH,
     UPDATE_INTERVAL,
 )
 from .exceptions import InvalidMasterToken
@@ -51,22 +52,27 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
         if user_input is not None:
             username = user_input[CONF_USERNAME]
+            password = user_input[CONF_PASSWORD]
             session = async_create_clientsession(self.hass)
-            client = GlocaltokensApiClient(
-                hass=self.hass,
-                session=session,
-                username=user_input[CONF_USERNAME],
-                password=user_input[CONF_PASSWORD],
-            )
-            master_token = await self._test_credentials(client)
-            if master_token is not None:
-                config_data: dict[str, str] = {}
-                config_data[CONF_USERNAME] = user_input[CONF_USERNAME]
-                config_data[CONF_PASSWORD] = user_input[CONF_PASSWORD]
-                config_data[CONF_MASTER_TOKEN] = master_token
-                config_data[CONF_ANDROID_ID] = await client.get_android_id()
-                return self.async_create_entry(title=username, data=config_data)
-            self._errors["base"] = "auth"
+
+            if len(password) < MAX_PASSWORD_LENGTH:
+                client = GlocaltokensApiClient(
+                    hass=self.hass,
+                    session=session,
+                    username=username,
+                    password=password,
+                )
+                master_token = await self._test_credentials(client)
+                if master_token is not None:
+                    config_data: dict[str, str] = {}
+                    config_data[CONF_USERNAME] = username
+                    config_data[CONF_PASSWORD] = password
+                    config_data[CONF_MASTER_TOKEN] = master_token
+                    config_data[CONF_ANDROID_ID] = await client.get_android_id()
+                    return self.async_create_entry(title=username, data=config_data)
+                self._errors["base"] = "auth"
+            else:
+                self._errors["base"] = "pass-len"
         return await self._show_config_form()
 
     @staticmethod

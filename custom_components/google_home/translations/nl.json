@@ -1,0 +1,29 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Google Home authenticatie",
+        "description": "Als je hulp nodig hebt bij de configuratie, kijk dan hier: https://github.com/leikoilja/ha-google-home. Gebruik de gebruikersnaam en het app-wachtwoord van uw Google-account. Het is veiliger/gemakkelijker om een app-wachtwoord te genereren en dit te gebruiken in plaats van je daadwerkelijke wachtwoord. Het heeft nog steeds dezelfde toegang als het normale wachtwoord, maar nog steeds beter dan het echte wachtwoord te gebruiken tijdens het scripten. (https://myaccount.google.com/apppasswords). Als dat niet het geval is, zou het normale wachtwoord van uw Google-account moeten werken.",
+        "data": {
+          "username": "Google account gebruikersnaam",
+          "password": "Google account (app) wachtwoord"
+        }
+      }
+    },
+    "error": {
+      "auth": "Gebruikersnaam/Wachtwoord is niet correct. Als voor je Google-account 2FA is ingeschakeld, genereert u een app-wachtwoord (https://myaccount.google.com/apppasswords). Als authenticatie nog steeds mislukt, raadpleeg dan https://github.com/leikoilja/ha-google-home#troubleshooting"
+    },
+    "abort": {
+      "single_instance_allowed": "Er is maar 1 intergratie toegestaan."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "update_interval": "Wijzig het update-interval. Verhoog dit als u last heeft van een time-out van apparaten. Standaard: 180 (seconden)"
+        }
+      }
+    }
+  }
+}
