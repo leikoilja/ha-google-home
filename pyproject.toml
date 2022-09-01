@@ -12,7 +12,7 @@ glocaltokens = "^0.6.7"
 homeassistant = "2022.6.0"
 
 [tool.poetry.dev-dependencies]
-black = "^22.3"
+black = "^22.8"
 codespell = "^2.2.1"
 flake8 = "^5.0.4"
 flake8-bugbear = "^22.8.23"
