@@ -374,7 +374,7 @@ python-versions = ">=3.7"
 
 [[package]]
 name = "glocaltokens"
-version = "0.6.7"
+version = "0.6.8"
 description = "Tool to extract Google device local authentication tokens in Python"
 category = "main"
 optional = false
@@ -382,11 +382,11 @@ python-versions = ">=3.8,<4.0"
 
 [package.dependencies]
 gpsoauth = ">=1.0.1,<2.0.0"
-grpcio = ">=1.46.1,<2.0.0"
+grpcio = ">=1.46.0"
 protobuf = ">=3.20.1,<4.0.0"
-requests = ">=2.27.1,<3.0.0"
+requests = ">=2.27.0"
 simplejson = ">=3.17.2,<4.0.0"
-zeroconf = ">=0.38.6,<0.39.0"
+zeroconf = ">=0.38.0"
 
 [[package]]
 name = "gpsoauth"
@@ -997,7 +997,7 @@ ifaddr = ">=0.1.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "3054a141c1a1069d3015411a7f007f73cdd15248d3e84e2f9a8e3cf4aed5069f"
+content-hash = "0fdbda1b9a3891d6ee3dedfd7ff725d7ecca2eaf81c7394365e0d6d2bef63ae9"
 
 [metadata.files]
 aiohttp = [
@@ -1354,8 +1354,8 @@ frozenlist = [
     {file = "frozenlist-1.3.0.tar.gz", hash = "sha256:ce6f2ba0edb7b0c1d8976565298ad2deba6f8064d2bebb6ffce2ca896eb35b0b"},
 ]
 glocaltokens = [
-    {file = "glocaltokens-0.6.7-py3-none-any.whl", hash = "sha256:9532b2c562e964cb64100de0e514f90089fa7fe7926bb691adab209829858a89"},
-    {file = "glocaltokens-0.6.7.tar.gz", hash = "sha256:8bd9a7aac2e25d7d59ae283654b715f8c2142fba4e6dad9c7cbabc97aadc6cae"},
+    {file = "glocaltokens-0.6.8-py3-none-any.whl", hash = "sha256:afe3e11922358da270498b8ef4bbc54b1dff8e6cc873c45eb1e32b6c77032252"},
+    {file = "glocaltokens-0.6.8.tar.gz", hash = "sha256:d966b63b5e409a5ed48a35a69331cf3387f4360fcf9b3693e4547024b0263a84"},
 ]
 gpsoauth = [
     {file = "gpsoauth-1.0.2-py3-none-any.whl", hash = "sha256:8f195b5f30df3109a79e6c8d45f2bd45c0fe64dfef7a5abc033bc6508f961abf"},
