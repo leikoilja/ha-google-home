@@ -1022,7 +1022,7 @@ ifaddr = ">=0.1.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "ffd4de085a612cf3fb77cbc6ebdd591fee51d4718588b06d81a5a24d337f678d"
+content-hash = "45a34ade76b1e83e22ec10f0519fd7be64f9db8210bbfb551841d4aee4778c61"
 
 [metadata.files]
 aiohttp = [
