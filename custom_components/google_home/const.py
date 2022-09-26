@@ -78,7 +78,7 @@ API_ENDPOINT_ALARM_VOLUME: Final = "setup/assistant/alarms/volume"
 API_ENDPOINT_REBOOT: Final = "setup/reboot"
 API_ENDPOINT_DO_NOT_DISTURB: Final = "setup/assistant/notifications"
 
-#Added
+# Added
 API_ENDPOINT_BLUETOOTH_SCAN: Final = "setup/bluetooth/scan"
 API_ENDPOINT_BLUETOOTH_RESULTS: Final = "setup/bluetooth/scan_results"
 

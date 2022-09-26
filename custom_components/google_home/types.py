@@ -23,11 +23,12 @@ class TimerJsonDict(TypedDict, total=False):
     status: int
     label: str | None
 
+
 class BTJsonDict(TypedDict, total=False):
-    """Typed dict for JSON representation of bluetooth items returned by Google Home API"""
+    """Typed dict for JSON representation of BT items returned by Google Home API"""
 
     id: str
-    mac_address: string
+    mac_address: str
     device_class: int
     device_type: int
     rssi: int
@@ -51,12 +52,11 @@ class GoogleHomeBTDeviceDict(TypedDict):
     """Typed dict representation of Google Home bluetooth device"""
 
     mac_address: str
-    device_class: int
-    device_type: int
+    device_class: str
+    device_type: str
     rssi: int
     expected_profiles: int
     name: str | None
-
 
 
 class GoogleHomeTimerDict(TypedDict):
@@ -74,6 +74,7 @@ class GoogleHomeTimerDict(TypedDict):
 class DeviceAttributes(TypedDict):
     """Typed dict for device attributes"""
 
+    device_id: str | None
     device_name: str
     auth_token: str | None
     ip_address: str | None
@@ -87,9 +88,13 @@ class AlarmsAttributes(TypedDict):
     alarm_volume: float
     alarms: list[GoogleHomeAlarmDict]
 
+
 class BTDeviceAttributes(TypedDict):
-    bt__devices: list[GoogleHomeBTDeviceDict]
+    """Typed dict for BT device attributes"""
+
+    bt_devices: list[GoogleHomeBTDeviceDict]
     integration: str
+
 
 class TimersAttributes(TypedDict):
     """Typed dict for timers attributes"""
