@@ -8,14 +8,14 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.9"
-glocaltokens = "^0.6.7"
+glocaltokens = "^0.6.8"
 homeassistant = "2022.6.0"
 
-[tool.poetry.dev-dependencies]
-black = "^22.3"
-codespell = "^2.1.0"
+[tool.poetry.group.dev.dependencies]
+black = "^22.8"
+codespell = "^2.2.1"
 flake8 = "^5.0.4"
-flake8-bugbear = "^22.7.1"
+flake8-bugbear = "^22.8.23"
 flake8-comprehensions = "^3.10.0"
 flake8-simplify = "^0.19.3"
 flake8-use-fstring = "^1.4"
@@ -24,8 +24,10 @@ isort = "^5.10.1"
 mypy = "^0.971"
 pre-commit = "^2.20.0"
 PyGithub = "^1.54.1"
-pylint = "^2.14.5"
-types-requests = "^2.28.8"
+pylint = "^2.15.2"
+types-requests = "^2.28.9"
+setuptools = "^65.3.0"
+
 
 [tool.pylint.messages_control]
 # Reasons disabled:
