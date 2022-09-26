@@ -3,22 +3,24 @@ from __future__ import annotations
 
 from datetime import timedelta
 from enum import Enum
+import logging
 import sys
+from typing import List
 
 from homeassistant.util.dt import as_local, utc_from_timestamp
 
 from .const import DATETIME_STR_FORMAT, GOOGLE_HOME_ALARM_DEFAULT_VALUE
 from .types import (
     AlarmJsonDict,
+    BTJsonDict,
     GoogleHomeAlarmDict,
     GoogleHomeBTDeviceDict,
     GoogleHomeTimerDict,
     TimerJsonDict,
-    BTJsonDict
 )
 
-import logging
 _LOGGER: logging.Logger = logging.getLogger(__package__)
+
 
 def convert_from_ms_to_s(timestamp: int) -> int:
     """Converts from milliseconds to seconds"""
@@ -49,19 +51,18 @@ class GoogleHomeDevice:
         self._bt_devices: list[GoogleHomeBTDevice] = []
 
     def set_bt(self, devices: list[BTJsonDict]) -> None:
+        """Stores BT devices as GoogleHomeBTDevice objects"""
         self._bt_devices = [
             GoogleHomeBTDevice(
-                mac_address = device['mac_address'],
-                device_class = device['device_class'],
-                device_type = device['device_type'],
-                rssi = device['rssi'],
-                expected_profiles = device['expected_profiles'],
-                name = device['name'],
-
+                mac_address=device["mac_address"],
+                device_class=device["device_class"],
+                device_type=device["device_type"],
+                rssi=device["rssi"],
+                expected_profiles=device["expected_profiles"],
+                name=device["name"],
             )
             for device in devices
         ]
-
 
     def set_alarms(self, alarms: list[AlarmJsonDict]) -> None:
         """Stores alarms as GoogleHomeAlarm objects"""
@@ -100,11 +101,8 @@ class GoogleHomeDevice:
         )
 
     def get_sorted_bt_devices(self) -> list[GoogleHomeBTDevice]:
-
-        return sorted(
-            self._bt_devices,
-            key=lambda k: k.rssi,
-            reverse=True)
+        """Returns sorted BT devices"""
+        return sorted(self._bt_devices, key=lambda k: k.rssi, reverse=True)
 
     def get_next_alarm(self) -> GoogleHomeAlarm | None:
         """Returns next alarm"""
@@ -112,7 +110,7 @@ class GoogleHomeDevice:
         return alarms[0] if alarms else None
 
     def get_closest_device(self) -> GoogleHomeBTDevice | None:
-
+        """Returns the closest BT device"""
         devices = self.get_sorted_bt_devices()
         return devices[0] if devices else None
 
@@ -184,8 +182,9 @@ class GoogleHomeTimer:
             "label": self.label,
         }
 
+
 class GoogleHomeBTDevice:
-    """Local representation of Google Home alarm"""
+    """Local representation of detected BT devices"""
 
     def __init__(
         self,
@@ -208,7 +207,7 @@ class GoogleHomeBTDevice:
         """Return typed dict representation."""
         return {
             "mac_address": self.mac_address,
-            "device_class": self._decode_device_class(self.device_class),
+            "device_class": self._decode_device_class(),
             "device_type": self._decode_device_type(self.device_type),
             "rssi": self.rssi,
             "expected_profiles": self.expected_profiles,
@@ -217,183 +216,293 @@ class GoogleHomeBTDevice:
 
     @staticmethod
     def _decode_device_type(device_type: int) -> str:
-        types = ['BREDR', "BLE"]
+        types = ["BREDR", "BLE"]
 
         out_types = []
 
         for num, name in enumerate(types):
             if device_type & (1 << num):
                 out_types.append(name)
-        
 
-        return '|'.join(out_types)
+        return "|".join(out_types)
 
     @staticmethod
-    def _decode_device_class(device_class: int) -> str:
-
+    def _device_major_class(major_number: int) -> str:
         # Major Device Classes
-        classes = ['Miscellaneous', 'Computer', 'Phone', 'LAN/Network Access Point',
-                   'Audio/Video', 'Peripheral', 'Imaging', 'Wearable', 'Toy',
-                   'Health']
-        major_number = (device_class >> 8) & 0x1f
+        classes = [
+            "Miscellaneous",
+            "Computer",
+            "Phone",
+            "LAN/Network Access Point",
+            "Audio/Video",
+            "Peripheral",
+            "Imaging",
+            "Wearable",
+            "Toy",
+            "Health",
+        ]
         if major_number < len(classes):
             major = classes[major_number]
         elif major_number == 31:
-            major = 'Uncategorized'
+            major = "Uncategorized"
         else:
-            major = 'Reserved'
+            major = "Reserved"
+        return major
+
+    @staticmethod
+    def _device_class_imaging(minor_number: int) -> str:
+        minors = []
+        minor = ""
+        if minor_number & (1 << 2):
+            minors.append("Display")
+        if minor_number & (1 << 3):
+            minors.append("Camera")
+        if minor_number & (1 << 4):
+            minors.append("Scanner")
+        if minor_number & (1 << 5):
+            minors.append("Printer")
+        if len(minors) > 0:
+            minor = ", ".join(minors)
+        return minor
+
+    @staticmethod
+    def _device_class_peripheral(minor_number: int) -> str:
+        feel_number = minor_number >> 4
+        classes = [
+            "Not Keyboard / Not Pointing Device",
+            "Keyboard",
+            "Pointing device",
+            "Combo keyboard/pointing device",
+        ]
+        feel = classes[feel_number]
+
+        classes = [
+            "Uncategorized",
+            "Joystick",
+            "Gamepad",
+            "Remote control",
+            "Sensing device",
+            "Digitizer tablet",
+            "Card Reader",
+            "Digital Pen",
+            "Handheld scanner for bar-codes, RFID, etc.",
+            "Handheld gestural input device",
+        ]
+        if minor_number < len(classes):
+            minor_low = classes[minor_number]
+        else:
+            minor_low = "reserved"
+        return f"{feel}, {minor_low}"
+
+    @staticmethod
+    def _device_major_service_class(device_class: int) -> List[str]:
+        services = []
+        if device_class & (1 << 23):
+            services.append("Information")
+        if device_class & (1 << 22):
+            services.append("Telephony")
+        if device_class & (1 << 21):
+            services.append("Audio")
+        if device_class & (1 << 20):
+            services.append("Object Transfer")
+        if device_class & (1 << 19):
+            services.append("Capturing")
+        if device_class & (1 << 18):
+            services.append("Rendering")
+        if device_class & (1 << 17):
+            services.append("Networking")
+        if device_class & (1 << 16):
+            services.append("Positioning")
+        if device_class & (1 << 15):
+            services.append("(reserved)")
+        if device_class & (1 << 14):
+            services.append("(reserved)")
+        if device_class & (1 << 13):
+            services.append("Limited Discoverable Mode")
+        return services
+
+    def _decode_device_class(self) -> str:
+        major_number = (self.device_class >> 8) & 0x1F
+        major = self._device_major_class(major_number)
 
         # Minor - varies depending on major
-        minor_number = (device_class >> 2) & 0x3f
+        minor_number = (self.device_class >> 2) & 0x3F
         minor = None
 
         # computer
         if major_number == 1:
-            classes = [
-                'Uncategorized', 'Desktop workstation', 'Server-class computer',
-                'Laptop', 'Handheld PC/PDA (clamshell)', 'Palm-size PC/PDA',
-                'Wearable computer (watch size)', 'Tablet']
-            if minor_number < len(classes):
-                minor = classes[minor_number]
-            else:
-                minor = 'reserved'
+            minor = self._device_class_computer(minor_number)
 
         # phone
         elif major_number == 2:
-            classes = [
-                'Uncategorized', 'Cellular', 'Cordless', 'Smartphone',
-                'Wired modem or voice gateway', 'Common ISDN access']
-            if minor_number < len(classes):
-                minor = classes[minor_number]
-            else:
-                minor = 'reserved'
+            minor = self._device_class_phone(minor_number)
 
         # network access point
         elif major_number == 3:
-            minor_number >> 3
-            classes = [
-                'Fully available', '1% to 17% utilized', '17% to 33% utilized',
-                '33% to 50% utilized', '50% to 67% utilized',
-                '67% to 83% utilized', '83% to 99% utilized',
-                'No service available']
-            if minor_number < len(classes):
-                minor = classes[minor_number]
-            else:
-                minor = 'reserved'
+            minor = self._device_class_ap(minor_number)
 
         # audio/video
         elif major_number == 4:
-            classes = [
-                'Uncategorized', 'Wearable Headset Device', 'Hands-free Device',
-                '(Reserved)', 'Microphone', 'Loudspeaker', 'Headphones',
-                'Portable Audio', 'Car audio', 'Set-top box', 'HiFi Audio Device',
-                'VCR', 'Video Camera', 'Camcorder', 'Video Monitor',
-                'Video Display and Loudspeaker', 'Video Conferencing',
-                '(Reserved)', 'Gaming/Toy']
-            if minor_number < len(classes):
-                minor = classes[minor_number]
-            else:
-                minor = 'reserved'
+            minor = self._device_class_av(minor_number)
 
         # peripheral, this one's gross
         elif major_number == 5:
-            feel_number = minor_number >> 4
-            classes = [
-                'Not Keyboard / Not Pointing Device', 'Keyboard',
-                'Pointing device', 'Combo keyboard/pointing device']
-            feel = classes[feel_number]
-
-            classes = [
-                'Uncategorized', 'Joystick', 'Gamepad', 'Remote control',
-                'Sensing device', 'Digitizer tablet', 'Card Reader', 'Digital Pen',
-                'Handheld scanner for bar-codes, RFID, etc.',
-                'Handheld gestural input device' ]
-            if minor_number < len(classes):
-                minor_low = classes[minor_number]
-            else:
-                minor_low = 'reserved'
-            
-            minor = '%s, %s' % (feel, minor_low)
+            minor = self._device_class_peripheral(minor_number)
 
         # imaging
         elif major_number == 6:
-            minors = []
-            if minor_number & (1 << 2):
-                minors.append('Display')
-            if minor_number & (1 << 3):
-                minors.append('Camera')
-            if minor_number & (1 << 4):
-                minors.append('Scanner')
-            if minor_number & (1 << 5):
-                minors.append('Printer')
-            if len(minors > 0):
-                minors = ', '.join(minors)
+            minor = self._device_class_imaging(minor_number)
 
         # wearable
         elif major_number == 7:
-            classes = ['Wristwatch', 'Pager', 'Jacket', 'Helmet', 'Glasses']
-            if minor_number < len(classes):
-                minor = classes[minor_number]
-            else:
-                minor = 'reserved'
+            minor = self._device_class_wearable(minor_number)
 
         # toy
         elif major_number == 8:
-            classes = ['Robot', 'Vehicle', 'Doll / Action figure', 'Controller',
-                       'Game']
-            if minor_number < len(classes):
-                minor = classes[minor_number]
-            else:
-                minor = 'reserved'
+            self._device_class_toy(minor_number)
 
         # health
         elif major_number == 9:
-            classes = [
-                'Undefined', 'Blood Pressure Monitor', 'Thermometer',
-                'Weighing Scale', 'Glucose Meter', 'Pulse Oximeter',
-                'Heart/Pulse Rate Monitor', 'Health Data Display', 'Step Counter',
-                'Body Composition Analyzer', 'Peak Flow Monitor',
-                'Medication Monitor', 'Knee Prosthesis', 'Ankle Prosthesis',
-                'Generic Health Manager', 'Personal Mobility Device']
-            if minor_number < len(classes):
-                minor = classes[minor_number]
-            else:
-                minor = 'reserved'
+            minor = self._device_class_health(minor_number)
 
         # Major Service Class (can by multiple)
-        services = []
-        if device_class & (1 << 23):
-            services.append('Information')
-        if device_class & (1 << 22):
-            services.append('Telephony')
-        if device_class & (1 << 21):
-            services.append('Audio')
-        if device_class & (1 << 20):
-            services.append('Object Transfer')
-        if device_class & (1 << 19):
-            services.append('Capturing')
-        if device_class & (1 << 18):
-            services.append('Rendering')
-        if device_class & (1 << 17):
-            services.append('Networking')
-        if device_class & (1 << 16):
-            services.append('Positioning')
-        if device_class & (1 << 15):
-            services.append('(reserved)')
-        if device_class & (1 << 14):
-            services.append('(reserved)')
-        if device_class & (1 << 13):
-            services.append('Limited Discoverable Mode')
+        services = self._device_major_service_class(self.device_class)
 
         output = str(major)
         if minor is not None:
-            output += ' (%s)' % minor
+            output += f" ({minor}s)"
 
-        if services:    
-            output += ': '
-            output += ', '.join(services)
+        if services:
+            output += ": "
+            output += ", ".join(services)
 
         return output
+
+    @staticmethod
+    def _device_class_health(minor_number: int) -> str:
+        classes = [
+            "Undefined",
+            "Blood Pressure Monitor",
+            "Thermometer",
+            "Weighing Scale",
+            "Glucose Meter",
+            "Pulse Oximeter",
+            "Heart/Pulse Rate Monitor",
+            "Health Data Display",
+            "Step Counter",
+            "Body Composition Analyzer",
+            "Peak Flow Monitor",
+            "Medication Monitor",
+            "Knee Prosthesis",
+            "Ankle Prosthesis",
+            "Generic Health Manager",
+            "Personal Mobility Device",
+        ]
+        if minor_number < len(classes):
+            minor = classes[minor_number]
+        else:
+            minor = "reserved"
+        return minor
+
+    @staticmethod
+    def _device_class_toy(minor_number: int) -> str:
+        classes = ["Robot", "Vehicle", "Doll / Action figure", "Controller", "Game"]
+        if minor_number < len(classes):
+            minor = classes[minor_number]
+        else:
+            minor = "reserved"
+        return minor
+
+    @staticmethod
+    def _device_class_wearable(minor_number: int) -> str:
+        classes = ["Wristwatch", "Pager", "Jacket", "Helmet", "Glasses"]
+        if minor_number < len(classes):
+            minor = classes[minor_number]
+        else:
+            minor = "reserved"
+        return minor
+
+    @staticmethod
+    def _device_class_av(minor_number: int) -> str:
+        classes = [
+            "Uncategorized",
+            "Wearable Headset Device",
+            "Hands-free Device",
+            "(Reserved)",
+            "Microphone",
+            "Loudspeaker",
+            "Headphones",
+            "Portable Audio",
+            "Car audio",
+            "Set-top box",
+            "HiFi Audio Device",
+            "VCR",
+            "Video Camera",
+            "Camcorder",
+            "Video Monitor",
+            "Video Display and Loudspeaker",
+            "Video Conferencing",
+            "(Reserved)",
+            "Gaming/Toy",
+        ]
+        if minor_number < len(classes):
+            minor = classes[minor_number]
+        else:
+            minor = "reserved"
+        return minor
+
+    @staticmethod
+    def _device_class_ap(minor_number: int) -> str:
+        classes = [
+            "Fully available",
+            "1% to 17% utilized",
+            "17% to 33% utilized",
+            "33% to 50% utilized",
+            "50% to 67% utilized",
+            "67% to 83% utilized",
+            "83% to 99% utilized",
+            "No service available",
+        ]
+        if minor_number < len(classes):
+            minor = classes[minor_number]
+        else:
+            minor = "reserved"
+        return minor
+
+    @staticmethod
+    def _device_class_phone(minor_number: int) -> str:
+        classes = [
+            "Uncategorized",
+            "Cellular",
+            "Cordless",
+            "Smartphone",
+            "Wired modem or voice gateway",
+            "Common ISDN access",
+        ]
+        if minor_number < len(classes):
+            minor = classes[minor_number]
+        else:
+            minor = "reserved"
+        return minor
+
+    @staticmethod
+    def _device_class_computer(minor_number: int) -> str:
+        classes = [
+            "Uncategorized",
+            "Desktop workstation",
+            "Server-class computer",
+            "Laptop",
+            "Handheld PC/PDA (clamshell)",
+            "Palm-size PC/PDA",
+            "Wearable computer (watch size)",
+            "Tablet",
+        ]
+        if minor_number < len(classes):
+            minor = classes[minor_number]
+        else:
+            minor = "reserved"
+        return minor
+
 
 class GoogleHomeAlarm:
     """Local representation of Google Home alarm"""
