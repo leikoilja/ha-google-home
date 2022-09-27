@@ -78,7 +78,7 @@ With Poetry installed, run `poetry install` in the repo root.
 It will create a virualenv with all required packages.
 
 After that you can run [pre-commit](https://pre-commit.com/) with settings included in the
-repostory to have code style and linting checks.
+repository to have code style and linting checks.
 
 Activate `pre-commit` git hook:
 
