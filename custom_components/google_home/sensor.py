@@ -88,7 +88,7 @@ async def async_setup_entry(
                     client,
                     device.device_id,
                     device.name,
-                    device.device_model,
+                    device.hardware,
                 ),
             ]
     async_add_devices(sensors)
