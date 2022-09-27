@@ -295,7 +295,7 @@ class GoogleHomeBTDevice:
         return f"{feel}, {minor_low}"
 
     @staticmethod
-    def _device_major_service_class(device_class: int) -> List[str]:
+    def _device_major_service_class(device_class: int) -> list[str]:
         services = []
         if device_class & (1 << 23):
             services.append("Information")
