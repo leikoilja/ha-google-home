@@ -5,7 +5,6 @@ from datetime import timedelta
 from enum import Enum
 import logging
 import sys
-from typing import List
 
 from homeassistant.util.dt import as_local, utc_from_timestamp
 
@@ -295,7 +294,7 @@ class GoogleHomeBTDevice:
         return f"{feel}, {minor_low}"
 
     @staticmethod
-    def _device_major_service_class(device_class: int) -> List[str]:
+    def _device_major_service_class(device_class: int) -> list[str]:
         services = []
         if device_class & (1 << 23):
             services.append("Information")
