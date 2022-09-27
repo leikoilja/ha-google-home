@@ -5,7 +5,6 @@ from datetime import timedelta
 from enum import Enum
 import logging
 import sys
-from typing import List
 
 from homeassistant.util.dt import as_local, utc_from_timestamp
 
