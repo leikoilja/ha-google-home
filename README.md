@@ -403,6 +403,7 @@ Currently the integration supports the following languages:
 - Danish
 - Dutch
 - English
+- French
 - German (Germany)
 - Italian (Italy)
 - Norwegian (bokmål and nynorsk)
