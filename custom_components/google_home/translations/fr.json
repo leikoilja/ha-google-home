@@ -1,0 +1,30 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Google Home authentification",
+        "description": "Si vous avez besoin d'aide pour la configuration, regardez ici: https://github.com/leikoilja/ha-google-home. Utilisez votre compte Google et un mot de passe d'application. C'est facile/sécuritaire de générer un mot de passe d'application et de l'utiliser à la place de votre mot de passe Google. Il aura les mêmes accès que votre mot de passe régulier, mais cela est bien mieux que d'utiliser votre mot de passe Google pour du développement. (https://myaccount.google.com/apppasswords). Au cas où, votre mot de passe Google régulier devrait fonctionner.",
+        "data": {
+          "username": "Nom d'utilisateur Google ",
+          "password": "Mot de passe d'application"
+        }
+      }
+    },
+    "error": {
+      "auth": "Utilisateur/Mot de passe incorrect. Si votre compte Google utilise la double authentification, veuillez utiliser un mot de passe d'application (https://myaccount.google.com/apppasswords). Si l'authentification ne fonctionne toujours pas, veuillez vous référer à https://github.com/leikoilja/ha-google-home#troubleshooting",
+      "pass-len": "La longueur du mot de passe est limitée à 100 caractères par Google (https://support.google.com/a/answer/139399). Veuillez changer votre mot de passe ou utiliser un mot de passe d'application (https://myaccount.google.com/apppasswords)."
+    },
+    "abort": {
+      "single_instance_allowed": "Une seule installation est autorisée."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "update_interval": "Modifier la fréquence de mise à jour. Augmentez ce paramètre si vous subissez des problèmes de timeout. Défaut: 180 (Secondes)"
+        }
+      }
+    }
+  }
+}
