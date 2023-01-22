@@ -307,7 +307,7 @@ class GlocaltokensApiClient:
         return device
 
     async def update_alarm_volume(
-        self, device: GoogleHomeDevice, volume: int | None = None
+        self, device: GoogleHomeDevice, volume: float | None = None
     ) -> GoogleHomeDevice:
         """Gets or sets the alarm volume setting on a Google Home device."""
 
