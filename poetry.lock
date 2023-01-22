@@ -1431,19 +1431,19 @@ files = [
 
 [[package]]
 name = "pygithub"
-version = "1.55"
+version = "1.57"
 description = "Use the full Github API v3"
 category = "dev"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 files = [
-    {file = "PyGithub-1.55-py3-none-any.whl", hash = "sha256:2caf0054ea079b71e539741ae56c5a95e073b81fa472ce222e81667381b9601b"},
-    {file = "PyGithub-1.55.tar.gz", hash = "sha256:1bbfff9372047ff3f21d5cd8e07720f3dbfdaf6462fcaed9d815f528f1ba7283"},
+    {file = "PyGithub-1.57-py3-none-any.whl", hash = "sha256:5822febeac2391f1306c55a99af2bc8f86c8bf82ded000030cd02c18f31b731f"},
+    {file = "PyGithub-1.57.tar.gz", hash = "sha256:c273f252b278fb81f1769505cc6921bdb6791e1cebd6ac850cc97dad13c31ff3"},
 ]
 
 [package.dependencies]
 deprecated = "*"
-pyjwt = ">=2.0"
+pyjwt = ">=2.4.0"
 pynacl = ">=1.4.0"
 requests = ">=2.14.0"
 
@@ -2072,4 +2072,4 @@ ifaddr = ">=0.1.7"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "4ba0132faa3383bd68aa562697f3da6600c2377d485667f923328cb5ada91066"
+content-hash = "6646624dc7f37321547c71c05e8e6872d7c26535d417c7d3b27de851030a8726"
