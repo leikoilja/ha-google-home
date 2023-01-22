@@ -94,7 +94,7 @@ class AlarmVolumeNumber(GoogleHomeBaseEntity, NumberEntity):
         volume = device.get_alarm_volume()
         return volume
 
-    async def async_set_native_value(self, value: int) -> None:
+    async def async_set_native_value(self, value: float) -> None:
         """Sets the alarm volume"""
         device = self.get_device()
         if device is None:
