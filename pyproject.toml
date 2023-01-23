@@ -25,7 +25,7 @@ mypy = "^0.971"
 pre-commit = "^2.21.0"
 PyGithub = "^1.57"
 pylint = "^2.15.2"
-types-requests = "^2.28.9"
+types-requests = "^2.28.11"
 setuptools = "^65.7.0"
 
 
