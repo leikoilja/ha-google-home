@@ -5,8 +5,9 @@ import logging
 
 import voluptuous as vol
 
+from homeassistant.components.sensor import SensorDeviceClass
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import DEVICE_CLASS_TIMESTAMP, STATE_UNAVAILABLE
+from homeassistant.const import STATE_UNAVAILABLE
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import config_validation as cv, entity_platform
 from homeassistant.helpers.entity import Entity, EntityCategory
@@ -160,7 +161,7 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
     """Google Home Alarms sensor."""
 
     _attr_icon = ICON_ALARMS
-    _attr_device_class = DEVICE_CLASS_TIMESTAMP
+    _attr_device_class = SensorDeviceClass.TIMESTAMP
 
     @property
     def label(self) -> str:
@@ -242,7 +243,7 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
     """Google Home Timers sensor."""
 
     _attr_icons = ICON_TIMERS
-    _attr_device_class = DEVICE_CLASS_TIMESTAMP
+    _attr_device_class = SensorDeviceClass.TIMESTAMP
 
     @property
     def label(self) -> str:
