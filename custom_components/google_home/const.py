@@ -32,9 +32,6 @@ ICON_ALARM_VOLUME_MID: Final = "mdi:volume-medium"
 ICON_ALARM_VOLUME_HIGH: Final = "mdi:volume-high"
 ICON_ALARM_VOLUME_OFF: Final = "mdi:volume-off"
 
-# Device classes
-BINARY_SENSOR_DEVICE_CLASS: Final = "connectivity"
-
 # Platforms
 SENSOR: Final = "sensor"
 SWITCH: Final = "switch"
