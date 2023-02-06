@@ -4,7 +4,7 @@ from __future__ import annotations
 import asyncio
 from http import HTTPStatus
 import logging
-from typing import List, Literal, cast
+from typing import Literal, cast
 
 from aiohttp import ClientError, ClientSession
 from aiohttp.client_exceptions import ClientConnectorError, ContentTypeError
@@ -164,8 +164,8 @@ class GlocaltokensApiClient:
 
         if response is not None:
             if JSON_TIMER in response and JSON_ALARM in response:
-                device.set_timers(cast(List[TimerJsonDict], response[JSON_TIMER]))
-                device.set_alarms(cast(List[AlarmJsonDict], response[JSON_ALARM]))
+                device.set_timers(cast(list[TimerJsonDict], response[JSON_TIMER]))
+                device.set_alarms(cast(list[AlarmJsonDict], response[JSON_ALARM]))
                 _LOGGER.debug(
                     "Successfully retrieved alarms and timers from %s. Response: %s",
                     device.name,

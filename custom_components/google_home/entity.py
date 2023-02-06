@@ -14,7 +14,7 @@ from .models import GoogleHomeDevice
 from .types import DeviceInfo
 
 
-class GoogleHomeBaseEntity(CoordinatorEntity, ABC):
+class GoogleHomeBaseEntity(CoordinatorEntity[DataUpdateCoordinator], ABC):
     """Base entity base for Google Home sensors"""
 
     def __init__(

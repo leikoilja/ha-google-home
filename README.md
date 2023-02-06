@@ -204,7 +204,7 @@ data:
 
 ### Prerequisites
 
-Use Home Assistant v2022.6.0 or above.
+Use Home Assistant v2023.2.0 or above.
 
 ### Google Account security
 
