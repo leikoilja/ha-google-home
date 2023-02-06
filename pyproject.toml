@@ -9,7 +9,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10"
 glocaltokens = "^0.6.8"
-homeassistant = "^2023.2.0"
+homeassistant = "^2023.2.2"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"
