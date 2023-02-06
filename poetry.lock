@@ -779,14 +779,14 @@ files = [
 
 [[package]]
 name = "glocaltokens"
-version = "0.6.8"
+version = "0.6.9"
 description = "Tool to extract Google device local authentication tokens in Python"
 category = "main"
 optional = false
-python-versions = ">=3.8,<4.0"
+python-versions = ">=3.9,<4.0"
 files = [
-    {file = "glocaltokens-0.6.8-py3-none-any.whl", hash = "sha256:afe3e11922358da270498b8ef4bbc54b1dff8e6cc873c45eb1e32b6c77032252"},
-    {file = "glocaltokens-0.6.8.tar.gz", hash = "sha256:d966b63b5e409a5ed48a35a69331cf3387f4360fcf9b3693e4547024b0263a84"},
+    {file = "glocaltokens-0.6.9-py3-none-any.whl", hash = "sha256:32702a39ac4c6011aaa397dd8d89f231016b221fcad3a2d463643cd2610f77c0"},
+    {file = "glocaltokens-0.6.9.tar.gz", hash = "sha256:5d1bcf7c794ba70a209c053fe2d28dacf91e75cb944e1d4acece1aa3309cfc9d"},
 ]
 
 [package.dependencies]
@@ -2297,4 +2297,4 @@ ifaddr = ">=0.1.7"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "2f2e62e93d25424e5986a80c2e40e753b865611ae4e21ab35fefa7ebcca7de77"
+content-hash = "6610a569eef13fc9520e505220e554e07051cec13f62af6cb753b76e712683d7"
