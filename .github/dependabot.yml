@@ -6,6 +6,8 @@ updates:
       interval: daily
     labels:
       - "dependencies"
+    ignore:
+      - dependency-name: "homeassistant"
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
