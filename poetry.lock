@@ -901,14 +901,14 @@ files = [
 
 [[package]]
 name = "homeassistant"
-version = "2023.2.0"
+version = "2023.2.2"
 description = "Open-source home automation platform running on Python 3."
 category = "main"
 optional = false
 python-versions = ">=3.10.0"
 files = [
-    {file = "homeassistant-2023.2.0-py3-none-any.whl", hash = "sha256:3d9c8b4312098fb7399291a401f79a3b8a4d9faa371165fd64b8fb04ff794848"},
-    {file = "homeassistant-2023.2.0.tar.gz", hash = "sha256:60aa354eaab6b17466da359b6fd84f6fcf14efa3a6745f055a3d51cbb69abc2e"},
+    {file = "homeassistant-2023.2.2-py3-none-any.whl", hash = "sha256:54e67bc94f736ddd53499bd43b0d5b0a383623acd868deef862c9c88e944757e"},
+    {file = "homeassistant-2023.2.2.tar.gz", hash = "sha256:4a8f4a4c88c826e1669a2064984328bba7cd19c265be631eef7a391a9ee98026"},
 ]
 
 [package.dependencies]
@@ -941,18 +941,18 @@ yarl = "1.8.1"
 
 [[package]]
 name = "homeassistant-stubs"
-version = "2023.2.0"
+version = "2023.2.2"
 description = "PEP 484 typing stubs for Home Assistant Core"
 category = "dev"
 optional = false
 python-versions = ">=3.10,<4.0"
 files = [
-    {file = "homeassistant_stubs-2023.2.0-py3-none-any.whl", hash = "sha256:b8d916e3c11599d505504603e7b67ccf3a4de317f5775aaeb236599ec8009676"},
-    {file = "homeassistant_stubs-2023.2.0.tar.gz", hash = "sha256:515a89201f08897c65c4ee10735dac795ef68cf3d8df7a4ff0d0462dcf5d547a"},
+    {file = "homeassistant_stubs-2023.2.2-py3-none-any.whl", hash = "sha256:68c31f94d677d4f91e4be9fd344615445d47848910c6040b30c6f1c96cfb8085"},
+    {file = "homeassistant_stubs-2023.2.2.tar.gz", hash = "sha256:0401bba05cc3816729bde08b5b36353b016d544df2a0afae38c4f74c1b9b7441"},
 ]
 
 [package.dependencies]
-homeassistant = "2023.2.0"
+homeassistant = "2023.2.2"
 
 [[package]]
 name = "httpcore"
@@ -2297,4 +2297,4 @@ ifaddr = ">=0.1.7"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "29ff7fb94c822f621f274edbc6820d081e0afc4d60b25355dd5852f5274c8ef1"
+content-hash = "8de094a9d206b068cd5f01f8d91b1b156e077f45674cf410b4f307545d84c2bd"
