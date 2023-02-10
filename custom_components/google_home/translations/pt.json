@@ -3,15 +3,15 @@
     "step": {
       "user": {
         "title": "Autenticação Google Home",
-        "description": "Se precisar de ajuda com a configuração, consulte o site: https://github.com/leikoilja/ha-google-home Use o nome de utilizador da sua conta google e a palavra-passe da app. É mais seguro/fácil gerar uma palavra-passe da app e utilizá-la em vez da palavra-passe original. Tem o mesmo acesso que a palavra-passe normal, porém é melhor do que usar a palavra-passe original durante a execução de scripts. ( https://myaccount.google.com/apppasswords ). Caso contrário, a palavra-passe normal da conta google.",
+        "description": "Se precisar de ajuda com a configuração, consulte o site: https://github.com/leikoilja/ha-google-home. Use o nome de utilizador da sua conta google e a palavra-passe da app. É mais seguro/fácil gerar uma palavra-passe da app e utilizá-la em vez da palavra-passe original. Tem o mesmo acesso que a palavra-passe normal, porém é melhor do que usar a palavra-passe original durante a execução de scripts. (https://myaccount.google.com/apppasswords). Caso contrário, a palavra-passe normal da conta google funciona.",
         "data": {
-          "username": "Email da conta Google",
+          "username": "Nome de utilizador da conta Google",
           "password": "Palavra-passe da conta Google"
         }
       }
     },
     "error": {
-      "auth": "Email ou palavra-passe incorretos. Se a sua conta google tem 2FA activada, por favor gere a palavra-passe da app ( https://myaccount.google.com/apppasswords ). Se a autenticação continuar a falhar, consulte https://github.com/leikoilja/ha-google-home#troubleshooting "
+      "auth": "Nome de utilizador/palavra-passe incorretos. Se a sua conta google tem 2FA activada, por favor gere a palavra-passe da app (https://myaccount.google.com/apppasswords). Se a autenticação continuar a falhar, consulte https://github.com/leikoilja/ha-google-home#troubleshooting"
     },
     "abort": {
       "single_instance_allowed": "Apenas é permitida uma única instância."
