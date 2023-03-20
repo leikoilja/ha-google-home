@@ -1632,24 +1632,21 @@ files = [
 
 [[package]]
 name = "pygithub"
-version = "1.58.0"
+version = "1.58.1"
 description = "Use the full Github API v3"
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "PyGithub-1.58.0-py3-none-any.whl", hash = "sha256:b7bac601492a2b6c876ef326e4ffa3c1923e32707e415da76bfb8307ee8ffb7e"},
-    {file = "PyGithub-1.58.0.tar.gz", hash = "sha256:e325f5ca2c111d19dea2796c8f1e7ae11da77287007736582196341390d31d35"},
+    {file = "PyGithub-1.58.1-py3-none-any.whl", hash = "sha256:4e7fe9c3ec30d5fde5b4fbb97f18821c9dbf372bf6df337fe66f6689a65e0a83"},
+    {file = "PyGithub-1.58.1.tar.gz", hash = "sha256:7d528b4ad92bc13122129fafd444ce3d04c47d2d801f6446b6e6ee2d410235b3"},
 ]
 
 [package.dependencies]
 deprecated = "*"
-pyjwt = ">=2.4.0"
+pyjwt = {version = ">=2.4.0", extras = ["crypto"]}
 pynacl = ">=1.4.0"
 requests = ">=2.14.0"
-
-[package.extras]
-integrations = ["cryptography"]
 
 [[package]]
 name = "pyjwt"
@@ -1662,6 +1659,10 @@ files = [
     {file = "PyJWT-2.5.0-py3-none-any.whl", hash = "sha256:8d82e7087868e94dd8d7d418e5088ce64f7daab4b36db654cbaedb46f9d1ca80"},
     {file = "PyJWT-2.5.0.tar.gz", hash = "sha256:e77ab89480905d86998442ac5788f35333fa85f65047a534adc38edf3c88fc3b"},
 ]
+
+[package.dependencies]
+cryptography = {version = ">=3.3.1", optional = true, markers = "extra == \"crypto\""}
+types-cryptography = {version = ">=3.3.21", optional = true, markers = "extra == \"crypto\""}
 
 [package.extras]
 crypto = ["cryptography (>=3.3.1)", "types-cryptography (>=3.3.21)"]
@@ -2009,6 +2010,18 @@ python-versions = ">=3.6,<4.0"
 files = [
     {file = "tomlkit-0.11.0-py3-none-any.whl", hash = "sha256:0f4050db66fd445b885778900ce4dd9aea8c90c4721141fde0d6ade893820ef1"},
     {file = "tomlkit-0.11.0.tar.gz", hash = "sha256:71ceb10c0eefd8b8f11fe34e8a51ad07812cb1dc3de23247425fbc9ddc47b9dd"},
+]
+
+[[package]]
+name = "types-cryptography"
+version = "3.3.23.2"
+description = "Typing stubs for cryptography"
+category = "dev"
+optional = false
+python-versions = "*"
+files = [
+    {file = "types-cryptography-3.3.23.2.tar.gz", hash = "sha256:09cc53f273dd4d8c29fa7ad11fefd9b734126d467960162397bc5e3e604dea75"},
+    {file = "types_cryptography-3.3.23.2-py3-none-any.whl", hash = "sha256:b965d548f148f8e87f353ccf2b7bd92719fdf6c845ff7cedf2abb393a0643e4f"},
 ]
 
 [[package]]
