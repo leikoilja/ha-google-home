@@ -7,7 +7,7 @@
         "data": {
           "username": "Google Account Nutzername",
           "password": "Google Account App-Passwort",
-		  "master_token": "Google Account Master Token"
+          "master_token": "Google Account Master Token"
         }
       }
     },
