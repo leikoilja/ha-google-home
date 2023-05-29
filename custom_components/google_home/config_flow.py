@@ -51,37 +51,58 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             return self.async_abort(reason="single_instance_allowed")
 
         if user_input is not None:
-            username = user_input[CONF_USERNAME]
-            password = user_input[CONF_PASSWORD]
             session = async_create_clientsession(self.hass)
+            try:
+                username = user_input[CONF_USERNAME]
+                password = user_input[CONF_PASSWORD]
+            except KeyError:
+                # either no username or password provided
+                username = None
+                password = None
+            
             try:
                 master_token = user_input[CONF_MASTER_TOKEN]
             except KeyError:
                 # no master token provided
                 master_token = None
 
-            if len(password) < MAX_PASSWORD_LENGTH:
+            if master_token is None and username is None:
+                self._errors["base"] = "missing-inputs"
+                return await self._show_config_form()
+
+            if master_token is None:
+                # only try to get the master_token if none has been provided
+                # but prioritize master_token
+                if len(password) < MAX_PASSWORD_LENGTH:
+                    client = GlocaltokensApiClient(
+                        hass=self.hass,
+                        session=session,
+                        username=username,
+                        password=password,
+                    )
+                    master_token = await self._test_credentials(client)
+                    if master_token is not None:
+                        config_data: dict[str, str] = {}
+                        config_data[CONF_USERNAME] = username
+                        config_data[CONF_PASSWORD] = password
+                        config_data[CONF_ANDROID_ID] = await client.get_android_id()
+                        return self.async_create_entry(title=username, data=config_data)
+                    self._errors["base"] = "auth"
+                else:
+                    self._errors["base"] = "pass-len"
+            else:
                 client = GlocaltokensApiClient(
                     hass=self.hass,
                     session=session,
-                    username=username,
-                    password=password,
+                    master_token=master_token,
                 )
-
-                if master_token is None:
-                    # only try to get the master_token if none has been provided
-                    master_token = await self._test_credentials(client)
-
-                if master_token is not None:
-                    config_data: dict[str, str] = {}
-                    config_data[CONF_USERNAME] = username
-                    config_data[CONF_PASSWORD] = password
-                    config_data[CONF_MASTER_TOKEN] = master_token
-                    config_data[CONF_ANDROID_ID] = await client.get_android_id()
-                    return self.async_create_entry(title=username, data=config_data)
-                self._errors["base"] = "auth"
-            else:
-                self._errors["base"] = "pass-len"
+                # otherwise master_token has been provided
+                config_data: dict[str, str] = {}
+                config_data[CONF_MASTER_TOKEN] = master_token
+                config_data[CONF_USERNAME] = ""
+                config_data[CONF_PASSWORD] = ""
+                config_data[CONF_ANDROID_ID] = await client.get_android_id()
+                return self.async_create_entry(title="ha-google-home (master_token)", data=config_data)
         return await self._show_config_form()
 
     @staticmethod
@@ -97,8 +118,8 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="user",
             data_schema=vol.Schema(
                 {
-                    vol.Required(CONF_USERNAME): str,
-                    vol.Required(CONF_PASSWORD): str,
+                    vol.Optional(CONF_USERNAME): str,
+                    vol.Optional(CONF_PASSWORD): str,
                     vol.Optional(CONF_MASTER_TOKEN): str,
                 }
             ),

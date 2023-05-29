@@ -12,7 +12,8 @@
       }
     },
     "error": {
-      "auth": "Nutzername/Passwort ist nicht korrekt. Falls dein Google Account die Zwei-Faktor-Autentifizierung aktiviert hat, generiere bitte ein App Passwort (https://myaccount.google.com/apppasswords). Sollte die Authentifizierung weiterhin fehlschlagen, findest du weitere Informationen unter https://github.com/leikoilja/ha-google-home#troubleshooting"
+      "auth": "Nutzername/Passwort ist nicht korrekt. Falls dein Google Account die Zwei-Faktor-Autentifizierung aktiviert hat, generiere bitte ein App Passwort (https://myaccount.google.com/apppasswords). Sollte die Authentifizierung weiterhin fehlschlagen, findest du weitere Informationen unter https://github.com/leikoilja/ha-google-home#troubleshooting",
+      "missing-inputs": "Bitte entweder Nutzername und Passwort oder Master Token angeben."
     },
     "abort": {
       "single_instance_allowed": "Es ist nur eine Instanz erlaubt."
