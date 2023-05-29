@@ -53,6 +53,7 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         if user_input is not None:
             username = user_input[CONF_USERNAME]
             password = user_input[CONF_PASSWORD]
+            master_token = user_input[CONF_MASTER_TOKEN]
             session = async_create_clientsession(self.hass)
 
             if len(password) < MAX_PASSWORD_LENGTH:
@@ -62,7 +63,8 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     username=username,
                     password=password,
                 )
-                master_token = await self._test_credentials(client)
+                # do not try to authenticate as this fails anyway (see issue #599)
+                #master_token = await self._test_credentials(client)
                 if master_token is not None:
                     config_data: dict[str, str] = {}
                     config_data[CONF_USERNAME] = username
@@ -90,6 +92,7 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 {
                     vol.Required(CONF_USERNAME): str,
                     vol.Required(CONF_PASSWORD): str,
+                    vol.Required(CONF_MASTER_TOKEN): str,
                 }
             ),
             errors=self._errors,
