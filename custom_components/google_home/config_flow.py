@@ -52,47 +52,52 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
         if user_input is not None:
             session = async_create_clientsession(self.hass)
-  username = user_input.get(CONF_USERNAME)
-  password = user_input.get(CONF_PASSWORD)
-  master_token = user_input.get(CONF_MASTER_TOKEN)
+            username = user_input.get(CONF_USERNAME)
+            password = user_input.get(CONF_PASSWORD)
+            master_token = user_input.get(CONF_MASTER_TOKEN)
 
-            if not master_token or (not username and not password):
-                self._errors["base"] = "missing-inputs"
-                return await self._show_config_form()
-
-            if master_token is None:
-                # only try to get the master_token if none has been provided
-                # but prioritize master_token
-                if len(password) < MAX_PASSWORD_LENGTH:
+            if master_token or (username and password):
+                # check if either master_token or username + password has been provided
+                if master_token is None:
+                    # master_token not provided, so use username/password authentication
+                    if len(password) < MAX_PASSWORD_LENGTH:
+                        client = GlocaltokensApiClient(
+                            hass=self.hass,
+                            session=session,
+                            username=username,
+                            password=password,
+                        )
+                        master_token = await self._test_credentials(client)
+                        if master_token is not None:
+                            config_data: dict[str, str] = {}
+                            config_data[CONF_USERNAME] = username
+                            config_data[CONF_PASSWORD] = password
+                            config_data[CONF_ANDROID_ID] = await client.get_android_id()
+                            return self.async_create_entry(title=username, data=config_data)
+                        self._errors["base"] = "auth"
+                    else:
+                        self._errors["base"] = "pass-len"
+                else:
+                    # otherwise master_token has been provided
                     client = GlocaltokensApiClient(
                         hass=self.hass,
                         session=session,
-                        username=username,
-                        password=password,
+                        username="",
+                        password="",
+                        master_token=master_token,
                     )
-                    master_token = await self._test_credentials(client)
-                    if master_token is not None:
+                    
+                    access_token = await self._test_master_token(client)
+                    if access_token is not None:
                         config_data: dict[str, str] = {}
-                        config_data[CONF_USERNAME] = username
-                        config_data[CONF_PASSWORD] = password
+                        config_data[CONF_MASTER_TOKEN] = master_token
+                        config_data[CONF_USERNAME] = ""
+                        config_data[CONF_PASSWORD] = ""
                         config_data[CONF_ANDROID_ID] = await client.get_android_id()
-                        return self.async_create_entry(title=username, data=config_data)
-                    self._errors["base"] = "auth"
-                else:
-                    self._errors["base"] = "pass-len"
+                        return self.async_create_entry(title="ha-google-home (master_token)", data=config_data)
+                    self._errors["base"] = "master-token-invalid"
             else:
-                client = GlocaltokensApiClient(
-                    hass=self.hass,
-                    session=session,
-                    master_token=master_token,
-                )
-                # otherwise master_token has been provided
-                config_data: dict[str, str] = {}
-                config_data[CONF_MASTER_TOKEN] = master_token
-                config_data[CONF_USERNAME] = ""
-                config_data[CONF_PASSWORD] = ""
-                config_data[CONF_ANDROID_ID] = await client.get_android_id()
-                return self.async_create_entry(title="ha-google-home (master_token)", data=config_data)
+                self._errors["base"] = "missing-inputs"
         return await self._show_config_form()
 
     @staticmethod
@@ -125,7 +130,16 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         except (InvalidMasterToken, RequestException) as exception:
             _LOGGER.error(exception)
         return None
-
+    
+    @staticmethod
+    async def _test_master_token(client: GlocaltokensApiClient) -> str | None:
+        """Returns true and master token if credentials are valid."""
+        try:
+            access_token = await client.async_get_access_token()
+            return access_token
+        except (InvalidMasterToken, RequestException) as exception:
+            _LOGGER.error(exception)
+        return None
 
 class GoogleHomeOptionsFlowHandler(config_entries.OptionsFlow):
     """Config flow options handler for GoogleHome."""
