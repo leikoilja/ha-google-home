@@ -11,7 +11,9 @@
       }
     },
     "error": {
-      "auth": "Username o password errati. Se il tuo account Google ha la 2FA abilitata genera una passoword per le app (https://myaccount.google.com/apppasswords). Se l'autenticazione continua a fallire, fai riferimento a https://github.com/leikoilja/ha-google-home#troubleshooting"
+      "auth": "Username o password errati. Se il tuo account Google ha la 2FA abilitata genera una passoword per le app (https://myaccount.google.com/apppasswords). Se l'autenticazione continua a fallire, fai riferimento a https://github.com/leikoilja/ha-google-home#troubleshooting",
+      "missing-inputs": "Inserire nome utente e password o il Master Token",
+      "master-token-invalid": "Token master non valido. Assicurarsi che sia stato specificato il token completo (compreso 'aas_et/')"
     },
     "abort": {
       "single_instance_allowed": "È consentita una sola istanza."
