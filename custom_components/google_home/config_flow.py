@@ -52,19 +52,9 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
         if user_input is not None:
             session = async_create_clientsession(self.hass)
-            try:
-                username = user_input[CONF_USERNAME]
-                password = user_input[CONF_PASSWORD]
-            except KeyError:
-                # either no username or password provided
-                username = None
-                password = None
-            
-            try:
-                master_token = user_input[CONF_MASTER_TOKEN]
-            except KeyError:
-                # no master token provided
-                master_token = None
+  username = user_input.get(CONF_USERNAME)
+  password = user_input.get(CONF_PASSWORD)
+  master_token = user_input.get(CONF_MASTER_TOKEN)
 
             if master_token is None and username is None:
                 self._errors["base"] = "missing-inputs"
