@@ -12,7 +12,9 @@
       }
     },
     "error": {
-      "auth": "La combinació Nom d'usuari/Contrassenya és incorrecta. Si el teu compte té l'autentificació en dos passes habilitada, per favor, genera una contrassenya d'aplicació (https://myaccount.google.com/apppasswords). Si tot i així no pots iniciar sessió, per favor accedeix a https://github.com/leikoilja/ha-google-home#troubleshooting (en anglès)."
+      "auth": "La combinació Nom d'usuari/Contrassenya és incorrecta. Si el teu compte té l'autentificació en dos passes habilitada, per favor, genera una contrassenya d'aplicació (https://myaccount.google.com/apppasswords). Si tot i així no pots iniciar sessió, per favor accedeix a https://github.com/leikoilja/ha-google-home#troubleshooting (en anglès).",
+      "missing-inputs": "Introduïu el nom d'usuari i la contrasenya o el testimoni mestre",
+      "master-token-invalid": "El testimoni mestre no és vàlid. Assegureu-vos que s'ofereix el testimoni complet (inclòs 'aas_et/')"
     },
     "abort": {
       "single_instance_allowed": "Solament està permesa una única instància"
