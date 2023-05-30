@@ -56,7 +56,7 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
   password = user_input.get(CONF_PASSWORD)
   master_token = user_input.get(CONF_MASTER_TOKEN)
 
-            if master_token is None and username is None:
+            if not master_token or (not username and not password):
                 self._errors["base"] = "missing-inputs"
                 return await self._show_config_form()
 
