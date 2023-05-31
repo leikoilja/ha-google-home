@@ -88,6 +88,7 @@ class ConfigFlowDict(TypedDict):
 
     username: str
     password: str
+    master_token: str
 
 
 class OptionsFlowDict(TypedDict):

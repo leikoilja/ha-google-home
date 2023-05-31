@@ -12,7 +12,9 @@
     },
     "error": {
       "auth": "O nome de usuário/senha está incorreto. Se sua conta do Google tiver o 2FA ativado, gere a senha do aplicativo (https://myaccount.google.com/apppasswords). Se a autenticação ainda falhar, consulte https://github.com/leikoilja/ha-google-home#troubleshooting",
-      "pass-len": "O comprimento da senha é limitado a 100 caracteres pela Política do Google (https://support.google.com/a/answer/139399). Por favor, altere sua senha ou use uma senha de aplicativo (https://myaccount.google.com/apppasswords)."
+      "pass-len": "O comprimento da senha é limitado a 100 caracteres pela Política do Google (https://support.google.com/a/answer/139399). Por favor, altere sua senha ou use uma senha de aplicativo (https://myaccount.google.com/apppasswords).",
+      "missing-inputs": "Digite o nome de usuário e a senha ou o Master Token",
+      "master-token-invalid": "Token mestre inválido. Certifique-se de que o token completo tenha sido especificado (incluindo 'aas_et/')"
     },
     "abort": {
       "single_instance_allowed": "Apenas uma única instância é permitida."

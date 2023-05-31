@@ -11,7 +11,9 @@
       }
     },
     "error": {
-      "auth": "Хибний логін або пароль. Якщо ваш обліковий запис використовує двохетапну авторизацію (2FA), будь ласка згенеруйте пароль застосунку (https://myaccount.google.com/apppasswords). Якщо це не допомагає, зверніться до https://github.com/leikoilja/ha-google-home#troubleshooting"
+      "auth": "Хибний логін або пароль. Якщо ваш обліковий запис використовує двохетапну авторизацію (2FA), будь ласка згенеруйте пароль застосунку (https://myaccount.google.com/apppasswords). Якщо це не допомагає, зверніться до https://github.com/leikoilja/ha-google-home#troubleshooting",
+      "missing-inputs": "Будь ласка, введіть ім'я користувача та пароль або Майстер-токен",
+      "master-token-invalid": "Головний токен недійсний. Переконайтеся, що було вказано повний токен (включно з 'aas_et/')"
     },
     "abort": {
       "single_instance_allowed": "Можна створити лише один екземпляр."

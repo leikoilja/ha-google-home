@@ -12,7 +12,9 @@
     },
     "error": {
       "auth": "Utilisateur/Mot de passe incorrect. Si votre compte Google utilise la double authentification, veuillez utiliser un mot de passe d'application (https://myaccount.google.com/apppasswords). Si l'authentification ne fonctionne toujours pas, veuillez vous référer à https://github.com/leikoilja/ha-google-home#troubleshooting",
-      "pass-len": "La longueur du mot de passe est limitée à 100 caractères par Google (https://support.google.com/a/answer/139399). Veuillez changer votre mot de passe ou utiliser un mot de passe d'application (https://myaccount.google.com/apppasswords)."
+      "pass-len": "La longueur du mot de passe est limitée à 100 caractères par Google (https://support.google.com/a/answer/139399). Veuillez changer votre mot de passe ou utiliser un mot de passe d'application (https://myaccount.google.com/apppasswords).",
+      "missing-inputs": "Veuillez indiquer soit votre nom d'utilisateur et votre mot de passe, soit votre jeton principal",
+      "master-token-invalid": "Jeton maître non valide. Assurez-vous que le jeton complet a été fourni (y compris 'aas_et/')"
     },
     "abort": {
       "single_instance_allowed": "Une seule installation est autorisée."

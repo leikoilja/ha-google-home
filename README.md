@@ -217,6 +217,10 @@ Your second account would not have access to anything other than Google Home, so
 gets compromised, it's not as severe as losing your main google account.
 See more discussion [here](https://github.com/leikoilja/ha-google-home/issues/124#issuecomment-921773489)
 
+### Master token
+
+Due to authentication issues with google credentials alone it may be required to get the master token separately and provide it during the setup process. This can be done using [this script](https://gist.github.com/rithvikvibhu/952f83ea656c6782fbd0f1645059055d) or [glocaltokens](https://github.com/leikoilja/glocaltokens#quickstart) package.
+
 ### HACS Installation
 
 You can find it in the default HACS repo. Just search `Google Home`.

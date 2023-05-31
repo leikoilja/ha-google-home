@@ -11,7 +11,9 @@
       }
     },
     "error": {
-      "auth": "Nome de utilizador/palavra-passe incorretos. Se a sua conta google tem 2FA activada, por favor gere a palavra-passe da app (https://myaccount.google.com/apppasswords). Se a autenticação continuar a falhar, consulte https://github.com/leikoilja/ha-google-home#troubleshooting"
+      "auth": "Nome de utilizador/palavra-passe incorretos. Se a sua conta google tem 2FA activada, por favor gere a palavra-passe da app (https://myaccount.google.com/apppasswords). Se a autenticação continuar a falhar, consulte https://github.com/leikoilja/ha-google-home#troubleshooting",
+      "missing-inputs": "Introduza o nome de utilizador e a palavra-passe ou o Master Token",
+      "master-token-invalid": "Token principal inválido. Certifique-se de que o token completo foi especificado (incluindo 'aas_et/')"
     },
     "abort": {
       "single_instance_allowed": "Apenas é permitida uma única instância."

@@ -6,12 +6,15 @@
         "description": "Hilfe zur Konfiguration findest du unter https://github.com/leikoilja/ha-google-home. Benutze deinen Google Account und ein App-Passwort. Es ist einfacher und sicherer, ein App-Passwort zu generieren und zu nutzen als das eigentliche Passwort. Es hat weiterhin die selben Zugriffsrechte, ist aber einfacher in der Handhabung beim Skripten als das echte Passwort. (https://myaccount.google.com/apppasswords). Falls nicht, dein normales Google Account Passwort sollte funktionieren.",
         "data": {
           "username": "Google Account Nutzername",
-          "password": "Google Account App-Passwort"
+          "password": "Google Account App-Passwort",
+          "master_token": "Google Account Master Token"
         }
       }
     },
     "error": {
-      "auth": "Nutzername/Passwort ist nicht korrekt. Falls dein Google Account die Zwei-Faktor-Autentifizierung aktiviert hat, generiere bitte ein App Passwort (https://myaccount.google.com/apppasswords). Sollte die Authentifizierung weiterhin fehlschlagen, findest du weitere Informationen unter https://github.com/leikoilja/ha-google-home#troubleshooting"
+      "auth": "Nutzername/Passwort ist nicht korrekt. Falls dein Google Account die Zwei-Faktor-Autentifizierung aktiviert hat, generiere bitte ein App Passwort (https://myaccount.google.com/apppasswords). Sollte die Authentifizierung weiterhin fehlschlagen, findest du weitere Informationen unter https://github.com/leikoilja/ha-google-home#troubleshooting",
+      "missing-inputs": "Bitte entweder Nutzername und Passwort oder Master Token angeben",
+      "master-token-invalid": "Master Token ungültig. Stelle sicher, dass das vollständige Token angegeben wurde (inklusive 'aas_et/')"
     },
     "abort": {
       "single_instance_allowed": "Es ist nur eine Instanz erlaubt."

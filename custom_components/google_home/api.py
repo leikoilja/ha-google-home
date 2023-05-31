@@ -77,6 +77,17 @@ class GlocaltokensApiClient:
             raise InvalidMasterToken
         return master_token
 
+    async def async_get_access_token(self) -> str:
+        """Get access token using master token"""
+
+        def _get_access_token() -> str | None:
+            return self._client.get_access_token()
+
+        access_token = await self.hass.async_add_executor_job(_get_access_token)
+        if access_token is None:
+            raise InvalidMasterToken
+        return access_token
+
     async def get_google_devices(self) -> list[GoogleHomeDevice]:
         """Get google device authentication tokens.
         Note this method will fetch necessary access tokens if missing"""

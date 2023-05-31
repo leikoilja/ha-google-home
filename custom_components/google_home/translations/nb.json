@@ -11,7 +11,9 @@
       }
     },
     "error": {
-      "auth": "Brukarnavn/passord er feil. Om Googlekontoen din har 2FA, vær vennlig og lag deg et applikasjonspassord (https://myaccount.google.com/apppasswords). Om autentiseringa fortsatt ikke går gjennom, gå til https://github.com/leikoilja/ha-google-home#troubleshooting"
+      "auth": "Brukarnavn/passord er feil. Om Googlekontoen din har 2FA, vær vennlig og lag deg et applikasjonspassord (https://myaccount.google.com/apppasswords). Om autentiseringa fortsatt ikke går gjennom, gå til https://github.com/leikoilja/ha-google-home#troubleshooting",
+      "missing-inputs": "Vennligst skriv inn enten brukernavn og passord eller Master Token",
+      "master-token-invalid": "Master token er ugyldig. Kontroller at hele tokenet er angitt (inkludert 'aas_et/')"
     },
     "abort": {
       "single_instance_allowed": "Du kan bare ha én installasjon"

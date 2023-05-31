@@ -12,7 +12,9 @@
       }
     },
     "error": {
-      "auth": "La combinación de Nombre de usuario/Contraseña no es correcta. Si tu cuenta tiene doble factor de autentificación habilitado, por favor, genera una contraseña de aplicación (https://myaccount.google.com/apppasswords). Si aún así no puedes iniciar sesión, por favor accede a https://github.com/leikoilja/ha-google-home#troubleshooting (en inglés)."
+      "auth": "La combinación de Nombre de usuario/Contraseña no es correcta. Si tu cuenta tiene doble factor de autentificación habilitado, por favor, genera una contraseña de aplicación (https://myaccount.google.com/apppasswords). Si aún así no puedes iniciar sesión, por favor accede a https://github.com/leikoilja/ha-google-home#troubleshooting (en inglés).",
+      "missing-inputs": "Por favor, introduzca su nombre de usuario y contraseña o la contraseña maestra",
+      "master-token-invalid": "El token maestro no es válido. Asegúrese de que se ha especificado el token completo (incluido 'aas_et/')"
     },
     "abort": {
       "single_instance_allowed": "Solo se permite una única instancia."

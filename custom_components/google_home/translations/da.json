@@ -11,7 +11,9 @@
       }
     },
     "error": {
-      "auth": "Brugernavn/adgangskode er forkert. Vis din Google konto har 2FA aktiveret, skal du bruge en app-adgangskode i stedet (https://myaccount.google.com/apppasswords). Vis du stadig ikke kan logge in, så kik her for hjælp https://github.com/leikoilja/ha-google-home#troubleshooting"
+      "auth": "Brugernavn/adgangskode er forkert. Vis din Google konto har 2FA aktiveret, skal du bruge en app-adgangskode i stedet (https://myaccount.google.com/apppasswords). Vis du stadig ikke kan logge in, så kik her for hjælp https://github.com/leikoilja/ha-google-home#troubleshooting",
+      "missing-inputs": "Indtast enten brugernavn og adgangskode eller master token",
+      "master-token-invalid": "Master token ugyldig. Sørg for, at det fulde token er angivet (inklusive 'aas_et/')"
     },
     "abort": {
       "single_instance_allowed": "Kun en enkelt forekomst er tilladt."
