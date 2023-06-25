@@ -1,3 +1,3 @@
 FROM ghcr.io/home-assistant/home-assistant:stable
 RUN apk add gcc g++
-RUN pip3 install glocaltokens
+RUN pip3 install glocaltokens==0.7.0
