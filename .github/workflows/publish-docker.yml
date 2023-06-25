@@ -35,7 +35,7 @@ jobs:
         with:
           context: .
           platforms: linux/amd64,
-          file: ./docker/Dockerfile
+          file: ./image-with-prerequisites.dockerfile
           load: true
           tags: >-
             ghcr.io/luttik/home-assistant:test-latest
@@ -54,7 +54,7 @@ jobs:
         with:
           context: .
           platforms: linux/amd64,
-          file: ./docker/Dockerfile
+          file: ./image-with-prerequisites.dockerfile
           push: true
           tags: >-
             ghcr.io/luttik/home-assistant:latest,
