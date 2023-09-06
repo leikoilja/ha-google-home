@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import asyncio
 from http import HTTPStatus
+import ipaddress
 import logging
 from typing import Literal, cast
 
@@ -125,6 +126,8 @@ class GlocaltokensApiClient:
     def create_url(ip_address: str, port: int, api_endpoint: str) -> str:
         """Creates url to endpoint.
         Note: port argument is unused because all request must be done to 8443"""
+        if isinstance(ipaddress.ip_address(ip_address), ipaddress.IPv6Address):
+            ip_address = f"[{ip_address}]"
         return f"https://{ip_address}:{port}/{api_endpoint}"
 
     async def update_google_devices_information(self) -> list[GoogleHomeDevice]:
