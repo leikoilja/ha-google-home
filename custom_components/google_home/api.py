@@ -3,9 +3,9 @@ from __future__ import annotations
 
 import asyncio
 from http import HTTPStatus
+import ipaddress
 import logging
 from typing import Literal, cast
-import ipaddress
 
 from aiohttp import ClientError, ClientSession
 from aiohttp.client_exceptions import ClientConnectorError, ContentTypeError
