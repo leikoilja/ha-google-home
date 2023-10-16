@@ -221,6 +221,20 @@ See more discussion [here](https://github.com/leikoilja/ha-google-home/issues/12
 
 Due to authentication issues with google credentials alone it may be required to get the master token separately and provide it during the setup process. This can be done using [this script](https://gist.github.com/rithvikvibhu/952f83ea656c6782fbd0f1645059055d) or [glocaltokens](https://github.com/leikoilja/glocaltokens#quickstart) package.
 
+Since there are several issues getting the token reliable on different environments, you can use a docker container which was created solely for this use: <https://hub.docker.com/r/breph/ha-google-home_get-token>. If you choose to use this container, follow the following instructions:
+
+```
+$ docker pull breph/ha-google-home_get-token:latest
+$ docker run -it -d breph/ha-google-home_get-token
+
+# the previous command will return a container id
+# use this id inside the next command which opens a shell inside the container:
+$ docker exec -it <id> bash
+
+# execute the pre-installed script:
+root@<id>:/# python3 get_tokens.py
+```
+
 ### HACS Installation
 
 You can find it in the default HACS repo. Just search `Google Home`.
