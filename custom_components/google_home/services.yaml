@@ -1,6 +1,7 @@
 # Services.yaml for google_home integration
 
 reboot_device:
+  name: Reboot device
   description: Reboot a Google Home device.
   fields:
     entity_id:
@@ -12,6 +13,7 @@ reboot_device:
         text:
 
 delete_alarm:
+  name: Delete alarm
   description: Delete an alarm from a Google Home device.
   fields:
     entity_id:
@@ -30,6 +32,7 @@ delete_alarm:
         text:
 
 delete_timer:
+  name: Delete timer
   description: Delete a timer from a Google Home device.
   fields:
     entity_id:
