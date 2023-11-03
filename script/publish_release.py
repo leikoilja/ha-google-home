@@ -7,7 +7,7 @@ import json
 import os
 import sys
 
-from github import Github, InputGitTreeElement
+from github import Auth, Github, InputGitTreeElement
 from github.ContentFile import ContentFile
 from github.GitRelease import GitRelease
 from github.Repository import Repository
@@ -16,8 +16,9 @@ from github.Repository import Repository
 def main() -> int:
     """Main function"""
     github_token = os.environ.get("GITHUB_TOKEN")
+    assert github_token is not None, "GITHUB_TOKEN is not set"
     print("Fetching draft release...")
-    github = Github(github_token)
+    github = Github(auth=Auth.Token(github_token))
     repo = github.get_repo("leikoilja/ha-google-home")
     release = repo.get_releases()[0]
     if not release.draft:
