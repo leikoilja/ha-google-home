@@ -321,7 +321,7 @@ class GlocaltokensApiClient:
         return device
 
     async def update_alarm_volume(
-        self, device: GoogleHomeDevice, volume: float | None = None
+        self, device: GoogleHomeDevice, volume: int | None = None
     ) -> GoogleHomeDevice:
         """Gets or sets the alarm volume setting on a Google Home device."""
 
@@ -330,7 +330,7 @@ class GlocaltokensApiClient:
 
         if volume is not None:
             # Setting is inverted on device
-            volume_float = float(volume / 100)
+            volume_float = volume / 100
             data = {JSON_ALARM_VOLUME: volume_float}
             _LOGGER.debug(
                 "Setting alarm volume to %d(float=%f) on Google Home device %s",
@@ -356,23 +356,23 @@ class GlocaltokensApiClient:
             if JSON_ALARM_VOLUME in response:
                 if polling:
                     volume_raw = str(response[JSON_ALARM_VOLUME])
-                    volume_int = round(float(volume_raw) * 100)
+                    volume = round(float(volume_raw) * 100)
                     _LOGGER.debug(
                         "Received alarm volume from Google Home device %s"
                         " - Volume: %d(raw=%s)",
                         device.name,
-                        volume_int,
+                        volume,
                         volume_raw,
                     )
                 else:
-                    volume_int = volume  # type: ignore
+                    assert volume is not None
                     _LOGGER.debug(
                         "Successfully set alarm volume to %d "
                         "on Google Home device %s",
                         volume,
                         device.name,
                     )
-                device.set_alarm_volume(volume_int)
+                device.set_alarm_volume(volume)
             else:
                 _LOGGER.debug(
                     (

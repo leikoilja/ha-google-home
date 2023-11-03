@@ -85,23 +85,24 @@ async def async_setup_entry(
     platform = entity_platform.current_platform.get()
 
     # Services
-    platform.async_register_entity_service(
-        SERVICE_DELETE_ALARM,
-        {vol.Required(SERVICE_ATTR_ALARM_ID): cv.string},
-        "async_delete_alarm",
-    )
+    if platform is not None:
+        platform.async_register_entity_service(
+            SERVICE_DELETE_ALARM,
+            vol.Schema({vol.Required(SERVICE_ATTR_ALARM_ID): cv.string}),
+            GoogleHomeAlarmsSensor.async_delete_alarm.__name__,
+        )
 
-    platform.async_register_entity_service(
-        SERVICE_DELETE_TIMER,
-        {vol.Required(SERVICE_ATTR_TIMER_ID): cv.string},
-        "async_delete_timer",
-    )
+        platform.async_register_entity_service(
+            SERVICE_DELETE_TIMER,
+            vol.Schema({vol.Required(SERVICE_ATTR_TIMER_ID): cv.string}),
+            GoogleHomeTimersSensor.async_delete_timer.__name__,
+        )
 
-    platform.async_register_entity_service(
-        SERVICE_REBOOT,
-        {},
-        "async_reboot_device",
-    )
+        platform.async_register_entity_service(
+            SERVICE_REBOOT,
+            vol.Schema({}),
+            GoogleHomeDeviceSensor.async_reboot_device.__name__,
+        )
 
     return True
 

@@ -27,6 +27,7 @@ from .const import (
     STARTUP_MESSAGE,
     UPDATE_INTERVAL,
 )
+from .models import GoogleHomeDevice
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -94,9 +95,9 @@ async def async_update_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Update config entry."""
     _LOGGER.debug("Updating entry...")
     update_interval: int = entry.options.get(CONF_UPDATE_INTERVAL, UPDATE_INTERVAL)
-    coordinator: DataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id][
-        DATA_COORDINATOR
-    ]
+    coordinator: DataUpdateCoordinator[list[GoogleHomeDevice]] = hass.data[DOMAIN][
+        entry.entry_id
+    ][DATA_COORDINATOR]
     coordinator.update_interval = timedelta(seconds=update_interval)
     _LOGGER.debug(
         "Coordinator update interval is: %s", timedelta(seconds=update_interval)

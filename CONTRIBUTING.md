@@ -75,7 +75,7 @@ When writing unittests please follow the good practises like:
 ## Pre-commit
 
 With Poetry installed, run `poetry install` in the repo root.
-It will create a virualenv with all required packages.
+It will create a virtualenv with all required packages.
 
 After that you can run [pre-commit](https://pre-commit.com/) with settings included in the
 repository to have code style and linting checks.
