@@ -1,0 +1,33 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Google Home autentifikácia",
+        "description": "Ak potrebujete pomoc s konfiguráciou, pozrite sa sem: https://github.com/leikoilja/ha-google-home. Použite svoje používateľské meno účtu Google a heslo aplikácie. Je bezpečnejšie/jednoduchšie vygenerovať heslo aplikácie a použiť ho namiesto skutočného hesla. Stále má rovnaký prístup ako bežné heslo, ale stále lepšie ako pri skriptovaní používať skutočné heslo. (https://myaccount.google.com/apppasswords). Ak nie, bežné heslo účtu Google by malo fungovať.",
+        "data": {
+          "username": "Google používateľské meno účtu",
+          "password": "Google heslo aplikácie účtu",
+          "master_token": "Google hlavný token účtu"
+        }
+      }
+    },
+    "error": {
+      "auth": "Používateľské meno/heslo je nesprávne. Ak má váš účet Google povolenú 2FA, vygenerujte si heslo aplikácie (https://myaccount.google.com/apppasswords). Ak autentifikácia stále zlyhá, pozrite si https://github.com/leikoilja/ha-google-home#troubleshooting",
+      "pass-len": "Dĺžka hesla je podľa pravidiel Google obmedzená na 100 znakov (https://support.google.com/a/answer/139399). Zmeňte si heslo alebo použite heslo aplikácie (https://myaccount.google.com/apppasswords).",
+      "missing-inputs": "Zadajte používateľské meno a heslo alebo hlavný token",
+      "master-token-invalid": "Hlavný token je neplatný. Uistite sa, že bol zadaný celý token (vrátane 'aas_et/')"
+    },
+    "abort": {
+      "single_instance_allowed": "Povolený je len jedna inštancia."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "update_interval": "Zmeniť interval aktualizácie. Zvýšte túto hodnotu, ak vám uplynie časový limit zariadení. Predvolená hodnota: 180 (sekúnd)"
+        }
+      }
+    }
+  }
+}
