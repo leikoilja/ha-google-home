@@ -420,6 +420,7 @@ Currently the integration supports the following languages:
 - Polish
 - Portuguese (Portugal)
 - Portuguese (Brazil)
+- Slovak
 - Spanish (Spain)
 - Russian
 - Ukrainian
