@@ -3,14 +3,10 @@
 reboot_device:
   name: Reboot device
   description: Reboot a Google Home device.
-  fields:
-    entity_id:
-      name: Entity
-      description: Represents a Google Home device (sensor.xxxx_device).
-      example: "sensor.kitchen_device"
-      required: true
-      selector:
-        text:
+  target:
+    entity:
+      domain: sensor
+      integration: google_home
 
 delete_alarm:
   name: Delete alarm
@@ -22,7 +18,9 @@ delete_alarm:
       example: "sensor.kitchen_alarms"
       required: true
       selector:
-        text:
+        entity:
+          domain: sensor
+          integration: google_home
     alarm_id:
       name: Alarm ID
       description: ID of an alarm (alarm/xxx).
@@ -41,7 +39,9 @@ delete_timer:
       example: "sensor.kitchen_timers"
       required: true
       selector:
-        text:
+        entity:
+          domain: sensor
+          integration: google_home
     timer_id:
       name: Timer ID
       description: ID of a timer (timer/xxx).
