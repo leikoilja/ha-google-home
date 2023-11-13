@@ -28,5 +28,39 @@
         }
       }
     }
+  },
+  "services": {
+    "delete_alarm": {
+      "description": "Excluir um alarme de um dispositivo Google Home.",
+      "fields": {
+        "alarm_id": {
+          "description": "ID do alarme (alarm/xxx).",
+          "name": "ID do alarme"
+        },
+        "entity_id": {
+          "description": "Representa um dispositivo Google Home (sensor.xxxx_alarms).",
+          "name": "Entidade"
+        }
+      },
+      "name": "Excluir alarme"
+    },
+    "delete_timer": {
+      "description": "Excluir um temporizador de um dispositivo Google Home.",
+      "fields": {
+        "timer_id": {
+          "description": "ID do temporizador (timer/xxx).",
+          "name": "ID do temporizador"
+        },
+        "entity_id": {
+          "description": "Representa um dispositivo Google Home (sensor.xxxx_alarms).",
+          "name": "Entidade"
+        }
+      },
+      "name": "Excluir temporizador"
+    },
+    "reboot_device": {
+      "description": "Reiniciar um dispositivo Google Home.",
+      "name": "Reiniciar dispositivo"
+    }
   }
 }
