@@ -418,10 +418,11 @@ Currently the integration supports the following languages:
 - Italian (Italy)
 - Norwegian (bokmål and nynorsk)
 - Polish
-- Portuguese (Portugal)
 - Portuguese (Brazil)
-- Spanish (Spain)
+- Portuguese (Portugal)
 - Russian
+- Slovak
+- Spanish (Spain)
 - Ukrainian
 
 If you want to translate the project to your own language, follow the [Localization guide](LOCALIZATION.md).
