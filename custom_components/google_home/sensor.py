@@ -8,7 +8,7 @@ import voluptuous as vol
 from homeassistant.components.sensor import SensorDeviceClass
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import STATE_UNAVAILABLE
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.helpers import config_validation as cv, entity_platform
 from homeassistant.helpers.entity import Entity, EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -82,27 +82,26 @@ async def async_setup_entry(
             ]
     async_add_devices(sensors)
 
-    platform = entity_platform.current_platform.get()
+    platform = entity_platform.async_get_current_platform()
 
     # Services
-    if platform is not None:
-        platform.async_register_entity_service(
-            SERVICE_DELETE_ALARM,
-            vol.Schema({vol.Required(SERVICE_ATTR_ALARM_ID): cv.string}),
-            GoogleHomeAlarmsSensor.async_delete_alarm.__name__,
-        )
+    platform.async_register_entity_service(
+        SERVICE_DELETE_ALARM,
+        {vol.Required(SERVICE_ATTR_ALARM_ID): cv.string},  # type: ignore[dict-item]
+        GoogleHomeAlarmsSensor.async_delete_alarm,
+    )
 
-        platform.async_register_entity_service(
-            SERVICE_DELETE_TIMER,
-            vol.Schema({vol.Required(SERVICE_ATTR_TIMER_ID): cv.string}),
-            GoogleHomeTimersSensor.async_delete_timer.__name__,
-        )
+    platform.async_register_entity_service(
+        SERVICE_DELETE_TIMER,
+        {vol.Required(SERVICE_ATTR_TIMER_ID): cv.string},  # type: ignore[dict-item]
+        GoogleHomeTimersSensor.async_delete_timer,
+    )
 
-        platform.async_register_entity_service(
-            SERVICE_REBOOT,
-            vol.Schema({}),
-            GoogleHomeDeviceSensor.async_reboot_device.__name__,
-        )
+    platform.async_register_entity_service(
+        SERVICE_REBOOT,
+        {},
+        GoogleHomeDeviceSensor.async_reboot_device,
+    )
 
     return True
 
@@ -147,7 +146,7 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
             "available": device.available,
         }
 
-    async def async_reboot_device(self) -> None:
+    async def async_reboot_device(self, _call: ServiceCall) -> None:
         """Reboot the device."""
         device = self.get_device()
 
@@ -222,7 +221,7 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
             alarm_id.startswith("alarm/") and len(alarm_id) == ALARM_AND_TIMER_ID_LENGTH
         )
 
-    async def async_delete_alarm(self, alarm_id: str) -> None:
+    async def async_delete_alarm(self, call: ServiceCall) -> None:
         """Service call to delete alarm on device"""
         device = self.get_device()
 
@@ -230,6 +229,7 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
             _LOGGER.error("Device %s is not found.", self.device_name)
             return
 
+        alarm_id: str = call.data[SERVICE_ATTR_ALARM_ID]
         if not self.is_valid_alarm_id(alarm_id):
             _LOGGER.error(
                 "Incorrect ID format! Please provide a valid alarm ID. "
@@ -295,7 +295,7 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
             timer_id.startswith("timer/") and len(timer_id) == ALARM_AND_TIMER_ID_LENGTH
         )
 
-    async def async_delete_timer(self, timer_id: str) -> None:
+    async def async_delete_timer(self, call: ServiceCall) -> None:
         """Service call to delete alarm on device"""
         device = self.get_device()
 
@@ -303,6 +303,7 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
             _LOGGER.error("Device %s is not found.", self.device_name)
             return
 
+        timer_id: str = call.data[SERVICE_ATTR_TIMER_ID]
         if not self.is_valid_timer_id(timer_id):
             _LOGGER.error(
                 "Incorrect ID format! Please provide a valid timer ID. "
