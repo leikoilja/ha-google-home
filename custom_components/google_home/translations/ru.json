@@ -27,5 +27,39 @@
         }
       }
     }
+  },
+  "services": {
+    "delete_alarm": {
+      "description": "Удалить будильник с устройства Google Home.",
+      "fields": {
+        "alarm_id": {
+          "description": "Идентификатор будильника (alarm/xxx).",
+          "name": "Идентификатор будильника"
+        },
+        "entity_id": {
+          "description": "Представляет устройство Google Home (sensor.xxxx_alarms).",
+          "name": "Объект"
+        }
+      },
+      "name": "Удалить будильник"
+    },
+    "delete_timer": {
+      "description": "Удалить таймер с устройства Google Home.",
+      "fields": {
+        "timer_id": {
+          "description": "Идентификатор таймера (timer/xxx).",
+          "name": "Идентификатор таймера"
+        },
+        "entity_id": {
+          "description": "Представляет устройство Google Home (sensor.xxxx_alarms).",
+          "name": "Объект"
+        }
+      },
+      "name": "Удалить таймер"
+    },
+    "reboot_device": {
+      "description": "Перезагрузить устройство Google Home.",
+      "name": "Перезагрузить устройство"
+    }
   }
 }

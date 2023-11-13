@@ -27,5 +27,39 @@
         }
       }
     }
+  },
+  "services": {
+    "delete_alarm": {
+      "description": "Slet en alarm fra en Google Home-enhed.",
+      "fields": {
+        "alarm_id": {
+          "description": "ID på en alarm (alarm/xxx).",
+          "name": "Alarm-ID"
+        },
+        "entity_id": {
+          "description": "Repræsenterer en Google Home-enhed (sensor.xxxx_alarms).",
+          "name": "Entitet"
+        }
+      },
+      "name": "Slet alarm"
+    },
+    "delete_timer": {
+      "description": "Slet en timer fra en Google Home-enhed.",
+      "fields": {
+        "timer_id": {
+          "description": "ID på en timer (timer/xxx).",
+          "name": "Timer-ID"
+        },
+        "entity_id": {
+          "description": "Repræsenterer en Google Home-enhed (sensor.xxxx_alarms).",
+          "name": "Entitet"
+        }
+      },
+      "name": "Slet timer"
+    },
+    "reboot_device": {
+      "description": "Genstart en Google Home-enhed.",
+      "name": "Genstart enhed"
+    }
   }
 }

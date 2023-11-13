@@ -27,5 +27,39 @@
         }
       }
     }
+  },
+  "services": {
+    "delete_alarm": {
+      "description": "Slett ein alarm frå ein Google Home-eining.",
+      "fields": {
+        "alarm_id": {
+          "description": "ID for ein alarm (alarm/xxx).",
+          "name": "Alarm-ID"
+        },
+        "entity_id": {
+          "description": "Representerer ein Google Home-eining (sensor.xxxx_alarms).",
+          "name": "Eining"
+        }
+      },
+      "name": "Slett alarm"
+    },
+    "delete_timer": {
+      "description": "Slett ein tidtakar frå ein Google Home-eining.",
+      "fields": {
+        "timer_id": {
+          "description": "ID for ein tidtakar (timer/xxx).",
+          "name": "Tidtakar-ID"
+        },
+        "entity_id": {
+          "description": "Representerer ein Google Home-eining (sensor.xxxx_alarms).",
+          "name": "Eining"
+        }
+      },
+      "name": "Slett tidtakar"
+    },
+    "reboot_device": {
+      "description": "Start ein Google Home-eining på nytt.",
+      "name": "Start eining på nytt"
+    }
   }
 }

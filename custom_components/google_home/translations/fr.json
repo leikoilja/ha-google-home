@@ -28,5 +28,39 @@
         }
       }
     }
+  },
+  "services": {
+    "delete_alarm": {
+      "description": "Supprimer un réveil d'un appareil Google Home.",
+      "fields": {
+        "alarm_id": {
+          "description": "ID d'un réveil (alarm/xxx).",
+          "name": "ID de l'alarme"
+        },
+        "entity_id": {
+          "description": "Représente un appareil Google Home (sensor.xxxx_alarms).",
+          "name": "Entité"
+        }
+      },
+      "name": "Supprimer l'alarme"
+    },
+    "delete_timer": {
+      "description": "Supprimer un minuteur d'un appareil Google Home.",
+      "fields": {
+        "timer_id": {
+          "description": "ID d'un minuteur (timer/xxx).",
+          "name": "ID du minuteur"
+        },
+        "entity_id": {
+          "description": "Représente un appareil Google Home (sensor.xxxx_alarms).",
+          "name": "Entité"
+        }
+      },
+      "name": "Supprimer le minuteur"
+    },
+    "reboot_device": {
+      "description": "Redémarrer un appareil Google Home.",
+      "name": "Redémarrer l'appareil"
+    }
   }
 }

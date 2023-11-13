@@ -29,5 +29,39 @@
         }
       }
     }
+  },
+  "services": {
+    "delete_alarm": {
+      "description": "Odstrániť budík z zariadenia Google Home.",
+      "fields": {
+        "alarm_id": {
+          "description": "ID budíka (alarm/xxx).",
+          "name": "ID budíka"
+        },
+        "entity_id": {
+          "description": "Reprezentuje zariadenie Google Home (sensor.xxxx_alarms).",
+          "name": "Entita"
+        }
+      },
+      "name": "Odstrániť budík"
+    },
+    "delete_timer": {
+      "description": "Odstrániť časovač z zariadenia Google Home.",
+      "fields": {
+        "timer_id": {
+          "description": "ID časovača (timer/xxx).",
+          "name": "ID časovača"
+        },
+        "entity_id": {
+          "description": "Reprezentuje zariadenie Google Home (sensor.xxxx_alarms).",
+          "name": "Entita"
+        }
+      },
+      "name": "Odstrániť časovač"
+    },
+    "reboot_device": {
+      "description": "Reštartovať zariadenie Google Home.",
+      "name": "Reštartovať zariadenie"
+    }
   }
 }
