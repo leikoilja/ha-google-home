@@ -26,7 +26,7 @@ from .const import (
     LABEL_DEVICE,
     LABEL_TIMERS,
     SERVICE_ATTR_ALARM_ID,
-    SERVICE_ATTR_FORCE_REFRESH,
+    SERVICE_ATTR_SKIP_REFRESH,
     SERVICE_ATTR_TIMER_ID,
     SERVICE_DELETE_ALARM,
     SERVICE_DELETE_TIMER,
@@ -92,7 +92,7 @@ async def async_setup_entry(
         {
             vol.Required(SERVICE_ATTR_ALARM_ID): cv.string,  # type: ignore[dict-item]
             vol.Optional(
-                SERVICE_ATTR_FORCE_REFRESH
+                SERVICE_ATTR_SKIP_REFRESH
             ): cv.boolean,  # type: ignore[dict-item]
         },
         GoogleHomeAlarmsSensor.async_delete_alarm,
@@ -100,10 +100,10 @@ async def async_setup_entry(
 
     platform.async_register_entity_service(
         SERVICE_DELETE_TIMER,
-        {  # types: ignore[dict]
+        {
             vol.Required(SERVICE_ATTR_TIMER_ID): cv.string,  # type: ignore[dict-item]
             vol.Optional(
-                SERVICE_ATTR_FORCE_REFRESH
+                SERVICE_ATTR_SKIP_REFRESH
             ): cv.boolean,  # type: ignore[dict-item]
         },
         GoogleHomeTimersSensor.async_delete_timer,
@@ -260,7 +260,7 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
             return
 
         await self.client.delete_alarm_or_timer(device=device, item_to_delete=alarm_id)
-        if call.data[SERVICE_ATTR_FORCE_REFRESH]:
+        if not call.data[SERVICE_ATTR_SKIP_REFRESH]:
             await self.coordinator.async_request_refresh()
 
 
@@ -336,6 +336,6 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
             return
 
         await self.client.delete_alarm_or_timer(device=device, item_to_delete=timer_id)
-        if call.data[SERVICE_ATTR_FORCE_REFRESH]:
+        if not call.data[SERVICE_ATTR_SKIP_REFRESH]:
             _LOGGER.debug("Refreshing Devices")
             await self.coordinator.async_request_refresh()

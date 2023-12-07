@@ -36,6 +36,10 @@
           "description": "ID for en alarm (alarm/xxx).",
           "name": "Alarm-ID"
         },
+        "skip_refresh": {
+          "description": "Hopp over oppdatering av Google Home-enheter etter at du har slettet en alarm.",
+          "name": "Hopp over oppdatering"
+        },
         "entity_id": {
           "description": "Representerer en Google Home-enhet (sensor.xxxx_alarms).",
           "name": "Entitet"
@@ -50,6 +54,10 @@
           "description": "ID for en timer (timer/xxx).",
           "name": "Timer-ID"
         },
+        "skip_refresh": {
+          "description": "Hopp over oppdatering av Google Home-enheter etter at du har slettet en timer.",
+          "name": "Hopp over oppdatering"
+        },
         "entity_id": {
           "description": "Representerer en Google Home-enhet (sensor.xxxx_alarms).",
           "name": "Entitet"
@@ -60,6 +68,10 @@
     "reboot_device": {
       "description": "Start en Google Home-enhet på nytt.",
       "name": "Start enhet på nytt"
+    },
+    "refresh_devices": {
+      "description": "Oppdater statusen til alle Google Home-enheter.",
+      "name": "Oppdater enheter"
     }
   }
 }

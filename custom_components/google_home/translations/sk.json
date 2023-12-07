@@ -38,6 +38,10 @@
           "description": "ID budíka (alarm/xxx).",
           "name": "ID budíka"
         },
+        "skip_refresh": {
+          "description": "Vynechanie obnovenia zariadení Google Home po vymazaní budíka.",
+          "name": "Preskočiť obnovenie"
+        },
         "entity_id": {
           "description": "Reprezentuje zariadenie Google Home (sensor.xxxx_alarms).",
           "name": "Entita"
@@ -52,6 +56,10 @@
           "description": "ID časovača (timer/xxx).",
           "name": "ID časovača"
         },
+        "skip_refresh": {
+          "description": "Vynechanie obnovenia zariadení Google Home po vymazaní časovača.",
+          "name": "Preskočiť obnovenie"
+        },
         "entity_id": {
           "description": "Reprezentuje zariadenie Google Home (sensor.xxxx_alarms).",
           "name": "Entita"
@@ -62,6 +70,10 @@
     "reboot_device": {
       "description": "Reštartovať zariadenie Google Home.",
       "name": "Reštartovať zariadenie"
+    },
+    "refresh_devices": {
+      "description": "Obnoviť stav všetkých zariadení Google Home.",
+      "name": "Obnoviť zariadenia"
     }
   }
 }

@@ -37,6 +37,10 @@
           "description": "ID de una alarma (alarm/xxx).",
           "name": "ID de alarma"
         },
+        "skip_refresh": {
+          "description": "Omita la actualización de los dispositivos Google Home después de eliminar una alarma.",
+          "name": "Saltar actualización"
+        },
         "entity_id": {
           "description": "Representa un dispositivo Google Home (sensor.xxxx_alarms).",
           "name": "Entidad"
@@ -51,6 +55,10 @@
           "description": "ID de un temporizador (timer/xxx).",
           "name": "ID de temporizador"
         },
+        "skip_refresh": {
+          "description": "Omita la actualización de los dispositivos Google Home después de eliminar un temporizador.",
+          "name": "Saltar actualización"
+        },
         "entity_id": {
           "description": "Representa un dispositivo Google Home (sensor.xxxx_alarms).",
           "name": "Entidad"
@@ -61,6 +69,10 @@
     "reboot_device": {
       "description": "Reiniciar un dispositivo Google Home.",
       "name": "Reiniciar dispositivo"
+    },
+    "refresh_devices": {
+      "description": "Actualiza el estado de todos los dispositivos Google Home.",
+      "name": "Actualizar dispositivos"
     }
   }
 }

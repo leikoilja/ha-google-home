@@ -36,6 +36,10 @@
           "description": "Идентификатор будильника (alarm/xxx).",
           "name": "Идентификатор будильника"
         },
+        "skip_refresh": {
+          "description": "Пропустить обновление устройств Google Home после удаления будильника.",
+          "name": "Пропустить обновление"
+        },
         "entity_id": {
           "description": "Представляет устройство Google Home (sensor.xxxx_alarms).",
           "name": "Объект"
@@ -50,6 +54,10 @@
           "description": "Идентификатор таймера (timer/xxx).",
           "name": "Идентификатор таймера"
         },
+        "skip_refresh": {
+          "description": "Пропустить обновление устройств Google Home после удаления таймера.",
+          "name": "Пропустить обновление"
+        },
         "entity_id": {
           "description": "Представляет устройство Google Home (sensor.xxxx_alarms).",
           "name": "Объект"
@@ -60,6 +68,10 @@
     "reboot_device": {
       "description": "Перезагрузить устройство Google Home.",
       "name": "Перезагрузить устройство"
+    },
+    "refresh_devices": {
+      "description": "Обновить состояние всех устройств Google Home.",
+      "name": "Обновить устройства"
     }
   }
 }

@@ -37,6 +37,10 @@
           "description": "ID de l'alarma (alarm/xxx).",
           "name": "ID de l'alarma"
         },
+        "skip_refresh": {
+          "description": "Omet l'actualització dels dispositius de Google Home després d'haver suprimit una alarma.",
+          "name": "Omet l'actualització"
+        },
         "entity_id": {
           "description": "Representa un dispositiu Google Home (sensor.xxxx_alarms).",
           "name": "Entitat"
@@ -51,6 +55,10 @@
           "description": "ID del temporitzador (timer/xxx).",
           "name": "ID del temporitzador"
         },
+        "skip_refresh": {
+          "description": "Omet l'actualització dels dispositius de Google Home després d'haver suprimit un temporitzador.",
+          "name": "Omet l'actualització"
+        },
         "entity_id": {
           "description": "Representa un dispositiu Google Home (sensor.xxxx_alarms).",
           "name": "Entitat"
@@ -61,6 +69,10 @@
     "reboot_device": {
       "description": "Reinicia un dispositiu Google Home.",
       "name": "Reinicia dispositiu"
+    },
+    "refresh_devices": {
+      "description": "Actualitza l'estat de tots els dispositius Google Home.",
+      "name": "Actualitzar dispositius"
     }
   }
 }

@@ -15,9 +15,9 @@ delete_alarm:
         entity:
           domain: sensor
           integration: google_home
-    force_refresh:
-      example: true
-      default: false
+    skip_refresh:
+      example: false
+      default: true
       required: false
       selector:
         boolean:
@@ -36,9 +36,9 @@ delete_timer:
         entity:
           domain: sensor
           integration: google_home
-    force_refresh:
-      example: true
-      default: false
+    skip_refresh:
+      example: false
+      default: true
       required: false
       selector:
         boolean:

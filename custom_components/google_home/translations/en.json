@@ -38,9 +38,9 @@
           "description": "ID of an alarm (alarm/xxx).",
           "name": "Alarm ID"
         },
-        "force_refresh": {
-          "description": "Force refreshing Google Home devices after deleting the alarm.",
-          "name": "Force Refresh"
+        "skip_refresh": {
+          "description": "Skip refreshing Google Home devices after deleting an alarm.",
+          "name": "Skip refresh"
         },
         "entity_id": {
           "description": "Represents a Google Home device (sensor.xxxx_alarms).",
@@ -56,9 +56,9 @@
           "description": "ID of a timer (timer/xxx).",
           "name": "Timer ID"
         },
-        "force_refresh": {
-          "description": "Force refreshing Google Home devices after deleting the timer.",
-          "name": "Force Refresh"
+        "skip_refresh": {
+          "description": "Skip refreshing Google Home devices after deleting a timer.",
+          "name": "Skip refresh"
         },
         "entity_id": {
           "description": "Represents a Google Home device (sensor.xxxx_alarms).",

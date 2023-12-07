@@ -37,6 +37,10 @@
           "description": "ID alarmu (alarm/xxx).",
           "name": "ID alarmu"
         },
+        "skip_refresh": {
+          "description": "Pomiń odświeżanie urządzeń Google Home po usunięciu alarmu.",
+          "name": "Pomiń odświeżanie"
+        },
         "entity_id": {
           "description": "Reprezentuje urządzenie Google Home (sensor.xxxx_alarms).",
           "name": "Encja"
@@ -51,6 +55,10 @@
           "description": "ID timera (timer/xxx).",
           "name": "ID timera"
         },
+        "skip_refresh": {
+          "description": "Pomija odświeżanie urządzeń Google Home po usunięciu timera.",
+          "name": "Pomiń odświeżanie"
+        },
         "entity_id": {
           "description": "Reprezentuje urządzenie Google Home (sensor.xxxx_alarms).",
           "name": "Encja"
@@ -61,6 +69,10 @@
     "reboot_device": {
       "description": "Uruchom ponownie urządzenie Google Home.",
       "name": "Uruchom ponownie urządzenie"
+    },
+    "refresh_devices": {
+      "description": "Odśwież stan wszystkich urządzeń Google Home.",
+      "name": "Odśwież urządzenia"
     }
   }
 }
