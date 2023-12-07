@@ -90,17 +90,21 @@ async def async_setup_entry(
     platform.async_register_entity_service(
         SERVICE_DELETE_ALARM,
         {
-            vol.Required(SERVICE_ATTR_ALARM_ID): cv.string,
-            vol.Optional(SERVICE_ATTR_FORCE_REFRESH): cv.boolean,
+            vol.Required(SERVICE_ATTR_ALARM_ID): cv.string,  # type: ignore[dict-item]
+            vol.Optional(
+                SERVICE_ATTR_FORCE_REFRESH
+            ): cv.boolean,  # type: ignore[dict-item]
         },
         GoogleHomeAlarmsSensor.async_delete_alarm,
     )
 
     platform.async_register_entity_service(
         SERVICE_DELETE_TIMER,
-        {
-            vol.Required(SERVICE_ATTR_TIMER_ID): cv.string,
-            vol.Optional(SERVICE_ATTR_FORCE_REFRESH): cv.boolean,
+        {  # types: ignore[dict]
+            vol.Required(SERVICE_ATTR_TIMER_ID): cv.string,  # type: ignore[dict-item]
+            vol.Optional(
+                SERVICE_ATTR_FORCE_REFRESH
+            ): cv.boolean,  # type: ignore[dict-item]
         },
         GoogleHomeTimersSensor.async_delete_timer,
     )
@@ -333,4 +337,5 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
 
         await self.client.delete_alarm_or_timer(device=device, item_to_delete=timer_id)
         if call.data[SERVICE_ATTR_FORCE_REFRESH]:
+            _LOGGER.debug("Refreshing Devices")
             await self.coordinator.async_request_refresh()
