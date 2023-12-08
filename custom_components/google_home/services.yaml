@@ -16,8 +16,8 @@ delete_alarm:
           domain: sensor
           integration: google_home
     skip_refresh:
-      example: false
-      default: true
+      example: true
+      default: false
       required: false
       selector:
         boolean:
@@ -37,8 +37,8 @@ delete_timer:
           domain: sensor
           integration: google_home
     skip_refresh:
-      example: false
-      default: true
+      example: true
+      default: false
       required: false
       selector:
         boolean:
