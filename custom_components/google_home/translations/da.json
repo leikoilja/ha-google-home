@@ -36,6 +36,10 @@
           "description": "ID på en alarm (alarm/xxx).",
           "name": "Alarm-ID"
         },
+        "skip_refresh": {
+          "description": "Spring over at opdatere Google Home-enheder efter sletning af en alarm.",
+          "name": "Spring opdatering over"
+        },
         "entity_id": {
           "description": "Repræsenterer en Google Home-enhed (sensor.xxxx_alarms).",
           "name": "Entitet"
@@ -50,6 +54,10 @@
           "description": "ID på en timer (timer/xxx).",
           "name": "Timer-ID"
         },
+        "skip_refresh": {
+          "description": "Spring over at opdatere Google Home-enheder efter sletning af en timer.",
+          "name": "Spring opdatering over"
+        },
         "entity_id": {
           "description": "Repræsenterer en Google Home-enhed (sensor.xxxx_alarms).",
           "name": "Entitet"
@@ -60,6 +68,10 @@
     "reboot_device": {
       "description": "Genstart en Google Home-enhed.",
       "name": "Genstart enhed"
+    },
+    "refresh_devices": {
+      "description": "Opdater status for alle Google Home-enheder.",
+      "name": "Opdater enheder"
     }
   }
 }

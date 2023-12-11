@@ -26,10 +26,12 @@ from .const import (
     LABEL_DEVICE,
     LABEL_TIMERS,
     SERVICE_ATTR_ALARM_ID,
+    SERVICE_ATTR_SKIP_REFRESH,
     SERVICE_ATTR_TIMER_ID,
     SERVICE_DELETE_ALARM,
     SERVICE_DELETE_TIMER,
     SERVICE_REBOOT,
+    SERVICE_REFRESH,
 )
 from .entity import GoogleHomeBaseEntity
 from .models import GoogleHomeAlarmStatus, GoogleHomeDevice, GoogleHomeTimerStatus
@@ -87,13 +89,23 @@ async def async_setup_entry(
     # Services
     platform.async_register_entity_service(
         SERVICE_DELETE_ALARM,
-        {vol.Required(SERVICE_ATTR_ALARM_ID): cv.string},  # type: ignore[dict-item]
+        {
+            vol.Required(SERVICE_ATTR_ALARM_ID): cv.string,  # type: ignore[dict-item]
+            vol.Optional(
+                SERVICE_ATTR_SKIP_REFRESH
+            ): cv.boolean,  # type: ignore[dict-item]
+        },
         GoogleHomeAlarmsSensor.async_delete_alarm,
     )
 
     platform.async_register_entity_service(
         SERVICE_DELETE_TIMER,
-        {vol.Required(SERVICE_ATTR_TIMER_ID): cv.string},  # type: ignore[dict-item]
+        {
+            vol.Required(SERVICE_ATTR_TIMER_ID): cv.string,  # type: ignore[dict-item]
+            vol.Optional(
+                SERVICE_ATTR_SKIP_REFRESH
+            ): cv.boolean,  # type: ignore[dict-item]
+        },
         GoogleHomeTimersSensor.async_delete_timer,
     )
 
@@ -101,6 +113,12 @@ async def async_setup_entry(
         SERVICE_REBOOT,
         {},
         GoogleHomeDeviceSensor.async_reboot_device,
+    )
+
+    platform.async_register_entity_service(
+        SERVICE_REFRESH,
+        {},
+        GoogleHomeDeviceSensor.async_refresh_devices,
     )
 
     return True
@@ -155,6 +173,10 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
             return
 
         await self.client.reboot_google_device(device)
+
+    async def async_refresh_devices(self, _call: ServiceCall) -> None:
+        """Refresh the devices."""
+        await self.coordinator.async_request_refresh()
 
 
 class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
@@ -238,6 +260,8 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
             return
 
         await self.client.delete_alarm_or_timer(device=device, item_to_delete=alarm_id)
+        if not call.data[SERVICE_ATTR_SKIP_REFRESH]:
+            await self.coordinator.async_request_refresh()
 
 
 class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
@@ -312,3 +336,6 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
             return
 
         await self.client.delete_alarm_or_timer(device=device, item_to_delete=timer_id)
+        if not call.data[SERVICE_ATTR_SKIP_REFRESH]:
+            _LOGGER.debug("Refreshing Devices")
+            await self.coordinator.async_request_refresh()

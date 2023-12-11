@@ -38,6 +38,10 @@
           "description": "ID of an alarm (alarm/xxx).",
           "name": "Alarm ID"
         },
+        "skip_refresh": {
+          "description": "Skip refreshing Google Home devices after deleting an alarm.",
+          "name": "Skip refresh"
+        },
         "entity_id": {
           "description": "Represents a Google Home device (sensor.xxxx_alarms).",
           "name": "Entity"
@@ -52,6 +56,10 @@
           "description": "ID of a timer (timer/xxx).",
           "name": "Timer ID"
         },
+        "skip_refresh": {
+          "description": "Skip refreshing Google Home devices after deleting a timer.",
+          "name": "Skip refresh"
+        },
         "entity_id": {
           "description": "Represents a Google Home device (sensor.xxxx_alarms).",
           "name": "Entity"
@@ -62,6 +70,10 @@
     "reboot_device": {
       "description": "Reboot a Google Home device.",
       "name": "Reboot device"
+    },
+    "refresh_devices": {
+      "description": "Refresh the status of all Google Home Devices.",
+      "name": "Refresh devices"
     }
   }
 }

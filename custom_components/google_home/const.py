@@ -42,7 +42,9 @@ PLATFORMS: Final = [SENSOR, SWITCH, NUMBER]
 SERVICE_REBOOT: Final = "reboot_device"
 SERVICE_DELETE_ALARM: Final = "delete_alarm"
 SERVICE_DELETE_TIMER: Final = "delete_timer"
+SERVICE_REFRESH: Final = "refresh_devices"
 SERVICE_ATTR_ALARM_ID: Final = "alarm_id"
+SERVICE_ATTR_SKIP_REFRESH: Final = "skip_refresh"
 SERVICE_ATTR_TIMER_ID: Final = "timer_id"
 
 # Configuration and options

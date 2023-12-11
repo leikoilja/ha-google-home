@@ -15,6 +15,12 @@ delete_alarm:
         entity:
           domain: sensor
           integration: google_home
+    skip_refresh:
+      example: true
+      default: false
+      required: false
+      selector:
+        boolean:
     alarm_id:
       example: "alarm/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51"
       required: true
@@ -30,8 +36,16 @@ delete_timer:
         entity:
           domain: sensor
           integration: google_home
+    skip_refresh:
+      example: true
+      default: false
+      required: false
+      selector:
+        boolean:
     timer_id:
       example: "timer/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51"
       required: true
       selector:
         text:
+
+refresh_devices:

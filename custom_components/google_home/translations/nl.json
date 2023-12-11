@@ -36,6 +36,10 @@
           "description": "ID van een alarm (alarm/xxx).",
           "name": "Alarm-ID"
         },
+        "skip_refresh": {
+          "description": "Sla het verversen van Google Home-apparaten over na het verwijderen van een alarm.",
+          "name": "Verversen overslaan"
+        },
         "entity_id": {
           "description": "Vertegenwoordigt een Google Home-apparaat (sensor.xxxx_alarms).",
           "name": "Entiteit"
@@ -50,6 +54,10 @@
           "description": "ID van een timer (timer/xxx).",
           "name": "Timer-ID"
         },
+        "skip_refresh": {
+          "description": "Sla het verversen van Google Home-apparaten over na het verwijderen van een timer.",
+          "name": "Verversen overslaan"
+        },
         "entity_id": {
           "description": "Vertegenwoordigt een Google Home-apparaat (sensor.xxxx_alarms).",
           "name": "Entiteit"
@@ -60,6 +68,10 @@
     "reboot_device": {
       "description": "Herstart een Google Home-apparaat.",
       "name": "Apparaat herstarten"
+    },
+    "refresh_devices": {
+      "description": "De status van alle Google Home-apparaten verversen.",
+      "name": "Apparaten verversen"
     }
   }
 }

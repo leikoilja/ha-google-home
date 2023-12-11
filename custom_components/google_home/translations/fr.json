@@ -37,6 +37,10 @@
           "description": "ID d'un réveil (alarm/xxx).",
           "name": "ID de l'alarme"
         },
+        "skip_refresh": {
+          "description": "Ignorez l'actualisation des appareils Google Home après la suppression d'une alarme.",
+          "name": "Ignorer l'actualisation"
+        },
         "entity_id": {
           "description": "Représente un appareil Google Home (sensor.xxxx_alarms).",
           "name": "Entité"
@@ -51,6 +55,10 @@
           "description": "ID d'un minuteur (timer/xxx).",
           "name": "ID du minuteur"
         },
+        "skip_refresh": {
+          "description": "Ignorez l'actualisation des appareils Google Home après la suppression d'une minuterie.",
+          "name": "Ignorer l'actualisation"
+        },
         "entity_id": {
           "description": "Représente un appareil Google Home (sensor.xxxx_alarms).",
           "name": "Entité"
@@ -61,6 +69,10 @@
     "reboot_device": {
       "description": "Redémarrer un appareil Google Home.",
       "name": "Redémarrer l'appareil"
+    },
+    "refresh_devices": {
+      "description": "Actualisez l'état de tous les appareils Google Home.",
+      "name": "Actualiser les appareils"
     }
   }
 }

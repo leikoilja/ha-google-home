@@ -36,6 +36,10 @@
           "description": "ID for ein alarm (alarm/xxx).",
           "name": "Alarm-ID"
         },
+        "skip_refresh": {
+          "description": "Hopp over oppdatering av Google heimeseiningar etter å sletta ein alarm.",
+          "name": "Hopp over oppdatering"
+        },
         "entity_id": {
           "description": "Representerar ei Google Home-eining (sensor.xxxx_alarms).",
           "name": "Eining"
@@ -50,6 +54,10 @@
           "description": "ID for ein tidtakar (timer/xxx).",
           "name": "Tidtakar-ID"
         },
+        "skip_refresh": {
+          "description": "Hopp over oppdatering av Google heimeseiningar etter å sletta ein tidsaverk.",
+          "name": "Hopp over oppdatering"
+        },
         "entity_id": {
           "description": "Representerar ei Google Home-eining (sensor.xxxx_alarms).",
           "name": "Eining"
@@ -60,6 +68,10 @@
     "reboot_device": {
       "description": "Start ei Google Home-eining på nytt.",
       "name": "Start eining på nytt"
+    },
+    "refresh_devices": {
+      "description": "Oppdater statusen til alle Google heimeseiningar.",
+      "name": "Oppdater einingar"
     }
   }
 }

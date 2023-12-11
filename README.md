@@ -155,14 +155,16 @@ service: google_home.delete_alarm
 data:
   entity_id: sensor.kitchen_alarms
   timer_id: alarm/47dc1fa0-5ec0-2cc7-9ead-a94b85e22769
+  skip_refresh: true
 ```
 
 #### Key Descriptions
 
-| Key         | Example                                      | Description                                   |
-| ----------- | -------------------------------------------- | --------------------------------------------- |
-| `entity_id` | `sensor.kitchen_alarms`                      | Entity name of a Google Home alarms sensor.   |
-| `alarm_id`  | `alarm/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51` | ID of an alarm. See alarms description above. |
+| Key            | Example                                      | Description                                     |
+| -------------- | -------------------------------------------- | ----------------------------------------------- |
+| `entity_id`    | `sensor.kitchen_alarms`                      | Entity name of a Google Home alarms sensor.     |
+| `alarm_id`     | `alarm/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51` | ID of an alarm. See alarms description above.   |
+| `skip_refresh` | `true`                                       | Boolean to skip refreshing Google Home devices. |
 
 ### Delete timer
 
@@ -173,14 +175,16 @@ service: google_home.delete_timer
 data:
   entity_id: sensor.kitchen_timers
   timer_id: timer/47dc1fa0-5ec0-2cc7-9ead-a94b85e22769
+  skip_refresh: true
 ```
 
 #### Key Descriptions
 
-| Key         | Example                                      | Description                                  |
-| ----------- | -------------------------------------------- | -------------------------------------------- |
-| `entity_id` | `sensor.kitchen_timers`                      | Entity name of a Google Home timers sensor.  |
-| `timer_id`  | `timer/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51` | ID of a timer. See timers description above. |
+| Key            | Example                                      | Description                                     |
+| -------------- | -------------------------------------------- | ----------------------------------------------- |
+| `entity_id`    | `sensor.kitchen_timers`                      | Entity name of a Google Home timers sensor.     |
+| `timer_id`     | `timer/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51` | ID of a timer. See timers description above.    |
+| `skip_refresh` | `true`                                       | Boolean to skip refreshing Google Home devices. |
 
 ### Reboot device
 
@@ -199,6 +203,16 @@ data:
 | Key         | Example                 | Description                                 |
 | ----------- | ----------------------- | ------------------------------------------- |
 | `entity_id` | `sensor.kitchen_device` | Entity name of a Google Home device sensor. |
+
+### Refresh devices
+
+Note: Resets the timer for automatic polling to refresh devices.
+
+#### Example
+
+```yaml
+service: google_home.refresh_devices
+```
 
 ## Getting Started
 

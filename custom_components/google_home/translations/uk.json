@@ -36,6 +36,10 @@
           "description": "ID будильника (alarm/xxx).",
           "name": "ID будильника"
         },
+        "skip_refresh": {
+          "description": "Пропустити оновлення пристроїв Google Home після видалення будильника.",
+          "name": "Пропустити оновлення"
+        },
         "entity_id": {
           "description": "Представляє пристрій Google Home (sensor.xxxx_alarms).",
           "name": "Сутність"
@@ -50,6 +54,10 @@
           "description": "ID таймера (timer/xxx).",
           "name": "ID таймера"
         },
+        "skip_refresh": {
+          "description": "Пропустити оновлення пристроїв Google Home після видалення таймера.",
+          "name": "Пропустити оновлення"
+        },
         "entity_id": {
           "description": "Представляє пристрій Google Home (sensor.xxxx_alarms).",
           "name": "Сутність"
@@ -60,6 +68,10 @@
     "reboot_device": {
       "description": "Перезавантажити пристрій Google Home.",
       "name": "Перезавантажити пристрій"
+    },
+    "refresh_devices": {
+      "description": "Оновити стан усіх пристроїв Google Home.",
+      "name": "Оновити пристрої"
     }
   }
 }

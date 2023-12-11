@@ -37,6 +37,10 @@
           "description": "ID eines Alarms (alarm/xxx).",
           "name": "Alarm-ID"
         },
+        "skip_refresh": {
+          "description": "Überspringen Sie die Aktualisierung von Google Home-Geräten nach dem Löschen eines Alarms.",
+          "name": "Aktualisierung überspringen"
+        },
         "entity_id": {
           "description": "Stellt ein Google Home Gerät dar (sensor.xxxx_alarms).",
           "name": "Entität"
@@ -51,6 +55,10 @@
           "description": "ID eines Timers (timer/xxx).",
           "name": "Timer-ID"
         },
+        "skip_refresh": {
+          "description": "Überspringen Sie die Aktualisierung von Google Home-Geräten, nachdem Sie einen Timer gelöscht haben.",
+          "name": "Aktualisierung überspringen"
+        },
         "entity_id": {
           "description": "Stellt ein Google Home Gerät dar (sensor.xxxx_alarms).",
           "name": "Entität"
@@ -61,6 +69,10 @@
     "reboot_device": {
       "description": "Ein Google Home Gerät neu starten.",
       "name": "Gerät neu starten"
+    },
+    "refresh_devices": {
+      "description": "Aktualisieren Sie den Status aller Google Home-Geräte.",
+      "name": "Geräte aktualisieren"
     }
   }
 }
