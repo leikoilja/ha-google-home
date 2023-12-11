@@ -25,7 +25,7 @@ isort = "^5.12.0"
 mypy = "^1.7"
 pre-commit = "^3.5.0"
 PyGithub = "^2.1"
-pylint = "^3.0.2"
+pylint = "^3.0.3"
 types-requests = "^2.31.0"
 voluptuous-stubs = "^0.1.1"
 
