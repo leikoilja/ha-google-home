@@ -23,7 +23,7 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Ændre opdaterings interval. Hæv dette Hvis du lider af timeout-fejl. Standard: 180 (Sekunder)"
+          "update_interval": "Ændre opdaterings interval. Hæv dette hvis du lider af timeout-fejl. Standard: 180 (Sekunder)"
         }
       }
     }
