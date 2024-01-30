@@ -4,6 +4,7 @@ Custom integration to integrate Google Home with Home Assistant.
 For more details about this integration, please refer to
 https://github.com/leikoilja/ha-google-home
 """
+
 from datetime import timedelta
 import logging
 

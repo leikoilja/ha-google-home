@@ -1,4 +1,5 @@
 """Sensor platform for Google Home"""
+
 from __future__ import annotations
 
 import logging
