@@ -1,4 +1,5 @@
 """Defines base entities for Google Home"""
+
 from __future__ import annotations
 
 from abc import ABC, abstractmethod

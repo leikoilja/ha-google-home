@@ -1,4 +1,5 @@
 """Models for Google Home"""
+
 from __future__ import annotations
 
 from datetime import timedelta
@@ -73,10 +74,12 @@ class GoogleHomeDevice:
         """Returns alarms in a sorted order. Inactive & missed alarms are at the end."""
         return sorted(
             self._alarms,
-            key=lambda k: k.fire_time
-            if k.status
-            not in (GoogleHomeAlarmStatus.INACTIVE, GoogleHomeAlarmStatus.MISSED)
-            else k.fire_time + sys.maxsize,
+            key=lambda k: (
+                k.fire_time
+                if k.status
+                not in (GoogleHomeAlarmStatus.INACTIVE, GoogleHomeAlarmStatus.MISSED)
+                else k.fire_time + sys.maxsize
+            ),
         )
 
     def get_next_alarm(self) -> GoogleHomeAlarm | None:

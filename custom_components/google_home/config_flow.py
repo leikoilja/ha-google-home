@@ -1,4 +1,5 @@
 """Adds config flow for Google Home"""
+
 from __future__ import annotations
 
 from datetime import timedelta
