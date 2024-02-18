@@ -8,7 +8,6 @@ import voluptuous as vol
 
 from homeassistant.components.sensor import SensorDeviceClass
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import STATE_UNAVAILABLE
 from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.helpers import config_validation as cv, entity_platform
 from homeassistant.helpers.entity import Entity, EntityCategory
@@ -202,7 +201,7 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
             if next_alarm
             and next_alarm.status
             not in (GoogleHomeAlarmStatus.INACTIVE, GoogleHomeAlarmStatus.MISSED)
-            else STATE_UNAVAILABLE
+            else None
         )
 
     @property
@@ -285,7 +284,7 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
         return (
             timer.local_time_iso
             if timer and timer.local_time_iso
-            else STATE_UNAVAILABLE
+            else None
         )
 
     @property
