@@ -26,7 +26,7 @@ mypy = "^1.10"
 pre-commit = "^3.7.1"
 PyGithub = "^2.3"
 pylint = "^3.2.2"
-types-requests = "^2.31.0"
+types-requests = "^2.32.0"
 voluptuous-stubs = "^0.1.1"
 
 [tool.pylint.messages_control]
