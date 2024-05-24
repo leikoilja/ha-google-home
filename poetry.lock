@@ -657,13 +657,13 @@ colorama = {version = "*", markers = "platform_system == \"Windows\""}
 
 [[package]]
 name = "codespell"
-version = "2.2.6"
+version = "2.3.0"
 description = "Codespell"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "codespell-2.2.6-py3-none-any.whl", hash = "sha256:9ee9a3e5df0990604013ac2a9f22fa8e57669c827124a2e961fe8a1da4cacc07"},
-    {file = "codespell-2.2.6.tar.gz", hash = "sha256:a8c65d8eb3faa03deabab6b3bbe798bea72e1799c7e9e955d57eca4096abcff9"},
+    {file = "codespell-2.3.0-py3-none-any.whl", hash = "sha256:a9c7cef2501c9cfede2110fd6d4e5e62296920efe9abfb84648df866e47f58d1"},
+    {file = "codespell-2.3.0.tar.gz", hash = "sha256:360c7d10f75e65f67bad720af7007e1060a5d395670ec11a7ed1fed9dd17471f"},
 ]
 
 [package.extras]
@@ -2547,4 +2547,4 @@ ifaddr = ">=0.1.7"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "cec3571c6d2afa549f2fc8ebe83f3ea89e2650aeffe25ce65a8866b8d943d549"
+content-hash = "64fbff1c64e5483bbbee33589e880b7b48be216248d057ebd812a3a9953471b6"
