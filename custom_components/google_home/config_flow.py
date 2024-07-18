@@ -16,6 +16,9 @@ from homeassistant.helpers.aiohttp_client import async_create_clientsession
 from .api import GlocaltokensApiClient
 from .const import (
     CONF_ANDROID_ID,
+    CONF_BLUETOOTH,
+    CONF_IRK,
+    CONF_IRK_IDENTIFIER,
     CONF_MASTER_TOKEN,
     CONF_PASSWORD,
     CONF_UPDATE_INTERVAL,
@@ -160,10 +163,14 @@ class GoogleHomeOptionsFlowHandler(OptionsFlow):
         # Cast from MappingProxy to dict to allow update.
         self.options = dict(config_entry.options)
 
-    async def async_step_init(
-        self, user_input: OptionsFlowDict | None = None
-    ) -> ConfigFlowResult:
+    async def async_step_init(self, user_input=None) -> ConfigFlowResult:
         """Manage the options."""
+        return self.async_show_menu(
+            step_id="init", menu_options=["global", "bluetooth"]
+        )
+
+    async def async_step_global(self, user_input=None) -> FlowResult:
+        """Manage the global options."""
         if user_input is not None:
             self.options.update(user_input)
             coordinator = self.hass.data[DOMAIN][self.config_entry.entry_id][
@@ -177,7 +184,6 @@ class GoogleHomeOptionsFlowHandler(OptionsFlow):
             return self.async_create_entry(
                 title=self.config_entry.data.get(CONF_USERNAME), data=self.options
             )
-
         return self.async_show_form(
             step_id="init",
             data_schema=vol.Schema(
@@ -188,6 +194,32 @@ class GoogleHomeOptionsFlowHandler(OptionsFlow):
                             CONF_UPDATE_INTERVAL, UPDATE_INTERVAL
                         ),
                     ): int,
+                }
+            ),
+        )
+
+    async def async_step_bluetooth(self, user_input=None) -> FlowResult:
+        """Manage the options."""
+        return self.async_show_menu(step_id="bluetooth", menu_options=["add_irk"])
+
+    async def async_step_add_irk(
+        self, user_input: OptionsFlowDict | None = None
+    ) -> FlowResult:
+        """Manage the options."""
+        if user_input is not None:
+            irk_list = self.options.get(CONF_BLUETOOTH, {}).get(CONF_IRK, [])
+            irk_list.append(user_input)
+            self.options[CONF_BLUETOOTH] = {CONF_IRK: irk_list}
+            return self.async_create_entry(
+                title=self.config_entry.data.get(CONF_USERNAME), data=self.options
+            )
+
+        return self.async_show_form(
+            step_id="add_irk",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(CONF_IRK_IDENTIFIER): str,
+                    vol.Required(CONF_IRK): str,
                 }
             ),
         )

@@ -97,3 +97,32 @@ type JsonDict = Mapping[
 ]
 
 type GoogleHomeConfigEntry = ConfigEntry[None]
+
+
+class BTJsonDict(TypedDict, total=False):
+    """Typed dict for JSON representation of BT items returned by Google Home API"""
+
+    id: str
+    mac_address: str
+    device_class: int
+    device_type: int
+    rssi: int
+    expected_profiles: int
+    name: str | None
+
+
+class GoogleHomeBTDeviceDict(TypedDict):
+    """Typed dict representation of Google Home bluetooth device"""
+
+    mac_address: str
+    device_type: str
+    rssi: int
+    expected_profiles: int
+    name: str | None
+
+
+class BTDeviceAttributes(TypedDict):
+    """Typed dict for BT device attributes"""
+
+    bt_devices: list[GoogleHomeBTDeviceDict]
+    integration: str
