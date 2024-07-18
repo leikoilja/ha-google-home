@@ -18,7 +18,8 @@
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/leikoilja/ha-google-home/issues",
   "requirements": [
-    "glocaltokens==0.7.1"
+    "glocaltokens==0.7.1",
+    "bluetooth-data-tools==1.19.3"
   ],
   "version": "1.11.1",
   "zeroconf": [

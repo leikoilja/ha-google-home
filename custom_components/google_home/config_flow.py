@@ -17,6 +17,9 @@ from homeassistant.helpers.aiohttp_client import async_create_clientsession
 from .api import GlocaltokensApiClient
 from .const import (
     CONF_ANDROID_ID,
+    CONF_BLUETOOTH,
+    CONF_IRK,
+    CONF_IRK_IDENTIFIER,
     CONF_MASTER_TOKEN,
     CONF_PASSWORD,
     CONF_UPDATE_INTERVAL,
@@ -43,7 +46,8 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         self._errors: dict[str, str] = {}
 
     async def async_step_user(
-        self, user_input: ConfigFlowDict | None = None  # type: ignore[override]
+        self,
+        user_input: ConfigFlowDict | None = None,  # type: ignore[override]
     ) -> FlowResult:
         """Handle a flow initialized by the user."""
         self._errors = {}
@@ -75,20 +79,18 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                         title = f"{MANUFACTURER} (master_token)"
                     else:
                         self._errors["base"] = "master-token-invalid"
+                elif len(password) < MAX_PASSWORD_LENGTH:
+                    client = GlocaltokensApiClient(
+                        hass=self.hass,
+                        session=session,
+                        username=username,
+                        password=password,
+                    )
+                    master_token = await self._get_master_token(client)
+                    if not master_token:
+                        self._errors["base"] = "auth"
                 else:
-                    # master_token not provided, so use username/password authentication
-                    if len(password) < MAX_PASSWORD_LENGTH:
-                        client = GlocaltokensApiClient(
-                            hass=self.hass,
-                            session=session,
-                            username=username,
-                            password=password,
-                        )
-                        master_token = await self._get_master_token(client)
-                        if not master_token:
-                            self._errors["base"] = "auth"
-                    else:
-                        self._errors["base"] = "pass-len"
+                    self._errors["base"] = "pass-len"
 
                 if client and not self._errors:
                     config_data: dict[str, str] = {}
@@ -152,10 +154,14 @@ class GoogleHomeOptionsFlowHandler(config_entries.OptionsFlow):
         # Cast from MappingProxy to dict to allow update.
         self.options = dict(config_entry.options)
 
-    async def async_step_init(
-        self, user_input: OptionsFlowDict | None = None
-    ) -> FlowResult:
+    async def async_step_init(self, user_input=None) -> FlowResult:
         """Manage the options."""
+        return self.async_show_menu(
+            step_id="init", menu_options=["global", "bluetooth"]
+        )
+
+    async def async_step_global(self, user_input=None) -> FlowResult:
+        """Manage the global options."""
         if user_input is not None:
             self.options.update(user_input)
             coordinator = self.hass.data[DOMAIN][self.config_entry.entry_id][
@@ -169,7 +175,6 @@ class GoogleHomeOptionsFlowHandler(config_entries.OptionsFlow):
             return self.async_create_entry(
                 title=self.config_entry.data.get(CONF_USERNAME), data=self.options
             )
-
         return self.async_show_form(
             step_id="init",
             data_schema=vol.Schema(
@@ -180,6 +185,32 @@ class GoogleHomeOptionsFlowHandler(config_entries.OptionsFlow):
                             CONF_UPDATE_INTERVAL, UPDATE_INTERVAL
                         ),
                     ): int,
+                }
+            ),
+        )
+
+    async def async_step_bluetooth(self, user_input=None) -> FlowResult:
+        """Manage the options."""
+        return self.async_show_menu(step_id="bluetooth", menu_options=["add_irk"])
+
+    async def async_step_add_irk(
+        self, user_input: OptionsFlowDict | None = None
+    ) -> FlowResult:
+        """Manage the options."""
+        if user_input is not None:
+            irk_list = self.options.get(CONF_BLUETOOTH, {}).get(CONF_IRK, [])
+            irk_list.append(user_input)
+            self.options[CONF_BLUETOOTH] = {CONF_IRK: irk_list}
+            return self.async_create_entry(
+                title=self.config_entry.data.get(CONF_USERNAME), data=self.options
+            )
+
+        return self.async_show_form(
+            step_id="add_irk",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(CONF_IRK_IDENTIFIER): str,
+                    vol.Required(CONF_IRK): str,
                 }
             ),
         )

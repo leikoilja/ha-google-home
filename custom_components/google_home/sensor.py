@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 
+from bluetooth_data_tools import get_cipher_for_irk, resolve_private_address
 import voluptuous as vol
 
 from homeassistant.components.sensor import SensorDeviceClass
@@ -13,17 +14,23 @@ from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.helpers import config_validation as cv, entity_platform
 from homeassistant.helpers.entity import Entity, EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
+from .api import GlocaltokensApiClient
 from .const import (
     ALARM_AND_TIMER_ID_LENGTH,
+    CONF_BLUETOOTH,
+    CONF_IRK,
     DATA_CLIENT,
     DATA_COORDINATOR,
     DOMAIN,
     GOOGLE_HOME_ALARM_DEFAULT_VALUE,
     ICON_ALARMS,
+    ICON_BT_DEVICES,
     ICON_TIMERS,
     ICON_TOKEN,
     LABEL_ALARMS,
+    LABEL_BT_DEVICES,
     LABEL_DEVICE,
     LABEL_TIMERS,
     SERVICE_ATTR_ALARM_ID,
@@ -56,6 +63,7 @@ async def async_setup_entry(
     client = hass.data[DOMAIN][entry.entry_id][DATA_CLIENT]
     coordinator = hass.data[DOMAIN][entry.entry_id][DATA_COORDINATOR]
     sensors: list[Entity] = []
+    irks = entry.options.get(CONF_BLUETOOTH, {}).get(CONF_IRK, [])
     for device in coordinator.data:
         sensors.append(
             GoogleHomeDeviceSensor(
@@ -83,6 +91,21 @@ async def async_setup_entry(
                     device.hardware,
                 ),
             ]
+        for irk_info in irks:
+            irk = irk_info["irk"]
+            irk_id = irk_info["irk_id"]
+            sensors.append(
+                GoogleHomeIrkBTDevicesSensor(
+                    coordinator,
+                    client,
+                    device.device_id,
+                    device.name,
+                    device.hardware,
+                    bytes.fromhex(irk),
+                    irk_id,
+                )
+            )
+
     async_add_devices(sensors)
 
     platform = entity_platform.async_get_current_platform()
@@ -340,3 +363,45 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
         if not call.data[SERVICE_ATTR_SKIP_REFRESH]:
             _LOGGER.debug("Refreshing Devices")
             await self.coordinator.async_request_refresh()
+
+
+class GoogleHomeIrkBTDevicesSensor(GoogleHomeBaseEntity):
+    """Google Home Alarms sensor."""
+
+    _attr_device_class = SensorDeviceClass.SIGNAL_STRENGTH
+
+    def __init__(
+        self,
+        coordinator: DataUpdateCoordinator[list[GoogleHomeDevice]],
+        client: GlocaltokensApiClient,
+        device_id: str,
+        device_name: str,
+        device_model: str,
+        irk: str,
+        irk_id: str,
+    ):
+        super().__init__(coordinator, client, device_id, device_name, device_model)
+        self.irk = irk
+        self.irk_id = irk_id
+        self._irk_cipher = get_cipher_for_irk(self.irk)
+
+    @property
+    def label(self) -> str:
+        """Label to use for name and unique id."""
+        return LABEL_BT_DEVICES + " " + str(self.irk_id)
+
+    @property
+    def icon(self) -> str:
+        """Icon to use in the frontend."""
+        return ICON_BT_DEVICES
+
+    @property
+    def state(self) -> str | None:
+        valid = [
+            device
+            for device in self.get_device().bt_devices.keys()
+            if resolve_private_address(self._irk_cipher, device)
+        ]
+        if not valid:
+            return STATE_UNAVAILABLE
+        return self.get_device().bt_devices[valid[0]].rssi
