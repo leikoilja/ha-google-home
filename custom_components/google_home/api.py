@@ -52,6 +52,7 @@ class GlocaltokensApiClient:
         master_token: str | None = None,
         android_id: str | None = None,
         zeroconf_instance: Zeroconf | None = None,
+        bt_update_interval: int = 90,
     ):
         """Sample API Client."""
         self.hass = hass
@@ -69,6 +70,7 @@ class GlocaltokensApiClient:
         )
         self.google_devices: list[GoogleHomeDevice] = []
         self.zeroconf_instance = zeroconf_instance
+        self._bt_update_interval = bt_update_interval
 
     async def async_get_master_token(self) -> str:
         """Get master API token"""
@@ -162,6 +164,35 @@ class GlocaltokensApiClient:
         )
         return coordinator_data
 
+    async def update_google_devices_bt_information(self) -> list[GoogleHomeDevice]:
+        """Retrieves devices from glocaltokens and
+        fetches alarm/timer data from each of the device
+        """
+
+        devices = await self.get_google_devices()
+
+        # Gives the user a warning if the device is offline
+        for device in devices:
+            if not device.ip_address and device.available:
+                device.available = False
+                _LOGGER.debug(
+                    (
+                        "Failed to fetch timers/alarms information "
+                        "from device %s. We could not determine its IP address, "
+                        "the device is either offline or is not compatible "
+                        "Google Home device. Will try again later."
+                    ),
+                    device.name,
+                )
+
+        coordinator_data = [
+            await self.update_bluetooth_list(device)
+            for device in devices
+            if device.ip_address and device.auth_token
+        ]
+
+        return coordinator_data
+
     async def collect_data_from_endpoints(
         self, device: GoogleHomeDevice
     ) -> GoogleHomeDevice:
@@ -169,7 +200,6 @@ class GlocaltokensApiClient:
         device = await self.update_alarms_and_timers(device)
         device = await self.update_alarm_volume(device)
         device = await self.update_do_not_disturb(device)
-        device = await self.update_bluetooth_list(device)
         return device
 
     async def update_alarms_and_timers(
@@ -252,7 +282,13 @@ class GlocaltokensApiClient:
     async def request_bluetooth_scan(self, device: GoogleHomeDevice) -> None:
         """Rescans for visible bluetooth devices."""
 
-        data = {"enable": True, "clear_results": True, "timeout": 90}
+        # Clear results should be set to False to prevent the data from disappearing
+        # if it was not seen in the most recent scan.
+        data = {
+            "enable": True,
+            "clear_results": False,
+            "timeout": self._bt_update_interval,
+        }
 
         _LOGGER.debug(
             "Trying to scan for Bluetooth device list on Google Home device %s",
@@ -267,7 +303,6 @@ class GlocaltokensApiClient:
         )
 
         if response is not None:
-            # It will return true even if the device does not support rebooting.
             _LOGGER.info(
                 "Successfully asked %s For Bluetooth device list scan.",
                 device.name,
@@ -288,7 +323,7 @@ class GlocaltokensApiClient:
         if response is not None:
             device.set_bt(cast(list[BTJsonDict], response))
 
-            _LOGGER.info(
+            _LOGGER.debug(
                 "Successfully retrieved some data from %s. Response: %s",
                 device.name,
                 response,

@@ -83,12 +83,6 @@ class ConfigFlowDict(TypedDict):
     master_token: str
 
 
-class OptionsFlowDict(TypedDict):
-    """Typed dict for options flow handler"""
-
-    update_interval: int
-
-
 JsonDict = Mapping[
     str,
     Union[bool, float, int, str, list[str], list[AlarmJsonDict], list[TimerJsonDict]],

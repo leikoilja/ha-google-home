@@ -48,11 +48,16 @@ class GoogleHomeDevice:
         self._alarm_volume = GOOGLE_HOME_ALARM_DEFAULT_VALUE
         self._timers: list[GoogleHomeTimer] = []
         self._alarms: list[GoogleHomeAlarm] = []
-        self.bt_devices: dict[str, GoogleHomeBTDevice] = []
+        self._bt_devices: dict[str, GoogleHomeBTDevice] = {}
+
+    @property
+    def bt_devices(self) -> dict[str, GoogleHomeBTDevice]:
+        """Get the currently seen bluetooth devices."""
+        return self._bt_devices
 
     def set_bt(self, devices: list[BTJsonDict]) -> None:
         """Stores BT devices as GoogleHomeBTDevice objects"""
-        self.bt_devices = {
+        self._bt_devices = {
             device["mac_address"]: GoogleHomeBTDevice(
                 mac_address=device["mac_address"],
                 device_type=device["device_type"],
