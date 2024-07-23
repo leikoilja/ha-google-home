@@ -13,6 +13,7 @@ dynamic = ["version"]
 dependencies = [
     "glocaltokens>=0.7.6",
     "homeassistant==2025.7.0",
+    "bluetooth-data-tools>=1.19.3"
 ]
 
 [dependency-groups]

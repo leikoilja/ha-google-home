@@ -1,31 +1,68 @@
 {
   "config": {
-    "step": {
-      "user": {
-        "title": "Google Home authentication",
-        "description": "If you need help with the configuration have a look here: https://github.com/leikoilja/ha-google-home. Use your google account username and app password. It's safer/easier to generate an app password and use it instead of the actual password. It still has the same access as the regular password, but still better than using the real password while scripting. (https://myaccount.google.com/apppasswords). If not, regular google account password should work.",
-        "data": {
-          "username": "Google account username",
-          "password": "Google account app password",
-          "master_token": "Google account master token"
-        }
-      }
+    "abort": {
+      "single_instance_allowed": "Only a single instance is allowed."
     },
     "error": {
       "auth": "Username/Password is incorrect. If your google account has 2FA enabled please generate app password (https://myaccount.google.com/apppasswords). If authentication still fails refer to https://github.com/leikoilja/ha-google-home#troubleshooting",
-      "pass-len": "Password length is limited to 100 characters by Google Policy (https://support.google.com/a/answer/139399). Please, change your password or use an app password (https://myaccount.google.com/apppasswords).",
+      "master-token-invalid": "Master token invalid. Make sure that the full token has been specified (including 'aas_et/')",
       "missing-inputs": "Please provide either username and password or master token",
-      "master-token-invalid": "Master token invalid. Make sure that the full token has been specified (including 'aas_et/')"
+      "pass-len": "Password length is limited to 100 characters by Google Policy (https://support.google.com/a/answer/139399). Please, change your password or use an app password (https://myaccount.google.com/apppasswords)."
     },
-    "abort": {
-      "single_instance_allowed": "Only a single instance is allowed."
+    "step": {
+      "user": {
+        "data": {
+          "master_token": "Google account master token",
+          "password": "Google account app password",
+          "username": "Google account username"
+        },
+        "description": "If you need help with the configuration have a look here: https://github.com/leikoilja/ha-google-home. Use your google account username and app password. It's safer/easier to generate an app password and use it instead of the actual password. It still has the same access as the regular password, but still better than using the real password while scripting. (https://myaccount.google.com/apppasswords). If not, regular google account password should work.",
+        "title": "Google Home authentication"
+      }
     }
   },
   "options": {
     "step": {
-      "init": {
+      "global": {
         "data": {
-          "update_interval": "Change update interval. Increase this if you are suffering from devices timing out. Default: 180 (Seconds)"
+          "update_interval": "Change update interval. Increase this if you are suffering from devices timing out. Default: 180 (Seconds)",
+          "bt_update_interval": "Change BT Update interval. Default: 10 (Seconds)"
+        }
+      },
+      "init": {
+        "menu_options": {
+          "global": "Global",
+          "bluetooth": "Bluetooth"
+        }
+      },
+      "bluetooth": {
+        "menu_options": {
+          "add_irk": "Add a irk device",
+          "add_mac": "Add a mac device",
+          "remove_irk": "Remove a irk device",
+          "remove_mac": "Remove a mac device"
+        }
+      },
+      "add_irk": {
+        "data": {
+          "irk_id": "Identifier for device",
+          "irk": "Identity Resolving Key (Irk)"
+        }
+      },
+      "add_mac": {
+        "data": {
+          "mac_id": "Identifier for device",
+          "mac": "Mac Address"
+        }
+      },
+      "remove_irk": {
+        "data": {
+          "irk_id": "Identifier for device"
+        }
+      },
+      "remove_mac": {
+        "data": {
+          "mac_id": "Identifier for device"
         }
       }
     }
@@ -38,13 +75,13 @@
           "description": "ID of an alarm (alarm/xxx).",
           "name": "Alarm ID"
         },
-        "skip_refresh": {
-          "description": "Skip refreshing Google Home devices after deleting an alarm.",
-          "name": "Skip refresh"
-        },
         "entity_id": {
           "description": "Represents a Google Home device (sensor.xxxx_alarms).",
           "name": "Entity"
+        },
+        "skip_refresh": {
+          "description": "Skip refreshing Google Home devices after deleting an alarm.",
+          "name": "Skip refresh"
         }
       },
       "name": "Delete alarm"
@@ -52,17 +89,17 @@
     "delete_timer": {
       "description": "Delete a timer from a Google Home device.",
       "fields": {
-        "timer_id": {
-          "description": "ID of a timer (timer/xxx).",
-          "name": "Timer ID"
+        "entity_id": {
+          "description": "Represents a Google Home device (sensor.xxxx_alarms).",
+          "name": "Entity"
         },
         "skip_refresh": {
           "description": "Skip refreshing Google Home devices after deleting a timer.",
           "name": "Skip refresh"
         },
-        "entity_id": {
-          "description": "Represents a Google Home device (sensor.xxxx_alarms).",
-          "name": "Entity"
+        "timer_id": {
+          "description": "ID of a timer (timer/xxx).",
+          "name": "Timer ID"
         }
       },
       "name": "Delete timer"
