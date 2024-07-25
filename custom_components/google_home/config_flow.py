@@ -55,7 +55,7 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
         """Return True if other_flow is matching this flow."""
         return other_flow.username == self.username
 
-    async def async_step_user(
+    async def async_step_user(  # type: ignore
         self,
         user_input: ConfigFlowDict | None = None,  # type: ignore[override]
     ) -> ConfigFlowResult:
@@ -117,7 +117,7 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
 
     @staticmethod
     @callback
-    def async_get_options_flow(
+    def async_get_options_flow(  # type: ignore
         config_entry: GoogleHomeConfigEntry,
     ) -> GoogleHomeOptionsFlowHandler:
         """Handle options flow."""
