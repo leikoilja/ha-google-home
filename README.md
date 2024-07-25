@@ -25,19 +25,20 @@
 3. [Switches](#switches)
 4. [Numbers](#numbers)
 5. [Services](#services)
-6. [Getting Started](#getting-started)
+6. [Bluetooth](#bluetooth)
+7. [Getting Started](#getting-started)
    - [Prerequisites](#prerequisites)
    - [HACS Installation](#hacs-installation)
    - [Manual Installation](#manual-installation)
    - [Integration Setup](#integration-setup)
    - [Running in Home Assistant Docker container](#running-in-home-assistant-docker-container)
    - [Installing ARM Docker Container Dependencies (Workaround)](#arm-docker-container-dependencies-workaround)
-7. [Lovelace Cards](#lovelace-cards)
-8. [Node-RED Flows](#node-red-flows)
-9. [Troubleshooting](#troubleshooting)
-10. [Contribution](#contribution)
-11. [Localization](#localization)
-12. [Credits](#credits)
+8. [Lovelace Cards](#lovelace-cards)
+9. [Node-RED Flows](#node-red-flows)
+10. [Troubleshooting](#troubleshooting)
+11. [Contribution](#contribution)
+12. [Localization](#localization)
+13. [Credits](#credits)
 
 </details>
 
@@ -138,6 +139,13 @@ This component will set up the following numbers:
 | Platform | Sample number                     | Description                                      |
 | -------- | --------------------------------- | ------------------------------------------------ |
 | `number` | `number.living_room_alarm_volume` | Control the alarm volume on a Google Home device |
+
+## Bluetooth
+
+It is possible to track bluetooth devices via your supported google home devices. There are two options with the data:
+
+1. You can get the bluetooth information directly as sensors by going to Google Home -> Configure -> Add mac or add irk. A sensor will be created to track the given device for each google home device.
+2. We automatically give the bluetooth information to Home Assistant, that way integrations like [Private BLE Tracker](https://www.home-assistant.io/integrations/private_ble_device/), [Bermuda](https://github.com/agittins/bermuda), etc. can track using the information provided.
 
 ## Services
 

@@ -15,6 +15,7 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .api import GlocaltokensApiClient
+from .bluetooth import async_connect_scanner
 from .const import (
     BT_COORDINATOR,
     BT_UPDATE_INTERVAL,
@@ -38,7 +39,9 @@ if TYPE_CHECKING:
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
-async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -> bool:
+async def async_setup_entry(  # type: ignore
+    hass: HomeAssistant, entry: GoogleHomeConfigEntry
+) -> bool:
     """Set up this integration using UI."""
     if hass.data.get(DOMAIN) is None:
         hass.data.setdefault(DOMAIN, {})
@@ -97,19 +100,23 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -
         BT_COORDINATOR: bt_coordinator,
     }
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    _scanners, unload_scanner = async_connect_scanner(hass, bt_coordinator)
     entry.async_on_unload(entry.add_update_listener(update_listener))
-
-    entry.add_update_listener(async_update_entry)
+    entry.async_on_unload(unload_scanner)
     return True
 
 
-async def update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
+async def update_listener(  # type: ignore
+    hass: HomeAssistant, entry: ConfigEntry
+) -> None:
     """Handle options update."""
     # Reload entry to update data
     await hass.config_entries.async_reload(entry.entry_id)
 
 
-async def async_unload_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -> bool:
+async def async_unload_entry(  # type: ignore
+    hass: HomeAssistant, entry: GoogleHomeConfigEntry
+) -> bool:
     """Handle removal of an entry."""
     _LOGGER.debug("Unloading entry...")
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
