@@ -49,7 +49,7 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         """Initialize."""
         self._errors: dict[str, str] = {}
 
-    async def async_step_user(
+    async def async_step_user(  # type: ignore
         self,
         user_input: ConfigFlowDict | None = None,  # type: ignore[override]
     ) -> FlowResult:
@@ -109,7 +109,7 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
     @staticmethod
     @callback
-    def async_get_options_flow(
+    def async_get_options_flow(  # type: ignore
         config_entry: ConfigEntry,
     ) -> GoogleHomeOptionsFlowHandler:
         return GoogleHomeOptionsFlowHandler(config_entry)
