@@ -13,6 +13,7 @@ from .const import DATETIME_STR_FORMAT, GOOGLE_HOME_ALARM_DEFAULT_VALUE
 from .types import (
     AlarmJsonDict,
     BTJsonDict,
+    EurekaInfoDict,
     GoogleHomeAlarmDict,
     GoogleHomeBTDeviceDict,
     GoogleHomeTimerDict,
@@ -49,6 +50,16 @@ class GoogleHomeDevice:
         self._timers: list[GoogleHomeTimer] = []
         self._alarms: list[GoogleHomeAlarm] = []
         self._bt_devices: dict[str, GoogleHomeBTDevice] = {}
+        self._eureka_info: EurekaInfoDict | None = None
+
+    @property
+    def mac(self) -> str | None:
+        """Gets the mac is one exist in eureka info, otherwise returns None"""
+        return (
+            self._eureka_info.get("device_info", {}).get("mac_address")
+            if self._eureka_info
+            else None
+        )
 
     @property
     def bt_devices(self) -> dict[str, GoogleHomeBTDevice]:
@@ -67,6 +78,10 @@ class GoogleHomeDevice:
             )
             for device in devices
         }
+
+    def set_eureka_info(self, eureka_info: EurekaInfoDict) -> None:
+        """Stores Eureka info"""
+        self._eureka_info = eureka_info
 
     def set_alarms(self, alarms: list[AlarmJsonDict]) -> None:
         """Stores alarms as GoogleHomeAlarm objects"""

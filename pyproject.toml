@@ -8,10 +8,11 @@ readme = "README.md"
 packages = [{include = "google_home", from = "custom_components"}]
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = ">=3.12,<3.13"
 glocaltokens = "^0.7.1"
-homeassistant = "2023.11.0"
+homeassistant = "2024.7.0"
 bluetooth-data-tools = "^1.19.3"
+mypy = "1.11"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.4.2"
@@ -21,7 +22,7 @@ flake8-bugbear = "^24.4.26"
 flake8-comprehensions = "^3.15.0"
 flake8-simplify = "^0.21.0"
 flake8-use-fstring = "^1.4"
-homeassistant-stubs = "^2023.11.0"
+homeassistant-stubs = "^2024.7.0"
 isort = "^5.13.2"
 mypy = "^1.11"
 pre-commit = "^3.7.1"
@@ -55,7 +56,7 @@ known_first_party = [
 ]
 
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.12"
 show_error_codes = true
 strict = true
 disallow_any_explicit = true

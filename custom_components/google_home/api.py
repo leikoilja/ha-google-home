@@ -23,6 +23,7 @@ from .const import (
     API_ENDPOINT_BLUETOOTH_RESULTS,
     API_ENDPOINT_BLUETOOTH_SCAN,
     API_ENDPOINT_DO_NOT_DISTURB,
+    API_ENDPOINT_EUREKA_INFO,
     API_ENDPOINT_REBOOT,
     HEADER_CAST_LOCAL_AUTH,
     HEADER_CONTENT_TYPE,
@@ -35,7 +36,7 @@ from .const import (
 )
 from .exceptions import InvalidMasterToken
 from .models import GoogleHomeDevice
-from .types import AlarmJsonDict, BTJsonDict, JsonDict, TimerJsonDict
+from .types import AlarmJsonDict, BTJsonDict, EurekaInfoDict, JsonDict, TimerJsonDict
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -78,7 +79,9 @@ class GlocaltokensApiClient:
         def _get_master_token() -> str | None:
             return self._client.get_master_token()
 
-        master_token = await self.hass.async_add_executor_job(_get_master_token)
+        master_token: str | None = await self.hass.async_add_executor_job(
+            _get_master_token  # type: ignore
+        )
         if master_token is None or is_aas_et(master_token) is False:
             raise InvalidMasterToken
         return master_token
@@ -89,7 +92,9 @@ class GlocaltokensApiClient:
         def _get_access_token() -> str | None:
             return self._client.get_access_token()
 
-        access_token = await self.hass.async_add_executor_job(_get_access_token)
+        access_token: str | None = await self.hass.async_add_executor_job(
+            _get_access_token  # type: ignore
+        )
         if access_token is None:
             raise InvalidMasterToken
         return access_token
@@ -106,7 +111,9 @@ class GlocaltokensApiClient:
                     force_homegraph_reload=True,
                 )
 
-            google_devices = await self.hass.async_add_executor_job(_get_google_devices)
+            google_devices = await self.hass.async_add_executor_job(
+                _get_google_devices  # type: ignore
+            )
             self.google_devices = [
                 GoogleHomeDevice(
                     device_id=device.device_id,
@@ -125,7 +132,7 @@ class GlocaltokensApiClient:
         def _get_android_id() -> str:
             return self._client.get_android_id()
 
-        return await self.hass.async_add_executor_job(_get_android_id)
+        return await self.hass.async_add_executor_job(_get_android_id)  # type: ignore
 
     @staticmethod
     def create_url(ip_address: str, port: int, api_endpoint: str) -> str:
@@ -193,6 +200,35 @@ class GlocaltokensApiClient:
 
         return coordinator_data
 
+    async def update_google_eureka_info(
+        self, device: GoogleHomeDevice
+    ) -> GoogleHomeDevice:
+        """Fetches eureka info from google device"""
+        response = await self.request(
+            method="GET",
+            endpoint=API_ENDPOINT_EUREKA_INFO,
+            device=device,
+            polling=True,
+            params={
+                # Note params can just have some set.
+                "params": "version,audio,name,build_info,detail,device_info,"
+                "net,wifi,setup,settings,opt_in,opencast,multizone,"
+                "proxy,night_mode_params,user_eq,room_equalizer,sign,"
+                "aogh,ultrasound,mesh",
+                "options": "detail,sign",
+                "nonce": 1234512345,
+            },
+        )
+
+        if response is not None:
+            device.set_eureka_info(cast(EurekaInfoDict, response))
+            _LOGGER.debug(
+                "Successfully retrieved eureka info from %s. Response: %s",
+                device.name,
+                response,
+            )
+        return device
+
     async def collect_data_from_endpoints(
         self, device: GoogleHomeDevice
     ) -> GoogleHomeDevice:
@@ -200,6 +236,7 @@ class GlocaltokensApiClient:
         device = await self.update_alarms_and_timers(device)
         device = await self.update_alarm_volume(device)
         device = await self.update_do_not_disturb(device)
+        device = await self.update_google_eureka_info(device)
         return device
 
     async def update_alarms_and_timers(
@@ -479,6 +516,7 @@ class GlocaltokensApiClient:
         device: GoogleHomeDevice,
         data: JsonDict | None = None,
         polling: bool = False,
+        params: JsonDict | None = None,
     ) -> JsonDict | None:
         """Shared request method"""
 
@@ -508,7 +546,7 @@ class GlocaltokensApiClient:
 
         try:
             async with self._session.request(
-                method, url, json=data, headers=headers, timeout=TIMEOUT
+                method, url, json=data, headers=headers, timeout=TIMEOUT, params=params
             ) as response:
                 if response.status == HTTPStatus.OK:
                     try:
