@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import timedelta
 from enum import Enum
+import logging
 import sys
 
 from homeassistant.util.dt import as_local, utc_from_timestamp
@@ -11,10 +12,14 @@ from homeassistant.util.dt import as_local, utc_from_timestamp
 from .const import DATETIME_STR_FORMAT, GOOGLE_HOME_ALARM_DEFAULT_VALUE
 from .types import (
     AlarmJsonDict,
+    BTJsonDict,
     GoogleHomeAlarmDict,
+    GoogleHomeBTDeviceDict,
     GoogleHomeTimerDict,
     TimerJsonDict,
 )
+
+_LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
 def convert_from_ms_to_s(timestamp: int) -> int:
@@ -43,6 +48,25 @@ class GoogleHomeDevice:
         self._alarm_volume = GOOGLE_HOME_ALARM_DEFAULT_VALUE
         self._timers: list[GoogleHomeTimer] = []
         self._alarms: list[GoogleHomeAlarm] = []
+        self._bt_devices: dict[str, GoogleHomeBTDevice] = {}
+
+    @property
+    def bt_devices(self) -> dict[str, GoogleHomeBTDevice]:
+        """Get the currently seen bluetooth devices."""
+        return self._bt_devices
+
+    def set_bt(self, devices: list[BTJsonDict]) -> None:
+        """Stores BT devices as GoogleHomeBTDevice objects"""
+        self._bt_devices = {
+            device["mac_address"]: GoogleHomeBTDevice(
+                mac_address=device["mac_address"],
+                device_type=device["device_type"],
+                rssi=device["rssi"],
+                expected_profiles=device["expected_profiles"],
+                name=device["name"],
+            )
+            for device in devices
+        }
 
     def set_alarms(self, alarms: list[AlarmJsonDict]) -> None:
         """Stores alarms as GoogleHomeAlarm objects"""
@@ -209,3 +233,43 @@ class GoogleHomeTimerStatus(Enum):
     SET = 1
     PAUSED = 2
     RINGING = 3
+
+
+class GoogleHomeBTDevice:
+    """Local representation of detected BT devices"""
+
+    def __init__(
+        self,
+        mac_address: str,
+        device_type: int,
+        rssi: int,
+        expected_profiles: int,
+        name: str | None,
+    ) -> None:
+        self.mac_address = mac_address
+        self.device_type = device_type
+        self.rssi = rssi
+        self.expected_profiles = expected_profiles
+        self.name = name
+
+    def as_dict(self) -> GoogleHomeBTDeviceDict:
+        """Return typed dict representation."""
+        return {
+            "mac_address": self.mac_address,
+            "device_type": self._decode_device_type(self.device_type),
+            "rssi": self.rssi,
+            "expected_profiles": self.expected_profiles,
+            "name": self.name,
+        }
+
+    @staticmethod
+    def _decode_device_type(device_type: int) -> str:
+        types = ["BREDR", "BLE"]
+
+        out_types = []
+
+        for num, name in enumerate(types):
+            if device_type & (1 << num):
+                out_types.append(name)
+
+        return "|".join(out_types)

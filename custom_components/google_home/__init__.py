@@ -17,7 +17,10 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .api import GlocaltokensApiClient
 from .const import (
+    BT_COORDINATOR,
+    BT_UPDATE_INTERVAL,
     CONF_ANDROID_ID,
+    CONF_BT_UPDATE_INTERVAL,
     CONF_MASTER_TOKEN,
     CONF_UPDATE_INTERVAL,
     DATA_CLIENT,
@@ -44,6 +47,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     android_id: str = entry.data.get(CONF_ANDROID_ID)
     master_token: str = entry.data.get(CONF_MASTER_TOKEN)
     update_interval: int = entry.options.get(CONF_UPDATE_INTERVAL, UPDATE_INTERVAL)
+    bt_update_interval: int = entry.options.get(
+        CONF_BT_UPDATE_INTERVAL, BT_UPDATE_INTERVAL
+    )
 
     _LOGGER.debug(
         "Coordinator update interval is: %s", timedelta(seconds=update_interval)
@@ -60,6 +66,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         master_token=master_token,
         android_id=android_id,
         zeroconf_instance=zeroconf_instance,
+        bt_update_interval=bt_update_interval,
     )
 
     coordinator = DataUpdateCoordinator(
@@ -69,18 +76,33 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         update_method=glocaltokens_client.update_google_devices_information,
         update_interval=timedelta(seconds=update_interval),
     )
+    bt_coordinator = DataUpdateCoordinator(
+        hass,
+        _LOGGER,
+        name=f"{DOMAIN}_bt",
+        update_method=glocaltokens_client.update_google_devices_bt_information,
+        update_interval=timedelta(seconds=bt_update_interval),
+    )
 
     await coordinator.async_config_entry_first_refresh()
+    await bt_coordinator.async_config_entry_first_refresh()
 
     hass.data[DOMAIN][entry.entry_id] = {
         DATA_CLIENT: glocaltokens_client,
         DATA_COORDINATOR: coordinator,
+        BT_COORDINATOR: bt_coordinator,
     }
-
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    entry.async_on_unload(entry.add_update_listener(update_listener))
 
     entry.add_update_listener(async_update_entry)
     return True
+
+
+async def update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    """Handle options update."""
+    # Reload entry to update data
+    await hass.config_entries.async_reload(entry.entry_id)
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -96,6 +118,9 @@ async def async_update_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Update config entry."""
     _LOGGER.debug("Updating entry...")
     update_interval: int = entry.options.get(CONF_UPDATE_INTERVAL, UPDATE_INTERVAL)
+    bt_update_interval: int = entry.options.get(
+        CONF_BT_UPDATE_INTERVAL, BT_UPDATE_INTERVAL
+    )
     coordinator: DataUpdateCoordinator[list[GoogleHomeDevice]] = hass.data[DOMAIN][
         entry.entry_id
     ][DATA_COORDINATOR]
@@ -103,3 +128,8 @@ async def async_update_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
     _LOGGER.debug(
         "Coordinator update interval is: %s", timedelta(seconds=update_interval)
     )
+    bt_coordinator: DataUpdateCoordinator[list[GoogleHomeDevice]] = hass.data[DOMAIN][
+        entry.entry_id
+    ][BT_COORDINATOR]
+    bt_coordinator.update_interval = timedelta(seconds=bt_update_interval)
+    _LOGGER.debug("Coordinator update interval is: %s", timedelta(seconds=10))

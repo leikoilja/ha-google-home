@@ -15,9 +15,14 @@ MANUFACTURER: Final = "Google Home"
 ATTRIBUTION: Final = "json"
 ISSUE_URL: Final = "https://github.com/leikoilja/ha-google-home/issues"
 CONF_UPDATE_INTERVAL: Final = "update_interval"
-
+CONF_BT_UPDATE_INTERVAL: Final = "bt_update_interval"
+CONF_IRK: Final = "irk"
+CONF_MAC_IDENTIFIER: Final = "mac_id"
+CONF_IRK_IDENTIFIER: Final = "irk_id"
+CONF_BLUETOOTH: Final = "bluetooth"
 DATA_CLIENT: Final = "client"
 DATA_COORDINATOR: Final = "coordinator"
+BT_COORDINATOR: Final = "bt_coordinator"
 
 ALARM_AND_TIMER_ID_LENGTH: Final = 42
 
@@ -27,6 +32,7 @@ MAX_PASSWORD_LENGTH: Final = 100
 ICON_TOKEN: Final = "mdi:form-textbox-password"
 ICON_ALARMS: Final = "mdi:alarm-multiple"
 ICON_TIMERS: Final = "mdi:timer-sand"
+ICON_BT_DEVICES: Final = "mdi:bluetooth"
 ICON_DO_NOT_DISTURB: Final = "mdi:minus-circle"
 ICON_ALARM_VOLUME_LOW: Final = "mdi:volume-low"
 ICON_ALARM_VOLUME_MID: Final = "mdi:volume-medium"
@@ -63,6 +69,7 @@ LABEL_ALARM_VOLUME: Final = "alarm volume"
 LABEL_AVAILABLE: Final = "available"
 LABEL_TIMERS: Final = "timers"
 LABEL_DEVICE: Final = "device"
+LABEL_BT_DEVICES: Final = "bt_devices"
 LABEL_DO_NOT_DISTURB: Final = "Do Not Disturb"
 
 # DEVICE PORT
@@ -74,6 +81,8 @@ API_ENDPOINT_ALARM_DELETE: Final = "setup/assistant/alarms/delete"
 API_ENDPOINT_ALARM_VOLUME: Final = "setup/assistant/alarms/volume"
 API_ENDPOINT_REBOOT: Final = "setup/reboot"
 API_ENDPOINT_DO_NOT_DISTURB: Final = "setup/assistant/notifications"
+API_ENDPOINT_BLUETOOTH_SCAN: Final = "setup/bluetooth/scan"
+API_ENDPOINT_BLUETOOTH_RESULTS: Final = "setup/bluetooth/scan_results"
 
 # HEADERS
 HEADER_CAST_LOCAL_AUTH: Final = "cast-local-authorization-token"
@@ -88,7 +97,7 @@ DATETIME_STR_FORMAT: Final = f"{DATE_STR_FORMAT} {TIME_STR_FORMAT}"
 # Access token only lives about 1 hour
 # Update often to fetch timers in timely manner
 UPDATE_INTERVAL: Final = 180  # sec
-
+BT_UPDATE_INTERVAL: Final = 10
 # JSON parameter values when retrieving information from devices
 JSON_ALARM: Final = "alarm"
 JSON_TIMER: Final = "timer"
