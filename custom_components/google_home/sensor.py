@@ -60,7 +60,7 @@ if TYPE_CHECKING:
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
-async def async_setup_entry(  # type: ignore
+async def async_setup_entry(
     hass: HomeAssistant,
     entry: GoogleHomeConfigEntry,
     async_add_devices: AddEntitiesCallback,
@@ -138,8 +138,10 @@ async def async_setup_entry(  # type: ignore
     platform.async_register_entity_service(
         SERVICE_DELETE_ALARM,
         {
-            vol.Required(SERVICE_ATTR_ALARM_ID): cv.string,
-            vol.Optional(SERVICE_ATTR_SKIP_REFRESH): cv.boolean,
+            vol.Required(SERVICE_ATTR_ALARM_ID): cv.string,  # type: ignore[dict-item]
+            vol.Optional(
+                SERVICE_ATTR_SKIP_REFRESH
+            ): cv.boolean,  # type: ignore[dict-item]
         },
         GoogleHomeAlarmsSensor.async_delete_alarm,
     )
@@ -147,8 +149,10 @@ async def async_setup_entry(  # type: ignore
     platform.async_register_entity_service(
         SERVICE_DELETE_TIMER,
         {
-            vol.Required(SERVICE_ATTR_TIMER_ID): cv.string,
-            vol.Optional(SERVICE_ATTR_SKIP_REFRESH): cv.boolean,
+            vol.Required(SERVICE_ATTR_TIMER_ID): cv.string,  # type: ignore[dict-item]
+            vol.Optional(
+                SERVICE_ATTR_SKIP_REFRESH
+            ): cv.boolean,  # type: ignore[dict-item]
         },
         GoogleHomeTimersSensor.async_delete_timer,
     )
