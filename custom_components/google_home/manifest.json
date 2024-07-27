@@ -13,7 +13,7 @@
     "@KapJI"
   ],
   "config_flow": true,
-  "dependencies": ["bluetooth"],
+  "dependencies": [],
   "documentation": "https://github.com/leikoilja/ha-google-home",
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/leikoilja/ha-google-home/issues",
