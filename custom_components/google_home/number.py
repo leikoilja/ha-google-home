@@ -30,7 +30,7 @@ from .models import GoogleHomeDevice
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
-async def async_setup_entry(  # type: ignore
+async def async_setup_entry(
     hass: HomeAssistant,
     entry: ConfigEntry,
     async_add_devices: AddEntitiesCallback,
