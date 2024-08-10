@@ -45,7 +45,7 @@
 
 This is a custom component that is emerging from the
 [community discussion][community-discussion] of a need to be able to retrieve
-local google assistant device (like Google Home/Nest etc) authentication
+local Google Assistant device (like Google Home/Nest etc) authentication
 tokens and use those tokens making API calls to Google Home devices.
 
 ## IMPORTANT
@@ -79,13 +79,13 @@ Each of the alarms has the following keys:
 | ---------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `alarm_id`       | Google Home corresponding ID | Used to identify the alarm                                                                                                                                                                              |
 | `fire_time`      | Seconds                      | Raw value coming from Google Home device until the alarm goes off                                                                                                                                       |
-| `local_time`     | Time                         | Time when the alarm goes off, in respect to the Home Assistant's timezone                                                                                                                               |
+| `local_time`     | Time                         | Time when the alarm goes off, in respect to the Home Assistant's time zone                                                                                                                               |
 | `local_time_iso` | Time in ISO 8601 standard    | Useful for automations                                                                                                                                                                                  |
 | `status`         | Status (string)              | The current status of the alarm, either `none`, `set`, `ringing`, `snoozed` or `inactive`                                                                                                               |
 | `label`          | Name                         | Name of the alarm, this can be set when making the alarm                                                                                                                                                |
 | `recurrence`     | List of integers             | Days of the week when the alarm will go off. Please note, respecting Google set standard, the week starts from Sunday, therefore is denoted by 0. Correspondingly, Monday is 1, Saturday is 6 and so on |
 
-The state value shows the next alarm as a timestring (i.e.: `2021-03-07T15:26:17+01:00`) if there is at least one alarm set, otherwise it is set to `unavailable`.
+The state value shows the next alarm as a time string (i.e.: `2021-03-07T15:26:17+01:00`) if there is at least one alarm set, otherwise it is set to `unavailable`.
 This matches state format of [standard next alarm sensor](https://companion.home-assistant.io/docs/core/sensors/#next-alarm-sensor) provided by `mobile_app`.
 
 This sensor is formatted to be compatible with the mobile app sensor, e.g. `sensor.phone_next_alarm`.
@@ -294,7 +294,7 @@ Make sure that you have your Home Assistant Container network set to `host`, as 
 
 ### ARM Docker Container Dependencies Workaround
 
-If you are installing this integration on an ARM based device (Like Raspberry Pi, Synology, etc), you may need to do the following if you get this error:
+If you are installing this integration on an ARM based device (Like Raspberry Pi, Synology, etc.), you may need to do the following if you get this error:
 
 ```
 ERROR: Cannot install glocaltokens==0.3.1
