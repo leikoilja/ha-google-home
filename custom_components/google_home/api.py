@@ -8,7 +8,7 @@ import ipaddress
 import logging
 from typing import Literal, cast
 
-from aiohttp import ClientError, ClientSession
+from aiohttp import ClientError, ClientSession, ClientTimeout
 from aiohttp.client_exceptions import ClientConnectorError, ContentTypeError
 from glocaltokens.client import Device, GLocalAuthenticationTokens
 from glocaltokens.utils.token import is_aas_et
@@ -74,7 +74,7 @@ class GlocaltokensApiClient:
         def _get_master_token() -> str | None:
             return self._client.get_master_token()
 
-        master_token = await self.hass.async_add_executor_job(_get_master_token)
+        master_token = await self.hass.async_add_executor_job(_get_master_token)  # type: ignore[arg-type]
         if master_token is None or is_aas_et(master_token) is False:
             raise InvalidMasterToken
         return master_token
@@ -85,7 +85,7 @@ class GlocaltokensApiClient:
         def _get_access_token() -> str | None:
             return self._client.get_access_token()
 
-        access_token = await self.hass.async_add_executor_job(_get_access_token)
+        access_token = await self.hass.async_add_executor_job(_get_access_token)  # type: ignore[arg-type]
         if access_token is None:
             raise InvalidMasterToken
         return access_token
@@ -102,7 +102,7 @@ class GlocaltokensApiClient:
                     force_homegraph_reload=True,
                 )
 
-            google_devices = await self.hass.async_add_executor_job(_get_google_devices)
+            google_devices = await self.hass.async_add_executor_job(_get_google_devices)  # type: ignore[arg-type]
             self.google_devices = [
                 GoogleHomeDevice(
                     device_id=device.device_id,
@@ -121,7 +121,7 @@ class GlocaltokensApiClient:
         def _get_android_id() -> str:
             return self._client.get_android_id()
 
-        return await self.hass.async_add_executor_job(_get_android_id)
+        return await self.hass.async_add_executor_job(_get_android_id)  # type: ignore[arg-type]
 
     @staticmethod
     def create_url(ip_address: str, port: int, api_endpoint: str) -> str:
@@ -421,8 +421,9 @@ class GlocaltokensApiClient:
         resp = None
 
         try:
+            timeout = ClientTimeout(total=TIMEOUT)
             async with self._session.request(
-                method, url, json=data, headers=headers, timeout=TIMEOUT
+                method, url, json=data, headers=headers, timeout=timeout
             ) as response:
                 if response.status == HTTPStatus.OK:
                     try:

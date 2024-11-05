@@ -6,7 +6,6 @@ import logging
 from typing import Any
 
 from homeassistant.components.switch import SwitchEntity
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -19,13 +18,14 @@ from .const import (
     LABEL_DO_NOT_DISTURB,
 )
 from .entity import GoogleHomeBaseEntity
+from .types import GoogleHomeConfigEntry
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: ConfigEntry,
+    entry: GoogleHomeConfigEntry,
     async_add_devices: AddEntitiesCallback,
 ) -> bool:
     """Setup switch platform."""
@@ -63,7 +63,7 @@ class DoNotDisturbSwitch(GoogleHomeBaseEntity, SwitchEntity):
         return LABEL_DO_NOT_DISTURB
 
     @property
-    def is_on(self) -> bool:
+    def is_on(self) -> bool:  # type: ignore[override]
         """Return true if Do Not Disturb Mode is on."""
         device = self.get_device()
 

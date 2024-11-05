@@ -7,7 +7,6 @@ import logging
 import voluptuous as vol
 
 from homeassistant.components.sensor import SensorDeviceClass
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import STATE_UNAVAILABLE
 from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.helpers import config_validation as cv, entity_platform
@@ -40,6 +39,7 @@ from .types import (
     AlarmsAttributes,
     DeviceAttributes,
     GoogleHomeAlarmDict,
+    GoogleHomeConfigEntry,
     GoogleHomeTimerDict,
     TimersAttributes,
 )
@@ -49,7 +49,7 @@ _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: ConfigEntry,
+    entry: GoogleHomeConfigEntry,
     async_add_devices: AddEntitiesCallback,
 ) -> bool:
     """Setup sensor platform."""
@@ -91,10 +91,8 @@ async def async_setup_entry(
     platform.async_register_entity_service(
         SERVICE_DELETE_ALARM,
         {
-            vol.Required(SERVICE_ATTR_ALARM_ID): cv.string,  # type: ignore[dict-item]
-            vol.Optional(
-                SERVICE_ATTR_SKIP_REFRESH
-            ): cv.boolean,  # type: ignore[dict-item]
+            vol.Required(SERVICE_ATTR_ALARM_ID): cv.string,
+            vol.Optional(SERVICE_ATTR_SKIP_REFRESH): cv.boolean,
         },
         GoogleHomeAlarmsSensor.async_delete_alarm,
     )
@@ -102,10 +100,8 @@ async def async_setup_entry(
     platform.async_register_entity_service(
         SERVICE_DELETE_TIMER,
         {
-            vol.Required(SERVICE_ATTR_TIMER_ID): cv.string,  # type: ignore[dict-item]
-            vol.Optional(
-                SERVICE_ATTR_SKIP_REFRESH
-            ): cv.boolean,  # type: ignore[dict-item]
+            vol.Required(SERVICE_ATTR_TIMER_ID): cv.string,
+            vol.Optional(SERVICE_ATTR_SKIP_REFRESH): cv.boolean,
         },
         GoogleHomeTimersSensor.async_delete_timer,
     )
@@ -137,12 +133,12 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
         return LABEL_DEVICE
 
     @property
-    def state(self) -> str | None:
+    def state(self) -> str | None:  # type: ignore[override]
         device = self.get_device()
         return device.ip_address if device else None
 
     @property
-    def extra_state_attributes(self) -> DeviceAttributes:
+    def extra_state_attributes(self) -> DeviceAttributes:  # type: ignore[override]
         """Return the state attributes."""
         device = self.get_device()
         attributes: DeviceAttributes = {
@@ -192,7 +188,7 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
         return LABEL_ALARMS
 
     @property
-    def state(self) -> str | None:
+    def state(self) -> str | None:  # type: ignore[override]
         device = self.get_device()
         if not device:
             return None
@@ -206,7 +202,7 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
         )
 
     @property
-    def extra_state_attributes(self) -> AlarmsAttributes:
+    def extra_state_attributes(self) -> AlarmsAttributes:  # type: ignore[override]
         """Return the state attributes."""
         return {
             "next_alarm_status": self._get_next_alarm_status(),
@@ -277,7 +273,7 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
         return LABEL_TIMERS
 
     @property
-    def state(self) -> str | None:
+    def state(self) -> str | None:  # type: ignore[override]
         device = self.get_device()
         if not device:
             return None
@@ -289,7 +285,7 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
         )
 
     @property
-    def extra_state_attributes(self) -> TimersAttributes:
+    def extra_state_attributes(self) -> TimersAttributes:  # type: ignore[override]
         """Return the state attributes."""
         return {
             "next_timer_status": self._get_next_timer_status(),

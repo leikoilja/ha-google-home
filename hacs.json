@@ -1,5 +1,5 @@
 {
   "name": "Google Home",
-  "homeassistant": "2023.11.0",
+  "homeassistant": "2024.11.0b0",
   "render_readme": true
 }

@@ -7,9 +7,9 @@ https://github.com/leikoilja/ha-google-home
 
 from datetime import timedelta
 import logging
+from typing import cast
 
 from homeassistant.components import zeroconf
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
@@ -29,21 +29,24 @@ from .const import (
     UPDATE_INTERVAL,
 )
 from .models import GoogleHomeDevice
+from .types import GoogleHomeConfigEntry
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
-async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -> bool:
     """Set up this integration using UI."""
     if hass.data.get(DOMAIN) is None:
         hass.data.setdefault(DOMAIN, {})
         _LOGGER.info(STARTUP_MESSAGE)
 
-    username: str = entry.data.get(CONF_USERNAME)
-    password: str = entry.data.get(CONF_PASSWORD)
-    android_id: str = entry.data.get(CONF_ANDROID_ID)
-    master_token: str = entry.data.get(CONF_MASTER_TOKEN)
-    update_interval: int = entry.options.get(CONF_UPDATE_INTERVAL, UPDATE_INTERVAL)
+    username = cast(str, entry.data.get(CONF_USERNAME))
+    password = cast(str, entry.data.get(CONF_PASSWORD))
+    android_id = cast(str, entry.data.get(CONF_ANDROID_ID))
+    master_token = cast(str, entry.data.get(CONF_MASTER_TOKEN))
+    update_interval = cast(
+        int, entry.options.get(CONF_UPDATE_INTERVAL, UPDATE_INTERVAL)
+    )
 
     _LOGGER.debug(
         "Coordinator update interval is: %s", timedelta(seconds=update_interval)
@@ -83,7 +86,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     return True
 
 
-async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+async def async_unload_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -> bool:
     """Handle removal of an entry."""
     _LOGGER.debug("Unloading entry...")
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
@@ -92,14 +95,14 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     return unload_ok
 
 
-async def async_update_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
+async def async_update_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -> None:
     """Update config entry."""
     _LOGGER.debug("Updating entry...")
     update_interval: int = entry.options.get(CONF_UPDATE_INTERVAL, UPDATE_INTERVAL)
     coordinator: DataUpdateCoordinator[list[GoogleHomeDevice]] = hass.data[DOMAIN][
         entry.entry_id
     ][DATA_COORDINATOR]
-    coordinator.update_interval = timedelta(seconds=update_interval)
+    coordinator.update_interval = timedelta(seconds=update_interval)  # type: ignore[misc]
     _LOGGER.debug(
         "Coordinator update interval is: %s", timedelta(seconds=update_interval)
     )

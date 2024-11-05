@@ -5,6 +5,8 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import TypedDict, Union
 
+from homeassistant.config_entries import ConfigEntry
+
 
 class AlarmJsonDict(TypedDict, total=False):
     """Typed dict for JSON representation of alarm returned by Google Home API"""
@@ -89,7 +91,9 @@ class OptionsFlowDict(TypedDict):
     update_interval: int
 
 
-JsonDict = Mapping[
+type JsonDict = Mapping[
     str,
     Union[bool, float, int, str, list[str], list[AlarmJsonDict], list[TimerJsonDict]],
 ]
+
+type GoogleHomeConfigEntry = ConfigEntry[None]
