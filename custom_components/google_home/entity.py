@@ -40,17 +40,17 @@ class GoogleHomeBaseEntity(
         """Label to use for name and unique id."""
 
     @property
-    def name(self) -> str:
+    def name(self) -> str:  # type: ignore[override]
         """Return the name of the sensor."""
         return f"{self.device_name} {self.label}"
 
     @property
-    def unique_id(self) -> str:
+    def unique_id(self) -> str:  # type: ignore[override]
         """Return a unique ID to use for this entity."""
         return f"{self.device_id}/{self.label}"
 
     @property
-    def device_info(self) -> DeviceInfo | None:
+    def device_info(self) -> DeviceInfo | None:  # type: ignore[override]
         return {
             "identifiers": {(DOMAIN, self.device_id)},
             "name": f"{DEFAULT_NAME} {self.device_name}",

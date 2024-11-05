@@ -1,3 +1,7 @@
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
 [tool.poetry]
 name = "google_home"
 version = "0.0.0"
@@ -8,9 +12,9 @@ readme = "README.md"
 packages = [{include = "google_home", from = "custom_components"}]
 
 [tool.poetry.dependencies]
-python = "^3.11"
-glocaltokens = "^0.7.1"
-homeassistant = "2023.11.0"
+python = ">=3.12,<3.14"
+glocaltokens = "^0.7.3"
+homeassistant = "2024.11.0b0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.10.0"
@@ -20,7 +24,7 @@ flake8-bugbear = "^24.10.31"
 flake8-comprehensions = "^3.16.0"
 flake8-simplify = "^0.21.0"
 flake8-use-fstring = "^1.4"
-homeassistant-stubs = "^2023.11.0"
+homeassistant-stubs = "^2024.11.0b0"
 isort = "^5.13.2"
 mypy = "^1.13"
 pre-commit = "^4.0.1"
@@ -35,6 +39,7 @@ voluptuous-stubs = "^0.1.1"
 # too-few-* - same as too-many-*
 disable = [
     "duplicate-code",
+    "line-too-long",
     "too-few-public-methods",
     "too-many-ancestors",
     "too-many-arguments",
@@ -55,7 +60,7 @@ known_first_party = [
 ]
 
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.12"
 show_error_codes = true
 strict = true
 disallow_any_explicit = true
@@ -67,7 +72,3 @@ warn_unreachable = true
 quiet-level = 2
 skip = "poetry.lock,./.git/*,./.mypy_cache/*,*.json"
 ignore-words-list = "hass"
-
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"

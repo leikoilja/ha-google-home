@@ -4,14 +4,13 @@ from __future__ import annotations
 
 from datetime import timedelta
 import logging
+from typing import Self
 
 from requests.exceptions import RequestException
 import voluptuous as vol
 
-from homeassistant import config_entries
-from homeassistant.config_entries import ConfigEntry
+from homeassistant.config_entries import ConfigFlow, ConfigFlowResult, OptionsFlow
 from homeassistant.core import callback
-from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
 
 from .api import GlocaltokensApiClient
@@ -28,23 +27,28 @@ from .const import (
     UPDATE_INTERVAL,
 )
 from .exceptions import InvalidMasterToken
-from .types import ConfigFlowDict, OptionsFlowDict
+from .types import ConfigFlowDict, GoogleHomeConfigEntry, OptionsFlowDict
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
-class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
+class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
     """Config flow for GoogleHome."""
 
     VERSION = 1
 
     def __init__(self) -> None:
         """Initialize."""
+        self.username: str | None = None
         self._errors: dict[str, str] = {}
+
+    def is_matching(self, other_flow: Self) -> bool:
+        """Return True if other_flow is matching this flow."""
+        return other_flow.username == self.username
 
     async def async_step_user(
         self, user_input: ConfigFlowDict | None = None  # type: ignore[override]
-    ) -> FlowResult:
+    ) -> ConfigFlowResult:
         """Handle a flow initialized by the user."""
         self._errors = {}
 
@@ -55,6 +59,7 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         if user_input is not None:
             session = async_create_clientsession(self.hass)
             username = user_input.get(CONF_USERNAME, "")
+            self.username = username
             password = user_input.get(CONF_PASSWORD, "")
             master_token = user_input.get(CONF_MASTER_TOKEN, "")
 
@@ -104,11 +109,11 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     @staticmethod
     @callback
     def async_get_options_flow(
-        config_entry: ConfigEntry,
+        config_entry: GoogleHomeConfigEntry,
     ) -> GoogleHomeOptionsFlowHandler:
         return GoogleHomeOptionsFlowHandler(config_entry)
 
-    async def _show_config_form(self) -> FlowResult:
+    async def _show_config_form(self) -> ConfigFlowResult:
         """Show the configuration form to edit login information."""
         return self.async_show_form(
             step_id="user",
@@ -143,10 +148,10 @@ class GoogleHomeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         return access_token
 
 
-class GoogleHomeOptionsFlowHandler(config_entries.OptionsFlow):
+class GoogleHomeOptionsFlowHandler(OptionsFlow):
     """Config flow options handler for GoogleHome."""
 
-    def __init__(self, config_entry: ConfigEntry):
+    def __init__(self, config_entry: GoogleHomeConfigEntry):
         """Initialize options flow."""
         self.config_entry = config_entry
         # Cast from MappingProxy to dict to allow update.
@@ -154,7 +159,7 @@ class GoogleHomeOptionsFlowHandler(config_entries.OptionsFlow):
 
     async def async_step_init(
         self, user_input: OptionsFlowDict | None = None
-    ) -> FlowResult:
+    ) -> ConfigFlowResult:
         """Manage the options."""
         if user_input is not None:
             self.options.update(user_input)

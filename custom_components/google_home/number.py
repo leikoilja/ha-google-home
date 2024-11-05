@@ -5,7 +5,6 @@ from __future__ import annotations
 import logging
 
 from homeassistant.components.number import NumberEntity
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import PERCENTAGE
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import EntityCategory
@@ -26,13 +25,14 @@ from .const import (
 )
 from .entity import GoogleHomeBaseEntity
 from .models import GoogleHomeDevice
+from .types import GoogleHomeConfigEntry
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: ConfigEntry,
+    entry: GoogleHomeConfigEntry,
     async_add_devices: AddEntitiesCallback,
 ) -> bool:
     """Setup switch platform."""
@@ -71,7 +71,7 @@ class AlarmVolumeNumber(GoogleHomeBaseEntity, NumberEntity):
         return LABEL_ALARM_VOLUME
 
     @property
-    def icon(self) -> str:
+    def icon(self) -> str:  # type: ignore[override]
         """Return the icon of the sensor."""
         device = self.get_device()
         if device is None:
@@ -86,7 +86,7 @@ class AlarmVolumeNumber(GoogleHomeBaseEntity, NumberEntity):
         return ICON_ALARM_VOLUME_HIGH
 
     @property
-    def native_value(self) -> float:
+    def native_value(self) -> float:  # type: ignore[override]
         """Return the current volume value."""
         device = self.get_device()
 
