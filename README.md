@@ -457,5 +457,5 @@ If you want to translate the project to your own language, follow the [Localizat
 [releases]: https://github.com/leikoilja/ha-google-home/releases
 [workflow-shield]: https://img.shields.io/github/actions/workflow/status/leikoilja/ha-google-home/linting.yaml?branch=master&style=for-the-badge
 [workflow]: https://github.com/leikoilja/ha-google-home/actions
-[installs-shield]: https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Frunkit.io%2Fkapji%2Fgoogle-home-installs-for-shield-io%2F3.0.0
+[installs-shield]: https://img.shields.io/badge/dynamic/json?style=for-the-badge&color=blue&label=installs&cacheSeconds=3600&url=https://analytics.home-assistant.io/custom_integrations.json&query=$.google_home.total
 [installs]: https://analytics.home-assistant.io/custom_integrations.json
