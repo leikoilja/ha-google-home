@@ -25,7 +25,7 @@ isort = "^5.13.2"
 mypy = "^1.13"
 pre-commit = "^4.0.1"
 PyGithub = "^2.4"
-pylint = "^3.2.7"
+pylint = "^3.3.1"
 types-requests = "<2.31.0.7"
 voluptuous-stubs = "^0.1.1"
 
@@ -40,6 +40,7 @@ disable = [
     "too-many-arguments",
     "too-many-instance-attributes",
     "too-many-locals",
+    "too-many-positional-arguments",
 ]
 
 [tool.pylint.format]
