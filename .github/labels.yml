@@ -4,6 +4,10 @@
 #
 # The repository labels will be automatically configured using this file and
 # the GitHub Action https://github.com/marketplace/actions/github-labeler.
+- name: automerge
+  description: Automatically merge by Kodiak
+  color: d4c5f9
+
 - name: bug
   description: Something isn't working
   color: d73a4a
