@@ -47,7 +47,8 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
         return other_flow.username == self.username
 
     async def async_step_user(
-        self, user_input: ConfigFlowDict | None = None  # type: ignore[override]
+        self,
+        user_input: ConfigFlowDict | None = None,  # type: ignore[override]
     ) -> ConfigFlowResult:
         """Handle a flow initialized by the user."""
         self._errors = {}
