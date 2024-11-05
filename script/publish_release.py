@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Update manifest.json and create new Github Release."""
+
 from __future__ import annotations
 
 from importlib.metadata import version as package_version

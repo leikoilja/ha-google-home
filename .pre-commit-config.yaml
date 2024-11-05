@@ -9,15 +9,9 @@ repos:
       - id: trailing-whitespace
   - repo: local
     hooks:
-      - id: black
-        name: black
-        entry: poetry run black
-        language: system
-        types: [python]
-        require_serial: true
-      - id: isort
-        name: isort
-        entry: poetry run isort
+      - id: ruff-format
+        name: ruff format
+        entry: poetry run ruff format
         language: system
         types: [python]
         require_serial: true
