@@ -1,5 +1,4 @@
-"""
-Custom integration to integrate Google Home with Home Assistant.
+"""Custom integration to integrate Google Home with Home Assistant.
 
 For more details about this integration, please refer to
 https://github.com/leikoilja/ha-google-home
@@ -7,7 +6,7 @@ https://github.com/leikoilja/ha-google-home
 
 from datetime import timedelta
 import logging
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
 from homeassistant.components import zeroconf
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
@@ -28,8 +27,10 @@ from .const import (
     STARTUP_MESSAGE,
     UPDATE_INTERVAL,
 )
-from .models import GoogleHomeDevice
 from .types import GoogleHomeConfigEntry
+
+if TYPE_CHECKING:
+    from .models import GoogleHomeDevice
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 

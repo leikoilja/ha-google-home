@@ -1,17 +1,14 @@
-"""Number Platform for Google Home"""
+"""Number Platform for Google Home."""
 
 from __future__ import annotations
 
 import logging
+from typing import TYPE_CHECKING
 
 from homeassistant.components.number import NumberEntity
 from homeassistant.const import PERCENTAGE
-from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import EntityCategory
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from .api import GlocaltokensApiClient
 from .const import (
     DATA_CLIENT,
     DATA_COORDINATOR,
@@ -24,8 +21,15 @@ from .const import (
     LABEL_ALARM_VOLUME,
 )
 from .entity import GoogleHomeBaseEntity
-from .models import GoogleHomeDevice
-from .types import GoogleHomeConfigEntry
+
+if TYPE_CHECKING:
+    from homeassistant.core import HomeAssistant
+    from homeassistant.helpers.entity_platform import AddEntitiesCallback
+    from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+
+    from .api import GlocaltokensApiClient
+    from .models import GoogleHomeDevice
+    from .types import GoogleHomeConfigEntry
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -35,20 +39,19 @@ async def async_setup_entry(
     entry: GoogleHomeConfigEntry,
     async_add_devices: AddEntitiesCallback,
 ) -> bool:
-    """Setup switch platform."""
+    """Set up switch platform."""
     client: GlocaltokensApiClient = hass.data[DOMAIN][entry.entry_id][DATA_CLIENT]
     coordinator: DataUpdateCoordinator[list[GoogleHomeDevice]] = hass.data[DOMAIN][
         entry.entry_id
     ][DATA_COORDINATOR]
 
-    numbers: list[NumberEntity] = []
-    for device in coordinator.data:
-        if device.auth_token and device.available:
-            numbers.append(
-                AlarmVolumeNumber(
-                    coordinator, client, device.device_id, device.name, device.hardware
-                )
-            )
+    numbers = [
+        AlarmVolumeNumber(
+            coordinator, client, device.device_id, device.name, device.hardware
+        )
+        for device in coordinator.data
+        if device.auth_token and device.available
+    ]
 
     if numbers:
         async_add_devices(numbers)
@@ -93,11 +96,10 @@ class AlarmVolumeNumber(GoogleHomeBaseEntity, NumberEntity):
         if device is None:
             return GOOGLE_HOME_ALARM_DEFAULT_VALUE
 
-        volume = device.get_alarm_volume()
-        return volume
+        return device.get_alarm_volume()
 
     async def async_set_native_value(self, value: float) -> None:
-        """Sets the alarm volume"""
+        """Set the alarm volume."""
         device = self.get_device()
         if device is None:
             _LOGGER.error("Device %s not found.", self.device_name)
