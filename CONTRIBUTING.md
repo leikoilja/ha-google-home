@@ -48,8 +48,8 @@ People _love_ thorough bug reports. I'm not even kidding.
 
 ## Use a Consistent Coding Style
 
-Install [Poetry](https://python-poetry.org/docs/#installation) to setup the developer environment.
-It uses [black](https://github.com/ambv/black) and [prettier](https://prettier.io/)
+Install [uv](https://docs.astral.sh/uv/getting-started/installation/) to setup the developer environment.
+It uses [ruff](https://docs.astral.sh/ruff/) and [prettier](https://prettier.io/)
 to make sure the code follows the style.
 
 `pre-commit` can be used to run all checks with one command (see dedicated section below).
@@ -74,7 +74,7 @@ When writing unittests please follow the good practises like:
 
 ## Pre-commit
 
-With Poetry installed, run `poetry install` in the repo root.
+With uv installed, run `uv sync` in the repo root.
 It will create a virtualenv with all required packages.
 
 After that you can run [pre-commit](https://pre-commit.com/) with settings included in the
@@ -83,7 +83,7 @@ repository to have code style and linting checks.
 Activate `pre-commit` git hook:
 
 ```console
-$ poetry run pre-commit install
+$ uvx pre-commit install
 ```
 
 Now the pre-commit tests will be done every time you commit.
@@ -91,5 +91,5 @@ Now the pre-commit tests will be done every time you commit.
 You can also run the tests on all repository files manually with this command:
 
 ```console
-$ poetry run pre-commit run --all-files
+$ uvx pre-commit run --all-files
 ```

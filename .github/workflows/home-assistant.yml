@@ -6,9 +6,6 @@ on:
       - master
   pull_request:
 
-env:
-  DEFAULT_PYTHON: "3.12"
-
 jobs:
   hacs:
     runs-on: ubuntu-latest

@@ -11,31 +11,31 @@ repos:
     hooks:
       - id: ruff-format
         name: ruff format
-        entry: poetry run ruff format
+        entry: uv run ruff format
         language: system
         types: [python]
         require_serial: true
       - id: ruff-check
         name: ruff check
-        entry: poetry run ruff check --fix
+        entry: uv run ruff check --fix
         language: system
         types: [python]
         require_serial: true
       - id: mypy
         name: mypy
-        entry: poetry run mypy
+        entry: uv run mypy
         language: system
         types: [python]
         require_serial: true
       - id: pylint
         name: pylint
-        entry: poetry run pylint
+        entry: uv run pylint
         language: system
         types: [python]
         require_serial: true
       - id: codespell
         name: codespell
-        entry: poetry run codespell --write-changes
+        entry: uv run codespell --write-changes
         language: system
         pass_filenames: false
         always_run: true

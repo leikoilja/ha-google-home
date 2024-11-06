@@ -1,36 +1,35 @@
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
 
-[tool.poetry]
+[project]
 name = "google_home"
-version = "0.0.0"
 description = "Home Assistant Google Home community integration"
-authors = ["Ilja Leiko <leikoilja@gmail.com>"]
-license = "MIT"
+authors = [{name = "Ilja Leiko", email = "leikoilja@gmail.com"}]
 readme = "README.md"
-packages = [{include = "google_home", from = "custom_components"}]
+license = {text = "MIT"}
+requires-python = ">=3.12"
+dynamic = ["version"]
+dependencies = [
+    "glocaltokens>=0.7.3",
+    "homeassistant==2024.11.0b0",
+]
 
-[tool.poetry.dependencies]
-python = ">=3.12,<3.14"
-glocaltokens = "^0.7.3"
-homeassistant = "2024.11.0b0"
+[dependency-groups]
+dev = [
+    "codespell>=2.3.0",
+    "homeassistant-stubs==2024.11.0b0",
+    "mypy>=1.13.0",
+    "PyGithub>=2.4",
+    "pylint>=3.3.1",
+    "pytest>=8.3.3",
+    "ruff>=0.7.2",
+    "types-requests<2.31.0.7",
+    "voluptuous-stubs>=0.1.1",
+]
 
-[tool.poetry.group.dev.dependencies]
-codespell = "^2.3.0"
-flake8 = "^7.1.1"
-flake8-bugbear = "^24.10.31"
-flake8-comprehensions = "^3.16.0"
-flake8-simplify = "^0.21.0"
-flake8-use-fstring = "^1.4"
-homeassistant-stubs = "^2024.11.0b0"
-mypy = "^1.13"
-pre-commit = "^4.0.1"
-PyGithub = "^2.4"
-pylint = "^3.3.1"
-ruff = "^0.7.2"
-types-requests = "<2.31.0.7"
-voluptuous-stubs = "^0.1.1"
+[tool.hatch.version]
+source = "vcs"
 
 [tool.ruff]
 required-version = ">=0.7.0"
@@ -189,5 +188,5 @@ warn_unreachable = true
 
 [tool.codespell]
 quiet-level = 2
-skip = "poetry.lock,./.git/*,./.mypy_cache/*,*.json"
+skip = "uv.lock,./.git/*,./.mypy_cache/*,*.json"
 ignore-words-list = "hass"

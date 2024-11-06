@@ -1,5 +1,5 @@
 dependencies:
-  - any: ["poetry.lock"]
+  - any: ["uv.lock"]
     all: ["!**/*.py"]
 
 documentation:
