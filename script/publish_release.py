@@ -7,15 +7,18 @@ from importlib.metadata import version as package_version
 import json
 import os
 import sys
+from typing import TYPE_CHECKING
 
 from github import Auth, Github, InputGitTreeElement
 from github.ContentFile import ContentFile
-from github.GitRelease import GitRelease
-from github.Repository import Repository
+
+if TYPE_CHECKING:
+    from github.GitRelease import GitRelease
+    from github.Repository import Repository
 
 
 def main() -> int:
-    """Main function"""
+    """Run main function."""
     github_token = os.environ.get("GITHUB_TOKEN")
     assert github_token is not None, "GITHUB_TOKEN is not set"
     print("Fetching draft release...")
@@ -32,7 +35,7 @@ def main() -> int:
 
 
 def update_manifests(repo: Repository, version: str) -> None:
-    """Update manifest.json and hacs.json"""
+    """Update manifest.json and hacs.json."""
     print("Updating manifest.json...")
     manifest = repo.get_contents("custom_components/google_home/manifest.json")
     assert isinstance(manifest, ContentFile)
@@ -79,7 +82,7 @@ def update_manifests(repo: Repository, version: str) -> None:
 
 
 def publish_release(release: GitRelease) -> None:
-    """Publish draft release"""
+    """Publish draft release."""
     print("Publishing new release...")
     release.update_release(
         name=release.title.split()[-1],

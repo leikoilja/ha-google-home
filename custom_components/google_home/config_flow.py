@@ -1,10 +1,10 @@
-"""Adds config flow for Google Home"""
+"""Adds config flow for Google Home."""
 
 from __future__ import annotations
 
 from datetime import timedelta
 import logging
-from typing import Self
+from typing import TYPE_CHECKING, Self
 
 from requests.exceptions import RequestException
 import voluptuous as vol
@@ -27,7 +27,9 @@ from .const import (
     UPDATE_INTERVAL,
 )
 from .exceptions import InvalidMasterToken
-from .types import ConfigFlowDict, GoogleHomeConfigEntry, OptionsFlowDict
+
+if TYPE_CHECKING:
+    from .types import ConfigFlowDict, GoogleHomeConfigEntry, OptionsFlowDict
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -81,20 +83,19 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
                         title = f"{MANUFACTURER} (master_token)"
                     else:
                         self._errors["base"] = "master-token-invalid"
+                # master_token not provided, so use username/password authentication
+                elif len(password) < MAX_PASSWORD_LENGTH:
+                    client = GlocaltokensApiClient(
+                        hass=self.hass,
+                        session=session,
+                        username=username,
+                        password=password,
+                    )
+                    master_token = await self._get_master_token(client)
+                    if not master_token:
+                        self._errors["base"] = "auth"
                 else:
-                    # master_token not provided, so use username/password authentication
-                    if len(password) < MAX_PASSWORD_LENGTH:
-                        client = GlocaltokensApiClient(
-                            hass=self.hass,
-                            session=session,
-                            username=username,
-                            password=password,
-                        )
-                        master_token = await self._get_master_token(client)
-                        if not master_token:
-                            self._errors["base"] = "auth"
-                    else:
-                        self._errors["base"] = "pass-len"
+                    self._errors["base"] = "pass-len"
 
                 if client and not self._errors:
                     config_data: dict[str, str] = {}
@@ -112,6 +113,7 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
     def async_get_options_flow(
         config_entry: GoogleHomeConfigEntry,
     ) -> GoogleHomeOptionsFlowHandler:
+        """Handle options flow."""
         return GoogleHomeOptionsFlowHandler(config_entry)
 
     async def _show_config_form(self) -> ConfigFlowResult:
@@ -130,22 +132,22 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
 
     @staticmethod
     async def _get_master_token(client: GlocaltokensApiClient) -> str:
-        """Returns master token if credentials are valid."""
+        """Return master token if credentials are valid."""
         master_token = ""
         try:
             master_token = await client.async_get_master_token()
-        except (InvalidMasterToken, RequestException) as exception:
-            _LOGGER.error(exception)
+        except (InvalidMasterToken, RequestException):
+            _LOGGER.exception("Failed to get master token")
         return master_token
 
     @staticmethod
     async def _get_access_token(client: GlocaltokensApiClient) -> str:
-        """Returns access token if master token is valid."""
+        """Return access token if master token is valid."""
         access_token = ""
         try:
             access_token = await client.async_get_access_token()
-        except (InvalidMasterToken, RequestException) as exception:
-            _LOGGER.error(exception)
+        except (InvalidMasterToken, RequestException):
+            _LOGGER.exception("Failed to get access token")
         return access_token
 
 

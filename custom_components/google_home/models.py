@@ -1,29 +1,32 @@
-"""Models for Google Home"""
+"""Models for Google Home."""
 
 from __future__ import annotations
 
 from datetime import timedelta
 from enum import Enum
 import sys
+from typing import TYPE_CHECKING
 
 from homeassistant.util.dt import as_local, utc_from_timestamp
 
 from .const import DATETIME_STR_FORMAT, GOOGLE_HOME_ALARM_DEFAULT_VALUE
-from .types import (
-    AlarmJsonDict,
-    GoogleHomeAlarmDict,
-    GoogleHomeTimerDict,
-    TimerJsonDict,
-)
+
+if TYPE_CHECKING:
+    from .types import (
+        AlarmJsonDict,
+        GoogleHomeAlarmDict,
+        GoogleHomeTimerDict,
+        TimerJsonDict,
+    )
 
 
 def convert_from_ms_to_s(timestamp: int) -> int:
-    """Converts from milliseconds to seconds"""
+    """Convert from milliseconds to seconds."""
     return round(timestamp / 1000)
 
 
 class GoogleHomeDevice:
-    """Local representation of Google Home device"""
+    """Local representation of Google Home device."""
 
     def __init__(
         self,
@@ -33,6 +36,7 @@ class GoogleHomeDevice:
         ip_address: str | None = None,
         hardware: str | None = None,
     ):
+        """Create Google Home device object."""
         self.device_id = device_id
         self.name = name
         self.auth_token = auth_token
@@ -45,7 +49,7 @@ class GoogleHomeDevice:
         self._alarms: list[GoogleHomeAlarm] = []
 
     def set_alarms(self, alarms: list[AlarmJsonDict]) -> None:
-        """Stores alarms as GoogleHomeAlarm objects"""
+        """Store alarms as GoogleHomeAlarm objects."""
         self._alarms = [
             GoogleHomeAlarm(
                 alarm_id=alarm["id"],
@@ -58,7 +62,7 @@ class GoogleHomeDevice:
         ]
 
     def set_timers(self, timers: list[TimerJsonDict]) -> None:
-        """Stores timers as GoogleHomeTimer objects"""
+        """Store timers as GoogleHomeTimer objects."""
         self._timers = [
             GoogleHomeTimer(
                 timer_id=timer["id"],
@@ -71,7 +75,7 @@ class GoogleHomeDevice:
         ]
 
     def get_sorted_alarms(self) -> list[GoogleHomeAlarm]:
-        """Returns alarms in a sorted order. Inactive & missed alarms are at the end."""
+        """Return alarms in a sorted order. Inactive & missed alarms are at the end."""
         return sorted(
             self._alarms,
             key=lambda k: (
@@ -83,19 +87,19 @@ class GoogleHomeDevice:
         )
 
     def get_next_alarm(self) -> GoogleHomeAlarm | None:
-        """Returns next alarm"""
+        """Return next alarm."""
         alarms = self.get_sorted_alarms()
         return alarms[0] if alarms else None
 
     def get_sorted_timers(self) -> list[GoogleHomeTimer]:
-        """Returns timers in a sorted order. If timer is paused, put it in the end."""
+        """Return timers in a sorted order. If timer is paused, put it in the end."""
         return sorted(
             self._timers,
             key=lambda k: k.fire_time if k.fire_time is not None else sys.maxsize,
         )
 
     def get_next_timer(self) -> GoogleHomeTimer | None:
-        """Returns next alarm"""
+        """Return next alarm."""
         timers = self.get_sorted_timers()
         return timers[0] if timers else None
 
@@ -117,7 +121,7 @@ class GoogleHomeDevice:
 
 
 class GoogleHomeTimer:
-    """Local representation of Google Home timer"""
+    """Local representation of Google Home timer."""
 
     def __init__(
         self,
@@ -127,6 +131,7 @@ class GoogleHomeTimer:
         status: int,
         label: str | None,
     ) -> None:
+        """Create Google Home Timer object."""
         self.timer_id = timer_id
         self.duration = str(timedelta(seconds=convert_from_ms_to_s(duration)))
         self.status = GoogleHomeTimerStatus(status)
@@ -157,7 +162,7 @@ class GoogleHomeTimer:
 
 
 class GoogleHomeAlarm:
-    """Local representation of Google Home alarm"""
+    """Local representation of Google Home alarm."""
 
     def __init__(
         self,
@@ -167,6 +172,7 @@ class GoogleHomeAlarm:
         label: str | None,
         recurrence: str | None,
     ) -> None:
+        """Create Google Home Alarm object."""
         self.alarm_id = alarm_id
         self.recurrence = recurrence
         self.fire_time = convert_from_ms_to_s(fire_time)
@@ -192,7 +198,7 @@ class GoogleHomeAlarm:
 
 
 class GoogleHomeAlarmStatus(Enum):
-    """Definition of Google Home alarm status"""
+    """Definition of Google Home alarm status."""
 
     NONE = 0
     SET = 1
@@ -203,7 +209,7 @@ class GoogleHomeAlarmStatus(Enum):
 
 
 class GoogleHomeTimerStatus(Enum):
-    """Definition of Google Home timer status"""
+    """Definition of Google Home timer status."""
 
     NONE = 0
     SET = 1

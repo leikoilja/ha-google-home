@@ -15,15 +15,15 @@ repos:
         language: system
         types: [python]
         require_serial: true
-      - id: mypy
-        name: mypy
-        entry: poetry run mypy
+      - id: ruff-check
+        name: ruff check
+        entry: poetry run ruff check --fix
         language: system
         types: [python]
         require_serial: true
-      - id: flake8
-        name: flake8
-        entry: poetry run flake8
+      - id: mypy
+        name: mypy
+        entry: poetry run mypy
         language: system
         types: [python]
         require_serial: true

@@ -32,24 +32,6 @@ ruff = "^0.7.2"
 types-requests = "<2.31.0.7"
 voluptuous-stubs = "^0.1.1"
 
-[tool.pylint.messages_control]
-# Reasons disabled:
-# too-many-* - not enforced for the sake of readability
-# too-few-* - same as too-many-*
-disable = [
-    "duplicate-code",
-    "line-too-long",
-    "too-few-public-methods",
-    "too-many-ancestors",
-    "too-many-arguments",
-    "too-many-instance-attributes",
-    "too-many-locals",
-    "too-many-positional-arguments",
-]
-
-[tool.pylint.format]
-max-line-length = 88
-
 [tool.ruff]
 required-version = ">=0.7.0"
 target-version = "py312"
@@ -61,6 +43,140 @@ split-on-trailing-comma = false
 known-first-party = [
     "homeassistant",
 ]
+
+[tool.ruff.lint]
+select = [
+    "A001", # Variable {name} is shadowing a Python builtin
+    "ASYNC", # flake8-async
+    "B", # flake8-bugbear
+    "BLE",
+    "C", # complexity, including flake8-comprehensions
+    "COM818", # Trailing comma on bare tuple prohibited
+    "D", # flake8-docstrings
+    "DTZ003", # Use datetime.now(tz=) instead of datetime.utcnow()
+    "DTZ004", # Use datetime.fromtimestamp(ts, tz=) instead of datetime.utcfromtimestamp(ts)
+    "E", # pycodestyle
+    "F", # pyflakes/autoflake
+    "FLY", # flynt
+    "FURB", # refurb
+    "G", # flake8-logging-format
+    "I", # isort
+    "INP", # flake8-no-pep420
+    "ISC", # flake8-implicit-str-concat
+    "ICN001", # import concentions; {name} should be imported as {asname}
+    "LOG", # flake8-logging
+    "N804", # First argument of a class method should be named cls
+    "N805", # First argument of a method should be named self
+    "N815", # Variable {name} in class scope should not be mixedCase
+    "PERF", # Perflint
+    "PGH", # pygrep-hooks
+    "PIE", # flake8-pie
+    "PL", # pylint
+    "PT", # flake8-pytest-style
+    "PTH", # flake8-use-pathlib
+    "PYI", # flake8-pyi
+    "RET", # flake8-return
+    "RSE", # flake8-raise
+    "RUF005", # Consider iterable unpacking instead of concatenation
+    "RUF006", # Store a reference to the return value of asyncio.create_task
+    "RUF010", # Use explicit conversion flag
+    "RUF013", # PEP 484 prohibits implicit Optional
+    "RUF017", # Avoid quadratic list summation
+    "RUF018", # Avoid assignment expressions in assert statements
+    "RUF019", # Unnecessary key check before dictionary access
+    # "RUF100", # Unused `noqa` directive; temporarily every now and then to clean them up
+    "S102", # Use of exec detected
+    "S103", # bad-file-permissions
+    "S108", # hardcoded-temp-file
+    "S306", # suspicious-mktemp-usage
+    "S307", # suspicious-eval-usage
+    "S313", # suspicious-xmlc-element-tree-usage
+    "S314", # suspicious-xml-element-tree-usage
+    "S315", # suspicious-xml-expat-reader-usage
+    "S316", # suspicious-xml-expat-builder-usage
+    "S317", # suspicious-xml-sax-usage
+    "S318", # suspicious-xml-mini-dom-usage
+    "S319", # suspicious-xml-pull-dom-usage
+    "S320", # suspicious-xmle-tree-usage
+    "S601", # paramiko-call
+    "S602", # subprocess-popen-with-shell-equals-true
+    "S604", # call-with-shell-equals-true
+    "S608", # hardcoded-sql-expression
+    "S609", # unix-command-wildcard-injection
+    "SIM", # flake8-simplify
+    "SLF", # flake8-self
+    "SLOT", # flake8-slots
+    "T100", # Trace found: {name} used
+    "TCH", # flake8-type-checking
+    "TID251", # Banned imports
+    "TRY", # tryceratops
+    "UP", # pyupgrade
+    "W", # pycodestyle
+]
+ignore = [
+    "D202", # No blank lines allowed after function docstring
+    "D203", # 1 blank line required before class docstring
+    "D213", # Multi-line docstring summary should start at the second line
+    "E501", # line too long
+    "PLR0911", # Too many return statements ({returns} > {max_returns})
+    "PLR0912", # Too many branches ({branches} > {max_branches})
+    "PLR0913", # Too many arguments to function call ({c_args} > {max_args})
+    "PLR0915", # Too many statements ({statements} > {max_statements})
+    "PLR2004", # Magic value used in comparison, consider replacing {value} with a constant variable
+    "PLW2901", # Outer {outer_kind} variable {name} overwritten by inner {inner_kind} target
+    "TRY003", # Avoid specifying long messages outside the exception class
+    # May conflict with the formatter, https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
+    "W191",
+    "E111",
+    "E114",
+    "E117",
+    "D206",
+    "D300",
+    "Q",
+    "COM812",
+    "COM819",
+    "ISC001",
+]
+
+[tool.ruff.lint.flake8-pytest-style]
+fixture-parentheses = false
+mark-parentheses = false
+
+[tool.ruff.lint.mccabe]
+max-complexity = 25
+
+[tool.pylint.main]
+py-version = "3.12"
+load-plugins = [
+    "pylint.extensions.code_style",
+    "pylint.extensions.typing",
+]
+
+[tool.pylint.messages_control]
+# Reasons disabled:
+# too-many-* - not enforced for the sake of readability
+# too-few-* - same as too-many-*
+# ---
+# Pylint CodeStyle plugin
+# consider-using-assignment-expr - decision to use := better left to devs
+# consider-using-assignment-expr - too opinionated
+disable = [
+    "duplicate-code",
+    "line-too-long",
+    "too-few-public-methods",
+    "too-many-ancestors",
+    "too-many-arguments",
+    "too-many-instance-attributes",
+    "too-many-locals",
+    "too-many-positional-arguments",
+    "consider-using-assignment-expr",
+    "consider-using-tuple",
+]
+
+[tool.pylint.format]
+expected-line-ending-format = "LF"
+max-line-length = 100
+min-similarity-lines = 7
 
 [tool.mypy]
 python_version = "3.12"
