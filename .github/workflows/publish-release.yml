@@ -3,9 +3,6 @@ name: Publish new release
 on:
   workflow_dispatch:
 
-env:
-  PYTHON_VERSION: "3.12"
-
 jobs:
   publish:
     name: Update manifest and publish
@@ -14,21 +11,11 @@ jobs:
       - name: Check out the repository
         uses: actions/checkout@v4
 
-      - name: Set up Python ${{ env.PYTHON_VERSION }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-
-      - name: Install Poetry
-        uses: abatilo/actions-poetry@v3.0.1
-        with:
-          poetry-version: 1.3.2
-
-      - name: Install dependencies
-        run: poetry install
+      - name: Prepare and install deps
+        uses: ./.github/actions/install-deps
 
       - name: Run script
         run: |
-          poetry run python script/publish_release.py
+          uv run python script/publish_release.py
         env:
           GITHUB_TOKEN: ${{ secrets.ADMIN_TOKEN }}
