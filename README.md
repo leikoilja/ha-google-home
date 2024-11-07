@@ -218,7 +218,7 @@ service: google_home.refresh_devices
 
 ### Prerequisites
 
-Use Home Assistant v2023.2.0 or above.
+Use Home Assistant v2024.11.0 or above.
 
 ### Google Account security
 
