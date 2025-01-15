@@ -373,8 +373,7 @@ class GlocaltokensApiClient:
                 else:
                     assert volume is not None
                     _LOGGER.debug(
-                        "Successfully set alarm volume to %d "
-                        "on Google Home device %s",
+                        "Successfully set alarm volume to %d on Google Home device %s",
                         volume,
                         device.name,
                     )
