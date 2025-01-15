@@ -272,18 +272,18 @@ name = "bleak"
 version = "0.22.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "dbus-fast", marker = "platform_system == 'Linux'" },
-    { name = "pyobjc-core", marker = "platform_system == 'Darwin'" },
-    { name = "pyobjc-framework-corebluetooth", marker = "platform_system == 'Darwin'" },
-    { name = "pyobjc-framework-libdispatch", marker = "platform_system == 'Darwin'" },
-    { name = "winrt-runtime", marker = "platform_system == 'Windows'" },
-    { name = "winrt-windows-devices-bluetooth", marker = "platform_system == 'Windows'" },
-    { name = "winrt-windows-devices-bluetooth-advertisement", marker = "platform_system == 'Windows'" },
-    { name = "winrt-windows-devices-bluetooth-genericattributeprofile", marker = "platform_system == 'Windows'" },
-    { name = "winrt-windows-devices-enumeration", marker = "platform_system == 'Windows'" },
-    { name = "winrt-windows-foundation", marker = "platform_system == 'Windows'" },
-    { name = "winrt-windows-foundation-collections", marker = "platform_system == 'Windows'" },
-    { name = "winrt-windows-storage-streams", marker = "platform_system == 'Windows'" },
+    { name = "dbus-fast", marker = "sys_platform == 'linux'" },
+    { name = "pyobjc-core", marker = "sys_platform == 'darwin'" },
+    { name = "pyobjc-framework-corebluetooth", marker = "sys_platform == 'darwin'" },
+    { name = "pyobjc-framework-libdispatch", marker = "sys_platform == 'darwin'" },
+    { name = "winrt-runtime", marker = "sys_platform == 'win32'" },
+    { name = "winrt-windows-devices-bluetooth", marker = "sys_platform == 'win32'" },
+    { name = "winrt-windows-devices-bluetooth-advertisement", marker = "sys_platform == 'win32'" },
+    { name = "winrt-windows-devices-bluetooth-genericattributeprofile", marker = "sys_platform == 'win32'" },
+    { name = "winrt-windows-devices-enumeration", marker = "sys_platform == 'win32'" },
+    { name = "winrt-windows-foundation", marker = "sys_platform == 'win32'" },
+    { name = "winrt-windows-foundation-collections", marker = "sys_platform == 'win32'" },
+    { name = "winrt-windows-storage-streams", marker = "sys_platform == 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/fb/96/15750b50c0018338e2cce30de939130971ebfdf4f9d6d56c960f5657daad/bleak-0.22.3.tar.gz", hash = "sha256:3149c3c19657e457727aa53d9d6aeb89658495822cd240afd8aeca4dd09c045c", size = 122339 }
 wheels = [
@@ -296,8 +296,8 @@ version = "3.6.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "bleak" },
-    { name = "bluetooth-adapters", marker = "platform_system == 'Linux'" },
-    { name = "dbus-fast", marker = "platform_system == 'Linux'" },
+    { name = "bluetooth-adapters", marker = "sys_platform == 'linux'" },
+    { name = "dbus-fast", marker = "sys_platform == 'linux'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/b7/af/77ef5cea28bf4356dc7677f821bdbd8f392c8eaee7c273a39d17bc181e40/bleak_retry_connector-3.6.0.tar.gz", hash = "sha256:2be9f2eaf2e83fd1f87170caefbf0e992b192df8634df81d937d626ed0ec5148", size = 15405 }
 wheels = [
@@ -688,7 +688,7 @@ wheels = [
 
 [[package]]
 name = "google-home"
-version = "1.12.1.dev4+g37f86f6.d20241107"
+version = "1.12.2.dev0+g9636fa6.d20250115"
 source = { editable = "." }
 dependencies = [
     { name = "glocaltokens" },
