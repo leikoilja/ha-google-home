@@ -224,7 +224,9 @@ Use Home Assistant v2024.11.0 or above.
 
 This integration uses your google account username and app password.
 See [2 Factor Authentication](#2-factor-authentication--app-passwords) section for tips
-how to setup app password. However, we strongly recommend protection your main
+how to setup app password. If you have created a passkey for your Google Account you must obtain the master token for your account as described in the [corresponding section](#master-token).
+
+However, we strongly recommend protection your main
 google account by not exposing it to the Home Assistant for automation purposes.
 We encourage you to create a separate Google account and add it to your Google Home.
 Your second account would not have access to anything other than Google Home, so even if it
