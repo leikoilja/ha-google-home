@@ -4,14 +4,13 @@ runs:
   using: "composite"
   steps:
     - name: Install uv
-      uses: astral-sh/setup-uv@v3
+      uses: astral-sh/setup-uv@v6
       with:
         enable-cache: true
 
     - name: Set up Python
       shell: bash
       run: |
-        uv python install
         echo "PYTHON_VERSION=$(uv run python -c 'import platform; print(platform.python_version())')" >> "$GITHUB_ENV"
 
     - name: Install dependencies with uv

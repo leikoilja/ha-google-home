@@ -8,22 +8,22 @@ description = "Home Assistant Google Home community integration"
 authors = [{name = "Ilja Leiko", email = "leikoilja@gmail.com"}]
 readme = "README.md"
 license = {text = "MIT"}
-requires-python = ">=3.12"
+requires-python = ">=3.13.2"
 dynamic = ["version"]
 dependencies = [
-    "glocaltokens>=0.7.3",
-    "homeassistant==2024.11.0",
+    "glocaltokens>=0.7.4",
+    "homeassistant==2025.6.0b1",
 ]
 
 [dependency-groups]
 dev = [
-    "codespell>=2.3.0",
-    "homeassistant-stubs==2024.11.0",
-    "mypy>=1.13.0",
-    "PyGithub>=2.4",
-    "pylint>=3.3.1",
-    "pytest>=8.3.3",
-    "ruff>=0.7.2",
+    "codespell>=2.4.1",
+    "homeassistant-stubs==2025.6.0b1",
+    "mypy>=1.15.0",
+    "PyGithub>=2.6",
+    "pylint>=3.3.7",
+    "pytest>=8.3.5",
+    "ruff>=0.11.11",
     "types-requests<2.31.0.7",
     "voluptuous-stubs>=0.1.1",
 ]
@@ -32,8 +32,8 @@ dev = [
 source = "vcs"
 
 [tool.ruff]
-required-version = ">=0.7.0"
-target-version = "py312"
+required-version = ">=0.11.0"
+target-version = "py313"
 
 [tool.ruff.lint.isort]
 force-sort-within-sections = true
@@ -145,7 +145,7 @@ mark-parentheses = false
 max-complexity = 25
 
 [tool.pylint.main]
-py-version = "3.12"
+py-version = "3.13"
 load-plugins = [
     "pylint.extensions.code_style",
     "pylint.extensions.typing",
@@ -178,7 +178,7 @@ max-line-length = 100
 min-similarity-lines = 7
 
 [tool.mypy]
-python_version = "3.12"
+python_version = "3.13"
 show_error_codes = true
 strict = true
 disallow_any_explicit = true

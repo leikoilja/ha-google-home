@@ -38,7 +38,9 @@ from .models import GoogleHomeAlarmStatus, GoogleHomeDevice, GoogleHomeTimerStat
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant, ServiceCall
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
+    from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
+    from .api import GlocaltokensApiClient
     from .types import (
         AlarmsAttributes,
         DeviceAttributes,
@@ -57,8 +59,10 @@ async def async_setup_entry(
     async_add_devices: AddEntitiesCallback,
 ) -> bool:
     """Set up sensor platform."""
-    client = hass.data[DOMAIN][entry.entry_id][DATA_CLIENT]
-    coordinator = hass.data[DOMAIN][entry.entry_id][DATA_COORDINATOR]
+    client: GlocaltokensApiClient = hass.data[DOMAIN][entry.entry_id][DATA_CLIENT]
+    coordinator: DataUpdateCoordinator[list[GoogleHomeDevice]] = hass.data[DOMAIN][
+        entry.entry_id
+    ][DATA_COORDINATOR]
     sensors: list[Entity] = []
     for device in coordinator.data:
         sensors.append(
@@ -137,13 +141,13 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
         return LABEL_DEVICE
 
     @property
-    def state(self) -> str | None:  # type: ignore[override]
+    def state(self) -> str | None:
         """Return device IP address if any."""
         device = self.get_device()
         return device.ip_address if device else None
 
     @property
-    def extra_state_attributes(self) -> DeviceAttributes:  # type: ignore[override]
+    def extra_state_attributes(self) -> DeviceAttributes:
         """Return the state attributes."""
         device = self.get_device()
         attributes: DeviceAttributes = {
@@ -193,7 +197,7 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
         return LABEL_ALARMS
 
     @property
-    def state(self) -> str | None:  # type: ignore[override]
+    def state(self) -> str | None:
         """Return next alarm if available."""
         device = self.get_device()
         if not device:
@@ -208,7 +212,7 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
         )
 
     @property
-    def extra_state_attributes(self) -> AlarmsAttributes:  # type: ignore[override]
+    def extra_state_attributes(self) -> AlarmsAttributes:
         """Return the state attributes."""
         return {
             "next_alarm_status": self._get_next_alarm_status(),
@@ -279,7 +283,7 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
         return LABEL_TIMERS
 
     @property
-    def state(self) -> str | None:  # type: ignore[override]
+    def state(self) -> str | None:
         """Return next timer if available."""
         device = self.get_device()
         if not device:
@@ -292,7 +296,7 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
         )
 
     @property
-    def extra_state_attributes(self) -> TimersAttributes:  # type: ignore[override]
+    def extra_state_attributes(self) -> TimersAttributes:
         """Return the state attributes."""
         return {
             "next_timer_status": self._get_next_timer_status(),

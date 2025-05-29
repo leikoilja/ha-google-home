@@ -74,7 +74,7 @@ class AlarmVolumeNumber(GoogleHomeBaseEntity, NumberEntity):
         return LABEL_ALARM_VOLUME
 
     @property
-    def icon(self) -> str:  # type: ignore[override]
+    def icon(self) -> str:
         """Return the icon of the sensor."""
         device = self.get_device()
         if device is None:
@@ -89,7 +89,7 @@ class AlarmVolumeNumber(GoogleHomeBaseEntity, NumberEntity):
         return ICON_ALARM_VOLUME_HIGH
 
     @property
-    def native_value(self) -> float:  # type: ignore[override]
+    def native_value(self) -> float:
         """Return the current volume value."""
         device = self.get_device()
 

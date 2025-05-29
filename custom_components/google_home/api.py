@@ -30,12 +30,13 @@ from .const import (
 )
 from .exceptions import InvalidMasterToken
 from .models import GoogleHomeDevice
-from .types import AlarmJsonDict, JsonDict, TimerJsonDict
 
 if TYPE_CHECKING:
     from zeroconf import Zeroconf
 
     from homeassistant.core import HomeAssistant
+
+    from .types import AlarmJsonDict, JsonDict, TimerJsonDict
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -76,7 +77,7 @@ class GlocaltokensApiClient:
         def _get_master_token() -> str | None:
             return self._client.get_master_token()
 
-        master_token = await self.hass.async_add_executor_job(_get_master_token)  # type: ignore[arg-type]
+        master_token = await self.hass.async_add_executor_job(_get_master_token)
         if master_token is None or is_aas_et(master_token) is False:
             raise InvalidMasterToken
         return master_token
@@ -87,7 +88,7 @@ class GlocaltokensApiClient:
         def _get_access_token() -> str | None:
             return self._client.get_access_token()
 
-        access_token = await self.hass.async_add_executor_job(_get_access_token)  # type: ignore[arg-type]
+        access_token = await self.hass.async_add_executor_job(_get_access_token)
         if access_token is None:
             raise InvalidMasterToken
         return access_token
@@ -106,7 +107,7 @@ class GlocaltokensApiClient:
                     force_homegraph_reload=True,
                 )
 
-            google_devices = await self.hass.async_add_executor_job(_get_google_devices)  # type: ignore[arg-type]
+            google_devices = await self.hass.async_add_executor_job(_get_google_devices)
             self.google_devices = [
                 GoogleHomeDevice(
                     device_id=device.device_id,
@@ -125,7 +126,7 @@ class GlocaltokensApiClient:
         def _get_android_id() -> str:
             return self._client.get_android_id()
 
-        return await self.hass.async_add_executor_job(_get_android_id)  # type: ignore[arg-type]
+        return await self.hass.async_add_executor_job(_get_android_id)
 
     @staticmethod
     def create_url(ip_address: str, port: int, api_endpoint: str) -> str:
@@ -182,8 +183,8 @@ class GlocaltokensApiClient:
 
         if response is not None:
             if JSON_TIMER in response and JSON_ALARM in response:
-                device.set_timers(cast(list[TimerJsonDict], response[JSON_TIMER]))
-                device.set_alarms(cast(list[AlarmJsonDict], response[JSON_ALARM]))
+                device.set_timers(cast("list[TimerJsonDict]", response[JSON_TIMER]))
+                device.set_alarms(cast("list[AlarmJsonDict]", response[JSON_ALARM]))
                 _LOGGER.debug(
                     "Successfully retrieved alarms and timers from %s. Response: %s",
                     device.name,
