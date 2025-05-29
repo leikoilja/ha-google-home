@@ -30,7 +30,7 @@ class GoogleHomeBaseEntity(
         client: GlocaltokensApiClient,
         device_id: str,
         device_name: str,
-        device_model: str,
+        device_model: str | None,
     ):
         """Create Google Home base entity."""
         super().__init__(coordinator)
@@ -45,17 +45,17 @@ class GoogleHomeBaseEntity(
         """Label to use for name and unique id."""
 
     @property
-    def name(self) -> str:  # type: ignore[override]
+    def name(self) -> str:
         """Return the name of the sensor."""
         return f"{self.device_name} {self.label}"
 
     @property
-    def unique_id(self) -> str:  # type: ignore[override]
+    def unique_id(self) -> str:
         """Return a unique ID to use for this entity."""
         return f"{self.device_id}/{self.label}"
 
     @property
-    def device_info(self) -> DeviceInfo | None:  # type: ignore[override]
+    def device_info(self) -> DeviceInfo | None:
         """Return device info."""
         return {
             "identifiers": {(DOMAIN, self.device_id)},

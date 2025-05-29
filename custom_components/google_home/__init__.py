@@ -41,12 +41,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -
         hass.data.setdefault(DOMAIN, {})
         _LOGGER.info(STARTUP_MESSAGE)
 
-    username = cast(str, entry.data.get(CONF_USERNAME))
-    password = cast(str, entry.data.get(CONF_PASSWORD))
-    android_id = cast(str, entry.data.get(CONF_ANDROID_ID))
-    master_token = cast(str, entry.data.get(CONF_MASTER_TOKEN))
+    username = cast("str", entry.data.get(CONF_USERNAME))
+    password = cast("str", entry.data.get(CONF_PASSWORD))
+    android_id = cast("str", entry.data.get(CONF_ANDROID_ID))
+    master_token = cast("str", entry.data.get(CONF_MASTER_TOKEN))
     update_interval = cast(
-        int, entry.options.get(CONF_UPDATE_INTERVAL, UPDATE_INTERVAL)
+        "int", entry.options.get(CONF_UPDATE_INTERVAL, UPDATE_INTERVAL)
     )
 
     _LOGGER.debug(
