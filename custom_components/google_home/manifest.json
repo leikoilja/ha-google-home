@@ -20,7 +20,7 @@
   "requirements": [
     "glocaltokens==0.7.4"
   ],
-  "version": "1.12.1",
+  "version": "1.13.0",
   "zeroconf": [
     "_googlecast._tcp.local."
   ]
