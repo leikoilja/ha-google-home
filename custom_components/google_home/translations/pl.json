@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Uwierzytelnianie Google Home",
-        "description": "Jeśli potrzebujesz pomocy w konfiguracji zajrzyj tutaj: https://github.com/leikoilja/ha-google-home. Użyj swojej nazwy użytkownika i hasła do konta Google. Rekomendowane (bezpieczniej i łatwiej) jest wygenerować hasło do aplikacji którąintegrujesz z kontem Google i użyć go zamiast faktycznego hasła. Uprawnienia są takie same - konto aplikacji posiada taki sam dostęp jak zwykłe hasło, ale nie udostępniasz swojego hasła do konta szczeguły pod adresem https://myaccount.google.com/apppasswords. Jeśli nie chcesz generować autoryzacji do aplikacji Google, regularne hasło do konta google powinno działać",
+        "description": "Jeśli potrzebujesz pomocy w konfiguracji zajrzyj tutaj: https://github.com/leikoilja/ha-google-home. Użyj swojej nazwy użytkownika i hasła do konta Google. Rekomendowane (bezpieczniej i łatwiej) jest wygenerować hasło do aplikacji, którą integrujesz z kontem Google i użyć go zamiast faktycznego hasła. Uprawnienia są takie same - konto aplikacji posiada taki sam dostęp jak zwykłe hasło, ale nie udostępniasz swojego hasła do konta szczegóły pod adresem https://myaccount.google.com/apppasswords. Jeśli nie chcesz generować autoryzacji do aplikacji Google, regularne hasło do konta google powinno działać",
         "data": {
           "username": "Nazwa użytkownika konta Google",
           "password": "Hasło do aplikacji konta Google"
@@ -11,7 +11,7 @@
       }
     },
     "error": {
-      "auth": "Nazwa lub hasło użytkownika jest nieprawidłowe. Jeśli Twoje konto google ma włączone 2FA (dwuetapowe uwierzytelnianie) wygeneruj hasło do aplikacji (https://myaccount.google.com/apppasswords). Jeśli uwierzytelnianie nadal nie powodzi się, przejdź do https://github.com/leikoilja/ha-google-home#troubleshooting",
+      "auth": "Nazwa lub hasło użytkownika jest nieprawidłowe. Jeśli Twoje konto google ma włączone 2FA (dwuetapowe uwierzytelnianie) wygeneruj hasło do aplikacji (https://myaccount.google.com/apppasswords). Jeśli uwierzytelnianie nadal nie powiedzie się, przejdź do https://github.com/leikoilja/ha-google-home#troubleshooting",
       "pass-len": "Długość hasła jest ograniczona do 100 znaków przez politykę Google (https://support.google.com/a/answer/139399). Proszę zmienić hasło lub użyć hasła z aplikacji (https://myaccount.google.com/apppasswords).",
       "missing-inputs": "Wprowadź nazwę użytkownika i hasło lub token główny",
       "master-token-invalid": "Główny token jest nieprawidłowy. Upewnij się, że podano pełny token (w tym 'aas_et/')"
