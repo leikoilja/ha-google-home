@@ -11,19 +11,19 @@ license = {text = "MIT"}
 requires-python = ">=3.13.2"
 dynamic = ["version"]
 dependencies = [
-    "glocaltokens>=0.7.4",
-    "homeassistant==2025.6.0b1",
+    "glocaltokens>=0.7.5",
+    "homeassistant==2025.6.0",
 ]
 
 [dependency-groups]
 dev = [
     "codespell>=2.4.1",
-    "homeassistant-stubs==2025.6.0b1",
-    "mypy>=1.15.0",
+    "homeassistant-stubs==2025.6.0",
+    "mypy>=1.16.1",
     "PyGithub>=2.6",
     "pylint>=3.3.7",
     "pytest>=8.3.5",
-    "ruff>=0.11.11",
+    "ruff>=0.12.0",
     "types-requests<2.31.0.7",
     "voluptuous-stubs>=0.1.1",
 ]
@@ -96,7 +96,6 @@ select = [
     "S317", # suspicious-xml-sax-usage
     "S318", # suspicious-xml-mini-dom-usage
     "S319", # suspicious-xml-pull-dom-usage
-    "S320", # suspicious-xmle-tree-usage
     "S601", # paramiko-call
     "S602", # subprocess-popen-with-shell-equals-true
     "S604", # call-with-shell-equals-true
