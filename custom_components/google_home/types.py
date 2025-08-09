@@ -91,16 +91,8 @@ class OptionsFlowDict(TypedDict):
     update_interval: int
 
 
-type JsonDict = Mapping[
-    str,
-    bool | float | int | str | list[str] | list[AlarmJsonDict] | list[TimerJsonDict],
-]
-
-type GoogleHomeConfigEntry = ConfigEntry[None]
-
-
 class BTJsonDict(TypedDict, total=False):
-    """Typed dict for JSON representation of BT items returned by Google Home API"""
+    """Typed dict for JSON representation of BT items returned by Google Home API."""
 
     id: str
     mac_address: str
@@ -111,8 +103,23 @@ class BTJsonDict(TypedDict, total=False):
     name: str | None
 
 
+type JsonDict = Mapping[
+    str,
+    bool
+    | float
+    | int
+    | str
+    | list[str]
+    | list[AlarmJsonDict]
+    | list[TimerJsonDict]
+    | list[BTJsonDict],
+]
+
+type GoogleHomeConfigEntry = ConfigEntry[None]
+
+
 class GoogleHomeBTDeviceDict(TypedDict):
-    """Typed dict representation of Google Home bluetooth device"""
+    """Typed dict representation of Google Home bluetooth device."""
 
     mac_address: str
     device_type: str
@@ -122,7 +129,7 @@ class GoogleHomeBTDeviceDict(TypedDict):
 
 
 class BTDeviceAttributes(TypedDict):
-    """Typed dict for BT device attributes"""
+    """Typed dict for BT device attributes."""
 
     bt_devices: list[GoogleHomeBTDeviceDict]
     integration: str

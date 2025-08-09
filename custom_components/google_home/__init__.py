@@ -9,6 +9,7 @@ import logging
 from typing import TYPE_CHECKING, cast
 
 from homeassistant.components import zeroconf
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
@@ -103,7 +104,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -
     return True
 
 
-async def update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
+async def update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:  # type: ignore[explicit-any]
     """Handle options update."""
     # Reload entry to update data
     await hass.config_entries.async_reload(entry.entry_id)
@@ -135,5 +136,7 @@ async def async_update_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) 
     bt_coordinator: DataUpdateCoordinator[list[GoogleHomeDevice]] = hass.data[DOMAIN][
         entry.entry_id
     ][BT_COORDINATOR]
-    bt_coordinator.update_interval = timedelta(seconds=bt_update_interval)
-    _LOGGER.debug("Coordinator update interval is: %s", timedelta(seconds=10))
+    bt_coordinator.update_interval = timedelta(seconds=bt_update_interval)  # type: ignore[misc]
+    _LOGGER.debug(
+        "Coordinator update interval is: %s", timedelta(seconds=bt_update_interval)
+    )

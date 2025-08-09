@@ -16,8 +16,8 @@ if TYPE_CHECKING:
     from .types import (
         AlarmJsonDict,
         BTJsonDict,
-    GoogleHomeAlarmDict,
-    GoogleHomeBTDeviceDict,
+        GoogleHomeAlarmDict,
+        GoogleHomeBTDeviceDict,
         GoogleHomeTimerDict,
         TimerJsonDict,
     )
@@ -60,7 +60,7 @@ class GoogleHomeDevice:
         return self._bt_devices
 
     def set_bt(self, devices: list[BTJsonDict]) -> None:
-        """Stores BT devices as GoogleHomeBTDevice objects"""
+        """Store BT devices as GoogleHomeBTDevice objects."""
         self._bt_devices = {
             device["mac_address"]: GoogleHomeBTDevice(
                 mac_address=device["mac_address"],
@@ -242,7 +242,7 @@ class GoogleHomeTimerStatus(Enum):
 
 
 class GoogleHomeBTDevice:
-    """Local representation of detected BT devices"""
+    """Local representation of detected BT devices."""
 
     def __init__(
         self,
@@ -252,6 +252,7 @@ class GoogleHomeBTDevice:
         expected_profiles: int,
         name: str | None,
     ) -> None:
+        """Initialize a GoogleHomeBTDevice instance."""
         self.mac_address = mac_address
         self.device_type = device_type
         self.rssi = rssi

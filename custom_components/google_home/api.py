@@ -170,12 +170,8 @@ class GlocaltokensApiClient:
         )
 
     async def update_google_devices_bt_information(self) -> list[GoogleHomeDevice]:
-        """Retrieves devices from glocaltokens and
-        fetches alarm/timer data from each of the device
-        """
-
+        """Retrieve devices from glocaltokens and fetch alarm/timer data from each device."""
         devices = await self.get_google_devices()
-
         # Gives the user a warning if the device is offline
         for device in devices:
             if not device.ip_address and device.available:
@@ -189,14 +185,11 @@ class GlocaltokensApiClient:
                     ),
                     device.name,
                 )
-
-        coordinator_data = [
+        return [
             await self.update_bluetooth_list(device)
             for device in devices
             if device.ip_address and device.auth_token
         ]
-
-        return coordinator_data
 
     async def collect_data_from_endpoints(
         self, device: GoogleHomeDevice
@@ -204,8 +197,7 @@ class GlocaltokensApiClient:
         """Collect data from different endpoints."""
         device = await self.update_alarms_and_timers(device)
         device = await self.update_alarm_volume(device)
-        device = await self.update_do_not_disturb(device)
-        return device
+        return await self.update_do_not_disturb(device)
 
     async def update_alarms_and_timers(
         self, device: GoogleHomeDevice
@@ -316,8 +308,7 @@ class GlocaltokensApiClient:
             )
 
     async def update_bluetooth_list(self, device: GoogleHomeDevice) -> GoogleHomeDevice:
-        """Fetches bluettooth items list from google device"""
-
+        """Fetch bluetooth items list from Google device."""
         _LOGGER.info("Reading bluetooth info for %s", device.name)
 
         response = await self.request(
@@ -328,7 +319,7 @@ class GlocaltokensApiClient:
         )
 
         if response is not None:
-            device.set_bt(cast(list[BTJsonDict], response))
+            device.set_bt(cast("list[BTJsonDict]", response))
 
             _LOGGER.debug(
                 "Successfully retrieved some data from %s. Response: %s",
@@ -515,7 +506,7 @@ class GlocaltokensApiClient:
         try:
             timeout = ClientTimeout(total=TIMEOUT)
             async with self._session.request(
-                method, url, json=data, headers=headers, timeout=TIMEOUT
+                method, url, json=data, headers=headers, timeout=timeout
             ) as response:
                 if response.status == HTTPStatus.OK:
                     try:

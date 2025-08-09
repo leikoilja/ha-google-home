@@ -13,7 +13,6 @@ from homeassistant.const import CONF_MAC, STATE_UNAVAILABLE
 from homeassistant.helpers import config_validation as cv, entity_platform
 from homeassistant.helpers.entity import Entity, EntityCategory
 
-from .api import GlocaltokensApiClient
 from .const import (
     ALARM_AND_TIMER_ID_LENGTH,
     BT_COORDINATOR,
@@ -138,10 +137,8 @@ async def async_setup_entry(
     platform.async_register_entity_service(
         SERVICE_DELETE_ALARM,
         {
-            vol.Required(SERVICE_ATTR_ALARM_ID): cv.string,  # type: ignore[dict-item]
-            vol.Optional(
-                SERVICE_ATTR_SKIP_REFRESH
-            ): cv.boolean,  # type: ignore[dict-item]
+            vol.Required(SERVICE_ATTR_ALARM_ID): cv.string,
+            vol.Optional(SERVICE_ATTR_SKIP_REFRESH): cv.boolean,
         },
         GoogleHomeAlarmsSensor.async_delete_alarm,
     )
@@ -149,10 +146,8 @@ async def async_setup_entry(
     platform.async_register_entity_service(
         SERVICE_DELETE_TIMER,
         {
-            vol.Required(SERVICE_ATTR_TIMER_ID): cv.string,  # type: ignore[dict-item]
-            vol.Optional(
-                SERVICE_ATTR_SKIP_REFRESH
-            ): cv.boolean,  # type: ignore[dict-item]
+            vol.Required(SERVICE_ATTR_TIMER_ID): cv.string,
+            vol.Optional(SERVICE_ATTR_SKIP_REFRESH): cv.boolean,
         },
         GoogleHomeTimersSensor.async_delete_timer,
     )
@@ -393,7 +388,7 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
 
 
 class GoogleHomeBTDevicesSensor(GoogleHomeBaseEntity):
-    """Google Home Alarms sensor."""
+    """Sensor for Bluetooth devices detected by Google Home."""
 
     _attr_device_class = SensorDeviceClass.SIGNAL_STRENGTH
 
@@ -403,10 +398,11 @@ class GoogleHomeBTDevicesSensor(GoogleHomeBaseEntity):
         client: GlocaltokensApiClient,
         device_id: str,
         device_name: str,
-        device_model: str,
+        device_model: str | None,
         mac: str,
         mac_id: str,
     ):
+        """Initialize the Bluetooth devices sensor entity."""
         super().__init__(coordinator, client, device_id, device_name, device_model)
         self.mac = mac
         self.mac_id = mac_id
@@ -423,6 +419,7 @@ class GoogleHomeBTDevicesSensor(GoogleHomeBaseEntity):
 
     @property
     def state(self) -> int | str | None:
+        """Return the signal strength (RSSI) of the Bluetooth device, or None if unavailable."""
         device = self.get_device()
         if not device:
             return None
@@ -433,7 +430,7 @@ class GoogleHomeBTDevicesSensor(GoogleHomeBaseEntity):
 
 
 class GoogleHomeIrkBTDevicesSensor(GoogleHomeBaseEntity):
-    """Google Home Alarms sensor."""
+    """Sensor for IRK-based Bluetooth devices."""
 
     _attr_device_class = SensorDeviceClass.SIGNAL_STRENGTH
 
@@ -443,10 +440,11 @@ class GoogleHomeIrkBTDevicesSensor(GoogleHomeBaseEntity):
         client: GlocaltokensApiClient,
         device_id: str,
         device_name: str,
-        device_model: str,
+        device_model: str | None,
         irk: bytes,
         irk_id: str,
     ):
+        """Initialize the IRK-based Bluetooth devices sensor entity."""
         super().__init__(coordinator, client, device_id, device_name, device_model)
         self.irk = irk
         self.irk_id = irk_id
@@ -464,6 +462,7 @@ class GoogleHomeIrkBTDevicesSensor(GoogleHomeBaseEntity):
 
     @property
     def state(self) -> int | str | None:
+        """Return the signal strength (RSSI) for IRK-based Bluetooth device, or None if unavailable."""
         device = self.get_device()
         if not device:
             return None

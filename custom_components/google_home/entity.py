@@ -5,7 +5,6 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
-from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
     DataUpdateCoordinator,
@@ -66,7 +65,7 @@ class GoogleHomeBaseEntity(
         }
 
     def get_device(self) -> GoogleHomeDevice | None:
-        """Return the device matched by device name from the list of google devices in coordinator_data."""
+        """Return the device matched by device name from the list of Google devices in coordinator_data."""
         matched_devices: list[GoogleHomeDevice] = [
             device
             for device in self.coordinator.data
