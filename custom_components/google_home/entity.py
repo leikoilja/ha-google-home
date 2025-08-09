@@ -58,16 +58,12 @@ class GoogleHomeBaseEntity(
     @property
     def device_info(self) -> DeviceInfo | None:
         """Return device info."""
-        device_info: DeviceInfo = {
+        return {
             "identifiers": {(DOMAIN, self.device_id)},
             "name": f"{DEFAULT_NAME} {self.device_name}",
             "manufacturer": MANUFACTURER,
             "model": self.device_model,
         }
-        if (dev := self.get_device()) is not None and dev.mac is not None:
-            device_info["connections"] = {(CONNECTION_NETWORK_MAC, dev.mac)}
-
-        return device_info
 
     def get_device(self) -> GoogleHomeDevice | None:
         """Return the device matched by device name from the list of google devices in coordinator_data."""
