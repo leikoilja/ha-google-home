@@ -41,6 +41,27 @@ if TYPE_CHECKING:
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
+def _parse_irk(irk: str) -> bytes | None:
+    irk = irk.removeprefix("irk:")
+
+    if irk.endswith("="):
+        try:
+            irk_bytes = bytes(reversed(base64.b64decode(irk)))
+        except binascii.Error:
+            # IRK is not valid base64
+            return None
+    else:
+        try:
+            irk_bytes = binascii.unhexlify(irk)
+        except binascii.Error:
+            # IRK is not correctly hex encoded
+            return None
+
+    if len(irk_bytes) != 16:
+        # IRK must be 16 bytes when decoded
+        return None
+
+    return irk_bytes
 
 class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
     """Config flow for GoogleHome."""
@@ -236,20 +257,23 @@ class GoogleHomeOptionsFlowHandler(OptionsFlow):
         self, user_input: dict[str, str] | None = None
     ) -> ConfigFlowResult:
         """Manage the options."""
+        errors = {}
         if user_input is not None:
-            # Create a mutable copy of current options
-            new_options = dict(self.config_entry.options)
-            irk_list = new_options.get(CONF_BLUETOOTH, {}).get(CONF_IRK, [])
-            mac_list = new_options.get(CONF_BLUETOOTH, {}).get(CONF_MAC, [])
-            irk_list.append(user_input)
-            new_options[CONF_BLUETOOTH] = {
-                CONF_IRK: irk_list,
-                CONF_MAC: mac_list,
-            }
-            return self.async_create_entry(
-                title=self.config_entry.data.get(CONF_USERNAME),
-                data=new_options,
-            )
+            if _parse_irk(user_input.get(CONF_IRK)) is None:
+                errors[CONF_IRK] = "invalid_irk"
+            else:
+                new_options = dict(self.config_entry.options)
+                irk_list = new_options.get(CONF_BLUETOOTH, {}).get(CONF_IRK, [])
+                mac_list = new_options.get(CONF_BLUETOOTH, {}).get(CONF_MAC, [])
+                irk_list.append(user_input)
+                new_options[CONF_BLUETOOTH] = {
+                    CONF_IRK: irk_list,
+                    CONF_MAC: mac_list,
+                }
+                return self.async_create_entry(
+                    title=self.config_entry.data.get(CONF_USERNAME),
+                    data=new_options,
+                )
 
         return self.async_show_form(
             step_id="add_irk",
@@ -259,6 +283,7 @@ class GoogleHomeOptionsFlowHandler(OptionsFlow):
                     vol.Required(CONF_IRK): str,
                 }
             ),
+            errors=errors,
         )
 
     async def async_step_add_mac(
