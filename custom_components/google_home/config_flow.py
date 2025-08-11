@@ -192,7 +192,8 @@ class GoogleHomeOptionsFlowHandler(OptionsFlow):
     """Config flow options handler for GoogleHome."""
 
     async def async_step_init(
-        self, user_input: dict[str, str] | None = None
+        self,
+        user_input: dict[str, str] | None = None,  # pylint: disable=unused-argument
     ) -> ConfigFlowResult:
         """Manage the options."""
         return self.async_show_menu(
@@ -263,7 +264,8 @@ class GoogleHomeOptionsFlowHandler(OptionsFlow):
         """Manage the options."""
         errors = {}
         if user_input is not None:
-            if _parse_irk(user_input.get(CONF_IRK)) is None:
+            irk_value = user_input.get(CONF_IRK)
+            if irk_value is not None and _parse_irk(irk_value) is None:
                 errors[CONF_IRK] = "invalid_irk"
             else:
                 new_options = dict(self.config_entry.options)

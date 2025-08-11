@@ -106,7 +106,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -
 
 async def update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:  # type: ignore[explicit-any]
     """Handle options update."""
-    # Reload entry to update data
     await hass.config_entries.async_reload(entry.entry_id)
 
 

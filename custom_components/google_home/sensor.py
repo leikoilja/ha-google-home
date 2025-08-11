@@ -400,8 +400,8 @@ class GoogleHomeBTDevicesSensor(GoogleHomeBaseEntity):
 
     def __init__(
         self,
-        coordinator,
-        client,
+        coordinator: DataUpdateCoordinator[list[GoogleHomeDevice]],
+        client: GlocaltokensApiClient,
         device_id: str,
         device_name: str,
         device_model: str | None,
