@@ -330,7 +330,8 @@ class GoogleHomeOptionsFlowHandler(OptionsFlow):
                 bluetooth_config.setdefault(CONF_IRK, [])
                 bluetooth_config.setdefault(CONF_MAC, [])
                 bluetooth_config[CONF_MAC] = [
-                    mac for mac in bluetooth_config[CONF_MAC]
+                    mac
+                    for mac in bluetooth_config[CONF_MAC]
                     if mac.get(CONF_MAC_IDENTIFIER) != mac_to_remove
                 ]
                 options_config[CONF_BLUETOOTH] = bluetooth_config
@@ -363,7 +364,8 @@ class GoogleHomeOptionsFlowHandler(OptionsFlow):
                 bluetooth_config.setdefault(CONF_IRK, [])
                 bluetooth_config.setdefault(CONF_MAC, [])
                 bluetooth_config[CONF_IRK] = [
-                    irk for irk in bluetooth_config[CONF_IRK]
+                    irk
+                    for irk in bluetooth_config[CONF_IRK]
                     if irk.get(CONF_IRK_IDENTIFIER) != irk_to_remove
                 ]
                 options_config[CONF_BLUETOOTH] = bluetooth_config

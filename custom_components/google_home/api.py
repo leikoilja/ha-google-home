@@ -312,6 +312,21 @@ class GlocaltokensApiClient:
         """Fetch bluetooth items list from Google device."""
         _LOGGER.info("Reading bluetooth info for %s", device.name)
 
+        self._bt_scan_counter += 1
+        min_scan_interval = 60
+        scan_every = max(1, math.ceil(min_scan_interval / self._bt_update_interval))
+        if self._bt_scan_counter >= scan_every:
+            await self.initiate_bluetooth_scan(
+                device, scan_timeout=0, clear_results=True
+            )
+            await self.initiate_bluetooth_scan(
+                device,
+                scan_timeout=max(self._bt_update_interval, 60),
+                clear_results=False,
+            )
+            self._bt_scan_counter = 0
+
+
         response = await self.request(
             method="GET",
             endpoint=API_ENDPOINT_BLUETOOTH_RESULTS,
@@ -328,19 +343,6 @@ class GlocaltokensApiClient:
                 response,
             )
 
-        self._bt_scan_counter += 1
-        min_scan_interval = 60
-        scan_every = max(1, math.ceil(min_scan_interval / self._bt_update_interval))
-        if self._bt_scan_counter >= scan_every:
-            await self.initiate_bluetooth_scan(
-                device, scan_timeout=0, clear_results=True
-            )
-            await self.initiate_bluetooth_scan(
-                device,
-                scan_timeout=max(self._bt_update_interval, 60),
-                clear_results=False,
-            )
-            self._bt_scan_counter = 0
 
         return device
 
