@@ -390,7 +390,7 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
 
 def normalize_mac(mac: str) -> str:
     """Normalize MAC address to lowercase, no separators."""
-    return ''.join(c for c in mac.lower() if c in string.hexdigits[:16])
+    return "".join(c for c in mac.lower() if c in string.hexdigits[:16])
 
 
 class GoogleHomeBTDevicesSensor(GoogleHomeBaseEntity):

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import base64
+import binascii
 from datetime import timedelta
 import logging
 from typing import TYPE_CHECKING, Self
@@ -41,6 +43,7 @@ if TYPE_CHECKING:
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
+
 def _parse_irk(irk: str) -> bytes | None:
     irk = irk.removeprefix("irk:")
 
@@ -62,6 +65,7 @@ def _parse_irk(irk: str) -> bytes | None:
         return None
 
     return irk_bytes
+
 
 class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
     """Config flow for GoogleHome."""
