@@ -268,17 +268,15 @@ class GoogleHomeOptionsFlowHandler(OptionsFlow):
             if irk_value is not None and _parse_irk(irk_value) is None:
                 errors[CONF_IRK] = "invalid_irk"
             else:
-                new_options = dict(self.config_entry.options)
-                irk_list = new_options.get(CONF_BLUETOOTH, {}).get(CONF_IRK, [])
-                mac_list = new_options.get(CONF_BLUETOOTH, {}).get(CONF_MAC, [])
-                irk_list.append(user_input)
-                new_options[CONF_BLUETOOTH] = {
-                    CONF_IRK: irk_list,
-                    CONF_MAC: mac_list,
-                }
+                options_config = dict(self.config_entry.options)
+                bluetooth_config = dict(options_config.get(CONF_BLUETOOTH, {}))
+                bluetooth_config.setdefault(CONF_IRK, [])
+                bluetooth_config.setdefault(CONF_MAC, [])
+                bluetooth_config[CONF_IRK] = bluetooth_config[CONF_IRK] + [user_input]
+                options_config[CONF_BLUETOOTH] = bluetooth_config
                 return self.async_create_entry(
                     title=self.config_entry.data.get(CONF_USERNAME),
-                    data=new_options,
+                    data=options_config,
                 )
 
         return self.async_show_form(
@@ -298,17 +296,16 @@ class GoogleHomeOptionsFlowHandler(OptionsFlow):
         """Manage the options."""
         if user_input is not None:
             # Create a mutable copy of current options
-            new_options = dict(self.config_entry.options)
-            irk_list = new_options.get(CONF_BLUETOOTH, {}).get(CONF_IRK, [])
-            mac_list = new_options.get(CONF_BLUETOOTH, {}).get(CONF_MAC, [])
-            mac_list.append(user_input)
-            new_options[CONF_BLUETOOTH] = {
-                CONF_IRK: irk_list,
-                CONF_MAC: mac_list,
-            }
+            options_config = dict(self.config_entry.options)
+            bluetooth_config = dict(options_config.get(CONF_BLUETOOTH, {}))
+            bluetooth_config.setdefault(CONF_IRK, [])
+            bluetooth_config.setdefault(CONF_MAC, [])
+            bluetooth_config[CONF_MAC] = bluetooth_config[CONF_MAC] + [user_input]
+            options_config[CONF_BLUETOOTH] = bluetooth_config
+
             return self.async_create_entry(
                 title=self.config_entry.data.get(CONF_USERNAME),
-                data=new_options,
+                data=options_config,
             )
 
         return self.async_show_form(
@@ -328,24 +325,20 @@ class GoogleHomeOptionsFlowHandler(OptionsFlow):
         if user_input is not None:
             mac_to_remove = user_input.get(CONF_MAC_IDENTIFIER)
             if mac_to_remove:
-                # Create a mutable copy of current options
-                new_options = dict(self.config_entry.options)
-                mac_list = new_options.get(CONF_BLUETOOTH, {}).get(CONF_MAC, [])
-                mac_list = [
-                    mac
-                    for mac in mac_list
+                options_config = dict(self.config_entry.options)
+                bluetooth_config = dict(options_config.get(CONF_BLUETOOTH, {}))
+                bluetooth_config.setdefault(CONF_IRK, [])
+                bluetooth_config.setdefault(CONF_MAC, [])
+                bluetooth_config[CONF_MAC] = [
+                    mac for mac in bluetooth_config[CONF_MAC]
                     if mac.get(CONF_MAC_IDENTIFIER) != mac_to_remove
                 ]
-                new_options[CONF_BLUETOOTH] = {
-                    CONF_IRK: new_options.get(CONF_BLUETOOTH, {}).get(CONF_IRK, []),
-                    CONF_MAC: mac_list,
-                }
+                options_config[CONF_BLUETOOTH] = bluetooth_config
                 return self.async_create_entry(
                     title=self.config_entry.data.get(CONF_USERNAME),
-                    data=new_options,
+                    data=options_config,
                 )
 
-        # Prepare list of current MAC addresses
         mac_list = self.config_entry.options.get(CONF_BLUETOOTH, {}).get(CONF_MAC, [])
         mac_identifiers = [mac.get(CONF_MAC_IDENTIFIER) for mac in mac_list]
 
@@ -365,24 +358,20 @@ class GoogleHomeOptionsFlowHandler(OptionsFlow):
         if user_input is not None:
             irk_to_remove = user_input.get(CONF_IRK_IDENTIFIER)
             if irk_to_remove:
-                # Create a mutable copy of current options
-                new_options = dict(self.config_entry.options)
-                irk_list = new_options.get(CONF_BLUETOOTH, {}).get(CONF_IRK, [])
-                irk_list = [
-                    irk
-                    for irk in irk_list
+                options_config = dict(self.config_entry.options)
+                bluetooth_config = dict(options_config.get(CONF_BLUETOOTH, {}))
+                bluetooth_config.setdefault(CONF_IRK, [])
+                bluetooth_config.setdefault(CONF_MAC, [])
+                bluetooth_config[CONF_IRK] = [
+                    irk for irk in bluetooth_config[CONF_IRK]
                     if irk.get(CONF_IRK_IDENTIFIER) != irk_to_remove
                 ]
-                new_options[CONF_BLUETOOTH] = {
-                    CONF_IRK: irk_list,
-                    CONF_MAC: new_options.get(CONF_BLUETOOTH, {}).get(CONF_MAC, []),
-                }
+                options_config[CONF_BLUETOOTH] = bluetooth_config
                 return self.async_create_entry(
                     title=self.config_entry.data.get(CONF_USERNAME),
-                    data=new_options,
+                    data=options_config,
                 )
 
-        # Prepare list of current irk addresses
         irk_list = self.config_entry.options.get(CONF_BLUETOOTH, {}).get(CONF_IRK, [])
         irk_identifiers = [irk.get(CONF_IRK_IDENTIFIER) for irk in irk_list]
 
