@@ -387,6 +387,11 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
             await self.coordinator.async_request_refresh()
 
 
+def normalize_mac(mac: str) -> str:
+    """Normalize MAC address to lowercase, no separators."""
+    return ''.join(c for c in mac.lower() if c in '0123456789abcdef')
+
+
 class GoogleHomeBTDevicesSensor(GoogleHomeBaseEntity):
     """Sensor for Bluetooth devices detected by Google Home."""
 
@@ -394,8 +399,8 @@ class GoogleHomeBTDevicesSensor(GoogleHomeBaseEntity):
 
     def __init__(
         self,
-        coordinator: DataUpdateCoordinator[list[GoogleHomeDevice]],
-        client: GlocaltokensApiClient,
+        coordinator,
+        client,
         device_id: str,
         device_name: str,
         device_model: str | None,
@@ -404,7 +409,7 @@ class GoogleHomeBTDevicesSensor(GoogleHomeBaseEntity):
     ):
         """Initialize the Bluetooth devices sensor entity."""
         super().__init__(coordinator, client, device_id, device_name, device_model)
-        self.mac = mac
+        self.mac = normalize_mac(mac)
         self.mac_id = mac_id
 
     @property
@@ -423,7 +428,7 @@ class GoogleHomeBTDevicesSensor(GoogleHomeBaseEntity):
         device = self.get_device()
         if not device:
             return None
-        bt_devices = device.bt_devices
+        bt_devices = {normalize_mac(k): v for k, v in device.bt_devices.items()}
         if self.mac in bt_devices:
             return bt_devices[self.mac].rssi
         return STATE_UNAVAILABLE
