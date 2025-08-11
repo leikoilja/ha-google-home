@@ -3,10 +3,10 @@
 from __future__ import annotations
 
 import asyncio
-import math
 from http import HTTPStatus
 import ipaddress
 import logging
+import math
 from typing import TYPE_CHECKING, Literal, cast
 
 from aiohttp import ClientError, ClientSession, ClientTimeout
