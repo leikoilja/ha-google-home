@@ -440,7 +440,7 @@ class GoogleHomeBTDevicesSensor(GoogleHomeBaseEntity):
         prev_state = self.hass.states.get(self.entity_id)
         last_seen = (
             prev_state.attributes.get("last_seen")
-            if prev_state and hasattr(prev_state, "attributes")
+            if prev_state and prev_state.attributes is not None
             else None
         )
         if last_seen is not None and time.time() - last_seen <= self.DEVICE_TIMEOUT:
@@ -497,7 +497,7 @@ class GoogleHomeIrkBTDevicesSensor(GoogleHomeBaseEntity):
         prev_state = self.hass.states.get(self.entity_id)
         last_seen = (
             prev_state.attributes.get("last_seen")
-            if prev_state and hasattr(prev_state, "attributes")
+            if prev_state and prev_state.attributes is not None
             else None
         )
         if last_seen is not None and time.time() - last_seen <= self.DEVICE_TIMEOUT:
