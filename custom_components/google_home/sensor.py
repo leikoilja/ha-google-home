@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import string
 from typing import TYPE_CHECKING
 
 from bluetooth_data_tools import get_cipher_for_irk, resolve_private_address
@@ -389,7 +390,7 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
 
 def normalize_mac(mac: str) -> str:
     """Normalize MAC address to lowercase, no separators."""
-    return ''.join(c for c in mac.lower() if c in '0123456789abcdef')
+    return ''.join(c for c in mac.lower() if c in string.hexdigits[:16])
 
 
 class GoogleHomeBTDevicesSensor(GoogleHomeBaseEntity):
