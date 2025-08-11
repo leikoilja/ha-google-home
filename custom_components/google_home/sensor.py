@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import string
+import time
 from typing import TYPE_CHECKING
 
 from bluetooth_data_tools import get_cipher_for_irk, resolve_private_address
@@ -397,6 +398,8 @@ class GoogleHomeBTDevicesSensor(GoogleHomeBaseEntity):
     """Sensor for Bluetooth devices detected by Google Home."""
 
     _attr_device_class = SensorDeviceClass.SIGNAL_STRENGTH
+    _attr_extra_state_attributes = {}
+    DEVICE_TIMEOUT = 60
 
     def __init__(
         self,
@@ -425,13 +428,23 @@ class GoogleHomeBTDevicesSensor(GoogleHomeBaseEntity):
 
     @property
     def state(self) -> int | str | None:
-        """Return the signal strength (RSSI) of the Bluetooth device, or None if unavailable."""
+        """Return the signal strength (RSSI) of the Bluetooth device, or STATE_UNAVAILABLE if not seen for 60s."""
+
         device = self.get_device()
         if not device:
             return None
         bt_devices = {normalize_mac(k): v for k, v in device.bt_devices.items()}
         if self.mac in bt_devices:
+            self._attr_extra_state_attributes["last_seen"] = time.time()
             return bt_devices[self.mac].rssi
+        prev_state = self.hass.states.get(self.entity_id)
+        last_seen = (
+            prev_state.attributes.get("last_seen")
+            if prev_state and hasattr(prev_state, "attributes")
+            else None
+        )
+        if last_seen is not None and time.time() - last_seen <= self.DEVICE_TIMEOUT:
+            return prev_state.state if prev_state else STATE_UNAVAILABLE
         return STATE_UNAVAILABLE
 
 
@@ -439,6 +452,8 @@ class GoogleHomeIrkBTDevicesSensor(GoogleHomeBaseEntity):
     """Sensor for IRK-based Bluetooth devices."""
 
     _attr_device_class = SensorDeviceClass.SIGNAL_STRENGTH
+    _attr_extra_state_attributes = {}
+    DEVICE_TIMEOUT = 60  # seconds
 
     def __init__(
         self,
@@ -468,16 +483,23 @@ class GoogleHomeIrkBTDevicesSensor(GoogleHomeBaseEntity):
 
     @property
     def state(self) -> int | str | None:
-        """Return the signal strength (RSSI) for IRK-based Bluetooth device, or None if unavailable."""
+        """Return the signal strength (RSSI) for IRK-based Bluetooth device, or STATE_UNAVAILABLE if not seen for 60s."""
+
         device = self.get_device()
         if not device:
             return None
         bt_devices = device.bt_devices
-        valid = [
-            device
-            for device in bt_devices
-            if resolve_private_address(self._irk_cipher, device)
-        ]
+        valid = [d for d in bt_devices if resolve_private_address(self._irk_cipher, d)]
         if valid:
-            return bt_devices[valid[0]].rssi
+            bt_device = bt_devices[valid[0]]
+            self._attr_extra_state_attributes["last_seen"] = time.time()
+            return bt_device.rssi
+        prev_state = self.hass.states.get(self.entity_id)
+        last_seen = (
+            prev_state.attributes.get("last_seen")
+            if prev_state and hasattr(prev_state, "attributes")
+            else None
+        )
+        if last_seen is not None and time.time() - last_seen <= self.DEVICE_TIMEOUT:
+            return prev_state.state if prev_state else STATE_UNAVAILABLE
         return STATE_UNAVAILABLE

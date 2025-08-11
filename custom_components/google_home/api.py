@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import math
 from http import HTTPStatus
 import ipaddress
 import logging
@@ -74,6 +75,7 @@ class GlocaltokensApiClient:
         self.google_devices: list[GoogleHomeDevice] = []
         self.zeroconf_instance = zeroconf_instance
         self._bt_update_interval = bt_update_interval
+        self._bt_scan_counter = 0
 
     async def async_get_master_token(self) -> str:
         """Get master API token."""
@@ -278,33 +280,32 @@ class GlocaltokensApiClient:
                     response,
                 )
 
-    async def request_bluetooth_scan(self, device: GoogleHomeDevice) -> None:
-        """Rescans for visible bluetooth devices."""
+    async def initiate_bluetooth_scan(
+        self, device: GoogleHomeDevice, scan_timeout: int, clear_results: bool = False
+    ) -> None:
+        """Start a bluetooth scan on the device."""
 
-        # Clear results should be set to False to prevent the data from disappearing
-        # if it was not seen in the most recent scan.
         data = {
             "enable": True,
-            "clear_results": False,
-            "timeout": self._bt_update_interval,
+            "clear_results": clear_results,
+            "timeout": scan_timeout,
         }
-
         _LOGGER.debug(
-            "Trying to scan for Bluetooth device list on Google Home device %s",
+            "Trying to scan for Bluetooth device list on Google Home device %s (clear_results=%s)",
             device.name,
+            clear_results,
         )
-
         response = await self.request(
             method="POST",
             endpoint=API_ENDPOINT_BLUETOOTH_SCAN,
             device=device,
             data=data,
         )
-
         if response is not None:
             _LOGGER.info(
-                "Successfully asked %s For Bluetooth device list scan.",
+                "Successfully asked %s For Bluetooth device list scan (clear_results=%s).",
                 device.name,
+                clear_results,
             )
 
     async def update_bluetooth_list(self, device: GoogleHomeDevice) -> GoogleHomeDevice:
@@ -326,7 +327,20 @@ class GlocaltokensApiClient:
                 device.name,
                 response,
             )
-        await self.request_bluetooth_scan(device)
+
+        self._bt_scan_counter += 1
+        min_scan_interval = 60
+        scan_every = max(1, math.ceil(min_scan_interval / self._bt_update_interval))
+        if self._bt_scan_counter >= scan_every:
+            await self.initiate_bluetooth_scan(
+                device, scan_timeout=0, clear_results=True
+            )
+            await self.initiate_bluetooth_scan(
+                device,
+                scan_timeout=max(self._bt_update_interval, 60),
+                clear_results=False,
+            )
+            self._bt_scan_counter = 0
 
         return device
 
