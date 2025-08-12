@@ -326,7 +326,6 @@ class GlocaltokensApiClient:
             )
             self._bt_scan_counter = 0
 
-
         response = await self.request(
             method="GET",
             endpoint=API_ENDPOINT_BLUETOOTH_RESULTS,
@@ -342,7 +341,6 @@ class GlocaltokensApiClient:
                 device.name,
                 response,
             )
-
 
         return device
 
