@@ -65,7 +65,7 @@ class GoogleHomeBaseEntity(
         }
 
     def get_device(self) -> GoogleHomeDevice | None:
-        """Return the device matched by device name from the list of google devices in coordinator_data."""
+        """Return the device matched by device name from the list of Google devices in coordinator_data."""
         matched_devices: list[GoogleHomeDevice] = [
             device
             for device in self.coordinator.data

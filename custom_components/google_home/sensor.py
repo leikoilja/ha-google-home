@@ -3,25 +3,33 @@
 from __future__ import annotations
 
 import logging
+import string
+import time
 from typing import TYPE_CHECKING
 
+from bluetooth_data_tools import get_cipher_for_irk, resolve_private_address
 import voluptuous as vol
 
 from homeassistant.components.sensor import SensorDeviceClass
-from homeassistant.const import STATE_UNAVAILABLE
+from homeassistant.const import CONF_MAC, STATE_UNAVAILABLE
 from homeassistant.helpers import config_validation as cv, entity_platform
 from homeassistant.helpers.entity import Entity, EntityCategory
 
 from .const import (
     ALARM_AND_TIMER_ID_LENGTH,
+    BT_COORDINATOR,
+    CONF_BLUETOOTH,
+    CONF_IRK,
     DATA_CLIENT,
     DATA_COORDINATOR,
     DOMAIN,
     GOOGLE_HOME_ALARM_DEFAULT_VALUE,
     ICON_ALARMS,
+    ICON_BT_DEVICES,
     ICON_TIMERS,
     ICON_TOKEN,
     LABEL_ALARMS,
+    LABEL_BT_DEVICES,
     LABEL_DEVICE,
     LABEL_TIMERS,
     SERVICE_ATTR_ALARM_ID,
@@ -63,7 +71,10 @@ async def async_setup_entry(
     coordinator: DataUpdateCoordinator[list[GoogleHomeDevice]] = hass.data[DOMAIN][
         entry.entry_id
     ][DATA_COORDINATOR]
+    bt_coordinator = hass.data[DOMAIN][entry.entry_id][BT_COORDINATOR]
     sensors: list[Entity] = []
+    irks = entry.options.get(CONF_BLUETOOTH, {}).get(CONF_IRK, [])
+    macs = entry.options.get(CONF_BLUETOOTH, {}).get(CONF_MAC, [])
     for device in coordinator.data:
         sensors.append(
             GoogleHomeDeviceSensor(
@@ -91,6 +102,35 @@ async def async_setup_entry(
                     device.hardware,
                 ),
             ]
+        for irk_info in irks:
+            irk = irk_info["irk"]
+            irk_id = irk_info["irk_id"]
+            sensors.append(
+                GoogleHomeIrkBTDevicesSensor(
+                    bt_coordinator,
+                    client,
+                    device.device_id,
+                    device.name,
+                    device.hardware,
+                    bytes.fromhex(irk),
+                    irk_id,
+                )
+            )
+        for mac_info in macs:
+            mac = mac_info["mac"]
+            mac_id = mac_info["mac_id"]
+            sensors.append(
+                GoogleHomeBTDevicesSensor(
+                    bt_coordinator,
+                    client,
+                    device.device_id,
+                    device.name,
+                    device.hardware,
+                    mac,
+                    mac_id,
+                )
+            )
+
     async_add_devices(sensors)
 
     platform = entity_platform.async_get_current_platform()
@@ -347,3 +387,119 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
         if not call.data[SERVICE_ATTR_SKIP_REFRESH]:
             _LOGGER.debug("Refreshing Devices")
             await self.coordinator.async_request_refresh()
+
+
+def normalize_mac(mac: str) -> str:
+    """Normalize MAC address to lowercase, no separators."""
+    return "".join(c for c in mac.lower() if c in string.hexdigits[:16])
+
+
+class GoogleHomeBTDevicesSensor(GoogleHomeBaseEntity):
+    """Sensor for Bluetooth devices detected by Google Home."""
+
+    _attr_device_class = SensorDeviceClass.SIGNAL_STRENGTH
+    _attr_extra_state_attributes = {}
+    DEVICE_TIMEOUT = 60
+
+    def __init__(
+        self,
+        coordinator: DataUpdateCoordinator[list[GoogleHomeDevice]],
+        client: GlocaltokensApiClient,
+        device_id: str,
+        device_name: str,
+        device_model: str | None,
+        mac: str,
+        mac_id: str,
+    ):
+        """Initialize the Bluetooth devices sensor entity."""
+        super().__init__(coordinator, client, device_id, device_name, device_model)
+        self.mac = normalize_mac(mac)
+        self.mac_id = mac_id
+
+    @property
+    def label(self) -> str:
+        """Label to use for name and unique id."""
+        return LABEL_BT_DEVICES + "_" + self.mac_id
+
+    @property
+    def icon(self) -> str:
+        """Icon to use in the frontend."""
+        return ICON_BT_DEVICES
+
+    @property
+    def state(self) -> int | str | None:
+        """Return the signal strength (RSSI) of the Bluetooth device, or STATE_UNAVAILABLE if not seen for 60s."""
+
+        device = self.get_device()
+        if not device:
+            return None
+        bt_devices = {normalize_mac(k): v for k, v in device.bt_devices.items()}
+        if self.mac in bt_devices:
+            self._attr_extra_state_attributes["last_seen"] = time.time()
+            return bt_devices[self.mac].rssi
+        prev_state = self.hass.states.get(self.entity_id)
+        last_seen = (
+            prev_state.attributes.get("last_seen")
+            if prev_state and prev_state.attributes is not None
+            else None
+        )
+        if last_seen is not None and time.time() - last_seen <= self.DEVICE_TIMEOUT:
+            return prev_state.state if prev_state else STATE_UNAVAILABLE
+        return STATE_UNAVAILABLE
+
+
+class GoogleHomeIrkBTDevicesSensor(GoogleHomeBaseEntity):
+    """Sensor for IRK-based Bluetooth devices."""
+
+    _attr_device_class = SensorDeviceClass.SIGNAL_STRENGTH
+    _attr_extra_state_attributes = {}
+    DEVICE_TIMEOUT = 60  # seconds
+
+    def __init__(
+        self,
+        coordinator: DataUpdateCoordinator[list[GoogleHomeDevice]],
+        client: GlocaltokensApiClient,
+        device_id: str,
+        device_name: str,
+        device_model: str | None,
+        irk: bytes,
+        irk_id: str,
+    ):
+        """Initialize the IRK-based Bluetooth devices sensor entity."""
+        super().__init__(coordinator, client, device_id, device_name, device_model)
+        self.irk = irk
+        self.irk_id = irk_id
+        self._irk_cipher = get_cipher_for_irk(self.irk)
+
+    @property
+    def label(self) -> str:
+        """Label to use for name and unique id."""
+        return LABEL_BT_DEVICES + "_" + str(self.irk_id)
+
+    @property
+    def icon(self) -> str:
+        """Icon to use in the frontend."""
+        return ICON_BT_DEVICES
+
+    @property
+    def state(self) -> int | str | None:
+        """Return the signal strength (RSSI) for IRK-based Bluetooth device, or STATE_UNAVAILABLE if not seen for 60s."""
+
+        device = self.get_device()
+        if not device:
+            return None
+        bt_devices = device.bt_devices
+        valid = [d for d in bt_devices if resolve_private_address(self._irk_cipher, d)]
+        if valid:
+            bt_device = bt_devices[valid[0]]
+            self._attr_extra_state_attributes["last_seen"] = time.time()
+            return bt_device.rssi
+        prev_state = self.hass.states.get(self.entity_id)
+        last_seen = (
+            prev_state.attributes.get("last_seen")
+            if prev_state and prev_state.attributes is not None
+            else None
+        )
+        if last_seen is not None and time.time() - last_seen <= self.DEVICE_TIMEOUT:
+            return prev_state.state if prev_state else STATE_UNAVAILABLE
+        return STATE_UNAVAILABLE

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import base64
+import binascii
 from datetime import timedelta
 import logging
 from typing import TYPE_CHECKING, Self
@@ -10,12 +12,20 @@ from requests.exceptions import RequestException
 import voluptuous as vol
 
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult, OptionsFlow
+from homeassistant.const import CONF_MAC
 from homeassistant.core import callback
+from homeassistant.helpers import selector
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
 
 from .api import GlocaltokensApiClient
 from .const import (
+    BT_UPDATE_INTERVAL,
     CONF_ANDROID_ID,
+    CONF_BLUETOOTH,
+    CONF_BT_UPDATE_INTERVAL,
+    CONF_IRK,
+    CONF_IRK_IDENTIFIER,
+    CONF_MAC_IDENTIFIER,
     CONF_MASTER_TOKEN,
     CONF_PASSWORD,
     CONF_UPDATE_INTERVAL,
@@ -29,9 +39,32 @@ from .const import (
 from .exceptions import InvalidMasterToken
 
 if TYPE_CHECKING:
-    from .types import ConfigFlowDict, GoogleHomeConfigEntry, OptionsFlowDict
+    from .types import ConfigFlowDict, GoogleHomeConfigEntry
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
+
+
+def _parse_irk(irk: str) -> bytes | None:
+    irk = irk.removeprefix("irk:")
+
+    if irk.endswith("="):
+        try:
+            irk_bytes = bytes(reversed(base64.b64decode(irk)))
+        except binascii.Error:
+            # IRK is not valid base64
+            return None
+    else:
+        try:
+            irk_bytes = binascii.unhexlify(irk)
+        except binascii.Error:
+            # IRK is not correctly hex encoded
+            return None
+
+    if len(irk_bytes) != 16:
+        # IRK must be 16 bytes when decoded
+        return None
+
+    return irk_bytes
 
 
 class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
@@ -114,7 +147,7 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
         config_entry: GoogleHomeConfigEntry,
     ) -> GoogleHomeOptionsFlowHandler:
         """Handle options flow."""
-        return GoogleHomeOptionsFlowHandler(config_entry)
+        return GoogleHomeOptionsFlowHandler()
 
     async def _show_config_form(self) -> ConfigFlowResult:
         """Show the configuration form to edit login information."""
@@ -122,9 +155,13 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
             step_id="user",
             data_schema=vol.Schema(
                 {
-                    vol.Optional(CONF_USERNAME): str,
-                    vol.Optional(CONF_PASSWORD): str,
-                    vol.Optional(CONF_MASTER_TOKEN): str,
+                    vol.Optional(CONF_USERNAME): selector.TextSelector(),
+                    vol.Optional(CONF_PASSWORD): selector.TextSelector(
+                        selector.TextSelectorConfig(
+                            type=selector.TextSelectorType.PASSWORD
+                        )
+                    ),
+                    vol.Optional(CONF_MASTER_TOKEN): selector.TextSelector(),
                 }
             ),
             errors=self._errors,
@@ -154,32 +191,36 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
 class GoogleHomeOptionsFlowHandler(OptionsFlow):
     """Config flow options handler for GoogleHome."""
 
-    def __init__(self, config_entry: GoogleHomeConfigEntry):
-        """Initialize options flow."""
-        self.config_entry = config_entry
-        # Cast from MappingProxy to dict to allow update.
-        self.options = dict(config_entry.options)
-
     async def async_step_init(
-        self, user_input: OptionsFlowDict | None = None
+        self,
+        user_input: dict[str, str] | None = None,  # pylint: disable=unused-argument
     ) -> ConfigFlowResult:
         """Manage the options."""
+        return self.async_show_menu(
+            step_id="init", menu_options=["global", "bluetooth"]
+        )
+
+    async def async_step_global(
+        self, user_input: dict[str, str] | None = None
+    ) -> ConfigFlowResult:
+        """Manage the global options."""
         if user_input is not None:
-            self.options.update(user_input)
+            options_config = dict(self.config_entry.options)
+            options_config.update(user_input)
             coordinator = self.hass.data[DOMAIN][self.config_entry.entry_id][
                 DATA_COORDINATOR
             ]
             update_interval = timedelta(
-                seconds=self.options.get(CONF_UPDATE_INTERVAL, UPDATE_INTERVAL)
+                seconds=options_config.get(CONF_UPDATE_INTERVAL, UPDATE_INTERVAL)
             )
             _LOGGER.debug("Updating coordinator, update_interval: %s", update_interval)
             coordinator.update_interval = update_interval
             return self.async_create_entry(
-                title=self.config_entry.data.get(CONF_USERNAME), data=self.options
+                title=self.config_entry.data.get(CONF_USERNAME),
+                data=options_config,
             )
-
         return self.async_show_form(
-            step_id="init",
+            step_id="global",
             data_schema=vol.Schema(
                 {
                     vol.Optional(
@@ -187,7 +228,158 @@ class GoogleHomeOptionsFlowHandler(OptionsFlow):
                         default=self.config_entry.options.get(
                             CONF_UPDATE_INTERVAL, UPDATE_INTERVAL
                         ),
-                    ): int,
+                    ): selector.NumberSelector(
+                        selector.NumberSelectorConfig(
+                            min=5, max=3600, step=1, unit_of_measurement="seconds"
+                        )
+                    ),
+                    vol.Optional(
+                        CONF_BT_UPDATE_INTERVAL,
+                        default=self.config_entry.options.get(
+                            CONF_BT_UPDATE_INTERVAL, BT_UPDATE_INTERVAL
+                        ),
+                    ): selector.NumberSelector(
+                        selector.NumberSelectorConfig(
+                            min=5, max=3600, step=1, unit_of_measurement="seconds"
+                        )
+                    ),
+                }
+            ),
+        )
+
+    async def async_step_bluetooth(
+        self,
+        user_input: dict[str, str] | None = None,  # pylint: disable=unused-argument
+    ) -> ConfigFlowResult:
+        """Manage the options."""
+        return self.async_show_menu(
+            step_id="bluetooth",
+            menu_options=["add_irk", "add_mac", "remove_irk", "remove_mac"],
+        )
+
+    async def async_step_add_irk(
+        self, user_input: dict[str, str] | None = None
+    ) -> ConfigFlowResult:
+        """Manage the options."""
+        errors = {}
+        if user_input is not None:
+            irk_value = user_input.get(CONF_IRK)
+            if irk_value is not None and _parse_irk(irk_value) is None:
+                errors[CONF_IRK] = "invalid_irk"
+            else:
+                options_config = dict(self.config_entry.options)
+                bluetooth_config = dict(options_config.get(CONF_BLUETOOTH, {}))
+                bluetooth_config.setdefault(CONF_IRK, [])
+                bluetooth_config.setdefault(CONF_MAC, [])
+                bluetooth_config[CONF_IRK] = bluetooth_config[CONF_IRK] + [user_input]
+                options_config[CONF_BLUETOOTH] = bluetooth_config
+                return self.async_create_entry(
+                    title=self.config_entry.data.get(CONF_USERNAME),
+                    data=options_config,
+                )
+
+        return self.async_show_form(
+            step_id="add_irk",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(CONF_IRK_IDENTIFIER): str,
+                    vol.Required(CONF_IRK): str,
+                }
+            ),
+            errors=errors,
+        )
+
+    async def async_step_add_mac(
+        self, user_input: dict[str, str] | None = None
+    ) -> ConfigFlowResult:
+        """Manage the options."""
+        if user_input is not None:
+            options_config = dict(self.config_entry.options)
+            bluetooth_config = dict(options_config.get(CONF_BLUETOOTH, {}))
+            bluetooth_config.setdefault(CONF_IRK, [])
+            bluetooth_config.setdefault(CONF_MAC, [])
+            bluetooth_config[CONF_MAC] = bluetooth_config[CONF_MAC] + [user_input]
+            options_config[CONF_BLUETOOTH] = bluetooth_config
+
+            return self.async_create_entry(
+                title=self.config_entry.data.get(CONF_USERNAME),
+                data=options_config,
+            )
+
+        return self.async_show_form(
+            step_id="add_mac",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(CONF_MAC_IDENTIFIER): str,
+                    vol.Required(CONF_MAC): str,
+                }
+            ),
+        )
+
+    async def async_step_remove_mac(
+        self, user_input: dict[str, str] | None = None
+    ) -> ConfigFlowResult:
+        """Manage the removal of MAC addresses."""
+        if user_input is not None:
+            mac_to_remove = user_input.get(CONF_MAC_IDENTIFIER)
+            if mac_to_remove:
+                options_config = dict(self.config_entry.options)
+                bluetooth_config = dict(options_config.get(CONF_BLUETOOTH, {}))
+                bluetooth_config.setdefault(CONF_IRK, [])
+                bluetooth_config.setdefault(CONF_MAC, [])
+                bluetooth_config[CONF_MAC] = [
+                    mac
+                    for mac in bluetooth_config[CONF_MAC]
+                    if mac.get(CONF_MAC_IDENTIFIER) != mac_to_remove
+                ]
+                options_config[CONF_BLUETOOTH] = bluetooth_config
+                return self.async_create_entry(
+                    title=self.config_entry.data.get(CONF_USERNAME),
+                    data=options_config,
+                )
+
+        mac_list = self.config_entry.options.get(CONF_BLUETOOTH, {}).get(CONF_MAC, [])
+        mac_identifiers = [mac.get(CONF_MAC_IDENTIFIER) for mac in mac_list]
+
+        return self.async_show_form(
+            step_id="remove_mac",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(CONF_MAC_IDENTIFIER): vol.In(mac_identifiers),
+                }
+            ),
+        )
+
+    async def async_step_remove_irk(
+        self, user_input: dict[str, str] | None = None
+    ) -> ConfigFlowResult:
+        """Manage the removal of irk addresses."""
+        if user_input is not None:
+            irk_to_remove = user_input.get(CONF_IRK_IDENTIFIER)
+            if irk_to_remove:
+                options_config = dict(self.config_entry.options)
+                bluetooth_config = dict(options_config.get(CONF_BLUETOOTH, {}))
+                bluetooth_config.setdefault(CONF_IRK, [])
+                bluetooth_config.setdefault(CONF_MAC, [])
+                bluetooth_config[CONF_IRK] = [
+                    irk
+                    for irk in bluetooth_config[CONF_IRK]
+                    if irk.get(CONF_IRK_IDENTIFIER) != irk_to_remove
+                ]
+                options_config[CONF_BLUETOOTH] = bluetooth_config
+                return self.async_create_entry(
+                    title=self.config_entry.data.get(CONF_USERNAME),
+                    data=options_config,
+                )
+
+        irk_list = self.config_entry.options.get(CONF_BLUETOOTH, {}).get(CONF_IRK, [])
+        irk_identifiers = [irk.get(CONF_IRK_IDENTIFIER) for irk in irk_list]
+
+        return self.async_show_form(
+            step_id="remove_irk",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(CONF_IRK_IDENTIFIER): vol.In(irk_identifiers),
                 }
             ),
         )

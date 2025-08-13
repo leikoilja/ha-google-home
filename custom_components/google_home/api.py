@@ -6,6 +6,7 @@ import asyncio
 from http import HTTPStatus
 import ipaddress
 import logging
+import math
 from typing import TYPE_CHECKING, Literal, cast
 
 from aiohttp import ClientError, ClientSession, ClientTimeout
@@ -17,6 +18,8 @@ from .const import (
     API_ENDPOINT_ALARM_DELETE,
     API_ENDPOINT_ALARM_VOLUME,
     API_ENDPOINT_ALARMS,
+    API_ENDPOINT_BLUETOOTH_RESULTS,
+    API_ENDPOINT_BLUETOOTH_SCAN,
     API_ENDPOINT_DO_NOT_DISTURB,
     API_ENDPOINT_REBOOT,
     HEADER_CAST_LOCAL_AUTH,
@@ -36,7 +39,7 @@ if TYPE_CHECKING:
 
     from homeassistant.core import HomeAssistant
 
-    from .types import AlarmJsonDict, JsonDict, TimerJsonDict
+    from .types import AlarmJsonDict, BTJsonDict, JsonDict, TimerJsonDict
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -53,6 +56,7 @@ class GlocaltokensApiClient:
         master_token: str | None = None,
         android_id: str | None = None,
         zeroconf_instance: Zeroconf | None = None,
+        bt_update_interval: int = 90,
     ):
         """Sample API Client."""
         self.hass = hass
@@ -70,6 +74,8 @@ class GlocaltokensApiClient:
         )
         self.google_devices: list[GoogleHomeDevice] = []
         self.zeroconf_instance = zeroconf_instance
+        self._bt_update_interval = bt_update_interval
+        self._bt_scan_counter = 0
 
     async def async_get_master_token(self) -> str:
         """Get master API token."""
@@ -165,6 +171,28 @@ class GlocaltokensApiClient:
             ]
         )
 
+    async def update_google_devices_bt_information(self) -> list[GoogleHomeDevice]:
+        """Retrieve devices from glocaltokens and fetch alarm/timer data from each device."""
+        devices = await self.get_google_devices()
+        # Gives the user a warning if the device is offline
+        for device in devices:
+            if not device.ip_address and device.available:
+                device.available = False
+                _LOGGER.debug(
+                    (
+                        "Failed to fetch timers/alarms information "
+                        "from device %s. We could not determine its IP address, "
+                        "the device is either offline or is not compatible "
+                        "Google Home device. Will try again later."
+                    ),
+                    device.name,
+                )
+        return [
+            await self.update_bluetooth_list(device)
+            for device in devices
+            if device.ip_address and device.auth_token
+        ]
+
     async def collect_data_from_endpoints(
         self, device: GoogleHomeDevice
     ) -> GoogleHomeDevice:
@@ -251,6 +279,70 @@ class GlocaltokensApiClient:
                     device.name,
                     response,
                 )
+
+    async def initiate_bluetooth_scan(
+        self, device: GoogleHomeDevice, scan_timeout: int, clear_results: bool = False
+    ) -> None:
+        """Start a bluetooth scan on the device."""
+
+        data = {
+            "enable": True,
+            "clear_results": clear_results,
+            "timeout": scan_timeout,
+        }
+        _LOGGER.debug(
+            "Trying to scan for Bluetooth device list on Google Home device %s (clear_results=%s)",
+            device.name,
+            clear_results,
+        )
+        response = await self.request(
+            method="POST",
+            endpoint=API_ENDPOINT_BLUETOOTH_SCAN,
+            device=device,
+            data=data,
+        )
+        if response is not None:
+            _LOGGER.info(
+                "Successfully asked %s For Bluetooth device list scan (clear_results=%s).",
+                device.name,
+                clear_results,
+            )
+
+    async def update_bluetooth_list(self, device: GoogleHomeDevice) -> GoogleHomeDevice:
+        """Fetch bluetooth items list from Google device."""
+        _LOGGER.info("Reading bluetooth info for %s", device.name)
+
+        self._bt_scan_counter += 1
+        min_scan_interval = 60
+        scan_every = max(1, math.ceil(min_scan_interval / self._bt_update_interval))
+        if self._bt_scan_counter >= scan_every:
+            await self.initiate_bluetooth_scan(
+                device, scan_timeout=0, clear_results=True
+            )
+            await self.initiate_bluetooth_scan(
+                device,
+                scan_timeout=max(self._bt_update_interval, 60),
+                clear_results=False,
+            )
+            self._bt_scan_counter = 0
+
+        response = await self.request(
+            method="GET",
+            endpoint=API_ENDPOINT_BLUETOOTH_RESULTS,
+            device=device,
+            polling=True,
+        )
+
+        if response is not None:
+            device.set_bt(cast("list[BTJsonDict]", response))
+
+            _LOGGER.debug(
+                "Successfully retrieved some data from %s. Response: %s",
+                device.name,
+                response,
+            )
+
+        return device
 
     async def reboot_google_device(self, device: GoogleHomeDevice) -> None:
         """Reboot a Google Home device if it supports this."""
