@@ -205,7 +205,6 @@ class GoogleHomeOptionsFlowHandler(OptionsFlow):
     ) -> ConfigFlowResult:
         """Manage the global options."""
         if user_input is not None:
-            # Create a mutable copy of current options and update with user input
             options_config = dict(self.config_entry.options)
             options_config.update(user_input)
             coordinator = self.hass.data[DOMAIN][self.config_entry.entry_id][
@@ -295,7 +294,6 @@ class GoogleHomeOptionsFlowHandler(OptionsFlow):
     ) -> ConfigFlowResult:
         """Manage the options."""
         if user_input is not None:
-            # Create a mutable copy of current options
             options_config = dict(self.config_entry.options)
             bluetooth_config = dict(options_config.get(CONF_BLUETOOTH, {}))
             bluetooth_config.setdefault(CONF_IRK, [])
