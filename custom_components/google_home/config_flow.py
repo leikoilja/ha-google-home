@@ -156,7 +156,7 @@ class GoogleHomeOptionsFlowHandler(OptionsFlow):
 
     def __init__(self, config_entry: GoogleHomeConfigEntry):
         """Initialize options flow."""
-        self.config_entry = config_entry
+        self._config_entry = config_entry
         # Cast from MappingProxy to dict to allow update.
         self.options = dict(config_entry.options)
 
