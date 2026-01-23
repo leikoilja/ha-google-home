@@ -45,7 +45,7 @@ repos:
       - id: prettier
         exclude: ^custom_components/google_home/manifest\.json$
   - repo: https://github.com/cdce8p/python-typing-update
-    rev: v0.7.0
+    rev: v0.8.1
     hooks:
       # Run `python-typing-update` hook manually from time to time
       # to update python typing syntax.
@@ -53,7 +53,7 @@ repos:
       - id: python-typing-update
         stages: [manual]
         args:
-          - --py310-plus
+          - --py313-plus
           - --force
           - --keep-updates
         files: ^.+\.py$
