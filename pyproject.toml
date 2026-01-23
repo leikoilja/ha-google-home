@@ -12,13 +12,13 @@ requires-python = ">=3.13.2"
 dynamic = ["version"]
 dependencies = [
     "glocaltokens>=0.7.6",
-    "homeassistant==2025.7.0",
+    "homeassistant==2026.1.0",
 ]
 
 [dependency-groups]
 dev = [
     "codespell>=2.4.1",
-    "homeassistant-stubs==2025.7.0",
+    "homeassistant-stubs==2026.1.0",
     "mypy>=1.16.1",
     "PyGithub>=2.6",
     "pylint>=3.3.7",
