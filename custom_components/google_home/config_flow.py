@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from datetime import timedelta
 import logging
 from typing import TYPE_CHECKING, Self
 
@@ -20,7 +19,6 @@ from .const import (
     CONF_PASSWORD,
     CONF_UPDATE_INTERVAL,
     CONF_USERNAME,
-    DATA_COORDINATOR,
     DOMAIN,
     MANUFACTURER,
     MAX_PASSWORD_LENGTH,
@@ -114,7 +112,7 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
         config_entry: GoogleHomeConfigEntry,
     ) -> GoogleHomeOptionsFlowHandler:
         """Handle options flow."""
-        return GoogleHomeOptionsFlowHandler(config_entry)
+        return GoogleHomeOptionsFlowHandler()
 
     async def _show_config_form(self) -> ConfigFlowResult:
         """Show the configuration form to edit login information."""
@@ -154,29 +152,12 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
 class GoogleHomeOptionsFlowHandler(OptionsFlow):
     """Config flow options handler for GoogleHome."""
 
-    def __init__(self, config_entry: GoogleHomeConfigEntry):
-        """Initialize options flow."""
-        self.config_entry = config_entry
-        # Cast from MappingProxy to dict to allow update.
-        self.options = dict(config_entry.options)
-
     async def async_step_init(
         self, user_input: OptionsFlowDict | None = None
     ) -> ConfigFlowResult:
         """Manage the options."""
         if user_input is not None:
-            self.options.update(user_input)
-            coordinator = self.hass.data[DOMAIN][self.config_entry.entry_id][
-                DATA_COORDINATOR
-            ]
-            update_interval = timedelta(
-                seconds=self.options.get(CONF_UPDATE_INTERVAL, UPDATE_INTERVAL)
-            )
-            _LOGGER.debug("Updating coordinator, update_interval: %s", update_interval)
-            coordinator.update_interval = update_interval
-            return self.async_create_entry(
-                title=self.config_entry.data.get(CONF_USERNAME), data=self.options
-            )
+            return self.async_create_entry(data=user_input)
 
         return self.async_show_form(
             step_id="init",
