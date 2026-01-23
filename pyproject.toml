@@ -19,12 +19,12 @@ dependencies = [
 dev = [
     "codespell>=2.4.1",
     "homeassistant-stubs==2026.1.0",
-    "mypy>=1.16.1",
+    "mypy>=1.19.1",
     "PyGithub>=2.6",
-    "pylint>=3.3.7",
-    "pytest>=8.3.5",
-    "ruff>=0.12.0",
-    "types-requests<2.31.0.7",
+    "pylint>=4.0.4",
+    "pytest>=9.0.2",
+    "ruff>=0.14.4",
+    "types-requests>=2.32.4.20260107",
     "voluptuous-stubs>=0.1.1",
 ]
 
