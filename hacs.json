@@ -1,5 +1,3603 @@
 {
-  "name": "Google Home",
-  "homeassistant": "2026.1.0",
-  "render_readme": true
+  "home_assistant": {
+    "installation_type": "Home Assistant OS",
+    "version": "2026.3.2",
+    "dev": false,
+    "hassio": true,
+    "virtualenv": false,
+    "python_version": "3.14.2",
+    "docker": true,
+    "arch": "aarch64",
+    "timezone": "Europe/Copenhagen",
+    "os_name": "Linux",
+    "os_version": "6.12.47-haos-raspi",
+    "container_arch": "aarch64",
+    "supervisor": "2026.03.0",
+    "host_os": "Home Assistant OS 17.1",
+    "docker_version": "29.1.3",
+    "chassis": "embedded",
+    "run_as_root": true
+  },
+  "custom_components": {},
+  "integration_manifest": {
+    "domain": "hassio",
+    "name": "Home Assistant Supervisor",
+    "codeowners": [
+      "home-assistant/supervisor"
+    ],
+    "dependencies": [
+      "http",
+      "repairs"
+    ],
+    "documentation": "https://www.home-assistant.io/integrations/hassio",
+    "iot_class": "local_polling",
+    "quality_scale": "internal",
+    "requirements": [
+      "aiohasupervisor==0.3.3"
+    ],
+    "single_config_entry": true,
+    "is_built_in": true,
+    "overwrites_built_in": false
+  },
+  "setup_times": {
+    "null": {
+      "setup": 0.03915573300000119
+    },
+    "01K9FTJYRWX4JB9DP47BQFWX9Y": {
+      "wait_import_platforms": -6.412999999838576e-05,
+      "wait_base_component": -0.00047470699999507815,
+      "config_entry_setup": 0.025234427000000892
+    }
+  },
+  "data": {
+    "coordinator_data": {
+      "addons": {
+        "core_nginx_proxy": {
+          "name": "NGINX Home Assistant SSL proxy",
+          "slug": "core_nginx_proxy",
+          "version": "4.1.0",
+          "version_latest": "4.1.0",
+          "update_available": false,
+          "state": "unknown",
+          "repository": "Official apps",
+          "icon": true,
+          "auto_update": true
+        },
+        "core_deconz": {
+          "name": "deCONZ",
+          "slug": "core_deconz",
+          "version": "8.7.0",
+          "version_latest": "8.7.0",
+          "update_available": false,
+          "state": "unknown",
+          "repository": "Official apps",
+          "icon": true,
+          "auto_update": true
+        },
+        "core_zwave_js": {
+          "name": "Z-Wave JS",
+          "slug": "core_zwave_js",
+          "version": "1.0.1",
+          "version_latest": "1.0.1",
+          "update_available": false,
+          "state": "unknown",
+          "repository": "Official apps",
+          "icon": true,
+          "auto_update": false
+        },
+        "core_ssh": {
+          "name": "Terminal & SSH",
+          "slug": "core_ssh",
+          "version": "10.0.2",
+          "version_latest": "10.0.2",
+          "update_available": false,
+          "state": "started",
+          "repository": "Official apps",
+          "icon": true,
+          "auto_update": true
+        }
+      },
+      "os": {
+        "version": "17.1",
+        "version_latest": "17.1",
+        "update_available": false,
+        "board": "rpi5-64",
+        "boot": "A",
+        "data_disk": "SD-0x00000824",
+        "boot_slots": {
+          "A": {
+            "state": "booted",
+            "status": "good",
+            "version": "17.1"
+          },
+          "B": {
+            "state": "inactive",
+            "status": "bad",
+            "version": null
+          }
+        }
+      },
+      "core": {
+        "version": "2026.3.2",
+        "version_latest": "2026.3.2",
+        "update_available": false,
+        "machine": "raspberrypi5-64",
+        "ip_address": "172.30.32.1",
+        "arch": "aarch64",
+        "image": "ghcr.io/home-assistant/raspberrypi5-64-homeassistant",
+        "boot": true,
+        "port": 8123,
+        "ssl": false,
+        "watchdog": true,
+        "audio_input": null,
+        "audio_output": null,
+        "backups_exclude_database": false,
+        "duplicate_log_file": false
+      },
+      "supervisor": {
+        "version": "2026.03.0",
+        "version_latest": "2026.03.0",
+        "update_available": false,
+        "channel": "stable",
+        "arch": "aarch64",
+        "supported": true,
+        "healthy": true,
+        "ip_address": "172.30.32.2",
+        "timezone": "Europe/Copenhagen",
+        "logging": "info",
+        "debug": false,
+        "debug_block": false,
+        "diagnostics": null,
+        "auto_update": true,
+        "detect_blocking_io": false,
+        "country": "DK",
+        "wait_boot": 5,
+        "addons": [
+          {
+            "name": "NGINX Home Assistant SSL proxy",
+            "slug": "core_nginx_proxy",
+            "version": "4.1.0",
+            "version_latest": "4.1.0",
+            "update_available": false,
+            "state": "unknown",
+            "repository": "core",
+            "icon": true
+          },
+          {
+            "name": "deCONZ",
+            "slug": "core_deconz",
+            "version": "8.7.0",
+            "version_latest": "8.7.0",
+            "update_available": false,
+            "state": "unknown",
+            "repository": "core",
+            "icon": true
+          },
+          {
+            "name": "Z-Wave JS",
+            "slug": "core_zwave_js",
+            "version": "1.0.1",
+            "version_latest": "1.0.1",
+            "update_available": false,
+            "state": "unknown",
+            "repository": "core",
+            "icon": true
+          },
+          {
+            "name": "Terminal & SSH",
+            "slug": "core_ssh",
+            "version": "10.0.2",
+            "version_latest": "10.0.2",
+            "update_available": false,
+            "state": "started",
+            "repository": "core",
+            "icon": true
+          }
+        ],
+        "addons_repositories": [
+          {
+            "name": "Local apps",
+            "slug": "local"
+          },
+          {
+            "name": "Music Assistant",
+            "slug": "d5369777"
+          },
+          {
+            "name": "ESPHome",
+            "slug": "5c53de3b"
+          },
+          {
+            "name": "Home Assistant Community Apps",
+            "slug": "a0d7b954"
+          },
+          {
+            "name": "Official apps",
+            "slug": "core"
+          }
+        ]
+      },
+      "host": {
+        "agent_version": "1.8.1",
+        "apparmor_version": "3.1.7",
+        "chassis": "embedded",
+        "virtualization": "",
+        "cpe": "cpe:2.3:o:home-assistant:haos:17.1:*:production:*:*:*:rpi5-64:*",
+        "deployment": "production",
+        "disk_free": 100.5,
+        "disk_total": 113.9,
+        "disk_used": 8.7,
+        "disk_life_time": null,
+        "features": [
+          "reboot",
+          "shutdown",
+          "services",
+          "network",
+          "hostname",
+          "timedate",
+          "os_agent",
+          "haos",
+          "resolved",
+          "journal",
+          "disk",
+          "mount"
+        ],
+        "hostname": "homeassistant",
+        "llmnr_hostname": "homeassistant",
+        "kernel": "6.12.47-haos-raspi",
+        "operating_system": "Home Assistant OS 17.1",
+        "timezone": "Europe/Copenhagen",
+        "dt_utc": "2026-03-17T07:23:38.769246+00:00",
+        "dt_synchronized": true,
+        "use_ntp": true,
+        "startup_time": 0.748778,
+        "boot_timestamp": 1773701290233512,
+        "broadcast_llmnr": true,
+        "broadcast_mdns": true
+      },
+      "mounts": {}
+    },
+    "devices": [
+      {
+        "device": {
+          "area_id": null,
+          "config_entries": [
+            "01K9FTJYRWX4JB9DP47BQFWX9Y"
+          ],
+          "config_entries_subentries": {
+            "01K9FTJYRWX4JB9DP47BQFWX9Y": [
+              null
+            ]
+          },
+          "configuration_url": "homeassistant://hassio/addon/core_nginx_proxy",
+          "connections": [],
+          "created_at": "2026-03-16T22:48:37.439245+00:00",
+          "disabled_by": null,
+          "entry_type": "service",
+          "hw_version": null,
+          "id": "cd4ebeed79a1f5994c6b3e57d8f2d0a0",
+          "identifiers": [
+            [
+              "hassio",
+              "core_nginx_proxy"
+            ]
+          ],
+          "labels": [],
+          "manufacturer": "Official apps",
+          "model": "Home Assistant App",
+          "model_id": null,
+          "modified_at": "2026-03-16T22:48:37.439312+00:00",
+          "name_by_user": null,
+          "name": "NGINX Home Assistant SSL proxy",
+          "primary_config_entry": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+          "serial_number": null,
+          "_suggested_area": null,
+          "sw_version": "4.1.0",
+          "via_device_id": null,
+          "_cache": {
+            "json_repr": {
+              "__type": "<class 'bytes'>",
+              "repr": "b'{\"area_id\":null,\"configuration_url\":\"homeassistant://hassio/addon/core_nginx_proxy\",\"config_entries\":[\"01K9FTJYRWX4JB9DP47BQFWX9Y\"],\"config_entries_subentries\":{\"01K9FTJYRWX4JB9DP47BQFWX9Y\":[null]},\"connections\":[],\"created_at\":1773701317.439245,\"disabled_by\":null,\"entry_type\":\"service\",\"hw_version\":null,\"id\":\"cd4ebeed79a1f5994c6b3e57d8f2d0a0\",\"identifiers\":[[\"hassio\",\"core_nginx_proxy\"]],\"labels\":[],\"manufacturer\":\"Official apps\",\"model\":\"Home Assistant App\",\"model_id\":null,\"modified_at\":1773701317.439312,\"name_by_user\":null,\"name\":\"NGINX Home Assistant SSL proxy\",\"primary_config_entry\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"serial_number\":null,\"sw_version\":\"4.1.0\",\"via_device_id\":null}'"
+            }
+          }
+        },
+        "entities": [
+          {
+            "entry": {
+              "entity_id": "binary_sensor.nginx_home_assistant_ssl_proxy_korer",
+              "unique_id": "core_nginx_proxy_state",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": null,
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-16T22:48:37.442843+00:00",
+              "device_class": null,
+              "device_id": "cd4ebeed79a1f5994c6b3e57d8f2d0a0",
+              "domain": "binary_sensor",
+              "disabled_by": "integration",
+              "entity_category": null,
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "f44acabda38b1ec7673b35df60e2e400",
+              "labels": [],
+              "modified_at": "2026-03-16T22:48:37.442968+00:00",
+              "name": null,
+              "object_id_base": "K\u00f8rer",
+              "options": {},
+              "original_device_class": "running",
+              "original_icon": null,
+              "original_name": "K\u00f8rer",
+              "suggested_object_id": null,
+              "supported_features": 0,
+              "translation_key": "state",
+              "unit_of_measurement": null,
+              "_cache": {
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773701317.442843,
+                  "device_id": "cd4ebeed79a1f5994c6b3e57d8f2d0a0",
+                  "disabled_by": "integration",
+                  "entity_category": null,
+                  "entity_id": "binary_sensor.nginx_home_assistant_ssl_proxy_korer",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "f44acabda38b1ec7673b35df60e2e400",
+                  "labels": [],
+                  "modified_at": 1773701317.442968,
+                  "name": null,
+                  "options": {},
+                  "original_name": "K\u00f8rer",
+                  "platform": "hassio",
+                  "translation_key": "state",
+                  "unique_id": "core_nginx_proxy_state"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773701317.442843,\"device_id\":\"cd4ebeed79a1f5994c6b3e57d8f2d0a0\",\"disabled_by\":\"integration\",\"entity_category\":null,\"entity_id\":\"binary_sensor.nginx_home_assistant_ssl_proxy_korer\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"f44acabda38b1ec7673b35df60e2e400\",\"labels\":[],\"modified_at\":1773701317.442968,\"name\":null,\"options\":{},\"original_name\":\"K\\xc3\\xb8rer\",\"platform\":\"hassio\",\"translation_key\":\"state\",\"unique_id\":\"core_nginx_proxy_state\"}'"
+                }
+              }
+            },
+            "state": null
+          },
+          {
+            "entry": {
+              "entity_id": "sensor.nginx_home_assistant_ssl_proxy_version",
+              "unique_id": "core_nginx_proxy_version",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": null,
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-16T22:48:37.443454+00:00",
+              "device_class": null,
+              "device_id": "cd4ebeed79a1f5994c6b3e57d8f2d0a0",
+              "domain": "sensor",
+              "disabled_by": "integration",
+              "entity_category": null,
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "09d0be3cbcd1937e641c7f9a5424391c",
+              "labels": [],
+              "modified_at": "2026-03-16T22:48:37.443527+00:00",
+              "name": null,
+              "object_id_base": "Version",
+              "options": {},
+              "original_device_class": null,
+              "original_icon": null,
+              "original_name": "Version",
+              "suggested_object_id": null,
+              "supported_features": 0,
+              "translation_key": "version",
+              "unit_of_measurement": null,
+              "_cache": {
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773701317.443454,
+                  "device_id": "cd4ebeed79a1f5994c6b3e57d8f2d0a0",
+                  "disabled_by": "integration",
+                  "entity_category": null,
+                  "entity_id": "sensor.nginx_home_assistant_ssl_proxy_version",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "09d0be3cbcd1937e641c7f9a5424391c",
+                  "labels": [],
+                  "modified_at": 1773701317.443527,
+                  "name": null,
+                  "options": {},
+                  "original_name": "Version",
+                  "platform": "hassio",
+                  "translation_key": "version",
+                  "unique_id": "core_nginx_proxy_version"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773701317.443454,\"device_id\":\"cd4ebeed79a1f5994c6b3e57d8f2d0a0\",\"disabled_by\":\"integration\",\"entity_category\":null,\"entity_id\":\"sensor.nginx_home_assistant_ssl_proxy_version\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"09d0be3cbcd1937e641c7f9a5424391c\",\"labels\":[],\"modified_at\":1773701317.443527,\"name\":null,\"options\":{},\"original_name\":\"Version\",\"platform\":\"hassio\",\"translation_key\":\"version\",\"unique_id\":\"core_nginx_proxy_version\"}'"
+                }
+              }
+            },
+            "state": null
+          },
+          {
+            "entry": {
+              "entity_id": "sensor.nginx_home_assistant_ssl_proxy_nyeste_version",
+              "unique_id": "core_nginx_proxy_version_latest",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": null,
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-16T22:48:37.443627+00:00",
+              "device_class": null,
+              "device_id": "cd4ebeed79a1f5994c6b3e57d8f2d0a0",
+              "domain": "sensor",
+              "disabled_by": "integration",
+              "entity_category": null,
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "b745452c4c41edb3fddcf56d476ae15a",
+              "labels": [],
+              "modified_at": "2026-03-16T22:48:37.443672+00:00",
+              "name": null,
+              "object_id_base": "Nyeste version",
+              "options": {},
+              "original_device_class": null,
+              "original_icon": null,
+              "original_name": "Nyeste version",
+              "suggested_object_id": null,
+              "supported_features": 0,
+              "translation_key": "version_latest",
+              "unit_of_measurement": null,
+              "_cache": {
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773701317.443627,
+                  "device_id": "cd4ebeed79a1f5994c6b3e57d8f2d0a0",
+                  "disabled_by": "integration",
+                  "entity_category": null,
+                  "entity_id": "sensor.nginx_home_assistant_ssl_proxy_nyeste_version",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "b745452c4c41edb3fddcf56d476ae15a",
+                  "labels": [],
+                  "modified_at": 1773701317.443672,
+                  "name": null,
+                  "options": {},
+                  "original_name": "Nyeste version",
+                  "platform": "hassio",
+                  "translation_key": "version_latest",
+                  "unique_id": "core_nginx_proxy_version_latest"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773701317.443627,\"device_id\":\"cd4ebeed79a1f5994c6b3e57d8f2d0a0\",\"disabled_by\":\"integration\",\"entity_category\":null,\"entity_id\":\"sensor.nginx_home_assistant_ssl_proxy_nyeste_version\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"b745452c4c41edb3fddcf56d476ae15a\",\"labels\":[],\"modified_at\":1773701317.443672,\"name\":null,\"options\":{},\"original_name\":\"Nyeste version\",\"platform\":\"hassio\",\"translation_key\":\"version_latest\",\"unique_id\":\"core_nginx_proxy_version_latest\"}'"
+                }
+              }
+            },
+            "state": null
+          },
+          {
+            "entry": {
+              "entity_id": "sensor.nginx_home_assistant_ssl_proxy_cpu_procent",
+              "unique_id": "core_nginx_proxy_cpu_percent",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": {
+                "state_class": "measurement"
+              },
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-16T22:48:37.443742+00:00",
+              "device_class": null,
+              "device_id": "cd4ebeed79a1f5994c6b3e57d8f2d0a0",
+              "domain": "sensor",
+              "disabled_by": "integration",
+              "entity_category": null,
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "814a65ae9214cfd9666eeee835dc0165",
+              "labels": [],
+              "modified_at": "2026-03-16T22:48:37.443782+00:00",
+              "name": null,
+              "object_id_base": "CPU-procent",
+              "options": {},
+              "original_device_class": null,
+              "original_icon": null,
+              "original_name": "CPU-procent",
+              "suggested_object_id": null,
+              "supported_features": 0,
+              "translation_key": "cpu_percent",
+              "unit_of_measurement": "%",
+              "_cache": {
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773701317.443742,
+                  "device_id": "cd4ebeed79a1f5994c6b3e57d8f2d0a0",
+                  "disabled_by": "integration",
+                  "entity_category": null,
+                  "entity_id": "sensor.nginx_home_assistant_ssl_proxy_cpu_procent",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "814a65ae9214cfd9666eeee835dc0165",
+                  "labels": [],
+                  "modified_at": 1773701317.443782,
+                  "name": null,
+                  "options": {},
+                  "original_name": "CPU-procent",
+                  "platform": "hassio",
+                  "translation_key": "cpu_percent",
+                  "unique_id": "core_nginx_proxy_cpu_percent"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773701317.443742,\"device_id\":\"cd4ebeed79a1f5994c6b3e57d8f2d0a0\",\"disabled_by\":\"integration\",\"entity_category\":null,\"entity_id\":\"sensor.nginx_home_assistant_ssl_proxy_cpu_procent\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"814a65ae9214cfd9666eeee835dc0165\",\"labels\":[],\"modified_at\":1773701317.443782,\"name\":null,\"options\":{},\"original_name\":\"CPU-procent\",\"platform\":\"hassio\",\"translation_key\":\"cpu_percent\",\"unique_id\":\"core_nginx_proxy_cpu_percent\"}'"
+                }
+              }
+            },
+            "state": null
+          },
+          {
+            "entry": {
+              "entity_id": "sensor.nginx_home_assistant_ssl_proxy_hukommelsesprocent",
+              "unique_id": "core_nginx_proxy_memory_percent",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": {
+                "state_class": "measurement"
+              },
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-16T22:48:37.443851+00:00",
+              "device_class": null,
+              "device_id": "cd4ebeed79a1f5994c6b3e57d8f2d0a0",
+              "domain": "sensor",
+              "disabled_by": "integration",
+              "entity_category": null,
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "d1fdbadc3f045b05299f31b1492e657b",
+              "labels": [],
+              "modified_at": "2026-03-16T22:48:37.443909+00:00",
+              "name": null,
+              "object_id_base": "Hukommelsesprocent",
+              "options": {},
+              "original_device_class": null,
+              "original_icon": null,
+              "original_name": "Hukommelsesprocent",
+              "suggested_object_id": null,
+              "supported_features": 0,
+              "translation_key": "memory_percent",
+              "unit_of_measurement": "%",
+              "_cache": {
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773701317.443851,
+                  "device_id": "cd4ebeed79a1f5994c6b3e57d8f2d0a0",
+                  "disabled_by": "integration",
+                  "entity_category": null,
+                  "entity_id": "sensor.nginx_home_assistant_ssl_proxy_hukommelsesprocent",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "d1fdbadc3f045b05299f31b1492e657b",
+                  "labels": [],
+                  "modified_at": 1773701317.443909,
+                  "name": null,
+                  "options": {},
+                  "original_name": "Hukommelsesprocent",
+                  "platform": "hassio",
+                  "translation_key": "memory_percent",
+                  "unique_id": "core_nginx_proxy_memory_percent"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773701317.443851,\"device_id\":\"cd4ebeed79a1f5994c6b3e57d8f2d0a0\",\"disabled_by\":\"integration\",\"entity_category\":null,\"entity_id\":\"sensor.nginx_home_assistant_ssl_proxy_hukommelsesprocent\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"d1fdbadc3f045b05299f31b1492e657b\",\"labels\":[],\"modified_at\":1773701317.443909,\"name\":null,\"options\":{},\"original_name\":\"Hukommelsesprocent\",\"platform\":\"hassio\",\"translation_key\":\"memory_percent\",\"unique_id\":\"core_nginx_proxy_memory_percent\"}'"
+                }
+              }
+            },
+            "state": null
+          },
+          {
+            "entry": {
+              "entity_id": "switch.nginx_home_assistant_ssl_proxy",
+              "unique_id": "core_nginx_proxy_state",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": null,
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-16T22:48:37.445333+00:00",
+              "device_class": null,
+              "device_id": "cd4ebeed79a1f5994c6b3e57d8f2d0a0",
+              "domain": "switch",
+              "disabled_by": "integration",
+              "entity_category": null,
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "8f61104b81bc71e73c33399bfe393c01",
+              "labels": [],
+              "modified_at": "2026-03-16T22:48:37.445372+00:00",
+              "name": null,
+              "object_id_base": null,
+              "options": {},
+              "original_device_class": null,
+              "original_icon": "mdi:puzzle",
+              "original_name": null,
+              "suggested_object_id": null,
+              "supported_features": 0,
+              "translation_key": null,
+              "unit_of_measurement": null,
+              "_cache": {
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773701317.445333,
+                  "device_id": "cd4ebeed79a1f5994c6b3e57d8f2d0a0",
+                  "disabled_by": "integration",
+                  "entity_category": null,
+                  "entity_id": "switch.nginx_home_assistant_ssl_proxy",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "8f61104b81bc71e73c33399bfe393c01",
+                  "labels": [],
+                  "modified_at": 1773701317.445372,
+                  "name": null,
+                  "options": {},
+                  "original_name": null,
+                  "platform": "hassio",
+                  "translation_key": null,
+                  "unique_id": "core_nginx_proxy_state"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773701317.445333,\"device_id\":\"cd4ebeed79a1f5994c6b3e57d8f2d0a0\",\"disabled_by\":\"integration\",\"entity_category\":null,\"entity_id\":\"switch.nginx_home_assistant_ssl_proxy\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"8f61104b81bc71e73c33399bfe393c01\",\"labels\":[],\"modified_at\":1773701317.445372,\"name\":null,\"options\":{},\"original_name\":null,\"platform\":\"hassio\",\"translation_key\":null,\"unique_id\":\"core_nginx_proxy_state\"}'"
+                }
+              }
+            },
+            "state": null
+          },
+          {
+            "entry": {
+              "entity_id": "update.nginx_home_assistant_ssl_proxy_opdatering",
+              "unique_id": "core_nginx_proxy_version_latest",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": null,
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-16T22:48:37.446450+00:00",
+              "device_class": null,
+              "device_id": "cd4ebeed79a1f5994c6b3e57d8f2d0a0",
+              "domain": "update",
+              "disabled_by": null,
+              "entity_category": "config",
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "b3aac437213ef2fd6c79d0143b4deee1",
+              "labels": [],
+              "modified_at": "2026-03-16T22:48:37.446491+00:00",
+              "name": null,
+              "object_id_base": "Opdatering",
+              "options": {},
+              "original_device_class": null,
+              "original_icon": null,
+              "original_name": "Opdatering",
+              "suggested_object_id": null,
+              "supported_features": 29,
+              "translation_key": "update",
+              "unit_of_measurement": null,
+              "_cache": {
+                "display_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"ei\":\"update.nginx_home_assistant_ssl_proxy_opdatering\",\"pl\":\"hassio\",\"lb\":[],\"di\":\"cd4ebeed79a1f5994c6b3e57d8f2d0a0\",\"tk\":\"update\",\"ec\":0,\"hn\":true,\"en\":\"Opdatering\"}'"
+                },
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773701317.44645,
+                  "device_id": "cd4ebeed79a1f5994c6b3e57d8f2d0a0",
+                  "disabled_by": null,
+                  "entity_category": "config",
+                  "entity_id": "update.nginx_home_assistant_ssl_proxy_opdatering",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "b3aac437213ef2fd6c79d0143b4deee1",
+                  "labels": [],
+                  "modified_at": 1773701317.446491,
+                  "name": null,
+                  "options": {},
+                  "original_name": "Opdatering",
+                  "platform": "hassio",
+                  "translation_key": "update",
+                  "unique_id": "core_nginx_proxy_version_latest"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773701317.44645,\"device_id\":\"cd4ebeed79a1f5994c6b3e57d8f2d0a0\",\"disabled_by\":null,\"entity_category\":\"config\",\"entity_id\":\"update.nginx_home_assistant_ssl_proxy_opdatering\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"b3aac437213ef2fd6c79d0143b4deee1\",\"labels\":[],\"modified_at\":1773701317.446491,\"name\":null,\"options\":{},\"original_name\":\"Opdatering\",\"platform\":\"hassio\",\"translation_key\":\"update\",\"unique_id\":\"core_nginx_proxy_version_latest\"}'"
+                }
+              }
+            },
+            "state": {
+              "entity_id": "update.nginx_home_assistant_ssl_proxy_opdatering",
+              "state": "off",
+              "attributes": {
+                "auto_update": true,
+                "display_precision": 0,
+                "installed_version": "4.1.0",
+                "in_progress": false,
+                "latest_version": "4.1.0",
+                "release_summary": null,
+                "release_url": null,
+                "skipped_version": null,
+                "title": "NGINX Home Assistant SSL proxy",
+                "update_percentage": null,
+                "entity_picture": "/api/hassio/addons/core_nginx_proxy/icon",
+                "friendly_name": "NGINX Home Assistant SSL proxy Opdatering",
+                "supported_features": 29
+              },
+              "last_changed": "2026-03-17T06:43:15.557944+00:00",
+              "last_reported": "2026-03-17T06:48:15.310643+00:00",
+              "last_updated": "2026-03-17T06:43:15.557944+00:00"
+            }
+          }
+        ]
+      },
+      {
+        "device": {
+          "area_id": null,
+          "config_entries": [
+            "01K9FTJYRWX4JB9DP47BQFWX9Y"
+          ],
+          "config_entries_subentries": {
+            "01K9FTJYRWX4JB9DP47BQFWX9Y": [
+              null
+            ]
+          },
+          "configuration_url": null,
+          "connections": [],
+          "created_at": "2026-03-16T22:48:37.439487+00:00",
+          "disabled_by": null,
+          "entry_type": "service",
+          "hw_version": null,
+          "id": "2d44788ba7048030271e992265a38df9",
+          "identifiers": [
+            [
+              "hassio",
+              "core"
+            ]
+          ],
+          "labels": [],
+          "manufacturer": "Home Assistant",
+          "model": "Home Assistant Core",
+          "model_id": null,
+          "modified_at": "2026-03-16T22:48:37.439512+00:00",
+          "name_by_user": null,
+          "name": "Home Assistant Core",
+          "primary_config_entry": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+          "serial_number": null,
+          "_suggested_area": null,
+          "sw_version": "2026.3.2",
+          "via_device_id": null,
+          "_cache": {
+            "json_repr": {
+              "__type": "<class 'bytes'>",
+              "repr": "b'{\"area_id\":null,\"configuration_url\":null,\"config_entries\":[\"01K9FTJYRWX4JB9DP47BQFWX9Y\"],\"config_entries_subentries\":{\"01K9FTJYRWX4JB9DP47BQFWX9Y\":[null]},\"connections\":[],\"created_at\":1773701317.439487,\"disabled_by\":null,\"entry_type\":\"service\",\"hw_version\":null,\"id\":\"2d44788ba7048030271e992265a38df9\",\"identifiers\":[[\"hassio\",\"core\"]],\"labels\":[],\"manufacturer\":\"Home Assistant\",\"model\":\"Home Assistant Core\",\"model_id\":null,\"modified_at\":1773701317.439512,\"name_by_user\":null,\"name\":\"Home Assistant Core\",\"primary_config_entry\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"serial_number\":null,\"sw_version\":\"2026.3.2\",\"via_device_id\":null}'"
+            }
+          }
+        },
+        "entities": [
+          {
+            "entry": {
+              "entity_id": "sensor.home_assistant_core_cpu_procent",
+              "unique_id": "home_assistant_core_cpu_percent",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": {
+                "state_class": "measurement"
+              },
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-16T22:48:37.443998+00:00",
+              "device_class": null,
+              "device_id": "2d44788ba7048030271e992265a38df9",
+              "domain": "sensor",
+              "disabled_by": "integration",
+              "entity_category": null,
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "d421ca95a0c59eacab7d8cf237f4e589",
+              "labels": [],
+              "modified_at": "2026-03-16T22:48:37.444034+00:00",
+              "name": null,
+              "object_id_base": "CPU-procent",
+              "options": {},
+              "original_device_class": null,
+              "original_icon": null,
+              "original_name": "CPU-procent",
+              "suggested_object_id": null,
+              "supported_features": 0,
+              "translation_key": "cpu_percent",
+              "unit_of_measurement": "%",
+              "_cache": {
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773701317.443998,
+                  "device_id": "2d44788ba7048030271e992265a38df9",
+                  "disabled_by": "integration",
+                  "entity_category": null,
+                  "entity_id": "sensor.home_assistant_core_cpu_procent",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "d421ca95a0c59eacab7d8cf237f4e589",
+                  "labels": [],
+                  "modified_at": 1773701317.444034,
+                  "name": null,
+                  "options": {},
+                  "original_name": "CPU-procent",
+                  "platform": "hassio",
+                  "translation_key": "cpu_percent",
+                  "unique_id": "home_assistant_core_cpu_percent"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773701317.443998,\"device_id\":\"2d44788ba7048030271e992265a38df9\",\"disabled_by\":\"integration\",\"entity_category\":null,\"entity_id\":\"sensor.home_assistant_core_cpu_procent\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"d421ca95a0c59eacab7d8cf237f4e589\",\"labels\":[],\"modified_at\":1773701317.444034,\"name\":null,\"options\":{},\"original_name\":\"CPU-procent\",\"platform\":\"hassio\",\"translation_key\":\"cpu_percent\",\"unique_id\":\"home_assistant_core_cpu_percent\"}'"
+                }
+              }
+            },
+            "state": null
+          },
+          {
+            "entry": {
+              "entity_id": "sensor.home_assistant_core_hukommelsesprocent",
+              "unique_id": "home_assistant_core_memory_percent",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": {
+                "state_class": "measurement"
+              },
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-16T22:48:37.444099+00:00",
+              "device_class": null,
+              "device_id": "2d44788ba7048030271e992265a38df9",
+              "domain": "sensor",
+              "disabled_by": "integration",
+              "entity_category": null,
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "972a716719560b3a7f0c8e95d2737cc1",
+              "labels": [],
+              "modified_at": "2026-03-16T22:48:37.444134+00:00",
+              "name": null,
+              "object_id_base": "Hukommelsesprocent",
+              "options": {},
+              "original_device_class": null,
+              "original_icon": null,
+              "original_name": "Hukommelsesprocent",
+              "suggested_object_id": null,
+              "supported_features": 0,
+              "translation_key": "memory_percent",
+              "unit_of_measurement": "%",
+              "_cache": {
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773701317.444099,
+                  "device_id": "2d44788ba7048030271e992265a38df9",
+                  "disabled_by": "integration",
+                  "entity_category": null,
+                  "entity_id": "sensor.home_assistant_core_hukommelsesprocent",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "972a716719560b3a7f0c8e95d2737cc1",
+                  "labels": [],
+                  "modified_at": 1773701317.444134,
+                  "name": null,
+                  "options": {},
+                  "original_name": "Hukommelsesprocent",
+                  "platform": "hassio",
+                  "translation_key": "memory_percent",
+                  "unique_id": "home_assistant_core_memory_percent"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773701317.444099,\"device_id\":\"2d44788ba7048030271e992265a38df9\",\"disabled_by\":\"integration\",\"entity_category\":null,\"entity_id\":\"sensor.home_assistant_core_hukommelsesprocent\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"972a716719560b3a7f0c8e95d2737cc1\",\"labels\":[],\"modified_at\":1773701317.444134,\"name\":null,\"options\":{},\"original_name\":\"Hukommelsesprocent\",\"platform\":\"hassio\",\"translation_key\":\"memory_percent\",\"unique_id\":\"home_assistant_core_memory_percent\"}'"
+                }
+              }
+            },
+            "state": null
+          },
+          {
+            "entry": {
+              "entity_id": "update.home_assistant_core_opdatering",
+              "unique_id": "home_assistant_core_version_latest",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": null,
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-16T22:48:37.446140+00:00",
+              "device_class": null,
+              "device_id": "2d44788ba7048030271e992265a38df9",
+              "domain": "update",
+              "disabled_by": null,
+              "entity_category": "config",
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "16cb0494f53240698f7bb9876b954ac8",
+              "labels": [],
+              "modified_at": "2026-03-16T22:48:37.446181+00:00",
+              "name": null,
+              "object_id_base": "Opdatering",
+              "options": {},
+              "original_device_class": null,
+              "original_icon": null,
+              "original_name": "Opdatering",
+              "suggested_object_id": null,
+              "supported_features": 15,
+              "translation_key": "update",
+              "unit_of_measurement": null,
+              "_cache": {
+                "display_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"ei\":\"update.home_assistant_core_opdatering\",\"pl\":\"hassio\",\"lb\":[],\"di\":\"2d44788ba7048030271e992265a38df9\",\"tk\":\"update\",\"ec\":0,\"hn\":true,\"en\":\"Opdatering\"}'"
+                },
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773701317.44614,
+                  "device_id": "2d44788ba7048030271e992265a38df9",
+                  "disabled_by": null,
+                  "entity_category": "config",
+                  "entity_id": "update.home_assistant_core_opdatering",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "16cb0494f53240698f7bb9876b954ac8",
+                  "labels": [],
+                  "modified_at": 1773701317.446181,
+                  "name": null,
+                  "options": {},
+                  "original_name": "Opdatering",
+                  "platform": "hassio",
+                  "translation_key": "update",
+                  "unique_id": "home_assistant_core_version_latest"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773701317.44614,\"device_id\":\"2d44788ba7048030271e992265a38df9\",\"disabled_by\":null,\"entity_category\":\"config\",\"entity_id\":\"update.home_assistant_core_opdatering\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"16cb0494f53240698f7bb9876b954ac8\",\"labels\":[],\"modified_at\":1773701317.446181,\"name\":null,\"options\":{},\"original_name\":\"Opdatering\",\"platform\":\"hassio\",\"translation_key\":\"update\",\"unique_id\":\"home_assistant_core_version_latest\"}'"
+                }
+              }
+            },
+            "state": {
+              "entity_id": "update.home_assistant_core_opdatering",
+              "state": "off",
+              "attributes": {
+                "auto_update": false,
+                "display_precision": 0,
+                "installed_version": "2026.3.2",
+                "in_progress": false,
+                "latest_version": "2026.3.2",
+                "release_summary": null,
+                "release_url": "https://www.home-assistant.io/latest-release-notes/",
+                "skipped_version": null,
+                "title": "Home Assistant Core",
+                "update_percentage": null,
+                "entity_picture": "/api/brands/integration/homeassistant/icon.png?placeholder=no",
+                "friendly_name": "Home Assistant Core Opdatering",
+                "supported_features": 15
+              },
+              "last_changed": "2026-03-17T06:43:15.557663+00:00",
+              "last_reported": "2026-03-17T06:48:15.310597+00:00",
+              "last_updated": "2026-03-17T06:43:15.557663+00:00"
+            }
+          }
+        ]
+      },
+      {
+        "device": {
+          "area_id": null,
+          "config_entries": [
+            "01K9FTJYRWX4JB9DP47BQFWX9Y"
+          ],
+          "config_entries_subentries": {
+            "01K9FTJYRWX4JB9DP47BQFWX9Y": [
+              null
+            ]
+          },
+          "configuration_url": null,
+          "connections": [],
+          "created_at": "2026-03-16T22:48:37.439567+00:00",
+          "disabled_by": null,
+          "entry_type": "service",
+          "hw_version": null,
+          "id": "ba0a7079c32256af8e095bba6c841718",
+          "identifiers": [
+            [
+              "hassio",
+              "supervisor"
+            ]
+          ],
+          "labels": [],
+          "manufacturer": "Home Assistant",
+          "model": "Home Assistant Supervisor",
+          "model_id": null,
+          "modified_at": "2026-03-16T22:48:37.439582+00:00",
+          "name_by_user": null,
+          "name": "Home Assistant Supervisor",
+          "primary_config_entry": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+          "serial_number": null,
+          "_suggested_area": null,
+          "sw_version": "2026.03.0",
+          "via_device_id": null,
+          "_cache": {
+            "json_repr": {
+              "__type": "<class 'bytes'>",
+              "repr": "b'{\"area_id\":null,\"configuration_url\":null,\"config_entries\":[\"01K9FTJYRWX4JB9DP47BQFWX9Y\"],\"config_entries_subentries\":{\"01K9FTJYRWX4JB9DP47BQFWX9Y\":[null]},\"connections\":[],\"created_at\":1773701317.439567,\"disabled_by\":null,\"entry_type\":\"service\",\"hw_version\":null,\"id\":\"ba0a7079c32256af8e095bba6c841718\",\"identifiers\":[[\"hassio\",\"supervisor\"]],\"labels\":[],\"manufacturer\":\"Home Assistant\",\"model\":\"Home Assistant Supervisor\",\"model_id\":null,\"modified_at\":1773701317.439582,\"name_by_user\":null,\"name\":\"Home Assistant Supervisor\",\"primary_config_entry\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"serial_number\":null,\"sw_version\":\"2026.03.0\",\"via_device_id\":null}'"
+            }
+          }
+        },
+        "entities": [
+          {
+            "entry": {
+              "entity_id": "sensor.home_assistant_supervisor_cpu_procent",
+              "unique_id": "home_assistant_supervisor_cpu_percent",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": {
+                "state_class": "measurement"
+              },
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-16T22:48:37.444211+00:00",
+              "device_class": null,
+              "device_id": "ba0a7079c32256af8e095bba6c841718",
+              "domain": "sensor",
+              "disabled_by": "integration",
+              "entity_category": null,
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "d7a5b38cd58f915c0a2f1ac8b0e02093",
+              "labels": [],
+              "modified_at": "2026-03-16T22:48:37.444246+00:00",
+              "name": null,
+              "object_id_base": "CPU-procent",
+              "options": {},
+              "original_device_class": null,
+              "original_icon": null,
+              "original_name": "CPU-procent",
+              "suggested_object_id": null,
+              "supported_features": 0,
+              "translation_key": "cpu_percent",
+              "unit_of_measurement": "%",
+              "_cache": {
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773701317.444211,
+                  "device_id": "ba0a7079c32256af8e095bba6c841718",
+                  "disabled_by": "integration",
+                  "entity_category": null,
+                  "entity_id": "sensor.home_assistant_supervisor_cpu_procent",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "d7a5b38cd58f915c0a2f1ac8b0e02093",
+                  "labels": [],
+                  "modified_at": 1773701317.444246,
+                  "name": null,
+                  "options": {},
+                  "original_name": "CPU-procent",
+                  "platform": "hassio",
+                  "translation_key": "cpu_percent",
+                  "unique_id": "home_assistant_supervisor_cpu_percent"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773701317.444211,\"device_id\":\"ba0a7079c32256af8e095bba6c841718\",\"disabled_by\":\"integration\",\"entity_category\":null,\"entity_id\":\"sensor.home_assistant_supervisor_cpu_procent\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"d7a5b38cd58f915c0a2f1ac8b0e02093\",\"labels\":[],\"modified_at\":1773701317.444246,\"name\":null,\"options\":{},\"original_name\":\"CPU-procent\",\"platform\":\"hassio\",\"translation_key\":\"cpu_percent\",\"unique_id\":\"home_assistant_supervisor_cpu_percent\"}'"
+                }
+              }
+            },
+            "state": null
+          },
+          {
+            "entry": {
+              "entity_id": "sensor.home_assistant_supervisor_hukommelsesprocent",
+              "unique_id": "home_assistant_supervisor_memory_percent",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": {
+                "state_class": "measurement"
+              },
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-16T22:48:37.444308+00:00",
+              "device_class": null,
+              "device_id": "ba0a7079c32256af8e095bba6c841718",
+              "domain": "sensor",
+              "disabled_by": "integration",
+              "entity_category": null,
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "68104bac6455dd07594534644b304460",
+              "labels": [],
+              "modified_at": "2026-03-16T22:48:37.444342+00:00",
+              "name": null,
+              "object_id_base": "Hukommelsesprocent",
+              "options": {},
+              "original_device_class": null,
+              "original_icon": null,
+              "original_name": "Hukommelsesprocent",
+              "suggested_object_id": null,
+              "supported_features": 0,
+              "translation_key": "memory_percent",
+              "unit_of_measurement": "%",
+              "_cache": {
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773701317.444308,
+                  "device_id": "ba0a7079c32256af8e095bba6c841718",
+                  "disabled_by": "integration",
+                  "entity_category": null,
+                  "entity_id": "sensor.home_assistant_supervisor_hukommelsesprocent",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "68104bac6455dd07594534644b304460",
+                  "labels": [],
+                  "modified_at": 1773701317.444342,
+                  "name": null,
+                  "options": {},
+                  "original_name": "Hukommelsesprocent",
+                  "platform": "hassio",
+                  "translation_key": "memory_percent",
+                  "unique_id": "home_assistant_supervisor_memory_percent"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773701317.444308,\"device_id\":\"ba0a7079c32256af8e095bba6c841718\",\"disabled_by\":\"integration\",\"entity_category\":null,\"entity_id\":\"sensor.home_assistant_supervisor_hukommelsesprocent\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"68104bac6455dd07594534644b304460\",\"labels\":[],\"modified_at\":1773701317.444342,\"name\":null,\"options\":{},\"original_name\":\"Hukommelsesprocent\",\"platform\":\"hassio\",\"translation_key\":\"memory_percent\",\"unique_id\":\"home_assistant_supervisor_memory_percent\"}'"
+                }
+              }
+            },
+            "state": null
+          },
+          {
+            "entry": {
+              "entity_id": "update.home_assistant_supervisor_opdatering",
+              "unique_id": "home_assistant_supervisor_version_latest",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": null,
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-16T22:48:37.445723+00:00",
+              "device_class": null,
+              "device_id": "ba0a7079c32256af8e095bba6c841718",
+              "domain": "update",
+              "disabled_by": null,
+              "entity_category": "config",
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "77291150e96f57d2fff0ece4a8b9d334",
+              "labels": [],
+              "modified_at": "2026-03-16T22:48:37.445769+00:00",
+              "name": null,
+              "object_id_base": "Opdatering",
+              "options": {},
+              "original_device_class": null,
+              "original_icon": null,
+              "original_name": "Opdatering",
+              "suggested_object_id": null,
+              "supported_features": 1,
+              "translation_key": "update",
+              "unit_of_measurement": null,
+              "_cache": {
+                "display_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"ei\":\"update.home_assistant_supervisor_opdatering\",\"pl\":\"hassio\",\"lb\":[],\"di\":\"ba0a7079c32256af8e095bba6c841718\",\"tk\":\"update\",\"ec\":0,\"hn\":true,\"en\":\"Opdatering\"}'"
+                },
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773701317.445723,
+                  "device_id": "ba0a7079c32256af8e095bba6c841718",
+                  "disabled_by": null,
+                  "entity_category": "config",
+                  "entity_id": "update.home_assistant_supervisor_opdatering",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "77291150e96f57d2fff0ece4a8b9d334",
+                  "labels": [],
+                  "modified_at": 1773701317.445769,
+                  "name": null,
+                  "options": {},
+                  "original_name": "Opdatering",
+                  "platform": "hassio",
+                  "translation_key": "update",
+                  "unique_id": "home_assistant_supervisor_version_latest"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773701317.445723,\"device_id\":\"ba0a7079c32256af8e095bba6c841718\",\"disabled_by\":null,\"entity_category\":\"config\",\"entity_id\":\"update.home_assistant_supervisor_opdatering\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"77291150e96f57d2fff0ece4a8b9d334\",\"labels\":[],\"modified_at\":1773701317.445769,\"name\":null,\"options\":{},\"original_name\":\"Opdatering\",\"platform\":\"hassio\",\"translation_key\":\"update\",\"unique_id\":\"home_assistant_supervisor_version_latest\"}'"
+                }
+              }
+            },
+            "state": {
+              "entity_id": "update.home_assistant_supervisor_opdatering",
+              "state": "off",
+              "attributes": {
+                "auto_update": true,
+                "display_precision": 0,
+                "installed_version": "2026.03.0",
+                "in_progress": false,
+                "latest_version": "2026.03.0",
+                "release_summary": null,
+                "release_url": "https://github.com/home-assistant/supervisor/releases/tag/2026.03.0",
+                "skipped_version": null,
+                "title": "Home Assistant Supervisor",
+                "update_percentage": null,
+                "entity_picture": "/api/brands/integration/hassio/icon.png?placeholder=no",
+                "friendly_name": "Home Assistant Supervisor Opdatering",
+                "supported_features": 1
+              },
+              "last_changed": "2026-03-17T06:43:15.557283+00:00",
+              "last_reported": "2026-03-17T06:48:15.310492+00:00",
+              "last_updated": "2026-03-17T06:43:15.557283+00:00"
+            }
+          }
+        ]
+      },
+      {
+        "device": {
+          "area_id": null,
+          "config_entries": [
+            "01K9FTJYRWX4JB9DP47BQFWX9Y"
+          ],
+          "config_entries_subentries": {
+            "01K9FTJYRWX4JB9DP47BQFWX9Y": [
+              null
+            ]
+          },
+          "configuration_url": null,
+          "connections": [],
+          "created_at": "2026-03-16T22:48:37.439621+00:00",
+          "disabled_by": null,
+          "entry_type": "service",
+          "hw_version": null,
+          "id": "ae57f760fd25e25ed77630f279975f90",
+          "identifiers": [
+            [
+              "hassio",
+              "host"
+            ]
+          ],
+          "labels": [],
+          "manufacturer": "Home Assistant",
+          "model": "Home Assistant Host",
+          "model_id": null,
+          "modified_at": "2026-03-16T22:48:37.439634+00:00",
+          "name_by_user": null,
+          "name": "Home Assistant Host",
+          "primary_config_entry": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+          "serial_number": null,
+          "_suggested_area": null,
+          "sw_version": null,
+          "via_device_id": null,
+          "_cache": {
+            "json_repr": {
+              "__type": "<class 'bytes'>",
+              "repr": "b'{\"area_id\":null,\"configuration_url\":null,\"config_entries\":[\"01K9FTJYRWX4JB9DP47BQFWX9Y\"],\"config_entries_subentries\":{\"01K9FTJYRWX4JB9DP47BQFWX9Y\":[null]},\"connections\":[],\"created_at\":1773701317.439621,\"disabled_by\":null,\"entry_type\":\"service\",\"hw_version\":null,\"id\":\"ae57f760fd25e25ed77630f279975f90\",\"identifiers\":[[\"hassio\",\"host\"]],\"labels\":[],\"manufacturer\":\"Home Assistant\",\"model\":\"Home Assistant Host\",\"model_id\":null,\"modified_at\":1773701317.439634,\"name_by_user\":null,\"name\":\"Home Assistant Host\",\"primary_config_entry\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"serial_number\":null,\"sw_version\":null,\"via_device_id\":null}'"
+            }
+          }
+        },
+        "entities": [
+          {
+            "entry": {
+              "entity_id": "sensor.home_assistant_host_os_agent_version",
+              "unique_id": "home_assistant_host_agent_version",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": null,
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-16T22:48:37.444422+00:00",
+              "device_class": null,
+              "device_id": "ae57f760fd25e25ed77630f279975f90",
+              "domain": "sensor",
+              "disabled_by": "integration",
+              "entity_category": "diagnostic",
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "d320789d162abfbdd4fd5624182f99d9",
+              "labels": [],
+              "modified_at": "2026-03-16T22:48:37.444456+00:00",
+              "name": null,
+              "object_id_base": "OS Agent-version",
+              "options": {},
+              "original_device_class": null,
+              "original_icon": null,
+              "original_name": "OS Agent-version",
+              "suggested_object_id": null,
+              "supported_features": 0,
+              "translation_key": "agent_version",
+              "unit_of_measurement": null,
+              "_cache": {
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773701317.444422,
+                  "device_id": "ae57f760fd25e25ed77630f279975f90",
+                  "disabled_by": "integration",
+                  "entity_category": "diagnostic",
+                  "entity_id": "sensor.home_assistant_host_os_agent_version",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "d320789d162abfbdd4fd5624182f99d9",
+                  "labels": [],
+                  "modified_at": 1773701317.444456,
+                  "name": null,
+                  "options": {},
+                  "original_name": "OS Agent-version",
+                  "platform": "hassio",
+                  "translation_key": "agent_version",
+                  "unique_id": "home_assistant_host_agent_version"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773701317.444422,\"device_id\":\"ae57f760fd25e25ed77630f279975f90\",\"disabled_by\":\"integration\",\"entity_category\":\"diagnostic\",\"entity_id\":\"sensor.home_assistant_host_os_agent_version\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"d320789d162abfbdd4fd5624182f99d9\",\"labels\":[],\"modified_at\":1773701317.444456,\"name\":null,\"options\":{},\"original_name\":\"OS Agent-version\",\"platform\":\"hassio\",\"translation_key\":\"agent_version\",\"unique_id\":\"home_assistant_host_agent_version\"}'"
+                }
+              }
+            },
+            "state": null
+          },
+          {
+            "entry": {
+              "entity_id": "sensor.home_assistant_host_apparmor_version",
+              "unique_id": "home_assistant_host_apparmor_version",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": null,
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-16T22:48:37.444520+00:00",
+              "device_class": null,
+              "device_id": "ae57f760fd25e25ed77630f279975f90",
+              "domain": "sensor",
+              "disabled_by": "integration",
+              "entity_category": "diagnostic",
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "7c167767d6fd892b18d4bbaa6076a617",
+              "labels": [],
+              "modified_at": "2026-03-16T22:48:37.444552+00:00",
+              "name": null,
+              "object_id_base": "AppArmor-version",
+              "options": {},
+              "original_device_class": null,
+              "original_icon": null,
+              "original_name": "AppArmor-version",
+              "suggested_object_id": null,
+              "supported_features": 0,
+              "translation_key": "apparmor_version",
+              "unit_of_measurement": null,
+              "_cache": {
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773701317.44452,
+                  "device_id": "ae57f760fd25e25ed77630f279975f90",
+                  "disabled_by": "integration",
+                  "entity_category": "diagnostic",
+                  "entity_id": "sensor.home_assistant_host_apparmor_version",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "7c167767d6fd892b18d4bbaa6076a617",
+                  "labels": [],
+                  "modified_at": 1773701317.444552,
+                  "name": null,
+                  "options": {},
+                  "original_name": "AppArmor-version",
+                  "platform": "hassio",
+                  "translation_key": "apparmor_version",
+                  "unique_id": "home_assistant_host_apparmor_version"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773701317.44452,\"device_id\":\"ae57f760fd25e25ed77630f279975f90\",\"disabled_by\":\"integration\",\"entity_category\":\"diagnostic\",\"entity_id\":\"sensor.home_assistant_host_apparmor_version\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"7c167767d6fd892b18d4bbaa6076a617\",\"labels\":[],\"modified_at\":1773701317.444552,\"name\":null,\"options\":{},\"original_name\":\"AppArmor-version\",\"platform\":\"hassio\",\"translation_key\":\"apparmor_version\",\"unique_id\":\"home_assistant_host_apparmor_version\"}'"
+                }
+              }
+            },
+            "state": null
+          },
+          {
+            "entry": {
+              "entity_id": "sensor.home_assistant_host_disk_total",
+              "unique_id": "home_assistant_host_disk_total",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": null,
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-16T22:48:37.444632+00:00",
+              "device_class": null,
+              "device_id": "ae57f760fd25e25ed77630f279975f90",
+              "domain": "sensor",
+              "disabled_by": "integration",
+              "entity_category": "diagnostic",
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "4cf13c0bdd96085fa67a438921f894a7",
+              "labels": [],
+              "modified_at": "2026-03-16T22:48:37.444667+00:00",
+              "name": null,
+              "object_id_base": "Disk-total",
+              "options": {},
+              "original_device_class": "data_size",
+              "original_icon": null,
+              "original_name": "Disk-total",
+              "suggested_object_id": null,
+              "supported_features": 0,
+              "translation_key": "disk_total",
+              "unit_of_measurement": "GB",
+              "_cache": {
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773701317.444632,
+                  "device_id": "ae57f760fd25e25ed77630f279975f90",
+                  "disabled_by": "integration",
+                  "entity_category": "diagnostic",
+                  "entity_id": "sensor.home_assistant_host_disk_total",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "4cf13c0bdd96085fa67a438921f894a7",
+                  "labels": [],
+                  "modified_at": 1773701317.444667,
+                  "name": null,
+                  "options": {},
+                  "original_name": "Disk-total",
+                  "platform": "hassio",
+                  "translation_key": "disk_total",
+                  "unique_id": "home_assistant_host_disk_total"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773701317.444632,\"device_id\":\"ae57f760fd25e25ed77630f279975f90\",\"disabled_by\":\"integration\",\"entity_category\":\"diagnostic\",\"entity_id\":\"sensor.home_assistant_host_disk_total\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"4cf13c0bdd96085fa67a438921f894a7\",\"labels\":[],\"modified_at\":1773701317.444667,\"name\":null,\"options\":{},\"original_name\":\"Disk-total\",\"platform\":\"hassio\",\"translation_key\":\"disk_total\",\"unique_id\":\"home_assistant_host_disk_total\"}'"
+                }
+              }
+            },
+            "state": null
+          },
+          {
+            "entry": {
+              "entity_id": "sensor.home_assistant_host_disk_forbrug",
+              "unique_id": "home_assistant_host_disk_used",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": null,
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-16T22:48:37.444737+00:00",
+              "device_class": null,
+              "device_id": "ae57f760fd25e25ed77630f279975f90",
+              "domain": "sensor",
+              "disabled_by": "integration",
+              "entity_category": "diagnostic",
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "3ae9a4530792b920a58333ca0c215056",
+              "labels": [],
+              "modified_at": "2026-03-16T22:48:37.444775+00:00",
+              "name": null,
+              "object_id_base": "Disk-forbrug",
+              "options": {},
+              "original_device_class": "data_size",
+              "original_icon": null,
+              "original_name": "Disk-forbrug",
+              "suggested_object_id": null,
+              "supported_features": 0,
+              "translation_key": "disk_used",
+              "unit_of_measurement": "GB",
+              "_cache": {
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773701317.444737,
+                  "device_id": "ae57f760fd25e25ed77630f279975f90",
+                  "disabled_by": "integration",
+                  "entity_category": "diagnostic",
+                  "entity_id": "sensor.home_assistant_host_disk_forbrug",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "3ae9a4530792b920a58333ca0c215056",
+                  "labels": [],
+                  "modified_at": 1773701317.444775,
+                  "name": null,
+                  "options": {},
+                  "original_name": "Disk-forbrug",
+                  "platform": "hassio",
+                  "translation_key": "disk_used",
+                  "unique_id": "home_assistant_host_disk_used"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773701317.444737,\"device_id\":\"ae57f760fd25e25ed77630f279975f90\",\"disabled_by\":\"integration\",\"entity_category\":\"diagnostic\",\"entity_id\":\"sensor.home_assistant_host_disk_forbrug\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"3ae9a4530792b920a58333ca0c215056\",\"labels\":[],\"modified_at\":1773701317.444775,\"name\":null,\"options\":{},\"original_name\":\"Disk-forbrug\",\"platform\":\"hassio\",\"translation_key\":\"disk_used\",\"unique_id\":\"home_assistant_host_disk_used\"}'"
+                }
+              }
+            },
+            "state": null
+          },
+          {
+            "entry": {
+              "entity_id": "sensor.home_assistant_host_disk_fri",
+              "unique_id": "home_assistant_host_disk_free",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": null,
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-16T22:48:37.444843+00:00",
+              "device_class": null,
+              "device_id": "ae57f760fd25e25ed77630f279975f90",
+              "domain": "sensor",
+              "disabled_by": "integration",
+              "entity_category": "diagnostic",
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "30681edbc3038dac390728a3a08dbd19",
+              "labels": [],
+              "modified_at": "2026-03-16T22:48:37.444881+00:00",
+              "name": null,
+              "object_id_base": "Disk fri",
+              "options": {},
+              "original_device_class": "data_size",
+              "original_icon": null,
+              "original_name": "Disk fri",
+              "suggested_object_id": null,
+              "supported_features": 0,
+              "translation_key": "disk_free",
+              "unit_of_measurement": "GB",
+              "_cache": {
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773701317.444843,
+                  "device_id": "ae57f760fd25e25ed77630f279975f90",
+                  "disabled_by": "integration",
+                  "entity_category": "diagnostic",
+                  "entity_id": "sensor.home_assistant_host_disk_fri",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "30681edbc3038dac390728a3a08dbd19",
+                  "labels": [],
+                  "modified_at": 1773701317.444881,
+                  "name": null,
+                  "options": {},
+                  "original_name": "Disk fri",
+                  "platform": "hassio",
+                  "translation_key": "disk_free",
+                  "unique_id": "home_assistant_host_disk_free"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773701317.444843,\"device_id\":\"ae57f760fd25e25ed77630f279975f90\",\"disabled_by\":\"integration\",\"entity_category\":\"diagnostic\",\"entity_id\":\"sensor.home_assistant_host_disk_fri\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"30681edbc3038dac390728a3a08dbd19\",\"labels\":[],\"modified_at\":1773701317.444881,\"name\":null,\"options\":{},\"original_name\":\"Disk fri\",\"platform\":\"hassio\",\"translation_key\":\"disk_free\",\"unique_id\":\"home_assistant_host_disk_free\"}'"
+                }
+              }
+            },
+            "state": null
+          }
+        ]
+      },
+      {
+        "device": {
+          "area_id": null,
+          "config_entries": [
+            "01K9FTJYRWX4JB9DP47BQFWX9Y"
+          ],
+          "config_entries_subentries": {
+            "01K9FTJYRWX4JB9DP47BQFWX9Y": [
+              null
+            ]
+          },
+          "configuration_url": null,
+          "connections": [],
+          "created_at": "2026-03-16T22:48:37.439670+00:00",
+          "disabled_by": null,
+          "entry_type": "service",
+          "hw_version": null,
+          "id": "9f0b2e95f37c956710a5d5e40d682dc4",
+          "identifiers": [
+            [
+              "hassio",
+              "OS"
+            ]
+          ],
+          "labels": [],
+          "manufacturer": "Home Assistant",
+          "model": "Home Assistant Operating System",
+          "model_id": null,
+          "modified_at": "2026-03-16T22:48:37.439684+00:00",
+          "name_by_user": null,
+          "name": "Home Assistant Operating System",
+          "primary_config_entry": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+          "serial_number": null,
+          "_suggested_area": null,
+          "sw_version": "17.1",
+          "via_device_id": null,
+          "_cache": {
+            "json_repr": {
+              "__type": "<class 'bytes'>",
+              "repr": "b'{\"area_id\":null,\"configuration_url\":null,\"config_entries\":[\"01K9FTJYRWX4JB9DP47BQFWX9Y\"],\"config_entries_subentries\":{\"01K9FTJYRWX4JB9DP47BQFWX9Y\":[null]},\"connections\":[],\"created_at\":1773701317.43967,\"disabled_by\":null,\"entry_type\":\"service\",\"hw_version\":null,\"id\":\"9f0b2e95f37c956710a5d5e40d682dc4\",\"identifiers\":[[\"hassio\",\"OS\"]],\"labels\":[],\"manufacturer\":\"Home Assistant\",\"model\":\"Home Assistant Operating System\",\"model_id\":null,\"modified_at\":1773701317.439684,\"name_by_user\":null,\"name\":\"Home Assistant Operating System\",\"primary_config_entry\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"serial_number\":null,\"sw_version\":\"17.1\",\"via_device_id\":null}'"
+            }
+          }
+        },
+        "entities": [
+          {
+            "entry": {
+              "entity_id": "sensor.home_assistant_operating_system_version",
+              "unique_id": "home_assistant_os_version",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": null,
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-16T22:48:37.444961+00:00",
+              "device_class": null,
+              "device_id": "9f0b2e95f37c956710a5d5e40d682dc4",
+              "domain": "sensor",
+              "disabled_by": "integration",
+              "entity_category": null,
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "295e1578385fab46058e2a733fb2d043",
+              "labels": [],
+              "modified_at": "2026-03-16T22:48:37.444995+00:00",
+              "name": null,
+              "object_id_base": "Version",
+              "options": {},
+              "original_device_class": null,
+              "original_icon": null,
+              "original_name": "Version",
+              "suggested_object_id": null,
+              "supported_features": 0,
+              "translation_key": "version",
+              "unit_of_measurement": null,
+              "_cache": {
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773701317.444961,
+                  "device_id": "9f0b2e95f37c956710a5d5e40d682dc4",
+                  "disabled_by": "integration",
+                  "entity_category": null,
+                  "entity_id": "sensor.home_assistant_operating_system_version",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "295e1578385fab46058e2a733fb2d043",
+                  "labels": [],
+                  "modified_at": 1773701317.444995,
+                  "name": null,
+                  "options": {},
+                  "original_name": "Version",
+                  "platform": "hassio",
+                  "translation_key": "version",
+                  "unique_id": "home_assistant_os_version"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773701317.444961,\"device_id\":\"9f0b2e95f37c956710a5d5e40d682dc4\",\"disabled_by\":\"integration\",\"entity_category\":null,\"entity_id\":\"sensor.home_assistant_operating_system_version\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"295e1578385fab46058e2a733fb2d043\",\"labels\":[],\"modified_at\":1773701317.444995,\"name\":null,\"options\":{},\"original_name\":\"Version\",\"platform\":\"hassio\",\"translation_key\":\"version\",\"unique_id\":\"home_assistant_os_version\"}'"
+                }
+              }
+            },
+            "state": null
+          },
+          {
+            "entry": {
+              "entity_id": "sensor.home_assistant_operating_system_nyeste_version",
+              "unique_id": "home_assistant_os_version_latest",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": null,
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-16T22:48:37.445055+00:00",
+              "device_class": null,
+              "device_id": "9f0b2e95f37c956710a5d5e40d682dc4",
+              "domain": "sensor",
+              "disabled_by": "integration",
+              "entity_category": null,
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "576dd56df2ad4f46e8a1c26f550304fb",
+              "labels": [],
+              "modified_at": "2026-03-16T22:48:37.445089+00:00",
+              "name": null,
+              "object_id_base": "Nyeste version",
+              "options": {},
+              "original_device_class": null,
+              "original_icon": null,
+              "original_name": "Nyeste version",
+              "suggested_object_id": null,
+              "supported_features": 0,
+              "translation_key": "version_latest",
+              "unit_of_measurement": null,
+              "_cache": {
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773701317.445055,
+                  "device_id": "9f0b2e95f37c956710a5d5e40d682dc4",
+                  "disabled_by": "integration",
+                  "entity_category": null,
+                  "entity_id": "sensor.home_assistant_operating_system_nyeste_version",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "576dd56df2ad4f46e8a1c26f550304fb",
+                  "labels": [],
+                  "modified_at": 1773701317.445089,
+                  "name": null,
+                  "options": {},
+                  "original_name": "Nyeste version",
+                  "platform": "hassio",
+                  "translation_key": "version_latest",
+                  "unique_id": "home_assistant_os_version_latest"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773701317.445055,\"device_id\":\"9f0b2e95f37c956710a5d5e40d682dc4\",\"disabled_by\":\"integration\",\"entity_category\":null,\"entity_id\":\"sensor.home_assistant_operating_system_nyeste_version\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"576dd56df2ad4f46e8a1c26f550304fb\",\"labels\":[],\"modified_at\":1773701317.445089,\"name\":null,\"options\":{},\"original_name\":\"Nyeste version\",\"platform\":\"hassio\",\"translation_key\":\"version_latest\",\"unique_id\":\"home_assistant_os_version_latest\"}'"
+                }
+              }
+            },
+            "state": null
+          },
+          {
+            "entry": {
+              "entity_id": "update.home_assistant_operating_system_opdatering",
+              "unique_id": "home_assistant_os_version_latest",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": null,
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-16T22:48:37.446695+00:00",
+              "device_class": null,
+              "device_id": "9f0b2e95f37c956710a5d5e40d682dc4",
+              "domain": "update",
+              "disabled_by": null,
+              "entity_category": "config",
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "4300d4310e25202d01a572d61d52d566",
+              "labels": [],
+              "modified_at": "2026-03-16T22:48:37.446736+00:00",
+              "name": null,
+              "object_id_base": "Opdatering",
+              "options": {},
+              "original_device_class": null,
+              "original_icon": null,
+              "original_name": "Opdatering",
+              "suggested_object_id": null,
+              "supported_features": 11,
+              "translation_key": "update",
+              "unit_of_measurement": null,
+              "_cache": {
+                "display_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"ei\":\"update.home_assistant_operating_system_opdatering\",\"pl\":\"hassio\",\"lb\":[],\"di\":\"9f0b2e95f37c956710a5d5e40d682dc4\",\"tk\":\"update\",\"ec\":0,\"hn\":true,\"en\":\"Opdatering\"}'"
+                },
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773701317.446695,
+                  "device_id": "9f0b2e95f37c956710a5d5e40d682dc4",
+                  "disabled_by": null,
+                  "entity_category": "config",
+                  "entity_id": "update.home_assistant_operating_system_opdatering",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "4300d4310e25202d01a572d61d52d566",
+                  "labels": [],
+                  "modified_at": 1773701317.446736,
+                  "name": null,
+                  "options": {},
+                  "original_name": "Opdatering",
+                  "platform": "hassio",
+                  "translation_key": "update",
+                  "unique_id": "home_assistant_os_version_latest"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773701317.446695,\"device_id\":\"9f0b2e95f37c956710a5d5e40d682dc4\",\"disabled_by\":null,\"entity_category\":\"config\",\"entity_id\":\"update.home_assistant_operating_system_opdatering\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"4300d4310e25202d01a572d61d52d566\",\"labels\":[],\"modified_at\":1773701317.446736,\"name\":null,\"options\":{},\"original_name\":\"Opdatering\",\"platform\":\"hassio\",\"translation_key\":\"update\",\"unique_id\":\"home_assistant_os_version_latest\"}'"
+                }
+              }
+            },
+            "state": {
+              "entity_id": "update.home_assistant_operating_system_opdatering",
+              "state": "off",
+              "attributes": {
+                "auto_update": false,
+                "display_precision": 0,
+                "installed_version": "17.1",
+                "in_progress": false,
+                "latest_version": "17.1",
+                "release_summary": null,
+                "release_url": "https://github.com/home-assistant/operating-system/releases/tag/17.1",
+                "skipped_version": null,
+                "title": "Home Assistant Operating System",
+                "update_percentage": null,
+                "entity_picture": "/api/brands/integration/homeassistant/icon.png?placeholder=no",
+                "friendly_name": "Home Assistant Operating System Opdatering",
+                "supported_features": 11
+              },
+              "last_changed": "2026-03-17T06:43:15.559208+00:00",
+              "last_reported": "2026-03-17T06:48:15.310786+00:00",
+              "last_updated": "2026-03-17T06:43:15.559208+00:00"
+            }
+          }
+        ]
+      },
+      {
+        "device": {
+          "area_id": null,
+          "config_entries": [
+            "01K9FTJYRWX4JB9DP47BQFWX9Y"
+          ],
+          "config_entries_subentries": {
+            "01K9FTJYRWX4JB9DP47BQFWX9Y": [
+              null
+            ]
+          },
+          "configuration_url": "homeassistant://hassio/addon/core_deconz",
+          "connections": [],
+          "created_at": "2026-03-17T06:26:51.689485+00:00",
+          "disabled_by": null,
+          "entry_type": "service",
+          "hw_version": null,
+          "id": "694ee0e19fed5cfa71a98bc9beb5c89e",
+          "identifiers": [
+            [
+              "hassio",
+              "core_deconz"
+            ]
+          ],
+          "labels": [],
+          "manufacturer": "Official apps",
+          "model": "Home Assistant App",
+          "model_id": null,
+          "modified_at": "2026-03-17T06:26:51.689541+00:00",
+          "name_by_user": null,
+          "name": "deCONZ",
+          "primary_config_entry": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+          "serial_number": null,
+          "_suggested_area": null,
+          "sw_version": "8.7.0",
+          "via_device_id": null,
+          "_cache": {
+            "json_repr": {
+              "__type": "<class 'bytes'>",
+              "repr": "b'{\"area_id\":null,\"configuration_url\":\"homeassistant://hassio/addon/core_deconz\",\"config_entries\":[\"01K9FTJYRWX4JB9DP47BQFWX9Y\"],\"config_entries_subentries\":{\"01K9FTJYRWX4JB9DP47BQFWX9Y\":[null]},\"connections\":[],\"created_at\":1773728811.689485,\"disabled_by\":null,\"entry_type\":\"service\",\"hw_version\":null,\"id\":\"694ee0e19fed5cfa71a98bc9beb5c89e\",\"identifiers\":[[\"hassio\",\"core_deconz\"]],\"labels\":[],\"manufacturer\":\"Official apps\",\"model\":\"Home Assistant App\",\"model_id\":null,\"modified_at\":1773728811.689541,\"name_by_user\":null,\"name\":\"deCONZ\",\"primary_config_entry\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"serial_number\":null,\"sw_version\":\"8.7.0\",\"via_device_id\":null}'"
+            }
+          }
+        },
+        "entities": [
+          {
+            "entry": {
+              "entity_id": "binary_sensor.deconz_korer",
+              "unique_id": "core_deconz_state",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": null,
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-17T06:26:51.690999+00:00",
+              "device_class": null,
+              "device_id": "694ee0e19fed5cfa71a98bc9beb5c89e",
+              "domain": "binary_sensor",
+              "disabled_by": "integration",
+              "entity_category": null,
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "21f54c880d0ab73888bc2d673c219cd9",
+              "labels": [],
+              "modified_at": "2026-03-17T06:26:51.691104+00:00",
+              "name": null,
+              "object_id_base": "K\u00f8rer",
+              "options": {},
+              "original_device_class": "running",
+              "original_icon": null,
+              "original_name": "K\u00f8rer",
+              "suggested_object_id": null,
+              "supported_features": 0,
+              "translation_key": "state",
+              "unit_of_measurement": null,
+              "_cache": {
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773728811.690999,
+                  "device_id": "694ee0e19fed5cfa71a98bc9beb5c89e",
+                  "disabled_by": "integration",
+                  "entity_category": null,
+                  "entity_id": "binary_sensor.deconz_korer",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "21f54c880d0ab73888bc2d673c219cd9",
+                  "labels": [],
+                  "modified_at": 1773728811.691104,
+                  "name": null,
+                  "options": {},
+                  "original_name": "K\u00f8rer",
+                  "platform": "hassio",
+                  "translation_key": "state",
+                  "unique_id": "core_deconz_state"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773728811.690999,\"device_id\":\"694ee0e19fed5cfa71a98bc9beb5c89e\",\"disabled_by\":\"integration\",\"entity_category\":null,\"entity_id\":\"binary_sensor.deconz_korer\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"21f54c880d0ab73888bc2d673c219cd9\",\"labels\":[],\"modified_at\":1773728811.691104,\"name\":null,\"options\":{},\"original_name\":\"K\\xc3\\xb8rer\",\"platform\":\"hassio\",\"translation_key\":\"state\",\"unique_id\":\"core_deconz_state\"}'"
+                }
+              }
+            },
+            "state": null
+          },
+          {
+            "entry": {
+              "entity_id": "sensor.deconz_version",
+              "unique_id": "core_deconz_version",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": null,
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-17T06:26:51.692798+00:00",
+              "device_class": null,
+              "device_id": "694ee0e19fed5cfa71a98bc9beb5c89e",
+              "domain": "sensor",
+              "disabled_by": "integration",
+              "entity_category": null,
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "3fcf97fe4e9f674a298195f69ae78350",
+              "labels": [],
+              "modified_at": "2026-03-17T06:26:51.692871+00:00",
+              "name": null,
+              "object_id_base": "Version",
+              "options": {},
+              "original_device_class": null,
+              "original_icon": null,
+              "original_name": "Version",
+              "suggested_object_id": null,
+              "supported_features": 0,
+              "translation_key": "version",
+              "unit_of_measurement": null,
+              "_cache": {
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773728811.692798,
+                  "device_id": "694ee0e19fed5cfa71a98bc9beb5c89e",
+                  "disabled_by": "integration",
+                  "entity_category": null,
+                  "entity_id": "sensor.deconz_version",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "3fcf97fe4e9f674a298195f69ae78350",
+                  "labels": [],
+                  "modified_at": 1773728811.692871,
+                  "name": null,
+                  "options": {},
+                  "original_name": "Version",
+                  "platform": "hassio",
+                  "translation_key": "version",
+                  "unique_id": "core_deconz_version"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773728811.692798,\"device_id\":\"694ee0e19fed5cfa71a98bc9beb5c89e\",\"disabled_by\":\"integration\",\"entity_category\":null,\"entity_id\":\"sensor.deconz_version\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"3fcf97fe4e9f674a298195f69ae78350\",\"labels\":[],\"modified_at\":1773728811.692871,\"name\":null,\"options\":{},\"original_name\":\"Version\",\"platform\":\"hassio\",\"translation_key\":\"version\",\"unique_id\":\"core_deconz_version\"}'"
+                }
+              }
+            },
+            "state": null
+          },
+          {
+            "entry": {
+              "entity_id": "sensor.deconz_nyeste_version",
+              "unique_id": "core_deconz_version_latest",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": null,
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-17T06:26:51.693201+00:00",
+              "device_class": null,
+              "device_id": "694ee0e19fed5cfa71a98bc9beb5c89e",
+              "domain": "sensor",
+              "disabled_by": "integration",
+              "entity_category": null,
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "e9ea53be456460b64f35a51f8118ca97",
+              "labels": [],
+              "modified_at": "2026-03-17T06:26:51.693266+00:00",
+              "name": null,
+              "object_id_base": "Nyeste version",
+              "options": {},
+              "original_device_class": null,
+              "original_icon": null,
+              "original_name": "Nyeste version",
+              "suggested_object_id": null,
+              "supported_features": 0,
+              "translation_key": "version_latest",
+              "unit_of_measurement": null,
+              "_cache": {
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773728811.693201,
+                  "device_id": "694ee0e19fed5cfa71a98bc9beb5c89e",
+                  "disabled_by": "integration",
+                  "entity_category": null,
+                  "entity_id": "sensor.deconz_nyeste_version",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "e9ea53be456460b64f35a51f8118ca97",
+                  "labels": [],
+                  "modified_at": 1773728811.693266,
+                  "name": null,
+                  "options": {},
+                  "original_name": "Nyeste version",
+                  "platform": "hassio",
+                  "translation_key": "version_latest",
+                  "unique_id": "core_deconz_version_latest"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773728811.693201,\"device_id\":\"694ee0e19fed5cfa71a98bc9beb5c89e\",\"disabled_by\":\"integration\",\"entity_category\":null,\"entity_id\":\"sensor.deconz_nyeste_version\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"e9ea53be456460b64f35a51f8118ca97\",\"labels\":[],\"modified_at\":1773728811.693266,\"name\":null,\"options\":{},\"original_name\":\"Nyeste version\",\"platform\":\"hassio\",\"translation_key\":\"version_latest\",\"unique_id\":\"core_deconz_version_latest\"}'"
+                }
+              }
+            },
+            "state": null
+          },
+          {
+            "entry": {
+              "entity_id": "sensor.deconz_cpu_procent",
+              "unique_id": "core_deconz_cpu_percent",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": {
+                "state_class": "measurement"
+              },
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-17T06:26:51.693642+00:00",
+              "device_class": null,
+              "device_id": "694ee0e19fed5cfa71a98bc9beb5c89e",
+              "domain": "sensor",
+              "disabled_by": "integration",
+              "entity_category": null,
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "d96efdef9755e829a9c87a8886b0740e",
+              "labels": [],
+              "modified_at": "2026-03-17T06:26:51.693708+00:00",
+              "name": null,
+              "object_id_base": "CPU-procent",
+              "options": {},
+              "original_device_class": null,
+              "original_icon": null,
+              "original_name": "CPU-procent",
+              "suggested_object_id": null,
+              "supported_features": 0,
+              "translation_key": "cpu_percent",
+              "unit_of_measurement": "%",
+              "_cache": {
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773728811.693642,
+                  "device_id": "694ee0e19fed5cfa71a98bc9beb5c89e",
+                  "disabled_by": "integration",
+                  "entity_category": null,
+                  "entity_id": "sensor.deconz_cpu_procent",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "d96efdef9755e829a9c87a8886b0740e",
+                  "labels": [],
+                  "modified_at": 1773728811.693708,
+                  "name": null,
+                  "options": {},
+                  "original_name": "CPU-procent",
+                  "platform": "hassio",
+                  "translation_key": "cpu_percent",
+                  "unique_id": "core_deconz_cpu_percent"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773728811.693642,\"device_id\":\"694ee0e19fed5cfa71a98bc9beb5c89e\",\"disabled_by\":\"integration\",\"entity_category\":null,\"entity_id\":\"sensor.deconz_cpu_procent\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"d96efdef9755e829a9c87a8886b0740e\",\"labels\":[],\"modified_at\":1773728811.693708,\"name\":null,\"options\":{},\"original_name\":\"CPU-procent\",\"platform\":\"hassio\",\"translation_key\":\"cpu_percent\",\"unique_id\":\"core_deconz_cpu_percent\"}'"
+                }
+              }
+            },
+            "state": null
+          },
+          {
+            "entry": {
+              "entity_id": "sensor.deconz_hukommelsesprocent",
+              "unique_id": "core_deconz_memory_percent",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": {
+                "state_class": "measurement"
+              },
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-17T06:26:51.694020+00:00",
+              "device_class": null,
+              "device_id": "694ee0e19fed5cfa71a98bc9beb5c89e",
+              "domain": "sensor",
+              "disabled_by": "integration",
+              "entity_category": null,
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "34a3b77261561dbd9e3e1b38e260aa01",
+              "labels": [],
+              "modified_at": "2026-03-17T06:26:51.694083+00:00",
+              "name": null,
+              "object_id_base": "Hukommelsesprocent",
+              "options": {},
+              "original_device_class": null,
+              "original_icon": null,
+              "original_name": "Hukommelsesprocent",
+              "suggested_object_id": null,
+              "supported_features": 0,
+              "translation_key": "memory_percent",
+              "unit_of_measurement": "%",
+              "_cache": {
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773728811.69402,
+                  "device_id": "694ee0e19fed5cfa71a98bc9beb5c89e",
+                  "disabled_by": "integration",
+                  "entity_category": null,
+                  "entity_id": "sensor.deconz_hukommelsesprocent",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "34a3b77261561dbd9e3e1b38e260aa01",
+                  "labels": [],
+                  "modified_at": 1773728811.694083,
+                  "name": null,
+                  "options": {},
+                  "original_name": "Hukommelsesprocent",
+                  "platform": "hassio",
+                  "translation_key": "memory_percent",
+                  "unique_id": "core_deconz_memory_percent"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773728811.69402,\"device_id\":\"694ee0e19fed5cfa71a98bc9beb5c89e\",\"disabled_by\":\"integration\",\"entity_category\":null,\"entity_id\":\"sensor.deconz_hukommelsesprocent\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"34a3b77261561dbd9e3e1b38e260aa01\",\"labels\":[],\"modified_at\":1773728811.694083,\"name\":null,\"options\":{},\"original_name\":\"Hukommelsesprocent\",\"platform\":\"hassio\",\"translation_key\":\"memory_percent\",\"unique_id\":\"core_deconz_memory_percent\"}'"
+                }
+              }
+            },
+            "state": null
+          },
+          {
+            "entry": {
+              "entity_id": "switch.deconz",
+              "unique_id": "core_deconz_state",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": null,
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-17T06:26:51.697292+00:00",
+              "device_class": null,
+              "device_id": "694ee0e19fed5cfa71a98bc9beb5c89e",
+              "domain": "switch",
+              "disabled_by": "integration",
+              "entity_category": null,
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "832bde415346b89b9f9dc272ccb0c8a9",
+              "labels": [],
+              "modified_at": "2026-03-17T06:26:51.697352+00:00",
+              "name": null,
+              "object_id_base": null,
+              "options": {},
+              "original_device_class": null,
+              "original_icon": "mdi:puzzle",
+              "original_name": null,
+              "suggested_object_id": null,
+              "supported_features": 0,
+              "translation_key": null,
+              "unit_of_measurement": null,
+              "_cache": {
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773728811.697292,
+                  "device_id": "694ee0e19fed5cfa71a98bc9beb5c89e",
+                  "disabled_by": "integration",
+                  "entity_category": null,
+                  "entity_id": "switch.deconz",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "832bde415346b89b9f9dc272ccb0c8a9",
+                  "labels": [],
+                  "modified_at": 1773728811.697352,
+                  "name": null,
+                  "options": {},
+                  "original_name": null,
+                  "platform": "hassio",
+                  "translation_key": null,
+                  "unique_id": "core_deconz_state"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773728811.697292,\"device_id\":\"694ee0e19fed5cfa71a98bc9beb5c89e\",\"disabled_by\":\"integration\",\"entity_category\":null,\"entity_id\":\"switch.deconz\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"832bde415346b89b9f9dc272ccb0c8a9\",\"labels\":[],\"modified_at\":1773728811.697352,\"name\":null,\"options\":{},\"original_name\":null,\"platform\":\"hassio\",\"translation_key\":null,\"unique_id\":\"core_deconz_state\"}'"
+                }
+              }
+            },
+            "state": null
+          },
+          {
+            "entry": {
+              "entity_id": "update.deconz_opdatering",
+              "unique_id": "core_deconz_version_latest",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": null,
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-17T06:26:51.699442+00:00",
+              "device_class": null,
+              "device_id": "694ee0e19fed5cfa71a98bc9beb5c89e",
+              "domain": "update",
+              "disabled_by": null,
+              "entity_category": "config",
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "2c235163cf15527c7e92f31ec5e4a87f",
+              "labels": [],
+              "modified_at": "2026-03-17T06:26:51.699508+00:00",
+              "name": null,
+              "object_id_base": "Opdatering",
+              "options": {},
+              "original_device_class": null,
+              "original_icon": null,
+              "original_name": "Opdatering",
+              "suggested_object_id": null,
+              "supported_features": 29,
+              "translation_key": "update",
+              "unit_of_measurement": null,
+              "_cache": {
+                "display_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"ei\":\"update.deconz_opdatering\",\"pl\":\"hassio\",\"lb\":[],\"di\":\"694ee0e19fed5cfa71a98bc9beb5c89e\",\"tk\":\"update\",\"ec\":0,\"hn\":true,\"en\":\"Opdatering\"}'"
+                },
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773728811.699442,
+                  "device_id": "694ee0e19fed5cfa71a98bc9beb5c89e",
+                  "disabled_by": null,
+                  "entity_category": "config",
+                  "entity_id": "update.deconz_opdatering",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "2c235163cf15527c7e92f31ec5e4a87f",
+                  "labels": [],
+                  "modified_at": 1773728811.699508,
+                  "name": null,
+                  "options": {},
+                  "original_name": "Opdatering",
+                  "platform": "hassio",
+                  "translation_key": "update",
+                  "unique_id": "core_deconz_version_latest"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773728811.699442,\"device_id\":\"694ee0e19fed5cfa71a98bc9beb5c89e\",\"disabled_by\":null,\"entity_category\":\"config\",\"entity_id\":\"update.deconz_opdatering\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"2c235163cf15527c7e92f31ec5e4a87f\",\"labels\":[],\"modified_at\":1773728811.699508,\"name\":null,\"options\":{},\"original_name\":\"Opdatering\",\"platform\":\"hassio\",\"translation_key\":\"update\",\"unique_id\":\"core_deconz_version_latest\"}'"
+                }
+              }
+            },
+            "state": {
+              "entity_id": "update.deconz_opdatering",
+              "state": "off",
+              "attributes": {
+                "auto_update": true,
+                "display_precision": 0,
+                "installed_version": "8.7.0",
+                "in_progress": false,
+                "latest_version": "8.7.0",
+                "release_summary": null,
+                "release_url": null,
+                "skipped_version": null,
+                "title": "deCONZ",
+                "update_percentage": null,
+                "entity_picture": "/api/hassio/addons/core_deconz/icon",
+                "friendly_name": "deCONZ Opdatering",
+                "supported_features": 29
+              },
+              "last_changed": "2026-03-17T06:43:15.558167+00:00",
+              "last_reported": "2026-03-17T06:48:15.310674+00:00",
+              "last_updated": "2026-03-17T06:43:15.558167+00:00"
+            }
+          }
+        ]
+      },
+      {
+        "device": {
+          "area_id": null,
+          "config_entries": [
+            "01K9FTJYRWX4JB9DP47BQFWX9Y"
+          ],
+          "config_entries_subentries": {
+            "01K9FTJYRWX4JB9DP47BQFWX9Y": [
+              null
+            ]
+          },
+          "configuration_url": "homeassistant://hassio/addon/core_zwave_js",
+          "connections": [],
+          "created_at": "2026-03-17T06:26:51.690011+00:00",
+          "disabled_by": null,
+          "entry_type": "service",
+          "hw_version": null,
+          "id": "de66f57e39f51188dfed58126c375cfc",
+          "identifiers": [
+            [
+              "hassio",
+              "core_zwave_js"
+            ]
+          ],
+          "labels": [],
+          "manufacturer": "Official apps",
+          "model": "Home Assistant App",
+          "model_id": null,
+          "modified_at": "2026-03-17T06:26:51.690046+00:00",
+          "name_by_user": null,
+          "name": "Z-Wave JS",
+          "primary_config_entry": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+          "serial_number": null,
+          "_suggested_area": null,
+          "sw_version": "1.0.1",
+          "via_device_id": null,
+          "_cache": {
+            "json_repr": {
+              "__type": "<class 'bytes'>",
+              "repr": "b'{\"area_id\":null,\"configuration_url\":\"homeassistant://hassio/addon/core_zwave_js\",\"config_entries\":[\"01K9FTJYRWX4JB9DP47BQFWX9Y\"],\"config_entries_subentries\":{\"01K9FTJYRWX4JB9DP47BQFWX9Y\":[null]},\"connections\":[],\"created_at\":1773728811.690011,\"disabled_by\":null,\"entry_type\":\"service\",\"hw_version\":null,\"id\":\"de66f57e39f51188dfed58126c375cfc\",\"identifiers\":[[\"hassio\",\"core_zwave_js\"]],\"labels\":[],\"manufacturer\":\"Official apps\",\"model\":\"Home Assistant App\",\"model_id\":null,\"modified_at\":1773728811.690046,\"name_by_user\":null,\"name\":\"Z-Wave JS\",\"primary_config_entry\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"serial_number\":null,\"sw_version\":\"1.0.1\",\"via_device_id\":null}'"
+            }
+          }
+        },
+        "entities": [
+          {
+            "entry": {
+              "entity_id": "binary_sensor.z_wave_js_korer",
+              "unique_id": "core_zwave_js_state",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": null,
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-17T06:26:51.691554+00:00",
+              "device_class": null,
+              "device_id": "de66f57e39f51188dfed58126c375cfc",
+              "domain": "binary_sensor",
+              "disabled_by": "integration",
+              "entity_category": null,
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "8d5dce48f39031b109db129b9fc79f0e",
+              "labels": [],
+              "modified_at": "2026-03-17T06:26:51.691623+00:00",
+              "name": null,
+              "object_id_base": "K\u00f8rer",
+              "options": {},
+              "original_device_class": "running",
+              "original_icon": null,
+              "original_name": "K\u00f8rer",
+              "suggested_object_id": null,
+              "supported_features": 0,
+              "translation_key": "state",
+              "unit_of_measurement": null,
+              "_cache": {
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773728811.691554,
+                  "device_id": "de66f57e39f51188dfed58126c375cfc",
+                  "disabled_by": "integration",
+                  "entity_category": null,
+                  "entity_id": "binary_sensor.z_wave_js_korer",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "8d5dce48f39031b109db129b9fc79f0e",
+                  "labels": [],
+                  "modified_at": 1773728811.691623,
+                  "name": null,
+                  "options": {},
+                  "original_name": "K\u00f8rer",
+                  "platform": "hassio",
+                  "translation_key": "state",
+                  "unique_id": "core_zwave_js_state"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773728811.691554,\"device_id\":\"de66f57e39f51188dfed58126c375cfc\",\"disabled_by\":\"integration\",\"entity_category\":null,\"entity_id\":\"binary_sensor.z_wave_js_korer\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"8d5dce48f39031b109db129b9fc79f0e\",\"labels\":[],\"modified_at\":1773728811.691623,\"name\":null,\"options\":{},\"original_name\":\"K\\xc3\\xb8rer\",\"platform\":\"hassio\",\"translation_key\":\"state\",\"unique_id\":\"core_zwave_js_state\"}'"
+                }
+              }
+            },
+            "state": null
+          },
+          {
+            "entry": {
+              "entity_id": "sensor.z_wave_js_version",
+              "unique_id": "core_zwave_js_version",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": null,
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-17T06:26:51.694381+00:00",
+              "device_class": null,
+              "device_id": "de66f57e39f51188dfed58126c375cfc",
+              "domain": "sensor",
+              "disabled_by": "integration",
+              "entity_category": null,
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "42cb441055011a8867558e08f150b7b1",
+              "labels": [],
+              "modified_at": "2026-03-17T06:26:51.694441+00:00",
+              "name": null,
+              "object_id_base": "Version",
+              "options": {},
+              "original_device_class": null,
+              "original_icon": null,
+              "original_name": "Version",
+              "suggested_object_id": null,
+              "supported_features": 0,
+              "translation_key": "version",
+              "unit_of_measurement": null,
+              "_cache": {
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773728811.694381,
+                  "device_id": "de66f57e39f51188dfed58126c375cfc",
+                  "disabled_by": "integration",
+                  "entity_category": null,
+                  "entity_id": "sensor.z_wave_js_version",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "42cb441055011a8867558e08f150b7b1",
+                  "labels": [],
+                  "modified_at": 1773728811.694441,
+                  "name": null,
+                  "options": {},
+                  "original_name": "Version",
+                  "platform": "hassio",
+                  "translation_key": "version",
+                  "unique_id": "core_zwave_js_version"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773728811.694381,\"device_id\":\"de66f57e39f51188dfed58126c375cfc\",\"disabled_by\":\"integration\",\"entity_category\":null,\"entity_id\":\"sensor.z_wave_js_version\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"42cb441055011a8867558e08f150b7b1\",\"labels\":[],\"modified_at\":1773728811.694441,\"name\":null,\"options\":{},\"original_name\":\"Version\",\"platform\":\"hassio\",\"translation_key\":\"version\",\"unique_id\":\"core_zwave_js_version\"}'"
+                }
+              }
+            },
+            "state": null
+          },
+          {
+            "entry": {
+              "entity_id": "sensor.z_wave_js_nyeste_version",
+              "unique_id": "core_zwave_js_version_latest",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": null,
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-17T06:26:51.694742+00:00",
+              "device_class": null,
+              "device_id": "de66f57e39f51188dfed58126c375cfc",
+              "domain": "sensor",
+              "disabled_by": "integration",
+              "entity_category": null,
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "29ddc271a33e0fb018445cb423866957",
+              "labels": [],
+              "modified_at": "2026-03-17T06:26:51.694804+00:00",
+              "name": null,
+              "object_id_base": "Nyeste version",
+              "options": {},
+              "original_device_class": null,
+              "original_icon": null,
+              "original_name": "Nyeste version",
+              "suggested_object_id": null,
+              "supported_features": 0,
+              "translation_key": "version_latest",
+              "unit_of_measurement": null,
+              "_cache": {
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773728811.694742,
+                  "device_id": "de66f57e39f51188dfed58126c375cfc",
+                  "disabled_by": "integration",
+                  "entity_category": null,
+                  "entity_id": "sensor.z_wave_js_nyeste_version",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "29ddc271a33e0fb018445cb423866957",
+                  "labels": [],
+                  "modified_at": 1773728811.694804,
+                  "name": null,
+                  "options": {},
+                  "original_name": "Nyeste version",
+                  "platform": "hassio",
+                  "translation_key": "version_latest",
+                  "unique_id": "core_zwave_js_version_latest"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773728811.694742,\"device_id\":\"de66f57e39f51188dfed58126c375cfc\",\"disabled_by\":\"integration\",\"entity_category\":null,\"entity_id\":\"sensor.z_wave_js_nyeste_version\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"29ddc271a33e0fb018445cb423866957\",\"labels\":[],\"modified_at\":1773728811.694804,\"name\":null,\"options\":{},\"original_name\":\"Nyeste version\",\"platform\":\"hassio\",\"translation_key\":\"version_latest\",\"unique_id\":\"core_zwave_js_version_latest\"}'"
+                }
+              }
+            },
+            "state": null
+          },
+          {
+            "entry": {
+              "entity_id": "sensor.z_wave_js_cpu_procent",
+              "unique_id": "core_zwave_js_cpu_percent",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": {
+                "state_class": "measurement"
+              },
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-17T06:26:51.695104+00:00",
+              "device_class": null,
+              "device_id": "de66f57e39f51188dfed58126c375cfc",
+              "domain": "sensor",
+              "disabled_by": "integration",
+              "entity_category": null,
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "18f77a35e43febf3d45f3b7ee215b2fc",
+              "labels": [],
+              "modified_at": "2026-03-17T06:26:51.695170+00:00",
+              "name": null,
+              "object_id_base": "CPU-procent",
+              "options": {},
+              "original_device_class": null,
+              "original_icon": null,
+              "original_name": "CPU-procent",
+              "suggested_object_id": null,
+              "supported_features": 0,
+              "translation_key": "cpu_percent",
+              "unit_of_measurement": "%",
+              "_cache": {
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773728811.695104,
+                  "device_id": "de66f57e39f51188dfed58126c375cfc",
+                  "disabled_by": "integration",
+                  "entity_category": null,
+                  "entity_id": "sensor.z_wave_js_cpu_procent",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "18f77a35e43febf3d45f3b7ee215b2fc",
+                  "labels": [],
+                  "modified_at": 1773728811.69517,
+                  "name": null,
+                  "options": {},
+                  "original_name": "CPU-procent",
+                  "platform": "hassio",
+                  "translation_key": "cpu_percent",
+                  "unique_id": "core_zwave_js_cpu_percent"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773728811.695104,\"device_id\":\"de66f57e39f51188dfed58126c375cfc\",\"disabled_by\":\"integration\",\"entity_category\":null,\"entity_id\":\"sensor.z_wave_js_cpu_procent\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"18f77a35e43febf3d45f3b7ee215b2fc\",\"labels\":[],\"modified_at\":1773728811.69517,\"name\":null,\"options\":{},\"original_name\":\"CPU-procent\",\"platform\":\"hassio\",\"translation_key\":\"cpu_percent\",\"unique_id\":\"core_zwave_js_cpu_percent\"}'"
+                }
+              }
+            },
+            "state": null
+          },
+          {
+            "entry": {
+              "entity_id": "sensor.z_wave_js_hukommelsesprocent",
+              "unique_id": "core_zwave_js_memory_percent",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": {
+                "state_class": "measurement"
+              },
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-17T06:26:51.695462+00:00",
+              "device_class": null,
+              "device_id": "de66f57e39f51188dfed58126c375cfc",
+              "domain": "sensor",
+              "disabled_by": "integration",
+              "entity_category": null,
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "c564c77f2edaea6a8d986c05a9c051d1",
+              "labels": [],
+              "modified_at": "2026-03-17T06:26:51.695523+00:00",
+              "name": null,
+              "object_id_base": "Hukommelsesprocent",
+              "options": {},
+              "original_device_class": null,
+              "original_icon": null,
+              "original_name": "Hukommelsesprocent",
+              "suggested_object_id": null,
+              "supported_features": 0,
+              "translation_key": "memory_percent",
+              "unit_of_measurement": "%",
+              "_cache": {
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773728811.695462,
+                  "device_id": "de66f57e39f51188dfed58126c375cfc",
+                  "disabled_by": "integration",
+                  "entity_category": null,
+                  "entity_id": "sensor.z_wave_js_hukommelsesprocent",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "c564c77f2edaea6a8d986c05a9c051d1",
+                  "labels": [],
+                  "modified_at": 1773728811.695523,
+                  "name": null,
+                  "options": {},
+                  "original_name": "Hukommelsesprocent",
+                  "platform": "hassio",
+                  "translation_key": "memory_percent",
+                  "unique_id": "core_zwave_js_memory_percent"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773728811.695462,\"device_id\":\"de66f57e39f51188dfed58126c375cfc\",\"disabled_by\":\"integration\",\"entity_category\":null,\"entity_id\":\"sensor.z_wave_js_hukommelsesprocent\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"c564c77f2edaea6a8d986c05a9c051d1\",\"labels\":[],\"modified_at\":1773728811.695523,\"name\":null,\"options\":{},\"original_name\":\"Hukommelsesprocent\",\"platform\":\"hassio\",\"translation_key\":\"memory_percent\",\"unique_id\":\"core_zwave_js_memory_percent\"}'"
+                }
+              }
+            },
+            "state": null
+          },
+          {
+            "entry": {
+              "entity_id": "switch.z_wave_js",
+              "unique_id": "core_zwave_js_state",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": null,
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-17T06:26:51.697689+00:00",
+              "device_class": null,
+              "device_id": "de66f57e39f51188dfed58126c375cfc",
+              "domain": "switch",
+              "disabled_by": "integration",
+              "entity_category": null,
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "4717aafd0262dcba155a83fcf3f4d274",
+              "labels": [],
+              "modified_at": "2026-03-17T06:26:51.697746+00:00",
+              "name": null,
+              "object_id_base": null,
+              "options": {},
+              "original_device_class": null,
+              "original_icon": "mdi:puzzle",
+              "original_name": null,
+              "suggested_object_id": null,
+              "supported_features": 0,
+              "translation_key": null,
+              "unit_of_measurement": null,
+              "_cache": {
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773728811.697689,
+                  "device_id": "de66f57e39f51188dfed58126c375cfc",
+                  "disabled_by": "integration",
+                  "entity_category": null,
+                  "entity_id": "switch.z_wave_js",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "4717aafd0262dcba155a83fcf3f4d274",
+                  "labels": [],
+                  "modified_at": 1773728811.697746,
+                  "name": null,
+                  "options": {},
+                  "original_name": null,
+                  "platform": "hassio",
+                  "translation_key": null,
+                  "unique_id": "core_zwave_js_state"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773728811.697689,\"device_id\":\"de66f57e39f51188dfed58126c375cfc\",\"disabled_by\":\"integration\",\"entity_category\":null,\"entity_id\":\"switch.z_wave_js\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"4717aafd0262dcba155a83fcf3f4d274\",\"labels\":[],\"modified_at\":1773728811.697746,\"name\":null,\"options\":{},\"original_name\":null,\"platform\":\"hassio\",\"translation_key\":null,\"unique_id\":\"core_zwave_js_state\"}'"
+                }
+              }
+            },
+            "state": null
+          },
+          {
+            "entry": {
+              "entity_id": "update.z_wave_js_opdatering",
+              "unique_id": "core_zwave_js_version_latest",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": null,
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-17T06:26:51.700003+00:00",
+              "device_class": null,
+              "device_id": "de66f57e39f51188dfed58126c375cfc",
+              "domain": "update",
+              "disabled_by": null,
+              "entity_category": "config",
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "6d91e0715cc41a6593f44fba6393ec6e",
+              "labels": [],
+              "modified_at": "2026-03-17T06:26:51.700067+00:00",
+              "name": null,
+              "object_id_base": "Opdatering",
+              "options": {},
+              "original_device_class": null,
+              "original_icon": null,
+              "original_name": "Opdatering",
+              "suggested_object_id": null,
+              "supported_features": 29,
+              "translation_key": "update",
+              "unit_of_measurement": null,
+              "_cache": {
+                "display_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"ei\":\"update.z_wave_js_opdatering\",\"pl\":\"hassio\",\"lb\":[],\"di\":\"de66f57e39f51188dfed58126c375cfc\",\"tk\":\"update\",\"ec\":0,\"hn\":true,\"en\":\"Opdatering\"}'"
+                },
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773728811.700003,
+                  "device_id": "de66f57e39f51188dfed58126c375cfc",
+                  "disabled_by": null,
+                  "entity_category": "config",
+                  "entity_id": "update.z_wave_js_opdatering",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "6d91e0715cc41a6593f44fba6393ec6e",
+                  "labels": [],
+                  "modified_at": 1773728811.700067,
+                  "name": null,
+                  "options": {},
+                  "original_name": "Opdatering",
+                  "platform": "hassio",
+                  "translation_key": "update",
+                  "unique_id": "core_zwave_js_version_latest"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773728811.700003,\"device_id\":\"de66f57e39f51188dfed58126c375cfc\",\"disabled_by\":null,\"entity_category\":\"config\",\"entity_id\":\"update.z_wave_js_opdatering\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"6d91e0715cc41a6593f44fba6393ec6e\",\"labels\":[],\"modified_at\":1773728811.700067,\"name\":null,\"options\":{},\"original_name\":\"Opdatering\",\"platform\":\"hassio\",\"translation_key\":\"update\",\"unique_id\":\"core_zwave_js_version_latest\"}'"
+                }
+              }
+            },
+            "state": {
+              "entity_id": "update.z_wave_js_opdatering",
+              "state": "off",
+              "attributes": {
+                "auto_update": false,
+                "display_precision": 0,
+                "installed_version": "1.0.1",
+                "in_progress": false,
+                "latest_version": "1.0.1",
+                "release_summary": null,
+                "release_url": null,
+                "skipped_version": null,
+                "title": "Z-Wave JS",
+                "update_percentage": null,
+                "entity_picture": "/api/hassio/addons/core_zwave_js/icon",
+                "friendly_name": "Z-Wave JS Opdatering",
+                "supported_features": 29
+              },
+              "last_changed": "2026-03-17T06:43:15.558384+00:00",
+              "last_reported": "2026-03-17T06:48:15.310702+00:00",
+              "last_updated": "2026-03-17T06:43:15.558384+00:00"
+            }
+          }
+        ]
+      },
+      {
+        "device": {
+          "area_id": null,
+          "config_entries": [
+            "01K9FTJYRWX4JB9DP47BQFWX9Y"
+          ],
+          "config_entries_subentries": {
+            "01K9FTJYRWX4JB9DP47BQFWX9Y": [
+              null
+            ]
+          },
+          "configuration_url": "homeassistant://hassio/addon/core_ssh",
+          "connections": [],
+          "created_at": "2026-03-17T06:43:15.550080+00:00",
+          "disabled_by": null,
+          "entry_type": "service",
+          "hw_version": null,
+          "id": "ad8ea64b46f8edd359d62728f47bc93f",
+          "identifiers": [
+            [
+              "hassio",
+              "core_ssh"
+            ]
+          ],
+          "labels": [],
+          "manufacturer": "Official apps",
+          "model": "Home Assistant App",
+          "model_id": null,
+          "modified_at": "2026-03-17T06:43:15.550132+00:00",
+          "name_by_user": null,
+          "name": "Terminal & SSH",
+          "primary_config_entry": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+          "serial_number": null,
+          "_suggested_area": null,
+          "sw_version": "10.0.2",
+          "via_device_id": null,
+          "_cache": {
+            "json_repr": {
+              "__type": "<class 'bytes'>",
+              "repr": "b'{\"area_id\":null,\"configuration_url\":\"homeassistant://hassio/addon/core_ssh\",\"config_entries\":[\"01K9FTJYRWX4JB9DP47BQFWX9Y\"],\"config_entries_subentries\":{\"01K9FTJYRWX4JB9DP47BQFWX9Y\":[null]},\"connections\":[],\"created_at\":1773729795.55008,\"disabled_by\":null,\"entry_type\":\"service\",\"hw_version\":null,\"id\":\"ad8ea64b46f8edd359d62728f47bc93f\",\"identifiers\":[[\"hassio\",\"core_ssh\"]],\"labels\":[],\"manufacturer\":\"Official apps\",\"model\":\"Home Assistant App\",\"model_id\":null,\"modified_at\":1773729795.550132,\"name_by_user\":null,\"name\":\"Terminal & SSH\",\"primary_config_entry\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"serial_number\":null,\"sw_version\":\"10.0.2\",\"via_device_id\":null}'"
+            }
+          }
+        },
+        "entities": [
+          {
+            "entry": {
+              "entity_id": "binary_sensor.terminal_ssh_korer",
+              "unique_id": "core_ssh_state",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": null,
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-17T06:43:15.551386+00:00",
+              "device_class": null,
+              "device_id": "ad8ea64b46f8edd359d62728f47bc93f",
+              "domain": "binary_sensor",
+              "disabled_by": "integration",
+              "entity_category": null,
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "7035dce385963dc1c4a865aa097d0a08",
+              "labels": [],
+              "modified_at": "2026-03-17T06:43:15.551504+00:00",
+              "name": null,
+              "object_id_base": "K\u00f8rer",
+              "options": {},
+              "original_device_class": "running",
+              "original_icon": null,
+              "original_name": "K\u00f8rer",
+              "suggested_object_id": null,
+              "supported_features": 0,
+              "translation_key": "state",
+              "unit_of_measurement": null,
+              "_cache": {
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773729795.551386,
+                  "device_id": "ad8ea64b46f8edd359d62728f47bc93f",
+                  "disabled_by": "integration",
+                  "entity_category": null,
+                  "entity_id": "binary_sensor.terminal_ssh_korer",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "7035dce385963dc1c4a865aa097d0a08",
+                  "labels": [],
+                  "modified_at": 1773729795.551504,
+                  "name": null,
+                  "options": {},
+                  "original_name": "K\u00f8rer",
+                  "platform": "hassio",
+                  "translation_key": "state",
+                  "unique_id": "core_ssh_state"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773729795.551386,\"device_id\":\"ad8ea64b46f8edd359d62728f47bc93f\",\"disabled_by\":\"integration\",\"entity_category\":null,\"entity_id\":\"binary_sensor.terminal_ssh_korer\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"7035dce385963dc1c4a865aa097d0a08\",\"labels\":[],\"modified_at\":1773729795.551504,\"name\":null,\"options\":{},\"original_name\":\"K\\xc3\\xb8rer\",\"platform\":\"hassio\",\"translation_key\":\"state\",\"unique_id\":\"core_ssh_state\"}'"
+                }
+              }
+            },
+            "state": null
+          },
+          {
+            "entry": {
+              "entity_id": "sensor.terminal_ssh_version",
+              "unique_id": "core_ssh_version",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": null,
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-17T06:43:15.553300+00:00",
+              "device_class": null,
+              "device_id": "ad8ea64b46f8edd359d62728f47bc93f",
+              "domain": "sensor",
+              "disabled_by": "integration",
+              "entity_category": null,
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "f5f0bb48a88512eabbf729ce5794b6c5",
+              "labels": [],
+              "modified_at": "2026-03-17T06:43:15.553386+00:00",
+              "name": null,
+              "object_id_base": "Version",
+              "options": {},
+              "original_device_class": null,
+              "original_icon": null,
+              "original_name": "Version",
+              "suggested_object_id": null,
+              "supported_features": 0,
+              "translation_key": "version",
+              "unit_of_measurement": null,
+              "_cache": {
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773729795.5533,
+                  "device_id": "ad8ea64b46f8edd359d62728f47bc93f",
+                  "disabled_by": "integration",
+                  "entity_category": null,
+                  "entity_id": "sensor.terminal_ssh_version",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "f5f0bb48a88512eabbf729ce5794b6c5",
+                  "labels": [],
+                  "modified_at": 1773729795.553386,
+                  "name": null,
+                  "options": {},
+                  "original_name": "Version",
+                  "platform": "hassio",
+                  "translation_key": "version",
+                  "unique_id": "core_ssh_version"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773729795.5533,\"device_id\":\"ad8ea64b46f8edd359d62728f47bc93f\",\"disabled_by\":\"integration\",\"entity_category\":null,\"entity_id\":\"sensor.terminal_ssh_version\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"f5f0bb48a88512eabbf729ce5794b6c5\",\"labels\":[],\"modified_at\":1773729795.553386,\"name\":null,\"options\":{},\"original_name\":\"Version\",\"platform\":\"hassio\",\"translation_key\":\"version\",\"unique_id\":\"core_ssh_version\"}'"
+                }
+              }
+            },
+            "state": null
+          },
+          {
+            "entry": {
+              "entity_id": "sensor.terminal_ssh_nyeste_version",
+              "unique_id": "core_ssh_version_latest",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": null,
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-17T06:43:15.553761+00:00",
+              "device_class": null,
+              "device_id": "ad8ea64b46f8edd359d62728f47bc93f",
+              "domain": "sensor",
+              "disabled_by": "integration",
+              "entity_category": null,
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "8b43cb1cbb8e7ec7dd3fe23d7ef3b2d1",
+              "labels": [],
+              "modified_at": "2026-03-17T06:43:15.553837+00:00",
+              "name": null,
+              "object_id_base": "Nyeste version",
+              "options": {},
+              "original_device_class": null,
+              "original_icon": null,
+              "original_name": "Nyeste version",
+              "suggested_object_id": null,
+              "supported_features": 0,
+              "translation_key": "version_latest",
+              "unit_of_measurement": null,
+              "_cache": {
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773729795.553761,
+                  "device_id": "ad8ea64b46f8edd359d62728f47bc93f",
+                  "disabled_by": "integration",
+                  "entity_category": null,
+                  "entity_id": "sensor.terminal_ssh_nyeste_version",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "8b43cb1cbb8e7ec7dd3fe23d7ef3b2d1",
+                  "labels": [],
+                  "modified_at": 1773729795.553837,
+                  "name": null,
+                  "options": {},
+                  "original_name": "Nyeste version",
+                  "platform": "hassio",
+                  "translation_key": "version_latest",
+                  "unique_id": "core_ssh_version_latest"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773729795.553761,\"device_id\":\"ad8ea64b46f8edd359d62728f47bc93f\",\"disabled_by\":\"integration\",\"entity_category\":null,\"entity_id\":\"sensor.terminal_ssh_nyeste_version\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"8b43cb1cbb8e7ec7dd3fe23d7ef3b2d1\",\"labels\":[],\"modified_at\":1773729795.553837,\"name\":null,\"options\":{},\"original_name\":\"Nyeste version\",\"platform\":\"hassio\",\"translation_key\":\"version_latest\",\"unique_id\":\"core_ssh_version_latest\"}'"
+                }
+              }
+            },
+            "state": null
+          },
+          {
+            "entry": {
+              "entity_id": "sensor.terminal_ssh_cpu_procent",
+              "unique_id": "core_ssh_cpu_percent",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": {
+                "state_class": "measurement"
+              },
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-17T06:43:15.554144+00:00",
+              "device_class": null,
+              "device_id": "ad8ea64b46f8edd359d62728f47bc93f",
+              "domain": "sensor",
+              "disabled_by": "integration",
+              "entity_category": null,
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "ba10df6b626ed346afb253a24e8844f2",
+              "labels": [],
+              "modified_at": "2026-03-17T06:43:15.554213+00:00",
+              "name": null,
+              "object_id_base": "CPU-procent",
+              "options": {},
+              "original_device_class": null,
+              "original_icon": null,
+              "original_name": "CPU-procent",
+              "suggested_object_id": null,
+              "supported_features": 0,
+              "translation_key": "cpu_percent",
+              "unit_of_measurement": "%",
+              "_cache": {
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773729795.554144,
+                  "device_id": "ad8ea64b46f8edd359d62728f47bc93f",
+                  "disabled_by": "integration",
+                  "entity_category": null,
+                  "entity_id": "sensor.terminal_ssh_cpu_procent",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "ba10df6b626ed346afb253a24e8844f2",
+                  "labels": [],
+                  "modified_at": 1773729795.554213,
+                  "name": null,
+                  "options": {},
+                  "original_name": "CPU-procent",
+                  "platform": "hassio",
+                  "translation_key": "cpu_percent",
+                  "unique_id": "core_ssh_cpu_percent"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773729795.554144,\"device_id\":\"ad8ea64b46f8edd359d62728f47bc93f\",\"disabled_by\":\"integration\",\"entity_category\":null,\"entity_id\":\"sensor.terminal_ssh_cpu_procent\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"ba10df6b626ed346afb253a24e8844f2\",\"labels\":[],\"modified_at\":1773729795.554213,\"name\":null,\"options\":{},\"original_name\":\"CPU-procent\",\"platform\":\"hassio\",\"translation_key\":\"cpu_percent\",\"unique_id\":\"core_ssh_cpu_percent\"}'"
+                }
+              }
+            },
+            "state": null
+          },
+          {
+            "entry": {
+              "entity_id": "sensor.terminal_ssh_hukommelsesprocent",
+              "unique_id": "core_ssh_memory_percent",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": {
+                "state_class": "measurement"
+              },
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-17T06:43:15.554509+00:00",
+              "device_class": null,
+              "device_id": "ad8ea64b46f8edd359d62728f47bc93f",
+              "domain": "sensor",
+              "disabled_by": "integration",
+              "entity_category": null,
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "9e3a0406bb959fc91faaf1beed8b8d24",
+              "labels": [],
+              "modified_at": "2026-03-17T06:43:15.554578+00:00",
+              "name": null,
+              "object_id_base": "Hukommelsesprocent",
+              "options": {},
+              "original_device_class": null,
+              "original_icon": null,
+              "original_name": "Hukommelsesprocent",
+              "suggested_object_id": null,
+              "supported_features": 0,
+              "translation_key": "memory_percent",
+              "unit_of_measurement": "%",
+              "_cache": {
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773729795.554509,
+                  "device_id": "ad8ea64b46f8edd359d62728f47bc93f",
+                  "disabled_by": "integration",
+                  "entity_category": null,
+                  "entity_id": "sensor.terminal_ssh_hukommelsesprocent",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "9e3a0406bb959fc91faaf1beed8b8d24",
+                  "labels": [],
+                  "modified_at": 1773729795.554578,
+                  "name": null,
+                  "options": {},
+                  "original_name": "Hukommelsesprocent",
+                  "platform": "hassio",
+                  "translation_key": "memory_percent",
+                  "unique_id": "core_ssh_memory_percent"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773729795.554509,\"device_id\":\"ad8ea64b46f8edd359d62728f47bc93f\",\"disabled_by\":\"integration\",\"entity_category\":null,\"entity_id\":\"sensor.terminal_ssh_hukommelsesprocent\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"9e3a0406bb959fc91faaf1beed8b8d24\",\"labels\":[],\"modified_at\":1773729795.554578,\"name\":null,\"options\":{},\"original_name\":\"Hukommelsesprocent\",\"platform\":\"hassio\",\"translation_key\":\"memory_percent\",\"unique_id\":\"core_ssh_memory_percent\"}'"
+                }
+              }
+            },
+            "state": null
+          },
+          {
+            "entry": {
+              "entity_id": "switch.terminal_ssh",
+              "unique_id": "core_ssh_state",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": null,
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-17T06:43:15.556384+00:00",
+              "device_class": null,
+              "device_id": "ad8ea64b46f8edd359d62728f47bc93f",
+              "domain": "switch",
+              "disabled_by": "integration",
+              "entity_category": null,
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "1e13370c96f1e8521b4d954a8aa83e32",
+              "labels": [],
+              "modified_at": "2026-03-17T06:43:15.556453+00:00",
+              "name": null,
+              "object_id_base": null,
+              "options": {},
+              "original_device_class": null,
+              "original_icon": "mdi:puzzle",
+              "original_name": null,
+              "suggested_object_id": null,
+              "supported_features": 0,
+              "translation_key": null,
+              "unit_of_measurement": null,
+              "_cache": {
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773729795.556384,
+                  "device_id": "ad8ea64b46f8edd359d62728f47bc93f",
+                  "disabled_by": "integration",
+                  "entity_category": null,
+                  "entity_id": "switch.terminal_ssh",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "1e13370c96f1e8521b4d954a8aa83e32",
+                  "labels": [],
+                  "modified_at": 1773729795.556453,
+                  "name": null,
+                  "options": {},
+                  "original_name": null,
+                  "platform": "hassio",
+                  "translation_key": null,
+                  "unique_id": "core_ssh_state"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773729795.556384,\"device_id\":\"ad8ea64b46f8edd359d62728f47bc93f\",\"disabled_by\":\"integration\",\"entity_category\":null,\"entity_id\":\"switch.terminal_ssh\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"1e13370c96f1e8521b4d954a8aa83e32\",\"labels\":[],\"modified_at\":1773729795.556453,\"name\":null,\"options\":{},\"original_name\":null,\"platform\":\"hassio\",\"translation_key\":null,\"unique_id\":\"core_ssh_state\"}'"
+                }
+              }
+            },
+            "state": null
+          },
+          {
+            "entry": {
+              "entity_id": "update.terminal_ssh_opdatering",
+              "unique_id": "core_ssh_version_latest",
+              "platform": "hassio",
+              "previous_unique_id": null,
+              "aliases": [],
+              "area_id": null,
+              "categories": {},
+              "capabilities": null,
+              "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+              "config_subentry_id": null,
+              "created_at": "2026-03-17T06:43:15.558504+00:00",
+              "device_class": null,
+              "device_id": "ad8ea64b46f8edd359d62728f47bc93f",
+              "domain": "update",
+              "disabled_by": null,
+              "entity_category": "config",
+              "has_entity_name": true,
+              "hidden_by": null,
+              "icon": null,
+              "id": "e4635c9d03bf2daeac04eb49a9fb6a56",
+              "labels": [],
+              "modified_at": "2026-03-17T06:43:15.558578+00:00",
+              "name": null,
+              "object_id_base": "Opdatering",
+              "options": {},
+              "original_device_class": null,
+              "original_icon": null,
+              "original_name": "Opdatering",
+              "suggested_object_id": null,
+              "supported_features": 29,
+              "translation_key": "update",
+              "unit_of_measurement": null,
+              "_cache": {
+                "display_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"ei\":\"update.terminal_ssh_opdatering\",\"pl\":\"hassio\",\"lb\":[],\"di\":\"ad8ea64b46f8edd359d62728f47bc93f\",\"tk\":\"update\",\"ec\":0,\"hn\":true,\"en\":\"Opdatering\"}'"
+                },
+                "as_partial_dict": {
+                  "area_id": null,
+                  "categories": {},
+                  "config_entry_id": "01K9FTJYRWX4JB9DP47BQFWX9Y",
+                  "config_subentry_id": null,
+                  "created_at": 1773729795.558504,
+                  "device_id": "ad8ea64b46f8edd359d62728f47bc93f",
+                  "disabled_by": null,
+                  "entity_category": "config",
+                  "entity_id": "update.terminal_ssh_opdatering",
+                  "has_entity_name": true,
+                  "hidden_by": null,
+                  "icon": null,
+                  "id": "e4635c9d03bf2daeac04eb49a9fb6a56",
+                  "labels": [],
+                  "modified_at": 1773729795.558578,
+                  "name": null,
+                  "options": {},
+                  "original_name": "Opdatering",
+                  "platform": "hassio",
+                  "translation_key": "update",
+                  "unique_id": "core_ssh_version_latest"
+                },
+                "partial_json_repr": {
+                  "__type": "<class 'bytes'>",
+                  "repr": "b'{\"area_id\":null,\"categories\":{},\"config_entry_id\":\"01K9FTJYRWX4JB9DP47BQFWX9Y\",\"config_subentry_id\":null,\"created_at\":1773729795.558504,\"device_id\":\"ad8ea64b46f8edd359d62728f47bc93f\",\"disabled_by\":null,\"entity_category\":\"config\",\"entity_id\":\"update.terminal_ssh_opdatering\",\"has_entity_name\":true,\"hidden_by\":null,\"icon\":null,\"id\":\"e4635c9d03bf2daeac04eb49a9fb6a56\",\"labels\":[],\"modified_at\":1773729795.558578,\"name\":null,\"options\":{},\"original_name\":\"Opdatering\",\"platform\":\"hassio\",\"translation_key\":\"update\",\"unique_id\":\"core_ssh_version_latest\"}'"
+                }
+              }
+            },
+            "state": {
+              "entity_id": "update.terminal_ssh_opdatering",
+              "state": "off",
+              "attributes": {
+                "auto_update": true,
+                "display_precision": 0,
+                "installed_version": "10.0.2",
+                "in_progress": false,
+                "latest_version": "10.0.2",
+                "release_summary": null,
+                "release_url": null,
+                "skipped_version": null,
+                "title": "Terminal & SSH",
+                "update_percentage": null,
+                "entity_picture": "/api/hassio/addons/core_ssh/icon",
+                "friendly_name": "Terminal & SSH Opdatering",
+                "supported_features": 29
+              },
+              "last_changed": "2026-03-17T06:43:15.558928+00:00",
+              "last_reported": "2026-03-17T06:48:15.310727+00:00",
+              "last_updated": "2026-03-17T06:43:15.558928+00:00"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "issues": []
 }
