@@ -1,0 +1,79 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Έλεγχος ταυτότητας Google Home",
+        "description": "Αν χρειάζεστε βοήθεια με τη ρύθμιση, δείτε εδώ: https://github.com/leikoilja/ha-google-home. Χρησιμοποιήστε το όνομα χρήστη του λογαριασμού Google και έναν κωδικό εφαρμογής. Είναι ασφαλέστερο/ευκολότερο να δημιουργήσετε έναν κωδικό εφαρμογής και να τον χρησιμοποιήσετε αντί για τον πραγματικό κωδικό πρόσβασης. Εξακολουθεί να έχει την ίδια πρόσβαση με τον κανονικό κωδικό, αλλά παραμένει καλύτερη επιλογή από τη χρήση του πραγματικού κωδικού σε scripts. (https://myaccount.google.com/apppasswords). Διαφορετικά, θα πρέπει να λειτουργεί και ο κανονικός κωδικός πρόσβασης του λογαριασμού Google.",
+        "data": {
+          "username": "Όνομα χρήστη λογαριασμού Google",
+          "password": "Κωδικός εφαρμογής λογαριασμού Google",
+          "master_token": "Master token λογαριασμού Google"
+        }
+      }
+    },
+    "error": {
+      "auth": "Το όνομα χρήστη ή ο κωδικός πρόσβασης δεν είναι σωστά. Αν ο λογαριασμός Google έχει ενεργοποιημένο 2FA, δημιουργήστε έναν κωδικό εφαρμογής (https://myaccount.google.com/apppasswords). Αν ο έλεγχος ταυτότητας συνεχίζει να αποτυγχάνει, δείτε το https://github.com/leikoilja/ha-google-home#troubleshooting",
+      "pass-len": "Το μήκος του κωδικού πρόσβασης περιορίζεται στους 100 χαρακτήρες από την πολιτική της Google (https://support.google.com/a/answer/139399). Αλλάξτε τον κωδικό πρόσβασης ή χρησιμοποιήστε έναν κωδικό εφαρμογής (https://myaccount.google.com/apppasswords).",
+      "missing-inputs": "Παρακαλώ δώστε είτε όνομα χρήστη και κωδικό πρόσβασης είτε master token",
+      "master-token-invalid": "Το master token δεν είναι έγκυρο. Βεβαιωθείτε ότι έχει οριστεί ολόκληρο το token (συμπεριλαμβανομένου του 'aas_et/')"
+    },
+    "abort": {
+      "single_instance_allowed": "Επιτρέπεται μόνο μία εγκατάσταση."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "update_interval": "Αλλαγή διαστήματος ενημέρωσης. Αυξήστε το αν οι συσκευές κάνουν timeout. Προεπιλογή: 180 (δευτερόλεπτα)"
+        }
+      }
+    }
+  },
+  "services": {
+    "delete_alarm": {
+      "description": "Διαγραφή ξυπνητηριού από συσκευή Google Home.",
+      "fields": {
+        "alarm_id": {
+          "description": "ID ξυπνητηριού (alarm/xxx).",
+          "name": "ID ξυπνητηριού"
+        },
+        "skip_refresh": {
+          "description": "Παράλειψη ανανέωσης των συσκευών Google Home μετά τη διαγραφή ξυπνητηριού.",
+          "name": "Παράλειψη ανανέωσης"
+        },
+        "entity_id": {
+          "description": "Αντιπροσωπεύει μια συσκευή Google Home (sensor.xxxx_alarms).",
+          "name": "Οντότητα"
+        }
+      },
+      "name": "Διαγραφή ξυπνητηριού"
+    },
+    "delete_timer": {
+      "description": "Διαγραφή χρονομέτρου από συσκευή Google Home.",
+      "fields": {
+        "timer_id": {
+          "description": "ID χρονομέτρου (timer/xxx).",
+          "name": "ID χρονομέτρου"
+        },
+        "skip_refresh": {
+          "description": "Παράλειψη ανανέωσης των συσκευών Google Home μετά τη διαγραφή χρονομέτρου.",
+          "name": "Παράλειψη ανανέωσης"
+        },
+        "entity_id": {
+          "description": "Αντιπροσωπεύει μια συσκευή Google Home (sensor.xxxx_alarms).",
+          "name": "Οντότητα"
+        }
+      },
+      "name": "Διαγραφή χρονομέτρου"
+    },
+    "reboot_device": {
+      "description": "Επανεκκίνηση συσκευής Google Home.",
+      "name": "Επανεκκίνηση συσκευής"
+    },
+    "refresh_devices": {
+      "description": "Ανανέωση της κατάστασης όλων των συσκευών Google Home.",
+      "name": "Ανανέωση συσκευών"
+    }
+  }
+}
