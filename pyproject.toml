@@ -18,7 +18,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "codespell>=2.4.1",
-    "homeassistant-stubs==2026.1.0",
+    "homeassistant-stubs==2026.2.1",
     "mypy>=1.19.1",
     "PyGithub>=2.6",
     "pylint>=4.0.4",
