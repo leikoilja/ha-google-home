@@ -4,8 +4,8 @@ For more details about this integration, please refer to
 https://github.com/leikoilja/ha-google-home
 """
 
-from datetime import timedelta
 import logging
+from datetime import timedelta
 from typing import TYPE_CHECKING, cast
 
 from homeassistant.components import zeroconf
@@ -70,6 +70,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -
         hass,
         _LOGGER,
         name=SENSOR,
+        config_entry=entry,
         update_method=glocaltokens_client.update_google_devices_information,
         update_interval=timedelta(seconds=update_interval),
         config_entry=entry,
