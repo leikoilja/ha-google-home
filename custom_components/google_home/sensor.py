@@ -267,14 +267,14 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
             return
 
         await self.client.delete_alarm_or_timer(device=device, item_to_delete=alarm_id)
-        if not call.data[SERVICE_ATTR_SKIP_REFRESH]:
+        if not call.data.get(SERVICE_ATTR_SKIP_REFRESH, False):
             await self.coordinator.async_request_refresh()
 
 
 class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
     """Google Home Timers sensor."""
 
-    _attr_icons = ICON_TIMERS
+    _attr_icon = ICON_TIMERS
     _attr_device_class = SensorDeviceClass.TIMESTAMP
 
     @property
@@ -344,6 +344,6 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
             return
 
         await self.client.delete_alarm_or_timer(device=device, item_to_delete=timer_id)
-        if not call.data[SERVICE_ATTR_SKIP_REFRESH]:
+        if not call.data.get(SERVICE_ATTR_SKIP_REFRESH, False):
             _LOGGER.debug("Refreshing Devices")
             await self.coordinator.async_request_refresh()
