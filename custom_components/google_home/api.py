@@ -75,6 +75,12 @@ class GlocaltokensApiClient:
         """Get master API token."""
 
         def _get_master_token() -> str | None:
+            # glocaltokens 0.7.6 bug: get_master_token() returns None when
+            # password=None even if master_token is already stored, because
+            # it checks `if self.username is None or self.password is None`
+            # before inspecting the stored token. Short-circuit that here.
+            if self._client.master_token and is_aas_et(self._client.master_token):
+                return self._client.master_token
             return self._client.get_master_token()
 
         master_token = await self.hass.async_add_executor_job(_get_master_token)
