@@ -433,6 +433,7 @@ Currently the integration supports the following languages:
 - English
 - French
 - German (Germany)
+- Greek
 - Italian (Italy)
 - Norwegian (bokmål and nynorsk)
 - Polish
