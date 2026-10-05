@@ -157,13 +157,15 @@ class GlocaltokensApiClient:
                     device.name,
                 )
 
-        return await asyncio.gather(
+        await asyncio.gather(
             *[
                 self.collect_data_from_endpoints(device)
                 for device in devices
                 if device.ip_address and device.auth_token
             ]
         )
+
+        return devices
 
     async def collect_data_from_endpoints(
         self, device: GoogleHomeDevice
