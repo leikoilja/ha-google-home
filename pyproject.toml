@@ -179,6 +179,7 @@ min-similarity-lines = 7
 
 [tool.mypy]
 python_version = "3.14"
+explicit_package_bases = true
 show_error_codes = true
 strict = true
 disallow_any_explicit = true
