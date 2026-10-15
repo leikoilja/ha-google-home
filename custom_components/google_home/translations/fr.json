@@ -2,19 +2,20 @@
   "config": {
     "step": {
       "user": {
-        "title": "Google Home authentification",
-        "description": "Si vous avez besoin d'aide pour la configuration, regardez ici: https://github.com/leikoilja/ha-google-home. Utilisez votre compte Google et un mot de passe d'application. C'est facile/sécuritaire de générer un mot de passe d'application et de l'utiliser à la place de votre mot de passe Google. Il aura les mêmes accès que votre mot de passe régulier, mais cela est bien mieux que d'utiliser votre mot de passe Google pour du développement. (https://myaccount.google.com/apppasswords). Au cas où, votre mot de passe Google régulier devrait fonctionner.",
+        "title": "Authentification Google Home",
+        "description": "Pour les instructions de configuration, consultez {docs_url}. Saisissez le nom d'utilisateur de votre compte Google et un mot de passe d'application ({app_passwords_url}), ou un jeton maître. La validation en deux étapes doit être activée pour créer un mot de passe d'application.",
         "data": {
-          "username": "Nom d'utilisateur Google ",
-          "password": "Mot de passe d'application"
+          "username": "Nom d'utilisateur du compte Google",
+          "password": "Mot de passe d'application du compte Google",
+          "master_token": "Jeton maître du compte Google"
         }
       }
     },
     "error": {
-      "auth": "Utilisateur/Mot de passe incorrect. Si votre compte Google utilise la double authentification, veuillez utiliser un mot de passe d'application (https://myaccount.google.com/apppasswords). Si l'authentification ne fonctionne toujours pas, veuillez vous référer à https://github.com/leikoilja/ha-google-home#troubleshooting",
-      "pass-len": "La longueur du mot de passe est limitée à 100 caractères par Google (https://support.google.com/a/answer/139399). Veuillez changer votre mot de passe ou utiliser un mot de passe d'application (https://myaccount.google.com/apppasswords).",
-      "missing-inputs": "Veuillez indiquer soit votre nom d'utilisateur et votre mot de passe, soit votre jeton principal",
-      "master-token-invalid": "Jeton maître non valide. Assurez-vous que le jeton complet a été fourni (y compris 'aas_et/')"
+      "auth": "Nom d'utilisateur ou mot de passe incorrect. Si la validation en deux étapes est activée sur votre compte Google, utilisez un mot de passe d'application ({app_passwords_url}). Si l'authentification échoue toujours, consultez {troubleshooting_url}",
+      "pass-len": "Cette intégration accepte les mots de passe contenant jusqu'à {max_password_length} caractères. Changez le mot de passe de votre compte ou utilisez un mot de passe d'application ({app_passwords_url}).",
+      "missing-inputs": "Veuillez indiquer soit votre nom d'utilisateur et votre mot de passe, soit votre jeton maître",
+      "master-token-invalid": "Jeton maître non valide. Assurez-vous d'avoir saisi le jeton complet (y compris 'aas_et/')"
     },
     "abort": {
       "single_instance_allowed": "Une seule installation est autorisée."
@@ -24,25 +25,25 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Modifier la fréquence de mise à jour. Augmentez ce paramètre si vous subissez des problèmes de timeout. Défaut: 180 (Secondes)"
+          "update_interval": "Modifier l'intervalle de mise à jour. Augmentez cette valeur si vos appareils dépassent souvent le délai d'attente. Par défaut : 180 (secondes)"
         }
       }
     }
   },
   "services": {
     "delete_alarm": {
-      "description": "Supprimer un réveil d'un appareil Google Home.",
+      "description": "Supprimer une alarme d'un appareil Google Home.",
       "fields": {
         "alarm_id": {
-          "description": "ID d'un réveil (alarm/xxx).",
+          "description": "ID d'une alarme (alarm/xxx).",
           "name": "ID de l'alarme"
         },
         "skip_refresh": {
-          "description": "Ignorez l'actualisation des appareils Google Home après la suppression d'une alarme.",
+          "description": "Ignorer l'actualisation des appareils Google Home après la suppression d'une alarme.",
           "name": "Ignorer l'actualisation"
         },
         "entity_id": {
-          "description": "Représente un appareil Google Home (sensor.xxxx_alarms).",
+          "description": "Correspond à un appareil Google Home (sensor.xxxx_alarms).",
           "name": "Entité"
         }
       },
@@ -56,11 +57,11 @@
           "name": "ID du minuteur"
         },
         "skip_refresh": {
-          "description": "Ignorez l'actualisation des appareils Google Home après la suppression d'une minuterie.",
+          "description": "Ignorer l'actualisation des appareils Google Home après la suppression d'un minuteur.",
           "name": "Ignorer l'actualisation"
         },
         "entity_id": {
-          "description": "Représente un appareil Google Home (sensor.xxxx_alarms).",
+          "description": "Correspond à un appareil Google Home (sensor.xxxx_alarms).",
           "name": "Entité"
         }
       },
@@ -71,7 +72,7 @@
       "name": "Redémarrer l'appareil"
     },
     "refresh_devices": {
-      "description": "Actualisez l'état de tous les appareils Google Home.",
+      "description": "Actualiser l'état de tous les appareils Google Home.",
       "name": "Actualiser les appareils"
     }
   }

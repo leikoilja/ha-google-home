@@ -38,3 +38,6 @@ jobs:
       - name: Run python-typing-update
         run: |
           uvx pre-commit run --hook-stage manual python-typing-update --all-files --show-diff-on-failure --color=always
+
+      - name: Run tests
+        run: uv run pytest -q

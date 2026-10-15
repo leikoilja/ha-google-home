@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Google Home authentication",
-        "description": "If you need help with the configuration have a look here: {docs_url}. Use your google account username and app password. It's safer/easier to generate an app password and use it instead of the actual password. It still has the same access as the regular password, but still better than using the real password while scripting. ({app_passwords_url}). If not, regular google account password should work.",
+        "description": "For setup instructions, see {docs_url}. Enter your Google account username and an app password ({app_passwords_url}), or provide a master token. Creating an app password requires 2-Step Verification.",
         "data": {
           "username": "Google account username",
           "password": "Google account app password",
@@ -12,8 +12,8 @@
       }
     },
     "error": {
-      "auth": "Username/Password is incorrect. If your google account has 2FA enabled please generate app password ({app_passwords_url}). If authentication still fails refer to {troubleshooting_url}",
-      "pass-len": "Password length is limited to 100 characters by Google Policy ({password_policy_url}). Please, change your password or use an app password ({app_passwords_url}).",
+      "auth": "Username or password is incorrect. If your Google account has 2-Step Verification enabled, generate an app password ({app_passwords_url}). If authentication still fails, see {troubleshooting_url}",
+      "pass-len": "This integration supports passwords of up to {max_password_length} characters. Change your account password or use an app password ({app_passwords_url}).",
       "missing-inputs": "Please provide either username and password or master token",
       "master-token-invalid": "Master token invalid. Make sure that the full token has been specified (including 'aas_et/')"
     },
@@ -25,7 +25,7 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Change update interval. Increase this if you are suffering from devices timing out. Default: 180 (Seconds)"
+          "update_interval": "Change the update interval. Increase this if your devices do not respond in time. Default: 180 (seconds)"
         }
       }
     }

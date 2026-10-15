@@ -2,28 +2,30 @@
   "config": {
     "step": {
       "user": {
-        "title": "Google Home authenticatie",
-        "description": "Als je hulp nodig hebt bij de configuratie, kijk dan hier: https://github.com/leikoilja/ha-google-home. Gebruik de gebruikersnaam en het app-wachtwoord van uw Google-account. Het is veiliger/gemakkelijker om een app-wachtwoord te genereren en dit te gebruiken in plaats van je daadwerkelijke wachtwoord. Het heeft nog steeds dezelfde toegang als het normale wachtwoord, maar nog steeds beter dan het echte wachtwoord te gebruiken tijdens het scripten. (https://myaccount.google.com/apppasswords). Als dat niet het geval is, zou het normale wachtwoord van uw Google-account moeten werken.",
+        "title": "Google Home-authenticatie",
+        "description": "Raadpleeg {docs_url} voor instructies voor het instellen. Voer de gebruikersnaam van je Google-account en een app-wachtwoord ({app_passwords_url}) in, of geef een mastertoken op. Verificatie in twee stappen moet zijn ingeschakeld om een app-wachtwoord te maken.",
         "data": {
-          "username": "Google account gebruikersnaam",
-          "password": "Google account (app) wachtwoord"
+          "username": "Gebruikersnaam van Google-account",
+          "password": "App-wachtwoord van Google-account",
+          "master_token": "Mastertoken van Google-account"
         }
       }
     },
     "error": {
-      "auth": "Gebruikersnaam/Wachtwoord is niet correct. Als voor je Google-account 2FA is ingeschakeld, genereert u een app-wachtwoord (https://myaccount.google.com/apppasswords). Als authenticatie nog steeds mislukt, raadpleeg dan https://github.com/leikoilja/ha-google-home#troubleshooting",
-      "missing-inputs": "Voer uw gebruikersnaam en wachtwoord of mastertoken in",
-      "master-token-invalid": "Hoofdtoken ongeldig. Controleer of het volledige token is opgegeven (inclusief 'aas_et/')"
+      "auth": "Gebruikersnaam of wachtwoord is niet correct. Als voor je Google-account verificatie in twee stappen is ingeschakeld, genereer dan een app-wachtwoord ({app_passwords_url}). Als authenticatie nog steeds mislukt, raadpleeg dan {troubleshooting_url}",
+      "pass-len": "Deze integratie ondersteunt wachtwoorden van maximaal {max_password_length} tekens. Wijzig het wachtwoord van je account of gebruik een app-wachtwoord ({app_passwords_url}).",
+      "missing-inputs": "Voer je gebruikersnaam en wachtwoord of je mastertoken in",
+      "master-token-invalid": "Mastertoken ongeldig. Controleer of het volledige token is opgegeven (inclusief 'aas_et/')"
     },
     "abort": {
-      "single_instance_allowed": "Er is maar 1 integratie toegestaan."
+      "single_instance_allowed": "Er is maar één integratie toegestaan."
     }
   },
   "options": {
     "step": {
       "init": {
         "data": {
-          "update_interval": "Wijzig het update-interval. Verhoog dit als u last heeft van een time-out van apparaten. Standaard: 180 (seconden)"
+          "update_interval": "Wijzig het update-interval. Verhoog dit als je apparaten vaak een time-out geven. Standaard: 180 (seconden)"
         }
       }
     }
@@ -41,7 +43,7 @@
           "name": "Verversen overslaan"
         },
         "entity_id": {
-          "description": "Vertegenwoordigt een Google Home-apparaat (sensor.xxxx_alarms).",
+          "description": "Komt overeen met een Google Home-apparaat (sensor.xxxx_alarms).",
           "name": "Entiteit"
         }
       },
@@ -59,7 +61,7 @@
           "name": "Verversen overslaan"
         },
         "entity_id": {
-          "description": "Vertegenwoordigt een Google Home-apparaat (sensor.xxxx_alarms).",
+          "description": "Komt overeen met een Google Home-apparaat (sensor.xxxx_alarms).",
           "name": "Entiteit"
         }
       },

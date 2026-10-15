@@ -3,16 +3,18 @@
     "step": {
       "user": {
         "title": "Autenticação Google Home",
-        "description": "Se precisar de ajuda com a configuração, consulte o site: https://github.com/leikoilja/ha-google-home. Use o nome de utilizador da sua conta google e a palavra-passe da app. É mais seguro/fácil gerar uma palavra-passe da app e utilizá-la em vez da palavra-passe original. Tem o mesmo acesso que a palavra-passe normal, porém é melhor do que usar a palavra-passe original durante a execução de scripts. (https://myaccount.google.com/apppasswords). Caso contrário, a palavra-passe normal da conta google funciona.",
+        "description": "Para obter instruções de configuração, consulte {docs_url}. Introduza o nome de utilizador da sua conta Google e uma palavra-passe de aplicação ({app_passwords_url}), ou um token principal. Para criar uma palavra-passe de aplicação, é necessário ter a validação em dois passos ativada.",
         "data": {
           "username": "Nome de utilizador da conta Google",
-          "password": "Palavra-passe da conta Google"
+          "password": "Palavra-passe de aplicação da conta Google",
+          "master_token": "Token principal da conta Google"
         }
       }
     },
     "error": {
-      "auth": "Nome de utilizador/palavra-passe incorretos. Se a sua conta google tem 2FA activada, por favor gere a palavra-passe da app (https://myaccount.google.com/apppasswords). Se a autenticação continuar a falhar, consulte https://github.com/leikoilja/ha-google-home#troubleshooting",
-      "missing-inputs": "Introduza o nome de utilizador e a palavra-passe ou o Master Token",
+      "auth": "Nome de utilizador ou palavra-passe incorretos. Se a sua conta Google tem a validação em dois passos ativada, gere uma palavra-passe de aplicação ({app_passwords_url}). Se a autenticação continuar a falhar, consulte {troubleshooting_url}",
+      "pass-len": "Esta integração aceita palavras-passe com um máximo de {max_password_length} caracteres. Altere a palavra-passe da sua conta ou utilize uma palavra-passe de aplicação ({app_passwords_url}).",
+      "missing-inputs": "Introduza o nome de utilizador e a palavra-passe ou o token principal",
       "master-token-invalid": "Token principal inválido. Certifique-se de que o token completo foi especificado (incluindo 'aas_et/')"
     },
     "abort": {
@@ -23,7 +25,7 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Altere o intervalo de atualização. Aumente isso se você estiver sofrendo de tempo limite dos dispositivos. Padrão: 180 (segundos)"
+          "update_interval": "Altere o intervalo de atualização. Aumente este valor se os dispositivos excederem frequentemente o tempo limite. Predefinição: 180 (segundos)"
         }
       }
     }
@@ -41,7 +43,7 @@
           "name": "Ignorar atualização"
         },
         "entity_id": {
-          "description": "Representa um dispositivo Google Home (sensor.xxxx_alarms).",
+          "description": "Corresponde a um dispositivo Google Home (sensor.xxxx_alarms).",
           "name": "Entidade"
         }
       },
@@ -59,7 +61,7 @@
           "name": "Ignorar atualização"
         },
         "entity_id": {
-          "description": "Representa um dispositivo Google Home (sensor.xxxx_alarms).",
+          "description": "Corresponde a um dispositivo Google Home (sensor.xxxx_alarms).",
           "name": "Entidade"
         }
       },

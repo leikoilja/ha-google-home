@@ -1,20 +1,21 @@
 {
-  "title": "Google Home",
   "config": {
     "step": {
       "user": {
         "title": "Identificarse en Google Home",
-        "description": "Si necesitas ayuda con la configuración revisa la documentación aquí (en inglés): https://github.com/leikoilja/ha-google-home. Por tu propia seguridad, utilitza el tu cuenta de Google, con contraseñas de aplicación. Es más seguro y facil de utilizar contraseñas de aplicación, en lugar de tu contraseña habitual. Tendrá el mismo nivel de acceso que la contaseña habitual, sin embargo Google recomienda las contraseñas de aplicación para los Scripts/Automatismos. (https://myaccount.google.com/apppasswords). De todas formas, tu contraseña habitual de la cuenta Google debería funcionar.",
+        "description": "Para obtener instrucciones de configuración, consulta {docs_url} (en inglés). Introduce el nombre de usuario de tu cuenta de Google y una contraseña de aplicación ({app_passwords_url}), o bien un token maestro. Para crear una contraseña de aplicación, debes tener activada la verificación en dos pasos.",
         "data": {
           "username": "Nombre de usuario de Google",
-          "password": "Contraseña de apliación de Google"
+          "password": "Contraseña de aplicación de Google",
+          "master_token": "Token maestro de Google"
         }
       }
     },
     "error": {
-      "auth": "La combinación de Nombre de usuario/Contraseña no es correcta. Si tu cuenta tiene doble factor de autentificación habilitado, por favor, genera una contraseña de aplicación (https://myaccount.google.com/apppasswords). Si aún así no puedes iniciar sesión, por favor accede a https://github.com/leikoilja/ha-google-home#troubleshooting (en inglés).",
-      "missing-inputs": "Por favor, introduzca su nombre de usuario y contraseña o la contraseña maestra",
-      "master-token-invalid": "El token maestro no es válido. Asegúrese de que se ha especificado el token completo (incluido 'aas_et/')"
+      "auth": "El nombre de usuario o la contraseña no son correctos. Si tu cuenta tiene activada la verificación en dos pasos, genera una contraseña de aplicación ({app_passwords_url}). Si aun así no puedes iniciar sesión, consulta {troubleshooting_url} (en inglés).",
+      "pass-len": "Esta integración admite contraseñas de hasta {max_password_length} caracteres. Cambia la contraseña de tu cuenta o usa una contraseña de aplicación ({app_passwords_url}).",
+      "missing-inputs": "Introduce tu nombre de usuario y contraseña o el token maestro",
+      "master-token-invalid": "El token maestro no es válido. Asegúrate de haber introducido el token completo (incluido 'aas_et/')"
     },
     "abort": {
       "single_instance_allowed": "Solo se permite una única instancia."
@@ -24,7 +25,7 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Cambia el intervalo de actualización. Aumentalo si obtiene tiempos de espera (Time Out) en los dispositivos. Valor por defecto: 180 (segundos)"
+          "update_interval": "Cambia el intervalo de actualización. Auméntalo si los dispositivos suelen agotar el tiempo de espera. Valor por defecto: 180 (segundos)"
         }
       }
     }
@@ -38,11 +39,11 @@
           "name": "ID de alarma"
         },
         "skip_refresh": {
-          "description": "Omita la actualización de los dispositivos Google Home después de eliminar una alarma.",
-          "name": "Saltar actualización"
+          "description": "Omitir la actualización de los dispositivos Google Home después de eliminar una alarma.",
+          "name": "Omitir actualización"
         },
         "entity_id": {
-          "description": "Representa un dispositivo Google Home (sensor.xxxx_alarms).",
+          "description": "Corresponde a un dispositivo Google Home (sensor.xxxx_alarms).",
           "name": "Entidad"
         }
       },
@@ -56,11 +57,11 @@
           "name": "ID de temporizador"
         },
         "skip_refresh": {
-          "description": "Omita la actualización de los dispositivos Google Home después de eliminar un temporizador.",
-          "name": "Saltar actualización"
+          "description": "Omitir la actualización de los dispositivos Google Home después de eliminar un temporizador.",
+          "name": "Omitir actualización"
         },
         "entity_id": {
-          "description": "Representa un dispositivo Google Home (sensor.xxxx_alarms).",
+          "description": "Corresponde a un dispositivo Google Home (sensor.xxxx_alarms).",
           "name": "Entidad"
         }
       },
@@ -71,7 +72,7 @@
       "name": "Reiniciar dispositivo"
     },
     "refresh_devices": {
-      "description": "Actualiza el estado de todos los dispositivos Google Home.",
+      "description": "Actualizar el estado de todos los dispositivos Google Home.",
       "name": "Actualizar dispositivos"
     }
   }

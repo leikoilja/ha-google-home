@@ -3,17 +3,19 @@
     "step": {
       "user": {
         "title": "Autenticazione Google Home",
-        "description": "Se hai bisogno di aiuto con la configurazione dai un'occhiata qui: https://github.com/leikoilja/ha-google-home. Usa l'utente e la password per le app del tuo account Google. È più sicuro/più facile generare una password per le app e usarla al posto della password effettiva. Ha ancora gli stessi privilegi di accesso della password normale, ma è comunque più sicura rispetto all'utilizzo della password reale durante lo scripting. (https://myaccount.google.com/apppasswords). In caso contrario, la normale password dell'account Google dovrebbe funzionare.",
+        "description": "Per le istruzioni di configurazione, consulta {docs_url}. Inserisci il nome utente del tuo account Google e una password per le app ({app_passwords_url}), oppure un token master. Per creare una password per le app, devi attivare la verifica in due passaggi.",
         "data": {
-          "username": "Google account username",
-          "password": "Google account password per le app"
+          "username": "Nome utente dell'account Google",
+          "password": "Password per le app dell'account Google",
+          "master_token": "Token master dell'account Google"
         }
       }
     },
     "error": {
-      "auth": "Username o password errati. Se il tuo account Google ha la 2FA abilitata genera una passoword per le app (https://myaccount.google.com/apppasswords). Se l'autenticazione continua a fallire, fai riferimento a https://github.com/leikoilja/ha-google-home#troubleshooting",
-      "missing-inputs": "Inserire nome utente e password o il Master Token",
-      "master-token-invalid": "Token master non valido. Assicurarsi che sia stato specificato il token completo (compreso 'aas_et/')"
+      "auth": "Nome utente o password errati. Se il tuo account Google ha la verifica in due passaggi attiva, genera una password per le app ({app_passwords_url}). Se l'autenticazione continua a non riuscire, consulta {troubleshooting_url}",
+      "pass-len": "Questa integrazione supporta password di massimo {max_password_length} caratteri. Cambia la password del tuo account o usa una password per le app ({app_passwords_url}).",
+      "missing-inputs": "Inserisci nome utente e password oppure il token master",
+      "master-token-invalid": "Token master non valido. Assicurati di aver inserito il token completo (compreso 'aas_et/')"
     },
     "abort": {
       "single_instance_allowed": "È consentita una sola istanza."
@@ -23,7 +25,7 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Modifica l'intervallo di update. Aumenta l'intervallo se sperimenti un timeout dei dispositivi. Default: 180 (Secondi)"
+          "update_interval": "Modifica l'intervallo di aggiornamento. Aumentalo se i dispositivi vanno spesso in timeout. Predefinito: 180 (secondi)"
         }
       }
     }
@@ -34,14 +36,14 @@
       "fields": {
         "alarm_id": {
           "description": "ID di una sveglia (alarm/xxx).",
-          "name": "ID Sveglia"
+          "name": "ID sveglia"
         },
         "skip_refresh": {
           "description": "Salta l'aggiornamento dei dispositivi Google Home dopo aver eliminato una sveglia.",
           "name": "Salta aggiornamento"
         },
         "entity_id": {
-          "description": "Rappresenta un dispositivo Google Home (sensor.xxxx_alarms).",
+          "description": "Corrisponde a un dispositivo Google Home (sensor.xxxx_alarms).",
           "name": "Entità"
         }
       },
@@ -52,14 +54,14 @@
       "fields": {
         "timer_id": {
           "description": "ID di un timer (timer/xxx).",
-          "name": "ID Timer"
+          "name": "ID timer"
         },
         "skip_refresh": {
           "description": "Salta l'aggiornamento dei dispositivi Google Home dopo aver eliminato un timer.",
           "name": "Salta aggiornamento"
         },
         "entity_id": {
-          "description": "Rappresenta un dispositivo Google Home (sensor.xxxx_alarms).",
+          "description": "Corrisponde a un dispositivo Google Home (sensor.xxxx_alarms).",
           "name": "Entità"
         }
       },

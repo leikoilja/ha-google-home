@@ -3,27 +3,29 @@
     "step": {
       "user": {
         "title": "Google Home-autentisering",
-        "description": "Om du trenger hjelp med konfigurasjonen, se her: https://github.com/leikoilja/ha-google-home. Bruk Googlekonto-brukarnavnet og applikasjonspassordet ditt. Det er tryggere/enklere å lage et nytt applikasjonspassord og bruke dette i stedet for ditt eget personlige passord. Applikasjonsassordet har samme tilgang som det vanlige passordet ditt, men det er fortsatt bedre å bruke dette enn det personlige passordet ditt til scripting. (https://myaccount.google.com/apppasswords). Dersom du ikke har fått laget dette, vil det personlige passordet ditt fungere",
+        "description": "Se veiledningen for oppsett her: {docs_url}. Skriv inn brukernavnet for Google-kontoen din og et applikasjonspassord ({app_passwords_url}), eller oppgi et master token. Totrinnsbekreftelse må være aktivert for å opprette et applikasjonspassord.",
         "data": {
-          "username": "Googlekonto-brukarnavn",
-          "password": "Googlekonto-passord"
+          "username": "Brukernavn for Google-kontoen",
+          "password": "Applikasjonspassord for Google-kontoen",
+          "master_token": "Master token for Google-kontoen"
         }
       }
     },
     "error": {
-      "auth": "Brukarnavn/passord er feil. Om Googlekontoen din har 2FA, vær vennlig og lag deg et applikasjonspassord (https://myaccount.google.com/apppasswords). Om autentiseringa fortsatt ikke går gjennom, gå til https://github.com/leikoilja/ha-google-home#troubleshooting",
-      "missing-inputs": "Vennligst skriv inn enten brukernavn og passord eller Master Token",
+      "auth": "Brukernavnet eller passordet er feil. Hvis Google-kontoen din har totrinnsbekreftelse, må du lage et applikasjonspassord ({app_passwords_url}). Hvis autentiseringen fortsatt ikke går gjennom, se {troubleshooting_url}",
+      "pass-len": "Denne integrasjonen støtter passord på opptil {max_password_length} tegn. Endre passordet for kontoen din eller bruk et applikasjonspassord ({app_passwords_url}).",
+      "missing-inputs": "Skriv inn enten brukernavn og passord eller master token",
       "master-token-invalid": "Master token er ugyldig. Kontroller at hele tokenet er angitt (inkludert 'aas_et/')"
     },
     "abort": {
-      "single_instance_allowed": "Du kan bare ha én installasjon"
+      "single_instance_allowed": "Du kan bare ha én installasjon."
     }
   },
   "options": {
     "step": {
       "init": {
         "data": {
-          "update_interval": "Endre oppdateringsintervall. Øk dette hvis du lider av tidsavbrudd for enheter. Standard: 180 (sekunder)"
+          "update_interval": "Endre oppdateringsintervall. Øk dette hvis enhetene ofte får tidsavbrudd. Standard: 180 (sekunder)"
         }
       }
     }
@@ -41,7 +43,7 @@
           "name": "Hopp over oppdatering"
         },
         "entity_id": {
-          "description": "Representerer en Google Home-enhet (sensor.xxxx_alarms).",
+          "description": "Tilsvarer en Google Home-enhet (sensor.xxxx_alarms).",
           "name": "Entitet"
         }
       },
@@ -59,7 +61,7 @@
           "name": "Hopp over oppdatering"
         },
         "entity_id": {
-          "description": "Representerer en Google Home-enhet (sensor.xxxx_alarms).",
+          "description": "Tilsvarer en Google Home-enhet (sensor.xxxx_alarms).",
           "name": "Entitet"
         }
       },

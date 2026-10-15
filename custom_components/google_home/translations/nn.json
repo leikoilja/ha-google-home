@@ -3,27 +3,29 @@
     "step": {
       "user": {
         "title": "Google Home-autentisering",
-        "description": "Om du treng hjelp med konfigurasjonen, sjå her: https://github.com/leikoilja/ha-google-home. Bruk Googlekonto-brukarnamnet og applikasjonspassordet ditt. Det er tryggare/enklare å lage eit nytt applikasjonspassord og bruke dette i staden for ditt eige personlege passord. Applikasjonspassordet har same tilgang som det vanlege passordet ditt, men det er framleis betre å bruke dette enn det personlege passordet ditt til scripting. (https://myaccount.google.com/apppasswords). Dersom du ikkje har fått laga dette, vil det personlege passordet ditt fungere",
+        "description": "Sjå rettleiinga for oppsett her: {docs_url}. Skriv inn brukarnamnet for Google-kontoen din og eit applikasjonspassord ({app_passwords_url}), eller oppgje eit master token. Totrinnsstadfesting må vere aktivert for å opprette eit applikasjonspassord.",
         "data": {
-          "username": "Googlekonto-brukarnamn",
-          "password": "Googlekonto-passord"
+          "username": "Brukarnamn for Google-kontoen",
+          "password": "Applikasjonspassord for Google-kontoen",
+          "master_token": "Master token for Google-kontoen"
         }
       }
     },
     "error": {
-      "auth": "Brukarnamn/passord er feil. Om Googlekontoen din har 2FA, ver vennleg og lag deg eit applikasjonspassord (https://myaccount.google.com/apppasswords). Om autentiseringa framleis ikkje går gjennom, gå til https://github.com/leikoilja/ha-google-home#troubleshooting",
-      "missing-inputs": "Vennligst skriv inn enten brukernavn og passord eller Master Token",
-      "master-token-invalid": "Master token er ugyldig. Kontroller at heile tokenen er gitt (inkludert 'aas_et/')"
+      "auth": "Brukarnamnet eller passordet er feil. Om Google-kontoen din har totrinnsstadfesting, må du lage eit applikasjonspassord ({app_passwords_url}). Om autentiseringa framleis ikkje går gjennom, sjå {troubleshooting_url}",
+      "pass-len": "Denne integrasjonen støttar passord på opptil {max_password_length} teikn. Endre passordet for kontoen din eller bruk eit applikasjonspassord ({app_passwords_url}).",
+      "missing-inputs": "Skriv inn anten brukarnamn og passord eller master token",
+      "master-token-invalid": "Master token er ugyldig. Kontroller at heile tokenet er gitt (inkludert 'aas_et/')"
     },
     "abort": {
-      "single_instance_allowed": "Du kan berre ha éin installasjon"
+      "single_instance_allowed": "Du kan berre ha éin installasjon."
     }
   },
   "options": {
     "step": {
       "init": {
         "data": {
-          "update_interval": "Endre oppdateringsintervall. Du kan auke dette om du slit med tidsavbrot for einingane. Standard: 180 (sekund)"
+          "update_interval": "Endre oppdateringsintervall. Du kan auke dette om einingane ofte får tidsavbrot. Standard: 180 (sekund)"
         }
       }
     }
@@ -37,12 +39,12 @@
           "name": "Alarm-ID"
         },
         "skip_refresh": {
-          "description": "Hopp over oppdatering av Google heimeseiningar etter å sletta ein alarm.",
+          "description": "Hopp over oppdatering av Google Home-einingar etter å ha sletta ein alarm.",
           "name": "Hopp over oppdatering"
         },
         "entity_id": {
-          "description": "Representerar ei Google Home-eining (sensor.xxxx_alarms).",
-          "name": "Eining"
+          "description": "Svarar til ei Google Home-eining (sensor.xxxx_alarms).",
+          "name": "Entitet"
         }
       },
       "name": "Slett alarm"
@@ -55,12 +57,12 @@
           "name": "Tidtakar-ID"
         },
         "skip_refresh": {
-          "description": "Hopp over oppdatering av Google heimeseiningar etter å sletta ein tidsaverk.",
+          "description": "Hopp over oppdatering av Google Home-einingar etter å ha sletta ein tidtakar.",
           "name": "Hopp over oppdatering"
         },
         "entity_id": {
-          "description": "Representerar ei Google Home-eining (sensor.xxxx_alarms).",
-          "name": "Eining"
+          "description": "Svarar til ei Google Home-eining (sensor.xxxx_alarms).",
+          "name": "Entitet"
         }
       },
       "name": "Slett tidtakar"
@@ -70,7 +72,7 @@
       "name": "Start eining på nytt"
     },
     "refresh_devices": {
-      "description": "Oppdater statusen til alle Google heimeseiningar.",
+      "description": "Oppdater statusen til alle Google Home-einingar.",
       "name": "Oppdater einingar"
     }
   }
