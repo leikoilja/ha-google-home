@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Autenticação do Google Home",
-        "description": "Se precisar de ajuda com a configuração, dê uma olhada aqui: https://github.com/leikoilja/ha-google-home. Use o nome de usuário da sua conta do Google e uma senha de app. É mais seguro e fácil gerar uma senha de app e usá-la em vez da senha real. Ela tem o mesmo acesso que a senha normal, mas ainda é melhor do que usar a senha real em scripts. (https://myaccount.google.com/apppasswords). Caso contrário, a senha normal da conta do Google deve funcionar.",
+        "description": "Se precisar de ajuda com a configuração, dê uma olhada aqui: {docs_url}. Use o nome de usuário da sua conta do Google e uma senha de app. É mais seguro e fácil gerar uma senha de app e usá-la em vez da senha real. Ela tem o mesmo acesso que a senha normal, mas ainda é melhor do que usar a senha real em scripts. ({app_passwords_url}). Caso contrário, a senha normal da conta do Google deve funcionar.",
         "data": {
           "username": "Nome de usuário da conta do Google",
           "password": "Senha de app da conta do Google",
@@ -12,8 +12,8 @@
       }
     },
     "error": {
-      "auth": "O nome de usuário ou a senha está incorreto. Se a sua conta do Google tiver a verificação em duas etapas ativada, gere uma senha de app (https://myaccount.google.com/apppasswords). Se a autenticação ainda falhar, consulte https://github.com/leikoilja/ha-google-home#troubleshooting",
-      "pass-len": "De acordo com a política do Google, a senha pode ter no máximo 100 caracteres (https://support.google.com/a/answer/139399). Altere sua senha ou use uma senha de app (https://myaccount.google.com/apppasswords).",
+      "auth": "O nome de usuário ou a senha está incorreto. Se a sua conta do Google tiver a verificação em duas etapas ativada, gere uma senha de app ({app_passwords_url}). Se a autenticação ainda falhar, consulte {troubleshooting_url}",
+      "pass-len": "De acordo com a política do Google, a senha pode ter no máximo 100 caracteres ({password_policy_url}). Altere sua senha ou use uma senha de app ({app_passwords_url}).",
       "missing-inputs": "Digite o nome de usuário e a senha ou o token mestre",
       "master-token-invalid": "Token mestre inválido. Certifique-se de que o token completo tenha sido especificado (incluindo 'aas_et/')"
     },

@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Google Home-autentisering",
-        "description": "Om du trenger hjelp med konfigurasjonen, se her: https://github.com/leikoilja/ha-google-home. Bruk brukernavnet for Google-kontoen din og et applikasjonspassord. Det er tryggere og enklere å lage et applikasjonspassord og bruke det i stedet for ditt eget personlige passord. Applikasjonspassordet har samme tilgang som det vanlige passordet ditt, men det er fortsatt bedre å bruke det enn det personlige passordet ditt i skript. (https://myaccount.google.com/apppasswords). Hvis ikke, skal det personlige passordet ditt også fungere.",
+        "description": "Om du trenger hjelp med konfigurasjonen, se her: {docs_url}. Bruk brukernavnet for Google-kontoen din og et applikasjonspassord. Det er tryggere og enklere å lage et applikasjonspassord og bruke det i stedet for ditt eget personlige passord. Applikasjonspassordet har samme tilgang som det vanlige passordet ditt, men det er fortsatt bedre å bruke det enn det personlige passordet ditt i skript. ({app_passwords_url}). Hvis ikke, skal det personlige passordet ditt også fungere.",
         "data": {
           "username": "Brukernavn for Google-kontoen",
           "password": "Applikasjonspassord for Google-kontoen",
@@ -12,8 +12,8 @@
       }
     },
     "error": {
-      "auth": "Brukernavnet eller passordet er feil. Hvis Google-kontoen din har totrinnsbekreftelse, må du lage et applikasjonspassord (https://myaccount.google.com/apppasswords). Hvis autentiseringen fortsatt ikke går gjennom, se https://github.com/leikoilja/ha-google-home#troubleshooting",
-      "pass-len": "Ifølge Googles retningslinjer kan passordet være på maksimalt 100 tegn (https://support.google.com/a/answer/139399). Endre passordet ditt eller bruk et applikasjonspassord (https://myaccount.google.com/apppasswords).",
+      "auth": "Brukernavnet eller passordet er feil. Hvis Google-kontoen din har totrinnsbekreftelse, må du lage et applikasjonspassord ({app_passwords_url}). Hvis autentiseringen fortsatt ikke går gjennom, se {troubleshooting_url}",
+      "pass-len": "Ifølge Googles retningslinjer kan passordet være på maksimalt 100 tegn ({password_policy_url}). Endre passordet ditt eller bruk et applikasjonspassord ({app_passwords_url}).",
       "missing-inputs": "Skriv inn enten brukernavn og passord eller master token",
       "master-token-invalid": "Master token er ugyldig. Kontroller at hele tokenet er angitt (inkludert 'aas_et/')"
     },

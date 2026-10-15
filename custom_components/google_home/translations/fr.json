@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Authentification Google Home",
-        "description": "Si vous avez besoin d'aide pour la configuration, consultez : https://github.com/leikoilja/ha-google-home. Utilisez le nom d'utilisateur de votre compte Google et un mot de passe d'application. Il est plus sûr et plus simple de générer un mot de passe d'application et de l'utiliser à la place de votre mot de passe Google. Il a les mêmes accès que votre mot de passe habituel, mais c'est toujours mieux que d'utiliser votre vrai mot de passe dans des scripts. (https://myaccount.google.com/apppasswords). Sinon, votre mot de passe Google habituel devrait fonctionner.",
+        "description": "Si vous avez besoin d'aide pour la configuration, consultez : {docs_url}. Utilisez le nom d'utilisateur de votre compte Google et un mot de passe d'application. Il est plus sûr et plus simple de générer un mot de passe d'application et de l'utiliser à la place de votre mot de passe Google. Il a les mêmes accès que votre mot de passe habituel, mais c'est toujours mieux que d'utiliser votre vrai mot de passe dans des scripts. ({app_passwords_url}). Sinon, votre mot de passe Google habituel devrait fonctionner.",
         "data": {
           "username": "Nom d'utilisateur du compte Google",
           "password": "Mot de passe d'application du compte Google",
@@ -12,8 +12,8 @@
       }
     },
     "error": {
-      "auth": "Nom d'utilisateur ou mot de passe incorrect. Si la validation en deux étapes est activée sur votre compte Google, utilisez un mot de passe d'application (https://myaccount.google.com/apppasswords). Si l'authentification échoue toujours, consultez https://github.com/leikoilja/ha-google-home#troubleshooting",
-      "pass-len": "Selon les règles de Google, le mot de passe ne peut pas dépasser 100 caractères (https://support.google.com/a/answer/139399). Veuillez changer votre mot de passe ou utiliser un mot de passe d'application (https://myaccount.google.com/apppasswords).",
+      "auth": "Nom d'utilisateur ou mot de passe incorrect. Si la validation en deux étapes est activée sur votre compte Google, utilisez un mot de passe d'application ({app_passwords_url}). Si l'authentification échoue toujours, consultez {troubleshooting_url}",
+      "pass-len": "Selon les règles de Google, le mot de passe ne peut pas dépasser 100 caractères ({password_policy_url}). Veuillez changer votre mot de passe ou utiliser un mot de passe d'application ({app_passwords_url}).",
       "missing-inputs": "Veuillez indiquer soit votre nom d'utilisateur et votre mot de passe, soit votre jeton maître",
       "master-token-invalid": "Jeton maître non valide. Assurez-vous d'avoir saisi le jeton complet (y compris 'aas_et/')"
     },

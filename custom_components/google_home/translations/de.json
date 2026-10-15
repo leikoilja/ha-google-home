@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Google Home-Authentifizierung",
-        "description": "Hilfe zur Konfiguration findest du unter https://github.com/leikoilja/ha-google-home. Benutze den Nutzernamen deines Google-Kontos und ein App-Passwort. Es ist sicherer und einfacher, ein App-Passwort zu erstellen und es statt deines eigentlichen Passworts zu verwenden. Es hat zwar dieselben Zugriffsrechte, ist für Skripte aber trotzdem besser geeignet als dein echtes Passwort. (https://myaccount.google.com/apppasswords). Alternativ sollte auch dein normales Passwort für das Google-Konto funktionieren.",
+        "description": "Hilfe zur Konfiguration findest du unter {docs_url}. Benutze den Nutzernamen deines Google-Kontos und ein App-Passwort. Es ist sicherer und einfacher, ein App-Passwort zu erstellen und es statt deines eigentlichen Passworts zu verwenden. Es hat zwar dieselben Zugriffsrechte, ist für Skripte aber trotzdem besser geeignet als dein echtes Passwort. ({app_passwords_url}). Alternativ sollte auch dein normales Passwort für das Google-Konto funktionieren.",
         "data": {
           "username": "Nutzername des Google-Kontos",
           "password": "App-Passwort des Google-Kontos",
@@ -12,8 +12,8 @@
       }
     },
     "error": {
-      "auth": "Nutzername oder Passwort ist nicht korrekt. Falls für dein Google-Konto die Bestätigung in zwei Schritten aktiviert ist, erstelle bitte ein App-Passwort (https://myaccount.google.com/apppasswords). Sollte die Authentifizierung weiterhin fehlschlagen, findest du weitere Informationen unter https://github.com/leikoilja/ha-google-home#troubleshooting",
-      "pass-len": "Laut Google-Richtlinie darf das Passwort höchstens 100 Zeichen lang sein (https://support.google.com/a/answer/139399). Bitte ändere dein Passwort oder verwende ein App-Passwort (https://myaccount.google.com/apppasswords).",
+      "auth": "Nutzername oder Passwort ist nicht korrekt. Falls für dein Google-Konto die Bestätigung in zwei Schritten aktiviert ist, erstelle bitte ein App-Passwort ({app_passwords_url}). Sollte die Authentifizierung weiterhin fehlschlagen, findest du weitere Informationen unter {troubleshooting_url}",
+      "pass-len": "Laut Google-Richtlinie darf das Passwort höchstens 100 Zeichen lang sein ({password_policy_url}). Bitte ändere dein Passwort oder verwende ein App-Passwort ({app_passwords_url}).",
       "missing-inputs": "Bitte gib entweder Nutzername und Passwort oder ein Master-Token an",
       "master-token-invalid": "Master-Token ungültig. Stelle sicher, dass das vollständige Token angegeben wurde (inklusive 'aas_et/')"
     },
