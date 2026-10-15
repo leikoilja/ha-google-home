@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: check-added-large-files
       - id: check-json
@@ -45,7 +45,7 @@ repos:
       - id: prettier
         exclude: ^custom_components/google_home/manifest\.json$
   - repo: https://github.com/cdce8p/python-typing-update
-    rev: v0.8.1
+    rev: v0.9.0
     hooks:
       # Run `python-typing-update` hook manually from time to time
       # to update python typing syntax.

@@ -234,7 +234,7 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
         """Update alarm volume status from coordinator."""
         device = self.get_device()
         alarm_volume = device.get_alarm_volume() if device else None
-        return alarm_volume if alarm_volume else GOOGLE_HOME_ALARM_DEFAULT_VALUE
+        return alarm_volume or GOOGLE_HOME_ALARM_DEFAULT_VALUE
 
     def _get_alarms_data(self) -> list[GoogleHomeAlarmDict]:
         """Update alarms data extracting it from coordinator."""
