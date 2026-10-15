@@ -8,9 +8,8 @@ from typing import TYPE_CHECKING
 import voluptuous as vol
 
 from homeassistant.components.sensor import SensorDeviceClass
-from homeassistant.const import STATE_UNAVAILABLE
+from homeassistant.const import STATE_UNAVAILABLE, EntityCategory
 from homeassistant.helpers import config_validation as cv, entity_platform
-from homeassistant.helpers.entity import Entity, EntityCategory
 
 from .const import (
     ALARM_AND_TIMER_ID_LENGTH,
@@ -37,6 +36,7 @@ from .models import GoogleHomeAlarmStatus, GoogleHomeDevice, GoogleHomeTimerStat
 
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant, ServiceCall
+    from homeassistant.helpers.entity import Entity
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
     from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 

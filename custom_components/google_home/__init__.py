@@ -4,13 +4,14 @@ For more details about this integration, please refer to
 https://github.com/leikoilja/ha-google-home
 """
 
+from __future__ import annotations
+
 from datetime import timedelta
 import logging
 from typing import TYPE_CHECKING, cast
 
 from homeassistant.components import zeroconf
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
-from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
@@ -27,10 +28,12 @@ from .const import (
     STARTUP_MESSAGE,
     UPDATE_INTERVAL,
 )
-from .types import GoogleHomeConfigEntry
 
 if TYPE_CHECKING:
+    from homeassistant.core import HomeAssistant
+
     from .models import GoogleHomeDevice
+    from .types import GoogleHomeConfigEntry
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -104,8 +107,7 @@ async def async_update_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) 
     coordinator: DataUpdateCoordinator[list[GoogleHomeDevice]] = hass.data[DOMAIN][
         entry.entry_id
     ][DATA_COORDINATOR]
-    # This property has a setter
-    coordinator.update_interval = timedelta(seconds=update_interval)  # type: ignore[misc]
+    coordinator.update_interval = timedelta(seconds=update_interval)
     _LOGGER.debug(
         "Coordinator update interval is: %s", timedelta(seconds=update_interval)
     )
