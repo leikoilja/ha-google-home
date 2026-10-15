@@ -6,8 +6,7 @@ import logging
 from typing import TYPE_CHECKING
 
 from homeassistant.components.number import NumberEntity
-from homeassistant.const import PERCENTAGE
-from homeassistant.helpers.entity import EntityCategory
+from homeassistant.const import PERCENTAGE, EntityCategory
 
 from .const import (
     DATA_CLIENT,

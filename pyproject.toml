@@ -8,17 +8,16 @@ description = "Home Assistant Google Home community integration"
 authors = [{name = "Ilja Leiko", email = "leikoilja@gmail.com"}]
 readme = "README.md"
 license = {text = "MIT"}
-requires-python = ">=3.13.2"
+requires-python = ">=3.14.2"
 dynamic = ["version"]
 dependencies = [
     "glocaltokens>=0.7.6",
-    "homeassistant==2026.1.0",
+    "homeassistant==2026.9.0",
 ]
 
 [dependency-groups]
 dev = [
     "codespell>=2.4.1",
-    "homeassistant-stubs==2026.1.0",
     "mypy>=1.19.1",
     "PyGithub>=2.6",
     "pylint>=4.0.4",
@@ -33,7 +32,7 @@ source = "vcs"
 
 [tool.ruff]
 required-version = ">=0.11.0"
-target-version = "py313"
+target-version = "py314"
 
 [tool.ruff.lint.isort]
 force-sort-within-sections = true
@@ -177,7 +176,7 @@ max-line-length = 100
 min-similarity-lines = 7
 
 [tool.mypy]
-python_version = "3.13"
+python_version = "3.14"
 show_error_codes = true
 strict = true
 disallow_any_explicit = true
