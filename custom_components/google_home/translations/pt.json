@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Autenticação Google Home",
-        "description": "Se precisar de ajuda com a configuração, consulte o site: {docs_url}. Use o nome de utilizador da sua conta Google e uma palavra-passe de aplicação. É mais seguro e fácil gerar uma palavra-passe de aplicação e utilizá-la em vez da palavra-passe original. Tem o mesmo acesso que a palavra-passe normal, mas é melhor do que usar a palavra-passe original em scripts. ({app_passwords_url}). Caso contrário, a palavra-passe normal da conta Google deverá funcionar.",
+        "description": "Para obter instruções de configuração, consulte {docs_url}. Introduza o nome de utilizador da sua conta Google e uma palavra-passe de aplicação ({app_passwords_url}), ou um token principal. Para criar uma palavra-passe de aplicação, é necessário ter a validação em dois passos ativada.",
         "data": {
           "username": "Nome de utilizador da conta Google",
           "password": "Palavra-passe de aplicação da conta Google",
@@ -13,7 +13,7 @@
     },
     "error": {
       "auth": "Nome de utilizador ou palavra-passe incorretos. Se a sua conta Google tem a validação em dois passos ativada, gere uma palavra-passe de aplicação ({app_passwords_url}). Se a autenticação continuar a falhar, consulte {troubleshooting_url}",
-      "pass-len": "De acordo com a política da Google, a palavra-passe pode ter no máximo 100 caracteres ({password_policy_url}). Altere a palavra-passe ou utilize uma palavra-passe de aplicação ({app_passwords_url}).",
+      "pass-len": "Esta integração aceita palavras-passe com um máximo de {max_password_length} caracteres. Altere a palavra-passe da sua conta ou utilize uma palavra-passe de aplicação ({app_passwords_url}).",
       "missing-inputs": "Introduza o nome de utilizador e a palavra-passe ou o token principal",
       "master-token-invalid": "Token principal inválido. Certifique-se de que o token completo foi especificado (incluindo 'aas_et/')"
     },

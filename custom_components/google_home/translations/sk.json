@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Autentifikácia Google Home",
-        "description": "Ak potrebujete pomoc s konfiguráciou, pozrite sa sem: {docs_url}. Použite používateľské meno svojho účtu Google a heslo aplikácie. Je bezpečnejšie a jednoduchšie vygenerovať heslo aplikácie a použiť ho namiesto skutočného hesla. Má rovnaký prístup ako bežné heslo, ale stále je to lepšie, ako používať v skriptoch skutočné heslo. ({app_passwords_url}). Inak by malo fungovať aj bežné heslo účtu Google.",
+        "description": "Pokyny na nastavenie nájdete tu: {docs_url}. Zadajte používateľské meno účtu Google a heslo aplikácie ({app_passwords_url}) alebo hlavný token. Na vytvorenie hesla aplikácie je potrebné mať zapnuté dvojstupňové overenie.",
         "data": {
           "username": "Používateľské meno účtu Google",
           "password": "Heslo aplikácie účtu Google",
@@ -13,7 +13,7 @@
     },
     "error": {
       "auth": "Používateľské meno alebo heslo je nesprávne. Ak máte v účte Google zapnuté dvojstupňové overenie, vygenerujte si heslo aplikácie ({app_passwords_url}). Ak autentifikácia stále zlyháva, pozrite si {troubleshooting_url}",
-      "pass-len": "Dĺžka hesla je podľa pravidiel Google obmedzená na 100 znakov ({password_policy_url}). Zmeňte si heslo alebo použite heslo aplikácie ({app_passwords_url}).",
+      "pass-len": "Táto integrácia podporuje heslá s dĺžkou najviac {max_password_length} znakov. Zmeňte heslo účtu alebo použite heslo aplikácie ({app_passwords_url}).",
       "missing-inputs": "Zadajte používateľské meno a heslo alebo hlavný token",
       "master-token-invalid": "Hlavný token je neplatný. Uistite sa, že bol zadaný celý token (vrátane 'aas_et/')"
     },

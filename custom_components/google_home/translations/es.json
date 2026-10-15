@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Identificarse en Google Home",
-        "description": "Si necesitas ayuda con la configuración, revisa la documentación aquí (en inglés): {docs_url}. Usa el nombre de usuario de tu cuenta de Google y una contraseña de aplicación. Es más seguro y fácil usar una contraseña de aplicación en lugar de tu contraseña habitual. Tiene el mismo nivel de acceso que la contraseña habitual, pero Google recomienda las contraseñas de aplicación para scripts y automatizaciones. ({app_passwords_url}). De todas formas, la contraseña habitual de tu cuenta de Google debería funcionar.",
+        "description": "Para obtener instrucciones de configuración, consulta {docs_url} (en inglés). Introduce el nombre de usuario de tu cuenta de Google y una contraseña de aplicación ({app_passwords_url}), o bien un token maestro. Para crear una contraseña de aplicación, debes tener activada la verificación en dos pasos.",
         "data": {
           "username": "Nombre de usuario de Google",
           "password": "Contraseña de aplicación de Google",
@@ -13,7 +13,7 @@
     },
     "error": {
       "auth": "El nombre de usuario o la contraseña no son correctos. Si tu cuenta tiene activada la verificación en dos pasos, genera una contraseña de aplicación ({app_passwords_url}). Si aun así no puedes iniciar sesión, consulta {troubleshooting_url} (en inglés).",
-      "pass-len": "Según la política de Google, la contraseña puede tener como máximo 100 caracteres ({password_policy_url}). Cambia tu contraseña o usa una contraseña de aplicación ({app_passwords_url}).",
+      "pass-len": "Esta integración admite contraseñas de hasta {max_password_length} caracteres. Cambia la contraseña de tu cuenta o usa una contraseña de aplicación ({app_passwords_url}).",
       "missing-inputs": "Introduce tu nombre de usuario y contraseña o el token maestro",
       "master-token-invalid": "El token maestro no es válido. Asegúrate de haber introducido el token completo (incluido 'aas_et/')"
     },

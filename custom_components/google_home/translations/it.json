@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Autenticazione Google Home",
-        "description": "Se hai bisogno di aiuto con la configurazione, dai un'occhiata qui: {docs_url}. Usa il nome utente del tuo account Google e una password per le app. È più sicuro e più facile generare una password per le app e usarla al posto della password effettiva. Ha gli stessi privilegi di accesso della password normale, ma è comunque meglio che usare la password reale negli script. ({app_passwords_url}). In alternativa, dovrebbe funzionare anche la normale password dell'account Google.",
+        "description": "Per le istruzioni di configurazione, consulta {docs_url}. Inserisci il nome utente del tuo account Google e una password per le app ({app_passwords_url}), oppure un token master. Per creare una password per le app, devi attivare la verifica in due passaggi.",
         "data": {
           "username": "Nome utente dell'account Google",
           "password": "Password per le app dell'account Google",
@@ -13,7 +13,7 @@
     },
     "error": {
       "auth": "Nome utente o password errati. Se il tuo account Google ha la verifica in due passaggi attiva, genera una password per le app ({app_passwords_url}). Se l'autenticazione continua a non riuscire, consulta {troubleshooting_url}",
-      "pass-len": "Secondo le norme di Google, la password può contenere al massimo 100 caratteri ({password_policy_url}). Cambia la password o usa una password per le app ({app_passwords_url}).",
+      "pass-len": "Questa integrazione supporta password di massimo {max_password_length} caratteri. Cambia la password del tuo account o usa una password per le app ({app_passwords_url}).",
       "missing-inputs": "Inserisci nome utente e password oppure il token master",
       "master-token-invalid": "Token master non valido. Assicurati di aver inserito il token completo (compreso 'aas_et/')"
     },

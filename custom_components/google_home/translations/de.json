@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Google Home-Authentifizierung",
-        "description": "Hilfe zur Konfiguration findest du unter {docs_url}. Benutze den Nutzernamen deines Google-Kontos und ein App-Passwort. Es ist sicherer und einfacher, ein App-Passwort zu erstellen und es statt deines eigentlichen Passworts zu verwenden. Es hat zwar dieselben Zugriffsrechte, ist für Skripte aber trotzdem besser geeignet als dein echtes Passwort. ({app_passwords_url}). Alternativ sollte auch dein normales Passwort für das Google-Konto funktionieren.",
+        "description": "Hilfe zur Einrichtung findest du unter {docs_url}. Gib den Nutzernamen deines Google-Kontos und ein App-Passwort ({app_passwords_url}) oder ein Master-Token ein. Um ein App-Passwort zu erstellen, muss die Bestätigung in zwei Schritten aktiviert sein.",
         "data": {
           "username": "Nutzername des Google-Kontos",
           "password": "App-Passwort des Google-Kontos",
@@ -13,7 +13,7 @@
     },
     "error": {
       "auth": "Nutzername oder Passwort ist nicht korrekt. Falls für dein Google-Konto die Bestätigung in zwei Schritten aktiviert ist, erstelle bitte ein App-Passwort ({app_passwords_url}). Sollte die Authentifizierung weiterhin fehlschlagen, findest du weitere Informationen unter {troubleshooting_url}",
-      "pass-len": "Laut Google-Richtlinie darf das Passwort höchstens 100 Zeichen lang sein ({password_policy_url}). Bitte ändere dein Passwort oder verwende ein App-Passwort ({app_passwords_url}).",
+      "pass-len": "Diese Integration unterstützt Passwörter mit bis zu {max_password_length} Zeichen. Ändere das Passwort deines Kontos oder verwende ein App-Passwort ({app_passwords_url}).",
       "missing-inputs": "Bitte gib entweder Nutzername und Passwort oder ein Master-Token an",
       "master-token-invalid": "Master-Token ungültig. Stelle sicher, dass das vollständige Token angegeben wurde (inklusive 'aas_et/')"
     },

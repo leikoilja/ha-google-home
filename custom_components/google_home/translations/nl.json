@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Google Home-authenticatie",
-        "description": "Als je hulp nodig hebt bij de configuratie, kijk dan hier: {docs_url}. Gebruik de gebruikersnaam en een app-wachtwoord van je Google-account. Het is veiliger en gemakkelijker om een app-wachtwoord te genereren en dit te gebruiken in plaats van je echte wachtwoord. Het heeft dezelfde toegang als je normale wachtwoord, maar het is nog steeds beter dan je echte wachtwoord in scripts te gebruiken. ({app_passwords_url}). Anders zou ook het normale wachtwoord van je Google-account moeten werken.",
+        "description": "Raadpleeg {docs_url} voor instructies voor het instellen. Voer de gebruikersnaam van je Google-account en een app-wachtwoord ({app_passwords_url}) in, of geef een mastertoken op. Verificatie in twee stappen moet zijn ingeschakeld om een app-wachtwoord te maken.",
         "data": {
           "username": "Gebruikersnaam van Google-account",
           "password": "App-wachtwoord van Google-account",
@@ -13,7 +13,7 @@
     },
     "error": {
       "auth": "Gebruikersnaam of wachtwoord is niet correct. Als voor je Google-account verificatie in twee stappen is ingeschakeld, genereer dan een app-wachtwoord ({app_passwords_url}). Als authenticatie nog steeds mislukt, raadpleeg dan {troubleshooting_url}",
-      "pass-len": "Volgens het beleid van Google mag een wachtwoord maximaal 100 tekens lang zijn ({password_policy_url}). Wijzig je wachtwoord of gebruik een app-wachtwoord ({app_passwords_url}).",
+      "pass-len": "Deze integratie ondersteunt wachtwoorden van maximaal {max_password_length} tekens. Wijzig het wachtwoord van je account of gebruik een app-wachtwoord ({app_passwords_url}).",
       "missing-inputs": "Voer je gebruikersnaam en wachtwoord of je mastertoken in",
       "master-token-invalid": "Mastertoken ongeldig. Controleer of het volledige token is opgegeven (inclusief 'aas_et/')"
     },

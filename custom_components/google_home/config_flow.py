@@ -82,7 +82,7 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
                     else:
                         self._errors["base"] = "master-token-invalid"
                 # master_token not provided, so use username/password authentication
-                elif len(password) < MAX_PASSWORD_LENGTH:
+                elif len(password) <= MAX_PASSWORD_LENGTH:
                     client = GlocaltokensApiClient(
                         hass=self.hass,
                         session=session,
@@ -130,7 +130,7 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
                 "docs_url": "https://github.com/leikoilja/ha-google-home",
                 "troubleshooting_url": "https://github.com/leikoilja/ha-google-home#troubleshooting",
                 "app_passwords_url": "https://myaccount.google.com/apppasswords",
-                "password_policy_url": "https://support.google.com/a/answer/139399",
+                "max_password_length": str(MAX_PASSWORD_LENGTH),
             },
         )
 
