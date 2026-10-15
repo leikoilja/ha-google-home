@@ -1,23 +1,18 @@
 """Models for Google Home."""
 
-from __future__ import annotations
-
 from datetime import timedelta
 from enum import Enum
 import sys
-from typing import TYPE_CHECKING
 
 from homeassistant.util.dt import as_local, utc_from_timestamp
 
 from .const import DATETIME_STR_FORMAT, GOOGLE_HOME_ALARM_DEFAULT_VALUE
-
-if TYPE_CHECKING:
-    from .types import (
-        AlarmJsonDict,
-        GoogleHomeAlarmDict,
-        GoogleHomeTimerDict,
-        TimerJsonDict,
-    )
+from .types import (
+    AlarmJsonDict,
+    GoogleHomeAlarmDict,
+    GoogleHomeTimerDict,
+    TimerJsonDict,
+)
 
 
 def convert_from_ms_to_s(timestamp: int) -> int:
@@ -81,7 +76,7 @@ class GoogleHomeDevice:
             key=lambda k: (
                 k.fire_time
                 if k.status
-                not in (GoogleHomeAlarmStatus.INACTIVE, GoogleHomeAlarmStatus.MISSED)
+                not in {GoogleHomeAlarmStatus.INACTIVE, GoogleHomeAlarmStatus.MISSED}
                 else k.fire_time + sys.maxsize
             ),
         )

@@ -1,16 +1,19 @@
 """Sensor platform for Google Home."""
 
-from __future__ import annotations
-
 import logging
-from typing import TYPE_CHECKING
+from typing import override
 
 import voluptuous as vol
 
 from homeassistant.components.sensor import SensorDeviceClass
 from homeassistant.const import STATE_UNAVAILABLE, EntityCategory
+from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.helpers import config_validation as cv, entity_platform
+from homeassistant.helpers.entity import Entity
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
+from .api import GlocaltokensApiClient
 from .const import (
     ALARM_AND_TIMER_ID_LENGTH,
     DATA_CLIENT,
@@ -33,22 +36,14 @@ from .const import (
 )
 from .entity import GoogleHomeBaseEntity
 from .models import GoogleHomeAlarmStatus, GoogleHomeDevice, GoogleHomeTimerStatus
-
-if TYPE_CHECKING:
-    from homeassistant.core import HomeAssistant, ServiceCall
-    from homeassistant.helpers.entity import Entity
-    from homeassistant.helpers.entity_platform import AddEntitiesCallback
-    from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
-
-    from .api import GlocaltokensApiClient
-    from .types import (
-        AlarmsAttributes,
-        DeviceAttributes,
-        GoogleHomeAlarmDict,
-        GoogleHomeConfigEntry,
-        GoogleHomeTimerDict,
-        TimersAttributes,
-    )
+from .types import (
+    AlarmsAttributes,
+    DeviceAttributes,
+    GoogleHomeAlarmDict,
+    GoogleHomeConfigEntry,
+    GoogleHomeTimerDict,
+    TimersAttributes,
+)
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -136,17 +131,20 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
     _attr_entity_category = EntityCategory.DIAGNOSTIC
 
     @property
+    @override
     def label(self) -> str:
         """Label to use for name and unique id."""
         return LABEL_DEVICE
 
     @property
+    @override
     def state(self) -> str | None:
         """Return device IP address if any."""
         device = self.get_device()
         return device.ip_address if device else None
 
     @property
+    @override
     def extra_state_attributes(self) -> DeviceAttributes:
         """Return the state attributes."""
         device = self.get_device()
@@ -192,11 +190,13 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
     _attr_device_class = SensorDeviceClass.TIMESTAMP
 
     @property
+    @override
     def label(self) -> str:
         """Label to use for name and unique id."""
         return LABEL_ALARMS
 
     @property
+    @override
     def state(self) -> str | None:
         """Return next alarm if available."""
         device = self.get_device()
@@ -207,11 +207,12 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
             next_alarm.local_time_iso
             if next_alarm
             and next_alarm.status
-            not in (GoogleHomeAlarmStatus.INACTIVE, GoogleHomeAlarmStatus.MISSED)
+            not in {GoogleHomeAlarmStatus.INACTIVE, GoogleHomeAlarmStatus.MISSED}
             else STATE_UNAVAILABLE
         )
 
     @property
+    @override
     def extra_state_attributes(self) -> AlarmsAttributes:
         """Return the state attributes."""
         return {
@@ -278,11 +279,13 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
     _attr_device_class = SensorDeviceClass.TIMESTAMP
 
     @property
+    @override
     def label(self) -> str:
         """Label to use for name and unique id."""
         return LABEL_TIMERS
 
     @property
+    @override
     def state(self) -> str | None:
         """Return next timer if available."""
         device = self.get_device()
@@ -296,6 +299,7 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
         )
 
     @property
+    @override
     def extra_state_attributes(self) -> TimersAttributes:
         """Return the state attributes."""
         return {

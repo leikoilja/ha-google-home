@@ -1,9 +1,7 @@
 """Adds config flow for Google Home."""
 
-from __future__ import annotations
-
 import logging
-from typing import TYPE_CHECKING, Self
+from typing import Self, override
 
 from requests.exceptions import RequestException
 import voluptuous as vol
@@ -25,9 +23,7 @@ from .const import (
     UPDATE_INTERVAL,
 )
 from .exceptions import InvalidMasterToken
-
-if TYPE_CHECKING:
-    from .types import ConfigFlowDict, GoogleHomeConfigEntry, OptionsFlowDict
+from .types import ConfigFlowDict, GoogleHomeConfigEntry, OptionsFlowDict
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -42,10 +38,12 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
         self.username: str | None = None
         self._errors: dict[str, str] = {}
 
+    @override
     def is_matching(self, other_flow: Self) -> bool:
         """Return True if other_flow is matching this flow."""
         return other_flow.username == self.username
 
+    @override
     async def async_step_user(
         self,
         user_input: ConfigFlowDict | None = None,  # type: ignore[override]
@@ -108,6 +106,7 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
 
     @staticmethod
     @callback
+    @override
     def async_get_options_flow(
         config_entry: GoogleHomeConfigEntry,
     ) -> GoogleHomeOptionsFlowHandler:

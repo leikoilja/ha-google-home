@@ -4,14 +4,13 @@ For more details about this integration, please refer to
 https://github.com/leikoilja/ha-google-home
 """
 
-from __future__ import annotations
-
 from datetime import timedelta
 import logging
-from typing import TYPE_CHECKING, cast
+from typing import cast
 
 from homeassistant.components import zeroconf
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
@@ -28,12 +27,8 @@ from .const import (
     STARTUP_MESSAGE,
     UPDATE_INTERVAL,
 )
-
-if TYPE_CHECKING:
-    from homeassistant.core import HomeAssistant
-
-    from .models import GoogleHomeDevice
-    from .types import GoogleHomeConfigEntry
+from .models import GoogleHomeDevice
+from .types import GoogleHomeConfigEntry
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -44,12 +39,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -
         hass.data.setdefault(DOMAIN, {})
         _LOGGER.info(STARTUP_MESSAGE)
 
-    username = cast("str", entry.data.get(CONF_USERNAME))
-    password = cast("str", entry.data.get(CONF_PASSWORD))
-    android_id = cast("str", entry.data.get(CONF_ANDROID_ID))
-    master_token = cast("str", entry.data.get(CONF_MASTER_TOKEN))
+    username = cast(str, entry.data.get(CONF_USERNAME))
+    password = cast(str, entry.data.get(CONF_PASSWORD))
+    android_id = cast(str, entry.data.get(CONF_ANDROID_ID))
+    master_token = cast(str, entry.data.get(CONF_MASTER_TOKEN))
     update_interval = cast(
-        "int", entry.options.get(CONF_UPDATE_INTERVAL, UPDATE_INTERVAL)
+        int, entry.options.get(CONF_UPDATE_INTERVAL, UPDATE_INTERVAL)
     )
 
     _LOGGER.debug(

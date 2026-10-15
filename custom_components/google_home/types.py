@@ -1,7 +1,5 @@
 """Various types used in type hints."""
 
-from __future__ import annotations
-
 from collections.abc import Mapping
 from typing import TypedDict
 
