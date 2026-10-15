@@ -17,13 +17,13 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "codespell>=2.4.1",
-    "mypy>=1.19.1",
-    "PyGithub>=2.6",
-    "pylint>=4.0.4",
-    "pytest>=9.0.2",
-    "ruff>=0.14.4",
-    "types-requests>=2.32.4.20260107",
+    "codespell>=2.4.3",
+    "mypy>=2.4.0",
+    "PyGithub>=2.10.0",
+    "pylint>=4.1.3",
+    "pytest>=9.1.1",
+    "ruff>=0.17.1",
+    "types-requests>=2.33.0.20261006",
     "voluptuous-stubs>=0.1.1",
 ]
 
@@ -153,11 +153,13 @@ load-plugins = [
 # Reasons disabled:
 # too-many-* - not enforced for the sake of readability
 # too-few-* - same as too-many-*
+# abstract-method - entities implement the async_* variants, as HA expects
 # ---
 # Pylint CodeStyle plugin
 # consider-using-assignment-expr - decision to use := better left to devs
 # consider-using-assignment-expr - too opinionated
 disable = [
+    "abstract-method",
     "duplicate-code",
     "line-too-long",
     "too-few-public-methods",

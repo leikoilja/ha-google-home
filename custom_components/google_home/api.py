@@ -48,6 +48,7 @@ class GlocaltokensApiClient:
         self,
         hass: HomeAssistant,
         session: ClientSession,
+        *,
         username: str | None = None,
         password: str | None = None,
         master_token: str | None = None,
@@ -212,7 +213,7 @@ class GlocaltokensApiClient:
 
         data = {"ids": [item_to_delete]}
 
-        item_type = item_to_delete.split("/")[0]
+        item_type = item_to_delete.split("/", maxsplit=1)[0]
 
         _LOGGER.debug(
             "Deleting %s from Google Home device %s - Raw data: %s",

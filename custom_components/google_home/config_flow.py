@@ -140,7 +140,7 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
         master_token = ""
         try:
             master_token = await client.async_get_master_token()
-        except (InvalidMasterToken, RequestException):
+        except InvalidMasterToken, RequestException:
             _LOGGER.exception("Failed to get master token")
         return master_token
 
@@ -150,7 +150,7 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
         access_token = ""
         try:
             access_token = await client.async_get_access_token()
-        except (InvalidMasterToken, RequestException):
+        except InvalidMasterToken, RequestException:
             _LOGGER.exception("Failed to get access token")
         return access_token
 
