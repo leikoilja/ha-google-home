@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Start a local Home Assistant on port 8123 with this integration loaded.
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+# custom_components/ has no __init__.py, so Home Assistant picks it up as part
+# of its custom_components namespace package from the repository root.
+export PYTHONPATH="${PWD}${PYTHONPATH:+:${PYTHONPATH}}"
+
+exec uv run hass --config "${PWD}/config" --debug

@@ -58,11 +58,19 @@ to make sure the code follows the style.
 
 This custom component is based on [integration_blueprint template](https://github.com/custom-components/integration_blueprint).
 
-It comes with development environment in a container, easy to launch
-if you use Visual Studio Code. With this container you will have a stand alone
-Home Assistant instance running and already configured with the included
-[`.devcontainer/configuration.yaml`](./.devcontainer/configuration.yaml)
-file.
+To try your changes in a real Home Assistant, run:
+
+```console
+$ script/develop
+```
+
+It starts a standalone Home Assistant at <http://localhost:8123> with this
+integration loaded, using [`config/configuration.yaml`](./config/configuration.yaml).
+Everything else Home Assistant writes to `config/` is ignored by git.
+
+The repository also has a [dev container](https://containers.dev/) with uv and
+the dependencies installed, which you can open in Visual Studio Code or GitHub
+Codespaces, and then run `script/develop` inside it.
 
 You can use the `prek` hooks configured in this repository to have
 linting tools check your contributions (see [Lint checks](#lint-checks)).

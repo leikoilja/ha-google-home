@@ -12,3 +12,5 @@ coverage.xml
 dist/
 .DS_Store
 /.idea
+config/*
+!config/configuration.yaml
