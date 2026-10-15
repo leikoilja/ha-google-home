@@ -12,14 +12,16 @@ from custom_components.google_home.config_flow import GoogleHomeFlowHandler
     ("password_length", "accepted"), [(99, True), (100, True), (101, False)]
 )
 def test_password_length(password_length: int, accepted: bool) -> None:
-    """Authenticate passwords up to 100 characters and reject longer ones locally."""
+    """Accept passwords up to 100 characters and reject longer ones before authentication."""
+    hass = Mock()
+    hass.config_entries.async_entries.return_value = []
     flow = GoogleHomeFlowHandler()
-    flow.hass = Mock()
+    flow.hass = hass
+    flow.handler = "google_home"
     flow.context = {"source": "user"}
     password = "x" * password_length
 
     with (
-        patch.object(flow, "_async_current_entries", return_value=[]),
         patch("custom_components.google_home.config_flow.async_create_clientsession"),
         patch(
             "custom_components.google_home.config_flow.GlocaltokensApiClient"
