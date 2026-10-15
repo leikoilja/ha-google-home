@@ -1,14 +1,41 @@
-dependencies:
-  - any: ["uv.lock"]
-    all: ["!**/*.py"]
+# Schema reference: https://github.com/actions/labeler#match-object
+# Options inside `all` are AND-ed. For a given set of changed files, at most
+# one rule matches. The dependency and translation rules need every change to
+# be inside their listed paths; the GitHub structure and documentation rules
+# can also match mixed changes. Pull requests touching Python source need a
+# manual type label. Dependabot labels its own pull requests, so its branches
+# are skipped here.
 
-documentation:
-  - any: ["**/*.md"]
-    all: ["!**/*.py", "!.github/**/*"]
+dependencies:
+  - all:
+      - head-branch: ["^(?!dependabot/)"]
+      - changed-files:
+          # A dependency update only: nothing outside these files changed.
+          - any-glob-to-any-file: "uv.lock"
+          # One combined pattern: any-glob-to-all-files asks whether a
+          # single glob matches every changed file, so a list of two would
+          # never match the usual pair.
+          - any-glob-to-all-files: "{uv.lock,pyproject.toml}"
 
 github structure:
-  - any: [".github/**/*"]
-    all: ["!**/*.py"]
+  - all:
+      - head-branch: ["^(?!dependabot/)"]
+      - changed-files:
+          - any-glob-to-any-file: ".github/**/*"
+          - all-globs-to-all-files: "!**/*.py"
 
 translation:
-  - any: ["custom_components/google_home/translations/*.json"]
+  - all:
+      - head-branch: ["^(?!dependabot/)"]
+      - changed-files:
+          - any-glob-to-all-files: "custom_components/google_home/translations/*.json"
+
+documentation:
+  - all:
+      - head-branch: ["^(?!dependabot/)"]
+      - changed-files:
+          - any-glob-to-any-file: "**/*.md"
+          - all-globs-to-all-files:
+              - "!**/*.py"
+              - "!.github/**/*"
+              - "!**/translations/*.json"

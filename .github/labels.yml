@@ -8,6 +8,10 @@
   description: Automatically merge by Kodiak
   color: d4c5f9
 
+- name: breaking
+  description: Breaking change. Used for major release bump
+  color: b60205
+
 - name: bug
   description: Something isn't working
   color: d73a4a
@@ -44,23 +48,26 @@
   description: This doesn't seem right
   color: e4e669
 
+# major/minor/patch describe the dependency's version jump on Dependabot PRs.
+# They do not affect this project's version: release bumps are driven by the
+# "breaking" and "feature" labels, see release-drafter.yml.
 - name: major
-  description: Major changes. Used for release bump
+  description: Semver-major dependency update
   color: 16970B
 
 - name: minor
-  description: Minor changes. Used for release bump
+  description: Semver-minor dependency update
   color: 16970B
 
 - name: patch
-  description: Patch changes. Used for release bump
+  description: Semver-patch dependency update
   color: 16970B
 
 - name: performance
   description: Performance
   color: "016175"
 
-# Prevent Dependabot from adding version labels
+# Leaves a pull request out of the release notes
 - name: skip-release
   description: Skip release
   color: "000000"
