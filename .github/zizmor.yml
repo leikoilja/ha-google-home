@@ -1,0 +1,9 @@
+rules:
+  unpinned-uses:
+    config:
+      policies:
+        # Home Assistant documents tracking master; the action has no releases.
+        home-assistant/actions/*: any
+  # `./` paths to local actions are the long-standing form; keep them.
+  self-repository:
+    disable: true

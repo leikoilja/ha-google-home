@@ -5,12 +5,18 @@ on:
     branches:
       - master
 
+permissions:
+  contents: write
+  pull-requests: read
+
 jobs:
   draft_release:
     name: Release Drafter
+    if: github.repository_owner == 'leikoilja'
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Run release-drafter
-        uses: release-drafter/release-drafter@v7.10.0
+        uses: release-drafter/release-drafter@978bb0b30c5ee8cdd332ced253758157150d43f0 # v7.10.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

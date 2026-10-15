@@ -6,25 +6,35 @@ on:
       - master
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   hacs:
     runs-on: ubuntu-latest
     name: HACS
+    timeout-minutes: 15
     steps:
       - name: Check out the repository
-        uses: "actions/checkout@v7"
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: HACS validation
-        uses: "hacs/action@22.5.0"
+        uses: hacs/action@d556e736723344f83838d08488c983a15381059a # 22.5.0
         with:
           category: "integration"
 
   hassfest:
     runs-on: ubuntu-latest
     name: Hassfest
+    timeout-minutes: 15
     steps:
       - name: Check out the repository
-        uses: "actions/checkout@v7"
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Hassfest validation
-        uses: "home-assistant/actions/hassfest@master"
+        # Home Assistant documents tracking master; the action has no releases.
+        uses: home-assistant/actions/hassfest@master
