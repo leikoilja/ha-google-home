@@ -2,66 +2,66 @@
   "config": {
     "step": {
       "user": {
-        "title": "Google Home autentifikácia",
-        "description": "Ak potrebujete pomoc s konfiguráciou, pozrite sa sem: https://github.com/leikoilja/ha-google-home. Použite svoje používateľské meno účtu Google a heslo aplikácie. Je bezpečnejšie/jednoduchšie vygenerovať heslo aplikácie a použiť ho namiesto skutočného hesla. Stále má rovnaký prístup ako bežné heslo, ale stále lepšie ako pri skriptovaní používať skutočné heslo. (https://myaccount.google.com/apppasswords). Ak nie, bežné heslo účtu Google by malo fungovať.",
+        "title": "Autentifikácia Google Home",
+        "description": "Ak potrebujete pomoc s konfiguráciou, pozrite sa sem: https://github.com/leikoilja/ha-google-home. Použite používateľské meno svojho účtu Google a heslo aplikácie. Je bezpečnejšie a jednoduchšie vygenerovať heslo aplikácie a použiť ho namiesto skutočného hesla. Má rovnaký prístup ako bežné heslo, ale stále je to lepšie, ako používať v skriptoch skutočné heslo. (https://myaccount.google.com/apppasswords). Inak by malo fungovať aj bežné heslo účtu Google.",
         "data": {
-          "username": "Google používateľské meno účtu",
-          "password": "Google heslo aplikácie účtu",
-          "master_token": "Google hlavný token účtu"
+          "username": "Používateľské meno účtu Google",
+          "password": "Heslo aplikácie účtu Google",
+          "master_token": "Hlavný token účtu Google"
         }
       }
     },
     "error": {
-      "auth": "Používateľské meno/heslo je nesprávne. Ak má váš účet Google povolenú 2FA, vygenerujte si heslo aplikácie (https://myaccount.google.com/apppasswords). Ak autentifikácia stále zlyhá, pozrite si https://github.com/leikoilja/ha-google-home#troubleshooting",
+      "auth": "Používateľské meno alebo heslo je nesprávne. Ak máte v účte Google zapnuté dvojstupňové overenie, vygenerujte si heslo aplikácie (https://myaccount.google.com/apppasswords). Ak autentifikácia stále zlyháva, pozrite si https://github.com/leikoilja/ha-google-home#troubleshooting",
       "pass-len": "Dĺžka hesla je podľa pravidiel Google obmedzená na 100 znakov (https://support.google.com/a/answer/139399). Zmeňte si heslo alebo použite heslo aplikácie (https://myaccount.google.com/apppasswords).",
       "missing-inputs": "Zadajte používateľské meno a heslo alebo hlavný token",
       "master-token-invalid": "Hlavný token je neplatný. Uistite sa, že bol zadaný celý token (vrátane 'aas_et/')"
     },
     "abort": {
-      "single_instance_allowed": "Povolený je len jedna inštancia."
+      "single_instance_allowed": "Povolená je len jedna inštancia."
     }
   },
   "options": {
     "step": {
       "init": {
         "data": {
-          "update_interval": "Zmeniť interval aktualizácie. Zvýšte túto hodnotu, ak vám uplynie časový limit zariadení. Predvolená hodnota: 180 (sekúnd)"
+          "update_interval": "Zmeniť interval aktualizácie. Zvýšte túto hodnotu, ak zariadeniam často vyprší časový limit. Predvolená hodnota: 180 (sekúnd)"
         }
       }
     }
   },
   "services": {
     "delete_alarm": {
-      "description": "Odstrániť budík z zariadenia Google Home.",
+      "description": "Odstrániť budík zo zariadenia Google Home.",
       "fields": {
         "alarm_id": {
           "description": "ID budíka (alarm/xxx).",
           "name": "ID budíka"
         },
         "skip_refresh": {
-          "description": "Vynechanie obnovenia zariadení Google Home po vymazaní budíka.",
+          "description": "Preskočiť obnovenie zariadení Google Home po odstránení budíka.",
           "name": "Preskočiť obnovenie"
         },
         "entity_id": {
-          "description": "Reprezentuje zariadenie Google Home (sensor.xxxx_alarms).",
+          "description": "Zodpovedá zariadeniu Google Home (sensor.xxxx_alarms).",
           "name": "Entita"
         }
       },
       "name": "Odstrániť budík"
     },
     "delete_timer": {
-      "description": "Odstrániť časovač z zariadenia Google Home.",
+      "description": "Odstrániť časovač zo zariadenia Google Home.",
       "fields": {
         "timer_id": {
           "description": "ID časovača (timer/xxx).",
           "name": "ID časovača"
         },
         "skip_refresh": {
-          "description": "Vynechanie obnovenia zariadení Google Home po vymazaní časovača.",
+          "description": "Preskočiť obnovenie zariadení Google Home po odstránení časovača.",
           "name": "Preskočiť obnovenie"
         },
         "entity_id": {
-          "description": "Reprezentuje zariadenie Google Home (sensor.xxxx_alarms).",
+          "description": "Zodpovedá zariadeniu Google Home (sensor.xxxx_alarms).",
           "name": "Entita"
         }
       },

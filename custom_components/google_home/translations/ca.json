@@ -1,30 +1,31 @@
 {
-  "title": "Google Home",
   "config": {
     "step": {
       "user": {
         "title": "Autenticació a Google Home",
-        "description": "Si necessites ajuda amb la configuració fes una ullada ací (en anglés): https://github.com/leikoilja/ha-google-home. Utilitza el teu compte de Google, i contrassenya d'aplicació. És més segur i senzill utilitzar una contrassenya d'aplicació en comptes de la teua contrassenya real. Té el mateix nivell d'accés que la contrassenya habitual, però Google recomana aquesta forma per a scripts. (https://myaccount.google.com/apppasswords). De totes maneres, la contrassenya habitual del teu compte de Google deuria funcionar.",
+        "description": "Si necessites ajuda amb la configuració, fes una ullada ací (en anglès): https://github.com/leikoilja/ha-google-home. Utilitza el nom d'usuari del teu compte de Google i una contrasenya d'aplicació. És més segur i senzill utilitzar una contrasenya d'aplicació en comptes de la teua contrasenya real. Té el mateix nivell d'accés que la contrasenya habitual, però Google recomana aquesta forma per a scripts. (https://myaccount.google.com/apppasswords). De totes maneres, la contrasenya habitual del teu compte de Google deuria funcionar.",
         "data": {
           "username": "Nom d'usuari de Google",
-          "password": "Contrassenya d'aplicació de Google"
+          "password": "Contrasenya d'aplicació de Google",
+          "master_token": "Testimoni mestre de Google"
         }
       }
     },
     "error": {
-      "auth": "La combinació Nom d'usuari/Contrassenya és incorrecta. Si el teu compte té l'autentificació en dos passes habilitada, per favor, genera una contrassenya d'aplicació (https://myaccount.google.com/apppasswords). Si tot i així no pots iniciar sessió, per favor accedeix a https://github.com/leikoilja/ha-google-home#troubleshooting (en anglès).",
-      "missing-inputs": "Introduïu el nom d'usuari i la contrasenya o el testimoni mestre",
-      "master-token-invalid": "El testimoni mestre no és vàlid. Assegureu-vos que s'ofereix el testimoni complet (inclòs 'aas_et/')"
+      "auth": "La combinació de nom d'usuari i contrasenya és incorrecta. Si el teu compte té la verificació en dos passos habilitada, genera una contrasenya d'aplicació (https://myaccount.google.com/apppasswords). Si tot i així no pots iniciar sessió, consulta https://github.com/leikoilja/ha-google-home#troubleshooting (en anglès).",
+      "pass-len": "Segons la política de Google, la contrasenya pot tindre com a màxim 100 caràcters (https://support.google.com/a/answer/139399). Canvia la contrasenya o utilitza una contrasenya d'aplicació (https://myaccount.google.com/apppasswords).",
+      "missing-inputs": "Introdueix el nom d'usuari i la contrasenya o el testimoni mestre",
+      "master-token-invalid": "El testimoni mestre no és vàlid. Assegura't que has introduït el testimoni complet (inclòs 'aas_et/')"
     },
     "abort": {
-      "single_instance_allowed": "Solament està permesa una única instància"
+      "single_instance_allowed": "Només es permet una única instància."
     }
   },
   "options": {
     "step": {
       "init": {
         "data": {
-          "update_interval": "Canvia l'interval d'actualització. Augmenteu-ho si teniu temps d’espera dels dispositius. Valor per defecte: 180 (segons)"
+          "update_interval": "Canvia l'interval d'actualització. Augmenta'l si els dispositius sovint no responen a temps. Valor per defecte: 180 (segons)"
         }
       }
     }
@@ -42,7 +43,7 @@
           "name": "Omet l'actualització"
         },
         "entity_id": {
-          "description": "Representa un dispositiu Google Home (sensor.xxxx_alarms).",
+          "description": "Correspon a un dispositiu Google Home (sensor.xxxx_alarms).",
           "name": "Entitat"
         }
       },
@@ -60,7 +61,7 @@
           "name": "Omet l'actualització"
         },
         "entity_id": {
-          "description": "Representa un dispositiu Google Home (sensor.xxxx_alarms).",
+          "description": "Correspon a un dispositiu Google Home (sensor.xxxx_alarms).",
           "name": "Entitat"
         }
       },
@@ -72,7 +73,7 @@
     },
     "refresh_devices": {
       "description": "Actualitza l'estat de tots els dispositius Google Home.",
-      "name": "Actualitzar dispositius"
+      "name": "Actualitza dispositius"
     }
   }
 }

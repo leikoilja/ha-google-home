@@ -3,17 +3,19 @@
     "step": {
       "user": {
         "title": "Google Home login",
-        "description": "Hvis du har brug for hjælp til at konfigurere, klik her: https://github.com/leikoilja/ha-google-home. Brug din Google kontos brugernavn og app-adgangskode. Det er sikrere at generere en app-adgangskode i stedet for at bruge din normale adgangskode. App-adgangskode har adgang til det samme, men er bedre end din normale adgangskode når man bruger den i scripts. (https://myaccount.google.com/apppasswords). Du kan også bruge din normale adgangskode.",
+        "description": "Hvis du har brug for hjælp til konfigurationen, så se her: https://github.com/leikoilja/ha-google-home. Brug din Google-kontos brugernavn og en app-adgangskode. Det er sikrere at oprette en app-adgangskode og bruge den i stedet for din normale adgangskode. En app-adgangskode giver adgang til det samme, men er bedre end din normale adgangskode, når den bruges i scripts. (https://myaccount.google.com/apppasswords). Ellers burde din normale adgangskode også virke.",
         "data": {
-          "username": "Google konto brugernavn",
-          "password": "Google konto app-adgangskode"
+          "username": "Brugernavn til Google-konto",
+          "password": "App-adgangskode til Google-konto",
+          "master_token": "Master token til Google-konto"
         }
       }
     },
     "error": {
-      "auth": "Brugernavn/adgangskode er forkert. Hvis din Google konto har 2FA aktiveret, skal du bruge en app-adgangskode i stedet (https://myaccount.google.com/apppasswords). Hvis du stadig ikke kan logge ind, så kig her for hjælp https://github.com/leikoilja/ha-google-home#troubleshooting",
+      "auth": "Brugernavn eller adgangskode er forkert. Hvis din Google-konto har totrinsbekræftelse slået til, skal du bruge en app-adgangskode i stedet (https://myaccount.google.com/apppasswords). Hvis du stadig ikke kan logge ind, så se her for hjælp: https://github.com/leikoilja/ha-google-home#troubleshooting",
+      "pass-len": "Ifølge Googles politik må adgangskoden højst være på 100 tegn (https://support.google.com/a/answer/139399). Skift din adgangskode, eller brug en app-adgangskode (https://myaccount.google.com/apppasswords).",
       "missing-inputs": "Indtast enten brugernavn og adgangskode eller master token",
-      "master-token-invalid": "Master token ugyldig. Sørg for, at det fulde token er angivet (inklusive 'aas_et/')"
+      "master-token-invalid": "Master token er ugyldigt. Sørg for, at hele tokenet er angivet (inklusive 'aas_et/')"
     },
     "abort": {
       "single_instance_allowed": "Kun en enkelt forekomst er tilladt."
@@ -23,7 +25,7 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Ændre opdaterings interval. Hæv dette hvis du lider af timeout-fejl. Standard: 180 (Sekunder)"
+          "update_interval": "Skift opdateringsinterval. Øg værdien, hvis dine enheder ofte får timeout. Standard: 180 (sekunder)"
         }
       }
     }
@@ -37,11 +39,11 @@
           "name": "Alarm-ID"
         },
         "skip_refresh": {
-          "description": "Spring opdatering af Google Home-enheder efter sletning af en alarm.",
+          "description": "Spring opdatering af Google Home-enheder over efter sletning af en alarm.",
           "name": "Spring opdatering over"
         },
         "entity_id": {
-          "description": "Repræsenterer en Google Home-enhed (sensor.xxxx_alarms).",
+          "description": "Svarer til en Google Home-enhed (sensor.xxxx_alarms).",
           "name": "Entitet"
         }
       },
@@ -55,11 +57,11 @@
           "name": "Timer-ID"
         },
         "skip_refresh": {
-          "description": "Spring opdatering over af Google Home-enheder efter sletning af en timer.",
+          "description": "Spring opdatering af Google Home-enheder over efter sletning af en timer.",
           "name": "Spring opdatering over"
         },
         "entity_id": {
-          "description": "Repræsenterer en Google Home-enhed (sensor.xxxx_alarms).",
+          "description": "Svarer til en Google Home-enhed (sensor.xxxx_alarms).",
           "name": "Entitet"
         }
       },

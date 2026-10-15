@@ -2,19 +2,20 @@
   "config": {
     "step": {
       "user": {
-        "title": "Google Home Authentifizierung",
-        "description": "Hilfe zur Konfiguration findest du unter https://github.com/leikoilja/ha-google-home. Benutze deinen Google Account und ein App-Passwort. Es ist einfacher und sicherer, ein App-Passwort zu generieren und zu nutzen als das eigentliche Passwort. Es hat weiterhin die selben Zugriffsrechte, ist aber einfacher in der Handhabung beim Skripten als das echte Passwort. (https://myaccount.google.com/apppasswords). Falls nicht, dein normales Google Account Passwort sollte funktionieren.",
+        "title": "Google Home-Authentifizierung",
+        "description": "Hilfe zur Konfiguration findest du unter https://github.com/leikoilja/ha-google-home. Benutze den Nutzernamen deines Google-Kontos und ein App-Passwort. Es ist sicherer und einfacher, ein App-Passwort zu erstellen und es statt deines eigentlichen Passworts zu verwenden. Es hat zwar dieselben Zugriffsrechte, ist für Skripte aber trotzdem besser geeignet als dein echtes Passwort. (https://myaccount.google.com/apppasswords). Alternativ sollte auch dein normales Passwort für das Google-Konto funktionieren.",
         "data": {
-          "username": "Google Account Nutzername",
-          "password": "Google Account App-Passwort",
-          "master_token": "Google Account Master Token"
+          "username": "Nutzername des Google-Kontos",
+          "password": "App-Passwort des Google-Kontos",
+          "master_token": "Master-Token des Google-Kontos"
         }
       }
     },
     "error": {
-      "auth": "Nutzername/Passwort ist nicht korrekt. Falls dein Google Account die Zwei-Faktor-Autentifizierung aktiviert hat, generiere bitte ein App Passwort (https://myaccount.google.com/apppasswords). Sollte die Authentifizierung weiterhin fehlschlagen, findest du weitere Informationen unter https://github.com/leikoilja/ha-google-home#troubleshooting",
-      "missing-inputs": "Bitte entweder Nutzername und Passwort oder Master Token angeben",
-      "master-token-invalid": "Master Token ungültig. Stelle sicher, dass das vollständige Token angegeben wurde (inklusive 'aas_et/')"
+      "auth": "Nutzername oder Passwort ist nicht korrekt. Falls für dein Google-Konto die Bestätigung in zwei Schritten aktiviert ist, erstelle bitte ein App-Passwort (https://myaccount.google.com/apppasswords). Sollte die Authentifizierung weiterhin fehlschlagen, findest du weitere Informationen unter https://github.com/leikoilja/ha-google-home#troubleshooting",
+      "pass-len": "Laut Google-Richtlinie darf das Passwort höchstens 100 Zeichen lang sein (https://support.google.com/a/answer/139399). Bitte ändere dein Passwort oder verwende ein App-Passwort (https://myaccount.google.com/apppasswords).",
+      "missing-inputs": "Bitte gib entweder Nutzername und Passwort oder ein Master-Token an",
+      "master-token-invalid": "Master-Token ungültig. Stelle sicher, dass das vollständige Token angegeben wurde (inklusive 'aas_et/')"
     },
     "abort": {
       "single_instance_allowed": "Es ist nur eine Instanz erlaubt."
@@ -24,54 +25,54 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Aktualisierungsintervall ändern. Erhöhen Sie diesen Wert, wenn Sie unter Zeitüberschreitungen der Geräte leiden. Standard: 180 (Sekunden)"
+          "update_interval": "Aktualisierungsintervall ändern. Erhöhe diesen Wert, wenn bei deinen Geräten Zeitüberschreitungen auftreten. Standard: 180 (Sekunden)"
         }
       }
     }
   },
   "services": {
     "delete_alarm": {
-      "description": "Einen Alarm von einem Google Home Gerät löschen.",
+      "description": "Einen Wecker von einem Google Home-Gerät löschen.",
       "fields": {
         "alarm_id": {
-          "description": "ID eines Alarms (alarm/xxx).",
-          "name": "Alarm-ID"
+          "description": "ID eines Weckers (alarm/xxx).",
+          "name": "Wecker-ID"
         },
         "skip_refresh": {
-          "description": "Überspringen Sie die Aktualisierung von Google Home-Geräten nach dem Löschen eines Alarms.",
+          "description": "Aktualisierung der Google Home-Geräte nach dem Löschen eines Weckers überspringen.",
           "name": "Aktualisierung überspringen"
         },
         "entity_id": {
-          "description": "Stellt ein Google Home Gerät dar (sensor.xxxx_alarms).",
+          "description": "Entspricht einem Google Home-Gerät (sensor.xxxx_alarms).",
           "name": "Entität"
         }
       },
-      "name": "Alarm löschen"
+      "name": "Wecker löschen"
     },
     "delete_timer": {
-      "description": "Einen Timer von einem Google Home Gerät löschen.",
+      "description": "Einen Timer von einem Google Home-Gerät löschen.",
       "fields": {
         "timer_id": {
           "description": "ID eines Timers (timer/xxx).",
           "name": "Timer-ID"
         },
         "skip_refresh": {
-          "description": "Überspringen Sie die Aktualisierung von Google Home-Geräten, nachdem Sie einen Timer gelöscht haben.",
+          "description": "Aktualisierung der Google Home-Geräte nach dem Löschen eines Timers überspringen.",
           "name": "Aktualisierung überspringen"
         },
         "entity_id": {
-          "description": "Stellt ein Google Home Gerät dar (sensor.xxxx_alarms).",
+          "description": "Entspricht einem Google Home-Gerät (sensor.xxxx_alarms).",
           "name": "Entität"
         }
       },
       "name": "Timer löschen"
     },
     "reboot_device": {
-      "description": "Ein Google Home Gerät neu starten.",
+      "description": "Ein Google Home-Gerät neu starten.",
       "name": "Gerät neu starten"
     },
     "refresh_devices": {
-      "description": "Aktualisieren Sie den Status aller Google Home-Geräte.",
+      "description": "Den Status aller Google Home-Geräte aktualisieren.",
       "name": "Geräte aktualisieren"
     }
   }
