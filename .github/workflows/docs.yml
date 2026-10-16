@@ -11,7 +11,6 @@ on:
       - uv.lock
       - .github/workflows/docs.yml
       - .github/actions/build-docs/**
-  workflow_dispatch:
 
 permissions:
   contents: read
@@ -52,8 +51,7 @@ jobs:
 
   deploy:
     name: Deploy to Cloudflare Pages
-    # A manual run can pick any branch, but only master is published
-    if: github.repository == 'leikoilja/ha-google-home' && github.ref == 'refs/heads/master'
+    if: github.repository == 'leikoilja/ha-google-home'
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
