@@ -6,7 +6,7 @@ from unittest.mock import AsyncMock, Mock
 import pytest
 
 from custom_components.google_home import async_migrate_entry, async_name_after_account
-from custom_components.google_home.const import MASTER_TOKEN_TITLE
+from custom_components.google_home.const import BROWSER_TITLE, MASTER_TOKEN_TITLE
 
 # glocaltokens accepts only master tokens of the real length
 MASTER_TOKEN = "aas_et/" + "x" * 216
@@ -54,12 +54,11 @@ def test_migrate_skips_current_entries() -> None:
     hass.config_entries.async_update_entry.assert_not_called()
 
 
-def test_name_after_account() -> None:
+@pytest.mark.parametrize("title", [MASTER_TOKEN_TITLE, BROWSER_TITLE])
+def test_name_after_account(title: str) -> None:
     """Rename the entry after its account and keep the saved username empty."""
     hass = Mock()
-    entry = make_entry(
-        {"username": "", "master_token": MASTER_TOKEN}, title=MASTER_TOKEN_TITLE
-    )
+    entry = make_entry({"username": "", "master_token": MASTER_TOKEN}, title=title)
     client = Mock(async_get_email=AsyncMock(return_value="test@example.com"))
 
     asyncio.run(async_name_after_account(hass, entry, client))

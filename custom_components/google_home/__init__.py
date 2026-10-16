@@ -18,6 +18,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .api import GlocaltokensApiClient
 from .const import (
+    BROWSER_TITLE,
     CONF_ANDROID_ID,
     CONF_MASTER_TOKEN,
     CONF_UPDATE_INTERVAL,
@@ -34,6 +35,9 @@ from .models import GoogleHomeDevice
 from .types import GoogleHomeConfigEntry
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
+
+# Titles that setup used when Google didn't say which account signed in
+GENERIC_TITLES = {MASTER_TOKEN_TITLE, BROWSER_TITLE}
 
 
 async def async_migrate_entry(
@@ -102,7 +106,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
-    if entry.title == MASTER_TOKEN_TITLE:
+    if entry.title in GENERIC_TITLES:
         entry.async_create_background_task(
             hass,
             async_name_after_account(hass, entry, glocaltokens_client),
@@ -116,15 +120,16 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -
 async def async_name_after_account(
     hass: HomeAssistant, entry: GoogleHomeConfigEntry, client: GlocaltokensApiClient
 ) -> None:
-    """Name an entry set up with only a master token after its Google account.
+    """Name an entry with a generic title after its Google account.
 
-    Older versions didn't know which account a master token belongs to, so they
-    gave the entry a generic title. Only the title changes: the saved username
+    Setup gives an entry a generic title when it doesn't know the account: older
+    versions always did for a master token, and browser sign-in does when Google
+    doesn't give the email address. Only the title changes: the saved username
     stays empty, so the integration keeps signing in exactly as before.
     """
     email = await client.async_get_email()
     # The user may have renamed the entry while Google was answering
-    if email and entry.title == MASTER_TOKEN_TITLE:
+    if email and entry.title in GENERIC_TITLES:
         hass.config_entries.async_update_entry(entry, title=email)
 
 

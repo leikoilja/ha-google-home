@@ -13,6 +13,7 @@ from homeassistant.helpers.aiohttp_client import async_create_clientsession
 
 from .api import GlocaltokensApiClient
 from .const import (
+    BROWSER_TITLE,
     CONF_ANDROID_ID,
     CONF_MASTER_TOKEN,
     CONF_OAUTH_TOKEN,
@@ -20,7 +21,6 @@ from .const import (
     CONF_UPDATE_INTERVAL,
     CONF_USERNAME,
     DOMAIN,
-    MANUFACTURER,
     MASTER_TOKEN_TITLE,
     UPDATE_INTERVAL,
 )
@@ -89,7 +89,7 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
                     username = await client.async_get_email() or ""
                     self.username = username
                     return await self._create_entry(
-                        client, username, username or f"{MANUFACTURER} (browser)"
+                        client, username, username or BROWSER_TITLE
                     )
                 errors["base"] = "oauth-token-invalid"
         return self._show_form(
