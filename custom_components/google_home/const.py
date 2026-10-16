@@ -53,6 +53,9 @@ CONF_OAUTH_TOKEN: Final = "oauth_token"
 
 # Defaults
 DEFAULT_NAME: Final = "Google Home"
+# Titles of entries whose Google account is unknown, by how they signed in
+MASTER_TOKEN_TITLE: Final = f"{MANUFACTURER} (master_token)"
+BROWSER_TITLE: Final = f"{MANUFACTURER} (browser)"
 GOOGLE_HOME_ALARM_DEFAULT_VALUE: Final = 0
 
 LABEL_ALARMS: Final = "alarms"
