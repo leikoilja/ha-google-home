@@ -1,19 +1,46 @@
 {
   "config": {
     "step": {
+      "user": {
+        "title": "Bei Google anmelden",
+        "description": "Diese Integration funktioniert mit deinen Google-Lautsprechern und -Displays, etwa Nest Mini, Nest Audio und Nest Hub. Andere Geräte aus deiner Google Home App fügt sie nicht hinzu.\n\nWähle, wie du dich bei einem Google-Konto anmeldest, das Mitglied deines Zuhauses ist. Hilfe findest du unter {docs_url}.",
+        "menu_options": {
+          "browser": "Anmeldung im Browser (empfohlen)",
+          "master_token": "Master-Token"
+        },
+        "menu_option_descriptions": {
+          "browser": "Melde dich in einem Desktop-Browser bei Google an und füge dann ein Cookie ein. Funktioniert bei den meisten Konten.",
+          "master_token": "Füge ein Master-Token ein, das du bereits hast."
+        }
+      },
       "browser": {
+        "title": "Anmeldung im Browser",
+        "description": "1. Öffne auf einem Computer {embedded_setup_url} in einem privaten Browserfenster und melde dich an. Nachdem du zugestimmt hast, lädt die Seite eventuell weiter; das ist normal.\n2. Öffne die Entwicklertools des Browsers und suche die Cookies für `accounts.google.com`.\n3. Kopiere den Wert des Cookies `oauth_token` und füge ihn sofort unten ein. Er läuft nach wenigen Minuten ab und funktioniert nur einmal.\n\nSchritt-für-Schritt-Anleitung: {browser_docs_url}\n\nUm eine andere Anmeldeart zu wählen, schließe dieses Fenster und füge die Integration erneut hinzu.",
         "data": {
-          "username": "Nutzername des Google-Kontos"
+          "username": "Nutzername des Google-Kontos",
+          "oauth_token": "Cookie oauth_token"
+        },
+        "data_description": {
+          "username": "Das Konto, mit dem du dich im Browser angemeldet hast.",
+          "oauth_token": "Beginnt mit oauth2_4/"
         }
       },
       "master_token": {
+        "title": "Master-Token",
+        "description": "Füge ein Master-Token ein, das du zuvor erhalten hast, zum Beispiel mit einem anderen Tool.\n\nUm eine andere Anmeldeart zu wählen, schließe dieses Fenster und füge die Integration erneut hinzu.",
         "data": {
           "master_token": "Master-Token des Google-Kontos"
+        },
+        "data_description": {
+          "master_token": "Beginnt mit aas_et/"
         }
       }
     },
     "error": {
-      "master-token-invalid": "Master-Token ungültig. Stelle sicher, dass das vollständige Token angegeben wurde (inklusive 'aas_et/')"
+      "oauth-token-invalid": "Google hat das Cookie nicht akzeptiert. Hol dir ein neues und füge es sofort ein: Es läuft nach wenigen Minuten ab und funktioniert nur einmal. Kopiere den vollständigen Wert, der mit oauth2_4/ beginnt, und prüfe, ob die E-Mail-Adresse zu dem Konto gehört, mit dem du dich angemeldet hast.",
+      "master-token-invalid": "Master-Token ungültig. Stelle sicher, dass das vollständige Token angegeben wurde (inklusive 'aas_et/')",
+      "oauth-token-format": "Das ist nicht das Cookie oauth_token. Sein Wert beginnt mit oauth2_4/.",
+      "master-token-format": "Ein Master-Token beginnt mit aas_et/ und ist 223 Zeichen lang. Kopiere das vollständige Token."
     }
   },
   "options": {

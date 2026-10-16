@@ -1,19 +1,46 @@
 {
   "config": {
     "step": {
+      "user": {
+        "title": "Prihlásenie do Google",
+        "description": "Táto integrácia funguje s reproduktormi a displejmi Google, napríklad Nest Mini, Nest Audio a Nest Hub. Nepridáva ostatné zariadenia z aplikácie Google Home.\n\nVyberte, ako sa prihlásiť do účtu Google, ktorý je členom vašej domácnosti. Pokyny nájdete tu: {docs_url}.",
+        "menu_options": {
+          "browser": "Prihlásenie v prehliadači (odporúčané)",
+          "master_token": "Hlavný token"
+        },
+        "menu_option_descriptions": {
+          "browser": "Prihláste sa do Google v prehliadači na počítači a potom vložte súbor cookie. Funguje pre väčšinu účtov.",
+          "master_token": "Vložte hlavný token, ktorý už máte."
+        }
+      },
       "browser": {
+        "title": "Prihlásenie v prehliadači",
+        "description": "1. Na počítači otvorte {embedded_setup_url} v súkromnom okne prehliadača a prihláste sa. Po potvrdení sa stránka môže naďalej načítavať; je to očakávané.\n2. Otvorte nástroje pre vývojárov v prehliadači a nájdite súbory cookie pre `accounts.google.com`.\n3. Skopírujte hodnotu súboru cookie `oauth_token` a hneď ju vložte nižšie. Jeho platnosť vyprší o niekoľko minút a funguje len raz.\n\nPodrobný návod: {browser_docs_url}\n\nAk chcete zvoliť iný spôsob prihlásenia, zatvorte toto okno a pridajte integráciu znova.",
         "data": {
-          "username": "Používateľské meno účtu Google"
+          "username": "Používateľské meno účtu Google",
+          "oauth_token": "Súbor cookie oauth_token"
+        },
+        "data_description": {
+          "username": "Účet, ktorým ste sa prihlásili v prehliadači.",
+          "oauth_token": "Začína sa oauth2_4/"
         }
       },
       "master_token": {
+        "title": "Hlavný token",
+        "description": "Vložte hlavný token, ktorý ste získali skôr, napríklad iným nástrojom.\n\nAk chcete zvoliť iný spôsob prihlásenia, zatvorte toto okno a pridajte integráciu znova.",
         "data": {
           "master_token": "Hlavný token účtu Google"
+        },
+        "data_description": {
+          "master_token": "Začína sa aas_et/"
         }
       }
     },
     "error": {
-      "master-token-invalid": "Hlavný token je neplatný. Uistite sa, že bol zadaný celý token (vrátane 'aas_et/')"
+      "oauth-token-invalid": "Google súbor cookie neprijal. Získajte nový a hneď ho vložte: jeho platnosť vyprší o niekoľko minút a funguje len raz. Skopírujte celú hodnotu, ktorá sa začína oauth2_4/, a skontrolujte, či e-mail patrí účtu, ktorým ste sa prihlásili.",
+      "master-token-invalid": "Hlavný token je neplatný. Uistite sa, že bol zadaný celý token (vrátane 'aas_et/')",
+      "oauth-token-format": "Toto nie je súbor cookie oauth_token. Jeho hodnota sa začína oauth2_4/.",
+      "master-token-format": "Hlavný token sa začína aas_et/ a má 223 znakov. Skopírujte celý token."
     }
   },
   "options": {

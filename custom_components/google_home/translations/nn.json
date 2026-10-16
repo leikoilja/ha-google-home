@@ -1,19 +1,46 @@
 {
   "config": {
     "step": {
+      "user": {
+        "title": "Logg på Google",
+        "description": "Denne integrasjonen fungerer med Google-høgtalarane og -skjermane dine, til dømes Nest Mini, Nest Audio og Nest Hub. Integrasjonen legg ikkje til dei andre einingane i Google Home-appen.\n\nVel korleis du vil logge på ein Google-konto som er medlem av heimen din. Sjå rettleiinga her: {docs_url}.",
+        "menu_options": {
+          "browser": "Pålogging i nettlesaren (tilrådd)",
+          "master_token": "Master token"
+        },
+        "menu_option_descriptions": {
+          "browser": "Logg på Google i ein nettlesar på ei datamaskin, og lim deretter inn ein informasjonskapsel. Fungerer for dei fleste kontoane.",
+          "master_token": "Lim inn eit master token du allereie har."
+        }
+      },
       "browser": {
+        "title": "Pålogging i nettlesaren",
+        "description": "1. Opne {embedded_setup_url} i eit privat nettlesarvindauge på ei datamaskin, og logg på. Etter at du har godteke, kan sida halde fram med å laste; det er venta.\n2. Opne utviklarverktøya i nettlesaren, og finn informasjonskapslane for `accounts.google.com`.\n3. Kopier verdien til informasjonskapselen `oauth_token`, og lim han inn nedanfor med ein gong. Han går ut på dato i løpet av nokre minutt og fungerer berre éin gong.\n\nRettleiing steg for steg: {browser_docs_url}\n\nFor å velje ein annan påloggingsmåte, lukk dette vindauget og legg til integrasjonen på nytt.",
         "data": {
-          "username": "Brukarnamn for Google-kontoen"
+          "username": "Brukarnamn for Google-kontoen",
+          "oauth_token": "Informasjonskapselen oauth_token"
+        },
+        "data_description": {
+          "username": "Kontoen du logga på med i nettlesaren.",
+          "oauth_token": "Byrjar med oauth2_4/"
         }
       },
       "master_token": {
+        "title": "Master token",
+        "description": "Lim inn eit master token som du har fått tidlegare, til dømes med eit anna verktøy.\n\nFor å velje ein annan påloggingsmåte, lukk dette vindauget og legg til integrasjonen på nytt.",
         "data": {
           "master_token": "Master token for Google-kontoen"
+        },
+        "data_description": {
+          "master_token": "Byrjar med aas_et/"
         }
       }
     },
     "error": {
-      "master-token-invalid": "Master token er ugyldig. Kontroller at heile tokenet er gitt (inkludert 'aas_et/')"
+      "oauth-token-invalid": "Google godtok ikkje informasjonskapselen. Hent ein ny, og lim han inn med ein gong: han går ut på dato i løpet av nokre minutt og fungerer berre éin gong. Kopier heile verdien, som byrjar med oauth2_4/, og kontroller at e-postadressa høyrer til kontoen du logga på med.",
+      "master-token-invalid": "Master token er ugyldig. Kontroller at heile tokenet er gitt (inkludert 'aas_et/')",
+      "oauth-token-format": "Dette er ikkje informasjonskapselen oauth_token. Verdien byrjar med oauth2_4/.",
+      "master-token-format": "Eit master token byrjar med aas_et/ og er 223 teikn langt. Kopier heile tokenet."
     }
   },
   "options": {
