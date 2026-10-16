@@ -20,6 +20,7 @@ from .const import (
     API_ENDPOINT_ALARM_VOLUME,
     API_ENDPOINT_ALARMS,
     API_ENDPOINT_DO_NOT_DISTURB,
+    API_ENDPOINT_EUREKA_INFO,
     API_ENDPOINT_REBOOT,
     HEADER_CAST_LOCAL_AUTH,
     HEADER_CONTENT_TYPE,
@@ -51,6 +52,7 @@ class GlocaltokensApiClient:
         oauth_token: str | None = None,
         android_id: str | None = None,
         zeroconf_instance: Zeroconf | None = None,
+        known_hosts: list[str] | None = None,
     ):
         """Sample API Client."""
         self.hass = hass
@@ -71,6 +73,7 @@ class GlocaltokensApiClient:
         # Whether Google's device list was fetched, as a failed fetch returns none
         self.google_devices_fetched = False
         self.zeroconf_instance = zeroconf_instance
+        self.known_hosts = known_hosts or []
 
     async def async_get_master_token(self) -> str:
         """Get master API token."""
@@ -124,17 +127,86 @@ class GlocaltokensApiClient:
             # glocaltokens drops the home graph before fetching it and returns no
             # devices if it can't get it again, for example when signing in fails
             self.google_devices_fetched = self._client.homegraph is not None
-            self.google_devices = [
-                GoogleHomeDevice(
-                    device_id=device.device_id,
-                    name=device.device_name,
-                    auth_token=device.local_auth_token,
-                    ip_address=device.ip_address,
-                    hardware=device.hardware,
+            # glocaltokens names a device found by mDNS after what it announces, such
+            # as one speaker of a pair, and doesn't keep the ID that devices report
+            # locally. Take both from Google's list instead.
+            google_items = (
+                {
+                    item.device_info.device_id: item
+                    for item in self._client.homegraph.home.devices
+                }
+                if self._client.homegraph is not None
+                else {}
+            )
+            self.google_devices = []
+            for device in google_devices:
+                item = google_items.get(device.device_id)
+                self.google_devices.append(
+                    GoogleHomeDevice(
+                        device_id=device.device_id,
+                        name=item.device_name if item else device.device_name,
+                        auth_token=device.local_auth_token,
+                        ip_address=device.ip_address,
+                        hardware=device.hardware,
+                        cloud_device_id=(
+                            item.device_info.agent_info.unique_id if item else None
+                        ),
+                    )
                 )
-                for device in google_devices
-            ]
+            # Known hosts are only asked when mDNS left a device without an address
+            if self.known_hosts and any(
+                not device.ip_address and device.cloud_device_id
+                for device in self.google_devices
+            ):
+                await self.async_use_known_hosts()
         return self.google_devices
+
+    async def async_use_known_hosts(self) -> None:
+        """Give devices that mDNS didn't find the address of the known host they're at.
+
+        Hosts are matched by the ID that Google and the device itself report. In a
+        speaker pair, only the leading speaker reports the pair's ID; the other
+        reports its own, which Google doesn't list, so it's never used.
+        """
+        cloud_device_ids = await asyncio.gather(
+            *(self._async_get_cloud_device_id(host) for host in self.known_hosts)
+        )
+        hosts_by_id: dict[str, str] = {}
+        for host, cloud_device_id in zip(
+            self.known_hosts, cloud_device_ids, strict=True
+        ):
+            if cloud_device_id is not None:
+                # As with mDNS, the first host that reports a device is used
+                hosts_by_id.setdefault(cloud_device_id, host)
+        for device in self.google_devices:
+            if device.ip_address or not device.cloud_device_id:
+                continue
+            if known_host := hosts_by_id.get(device.cloud_device_id):
+                _LOGGER.debug("Found %s at known host %s", device.name, known_host)
+                device.ip_address = known_host
+
+    async def _async_get_cloud_device_id(self, host: str) -> str | None:
+        """Return Google's ID of the device at a known host."""
+        url = self.create_url(host, PORT, API_ENDPOINT_EUREKA_INFO)
+        try:
+            async with self._session.get(
+                url, timeout=ClientTimeout(total=TIMEOUT)
+            ) as response:
+                info = await response.json()
+        except ClientError, TimeoutError, ValueError:
+            _LOGGER.debug("Known host %s didn't answer", host, exc_info=True)
+            return None
+        device_info = info.get("device_info") if isinstance(info, dict) else None
+        cloud_device_id = (
+            device_info.get("cloud_device_id")
+            if isinstance(device_info, dict)
+            else None
+        )
+        if not isinstance(cloud_device_id, str) or not cloud_device_id:
+            _LOGGER.debug("Known host %s didn't report a device ID", host)
+            return None
+        _LOGGER.debug("Known host %s is %s", host, info.get("name"))
+        return cloud_device_id.lower()
 
     async def get_android_id(self) -> str:
         """Generate random android_id."""

@@ -75,10 +75,11 @@ class TimersAttributes(TypedDict):
     timers: list[GoogleHomeTimerDict]
 
 
-class OptionsFlowDict(TypedDict):
+class OptionsFlowDict(TypedDict, total=False):
     """Typed dict for options flow handler."""
 
     update_interval: int
+    known_hosts: list[str]
 
 
 type JsonDict = Mapping[

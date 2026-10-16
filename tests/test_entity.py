@@ -36,3 +36,11 @@ def test_entity_name_starts_with_device_name(entity_class: type) -> None:
     unprefixed = _async_strip_prefix_from_entity_name(entity.name, "Living Room")
     assert unprefixed is not None
     assert unprefixed.casefold() == entity.label.casefold()
+
+
+def test_unique_id_ignores_device_name() -> None:
+    """Keep entity IDs when a device's name changes, as they follow the unique ID."""
+    before = GoogleHomeAlarmsSensor(Mock(), Mock(), "pair", "Den speaker left", None)
+    after = GoogleHomeAlarmsSensor(Mock(), Mock(), "pair", "Den speakers", None)
+
+    assert before.unique_id == after.unique_id == "pair/alarms"

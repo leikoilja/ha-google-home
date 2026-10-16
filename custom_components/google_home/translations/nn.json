@@ -45,9 +45,16 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Endre oppdateringsintervall. Du kan auke dette om einingane ofte får tidsavbrot. Standard: 180 (sekund)"
+          "update_interval": "Endre oppdateringsintervall. Du kan auke dette om einingane ofte får tidsavbrot. Standard: 180 (sekund)",
+          "known_hosts": "Kjende vertar"
+        },
+        "data_description": {
+          "known_hosts": "IP-adresser til høgtalarar og skjermar som integrasjonen ikkje finn sjølv, til dømes fordi dei er på eit anna nettverk eller VLAN."
         }
       }
+    },
+    "error": {
+      "known-host-not-ip": "Skriv berre inn IP-adresser, til dømes 192.168.1.20."
     }
   },
   "services": {

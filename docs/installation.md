@@ -7,7 +7,7 @@ You need:
 - Home Assistant 2026.10.0 or later.
 - Google speakers or displays, such as a Nest Mini, Nest Audio or Nest Hub. The integration doesn't add the other devices in your Google Home app, such as lights or thermostats. See [Other Google Home devices](index.md#other-google-home-devices).
 - A Google account that is a member of your home in the Google Home app. Open the Google Home app with that account and check that your devices are listed.
-- Home Assistant on the same local network as your devices. If you run Home Assistant in Docker, set the container's network mode to `host`, as the [official installation guide](https://www.home-assistant.io/installation/linux) does. Otherwise the integration can't find your devices.
+- Home Assistant on the same local network as your devices, so the integration finds them automatically. If you run Home Assistant in Docker, set the container's network mode to `host`, as the [official installation guide](https://www.home-assistant.io/installation/linux) does. If your devices are on another network, or the container can't use `host` mode, [add them as known hosts](#add-devices-on-another-network) instead.
 
 !!! tip "Use a separate Google account"
 
@@ -77,6 +77,16 @@ The integration checks your devices for changes every 180 seconds.
 To change the interval, go to **Settings** > **Devices & services** > **Google Home** and select **Configure**. If your devices time out, increase the interval until they stay stable. Shorter intervals update alarms and timers sooner but send more requests to your devices.
 
 To update immediately, use the [Refresh devices](actions.md#refresh-devices) action.
+
+## Add devices on another network
+
+The integration finds your devices on your network with multicast DNS (mDNS). mDNS usually doesn't reach other networks, such as a separate VLAN for smart home devices, or a Home Assistant container that doesn't use `host` network mode. Those devices then have only a [device sensor](entities.md#device-sensor). If Home Assistant can reach a device on TCP port 8443, add its IP address instead:
+
+1. Go to **Settings** > **Devices & services** > **Google Home** and select **Configure**.
+2. Under **Known hosts**, add the IP address of each device that the integration can't find.
+3. Select **Submit**. The integration reloads, asks each address which device it is, and uses the address for that device.
+
+Give these devices fixed IP addresses in your router, so the addresses don't change. For a speaker pair, add the addresses of both speakers. Only the speaker that leads the pair reports it, so the integration uses that one and ignores the other.
 
 ## Remove a device
 

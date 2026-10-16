@@ -30,6 +30,7 @@ class GoogleHomeDevice:
         auth_token: str | None,
         ip_address: str | None = None,
         hardware: str | None = None,
+        cloud_device_id: str | None = None,
     ):
         """Create Google Home device object."""
         self.device_id = device_id
@@ -37,6 +38,8 @@ class GoogleHomeDevice:
         self.auth_token = auth_token
         self.ip_address = ip_address
         self.hardware = hardware
+        # Google's ID for the device, which it also reports locally
+        self.cloud_device_id = cloud_device_id.lower() if cloud_device_id else None
         self.available = True
         self._do_not_disturb = False
         self._alarm_volume = GOOGLE_HOME_ALARM_DEFAULT_VALUE

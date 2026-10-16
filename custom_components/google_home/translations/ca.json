@@ -45,9 +45,16 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Canvia l'interval d'actualització. Augmenta'l si els dispositius sovint no responen a temps. Valor per defecte: 180 (segons)"
+          "update_interval": "Canvia l'interval d'actualització. Augmenta'l si els dispositius sovint no responen a temps. Valor per defecte: 180 (segons)",
+          "known_hosts": "Amfitrions coneguts"
+        },
+        "data_description": {
+          "known_hosts": "Adreces IP d'altaveus i pantalles que la integració no pot trobar per si mateixa, per exemple perquè són en una altra xarxa o VLAN."
         }
       }
+    },
+    "error": {
+      "known-host-not-ip": "Introdueix només adreces IP, com ara 192.168.1.20."
     }
   },
   "services": {

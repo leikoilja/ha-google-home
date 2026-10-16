@@ -45,9 +45,16 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Modifier l'intervalle de mise à jour. Augmentez cette valeur si vos appareils dépassent souvent le délai d'attente. Par défaut : 180 (secondes)"
+          "update_interval": "Modifier l'intervalle de mise à jour. Augmentez cette valeur si vos appareils dépassent souvent le délai d'attente. Par défaut : 180 (secondes)",
+          "known_hosts": "Hôtes connus"
+        },
+        "data_description": {
+          "known_hosts": "Adresses IP des enceintes et écrans que l'intégration ne trouve pas d'elle-même, par exemple parce qu'ils sont sur un autre réseau ou VLAN."
         }
       }
+    },
+    "error": {
+      "known-host-not-ip": "Saisissez uniquement des adresses IP, comme 192.168.1.20."
     }
   },
   "services": {

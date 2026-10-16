@@ -45,9 +45,16 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Change the update interval. Increase this if your devices do not respond in time. Default: 180 (seconds)"
+          "update_interval": "Change the update interval. Increase this if your devices do not respond in time. Default: 180 (seconds)",
+          "known_hosts": "Known hosts"
+        },
+        "data_description": {
+          "known_hosts": "IP addresses of speakers and displays that the integration can't find on its own, for example because they're on another network or VLAN."
         }
       }
+    },
+    "error": {
+      "known-host-not-ip": "Enter IP addresses only, such as 192.168.1.20."
     }
   },
   "services": {

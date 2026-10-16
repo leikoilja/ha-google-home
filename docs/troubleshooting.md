@@ -66,6 +66,8 @@ The integration finds your devices on your network with multicast DNS (mDNS) and
 - If Home Assistant runs in Docker, the container uses `host` network mode.
 - If your devices are on a separate network or VLAN, your router forwards mDNS between the networks, and Home Assistant can reach the devices on TCP port 8443.
 
+If mDNS can't reach your devices but Home Assistant can reach them on TCP port 8443, add their IP addresses as [known hosts](installation.md#add-devices-on-another-network) instead.
+
 If only some devices show the message, those devices are offline or don't support this integration.
 
 ## Still stuck

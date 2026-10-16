@@ -45,9 +45,16 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Altere o intervalo de atualização. Aumente este valor se os dispositivos excederem frequentemente o tempo limite. Predefinição: 180 (segundos)"
+          "update_interval": "Altere o intervalo de atualização. Aumente este valor se os dispositivos excederem frequentemente o tempo limite. Predefinição: 180 (segundos)",
+          "known_hosts": "Anfitriões conhecidos"
+        },
+        "data_description": {
+          "known_hosts": "Endereços IP de altifalantes e ecrãs que a integração não consegue encontrar sozinha, por exemplo porque estão noutra rede ou VLAN."
         }
       }
+    },
+    "error": {
+      "known-host-not-ip": "Introduza apenas endereços IP, como 192.168.1.20."
     }
   },
   "services": {
