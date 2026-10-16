@@ -1,0 +1,54 @@
+name: Build docs
+
+on:
+  pull_request:
+    paths:
+      - docs/**
+      - zensical.toml
+      - pyproject.toml
+      - uv.lock
+      - .github/workflows/build-docs.yml
+      - .github/workflows/preview-docs.yml
+      - .github/actions/build-docs/**
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-docs-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_VERSION: "3.14"
+
+jobs:
+  build:
+    name: Build site
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Build docs
+        uses: ./.github/actions/build-docs
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Upload site artifact
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: site
+          path: site/
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Upload docs digest
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: docs-digest
+          path: digest.txt
+          if-no-files-found: error
+          retention-days: 1

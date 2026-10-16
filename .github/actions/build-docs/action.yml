@@ -1,0 +1,27 @@
+name: "Build docs"
+description: "Build the Zensical docs site into site/ and write its content digest to digest.txt"
+
+inputs:
+  python-version:
+    description: "Python version to build with"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install uv
+      uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+      with:
+        enable-cache: true
+        python-version: ${{ inputs.python-version }}
+        cache-suffix: docs
+
+    - name: Build docs
+      shell: bash
+      run: uv run --only-group docs zensical build --clean --strict
+
+    # The build is reproducible, so an unchanged digest means the PR doesn't
+    # change the rendered site and needs no preview.
+    - name: Compute content digest
+      shell: bash
+      run: find site -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1 > digest.txt

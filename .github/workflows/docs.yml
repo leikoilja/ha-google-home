@@ -4,14 +4,13 @@ on:
   push:
     branches:
       - master
-    paths: &paths
+    paths:
       - docs/**
       - zensical.toml
       - pyproject.toml
       - uv.lock
       - .github/workflows/docs.yml
-  pull_request:
-    paths: *paths
+      - .github/actions/build-docs/**
   workflow_dispatch:
 
 permissions:
@@ -21,8 +20,8 @@ env:
   PYTHON_VERSION: "3.14"
 
 jobs:
-  docs:
-    name: Build and deploy
+  build:
+    name: Build site
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -31,19 +30,45 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Install uv
-        uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+      - name: Build docs
+        uses: ./.github/actions/build-docs
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Build
-        run: uv run --only-group docs zensical build --clean --strict
+      - name: Upload site artifact
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: site
+          path: site/
+          if-no-files-found: error
 
-      # Fork PRs get no secrets, so they only run the build check
+      # Docs previews compare against this to skip PRs that don't change the site
+      - name: Upload docs digest
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: docs-digest
+          path: digest.txt
+          if-no-files-found: error
+
+  deploy:
+    name: Deploy to Cloudflare Pages
+    if: github.repository == 'leikoilja/ha-google-home'
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    concurrency: docs-deploy
+    environment:
+      name: docs
+      url: https://ha-google-home.pages.dev/
+    steps:
+      - name: Download site artifact
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: site
+          path: site
+
       - name: Deploy to Cloudflare Pages
-        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          BRANCH: ${{ github.head_ref || github.ref_name }}
-        run: npx --yes wrangler@4.146.0 pages deploy site --project-name=ha-google-home --branch="$BRANCH"
+        run: npx --yes wrangler@4.146.0 pages deploy site --project-name=ha-google-home --branch=master --commit-dirty=true
