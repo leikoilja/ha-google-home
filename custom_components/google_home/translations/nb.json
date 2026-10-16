@@ -17,7 +17,7 @@
         "title": "Pålogging i nettleseren",
         "description": "1. Åpne {embedded_setup_url} i et privat nettleservindu på en datamaskin, og logg på. Etter at du har godtatt, kan siden fortsette å laste; det er forventet.\n2. Åpne utviklerverktøyene i nettleseren, og finn informasjonskapslene for `accounts.google.com`.\n3. Kopier verdien til informasjonskapselen `oauth_token`, og lim den inn nedenfor med en gang. Den utløper i løpet av noen minutter og fungerer bare én gang.\n\nTrinnvis veiledning: {browser_docs_url}\n\nFor å velge en annen påloggingsmåte, lukk dette vinduet og legg til integrasjonen på nytt.",
         "data": {
-          "username": "Brukernavn for Google-kontoen",
+          "username": "E-postadresse for Google-kontoen",
           "oauth_token": "Informasjonskapselen oauth_token"
         },
         "data_description": {

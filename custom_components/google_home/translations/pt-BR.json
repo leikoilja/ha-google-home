@@ -17,7 +17,7 @@
         "title": "Login pelo navegador",
         "description": "1. Em um computador, abra {embedded_setup_url} em uma janela anônima do navegador e faça login. Depois de aceitar, a página pode continuar carregando; isso é esperado.\n2. Abra as ferramentas de desenvolvedor do navegador e encontre os cookies de `accounts.google.com`.\n3. Copie o valor do cookie `oauth_token` e cole abaixo imediatamente. Ele expira em poucos minutos e funciona apenas uma vez.\n\nInstruções passo a passo: {browser_docs_url}\n\nPara escolher outra forma de entrar, feche esta janela e adicione a integração novamente.",
         "data": {
-          "username": "Nome de usuário da conta do Google",
+          "username": "Endereço de e-mail da conta do Google",
           "oauth_token": "Cookie oauth_token"
         },
         "data_description": {

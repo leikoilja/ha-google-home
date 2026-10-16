@@ -17,7 +17,7 @@
         "title": "Inici de sessió amb el navegador",
         "description": "1. En un ordinador, obre {embedded_setup_url} en una finestra de navegació privada i inicia la sessió. Després d'acceptar, és possible que la pàgina continuï carregant; és normal.\n2. Obre les eines per a desenvolupadors del navegador i cerca les galetes de `accounts.google.com`.\n3. Copia el valor de la galeta `oauth_token` i enganxa'l a continuació immediatament. Caduca en pocs minuts i només funciona una vegada.\n\nInstruccions pas a pas (en anglès): {browser_docs_url}\n\nPer triar una altra manera d'iniciar la sessió, tanca aquesta finestra i torna a afegir la integració.",
         "data": {
-          "username": "Nom d'usuari de Google",
+          "username": "Adreça electrònica del compte de Google",
           "oauth_token": "Galeta oauth_token"
         },
         "data_description": {

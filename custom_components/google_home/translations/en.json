@@ -17,7 +17,7 @@
         "title": "Browser sign-in",
         "description": "1. On a computer, open {embedded_setup_url} in a private browser window and sign in. After you accept, the page may keep loading; that is expected.\n2. Open the browser's developer tools and find the cookies for `accounts.google.com`.\n3. Copy the value of the `oauth_token` cookie and paste it below straight away. It expires within minutes and works only once.\n\nStep-by-step instructions: {browser_docs_url}\n\nTo choose another way to sign in, close this window and add the integration again.",
         "data": {
-          "username": "Google account username",
+          "username": "Google account email address",
           "oauth_token": "oauth_token cookie"
         },
         "data_description": {

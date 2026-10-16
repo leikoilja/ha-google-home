@@ -17,7 +17,7 @@
         "title": "Início de sessão no navegador",
         "description": "1. Num computador, abra {embedded_setup_url} numa janela de navegação privada e inicie sessão. Depois de aceitar, a página pode continuar a carregar; isso é esperado.\n2. Abra as ferramentas de programador do navegador e procure os cookies de `accounts.google.com`.\n3. Copie o valor do cookie `oauth_token` e cole-o abaixo de imediato. Expira em poucos minutos e só funciona uma vez.\n\nInstruções passo a passo: {browser_docs_url}\n\nPara escolher outra forma de iniciar sessão, feche esta janela e adicione novamente a integração.",
         "data": {
-          "username": "Nome de utilizador da conta Google",
+          "username": "Endereço de email da conta Google",
           "oauth_token": "Cookie oauth_token"
         },
         "data_description": {

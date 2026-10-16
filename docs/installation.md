@@ -56,7 +56,7 @@ You need a computer with a desktop browser, such as Chrome or Firefox. Phones do
 2. Accept the prompt. The page may then keep loading forever; that is expected.
 3. Open the browser's developer tools and find the cookies for `accounts.google.com`. In Chrome, this is **Application** > **Cookies**; in Firefox, **Storage** > **Cookies**.
 4. Copy the value of the `oauth_token` cookie. It starts with `oauth2_4/`.
-5. In Home Assistant, select **Browser sign-in (recommended)**. Enter the account's email address in **Google account username**, paste the cookie into **oauth_token cookie**, and select **Submit**.
+5. In Home Assistant, select **Browser sign-in (recommended)**. Enter the account's email address in **Google account email address**, paste the cookie into **oauth_token cookie**, and select **Submit**.
 
 The cookie expires within minutes and works only once, so paste it straight away. If setup says "Google didn't accept the cookie", close the private window and repeat from step 1.
 

@@ -17,7 +17,7 @@
         "title": "Anmeldung im Browser",
         "description": "1. Öffne auf einem Computer {embedded_setup_url} in einem privaten Browserfenster und melde dich an. Nachdem du zugestimmt hast, lädt die Seite eventuell weiter; das ist normal.\n2. Öffne die Entwicklertools des Browsers und suche die Cookies für `accounts.google.com`.\n3. Kopiere den Wert des Cookies `oauth_token` und füge ihn sofort unten ein. Er läuft nach wenigen Minuten ab und funktioniert nur einmal.\n\nSchritt-für-Schritt-Anleitung: {browser_docs_url}\n\nUm eine andere Anmeldeart zu wählen, schließe dieses Fenster und füge die Integration erneut hinzu.",
         "data": {
-          "username": "Nutzername des Google-Kontos",
+          "username": "E-Mail-Adresse des Google-Kontos",
           "oauth_token": "Cookie oauth_token"
         },
         "data_description": {

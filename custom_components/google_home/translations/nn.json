@@ -15,9 +15,9 @@
       },
       "browser": {
         "title": "Pålogging i nettlesaren",
-        "description": "1. Opne {embedded_setup_url} i eit privat nettlesarvindauge på ei datamaskin, og logg på. Etter at du har godteke, kan sida halde fram med å laste; det er venta.\n2. Opne utviklarverktøya i nettlesaren, og finn informasjonskapslane for `accounts.google.com`.\n3. Kopier verdien til informasjonskapselen `oauth_token`, og lim han inn nedanfor med ein gong. Han går ut på dato i løpet av nokre minutt og fungerer berre éin gong.\n\nRettleiing steg for steg: {browser_docs_url}\n\nFor å velje ein annan påloggingsmåte, lukk dette vindauget og legg til integrasjonen på nytt.",
+        "description": "1. Opne {embedded_setup_url} i eit privat nettlesarvindauge på ei datamaskin, og logg på. Etter at du har godteke, kan sida halde fram med å laste; det er venta.\n2. Opne utviklarverktøya i nettlesaren, og finn informasjonskapslane for `accounts.google.com`.\n3. Kopier verdien til informasjonskapselen `oauth_token`, og lim han inn nedanfor med ein gong. Han er berre gyldig i nokre minutt og fungerer berre éin gong.\n\nRettleiing steg for steg: {browser_docs_url}\n\nFor å velje ein annan påloggingsmåte, lukk dette vindauget og legg til integrasjonen på nytt.",
         "data": {
-          "username": "Brukarnamn for Google-kontoen",
+          "username": "E-postadresse for Google-kontoen",
           "oauth_token": "Informasjonskapselen oauth_token"
         },
         "data_description": {
@@ -37,7 +37,7 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "Google godtok ikkje informasjonskapselen. Hent ein ny, og lim han inn med ein gong: han går ut på dato i løpet av nokre minutt og fungerer berre éin gong. Kopier heile verdien, som byrjar med oauth2_4/, og kontroller at e-postadressa høyrer til kontoen du logga på med.",
+      "oauth-token-invalid": "Google godtok ikkje informasjonskapselen. Hent ein ny, og lim han inn med ein gong: han er berre gyldig i nokre minutt og fungerer berre éin gong. Kopier heile verdien, som byrjar med oauth2_4/, og kontroller at e-postadressa høyrer til kontoen du logga på med.",
       "master-token-invalid": "Master token er ugyldig. Kontroller at heile tokenet er gitt (inkludert 'aas_et/')",
       "oauth-token-format": "Dette er ikkje informasjonskapselen oauth_token. Verdien byrjar med oauth2_4/.",
       "master-token-format": "Eit master token byrjar med aas_et/ og er 223 teikn langt. Kopier heile tokenet."

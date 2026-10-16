@@ -17,7 +17,7 @@
         "title": "Inloggen via de browser",
         "description": "1. Open op een computer {embedded_setup_url} in een privévenster en log in. Nadat je hebt geaccepteerd, kan de pagina blijven laden; dat is normaal.\n2. Open de ontwikkelaarstools van de browser en zoek de cookies voor `accounts.google.com`.\n3. Kopieer de waarde van de cookie `oauth_token` en plak deze meteen hieronder. De cookie verloopt binnen een paar minuten en werkt maar één keer.\n\nStapsgewijze instructies: {browser_docs_url}\n\nSluit dit venster en voeg de integratie opnieuw toe om een andere manier van inloggen te kiezen.",
         "data": {
-          "username": "Gebruikersnaam van Google-account",
+          "username": "E-mailadres van Google-account",
           "oauth_token": "Cookie oauth_token"
         },
         "data_description": {

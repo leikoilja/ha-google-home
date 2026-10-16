@@ -17,7 +17,7 @@
         "title": "Login via browser",
         "description": "1. Åbn {embedded_setup_url} i et privat browservindue på en computer, og log ind. Når du har accepteret, bliver siden måske ved med at indlæse; det er forventet.\n2. Åbn browserens udviklerværktøjer, og find cookies for `accounts.google.com`.\n3. Kopiér værdien af cookien `oauth_token`, og indsæt den nedenfor med det samme. Den udløber inden for få minutter og virker kun én gang.\n\nTrin-for-trin-vejledning: {browser_docs_url}\n\nHvis du vil vælge en anden måde at logge ind på, så luk dette vindue, og tilføj integrationen igen.",
         "data": {
-          "username": "Brugernavn til Google-konto",
+          "username": "E-mailadresse til Google-konto",
           "oauth_token": "Cookien oauth_token"
         },
         "data_description": {

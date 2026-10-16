@@ -17,7 +17,7 @@
         "title": "Accesso dal browser",
         "description": "1. Su un computer, apri {embedded_setup_url} in una finestra di navigazione privata e accedi. Dopo aver accettato, la pagina potrebbe continuare a caricare; è normale.\n2. Apri gli strumenti per sviluppatori del browser e trova i cookie di `accounts.google.com`.\n3. Copia il valore del cookie `oauth_token` e incollalo subito qui sotto. Scade dopo pochi minuti e funziona una sola volta.\n\nIstruzioni passo passo: {browser_docs_url}\n\nPer scegliere un altro modo di accedere, chiudi questa finestra e aggiungi di nuovo l'integrazione.",
         "data": {
-          "username": "Nome utente dell'account Google",
+          "username": "Indirizzo email dell'account Google",
           "oauth_token": "Cookie oauth_token"
         },
         "data_description": {

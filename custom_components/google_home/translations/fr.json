@@ -5,7 +5,7 @@
         "title": "Se connecter à Google",
         "description": "Cette intégration fonctionne avec vos enceintes et écrans Google, comme Nest Mini, Nest Audio et Nest Hub. Elle n'ajoute pas les autres appareils de votre application Google Home.\n\nChoisissez comment vous connecter à un compte Google membre de votre maison. Pour obtenir de l'aide, consultez {docs_url}.",
         "menu_options": {
-          "browser": "Connexion via le navigateur (recommandé)",
+          "browser": "Connexion via le navigateur (recommandée)",
           "master_token": "Jeton maître"
         },
         "menu_option_descriptions": {
@@ -17,7 +17,7 @@
         "title": "Connexion via le navigateur",
         "description": "1. Sur un ordinateur, ouvrez {embedded_setup_url} dans une fenêtre de navigation privée et connectez-vous. Une fois que vous avez accepté, la page peut continuer à charger ; c'est normal.\n2. Ouvrez les outils de développement du navigateur et trouvez les cookies de `accounts.google.com`.\n3. Copiez la valeur du cookie `oauth_token` et collez-la ci-dessous immédiatement. Il expire en quelques minutes et ne fonctionne qu'une seule fois.\n\nInstructions détaillées : {browser_docs_url}\n\nPour choisir une autre méthode de connexion, fermez cette fenêtre et ajoutez à nouveau l'intégration.",
         "data": {
-          "username": "Nom d'utilisateur du compte Google",
+          "username": "Adresse e-mail du compte Google",
           "oauth_token": "Cookie oauth_token"
         },
         "data_description": {

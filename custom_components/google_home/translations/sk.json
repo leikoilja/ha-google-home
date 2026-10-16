@@ -17,7 +17,7 @@
         "title": "Prihlásenie v prehliadači",
         "description": "1. Na počítači otvorte {embedded_setup_url} v súkromnom okne prehliadača a prihláste sa. Po potvrdení sa stránka môže naďalej načítavať; je to očakávané.\n2. Otvorte nástroje pre vývojárov v prehliadači a nájdite súbory cookie pre `accounts.google.com`.\n3. Skopírujte hodnotu súboru cookie `oauth_token` a hneď ju vložte nižšie. Jeho platnosť vyprší o niekoľko minút a funguje len raz.\n\nPodrobný návod: {browser_docs_url}\n\nAk chcete zvoliť iný spôsob prihlásenia, zatvorte toto okno a pridajte integráciu znova.",
         "data": {
-          "username": "Používateľské meno účtu Google",
+          "username": "E-mailová adresa účtu Google",
           "oauth_token": "Súbor cookie oauth_token"
         },
         "data_description": {
