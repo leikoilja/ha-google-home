@@ -1,0 +1,10 @@
+contact_links:
+  - name: Ask a question
+    url: https://github.com/leikoilja/ha-google-home/discussions/categories/q-a
+    about: Get help with setup or usage.
+  - name: Read the documentation
+    url: https://ha-google-home.pages.dev/
+    about: Setup, entities, actions and troubleshooting.
+  - name: Report a security vulnerability
+    url: https://github.com/leikoilja/ha-google-home/security/advisories/new
+    about: Report it privately, not in a public issue.
