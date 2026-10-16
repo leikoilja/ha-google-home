@@ -45,9 +45,16 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Aktualisierungsintervall ändern. Erhöhe diesen Wert, wenn bei deinen Geräten Zeitüberschreitungen auftreten. Standard: 180 (Sekunden)"
+          "update_interval": "Aktualisierungsintervall ändern. Erhöhe diesen Wert, wenn bei deinen Geräten Zeitüberschreitungen auftreten. Standard: 180 (Sekunden)",
+          "known_hosts": "Bekannte Hosts"
+        },
+        "data_description": {
+          "known_hosts": "IP-Adressen von Lautsprechern und Displays, die die Integration nicht selbst findet, etwa weil sie in einem anderen Netzwerk oder VLAN sind."
         }
       }
+    },
+    "error": {
+      "known-host-not-ip": "Gib nur IP-Adressen ein, etwa 192.168.1.20."
     }
   },
   "services": {

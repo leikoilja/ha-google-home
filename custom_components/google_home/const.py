@@ -13,6 +13,8 @@ MANUFACTURER: Final = "Google Home"
 ATTRIBUTION: Final = "json"
 ISSUE_URL: Final = "https://github.com/leikoilja/ha-google-home/issues"
 CONF_UPDATE_INTERVAL: Final = "update_interval"
+# Addresses of devices that mDNS can't find, for example on another network
+CONF_KNOWN_HOSTS: Final = "known_hosts"
 
 DATA_CLIENT: Final = "client"
 DATA_COORDINATOR: Final = "coordinator"
@@ -73,6 +75,8 @@ API_ENDPOINT_ALARM_DELETE: Final = "setup/assistant/alarms/delete"
 API_ENDPOINT_ALARM_VOLUME: Final = "setup/assistant/alarms/volume"
 API_ENDPOINT_REBOOT: Final = "setup/reboot"
 API_ENDPOINT_DO_NOT_DISTURB: Final = "setup/assistant/notifications"
+# Answers without a local auth token, so it identifies a known host
+API_ENDPOINT_EUREKA_INFO: Final = "setup/eureka_info?params=name,device_info"
 
 # HEADERS
 HEADER_CAST_LOCAL_AUTH: Final = "cast-local-authorization-token"

@@ -45,9 +45,16 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Wijzig het update-interval. Verhoog dit als je apparaten vaak een time-out geven. Standaard: 180 (seconden)"
+          "update_interval": "Wijzig het update-interval. Verhoog dit als je apparaten vaak een time-out geven. Standaard: 180 (seconden)",
+          "known_hosts": "Bekende hosts"
+        },
+        "data_description": {
+          "known_hosts": "IP-adressen van speakers en schermen die de integratie zelf niet kan vinden, bijvoorbeeld omdat ze op een ander netwerk of VLAN staan."
         }
       }
+    },
+    "error": {
+      "known-host-not-ip": "Voer alleen IP-adressen in, zoals 192.168.1.20."
     }
   },
   "services": {

@@ -45,9 +45,16 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Zmeniť interval aktualizácie. Zvýšte túto hodnotu, ak zariadeniam často vyprší časový limit. Predvolená hodnota: 180 (sekúnd)"
+          "update_interval": "Zmeniť interval aktualizácie. Zvýšte túto hodnotu, ak zariadeniam často vyprší časový limit. Predvolená hodnota: 180 (sekúnd)",
+          "known_hosts": "Známi hostitelia"
+        },
+        "data_description": {
+          "known_hosts": "IP adresy reproduktorov a displejov, ktoré integrácia nedokáže nájsť sama, napríklad preto, že sú v inej sieti alebo VLAN."
         }
       }
+    },
+    "error": {
+      "known-host-not-ip": "Zadajte iba IP adresy, napríklad 192.168.1.20."
     }
   },
   "services": {

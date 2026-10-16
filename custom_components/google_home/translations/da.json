@@ -45,9 +45,16 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Skift opdateringsinterval. Øg værdien, hvis dine enheder ofte får timeout. Standard: 180 (sekunder)"
+          "update_interval": "Skift opdateringsinterval. Øg værdien, hvis dine enheder ofte får timeout. Standard: 180 (sekunder)",
+          "known_hosts": "Kendte værter"
+        },
+        "data_description": {
+          "known_hosts": "IP-adresser på højttalere og skærme, som integrationen ikke selv kan finde, f.eks. fordi de er på et andet netværk eller VLAN."
         }
       }
+    },
+    "error": {
+      "known-host-not-ip": "Indtast kun IP-adresser, f.eks. 192.168.1.20."
     }
   },
   "services": {

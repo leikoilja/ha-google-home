@@ -1,5 +1,6 @@
 """Adds config flow for Google Home."""
 
+import ipaddress
 import logging
 from typing import Self, override
 
@@ -10,11 +11,13 @@ from requests.exceptions import RequestException
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult, OptionsFlow
 from homeassistant.core import callback
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
+from homeassistant.helpers.selector import SelectSelector, SelectSelectorConfig
 
 from .api import GlocaltokensApiClient
 from .const import (
     BROWSER_TITLE,
     CONF_ANDROID_ID,
+    CONF_KNOWN_HOSTS,
     CONF_MASTER_TOKEN,
     CONF_OAUTH_TOKEN,
     CONF_PASSWORD,
@@ -188,8 +191,20 @@ class GoogleHomeOptionsFlowHandler(OptionsFlow):
         self, user_input: OptionsFlowDict | None = None
     ) -> ConfigFlowResult:
         """Manage the options."""
+        errors: dict[str, str] = {}
+        options: dict[str, object] = dict(self.config_entry.options)
         if user_input is not None:
-            return self.async_create_entry(data=user_input)
+            known_hosts = [
+                host.strip()
+                for host in user_input.get(CONF_KNOWN_HOSTS, [])
+                if host.strip()
+            ]
+            if all(_is_ip_address(host) for host in known_hosts):
+                return self.async_create_entry(
+                    data={**user_input, CONF_KNOWN_HOSTS: known_hosts}
+                )
+            errors[CONF_KNOWN_HOSTS] = "known-host-not-ip"
+            options = {**options, **user_input}
 
         return self.async_show_form(
             step_id="init",
@@ -197,10 +212,26 @@ class GoogleHomeOptionsFlowHandler(OptionsFlow):
                 {
                     probatio.Optional(
                         CONF_UPDATE_INTERVAL,
-                        default=self.config_entry.options.get(
-                            CONF_UPDATE_INTERVAL, UPDATE_INTERVAL
-                        ),
+                        default=options.get(CONF_UPDATE_INTERVAL, UPDATE_INTERVAL),
                     ): int,
+                    probatio.Optional(
+                        CONF_KNOWN_HOSTS,
+                        default=options.get(CONF_KNOWN_HOSTS, []),
+                    ): SelectSelector(
+                        SelectSelectorConfig(
+                            custom_value=True, options=[], multiple=True
+                        )
+                    ),
                 }
             ),
+            errors=errors,
         )
+
+
+def _is_ip_address(host: str) -> bool:
+    """Return whether a known host is an IP address, which requests need."""
+    try:
+        ipaddress.ip_address(host)
+    except ValueError:
+        return False
+    return True

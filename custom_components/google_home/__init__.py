@@ -21,6 +21,7 @@ from .api import GlocaltokensApiClient
 from .const import (
     BROWSER_TITLE,
     CONF_ANDROID_ID,
+    CONF_KNOWN_HOSTS,
     CONF_MASTER_TOKEN,
     CONF_UPDATE_INTERVAL,
     DATA_CLIENT,
@@ -87,6 +88,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -
         master_token=master_token,
         android_id=android_id,
         zeroconf_instance=zeroconf_instance,
+        known_hosts=entry.options.get(CONF_KNOWN_HOSTS, []),
     )
 
     coordinator = DataUpdateCoordinator(
@@ -164,7 +166,13 @@ async def async_remove_config_entry_device(
 
 
 async def async_update_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -> None:
-    """Update config entry."""
+    """Apply changed options."""
+    client: GlocaltokensApiClient = hass.data[DOMAIN][entry.entry_id][DATA_CLIENT]
+    # Known hosts are looked up when Google's device list is fetched, at setup
+    if entry.options.get(CONF_KNOWN_HOSTS, []) != client.known_hosts:
+        _LOGGER.debug("Known hosts changed, reloading...")
+        hass.config_entries.async_schedule_reload(entry.entry_id)
+        return
     _LOGGER.debug("Options updated, updating coordinator interval...")
     update_interval: int = entry.options.get(CONF_UPDATE_INTERVAL, UPDATE_INTERVAL)
     coordinator: DataUpdateCoordinator[list[GoogleHomeDevice]] = hass.data[DOMAIN][

@@ -45,9 +45,16 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Endre oppdateringsintervall. Øk dette hvis enhetene ofte får tidsavbrudd. Standard: 180 (sekunder)"
+          "update_interval": "Endre oppdateringsintervall. Øk dette hvis enhetene ofte får tidsavbrudd. Standard: 180 (sekunder)",
+          "known_hosts": "Kjente verter"
+        },
+        "data_description": {
+          "known_hosts": "IP-adresser til høyttalere og skjermer som integrasjonen ikke finner selv, for eksempel fordi de er på et annet nettverk eller VLAN."
         }
       }
+    },
+    "error": {
+      "known-host-not-ip": "Skriv bare inn IP-adresser, for eksempel 192.168.1.20."
     }
   },
   "services": {

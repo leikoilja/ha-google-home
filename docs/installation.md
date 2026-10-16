@@ -78,6 +78,16 @@ To change the interval, go to **Settings** > **Devices & services** > **Google H
 
 To update immediately, use the [Refresh devices](actions.md#refresh-devices) action.
 
+## Add devices on another network
+
+The integration finds your devices on your network with multicast DNS (mDNS). mDNS usually doesn't reach other networks, such as a separate VLAN for smart home devices, or a Home Assistant container that doesn't use `host` network mode. Those devices then have only a [device sensor](entities.md#device-sensor). If Home Assistant can reach a device on TCP port 8443, add its IP address instead:
+
+1. Go to **Settings** > **Devices & services** > **Google Home** and select **Configure**.
+2. Under **Known hosts**, add the IP address of each device that the integration can't find.
+3. Select **Submit**. The integration reloads, asks each address which device it is, and uses the address for that device.
+
+Give these devices fixed IP addresses in your router, so the addresses don't change. For a speaker pair, add the addresses of both speakers: the integration uses the first one that answers for the pair.
+
 ## Remove a device
 
 When you remove a device from the Google Home app or factory reset it, the integration notices only when it next loads. Reload it: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. Then open the device's page in Home Assistant, open the **⋮** menu and select **Delete**.

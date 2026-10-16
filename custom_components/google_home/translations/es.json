@@ -45,9 +45,16 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Cambia el intervalo de actualización. Auméntalo si los dispositivos suelen agotar el tiempo de espera. Valor por defecto: 180 (segundos)"
+          "update_interval": "Cambia el intervalo de actualización. Auméntalo si los dispositivos suelen agotar el tiempo de espera. Valor por defecto: 180 (segundos)",
+          "known_hosts": "Hosts conocidos"
+        },
+        "data_description": {
+          "known_hosts": "Direcciones IP de altavoces y pantallas que la integración no puede encontrar por sí misma, por ejemplo porque están en otra red o VLAN."
         }
       }
+    },
+    "error": {
+      "known-host-not-ip": "Introduce solo direcciones IP, como 192.168.1.20."
     }
   },
   "services": {
