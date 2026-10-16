@@ -14,6 +14,7 @@ from homeassistant.components import zeroconf
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.device_registry import DeviceEntry
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .api import GlocaltokensApiClient
@@ -140,6 +141,26 @@ async def async_unload_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) 
     if unload_ok:
         hass.data[DOMAIN].pop(entry.entry_id)
     return unload_ok
+
+
+async def async_remove_config_entry_device(
+    hass: HomeAssistant, entry: GoogleHomeConfigEntry, device_entry: DeviceEntry
+) -> bool:
+    """Allow deleting a device only when Google no longer returns it.
+
+    Devices that are offline or not on the network stay in the coordinator data,
+    so they come back on the next reload and can't be deleted. Nothing can be
+    deleted while Google's device list is unknown: the entry isn't loaded, or
+    fetching the list failed.
+    """
+    entry_data = hass.data.get(DOMAIN, {}).get(entry.entry_id)
+    if entry_data is None or not entry_data[DATA_CLIENT].google_devices_fetched:
+        return False
+    coordinator: DataUpdateCoordinator[list[GoogleHomeDevice]] = entry_data[
+        DATA_COORDINATOR
+    ]
+    google_ids = {(DOMAIN, device.device_id) for device in coordinator.data}
+    return not device_entry.identifiers & google_ids
 
 
 async def async_update_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -> None:
