@@ -1,20 +1,18 @@
 {
   "config": {
     "step": {
-      "user": {
-        "title": "Autenticació a Google Home",
-        "description": "Si necessites ajuda amb la configuració, consulta {docs_url} (en anglès). Introdueix el nom d'usuari del teu compte de Google i una contrasenya d'aplicació ({app_passwords_url}), o bé un testimoni mestre. Per a crear una contrasenya d'aplicació, cal activar la verificació en dos passos.",
+      "browser": {
         "data": {
-          "username": "Nom d'usuari de Google",
-          "password": "Contrasenya d'aplicació de Google",
+          "username": "Nom d'usuari de Google"
+        }
+      },
+      "master_token": {
+        "data": {
           "master_token": "Testimoni mestre de Google"
         }
       }
     },
     "error": {
-      "auth": "La combinació de nom d'usuari i contrasenya és incorrecta. Si el teu compte té la verificació en dos passos habilitada, genera una contrasenya d'aplicació ({app_passwords_url}). Si tot i així no pots iniciar sessió, consulta {troubleshooting_url} (en anglès).",
-      "pass-len": "Aquesta integració admet contrasenyes de fins a {max_password_length} caràcters. Canvia la contrasenya del teu compte o utilitza una contrasenya d'aplicació ({app_passwords_url}).",
-      "missing-inputs": "Introdueix el nom d'usuari i la contrasenya o el testimoni mestre",
       "master-token-invalid": "El testimoni mestre no és vàlid. Assegura't que has introduït el testimoni complet (inclòs 'aas_et/')"
     }
   },

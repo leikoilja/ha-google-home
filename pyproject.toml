@@ -9,6 +9,7 @@ license = "MIT"
 requires-python = ">=3.14.2"
 dependencies = [
     "glocaltokens>=0.8.0",
+    "gpsoauth>=2.0.0",
     "homeassistant==2026.10.0",
 ]
 

@@ -1,20 +1,18 @@
 {
   "config": {
     "step": {
-      "user": {
-        "title": "Autenticação do Google Home",
-        "description": "Para obter instruções de configuração, consulte {docs_url}. Digite o nome de usuário da sua conta do Google e uma senha de app ({app_passwords_url}), ou informe um token mestre. Para criar uma senha de app, a verificação em duas etapas precisa estar ativada.",
+      "browser": {
         "data": {
-          "username": "Nome de usuário da conta do Google",
-          "password": "Senha de app da conta do Google",
+          "username": "Nome de usuário da conta do Google"
+        }
+      },
+      "master_token": {
+        "data": {
           "master_token": "Token mestre da conta do Google"
         }
       }
     },
     "error": {
-      "auth": "O nome de usuário ou a senha está incorreto. Se a sua conta do Google tiver a verificação em duas etapas ativada, gere uma senha de app ({app_passwords_url}). Se a autenticação ainda falhar, consulte {troubleshooting_url}",
-      "pass-len": "Esta integração aceita senhas de até {max_password_length} caracteres. Altere a senha da sua conta ou use uma senha de app ({app_passwords_url}).",
-      "missing-inputs": "Digite o nome de usuário e a senha ou o token mestre",
       "master-token-invalid": "Token mestre inválido. Certifique-se de que o token completo tenha sido especificado (incluindo 'aas_et/')"
     }
   },

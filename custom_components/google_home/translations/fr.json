@@ -1,20 +1,18 @@
 {
   "config": {
     "step": {
-      "user": {
-        "title": "Authentification Google Home",
-        "description": "Pour les instructions de configuration, consultez {docs_url}. Saisissez le nom d'utilisateur de votre compte Google et un mot de passe d'application ({app_passwords_url}), ou un jeton maître. La validation en deux étapes doit être activée pour créer un mot de passe d'application.",
+      "browser": {
         "data": {
-          "username": "Nom d'utilisateur du compte Google",
-          "password": "Mot de passe d'application du compte Google",
+          "username": "Nom d'utilisateur du compte Google"
+        }
+      },
+      "master_token": {
+        "data": {
           "master_token": "Jeton maître du compte Google"
         }
       }
     },
     "error": {
-      "auth": "Nom d'utilisateur ou mot de passe incorrect. Si la validation en deux étapes est activée sur votre compte Google, utilisez un mot de passe d'application ({app_passwords_url}). Si l'authentification échoue toujours, consultez {troubleshooting_url}",
-      "pass-len": "Cette intégration accepte les mots de passe contenant jusqu'à {max_password_length} caractères. Changez le mot de passe de votre compte ou utilisez un mot de passe d'application ({app_passwords_url}).",
-      "missing-inputs": "Veuillez indiquer soit votre nom d'utilisateur et votre mot de passe, soit votre jeton maître",
       "master-token-invalid": "Jeton maître non valide. Assurez-vous d'avoir saisi le jeton complet (y compris 'aas_et/')"
     }
   },

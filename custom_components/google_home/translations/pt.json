@@ -1,20 +1,18 @@
 {
   "config": {
     "step": {
-      "user": {
-        "title": "Autenticação Google Home",
-        "description": "Para obter instruções de configuração, consulte {docs_url}. Introduza o nome de utilizador da sua conta Google e uma palavra-passe de aplicação ({app_passwords_url}), ou um token principal. Para criar uma palavra-passe de aplicação, é necessário ter a validação em dois passos ativada.",
+      "browser": {
         "data": {
-          "username": "Nome de utilizador da conta Google",
-          "password": "Palavra-passe de aplicação da conta Google",
+          "username": "Nome de utilizador da conta Google"
+        }
+      },
+      "master_token": {
+        "data": {
           "master_token": "Token principal da conta Google"
         }
       }
     },
     "error": {
-      "auth": "Nome de utilizador ou palavra-passe incorretos. Se a sua conta Google tem a validação em dois passos ativada, gere uma palavra-passe de aplicação ({app_passwords_url}). Se a autenticação continuar a falhar, consulte {troubleshooting_url}",
-      "pass-len": "Esta integração aceita palavras-passe com um máximo de {max_password_length} caracteres. Altere a palavra-passe da sua conta ou utilize uma palavra-passe de aplicação ({app_passwords_url}).",
-      "missing-inputs": "Introduza o nome de utilizador e a palavra-passe ou o token principal",
       "master-token-invalid": "Token principal inválido. Certifique-se de que o token completo foi especificado (incluindo 'aas_et/')"
     }
   },

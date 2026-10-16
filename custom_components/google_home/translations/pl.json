@@ -1,20 +1,18 @@
 {
   "config": {
     "step": {
-      "user": {
-        "title": "Uwierzytelnianie Google Home",
-        "description": "Instrukcje konfiguracji znajdziesz tutaj: {docs_url}. Wprowadź nazwę użytkownika konta Google i hasło do aplikacji ({app_passwords_url}) albo token główny. Aby utworzyć hasło do aplikacji, musisz mieć włączoną weryfikację dwuetapową.",
+      "browser": {
         "data": {
-          "username": "Nazwa użytkownika konta Google",
-          "password": "Hasło do aplikacji konta Google",
+          "username": "Nazwa użytkownika konta Google"
+        }
+      },
+      "master_token": {
+        "data": {
           "master_token": "Token główny konta Google"
         }
       }
     },
     "error": {
-      "auth": "Nazwa użytkownika lub hasło są nieprawidłowe. Jeśli na Twoim koncie Google jest włączona weryfikacja dwuetapowa, wygeneruj hasło do aplikacji ({app_passwords_url}). Jeśli uwierzytelnianie nadal się nie powiedzie, przejdź do {troubleshooting_url}",
-      "pass-len": "Ta integracja obsługuje hasła o długości do {max_password_length} znaków. Zmień hasło do konta lub użyj hasła do aplikacji ({app_passwords_url}).",
-      "missing-inputs": "Wprowadź nazwę użytkownika i hasło lub token główny",
       "master-token-invalid": "Główny token jest nieprawidłowy. Upewnij się, że podano pełny token (w tym 'aas_et/')"
     }
   },

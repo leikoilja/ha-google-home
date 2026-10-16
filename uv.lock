@@ -960,6 +960,7 @@ version = "0.0.0"
 source = { virtual = "." }
 dependencies = [
     { name = "glocaltokens" },
+    { name = "gpsoauth" },
     { name = "homeassistant" },
 ]
 
@@ -981,6 +982,7 @@ docs = [
 [package.metadata]
 requires-dist = [
     { name = "glocaltokens", specifier = ">=0.8.0" },
+    { name = "gpsoauth", specifier = ">=2.0.0" },
     { name = "homeassistant", specifier = "==2026.10.0" },
 ]
 

@@ -1,20 +1,18 @@
 {
   "config": {
     "step": {
-      "user": {
-        "title": "Identificarse en Google Home",
-        "description": "Para obtener instrucciones de configuración, consulta {docs_url} (en inglés). Introduce el nombre de usuario de tu cuenta de Google y una contraseña de aplicación ({app_passwords_url}), o bien un token maestro. Para crear una contraseña de aplicación, debes tener activada la verificación en dos pasos.",
+      "browser": {
         "data": {
-          "username": "Nombre de usuario de Google",
-          "password": "Contraseña de aplicación de Google",
+          "username": "Nombre de usuario de Google"
+        }
+      },
+      "master_token": {
+        "data": {
           "master_token": "Token maestro de Google"
         }
       }
     },
     "error": {
-      "auth": "El nombre de usuario o la contraseña no son correctos. Si tu cuenta tiene activada la verificación en dos pasos, genera una contraseña de aplicación ({app_passwords_url}). Si aun así no puedes iniciar sesión, consulta {troubleshooting_url} (en inglés).",
-      "pass-len": "Esta integración admite contraseñas de hasta {max_password_length} caracteres. Cambia la contraseña de tu cuenta o usa una contraseña de aplicación ({app_passwords_url}).",
-      "missing-inputs": "Introduce tu nombre de usuario y contraseña o el token maestro",
       "master-token-invalid": "El token maestro no es válido. Asegúrate de haber introducido el token completo (incluido 'aas_et/')"
     }
   },

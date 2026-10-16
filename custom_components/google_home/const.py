@@ -19,8 +19,6 @@ DATA_COORDINATOR: Final = "coordinator"
 
 ALARM_AND_TIMER_ID_LENGTH: Final = 42
 
-MAX_PASSWORD_LENGTH: Final = 100
-
 # Icons
 ICON_TOKEN: Final = "mdi:form-textbox-password"
 ICON_ALARMS: Final = "mdi:alarm-multiple"
@@ -51,6 +49,13 @@ CONF_ANDROID_ID: Final = "android_id"
 CONF_USERNAME: Final = "username"
 CONF_PASSWORD: Final = "password"
 CONF_MASTER_TOKEN: Final = "master_token"
+CONF_OAUTH_TOKEN: Final = "oauth_token"
+
+# Looking up the email address of the account a master token belongs to
+EMAIL_ACCESS_TOKEN_SERVICE: Final = (
+    "oauth2:https://www.googleapis.com/auth/userinfo.email"
+)
+TOKEN_INFO_URL: Final = "https://www.googleapis.com/oauth2/v3/tokeninfo"
 
 # Defaults
 DEFAULT_NAME: Final = "Google Home"

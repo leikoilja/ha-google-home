@@ -1,20 +1,18 @@
 {
   "config": {
     "step": {
-      "user": {
-        "title": "Google Home-autentisering",
-        "description": "Sjå rettleiinga for oppsett her: {docs_url}. Skriv inn brukarnamnet for Google-kontoen din og eit applikasjonspassord ({app_passwords_url}), eller oppgje eit master token. Totrinnsstadfesting må vere aktivert for å opprette eit applikasjonspassord.",
+      "browser": {
         "data": {
-          "username": "Brukarnamn for Google-kontoen",
-          "password": "Applikasjonspassord for Google-kontoen",
+          "username": "Brukarnamn for Google-kontoen"
+        }
+      },
+      "master_token": {
+        "data": {
           "master_token": "Master token for Google-kontoen"
         }
       }
     },
     "error": {
-      "auth": "Brukarnamnet eller passordet er feil. Om Google-kontoen din har totrinnsstadfesting, må du lage eit applikasjonspassord ({app_passwords_url}). Om autentiseringa framleis ikkje går gjennom, sjå {troubleshooting_url}",
-      "pass-len": "Denne integrasjonen støttar passord på opptil {max_password_length} teikn. Endre passordet for kontoen din eller bruk eit applikasjonspassord ({app_passwords_url}).",
-      "missing-inputs": "Skriv inn anten brukarnamn og passord eller master token",
       "master-token-invalid": "Master token er ugyldig. Kontroller at heile tokenet er gitt (inkludert 'aas_et/')"
     }
   },

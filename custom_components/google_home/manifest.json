@@ -18,7 +18,8 @@
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/leikoilja/ha-google-home/issues",
   "requirements": [
-    "glocaltokens==0.8.0"
+    "glocaltokens==0.8.0",
+    "gpsoauth==2.0.0"
   ],
   "single_config_entry": true,
   "version": "1.13.3",

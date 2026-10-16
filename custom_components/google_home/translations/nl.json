@@ -1,20 +1,18 @@
 {
   "config": {
     "step": {
-      "user": {
-        "title": "Google Home-authenticatie",
-        "description": "Raadpleeg {docs_url} voor instructies voor het instellen. Voer de gebruikersnaam van je Google-account en een app-wachtwoord ({app_passwords_url}) in, of geef een mastertoken op. Verificatie in twee stappen moet zijn ingeschakeld om een app-wachtwoord te maken.",
+      "browser": {
         "data": {
-          "username": "Gebruikersnaam van Google-account",
-          "password": "App-wachtwoord van Google-account",
+          "username": "Gebruikersnaam van Google-account"
+        }
+      },
+      "master_token": {
+        "data": {
           "master_token": "Mastertoken van Google-account"
         }
       }
     },
     "error": {
-      "auth": "Gebruikersnaam of wachtwoord is niet correct. Als voor je Google-account verificatie in twee stappen is ingeschakeld, genereer dan een app-wachtwoord ({app_passwords_url}). Als authenticatie nog steeds mislukt, raadpleeg dan {troubleshooting_url}",
-      "pass-len": "Deze integratie ondersteunt wachtwoorden van maximaal {max_password_length} tekens. Wijzig het wachtwoord van je account of gebruik een app-wachtwoord ({app_passwords_url}).",
-      "missing-inputs": "Voer je gebruikersnaam en wachtwoord of je mastertoken in",
       "master-token-invalid": "Mastertoken ongeldig. Controleer of het volledige token is opgegeven (inclusief 'aas_et/')"
     }
   },
