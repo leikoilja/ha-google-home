@@ -11,7 +11,9 @@ You need:
 
 !!! tip "Use a separate Google account"
 
-    The integration needs credentials that give full access to the Google account you sign in with. Instead of your main account, create a new Google account and [invite it to your home](https://support.google.com/googlenest/answer/9155535) in the Google Home app. If its credentials leak, only that account is exposed. See [issue #124](https://github.com/leikoilja/ha-google-home/issues/124#issuecomment-921773489) for the discussion.
+    The integration needs credentials that give full access to the Google account you sign in with. Instead of your main account, create a new Gmail account, one ending in `@gmail.com`, and [invite it to your home](https://support.google.com/googlenest/answer/9155535) in the Google Home app. If its credentials leak, only that account is exposed. See [issue #124](https://github.com/leikoilja/ha-google-home/issues/124#issuecomment-921773489) for the discussion.
+
+    Work, school and other Google Workspace accounts, and Google accounts that use a non-Gmail email address, have often failed: sign-in seems to work, but no devices appear.
 
 ## Install the integration
 
