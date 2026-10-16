@@ -52,7 +52,8 @@ jobs:
 
   deploy:
     name: Deploy to Cloudflare Pages
-    if: github.repository == 'leikoilja/ha-google-home'
+    # A manual run can pick any branch, but only master is published
+    if: github.repository == 'leikoilja/ha-google-home' && github.ref == 'refs/heads/master'
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10

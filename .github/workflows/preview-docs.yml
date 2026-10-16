@@ -36,7 +36,9 @@ jobs:
       pull-requests: write
       statuses: write
     steps:
-      # workflow_run doesn't list PRs from forks, so find the PR by its head
+      # workflow_run doesn't list PRs from forks, so find the PR by its head.
+      # A build of an older commit, such as a re-run, matches no PR and is
+      # skipped, so it can't replace a newer preview.
       - name: Resolve PR
         id: pr
         env:
@@ -44,10 +46,10 @@ jobs:
           HEAD_REPO: ${{ github.event.workflow_run.head_repository.full_name }}
         run: |
           PR=$(gh api "repos/${GH_REPO}/pulls?state=open" --paginate |
-            jq -c --arg b "${HEAD_BRANCH}" --arg r "${HEAD_REPO}" \
-              'first(.[] | select(.head.ref == $b and .head.repo.full_name == $r) | {number, base_sha: .base.sha})')
+            jq -c --arg b "${HEAD_BRANCH}" --arg r "${HEAD_REPO}" --arg s "${HEAD_SHA}" \
+              'first(.[] | select(.head.ref == $b and .head.repo.full_name == $r and .head.sha == $s) | {number, base_sha: .base.sha})')
           if [ -z "${PR}" ] || [ "${PR}" = "null" ]; then
-            echo "No matching open PR for ${HEAD_REPO}:${HEAD_BRANCH}; nothing to preview."
+            echo "No open PR has ${HEAD_REPO}:${HEAD_BRANCH} at ${HEAD_SHA}; nothing to preview."
             exit 0
           fi
           {
@@ -112,6 +114,17 @@ jobs:
             echo "unchanged=true" >> "${GITHUB_OUTPUT}"
           else
             echo "unchanged=false" >> "${GITHUB_OUTPUT}"
+          fi
+
+      # The PR controls the artifact, including through its own copy of the
+      # build workflow. Wrangler would deploy a _worker.js file or folder as a
+      # Worker, which would run the PR's code under the Cloudflare project.
+      - name: Reject Workers in the site
+        if: steps.pr.outputs.number && steps.compare.outputs.unchanged != 'true'
+        run: |
+          if [ -n "$(find site -maxdepth 1 -name _worker.js)" ]; then
+            echo "::error::The site contains _worker.js, which Cloudflare Pages would run as a Worker."
+            exit 1
           fi
 
       - name: Deploy to Cloudflare Pages
