@@ -117,12 +117,15 @@ def make_options_flow(options: dict[str, object]) -> GoogleHomeOptionsFlowHandle
 
 
 def test_options_save_known_hosts() -> None:
-    """Save known hosts without blanks and surrounding spaces."""
+    """Save known hosts without blanks, surrounding spaces and repeats, in order."""
     flow = make_options_flow({})
 
     result = asyncio.run(
         flow.async_step_init(
-            {"update_interval": 180, "known_hosts": [" 10.0.1.5 ", "", "fd00::5"]}
+            {
+                "update_interval": 180,
+                "known_hosts": [" 10.0.1.5 ", "", "fd00::5", "10.0.1.5"],
+            }
         )
     )
 
@@ -170,3 +173,31 @@ def test_devices_named_as_in_google_home() -> None:
     assert pair.name == "Den speakers"
     assert pair.cloud_device_id == "dddd"
     assert pair.ip_address == "10.0.0.3"
+
+
+def test_known_hosts_not_asked_when_mdns_found_everything() -> None:
+    """Don't wait on known hosts when mDNS found an address for every device."""
+    hass = Mock()
+    hass.async_add_executor_job = AsyncMock(side_effect=lambda func, *args: func(*args))
+    session = Mock()
+    client = GlocaltokensApiClient(
+        hass, session, master_token=MASTER_TOKEN, known_hosts=["10.0.1.5"]
+    )
+    found_by_mdns = Mock(
+        device_id="kitchen",
+        device_name="Kitchen",
+        local_auth_token="token",
+        ip_address="10.0.0.3",
+        hardware="Nest Audio",
+    )
+    listed_by_google = Mock(device_name="Kitchen")
+    listed_by_google.device_info.device_id = "kitchen"
+    listed_by_google.device_info.agent_info.unique_id = "AAAA"
+    client._client = Mock(  # noqa: SLF001  # pylint: disable=protected-access
+        get_google_devices=Mock(return_value=[found_by_mdns]),
+        homegraph=Mock(home=Mock(devices=[listed_by_google])),
+    )
+
+    asyncio.run(client.get_google_devices())
+
+    session.get.assert_not_called()

@@ -153,7 +153,11 @@ class GlocaltokensApiClient:
                         ),
                     )
                 )
-            if self.known_hosts:
+            # Known hosts are only asked when mDNS left a device without an address
+            if self.known_hosts and any(
+                not device.ip_address and device.cloud_device_id
+                for device in self.google_devices
+            ):
                 await self.async_use_known_hosts()
         return self.google_devices
 
@@ -176,7 +180,7 @@ class GlocaltokensApiClient:
         for device in self.google_devices:
             if device.ip_address or not device.cloud_device_id:
                 continue
-            if known_host := hosts_by_id.get(device.cloud_device_id.lower()):
+            if known_host := hosts_by_id.get(device.cloud_device_id):
                 _LOGGER.debug("Found %s at known host %s", device.name, known_host)
                 device.ip_address = known_host
 

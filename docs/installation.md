@@ -86,7 +86,7 @@ The integration finds your devices on your network with multicast DNS (mDNS). mD
 2. Under **Known hosts**, add the IP address of each device that the integration can't find.
 3. Select **Submit**. The integration reloads, asks each address which device it is, and uses the address for that device.
 
-Give these devices fixed IP addresses in your router, so the addresses don't change. For a speaker pair, add the addresses of both speakers: the integration uses the first one that answers for the pair.
+Give these devices fixed IP addresses in your router, so the addresses don't change. For a speaker pair, add the addresses of both speakers: the integration uses the first one in the list that answers for the pair.
 
 ## Remove a device
 

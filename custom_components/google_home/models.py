@@ -39,7 +39,7 @@ class GoogleHomeDevice:
         self.ip_address = ip_address
         self.hardware = hardware
         # Google's ID for the device, which it also reports locally
-        self.cloud_device_id = cloud_device_id
+        self.cloud_device_id = cloud_device_id.lower() if cloud_device_id else None
         self.available = True
         self._do_not_disturb = False
         self._alarm_volume = GOOGLE_HOME_ALARM_DEFAULT_VALUE

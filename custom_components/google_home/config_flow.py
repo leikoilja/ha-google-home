@@ -194,11 +194,14 @@ class GoogleHomeOptionsFlowHandler(OptionsFlow):
         errors: dict[str, str] = {}
         options: dict[str, object] = dict(self.config_entry.options)
         if user_input is not None:
-            known_hosts = [
-                host.strip()
-                for host in user_input.get(CONF_KNOWN_HOSTS, [])
-                if host.strip()
-            ]
+            # Keep the order, which decides between hosts that report the same device
+            known_hosts = list(
+                dict.fromkeys(
+                    host.strip()
+                    for host in user_input.get(CONF_KNOWN_HOSTS, [])
+                    if host.strip()
+                )
+            )
             if all(_is_ip_address(host) for host in known_hosts):
                 return self.async_create_entry(
                     data={**user_input, CONF_KNOWN_HOSTS: known_hosts}
