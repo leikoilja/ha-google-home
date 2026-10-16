@@ -38,7 +38,6 @@ def update_manifests(repo: Repository, version: str) -> None:
     manifest_json["version"] = version
     manifest_json["requirements"] = [
         f"glocaltokens=={package_version('glocaltokens')}",
-        f"gpsoauth=={package_version('gpsoauth')}",
     ]
     updated_manifest = json.dumps(manifest_json, indent=2) + "\n"
 

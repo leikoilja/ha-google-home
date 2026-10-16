@@ -9,9 +9,7 @@ from typing import Literal, cast
 from aiohttp import ClientError, ClientSession, ClientTimeout
 from aiohttp.client_exceptions import ClientConnectorError, ContentTypeError
 from glocaltokens.client import Device, GLocalAuthenticationTokens
-from glocaltokens.const import ACCESS_TOKEN_APP_NAME, ACCESS_TOKEN_CLIENT_SIGNATURE
 from glocaltokens.utils.token import is_aas_et
-from gpsoauth import perform_oauth
 from requests.exceptions import RequestException
 from zeroconf import Zeroconf
 
@@ -23,7 +21,6 @@ from .const import (
     API_ENDPOINT_ALARMS,
     API_ENDPOINT_DO_NOT_DISTURB,
     API_ENDPOINT_REBOOT,
-    EMAIL_ACCESS_TOKEN_SERVICE,
     HEADER_CAST_LOCAL_AUTH,
     HEADER_CONTENT_TYPE,
     JSON_ALARM,
@@ -32,7 +29,6 @@ from .const import (
     JSON_TIMER,
     PORT,
     TIMEOUT,
-    TOKEN_INFO_URL,
 )
 from .exceptions import InvalidMasterToken
 from .models import GoogleHomeDevice
@@ -97,41 +93,16 @@ class GlocaltokensApiClient:
         return access_token
 
     async def async_get_email(self) -> str | None:
-        """Return the email address of the signed-in account, if Google gives it.
+        """Return the verified email address of the signed-in account, if Google gives it."""
 
-        A master token doesn't say which account it belongs to, so get an access
-        token that may read the email address and ask Google about it.
-        """
-
-        def _get_email_access_token() -> str | None:
-            response = perform_oauth(
-                self._username or "",
-                self._client.get_master_token() or "",
-                self._client.get_android_id(),
-                app=ACCESS_TOKEN_APP_NAME,
-                service=EMAIL_ACCESS_TOKEN_SERVICE,
-                client_sig=ACCESS_TOKEN_CLIENT_SIGNATURE,
-            )
-            return response.get("Auth")
+        def _get_email() -> str | None:
+            return self._client.get_email()
 
         try:
-            access_token = await self.hass.async_add_executor_job(
-                _get_email_access_token
-            )
-            if access_token is None:
-                return None
-            async with self._session.get(
-                TOKEN_INFO_URL,
-                params={"access_token": access_token},
-                timeout=ClientTimeout(total=TIMEOUT),
-            ) as response:
-                token_info = await response.json()
-        except RequestException, ClientError, TimeoutError, ValueError:
+            return await self.hass.async_add_executor_job(_get_email)
+        except RequestException:
             _LOGGER.debug("Failed to get the account's email address", exc_info=True)
             return None
-        if str(token_info.get("email_verified")).lower() != "true":
-            return None
-        return cast(str, token_info.get("email")) or None
 
     async def get_google_devices(self) -> list[GoogleHomeDevice]:
         """Get google device authentication tokens.

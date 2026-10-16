@@ -51,12 +51,6 @@ CONF_PASSWORD: Final = "password"
 CONF_MASTER_TOKEN: Final = "master_token"
 CONF_OAUTH_TOKEN: Final = "oauth_token"
 
-# Looking up the email address of the account a master token belongs to
-EMAIL_ACCESS_TOKEN_SERVICE: Final = (
-    "oauth2:https://www.googleapis.com/auth/userinfo.email"
-)
-TOKEN_INFO_URL: Final = "https://www.googleapis.com/oauth2/v3/tokeninfo"
-
 # Defaults
 DEFAULT_NAME: Final = "Google Home"
 GOOGLE_HOME_ALARM_DEFAULT_VALUE: Final = 0

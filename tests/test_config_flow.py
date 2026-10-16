@@ -2,9 +2,10 @@
 
 import asyncio
 from collections.abc import Iterator
-from unittest.mock import AsyncMock, MagicMock, Mock, patch
+from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
+from requests.exceptions import RequestException
 
 from custom_components.google_home.api import GlocaltokensApiClient
 from custom_components.google_home.config_flow import GoogleHomeFlowHandler
@@ -164,26 +165,14 @@ def test_master_token_rejected(flow: GoogleHomeFlowHandler, client: Mock) -> Non
     assert result["errors"] == {"base": "master-token-invalid"}
 
 
-@pytest.mark.parametrize(
-    ("verified", "email"), [("true", "test@example.com"), ("false", None)]
-)
-def test_get_email(verified: str, email: str | None) -> None:
-    """Return the account's email address only when Google has verified it."""
+def test_get_email_failure() -> None:
+    """Treat a failed email lookup as no email address, so setup still succeeds."""
     hass = Mock()
     hass.async_add_executor_job = AsyncMock(side_effect=lambda func, *args: func(*args))
-    session = MagicMock()
-    session.get.return_value.__aenter__.return_value.json = AsyncMock(
-        return_value={"email": "test@example.com", "email_verified": verified}
-    )
-    client = GlocaltokensApiClient(hass, session, master_token=MASTER_TOKEN)
+    client = GlocaltokensApiClient(hass, Mock(), master_token=MASTER_TOKEN)
 
     with patch(
-        "custom_components.google_home.api.perform_oauth",
-        return_value={"Auth": "email-access-token"},
-    ) as oauth:
-        assert asyncio.run(client.async_get_email()) == email
-
-    assert oauth.call_args.kwargs["service"].endswith("/auth/userinfo.email")
-    assert session.get.call_args.kwargs["params"] == {
-        "access_token": "email-access-token"
-    }
+        "glocaltokens.client.GLocalAuthenticationTokens.get_email",
+        side_effect=RequestException("No network"),
+    ):
+        assert asyncio.run(client.async_get_email()) is None
