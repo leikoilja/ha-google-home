@@ -14,3 +14,4 @@ dist/
 /.idea
 config/*
 !config/configuration.yaml
+/site

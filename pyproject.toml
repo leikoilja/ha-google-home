@@ -23,6 +23,9 @@ dev = [
     "ruff>=0.17.1",
     "types-requests>=2.33.0.20261006",
 ]
+docs = [
+    "zensical>=0.0.70",
+]
 
 [tool.uv]
 # Not an installable package: Home Assistant loads custom_components/ directly.
@@ -268,5 +271,5 @@ enable_error_code = [
 
 [tool.codespell]
 quiet-level = 2
-skip = "uv.lock,./.git/*,./.mypy_cache/*,*.json"
+skip = "uv.lock,./.git/*,./.mypy_cache/*,./site/*,*.json"
 ignore-words-list = "hass"

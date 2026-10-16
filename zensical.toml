@@ -1,0 +1,46 @@
+[project]
+site_name = "Google Home for Home Assistant"
+site_url = "https://ha-google-home.pages.dev/"
+repo_url = "https://github.com/leikoilja/ha-google-home"
+edit_uri = "edit/master/docs/"
+nav = [
+    { "Home" = "index.md" },
+    { "Getting Started" = "installation.md" },
+    { "Entities" = "entities.md" },
+    { "Actions" = "actions.md" },
+    { "Troubleshooting" = "troubleshooting.md" },
+    { "Community" = "community.md" },
+]
+
+[project.theme]
+features = [
+    "content.action.edit",
+    "content.code.copy",
+    "navigation.instant",
+    "navigation.top",
+    "search.highlight",
+]
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: light)"
+scheme = "default"
+toggle.icon = "lucide/moon"
+toggle.name = "Switch to dark mode"
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: dark)"
+scheme = "slate"
+toggle.icon = "lucide/sun"
+toggle.name = "Switch to light mode"
+
+[project.markdown_extensions]
+admonition = {}
+attr_list = {}
+md_in_html = {}
+tables = {}
+toc.permalink = true
+pymdownx.details = {}
+pymdownx.highlight = {}
+pymdownx.inlinehilite = {}
+pymdownx.superfences = {}
+pymdownx.tabbed.alternate_style = true
