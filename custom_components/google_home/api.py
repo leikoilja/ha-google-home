@@ -168,13 +168,20 @@ class GlocaltokensApiClient:
         speaker pair, only the leading speaker reports the pair's ID; the other
         reports its own, which Google doesn't list, so it's never used.
         """
+        # A host that mDNS already gave to a device can't fill in another one
+        found = {
+            ipaddress.ip_address(device.ip_address)
+            for device in self.google_devices
+            if device.ip_address
+        }
+        hosts = [
+            host for host in self.known_hosts if ipaddress.ip_address(host) not in found
+        ]
         cloud_device_ids = await asyncio.gather(
-            *(self._async_get_cloud_device_id(host) for host in self.known_hosts)
+            *(self._async_get_cloud_device_id(host) for host in hosts)
         )
         hosts_by_id: dict[str, str] = {}
-        for host, cloud_device_id in zip(
-            self.known_hosts, cloud_device_ids, strict=True
-        ):
+        for host, cloud_device_id in zip(hosts, cloud_device_ids, strict=True):
             if cloud_device_id is not None:
                 # As with mDNS, the first host that reports a device is used
                 hosts_by_id.setdefault(cloud_device_id, host)
