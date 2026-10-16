@@ -20,7 +20,7 @@ It can't create, change or snooze alarms and timers. Set them by voice or on a d
 
 The integration uses your Google account to get access tokens for your devices from Google, and renews them regularly. Everything else, such as reading alarms or changing the alarm volume, goes directly to the devices over your local network. For this to work:
 
-- Home Assistant and your devices must be on the same network. See [Device offline or not compatible](troubleshooting.md#device-offline-or-not-compatible).
+- Home Assistant must be able to reach your devices. It finds them automatically on the same network; for devices on another network, see [Add devices on another network](installation.md#add-devices-on-another-network).
 - The Google account you use must be a member of the home your devices belong to in the Google Home app.
 - You can add the integration only once, so it works with one Google account.
 
