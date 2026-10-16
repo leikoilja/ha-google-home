@@ -17,11 +17,9 @@
         "title": "Inicio de sesión en el navegador",
         "description": "1. En un ordenador, abre {embedded_setup_url} en una ventana de navegación privada e inicia sesión. Después de aceptar, puede que la página siga cargando; es normal.\n2. Abre las herramientas para desarrolladores del navegador y busca las cookies de `accounts.google.com`.\n3. Copia el valor de la cookie `oauth_token` y pégalo abajo enseguida. Caduca en pocos minutos y solo funciona una vez.\n\nInstrucciones paso a paso (en inglés): {browser_docs_url}\n\nPara elegir otra forma de iniciar sesión, cierra esta ventana y vuelve a añadir la integración.",
         "data": {
-          "username": "Correo electrónico de la cuenta de Google",
           "oauth_token": "Cookie oauth_token"
         },
         "data_description": {
-          "username": "La cuenta con la que iniciaste sesión en el navegador.",
           "oauth_token": "Empieza por oauth2_4/"
         }
       },
@@ -37,7 +35,7 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "Google no ha aceptado la cookie. Consigue una nueva y pégala enseguida: caduca en pocos minutos y solo funciona una vez. Copia el valor completo, que empieza por oauth2_4/, y comprueba que el correo electrónico es el de la cuenta con la que iniciaste sesión.",
+      "oauth-token-invalid": "Google no ha aceptado la cookie. Consigue una nueva y pégala enseguida: caduca en pocos minutos y solo funciona una vez. Copia el valor completo, que empieza por oauth2_4/.",
       "master-token-invalid": "El token maestro no es válido. Asegúrate de haber introducido el token completo (incluido 'aas_et/')",
       "oauth-token-format": "Esta no es la cookie oauth_token. Su valor empieza por oauth2_4/.",
       "master-token-format": "Un token maestro empieza por aas_et/ y tiene 223 caracteres. Copia el token completo."

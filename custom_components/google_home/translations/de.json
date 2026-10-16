@@ -17,11 +17,9 @@
         "title": "Anmeldung im Browser",
         "description": "1. Öffne auf einem Computer {embedded_setup_url} in einem privaten Browserfenster und melde dich an. Nachdem du zugestimmt hast, lädt die Seite eventuell weiter; das ist normal.\n2. Öffne die Entwicklertools des Browsers und suche die Cookies für `accounts.google.com`.\n3. Kopiere den Wert des Cookies `oauth_token` und füge ihn sofort unten ein. Er läuft nach wenigen Minuten ab und funktioniert nur einmal.\n\nSchritt-für-Schritt-Anleitung: {browser_docs_url}\n\nUm eine andere Anmeldeart zu wählen, schließe dieses Fenster und füge die Integration erneut hinzu.",
         "data": {
-          "username": "E-Mail-Adresse des Google-Kontos",
           "oauth_token": "Cookie oauth_token"
         },
         "data_description": {
-          "username": "Das Konto, mit dem du dich im Browser angemeldet hast.",
           "oauth_token": "Beginnt mit oauth2_4/"
         }
       },
@@ -37,7 +35,7 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "Google hat das Cookie nicht akzeptiert. Hol dir ein neues und füge es sofort ein: Es läuft nach wenigen Minuten ab und funktioniert nur einmal. Kopiere den vollständigen Wert, der mit oauth2_4/ beginnt, und prüfe, ob die E-Mail-Adresse zu dem Konto gehört, mit dem du dich angemeldet hast.",
+      "oauth-token-invalid": "Google hat das Cookie nicht akzeptiert. Hol dir ein neues und füge es sofort ein: Es läuft nach wenigen Minuten ab und funktioniert nur einmal. Kopiere den vollständigen Wert, der mit oauth2_4/ beginnt.",
       "master-token-invalid": "Master-Token ungültig. Stelle sicher, dass das vollständige Token angegeben wurde (inklusive 'aas_et/')",
       "oauth-token-format": "Das ist nicht das Cookie oauth_token. Sein Wert beginnt mit oauth2_4/.",
       "master-token-format": "Ein Master-Token beginnt mit aas_et/ und ist 223 Zeichen lang. Kopiere das vollständige Token."

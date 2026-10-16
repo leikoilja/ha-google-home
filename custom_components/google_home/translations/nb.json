@@ -17,11 +17,9 @@
         "title": "Pålogging i nettleseren",
         "description": "1. Åpne {embedded_setup_url} i et privat nettleservindu på en datamaskin, og logg på. Etter at du har godtatt, kan siden fortsette å laste; det er forventet.\n2. Åpne utviklerverktøyene i nettleseren, og finn informasjonskapslene for `accounts.google.com`.\n3. Kopier verdien til informasjonskapselen `oauth_token`, og lim den inn nedenfor med en gang. Den utløper i løpet av noen minutter og fungerer bare én gang.\n\nTrinnvis veiledning: {browser_docs_url}\n\nFor å velge en annen påloggingsmåte, lukk dette vinduet og legg til integrasjonen på nytt.",
         "data": {
-          "username": "E-postadresse for Google-kontoen",
           "oauth_token": "Informasjonskapselen oauth_token"
         },
         "data_description": {
-          "username": "Kontoen du logget på med i nettleseren.",
           "oauth_token": "Starter med oauth2_4/"
         }
       },
@@ -37,7 +35,7 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "Google godtok ikke informasjonskapselen. Hent en ny, og lim den inn med en gang: den utløper i løpet av noen minutter og fungerer bare én gang. Kopier hele verdien, som starter med oauth2_4/, og kontroller at e-postadressen tilhører kontoen du logget på med.",
+      "oauth-token-invalid": "Google godtok ikke informasjonskapselen. Hent en ny, og lim den inn med en gang: den utløper i løpet av noen minutter og fungerer bare én gang. Kopier hele verdien, som starter med oauth2_4/.",
       "master-token-invalid": "Master token er ugyldig. Kontroller at hele tokenet er angitt (inkludert 'aas_et/')",
       "oauth-token-format": "Dette er ikke informasjonskapselen oauth_token. Verdien starter med oauth2_4/.",
       "master-token-format": "Et master token starter med aas_et/ og er 223 tegn langt. Kopier hele tokenet."

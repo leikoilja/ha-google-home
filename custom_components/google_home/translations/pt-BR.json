@@ -17,11 +17,9 @@
         "title": "Login pelo navegador",
         "description": "1. Em um computador, abra {embedded_setup_url} em uma janela anônima do navegador e faça login. Depois de aceitar, a página pode continuar carregando; isso é esperado.\n2. Abra as ferramentas de desenvolvedor do navegador e encontre os cookies de `accounts.google.com`.\n3. Copie o valor do cookie `oauth_token` e cole abaixo imediatamente. Ele expira em poucos minutos e funciona apenas uma vez.\n\nInstruções passo a passo: {browser_docs_url}\n\nPara escolher outra forma de entrar, feche esta janela e adicione a integração novamente.",
         "data": {
-          "username": "Endereço de e-mail da conta do Google",
           "oauth_token": "Cookie oauth_token"
         },
         "data_description": {
-          "username": "A conta com que você fez login no navegador.",
           "oauth_token": "Começa com oauth2_4/"
         }
       },
@@ -37,7 +35,7 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "O Google não aceitou o cookie. Obtenha um novo e cole imediatamente: ele expira em poucos minutos e funciona apenas uma vez. Copie o valor completo, que começa com oauth2_4/, e verifique se o e-mail é o da conta com que você fez login.",
+      "oauth-token-invalid": "O Google não aceitou o cookie. Obtenha um novo e cole imediatamente: ele expira em poucos minutos e funciona apenas uma vez. Copie o valor completo, que começa com oauth2_4/.",
       "master-token-invalid": "Token mestre inválido. Certifique-se de que o token completo tenha sido especificado (incluindo 'aas_et/')",
       "oauth-token-format": "Este não é o cookie oauth_token. O valor dele começa com oauth2_4/.",
       "master-token-format": "Um token mestre começa com aas_et/ e tem 223 caracteres. Copie o token completo."

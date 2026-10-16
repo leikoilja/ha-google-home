@@ -17,11 +17,9 @@
         "title": "Login via browser",
         "description": "1. Åbn {embedded_setup_url} i et privat browservindue på en computer, og log ind. Når du har accepteret, bliver siden måske ved med at indlæse; det er forventet.\n2. Åbn browserens udviklerværktøjer, og find cookies for `accounts.google.com`.\n3. Kopiér værdien af cookien `oauth_token`, og indsæt den nedenfor med det samme. Den udløber inden for få minutter og virker kun én gang.\n\nTrin-for-trin-vejledning: {browser_docs_url}\n\nHvis du vil vælge en anden måde at logge ind på, så luk dette vindue, og tilføj integrationen igen.",
         "data": {
-          "username": "E-mailadresse til Google-konto",
           "oauth_token": "Cookien oauth_token"
         },
         "data_description": {
-          "username": "Den konto, du loggede ind med i browseren.",
           "oauth_token": "Starter med oauth2_4/"
         }
       },
@@ -37,7 +35,7 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "Google accepterede ikke cookien. Hent en ny, og indsæt den med det samme: den udløber inden for få minutter og virker kun én gang. Kopiér hele værdien, der starter med oauth2_4/, og tjek, at e-mailadressen hører til den konto, du loggede ind med.",
+      "oauth-token-invalid": "Google accepterede ikke cookien. Hent en ny, og indsæt den med det samme: den udløber inden for få minutter og virker kun én gang. Kopiér hele værdien, der starter med oauth2_4/.",
       "master-token-invalid": "Master token er ugyldigt. Sørg for, at hele tokenet er angivet (inklusive 'aas_et/')",
       "oauth-token-format": "Dette er ikke cookien oauth_token. Dens værdi starter med oauth2_4/.",
       "master-token-format": "Et master token starter med aas_et/ og er 223 tegn langt. Kopiér hele tokenet."

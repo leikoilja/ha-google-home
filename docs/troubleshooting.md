@@ -30,7 +30,7 @@ Older versions of the integration signed in with an app password, which Google r
 
 ### "Google didn't accept the cookie"
 
-The `oauth_token` cookie expires within minutes and works only once. Close the private window and repeat [browser sign-in](installation.md#browser-sign-in) from step 1, then paste the new cookie straight away. Copy the whole value, starting with `oauth2_4/`, and enter the email address of the account you signed in with.
+The `oauth_token` cookie expires within minutes and works only once. Close the private window and repeat [browser sign-in](installation.md#browser-sign-in) from step 1, then paste the new cookie straight away. Copy the whole value, starting with `oauth2_4/`.
 
 ### "Master token invalid"
 
