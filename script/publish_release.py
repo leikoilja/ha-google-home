@@ -1,20 +1,15 @@
 #!/usr/bin/env python3
 """Update manifest.json and create new Github Release."""
 
-from __future__ import annotations
-
 from importlib.metadata import version as package_version
 import json
 import os
 import sys
-from typing import TYPE_CHECKING
 
 from github import Auth, Github, InputGitTreeElement
 from github.ContentFile import ContentFile
-
-if TYPE_CHECKING:
-    from github.GitRelease import GitRelease
-    from github.Repository import Repository
+from github.GitRelease import GitRelease
+from github.Repository import Repository
 
 
 def main() -> int:
@@ -28,7 +23,7 @@ def main() -> int:
     if not release.draft:
         print("The latest release is not a draft!")
         return 1
-    version = release.title.split()[-1].lstrip("v")
+    version = release.name.split()[-1].lstrip("v")
     update_manifests(repo, version)
     publish_release(release)
     return 0
@@ -85,7 +80,7 @@ def publish_release(release: GitRelease) -> None:
     """Publish draft release."""
     print("Publishing new release...")
     release.update_release(
-        name=release.title.split()[-1],
+        name=release.name.split()[-1],
         message=release.body,
         draft=False,
     )

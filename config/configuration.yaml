@@ -1,0 +1,16 @@
+# Minimal configuration for the development instance started by script/develop.
+# default_config is avoided because it also sets up components that need system
+# packages (go2rtc, libpcap). Home Assistant loads camera code at startup
+# whatever is configured here, so a missing libturbojpeg is still logged as an
+# error. It only slows camera snapshots and can be ignored.
+frontend:
+config:
+zeroconf:
+
+logger:
+  default: info
+  logs:
+    custom_components.google_home: debug
+
+# Uncomment to attach a debugger on port 5678 (https://www.home-assistant.io/integrations/debugpy/)
+# debugpy:

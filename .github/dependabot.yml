@@ -1,21 +1,34 @@
 version: 2
 updates:
-  - package-ecosystem: pip
+  - package-ecosystem: uv
     directory: "/"
     schedule:
-      interval: daily
+      interval: weekly
+    # A release has a week to be yanked before it is proposed here.
+    cooldown:
+      default-days: 7
     labels:
       - "dependencies"
     ignore:
+      # Bumped by hand, together with hacs.json and the code it needs.
       - dependency-name: "homeassistant"
+  - package-ecosystem: pre-commit
+    directory: "/"
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    labels:
+      - "dependencies"
   - package-ecosystem: github-actions
     directories:
+      # Workflows in .github/workflows
       - "/"
+      # Composite actions are not covered by "/" and must be listed explicitly
       - "/.github/actions/*"
     schedule:
-      interval: daily
+      interval: weekly
+    cooldown:
+      default-days: 7
     labels:
       - "dependencies"
-    ignore:
-      - dependency-name: "crazy-max/ghaction-github-labeler"
-        versions: ["5.1.0"]

@@ -1,7 +1,5 @@
 """Constants for Google Home."""
 
-from __future__ import annotations
-
 from typing import Final
 
 from homeassistant.util.dt import DATE_STR_FORMAT

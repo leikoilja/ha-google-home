@@ -3,12 +3,37 @@ repos:
     rev: v6.0.0
     hooks:
       - id: check-added-large-files
+      - id: check-case-conflict
       - id: check-json
+      - id: check-merge-conflict
+      - id: check-toml
       - id: check-yaml
       - id: end-of-file-fixer
       - id: trailing-whitespace
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.38.2
+    hooks:
+      - id: check-dependabot
+      - id: check-github-actions
+      - id: check-github-workflows
+  - repo: https://github.com/zizmorcore/zizmor-pre-commit
+    rev: v1.31.0
+    hooks:
+      - id: zizmor
   - repo: local
     hooks:
+      - id: codespell
+        name: codespell
+        entry: uv run codespell --write-changes
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: dprint
+        name: dprint format
+        entry: uv run dprint fmt
+        language: system
+        pass_filenames: false
+        types_or: [json, markdown, toml, yaml]
       - id: ruff-format
         name: ruff format
         entry: uv run ruff format
@@ -23,27 +48,16 @@ repos:
         require_serial: true
       - id: mypy
         name: mypy
-        entry: uv run mypy
+        entry: uv run mypy custom_components script tests
         language: system
         types: [python]
-        require_serial: true
+        pass_filenames: false
       - id: pylint
         name: pylint
         entry: uv run pylint
         language: system
         types: [python]
         require_serial: true
-      - id: codespell
-        name: codespell
-        entry: uv run codespell --write-changes
-        language: system
-        pass_filenames: false
-        always_run: true
-  - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v3.1.0
-    hooks:
-      - id: prettier
-        exclude: ^custom_components/google_home/manifest\.json$
   - repo: https://github.com/cdce8p/python-typing-update
     rev: v0.9.0
     hooks:
@@ -53,7 +67,7 @@ repos:
       - id: python-typing-update
         stages: [manual]
         args:
-          - --py313-plus
+          - --py314-plus
           - --force
           - --keep-updates
         files: ^.+\.py$

@@ -1,43 +1,51 @@
+# The release script reads the version from the last word of the name.
 name-template: "RELEASE WITH GITHUB ACTIONS! v$RESOLVED_VERSION"
 tag-template: "v$RESOLVED_VERSION"
 categories:
+  # PRs with this label are left out of the release notes entirely.
+  - type: "pre-exclude"
+    when:
+      label: "skip-release"
+  # major/minor/patch labels are intentionally not used for version
+  # resolution: Dependabot applies them to describe the dependency's own
+  # version jump, which says nothing about this integration.
+  - type: "version-resolver"
+    semver-increment: "major"
+    when:
+      label: "breaking"
+  - type: "version-resolver"
+    semver-increment: "minor"
+    when:
+      label: "feature"
   - title: "🚀 Features"
-    labels:
-      - "feature"
-      - "performance"
+    when:
+      labels:
+        - "feature"
+        - "performance"
   - title: "🐛 Bug Fixes"
-    labels:
-      - "bug"
+    when:
+      label: "bug"
   - title: "🈵 Translations"
-    labels:
-      - "translation"
+    when:
+      label: "translation"
   - title: "📄 Documentation"
-    labels:
-      - "documentation"
+    when:
+      label: "documentation"
   - title: "🧱 Dependency Updates"
-    labels:
-      - "dependencies"
+    when:
+      label: "dependencies"
   - title: "🔧 Internal structure enhancement"
-    labels:
-      - "github structure"
-      - "refactoring"
-      - "removal"
+    when:
+      labels:
+        - "github structure"
+        - "refactoring"
+        - "removal"
   - title: "🧰 Maintenance"
-    labels:
-      - "testing"
+    when:
+      label: "testing"
 change-template: "- $TITLE @$AUTHOR (#$NUMBER)"
 change-title-escapes: '\<*_&' # You can add # and @ to disable mentions, and add ` to disable code blocks.
 version-resolver:
-  major:
-    labels:
-      - "major"
-  minor:
-    labels:
-      - "minor"
-      - "feature"
-  patch:
-    labels:
-      - "patch"
   default: patch
 template: |
   ## Changes

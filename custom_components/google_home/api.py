@@ -1,17 +1,18 @@
 """Sample API Client."""
 
-from __future__ import annotations
-
 import asyncio
 from http import HTTPStatus
 import ipaddress
 import logging
-from typing import TYPE_CHECKING, Literal, cast
+from typing import Literal, cast
 
 from aiohttp import ClientError, ClientSession, ClientTimeout
 from aiohttp.client_exceptions import ClientConnectorError, ContentTypeError
 from glocaltokens.client import Device, GLocalAuthenticationTokens
 from glocaltokens.utils.token import is_aas_et
+from zeroconf import Zeroconf
+
+from homeassistant.core import HomeAssistant
 
 from .const import (
     API_ENDPOINT_ALARM_DELETE,
@@ -30,13 +31,7 @@ from .const import (
 )
 from .exceptions import InvalidMasterToken
 from .models import GoogleHomeDevice
-
-if TYPE_CHECKING:
-    from zeroconf import Zeroconf
-
-    from homeassistant.core import HomeAssistant
-
-    from .types import AlarmJsonDict, JsonDict, TimerJsonDict
+from .types import AlarmJsonDict, JsonDict, TimerJsonDict
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -184,8 +179,8 @@ class GlocaltokensApiClient:
 
         if response is not None:
             if JSON_TIMER in response and JSON_ALARM in response:
-                device.set_timers(cast("list[TimerJsonDict]", response[JSON_TIMER]))
-                device.set_alarms(cast("list[AlarmJsonDict]", response[JSON_ALARM]))
+                device.set_timers(cast(list[TimerJsonDict], response[JSON_TIMER]))
+                device.set_alarms(cast(list[AlarmJsonDict], response[JSON_ALARM]))
                 _LOGGER.debug(
                     "Successfully retrieved alarms and timers from %s. Response: %s",
                     device.name,

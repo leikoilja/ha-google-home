@@ -15,7 +15,7 @@ Pull requests are the best way to propose changes to the codebase.
 
 1. Fork the repo and create your branch from `master`.
 2. If you've changed something, update the documentation.
-3. Make sure your code passes lint checks (using `pre-commit`).
+3. Make sure your code passes lint checks (using `prek`).
 4. Test your contribution.
 5. Issue that pull request!
 
@@ -49,47 +49,56 @@ People _love_ thorough bug reports. I'm not even kidding.
 ## Use a Consistent Coding Style
 
 Install [uv](https://docs.astral.sh/uv/getting-started/installation/) to setup the developer environment.
-It uses [ruff](https://docs.astral.sh/ruff/) and [prettier](https://prettier.io/)
+It uses [ruff](https://docs.astral.sh/ruff/) and [dprint](https://dprint.dev/)
 to make sure the code follows the style.
 
-`pre-commit` can be used to run all checks with one command (see dedicated section below).
+[prek](https://prek.j178.dev/) runs all checks with one command (see [Lint checks](#lint-checks)).
 
 ## Test your code modification
 
 This custom component is based on [integration_blueprint template](https://github.com/custom-components/integration_blueprint).
 
-It comes with development environment in a container, easy to launch
-if you use Visual Studio Code. With this container you will have a stand alone
-Home Assistant instance running and already configured with the included
-[`.devcontainer/configuration.yaml`](./.devcontainer/configuration.yaml)
-file.
+To try your changes in a real Home Assistant, run:
 
-You can use the `pre-commit` settings implemented in this repository to have
-linting tools check your contributions (see dedicated section below).
+```console
+$ script/develop
+```
+
+It starts a standalone Home Assistant at <http://localhost:8123> with this
+integration loaded, using [`config/configuration.yaml`](./config/configuration.yaml).
+Everything else Home Assistant writes to `config/` is ignored by git.
+
+The repository also has a [dev container](https://containers.dev/) with uv and
+the dependencies installed, which you can open in Visual Studio Code or GitHub
+Codespaces, and then run `script/develop` inside it.
+
+You can use the `prek` hooks configured in this repository to have
+linting tools check your contributions (see [Lint checks](#lint-checks)).
 
 When writing unittests please follow the good practises like:
 
 - Use `faker` to fake the data. See [examples](https://faker.readthedocs.io/en/master/)
 - Use `mock` to patch objects/methods. See [examples](https://realpython.com/python-mock-library/)
 
-## Pre-commit
+## Lint checks
 
 With uv installed, run `uv sync` in the repo root.
 It will create a virtualenv with all required packages.
 
-After that you can run [pre-commit](https://pre-commit.com/) with settings included in the
-repository to have code style and linting checks.
+After that you can run [prek](https://prek.j178.dev/) with the hooks in
+`.pre-commit-config.yaml` to have code style and linting checks. `pre-commit`
+reads the same file, if you already use it.
 
-Activate `pre-commit` git hook:
+Activate the git hook:
 
 ```console
-$ uvx pre-commit install
+$ uvx prek install
 ```
 
-Now the pre-commit tests will be done every time you commit.
+Now the checks will run every time you commit.
 
-You can also run the tests on all repository files manually with this command:
+You can also run the checks on all repository files manually with this command:
 
 ```console
-$ uvx pre-commit run --all-files
+$ uvx prek run --all-files
 ```
