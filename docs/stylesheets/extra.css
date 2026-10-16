@@ -1,0 +1,45 @@
+/* Google-like blue accent. */
+:root > * {
+  --md-primary-fg-color: #1a73e8;
+  --md-primary-fg-color--light: #4c94f0;
+  --md-primary-fg-color--dark: #1558b0;
+  --md-primary-bg-color: #ffffff;
+  --md-primary-bg-color--light: #ffffffb3;
+  --md-accent-fg-color: #1a73e8;
+}
+
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: #1a4d99;
+  --md-typeset-a-color: #8ab4f8;
+  --md-accent-fg-color: #aecbfa;
+}
+
+/* The modern variant paints the header with the default background; tint it
+   with the brand colour instead. */
+.md-header {
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color);
+}
+
+/* The modern search trigger is styled for a light header. Restyle it as a
+   translucent-dark pill with white text. A white tint would lighten the blue
+   behind the text below the 4.5:1 contrast that WCAG asks for. Scoped to
+   .md-header so the open search modal keeps its default styling. */
+.md-header .md-search__button {
+  background-color: #00000026;
+  color: var(--md-primary-bg-color);
+}
+
+.md-header .md-search__button:hover {
+  background-color: #00000040;
+  color: var(--md-primary-bg-color);
+}
+
+.md-header .md-search__button:before {
+  background-color: var(--md-primary-bg-color);
+}
+
+.md-header .md-search__button:after {
+  background-color: #00000033;
+  color: var(--md-primary-bg-color);
+}
