@@ -75,7 +75,7 @@ Timers have no `snoozed` status. If you snooze a ringing timer, it restarts and 
 
 ## Device sensor
 
-The state is the device's IP address on your network. The sensor appears under **Diagnostic** on the device page.
+The state is the device's IP address on your network. It is `unavailable` while Home Assistant can't find the device there, for example because it's offline, and then shows no attributes. The sensor appears under **Diagnostic** on the device page.
 
 | Attribute     | Description                                                     |
 | ------------- | --------------------------------------------------------------- |
