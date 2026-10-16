@@ -75,14 +75,6 @@ class TimersAttributes(TypedDict):
     timers: list[GoogleHomeTimerDict]
 
 
-class ConfigFlowDict(TypedDict):
-    """Typed dict for config flow handler."""
-
-    username: str
-    password: str
-    master_token: str
-
-
 class OptionsFlowDict(TypedDict):
     """Typed dict for options flow handler."""
 

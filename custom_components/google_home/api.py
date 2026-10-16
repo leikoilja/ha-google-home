@@ -10,6 +10,7 @@ from aiohttp import ClientError, ClientSession, ClientTimeout
 from aiohttp.client_exceptions import ClientConnectorError, ContentTypeError
 from glocaltokens.client import Device, GLocalAuthenticationTokens
 from glocaltokens.utils.token import is_aas_et
+from requests.exceptions import RequestException
 from zeroconf import Zeroconf
 
 from homeassistant.core import HomeAssistant
@@ -47,6 +48,7 @@ class GlocaltokensApiClient:
         username: str | None = None,
         password: str | None = None,
         master_token: str | None = None,
+        oauth_token: str | None = None,
         android_id: str | None = None,
         zeroconf_instance: Zeroconf | None = None,
     ):
@@ -61,6 +63,7 @@ class GlocaltokensApiClient:
             username=username,
             password=password,
             master_token=master_token,
+            oauth_token=oauth_token,
             android_id=android_id,
             verbose=verbose,
         )
@@ -88,6 +91,18 @@ class GlocaltokensApiClient:
         if access_token is None:
             raise InvalidMasterToken
         return access_token
+
+    async def async_get_email(self) -> str | None:
+        """Return the verified email address of the signed-in account, if Google gives it."""
+
+        def _get_email() -> str | None:
+            return self._client.get_email()
+
+        try:
+            return await self.hass.async_add_executor_job(_get_email)
+        except RequestException:
+            _LOGGER.debug("Failed to get the account's email address", exc_info=True)
+            return None
 
     async def get_google_devices(self) -> list[GoogleHomeDevice]:
         """Get google device authentication tokens.

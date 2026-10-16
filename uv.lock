@@ -940,7 +940,7 @@ wheels = [
 
 [[package]]
 name = "glocaltokens"
-version = "0.8.0"
+version = "0.9.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "ghome-foyer-api" },
@@ -949,9 +949,9 @@ dependencies = [
     { name = "requests" },
     { name = "zeroconf" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/aa/1d/353be1649f8ce8189b3569253d1ca706a80dfc2bde288502226d834b9c49/glocaltokens-0.8.0.tar.gz", hash = "sha256:cd0231cbb6b3ad4bc9ceb547bcd8374a726d2b20728af18226b9311562df3b92", size = 88366, upload-time = "2026-10-16T14:54:09.753Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/57/fd/65cd2a0c0b2b081c4e4dd604ee98faafd647e790318e199d8ed5c174b941/glocaltokens-0.9.0.tar.gz", hash = "sha256:375bd745039c18beaf57403b454f2dc086787fb2af3c13bf6e6711eacffcc2a4", size = 90974, upload-time = "2026-10-16T17:47:32.096Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/cb/72/54ca3c4c95cb35ae31f4f96eaa11a7a6ae61526f7a4437ac904a72774242/glocaltokens-0.8.0-py3-none-any.whl", hash = "sha256:2cdd955d2f185799d06cf1a432a340d09a80dbb2a84396bddafde648a97de48a", size = 16733, upload-time = "2026-10-16T14:54:08.461Z" },
+    { url = "https://files.pythonhosted.org/packages/da/11/509c0e6c4390ed03e9b532b9cd00a73c843b831796a58bcccfb04a9ef354/glocaltokens-0.9.0-py3-none-any.whl", hash = "sha256:76ab643b465f7c1d80bf84a7fc2003f4f63139ddd2754e39ed201b5649cc047e", size = 17811, upload-time = "2026-10-16T17:47:30.897Z" },
 ]
 
 [[package]]
@@ -980,7 +980,7 @@ docs = [
 
 [package.metadata]
 requires-dist = [
-    { name = "glocaltokens", specifier = ">=0.8.0" },
+    { name = "glocaltokens", specifier = ">=0.9.0" },
     { name = "homeassistant", specifier = "==2026.10.0" },
 ]
 

@@ -26,21 +26,15 @@ data:
 
 ### "Username or password is incorrect"
 
-1. Check that the username and app password belong to the same Google account.
-2. Use an [app password](installation.md#create-an-app-password), not your normal password.
-3. If it still fails, Google is rejecting this sign-in method for your account. That happens even with correct details. [Get a master token](installation.md#get-a-master-token) and use it instead.
+Older versions of the integration signed in with an app password, which Google rejects for many accounts. [Update the integration](https://github.com/leikoilja/ha-google-home/releases/latest) and use [browser sign-in](installation.md#browser-sign-in) instead.
 
-### "The setting you are looking for is not available for your account"
+### "Google didn't accept the cookie"
 
-Google shows this on the App passwords page when your account can't create app passwords. Usually 2-Step Verification is off. [Turn it on](https://myaccount.google.com/signinoptions/twosv) and try again.
-
-Accounts that use only security keys or are enrolled in Advanced Protection can't create app passwords at all. Use a [master token](installation.md#get-a-master-token) instead.
-
-For a work or school account, your organization's [security settings](https://knowledge.workspace.google.com/admin/security/how-2-step-verification-works-with-legacy-apps) decide whether you can create app passwords. For example, an organization that requires security keys turns them off. Ask your administrator, or use a [master token](installation.md#get-a-master-token).
+The `oauth_token` cookie expires within minutes and works only once. Close the private window and repeat [browser sign-in](installation.md#browser-sign-in) from step 1, then paste the new cookie straight away. Copy the whole value, starting with `oauth2_4/`, and enter the email address of the account you signed in with.
 
 ### "Master token invalid"
 
-Paste the whole token, including the `aas_et/` at the start. If it was correct before and has stopped working, for example after you changed your Google password, get a new master token, then delete the integration and add it again.
+Paste the whole token, including the `aas_et/` at the start. If it was correct before and has stopped working, for example after you changed your Google password, delete the integration and add it again with [browser sign-in](installation.md#browser-sign-in).
 
 ## Devices are missing
 

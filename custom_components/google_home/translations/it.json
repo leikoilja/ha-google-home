@@ -2,20 +2,45 @@
   "config": {
     "step": {
       "user": {
-        "title": "Autenticazione Google Home",
-        "description": "Per le istruzioni di configurazione, consulta {docs_url}. Inserisci il nome utente del tuo account Google e una password per le app ({app_passwords_url}), oppure un token master. Per creare una password per le app, devi attivare la verifica in due passaggi.",
+        "title": "Accedi a Google",
+        "description": "Questa integrazione funziona con i tuoi altoparlanti e display Google, come Nest Mini, Nest Audio e Nest Hub. Non aggiunge gli altri dispositivi della tua app Google Home.\n\nScegli come accedere a un account Google che fa parte della tua casa. Per assistenza, consulta {docs_url}.",
+        "menu_options": {
+          "browser": "Accesso dal browser (consigliato)",
+          "master_token": "Token master"
+        },
+        "menu_option_descriptions": {
+          "browser": "Accedi a Google in un browser desktop, poi incolla un cookie. Funziona con la maggior parte degli account.",
+          "master_token": "Incolla un token master che hai già."
+        }
+      },
+      "browser": {
+        "title": "Accesso dal browser",
+        "description": "1. Su un computer, apri {embedded_setup_url} in una finestra di navigazione privata e accedi. Dopo aver accettato, la pagina potrebbe continuare a caricare; è normale.\n2. Apri gli strumenti per sviluppatori del browser e trova i cookie di `accounts.google.com`.\n3. Copia il valore del cookie `oauth_token` e incollalo subito qui sotto. Scade dopo pochi minuti e funziona una sola volta.\n\nIstruzioni passo passo: {browser_docs_url}\n\nPer scegliere un altro modo di accedere, chiudi questa finestra e aggiungi di nuovo l'integrazione.",
         "data": {
-          "username": "Nome utente dell'account Google",
-          "password": "Password per le app dell'account Google",
+          "username": "Indirizzo email dell'account Google",
+          "oauth_token": "Cookie oauth_token"
+        },
+        "data_description": {
+          "username": "L'account con cui hai effettuato l'accesso nel browser.",
+          "oauth_token": "Inizia con oauth2_4/"
+        }
+      },
+      "master_token": {
+        "title": "Token master",
+        "description": "Incolla un token master ottenuto in precedenza, ad esempio con un altro strumento.\n\nPer scegliere un altro modo di accedere, chiudi questa finestra e aggiungi di nuovo l'integrazione.",
+        "data": {
           "master_token": "Token master dell'account Google"
+        },
+        "data_description": {
+          "master_token": "Inizia con aas_et/"
         }
       }
     },
     "error": {
-      "auth": "Nome utente o password errati. Se il tuo account Google ha la verifica in due passaggi attiva, genera una password per le app ({app_passwords_url}). Se l'autenticazione continua a non riuscire, consulta {troubleshooting_url}",
-      "pass-len": "Questa integrazione supporta password di massimo {max_password_length} caratteri. Cambia la password del tuo account o usa una password per le app ({app_passwords_url}).",
-      "missing-inputs": "Inserisci nome utente e password oppure il token master",
-      "master-token-invalid": "Token master non valido. Assicurati di aver inserito il token completo (compreso 'aas_et/')"
+      "oauth-token-invalid": "Google non ha accettato il cookie. Ottienine uno nuovo e incollalo subito: scade dopo pochi minuti e funziona una sola volta. Copia il valore completo, che inizia con oauth2_4/, e verifica che l'email sia quella dell'account con cui hai effettuato l'accesso.",
+      "master-token-invalid": "Token master non valido. Assicurati di aver inserito il token completo (compreso 'aas_et/')",
+      "oauth-token-format": "Questo non è il cookie oauth_token. Il suo valore inizia con oauth2_4/.",
+      "master-token-format": "Un token master inizia con aas_et/ ed è lungo 223 caratteri. Copia il token completo."
     }
   },
   "options": {

@@ -2,20 +2,45 @@
   "config": {
     "step": {
       "user": {
-        "title": "Authentification Google Home",
-        "description": "Pour les instructions de configuration, consultez {docs_url}. Saisissez le nom d'utilisateur de votre compte Google et un mot de passe d'application ({app_passwords_url}), ou un jeton maître. La validation en deux étapes doit être activée pour créer un mot de passe d'application.",
+        "title": "Se connecter à Google",
+        "description": "Cette intégration fonctionne avec vos enceintes et écrans Google, comme Nest Mini, Nest Audio et Nest Hub. Elle n'ajoute pas les autres appareils de votre application Google Home.\n\nChoisissez comment vous connecter à un compte Google membre de votre maison. Pour obtenir de l'aide, consultez {docs_url}.",
+        "menu_options": {
+          "browser": "Connexion via le navigateur (recommandée)",
+          "master_token": "Jeton maître"
+        },
+        "menu_option_descriptions": {
+          "browser": "Connectez-vous à Google dans un navigateur sur ordinateur, puis collez un cookie. Fonctionne pour la plupart des comptes.",
+          "master_token": "Collez un jeton maître que vous avez déjà."
+        }
+      },
+      "browser": {
+        "title": "Connexion via le navigateur",
+        "description": "1. Sur un ordinateur, ouvrez {embedded_setup_url} dans une fenêtre de navigation privée et connectez-vous. Une fois que vous avez accepté, la page peut continuer à charger ; c'est normal.\n2. Ouvrez les outils de développement du navigateur et trouvez les cookies de `accounts.google.com`.\n3. Copiez la valeur du cookie `oauth_token` et collez-la ci-dessous immédiatement. Il expire en quelques minutes et ne fonctionne qu'une seule fois.\n\nInstructions détaillées : {browser_docs_url}\n\nPour choisir une autre méthode de connexion, fermez cette fenêtre et ajoutez à nouveau l'intégration.",
         "data": {
-          "username": "Nom d'utilisateur du compte Google",
-          "password": "Mot de passe d'application du compte Google",
+          "username": "Adresse e-mail du compte Google",
+          "oauth_token": "Cookie oauth_token"
+        },
+        "data_description": {
+          "username": "Le compte avec lequel vous vous êtes connecté dans le navigateur.",
+          "oauth_token": "Commence par oauth2_4/"
+        }
+      },
+      "master_token": {
+        "title": "Jeton maître",
+        "description": "Collez un jeton maître obtenu précédemment, par exemple avec un autre outil.\n\nPour choisir une autre méthode de connexion, fermez cette fenêtre et ajoutez à nouveau l'intégration.",
+        "data": {
           "master_token": "Jeton maître du compte Google"
+        },
+        "data_description": {
+          "master_token": "Commence par aas_et/"
         }
       }
     },
     "error": {
-      "auth": "Nom d'utilisateur ou mot de passe incorrect. Si la validation en deux étapes est activée sur votre compte Google, utilisez un mot de passe d'application ({app_passwords_url}). Si l'authentification échoue toujours, consultez {troubleshooting_url}",
-      "pass-len": "Cette intégration accepte les mots de passe contenant jusqu'à {max_password_length} caractères. Changez le mot de passe de votre compte ou utilisez un mot de passe d'application ({app_passwords_url}).",
-      "missing-inputs": "Veuillez indiquer soit votre nom d'utilisateur et votre mot de passe, soit votre jeton maître",
-      "master-token-invalid": "Jeton maître non valide. Assurez-vous d'avoir saisi le jeton complet (y compris 'aas_et/')"
+      "oauth-token-invalid": "Google n'a pas accepté le cookie. Récupérez-en un nouveau et collez-le immédiatement : il expire en quelques minutes et ne fonctionne qu'une seule fois. Copiez la valeur complète, qui commence par oauth2_4/, et vérifiez que l'adresse e-mail est celle du compte avec lequel vous vous êtes connecté.",
+      "master-token-invalid": "Jeton maître non valide. Assurez-vous d'avoir saisi le jeton complet (y compris 'aas_et/')",
+      "oauth-token-format": "Ce n'est pas le cookie oauth_token. Sa valeur commence par oauth2_4/.",
+      "master-token-format": "Un jeton maître commence par aas_et/ et comporte 223 caractères. Copiez le jeton complet."
     }
   },
   "options": {

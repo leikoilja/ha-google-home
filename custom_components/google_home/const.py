@@ -19,8 +19,6 @@ DATA_COORDINATOR: Final = "coordinator"
 
 ALARM_AND_TIMER_ID_LENGTH: Final = 42
 
-MAX_PASSWORD_LENGTH: Final = 100
-
 # Icons
 ICON_TOKEN: Final = "mdi:form-textbox-password"
 ICON_ALARMS: Final = "mdi:alarm-multiple"
@@ -51,6 +49,7 @@ CONF_ANDROID_ID: Final = "android_id"
 CONF_USERNAME: Final = "username"
 CONF_PASSWORD: Final = "password"
 CONF_MASTER_TOKEN: Final = "master_token"
+CONF_OAUTH_TOKEN: Final = "oauth_token"
 
 # Defaults
 DEFAULT_NAME: Final = "Google Home"

@@ -2,20 +2,45 @@
   "config": {
     "step": {
       "user": {
-        "title": "Identificarse en Google Home",
-        "description": "Para obtener instrucciones de configuración, consulta {docs_url} (en inglés). Introduce el nombre de usuario de tu cuenta de Google y una contraseña de aplicación ({app_passwords_url}), o bien un token maestro. Para crear una contraseña de aplicación, debes tener activada la verificación en dos pasos.",
+        "title": "Iniciar sesión en Google",
+        "description": "Esta integración funciona con tus altavoces y pantallas de Google, como Nest Mini, Nest Audio y Nest Hub. No añade los demás dispositivos de tu aplicación Google Home.\n\nElige cómo iniciar sesión en una cuenta de Google que sea miembro de tu casa. Si necesitas ayuda, consulta {docs_url} (en inglés).",
+        "menu_options": {
+          "browser": "Inicio de sesión en el navegador (recomendado)",
+          "master_token": "Token maestro"
+        },
+        "menu_option_descriptions": {
+          "browser": "Inicia sesión en Google en un navegador de ordenador y después pega una cookie. Funciona con la mayoría de las cuentas.",
+          "master_token": "Pega un token maestro que ya tengas."
+        }
+      },
+      "browser": {
+        "title": "Inicio de sesión en el navegador",
+        "description": "1. En un ordenador, abre {embedded_setup_url} en una ventana de navegación privada e inicia sesión. Después de aceptar, puede que la página siga cargando; es normal.\n2. Abre las herramientas para desarrolladores del navegador y busca las cookies de `accounts.google.com`.\n3. Copia el valor de la cookie `oauth_token` y pégalo abajo enseguida. Caduca en pocos minutos y solo funciona una vez.\n\nInstrucciones paso a paso (en inglés): {browser_docs_url}\n\nPara elegir otra forma de iniciar sesión, cierra esta ventana y vuelve a añadir la integración.",
         "data": {
-          "username": "Nombre de usuario de Google",
-          "password": "Contraseña de aplicación de Google",
+          "username": "Correo electrónico de la cuenta de Google",
+          "oauth_token": "Cookie oauth_token"
+        },
+        "data_description": {
+          "username": "La cuenta con la que iniciaste sesión en el navegador.",
+          "oauth_token": "Empieza por oauth2_4/"
+        }
+      },
+      "master_token": {
+        "title": "Token maestro",
+        "description": "Pega un token maestro que hayas obtenido antes, por ejemplo con otra herramienta.\n\nPara elegir otra forma de iniciar sesión, cierra esta ventana y vuelve a añadir la integración.",
+        "data": {
           "master_token": "Token maestro de Google"
+        },
+        "data_description": {
+          "master_token": "Empieza por aas_et/"
         }
       }
     },
     "error": {
-      "auth": "El nombre de usuario o la contraseña no son correctos. Si tu cuenta tiene activada la verificación en dos pasos, genera una contraseña de aplicación ({app_passwords_url}). Si aun así no puedes iniciar sesión, consulta {troubleshooting_url} (en inglés).",
-      "pass-len": "Esta integración admite contraseñas de hasta {max_password_length} caracteres. Cambia la contraseña de tu cuenta o usa una contraseña de aplicación ({app_passwords_url}).",
-      "missing-inputs": "Introduce tu nombre de usuario y contraseña o el token maestro",
-      "master-token-invalid": "El token maestro no es válido. Asegúrate de haber introducido el token completo (incluido 'aas_et/')"
+      "oauth-token-invalid": "Google no ha aceptado la cookie. Consigue una nueva y pégala enseguida: caduca en pocos minutos y solo funciona una vez. Copia el valor completo, que empieza por oauth2_4/, y comprueba que el correo electrónico es el de la cuenta con la que iniciaste sesión.",
+      "master-token-invalid": "El token maestro no es válido. Asegúrate de haber introducido el token completo (incluido 'aas_et/')",
+      "oauth-token-format": "Esta no es la cookie oauth_token. Su valor empieza por oauth2_4/.",
+      "master-token-format": "Un token maestro empieza por aas_et/ y tiene 223 caracteres. Copia el token completo."
     }
   },
   "options": {

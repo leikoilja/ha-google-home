@@ -2,20 +2,45 @@
   "config": {
     "step": {
       "user": {
-        "title": "Google Home authentication",
-        "description": "For setup instructions, see {docs_url}. Enter your Google account username and an app password ({app_passwords_url}), or provide a master token. Creating an app password requires 2-Step Verification.",
+        "title": "Sign in to Google",
+        "description": "This integration works with your Google speakers and displays, such as Nest Mini, Nest Audio and Nest Hub. It doesn't add the other devices in your Google Home app.\n\nChoose how to sign in to a Google account that is a member of your home. For help, see {docs_url}.",
+        "menu_options": {
+          "browser": "Browser sign-in (recommended)",
+          "master_token": "Master token"
+        },
+        "menu_option_descriptions": {
+          "browser": "Sign in to Google in a desktop browser, then paste a cookie. Works for most accounts.",
+          "master_token": "Paste a master token you already have."
+        }
+      },
+      "browser": {
+        "title": "Browser sign-in",
+        "description": "1. On a computer, open {embedded_setup_url} in a private browser window and sign in. After you accept, the page may keep loading; that is expected.\n2. Open the browser's developer tools and find the cookies for `accounts.google.com`.\n3. Copy the value of the `oauth_token` cookie and paste it below straight away. It expires within minutes and works only once.\n\nStep-by-step instructions: {browser_docs_url}\n\nTo choose another way to sign in, close this window and add the integration again.",
         "data": {
-          "username": "Google account username",
-          "password": "Google account app password",
+          "username": "Google account email address",
+          "oauth_token": "oauth_token cookie"
+        },
+        "data_description": {
+          "username": "The account you signed in with in the browser.",
+          "oauth_token": "Starts with oauth2_4/"
+        }
+      },
+      "master_token": {
+        "title": "Master token",
+        "description": "Paste a master token that you got earlier, for example with another tool.\n\nTo choose another way to sign in, close this window and add the integration again.",
+        "data": {
           "master_token": "Google account master token"
+        },
+        "data_description": {
+          "master_token": "Starts with aas_et/"
         }
       }
     },
     "error": {
-      "auth": "Username or password is incorrect. If your Google account has 2-Step Verification enabled, generate an app password ({app_passwords_url}). If authentication still fails, see {troubleshooting_url}",
-      "pass-len": "This integration supports passwords of up to {max_password_length} characters. Change your account password or use an app password ({app_passwords_url}).",
-      "missing-inputs": "Please provide either username and password or master token",
-      "master-token-invalid": "Master token invalid. Make sure that the full token has been specified (including 'aas_et/')"
+      "oauth-token-invalid": "Google didn't accept the cookie. Get a new one and paste it straight away: it expires within minutes and works only once. Copy the whole value, starting with oauth2_4/, and check that the email is the account you signed in with.",
+      "master-token-invalid": "Master token invalid. Make sure that the full token has been specified (including 'aas_et/')",
+      "oauth-token-format": "This isn't the oauth_token cookie. Its value starts with oauth2_4/.",
+      "master-token-format": "A master token starts with aas_et/ and is 223 characters long. Copy the whole token."
     }
   },
   "options": {

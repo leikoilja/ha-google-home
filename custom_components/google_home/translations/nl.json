@@ -2,20 +2,45 @@
   "config": {
     "step": {
       "user": {
-        "title": "Google Home-authenticatie",
-        "description": "Raadpleeg {docs_url} voor instructies voor het instellen. Voer de gebruikersnaam van je Google-account en een app-wachtwoord ({app_passwords_url}) in, of geef een mastertoken op. Verificatie in twee stappen moet zijn ingeschakeld om een app-wachtwoord te maken.",
+        "title": "Inloggen bij Google",
+        "description": "Deze integratie werkt met je Google-speakers en -schermen, zoals Nest Mini, Nest Audio en Nest Hub. Andere apparaten uit je Google Home-app voegt ze niet toe.\n\nKies hoe je inlogt met een Google-account dat lid is van je huis. Raadpleeg {docs_url} voor hulp.",
+        "menu_options": {
+          "browser": "Inloggen via de browser (aanbevolen)",
+          "master_token": "Mastertoken"
+        },
+        "menu_option_descriptions": {
+          "browser": "Log in bij Google in een desktopbrowser en plak daarna een cookie. Werkt voor de meeste accounts.",
+          "master_token": "Plak een mastertoken dat je al hebt."
+        }
+      },
+      "browser": {
+        "title": "Inloggen via de browser",
+        "description": "1. Open op een computer {embedded_setup_url} in een privévenster en log in. Nadat je hebt geaccepteerd, kan de pagina blijven laden; dat is normaal.\n2. Open de ontwikkelaarstools van de browser en zoek de cookies voor `accounts.google.com`.\n3. Kopieer de waarde van de cookie `oauth_token` en plak deze meteen hieronder. De cookie verloopt binnen een paar minuten en werkt maar één keer.\n\nStapsgewijze instructies: {browser_docs_url}\n\nSluit dit venster en voeg de integratie opnieuw toe om een andere manier van inloggen te kiezen.",
         "data": {
-          "username": "Gebruikersnaam van Google-account",
-          "password": "App-wachtwoord van Google-account",
+          "username": "E-mailadres van Google-account",
+          "oauth_token": "Cookie oauth_token"
+        },
+        "data_description": {
+          "username": "Het account waarmee je in de browser hebt ingelogd.",
+          "oauth_token": "Begint met oauth2_4/"
+        }
+      },
+      "master_token": {
+        "title": "Mastertoken",
+        "description": "Plak een mastertoken dat je eerder hebt verkregen, bijvoorbeeld met een ander hulpmiddel.\n\nSluit dit venster en voeg de integratie opnieuw toe om een andere manier van inloggen te kiezen.",
+        "data": {
           "master_token": "Mastertoken van Google-account"
+        },
+        "data_description": {
+          "master_token": "Begint met aas_et/"
         }
       }
     },
     "error": {
-      "auth": "Gebruikersnaam of wachtwoord is niet correct. Als voor je Google-account verificatie in twee stappen is ingeschakeld, genereer dan een app-wachtwoord ({app_passwords_url}). Als authenticatie nog steeds mislukt, raadpleeg dan {troubleshooting_url}",
-      "pass-len": "Deze integratie ondersteunt wachtwoorden van maximaal {max_password_length} tekens. Wijzig het wachtwoord van je account of gebruik een app-wachtwoord ({app_passwords_url}).",
-      "missing-inputs": "Voer je gebruikersnaam en wachtwoord of je mastertoken in",
-      "master-token-invalid": "Mastertoken ongeldig. Controleer of het volledige token is opgegeven (inclusief 'aas_et/')"
+      "oauth-token-invalid": "Google heeft de cookie niet geaccepteerd. Haal een nieuwe op en plak deze meteen: de cookie verloopt binnen een paar minuten en werkt maar één keer. Kopieer de volledige waarde, die begint met oauth2_4/, en controleer of het e-mailadres hoort bij het account waarmee je hebt ingelogd.",
+      "master-token-invalid": "Mastertoken ongeldig. Controleer of het volledige token is opgegeven (inclusief 'aas_et/')",
+      "oauth-token-format": "Dit is niet de cookie oauth_token. De waarde begint met oauth2_4/.",
+      "master-token-format": "Een mastertoken begint met aas_et/ en is 223 tekens lang. Kopieer het volledige token."
     }
   },
   "options": {
