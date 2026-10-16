@@ -16,9 +16,6 @@
       "pass-len": "Denne integrasjonen støtter passord på opptil {max_password_length} tegn. Endre passordet for kontoen din eller bruk et applikasjonspassord ({app_passwords_url}).",
       "missing-inputs": "Skriv inn enten brukernavn og passord eller master token",
       "master-token-invalid": "Master token er ugyldig. Kontroller at hele tokenet er angitt (inkludert 'aas_et/')"
-    },
-    "abort": {
-      "single_instance_allowed": "Du kan bare ha én installasjon."
     }
   },
   "options": {

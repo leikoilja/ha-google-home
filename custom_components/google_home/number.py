@@ -4,7 +4,7 @@ import logging
 from typing import override
 
 from homeassistant.components.number import NumberEntity
-from homeassistant.const import PERCENTAGE, EntityCategory
+from homeassistant.const import EntityCategory, UnitOfRatio
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
@@ -56,7 +56,7 @@ async def async_setup_entry(
 class AlarmVolumeNumber(GoogleHomeBaseEntity, NumberEntity):
     """Google Home Alarm Volume Number entity."""
 
-    _attr_native_unit_of_measurement = PERCENTAGE
+    _attr_native_unit_of_measurement = UnitOfRatio.PERCENTAGE
     _attr_entity_category = EntityCategory.CONFIG
     _attr_native_min_value = 0
     _attr_native_max_value = 100

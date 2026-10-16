@@ -16,9 +16,6 @@
       "pass-len": "Cette intégration accepte les mots de passe contenant jusqu'à {max_password_length} caractères. Changez le mot de passe de votre compte ou utilisez un mot de passe d'application ({app_passwords_url}).",
       "missing-inputs": "Veuillez indiquer soit votre nom d'utilisateur et votre mot de passe, soit votre jeton maître",
       "master-token-invalid": "Jeton maître non valide. Assurez-vous d'avoir saisi le jeton complet (y compris 'aas_et/')"
-    },
-    "abort": {
-      "single_instance_allowed": "Une seule installation est autorisée."
     }
   },
   "options": {

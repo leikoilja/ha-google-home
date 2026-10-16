@@ -16,9 +16,6 @@
       "pass-len": "This integration supports passwords of up to {max_password_length} characters. Change your account password or use an app password ({app_passwords_url}).",
       "missing-inputs": "Please provide either username and password or master token",
       "master-token-invalid": "Master token invalid. Make sure that the full token has been specified (including 'aas_et/')"
-    },
-    "abort": {
-      "single_instance_allowed": "Only a single instance is allowed."
     }
   },
   "options": {

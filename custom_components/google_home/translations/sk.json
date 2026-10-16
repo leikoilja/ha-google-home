@@ -16,9 +16,6 @@
       "pass-len": "Táto integrácia podporuje heslá s dĺžkou najviac {max_password_length} znakov. Zmeňte heslo účtu alebo použite heslo aplikácie ({app_passwords_url}).",
       "missing-inputs": "Zadajte používateľské meno a heslo alebo hlavný token",
       "master-token-invalid": "Hlavný token je neplatný. Uistite sa, že bol zadaný celý token (vrátane 'aas_et/')"
-    },
-    "abort": {
-      "single_instance_allowed": "Povolená je len jedna inštancia."
     }
   },
   "options": {

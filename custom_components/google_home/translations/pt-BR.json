@@ -16,9 +16,6 @@
       "pass-len": "Esta integração aceita senhas de até {max_password_length} caracteres. Altere a senha da sua conta ou use uma senha de app ({app_passwords_url}).",
       "missing-inputs": "Digite o nome de usuário e a senha ou o token mestre",
       "master-token-invalid": "Token mestre inválido. Certifique-se de que o token completo tenha sido especificado (incluindo 'aas_et/')"
-    },
-    "abort": {
-      "single_instance_allowed": "Apenas uma única instância é permitida."
     }
   },
   "options": {
