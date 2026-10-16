@@ -26,6 +26,7 @@ Read the full documentation at **[ha-google-home.pages.dev](https://ha-google-ho
 - [Actions](https://ha-google-home.pages.dev/actions/): delete alarms and timers, reboot and refresh devices
 - [Troubleshooting](https://ha-google-home.pages.dev/troubleshooting/)
 - [Community](https://ha-google-home.pages.dev/community/): dashboard cards and Node-RED flows
+- [Contributing](https://ha-google-home.pages.dev/contributing/): questions, bug reports, translations and development
 
 ## About
 
@@ -39,8 +40,7 @@ For manual installation and setup, see [Getting Started](https://ha-google-home.
 
 ## Contribution
 
-If you encounter issues or have any suggestions consider opening issues and contributing through PR.
-If you are ready to contribute to this please read the [Contribution guidelines](CONTRIBUTING.md).
+Ask questions in [GitHub Discussions](https://github.com/leikoilja/ha-google-home/discussions), and report bugs or suggest features in [issues](https://github.com/leikoilja/ha-google-home/issues/new/choose). To translate the integration or change its code, see [Contributing](https://ha-google-home.pages.dev/contributing/).
 
 ## Credits
 
