@@ -69,3 +69,7 @@ The integration finds your devices on your network with multicast DNS (mDNS) and
 - If your devices are on a separate network or VLAN, your router forwards mDNS between the networks, and Home Assistant can reach the devices on TCP port 8443.
 
 If only some devices show the message, those devices are offline or don't support this integration.
+
+## Still stuck
+
+Search [GitHub Discussions](https://github.com/leikoilja/ha-google-home/discussions) and the [issues](https://github.com/leikoilja/ha-google-home/issues?q=is%3Aissue) for your problem. If nobody has reported it, ask in [Q&A](https://github.com/leikoilja/ha-google-home/discussions/categories/q-a), or [open an issue](https://github.com/leikoilja/ha-google-home/issues/new/choose) with your [debug logs](#collect-debug-logs).

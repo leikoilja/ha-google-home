@@ -2,7 +2,7 @@
 
 Projects that other users built on top of this integration. They are maintained by their authors, not by this project.
 
-To add yours, [edit this page](https://github.com/leikoilja/ha-google-home/edit/master/docs/community.md) and open a pull request.
+To add yours, [edit this page](https://github.com/leikoilja/ha-google-home/edit/master/docs/community.md) and open a pull request. You can also share it in [Show and tell](https://github.com/leikoilja/ha-google-home/discussions/categories/show-and-tell).
 
 ## Dashboard cards
 

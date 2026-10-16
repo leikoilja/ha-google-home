@@ -18,8 +18,6 @@ The integration uses your Google account to get access tokens for your devices f
 - The Google account you use must be a member of the home your devices belong to in the Google Home app.
 - You can add the integration only once, so it works with one Google account.
 
-The integration started from a [community discussion][community-discussion] about reading Google Home alarms and timers in Home Assistant.
-
 ## Get started
 
 1. [Install the integration and sign in](installation.md).
@@ -28,29 +26,8 @@ The integration started from a [community discussion][community-discussion] abou
 
 ## Languages
 
-The integration's setup screens, options and action descriptions are translated into:
-
-- Catalan
-- Danish
-- Dutch
-- English
-- French
-- German
-- Greek
-- Italian
-- Norwegian (bokmål and nynorsk)
-- Polish
-- Portuguese (Brazil)
-- Portuguese (Portugal)
-- Russian
-- Slovak
-- Spanish
-- Ukrainian
-
-To add your language, follow the [Localization guide](https://github.com/leikoilja/ha-google-home/blob/master/LOCALIZATION.md).
+The integration's setup screens, options and action descriptions follow your Home Assistant language. Text that isn't translated yet is shown in English. To add or fix a translation, see [Translate the integration](contributing.md#translate-the-integration).
 
 ## Contributing
 
-To report a bug or suggest a feature, [open an issue](https://github.com/leikoilja/ha-google-home/issues/new/choose). To contribute code, read the [Contribution guidelines](https://github.com/leikoilja/ha-google-home/blob/master/CONTRIBUTING.md).
-
-[community-discussion]: https://community.home-assistant.io/t/solution-to-track-your-google-home-alarms-and-timers-and-trigger-different-home-assistant-events/61534/74
+Ask questions in [GitHub Discussions](https://github.com/leikoilja/ha-google-home/discussions), and report bugs or suggest features in [issues](https://github.com/leikoilja/ha-google-home/issues/new/choose). To translate the integration or change its code, see [Contributing](contributing.md).

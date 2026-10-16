@@ -12,6 +12,7 @@ nav = [
     { "Actions" = "actions.md" },
     { "Troubleshooting" = "troubleshooting.md" },
     { "Community" = "community.md" },
+    { "Contributing" = "contributing.md" },
 ]
 
 extra_css = ["stylesheets/extra.css"]
