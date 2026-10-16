@@ -69,6 +69,22 @@ def test_name_after_account() -> None:
     )
 
 
+def test_name_after_account_renamed_meanwhile() -> None:
+    """Keep a name the user chose while the email address was being looked up."""
+    hass = Mock()
+    entry = make_entry({"username": ""}, title=MASTER_TOKEN_TITLE)
+
+    async def rename_during_lookup() -> str:
+        entry.title = "Home speakers"
+        return "test@example.com"
+
+    client = Mock(async_get_email=AsyncMock(side_effect=rename_during_lookup))
+
+    asyncio.run(async_name_after_account(hass, entry, client))
+
+    hass.config_entries.async_update_entry.assert_not_called()
+
+
 def test_name_after_account_without_email() -> None:
     """Leave the entry unchanged when Google doesn't give the email address."""
     hass = Mock()

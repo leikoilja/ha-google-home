@@ -122,7 +122,9 @@ async def async_name_after_account(
     gave the entry a generic title. Only the title changes: the saved username
     stays empty, so the integration keeps signing in exactly as before.
     """
-    if email := await client.async_get_email():
+    email = await client.async_get_email()
+    # The user may have renamed the entry while Google was answering
+    if email and entry.title == MASTER_TOKEN_TITLE:
         hass.config_entries.async_update_entry(entry, title=email)
 
 
