@@ -84,10 +84,17 @@ def test_known_hosts_fill_in_missing_addresses() -> None:
 
 
 def test_known_hosts_find_speaker_pair() -> None:
-    """Find a speaker pair at the speaker that reports the pair's ID."""
+    """Find a speaker pair at its leading speaker, even when the other comes first."""
     pair = device("Den speakers", "dddd")
 
-    use_known_hosts([pair], {"10.0.1.8": ("Den speaker left", "dddd")})
+    use_known_hosts(
+        [pair],
+        {
+            # The other speaker reports its own ID, which Google doesn't list
+            "10.0.1.9": ("Den speaker right", "eeee"),
+            "10.0.1.8": ("Den speaker left", "dddd"),
+        },
+    )
 
     assert pair.ip_address == "10.0.1.8"
 

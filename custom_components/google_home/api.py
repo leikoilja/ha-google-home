@@ -164,8 +164,9 @@ class GlocaltokensApiClient:
     async def async_use_known_hosts(self) -> None:
         """Give devices that mDNS didn't find the address of the known host they're at.
 
-        Hosts are matched by the ID that Google and the device itself report, so a
-        speaker pair is found at the speaker that reports the pair's ID.
+        Hosts are matched by the ID that Google and the device itself report. In a
+        speaker pair, only the leading speaker reports the pair's ID; the other
+        reports its own, which Google doesn't list, so it's never used.
         """
         cloud_device_ids = await asyncio.gather(
             *(self._async_get_cloud_device_id(host) for host in self.known_hosts)
