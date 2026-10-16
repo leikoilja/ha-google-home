@@ -1,0 +1,8 @@
+# Cloudflare Pages caches everything but HTML for four hours by default.
+# extra.css and the favicon keep stable names, so revalidate them instead.
+
+/stylesheets/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/assets/*
+  Cache-Control: public, max-age=0, must-revalidate
