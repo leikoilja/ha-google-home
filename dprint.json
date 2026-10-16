@@ -1,7 +1,7 @@
 {
   "$schema": "https://dprint.dev/schemas/v0.json",
   "includes": ["**/*.md", "**/*.toml", "**/*.json", "**/*.yaml", "**/*.yml"],
-  "excludes": ["**/.venv", "**/.mypy_cache", "**/.ruff_cache", "**/.pytest_cache", "uv.lock"],
+  "excludes": ["**/.venv", "**/.mypy_cache", "**/.ruff_cache", "**/.pytest_cache", "uv.lock", "docs/**/*.md"],
   "plugins": [
     "https://plugins.dprint.dev/g-plane/pretty_yaml-v0.5.1.wasm",
     "https://plugins.dprint.dev/json-0.20.0.wasm",

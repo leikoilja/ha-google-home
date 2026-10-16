@@ -122,8 +122,8 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
             ),
             errors=self._errors,
             description_placeholders={
-                "docs_url": "https://github.com/leikoilja/ha-google-home",
-                "troubleshooting_url": "https://github.com/leikoilja/ha-google-home#troubleshooting",
+                "docs_url": "https://ha-google-home.pages.dev/installation/",
+                "troubleshooting_url": "https://ha-google-home.pages.dev/troubleshooting/",
                 "app_passwords_url": "https://myaccount.google.com/apppasswords",
                 "max_password_length": str(MAX_PASSWORD_LENGTH),
             },
