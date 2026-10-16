@@ -51,10 +51,6 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
         """Handle a flow initialized by the user."""
         self._errors = {}
 
-        # Only a single instance of the integration is allowed:
-        if self._async_current_entries():
-            return self.async_abort(reason="single_instance_allowed")
-
         if user_input is not None:
             session = async_create_clientsession(self.hass)
             username = user_input.get(CONF_USERNAME, "")

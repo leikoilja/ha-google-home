@@ -16,9 +16,6 @@
       "pass-len": "Questa integrazione supporta password di massimo {max_password_length} caratteri. Cambia la password del tuo account o usa una password per le app ({app_passwords_url}).",
       "missing-inputs": "Inserisci nome utente e password oppure il token master",
       "master-token-invalid": "Token master non valido. Assicurati di aver inserito il token completo (compreso 'aas_et/')"
-    },
-    "abort": {
-      "single_instance_allowed": "È consentita una sola istanza."
     }
   },
   "options": {

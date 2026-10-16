@@ -16,9 +16,6 @@
       "pass-len": "Esta integração aceita palavras-passe com um máximo de {max_password_length} caracteres. Altere a palavra-passe da sua conta ou utilize uma palavra-passe de aplicação ({app_passwords_url}).",
       "missing-inputs": "Introduza o nome de utilizador e a palavra-passe ou o token principal",
       "master-token-invalid": "Token principal inválido. Certifique-se de que o token completo foi especificado (incluindo 'aas_et/')"
-    },
-    "abort": {
-      "single_instance_allowed": "Apenas é permitida uma única instância."
     }
   },
   "options": {

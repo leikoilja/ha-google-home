@@ -16,9 +16,6 @@
       "pass-len": "Ta integracja obsługuje hasła o długości do {max_password_length} znaków. Zmień hasło do konta lub użyj hasła do aplikacji ({app_passwords_url}).",
       "missing-inputs": "Wprowadź nazwę użytkownika i hasło lub token główny",
       "master-token-invalid": "Główny token jest nieprawidłowy. Upewnij się, że podano pełny token (w tym 'aas_et/')"
-    },
-    "abort": {
-      "single_instance_allowed": "Tylko pojedyncza instancja (konto Google) jest dozwolona."
     }
   },
   "options": {

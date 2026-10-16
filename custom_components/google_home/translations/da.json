@@ -16,9 +16,6 @@
       "pass-len": "Denne integration understøtter adgangskoder på op til {max_password_length} tegn. Skift adgangskoden til din konto, eller brug en app-adgangskode ({app_passwords_url}).",
       "missing-inputs": "Indtast enten brugernavn og adgangskode eller master token",
       "master-token-invalid": "Master token er ugyldigt. Sørg for, at hele tokenet er angivet (inklusive 'aas_et/')"
-    },
-    "abort": {
-      "single_instance_allowed": "Kun en enkelt forekomst er tilladt."
     }
   },
   "options": {

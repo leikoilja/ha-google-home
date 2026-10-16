@@ -16,9 +16,6 @@
       "pass-len": "Deze integratie ondersteunt wachtwoorden van maximaal {max_password_length} tekens. Wijzig het wachtwoord van je account of gebruik een app-wachtwoord ({app_passwords_url}).",
       "missing-inputs": "Voer je gebruikersnaam en wachtwoord of je mastertoken in",
       "master-token-invalid": "Mastertoken ongeldig. Controleer of het volledige token is opgegeven (inclusief 'aas_et/')"
-    },
-    "abort": {
-      "single_instance_allowed": "Er is maar één integratie toegestaan."
     }
   },
   "options": {
