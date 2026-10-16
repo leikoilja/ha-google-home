@@ -5,6 +5,7 @@
 You need:
 
 - Home Assistant 2026.10.0 or later.
+- Google speakers or displays, such as a Nest Mini, Nest Audio or Nest Hub. The integration doesn't add the other devices in your Google Home app, such as lights or thermostats. See [Other Google Home devices](index.md#other-google-home-devices).
 - A Google account that is a member of your home in the Google Home app. Open the Google Home app with that account and check that your devices are listed.
 - Home Assistant on the same local network as your devices. If you run Home Assistant in Docker, set the container's network mode to `host`, as the [official installation guide](https://www.home-assistant.io/installation/linux) does. Otherwise the integration can't find your devices.
 
@@ -56,7 +57,7 @@ If the App passwords page still says "The setting you are looking for is not ava
     - To use a master token, paste it into **Google account master token**. You can leave the other two fields empty.
 3. Select **Submit**.
 
-Home Assistant then adds a device for each Google Home and Nest speaker or display it finds, with the [entities](entities.md) for it.
+Home Assistant then adds a device for each Google Cast device in your home, with the [entities](entities.md) for it. Devices that have no alarms or timers, such as an NVIDIA Shield, get only a device sensor.
 
 To change the account or credentials later, delete the integration and add it again.
 

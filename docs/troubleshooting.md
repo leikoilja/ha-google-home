@@ -46,6 +46,8 @@ Paste the whole token, including the `aas_et/` at the start. If it was correct b
 
 ### No devices appear
 
+The integration adds only Google Cast devices, such as Google speakers and displays. Lights, plugs, thermostats and other devices in your Google Home app don't appear; see [Other Google Home devices](index.md#other-google-home-devices).
+
 The Google account you signed in with must be a member of the home your devices belong to. Open the Google Home app with that account and check that the devices are listed. If not, [invite the account](https://support.google.com/googlenest/answer/9155535) to your home and reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**.
 
 ### No alarms or timers sensors

@@ -13,8 +13,7 @@
 <h3 align="center">Home Assistant Google Home community integration</h3>
 
 <p align="center">
-  This custom integration aims to provide plug-and-play Google Home
-  experience for Home Assistant enthusiasts.
+  Alarms, timers and more from your Google Home and Nest speakers and displays.
 </p>
 
 ## Documentation
@@ -30,7 +29,7 @@ Read the full documentation at **[ha-google-home.pages.dev](https://ha-google-ho
 
 ## About
 
-This integration brings your Google Home and Nest speakers and displays into Home Assistant. You can see and delete their alarms and timers, turn Do Not Disturb on or off, change the alarm volume and reboot them. It started from a [community discussion][community-discussion] about reading Google Home alarms and timers in Home Assistant.
+This integration brings your Google Home and Nest speakers and displays into Home Assistant. You can see and delete their alarms and timers, turn Do Not Disturb on or off, change the alarm volume and reboot them. It doesn't add the other devices in your Google Home app, such as lights or thermostats; see [Other Google Home devices](https://ha-google-home.pages.dev/#other-google-home-devices). It started from a [community discussion][community-discussion] about reading Google Home alarms and timers in Home Assistant.
 
 ## HACS Installation
 
