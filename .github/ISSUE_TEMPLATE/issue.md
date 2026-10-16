@@ -13,14 +13,17 @@ To help us to resolve this issue please include the following information:
 - Describe the issue in detail.
 - Provide steps to reproduce this issue.
 - Add version of the `google_home` integration.
-- Add version of `glocaltokens` package.
-- Attach logs. The more the better. Enable debug logs for the integration.
+- Attach debug logs. The more the better.
 
 -->
 
 ## Describe the bug
 
 <!-- A clear and concise description of what the bug is. -->
+
+## Steps to reproduce
+
+<!-- What you did before the problem happened. -->
 
 ## Version of the integration
 
@@ -35,12 +38,9 @@ Add version here.
 
 ## Logs
 
-<!-- To enable debug logs, put the below snippet in your configuration.yaml file.
+<!-- To collect debug logs, follow https://ha-google-home.pages.dev/troubleshooting/#collect-debug-logs
 
-logger:
-  default: debug
-  logs:
-    custom_components.google_home: debug
+Debug logs can contain your email address, tokens and the IP addresses of your devices. Replace them with xxx before you post the logs.
 -->
 
 <!-- Paste logs below here-->
