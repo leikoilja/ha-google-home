@@ -16,6 +16,8 @@ The alarms sensor, timers sensor, switch and alarm volume are added only for dev
 
 The state is the time of the next alarm, such as `2026-03-07T15:26:17+01:00`. It is `unavailable` when no alarm is set, or when all alarms are inactive or missed.
 
+To start automations at the time of the next alarm or timer, see [Automation examples](automations.md).
+
 The state uses the same format as the [next alarm sensor](https://companion.home-assistant.io/docs/core/sensors/#next-alarm-sensor) of the Home Assistant mobile app, such as `sensor.phone_next_alarm`. You can use both in the same automations.
 
 | Attribute           | Description                                                                           |
