@@ -78,6 +78,12 @@ To change the interval, go to **Settings** > **Devices & services** > **Google H
 
 To update immediately, use the [Refresh devices](actions.md#refresh-devices) action.
 
+## Remove a device
+
+When you remove a device from the Google Home app or factory reset it, the integration notices only when it next loads. Reload it: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. The device's page in Home Assistant then offers **Delete**.
+
+You can't delete a device that Google still lists in your home, even if it shows as unavailable: it would come back the next time the integration loads.
+
 ## Remove the integration
 
 1. Go to **Settings** > **Devices & services** > **Google Home**, open the **⋮** menu and select **Delete**. Home Assistant deletes the master token it stored.
