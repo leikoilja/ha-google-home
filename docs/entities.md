@@ -75,7 +75,7 @@ Timers have no `snoozed` status. If you snooze a ringing timer, it restarts and 
 
 ## Device sensor
 
-The state is the device's IP address on your network. The sensor appears under **Diagnostic** on the device page.
+The state is the device's IP address on your network. If no IP address is available for the device, the sensor is unavailable and the device details listed below are hidden. The sensor appears under **Diagnostic** on the device page.
 
 | Attribute     | Description                                                     |
 | ------------- | --------------------------------------------------------------- |

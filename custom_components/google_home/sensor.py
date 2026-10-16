@@ -138,6 +138,15 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
 
     @property
     @override
+    def available(self) -> bool:
+        """Return whether the device was found on the network."""
+        device = self.get_device()
+        return (
+            super().available and device is not None and device.ip_address is not None
+        )
+
+    @property
+    @override
     def state(self) -> str | None:
         """Return device IP address if any."""
         device = self.get_device()
