@@ -10,6 +10,7 @@ nav = [
     { "Getting Started" = "installation.md" },
     { "Entities" = "entities.md" },
     { "Actions" = "actions.md" },
+    { "Automation examples" = "automations.md" },
     { "Troubleshooting" = "troubleshooting.md" },
     { "Community" = "community.md" },
     { "Contributing" = "contributing.md" },
