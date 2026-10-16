@@ -55,12 +55,12 @@ class GoogleHomeBaseEntity(
     @override
     def device_info(self) -> DeviceInfo | None:
         """Return device info."""
-        return {
-            "identifiers": {(DOMAIN, self.device_id)},
-            "name": f"{DEFAULT_NAME} {self.device_name}",
-            "manufacturer": MANUFACTURER,
-            "model": self.device_model,
-        }
+        return DeviceInfo(
+            identifiers={(DOMAIN, self.device_id)},
+            name=f"{DEFAULT_NAME} {self.device_name}",
+            manufacturer=MANUFACTURER,
+            model=self.device_model,
+        )
 
     def get_device(self) -> GoogleHomeDevice | None:
         """Return the device matched by device name from the list of google devices in coordinator_data."""
