@@ -21,7 +21,19 @@ actions:
       entity_id: light.bedroom
 ```
 
-A negative offset runs the automation before the alarm, a positive one after it.
+A negative offset runs the automation before the alarm. Avoid a positive offset to run it after the alarm: if you stop the alarm and the integration notices before the offset has passed, the sensor moves on to the next alarm, and Home Assistant [cancels the trigger](https://www.home-assistant.io/triggers/time/#good-to-know). Instead, trigger at the alarm time and add a delay:
+
+```yaml
+alias: Coffee after the alarm
+triggers:
+  - trigger: time
+    at: sensor.bedroom_alarms
+actions:
+  - delay: "00:10:00"
+  - action: switch.turn_on
+    target:
+      entity_id: switch.coffee_machine
+```
 
 ## When an alarm goes off
 
@@ -53,8 +65,11 @@ actions:
       message: The kitchen timer has finished.
 ```
 
-## What the trigger can't see
+## When the trigger runs
 
-- The integration [checks your devices](installation.md#change-the-update-interval) every 180 seconds. An alarm or timer that goes off before the next check, such as a one-minute timer, doesn't trigger anything.
-- Inactive and missed alarms and paused timers don't trigger anything. A timer you resume triggers at its new end time.
-- You can also trigger on the `next_alarm_status` or `next_timer_status` attribute changing to `ringing`, but because of the 180-second checks, that trigger can run up to 3 minutes late, and it misses an alarm or timer that you stop before the next check.
+The trigger follows the time that the integration last saw. The integration [checks your devices](installation.md#change-the-update-interval) every 180 seconds, so:
+
+- An alarm or timer that the integration has seen triggers on time, even between checks. One that goes off before the integration sees it, such as a one-minute timer, doesn't trigger anything.
+- If you pause, cancel or change an alarm or timer, the automation follows the change only after the next check, so it can still run at the old time if that comes first.
+- Inactive and missed alarms and paused timers don't trigger anything. A timer you resume triggers at its new end time, once the integration has seen it.
+- You can also trigger on the `next_alarm_status` or `next_timer_status` attribute changing to `ringing`, but that trigger runs only at the next check, up to 180 seconds late, and it misses an alarm or timer that you stop before the next check.
