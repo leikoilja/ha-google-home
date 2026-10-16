@@ -34,7 +34,9 @@ data:
 
 Google shows this on the App passwords page when your account can't create app passwords. Usually 2-Step Verification is off. [Turn it on](https://myaccount.google.com/signinoptions/twosv) and try again.
 
-Accounts that use only security keys, use Advanced Protection, or belong to work or school can't create app passwords at all. Use a [master token](installation.md#get-a-master-token) instead.
+Accounts that use only security keys or are enrolled in Advanced Protection can't create app passwords at all. Use a [master token](installation.md#get-a-master-token) instead.
+
+For a work or school account, your organization's [security settings](https://knowledge.workspace.google.com/admin/security/how-2-step-verification-works-with-legacy-apps) decide whether you can create app passwords. For example, an organization that requires security keys turns them off. Ask your administrator, or use a [master token](installation.md#get-a-master-token).
 
 ### "Master token invalid"
 

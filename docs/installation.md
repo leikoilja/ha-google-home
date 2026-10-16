@@ -36,7 +36,7 @@ You need:
 
 The setup form accepts either your **Google account username** with an **app password**, or a **master token**.
 
-- **App password:** try this first, because it is simpler. Google accepts it for some accounts and rejects it for others. App passwords aren't available if your 2-Step Verification uses only security keys, if your account is enrolled in Advanced Protection, or if it is a work or school account. If you sign in to Google with a passkey, use a master token. When Google rejects one, setup shows "Username or password is incorrect" even though both are right.
+- **App password:** try this first, because it is simpler. Google accepts it for some accounts and rejects it for others. App passwords aren't available if your 2-Step Verification uses only security keys or your account is enrolled in Advanced Protection. For a work or school account, they depend on your organization's [security settings](https://knowledge.workspace.google.com/admin/security/how-2-step-verification-works-with-legacy-apps). If you sign in to Google with a passkey, use a master token. When Google rejects one, setup shows "Username or password is incorrect" even though both are right.
 - **Master token:** works when an app password doesn't. See [Get a master token](#get-a-master-token).
 
 ### Create an app password
@@ -92,13 +92,26 @@ This method doesn't use your password, so it works when Google rejects your app 
 2. Accept the prompt. The page may then keep loading forever; that is expected.
 3. Open your browser's developer tools and find the cookies for `accounts.google.com`. In Chrome, this is **Application** > **Cookies**; in Firefox, **Storage** > **Cookies**.
 4. Copy the value of the `oauth_token` cookie. It starts with `oauth2_4/`.
-5. Install the [`gpsoauth`](https://github.com/simon-weber/gpsoauth) library and exchange the cookie for a master token. Replace the email address and cookie value with your own:
+5. Install the [`gpsoauth`](https://github.com/simon-weber/gpsoauth) library in a new virtual environment, so it doesn't touch your system's Python, and exchange the cookie for a master token. Replace the email address and cookie value with your own:
 
-    ```shell
-    pip install gpsoauth
-    python3 -c "import gpsoauth; print(gpsoauth.exchange_token('you@gmail.com', 'oauth2_4/...', '0123456789abcdef'))"
-    ```
+    === "macOS and Linux"
 
-6. Find `Token` in the output. Its value starts with `aas_et/`. That is your master token.
+        ```shell
+        python3 -m venv gpsoauth-env
+        gpsoauth-env/bin/python -m pip install gpsoauth
+        gpsoauth-env/bin/python -c "import gpsoauth; print(gpsoauth.exchange_token('you@gmail.com', 'oauth2_4/...', '0123456789abcdef'))"
+        ```
+
+        On Debian or Ubuntu, if the first command says `ensurepip is not available`, install the `python3-venv` package and run it again.
+
+    === "Windows"
+
+        ```powershell
+        py -m venv gpsoauth-env
+        .\gpsoauth-env\Scripts\python -m pip install gpsoauth
+        .\gpsoauth-env\Scripts\python -c "import gpsoauth; print(gpsoauth.exchange_token('you@gmail.com', 'oauth2_4/...', '0123456789abcdef'))"
+        ```
+
+6. Find `Token` in the output. Its value starts with `aas_et/`. That is your master token. You can now delete the `gpsoauth-env` folder.
 
 If the output contains `'Error': 'BadAuthentication'` instead, the cookie has expired, was already used, or was copied incompletely. The cookie expires quickly and works only once, so repeat from step 1 in a new private window and run the command straight away.
