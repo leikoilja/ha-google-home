@@ -17,11 +17,9 @@
         "title": "Inici de sessió amb el navegador",
         "description": "1. En un ordinador, obre {embedded_setup_url} en una finestra de navegació privada i inicia la sessió. Després d'acceptar, és possible que la pàgina continuï carregant; és normal.\n2. Obre les eines per a desenvolupadors del navegador i cerca les galetes de `accounts.google.com`.\n3. Copia el valor de la galeta `oauth_token` i enganxa'l a continuació immediatament. Caduca en pocs minuts i només funciona una vegada.\n\nInstruccions pas a pas (en anglès): {browser_docs_url}\n\nPer triar una altra manera d'iniciar la sessió, tanca aquesta finestra i torna a afegir la integració.",
         "data": {
-          "username": "Adreça electrònica del compte de Google",
           "oauth_token": "Galeta oauth_token"
         },
         "data_description": {
-          "username": "El compte amb què has iniciat la sessió al navegador.",
           "oauth_token": "Comença per oauth2_4/"
         }
       },
@@ -37,7 +35,7 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "Google no ha acceptat la galeta. Obtén-ne una de nova i enganxa-la immediatament: caduca en pocs minuts i només funciona una vegada. Copia el valor sencer, que comença per oauth2_4/, i comprova que el correu electrònic és el del compte amb què has iniciat la sessió.",
+      "oauth-token-invalid": "Google no ha acceptat la galeta. Obtén-ne una de nova i enganxa-la immediatament: caduca en pocs minuts i només funciona una vegada. Copia el valor sencer, que comença per oauth2_4/.",
       "master-token-invalid": "El testimoni mestre no és vàlid. Assegura't que has introduït el testimoni complet (inclòs 'aas_et/')",
       "oauth-token-format": "Aquesta no és la galeta oauth_token. El seu valor comença per oauth2_4/.",
       "master-token-format": "Un testimoni mestre comença per aas_et/ i té 223 caràcters. Copia el testimoni sencer."

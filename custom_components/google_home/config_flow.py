@@ -72,8 +72,6 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
         """Sign in with the oauth_token cookie from a browser sign-in."""
         errors: dict[str, str] = {}
         if user_input is not None:
-            username = user_input[CONF_USERNAME].strip()
-            self.username = username
             oauth_token = user_input[CONF_OAUTH_TOKEN].strip()
             if not oauth_token.startswith(OAUTH_TOKEN_PREFIX):
                 errors[CONF_OAUTH_TOKEN] = "oauth-token-format"
@@ -81,19 +79,19 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
                 client = GlocaltokensApiClient(
                     hass=self.hass,
                     session=async_create_clientsession(self.hass),
-                    username=username,
                     oauth_token=oauth_token,
                 )
                 # Getting the master token exchanges the cookie for it
                 if await self._sign_in(client):
-                    return await self._create_entry(client, username, username)
+                    username = await client.async_get_email() or ""
+                    self.username = username
+                    return await self._create_entry(
+                        client, username, username or f"{MANUFACTURER} (browser)"
+                    )
                 errors["base"] = "oauth-token-invalid"
         return self._show_form(
             STEP_BROWSER,
-            {
-                probatio.Required(CONF_USERNAME): str,
-                probatio.Required(CONF_OAUTH_TOKEN): str,
-            },
+            {probatio.Required(CONF_OAUTH_TOKEN): str},
             errors,
         )
 

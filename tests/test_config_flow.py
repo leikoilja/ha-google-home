@@ -58,14 +58,12 @@ def test_menu(flow: GoogleHomeFlowHandler) -> None:
 
 
 def test_browser_sign_in(flow: GoogleHomeFlowHandler, client: Mock) -> None:
-    """Pass the cookie to the client and save the master token it gets."""
-    result = asyncio.run(
-        flow.async_step_browser(
-            {"username": " test@example.com ", "oauth_token": " oauth2_4/cookie\n"}
-        )
-    )
+    """Save the exchanged master token under the email Google returns for it."""
+    client.return_value.async_get_email = AsyncMock(return_value="test@example.com")
 
-    assert client.call_args.kwargs["username"] == "test@example.com"
+    result = asyncio.run(flow.async_step_browser({"oauth_token": " oauth2_4/cookie\n"}))
+
+    assert "username" not in client.call_args.kwargs
     assert client.call_args.kwargs["oauth_token"] == "oauth2_4/cookie"
     assert result["type"] == "create_entry"
     assert result["title"] == "test@example.com"
@@ -77,15 +75,21 @@ def test_browser_sign_in(flow: GoogleHomeFlowHandler, client: Mock) -> None:
     }
 
 
+@pytest.mark.usefixtures("client")
+def test_browser_sign_in_without_email(flow: GoogleHomeFlowHandler) -> None:
+    """Still save the master token when Google doesn't give the email address."""
+    result = asyncio.run(flow.async_step_browser({"oauth_token": "oauth2_4/cookie"}))
+
+    assert result["type"] == "create_entry"
+    assert result["title"] == "Google Home (browser)"
+    assert result["data"]["username"] == ""
+
+
 def test_browser_sign_in_rejected(flow: GoogleHomeFlowHandler, client: Mock) -> None:
     """Ask for a new cookie when Google doesn't accept it."""
     reject_sign_in(client)
 
-    result = asyncio.run(
-        flow.async_step_browser(
-            {"username": "test@example.com", "oauth_token": "oauth2_4/used"}
-        )
-    )
+    result = asyncio.run(flow.async_step_browser({"oauth_token": "oauth2_4/used"}))
 
     assert result["type"] == "form"
     assert result["errors"] == {"base": "oauth-token-invalid"}
@@ -93,11 +97,7 @@ def test_browser_sign_in_rejected(flow: GoogleHomeFlowHandler, client: Mock) -> 
 
 def test_browser_cookie_format(flow: GoogleHomeFlowHandler, client: Mock) -> None:
     """Point out a value that isn't the oauth_token cookie without asking Google."""
-    result = asyncio.run(
-        flow.async_step_browser(
-            {"username": "test@example.com", "oauth_token": "SAPISID=abc"}
-        )
-    )
+    result = asyncio.run(flow.async_step_browser({"oauth_token": "SAPISID=abc"}))
 
     assert result["errors"] == {"oauth_token": "oauth-token-format"}
     client.assert_not_called()
@@ -107,20 +107,20 @@ def test_browser_sign_in_with_glocaltokens(flow: GoogleHomeFlowHandler) -> None:
     """Exchange the cookie through glocaltokens with the Android ID that is saved."""
     with (
         patch(
-            "glocaltokens.client.exchange_token", return_value={"Token": MASTER_TOKEN}
+            "glocaltokens.client.exchange_token",
+            return_value={"Token": MASTER_TOKEN, "Email": "test@example.com"},
         ) as exchange,
         patch("glocaltokens.client.perform_oauth", return_value={"Auth": "access"}),
     ):
         result = asyncio.run(
-            flow.async_step_browser(
-                {"username": "test@example.com", "oauth_token": "oauth2_4/cookie"}
-            )
+            flow.async_step_browser({"oauth_token": "oauth2_4/cookie"})
         )
 
     email, cookie, android_id = exchange.call_args.args
-    assert (email, cookie) == ("test@example.com", "oauth2_4/cookie")
+    assert (email, cookie) == ("", "oauth2_4/cookie")
     assert result["type"] == "create_entry"
     assert result["data"]["master_token"] == MASTER_TOKEN
+    assert result["data"]["username"] == "test@example.com"
     assert result["data"]["android_id"] == android_id
 
 
