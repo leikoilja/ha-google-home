@@ -149,10 +149,12 @@ async def async_remove_config_entry_device(
     """Allow deleting a device only when Google no longer returns it.
 
     Devices that are offline or not on the network stay in the coordinator data,
-    so they come back on the next reload and can't be deleted.
+    so they come back on the next reload and can't be deleted. Nothing can be
+    deleted while Google's device list is unknown: the entry isn't loaded, or
+    fetching the list failed.
     """
     entry_data = hass.data.get(DOMAIN, {}).get(entry.entry_id)
-    if entry_data is None:
+    if entry_data is None or not entry_data[DATA_CLIENT].google_devices_fetched:
         return False
     coordinator: DataUpdateCoordinator[list[GoogleHomeDevice]] = entry_data[
         DATA_COORDINATOR

@@ -68,6 +68,8 @@ class GlocaltokensApiClient:
             verbose=verbose,
         )
         self.google_devices: list[GoogleHomeDevice] = []
+        # Whether Google's device list was fetched, as a failed fetch returns none
+        self.google_devices_fetched = False
         self.zeroconf_instance = zeroconf_instance
 
     async def async_get_master_token(self) -> str:
@@ -119,6 +121,9 @@ class GlocaltokensApiClient:
                 )
 
             google_devices = await self.hass.async_add_executor_job(_get_google_devices)
+            # glocaltokens drops the home graph before fetching it and returns no
+            # devices if it can't get it again, for example when signing in fails
+            self.google_devices_fetched = self._client.homegraph is not None
             self.google_devices = [
                 GoogleHomeDevice(
                     device_id=device.device_id,

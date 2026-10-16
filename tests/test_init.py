@@ -1,7 +1,7 @@
 """Tests for migrating and naming config entries and deleting devices."""
 
 import asyncio
-from unittest.mock import AsyncMock, Mock
+from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
 
@@ -10,8 +10,10 @@ from custom_components.google_home import (
     async_name_after_account,
     async_remove_config_entry_device,
 )
+from custom_components.google_home.api import GlocaltokensApiClient
 from custom_components.google_home.const import (
     BROWSER_TITLE,
+    DATA_CLIENT,
     DATA_COORDINATOR,
     DOMAIN,
     MASTER_TOKEN_TITLE,
@@ -114,7 +116,14 @@ def fixture_hass() -> Mock:
     offline = GoogleHomeDevice(device_id="offline", name="Bedroom", auth_token="token")
     offline.available = False
     hass = Mock()
-    hass.data = {DOMAIN: {"entry": {DATA_COORDINATOR: Mock(data=[online, offline])}}}
+    hass.data = {
+        DOMAIN: {
+            "entry": {
+                DATA_CLIENT: Mock(google_devices_fetched=True),
+                DATA_COORDINATOR: Mock(data=[online, offline]),
+            }
+        }
+    }
     return hass
 
 
@@ -143,3 +152,22 @@ def test_delete_device_google_no_longer_returns(hass: Mock) -> None:
 def test_keep_devices_of_unloaded_entry() -> None:
     """Keep devices while the entry isn't loaded, as Google's list is unknown."""
     assert not can_delete(Mock(data={}), "removed")
+
+
+def test_keep_devices_when_fetch_fails() -> None:
+    """Keep devices when Google's device list couldn't be fetched."""
+    hass = Mock()
+    hass.async_add_executor_job = AsyncMock(side_effect=lambda func, *args: func(*args))
+    client = GlocaltokensApiClient(hass, Mock(), master_token=MASTER_TOKEN)
+
+    with patch(
+        "glocaltokens.client.GLocalAuthenticationTokens.get_access_token",
+        return_value=None,
+    ):
+        devices = asyncio.run(client.get_google_devices())
+
+    hass.data = {
+        DOMAIN: {"entry": {DATA_CLIENT: client, DATA_COORDINATOR: Mock(data=devices)}}
+    }
+    assert devices == []
+    assert not can_delete(hass, "online")
