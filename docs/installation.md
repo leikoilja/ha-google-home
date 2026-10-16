@@ -50,12 +50,14 @@ To change the account or sign in again, delete the integration and add it again.
 
 ### Browser sign-in
 
-You need a computer with a desktop browser, such as Chrome or Firefox. Phones don't show the cookies you need.
+You need a computer with a desktop browser, such as Chrome, Edge or Firefox. Phones don't show the cookies you need.
 
 1. In a private browser window, open [accounts.google.com/EmbeddedSetup](https://accounts.google.com/EmbeddedSetup) and sign in with the Google account you want to use.
 2. Accept the prompt. The page may then keep loading forever; that is expected.
-3. Open the browser's developer tools and find the cookies for `accounts.google.com`. In Chrome, this is **Application** > **Cookies**; in Firefox, **Storage** > **Cookies**.
-4. Copy the value of the `oauth_token` cookie. It starts with `oauth2_4/`.
+3. Press `F12`, or `Cmd+Option+I` on a Mac, to open the browser's developer tools. Then open the cookies for `https://accounts.google.com`:
+    - Chrome or Edge: **Application** > **Cookies**. If you can't see the **Application** tab, select `>>` to show more tabs.
+    - Firefox: **Storage** > **Cookies**.
+4. Find the `oauth_token` row, double-click its value to select all of it, and copy it. It starts with `oauth2_4/`.
 5. In Home Assistant, select **Browser sign-in (recommended)**. Enter the account's email address in **Google account email address**, paste the cookie into **oauth_token cookie**, and select **Submit**.
 
 The cookie expires within minutes and works only once, so paste it straight away. If setup says "Google didn't accept the cookie", close the private window and repeat from step 1.
