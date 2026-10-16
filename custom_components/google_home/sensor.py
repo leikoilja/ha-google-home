@@ -3,7 +3,7 @@
 import logging
 from typing import override
 
-import voluptuous as vol
+import probatio
 
 from homeassistant.components.sensor import SensorDeviceClass
 from homeassistant.const import STATE_UNAVAILABLE, EntityCategory
@@ -94,8 +94,8 @@ async def async_setup_entry(
     platform.async_register_entity_service(
         SERVICE_DELETE_ALARM,
         {
-            vol.Required(SERVICE_ATTR_ALARM_ID): cv.string,
-            vol.Optional(SERVICE_ATTR_SKIP_REFRESH): cv.boolean,
+            probatio.Required(SERVICE_ATTR_ALARM_ID): cv.string,
+            probatio.Optional(SERVICE_ATTR_SKIP_REFRESH): cv.boolean,
         },
         GoogleHomeAlarmsSensor.async_delete_alarm,
     )
@@ -103,8 +103,8 @@ async def async_setup_entry(
     platform.async_register_entity_service(
         SERVICE_DELETE_TIMER,
         {
-            vol.Required(SERVICE_ATTR_TIMER_ID): cv.string,
-            vol.Optional(SERVICE_ATTR_SKIP_REFRESH): cv.boolean,
+            probatio.Required(SERVICE_ATTR_TIMER_ID): cv.string,
+            probatio.Optional(SERVICE_ATTR_SKIP_REFRESH): cv.boolean,
         },
         GoogleHomeTimersSensor.async_delete_timer,
     )

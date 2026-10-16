@@ -9,7 +9,7 @@ license = "MIT"
 requires-python = ">=3.14.2"
 dependencies = [
     "glocaltokens>=0.7.6",
-    "homeassistant==2026.9.0",
+    "homeassistant==2026.10.0",
 ]
 
 [dependency-groups]
@@ -22,7 +22,6 @@ dev = [
     "pytest>=9.1.1",
     "ruff>=0.17.1",
     "types-requests>=2.33.0.20261006",
-    "voluptuous-stubs>=0.1.1",
 ]
 
 [tool.uv]
@@ -32,7 +31,7 @@ package = false
 # Lint rules follow Home Assistant core's pyproject.toml at the version pinned
 # above, plus a few extra rules marked below. Re-sync when bumping homeassistant.
 [tool.ruff]
-required-version = ">=0.16.3"
+required-version = ">=0.16.9"
 target-version = "py314"
 
 [tool.ruff.lint]
@@ -61,6 +60,7 @@ select = [
     "INP", # flake8-no-pep420
     "ISC", # flake8-implicit-str-concat
     "ICN001", # import concentions; {name} should be imported as {asname}
+    "ICN002", # import conventions; {name} should not be imported as {asname}
     "LOG", # flake8-logging
     "N804", # First argument of a class method should be named cls
     "N805", # First argument of a method should be named self
@@ -179,6 +179,9 @@ ignore = [
 "homeassistant.helpers.entity_registry" = "er"
 "homeassistant.util.dt" = "dt_util"
 
+[tool.ruff.lint.flake8-import-conventions.banned-aliases]
+"probatio" = ["vol"]
+
 [tool.ruff.lint.flake8-pytest-style]
 fixture-parentheses = false
 mark-parentheses = false
@@ -186,6 +189,11 @@ mark-parentheses = false
 [tool.ruff.lint.flake8-tidy-imports.banned-api]
 "async_timeout".msg = "use asyncio.timeout instead"
 "pytz".msg = "use zoneinfo instead"
+"voluptuous".msg = "use probatio instead"
+"homeassistant.helpers.config_validation.ensure_list".msg = "use probatio.EnsureList() instead"
+"homeassistant.helpers.config_validation.port".msg = "use probatio.Port() instead"
+"homeassistant.helpers.config_validation.has_at_least_one_key".msg = "use probatio.AtLeastOne instead"
+"homeassistant.helpers.config_validation.has_at_most_one_key".msg = "use probatio.AtMostOne instead"
 "__future__.annotations".msg = "It should not be needed because Home Assistant requires Python 3.14+"
 
 [tool.ruff.lint.isort]

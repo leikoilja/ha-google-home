@@ -3,8 +3,8 @@
 import logging
 from typing import Self, override
 
+import probatio
 from requests.exceptions import RequestException
-import voluptuous as vol
 
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult, OptionsFlow
 from homeassistant.core import callback
@@ -117,11 +117,11 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
         """Show the configuration form to edit login information."""
         return self.async_show_form(
             step_id="user",
-            data_schema=vol.Schema(
+            data_schema=probatio.Schema(
                 {
-                    vol.Optional(CONF_USERNAME): str,
-                    vol.Optional(CONF_PASSWORD): str,
-                    vol.Optional(CONF_MASTER_TOKEN): str,
+                    probatio.Optional(CONF_USERNAME): str,
+                    probatio.Optional(CONF_PASSWORD): str,
+                    probatio.Optional(CONF_MASTER_TOKEN): str,
                 }
             ),
             errors=self._errors,
@@ -166,9 +166,9 @@ class GoogleHomeOptionsFlowHandler(OptionsFlow):
 
         return self.async_show_form(
             step_id="init",
-            data_schema=vol.Schema(
+            data_schema=probatio.Schema(
                 {
-                    vol.Optional(
+                    probatio.Optional(
                         CONF_UPDATE_INTERVAL,
                         default=self.config_entry.options.get(
                             CONF_UPDATE_INTERVAL, UPDATE_INTERVAL
