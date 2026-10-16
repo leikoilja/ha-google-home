@@ -208,3 +208,19 @@ def test_known_hosts_not_asked_when_mdns_found_everything() -> None:
     asyncio.run(client.get_google_devices())
 
     session.get.assert_not_called()
+
+
+def test_known_hosts_skip_addresses_mdns_found() -> None:
+    """Don't ask a known host whose address mDNS already gave to a device."""
+    office = device("Office", "BBBB", ip_address="fd00::2")
+    kitchen = device("Kitchen", "AAAA")
+    answers: dict[str, tuple[str, str] | Exception] = {
+        # The same address as the office speaker's, written differently
+        "fd00:0::2": AssertionError("asked a host that mDNS already found"),
+        "10.0.1.5": ("Kitchen", "aaaa"),
+    }
+
+    use_known_hosts([office, kitchen], answers)
+
+    assert kitchen.ip_address == "10.0.1.5"
+    assert office.ip_address == "fd00::2"
