@@ -8,6 +8,8 @@ from datetime import timedelta
 import logging
 from typing import cast
 
+from glocaltokens.utils.token import is_aas_et
+
 from homeassistant.components import zeroconf
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant
@@ -22,6 +24,7 @@ from .const import (
     DATA_CLIENT,
     DATA_COORDINATOR,
     DOMAIN,
+    MASTER_TOKEN_TITLE,
     PLATFORMS,
     SENSOR,
     STARTUP_MESSAGE,
@@ -31,6 +34,23 @@ from .models import GoogleHomeDevice
 from .types import GoogleHomeConfigEntry
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
+
+
+async def async_migrate_entry(
+    hass: HomeAssistant, entry: GoogleHomeConfigEntry
+) -> bool:
+    """Migrate a config entry saved by an older version."""
+    if entry.version > 1:
+        return False
+    if entry.minor_version < 2:
+        data = dict(entry.data)
+        # Setup has always saved a master token, and the integration signs in
+        # with it from then on, so a saved app password is never used again.
+        if data.get(CONF_PASSWORD) and is_aas_et(data.get(CONF_MASTER_TOKEN) or ""):
+            data[CONF_PASSWORD] = ""
+            _LOGGER.debug("Cleared the app password, which is no longer used")
+        hass.config_entries.async_update_entry(entry, data=data, minor_version=2)
+    return True
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -> bool:
@@ -82,8 +102,28 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
+    if entry.title == MASTER_TOKEN_TITLE:
+        entry.async_create_background_task(
+            hass,
+            async_name_after_account(hass, entry, glocaltokens_client),
+            "Look up the Google account of the master token",
+        )
+
     entry.async_on_unload(entry.add_update_listener(async_update_entry))
     return True
+
+
+async def async_name_after_account(
+    hass: HomeAssistant, entry: GoogleHomeConfigEntry, client: GlocaltokensApiClient
+) -> None:
+    """Name an entry set up with only a master token after its Google account.
+
+    Older versions didn't know which account a master token belongs to, so they
+    gave the entry a generic title. Only the title changes: the saved username
+    stays empty, so the integration keeps signing in exactly as before.
+    """
+    if email := await client.async_get_email():
+        hass.config_entries.async_update_entry(entry, title=email)
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -> bool:

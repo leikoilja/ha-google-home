@@ -21,6 +21,7 @@ from .const import (
     CONF_USERNAME,
     DOMAIN,
     MANUFACTURER,
+    MASTER_TOKEN_TITLE,
     UPDATE_INTERVAL,
 )
 from .exceptions import InvalidMasterToken
@@ -44,6 +45,8 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
     """Config flow for GoogleHome."""
 
     VERSION = 1
+    # 2: app passwords that older versions saved are cleared
+    MINOR_VERSION = 2
 
     def __init__(self) -> None:
         """Initialize."""
@@ -116,7 +119,7 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
                     username = await client.async_get_email() or ""
                     self.username = username
                     return await self._create_entry(
-                        client, username, username or f"{MANUFACTURER} (master_token)"
+                        client, username, username or MASTER_TOKEN_TITLE
                     )
                 errors["base"] = "master-token-invalid"
         return self._show_form(

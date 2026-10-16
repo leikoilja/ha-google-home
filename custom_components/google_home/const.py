@@ -53,6 +53,8 @@ CONF_OAUTH_TOKEN: Final = "oauth_token"
 
 # Defaults
 DEFAULT_NAME: Final = "Google Home"
+# Title of an entry set up with a master token whose account is unknown
+MASTER_TOKEN_TITLE: Final = f"{MANUFACTURER} (master_token)"
 GOOGLE_HOME_ALARM_DEFAULT_VALUE: Final = 0
 
 LABEL_ALARMS: Final = "alarms"
