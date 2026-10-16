@@ -10,7 +10,7 @@ from homeassistant.helpers.update_coordinator import (
 )
 
 from .api import GlocaltokensApiClient
-from .const import DEFAULT_NAME, DOMAIN, MANUFACTURER
+from .const import DOMAIN, MANUFACTURER
 from .models import GoogleHomeDevice
 
 
@@ -55,9 +55,12 @@ class GoogleHomeBaseEntity(
     @override
     def device_info(self) -> DeviceInfo | None:
         """Return device info."""
+        # Entity names start with the device name, which Home Assistant strips
+        # when it builds entity IDs from both: sensor.kitchen_alarms, not
+        # sensor.google_home_kitchen_kitchen_alarms.
         return DeviceInfo(
             identifiers={(DOMAIN, self.device_id)},
-            name=f"{DEFAULT_NAME} {self.device_name}",
+            name=self.device_name,
             manufacturer=MANUFACTURER,
             model=self.device_model,
         )
