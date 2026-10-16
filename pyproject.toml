@@ -22,7 +22,6 @@ dev = [
     "pytest>=9.1.1",
     "ruff>=0.17.1",
     "types-requests>=2.33.0.20261006",
-    "voluptuous-stubs>=0.1.1",
 ]
 
 [tool.uv]
@@ -238,6 +237,7 @@ min-similarity-lines = 7
 
 [tool.mypy]
 python_version = "3.14"
+mypy_path = "typings"
 explicit_package_bases = true
 num_workers = 4
 show_error_codes = true

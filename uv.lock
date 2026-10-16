@@ -917,7 +917,6 @@ dev = [
     { name = "pytest" },
     { name = "ruff" },
     { name = "types-requests" },
-    { name = "voluptuous-stubs" },
 ]
 
 [package.metadata]
@@ -936,7 +935,6 @@ dev = [
     { name = "pytest", specifier = ">=9.1.1" },
     { name = "ruff", specifier = ">=0.17.1" },
     { name = "types-requests", specifier = ">=2.33.0.20261006" },
-    { name = "voluptuous-stubs", specifier = ">=0.1.1" },
 ]
 
 [[package]]
@@ -2640,19 +2638,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/92/f4/0738e6849858deae22218be3bbb8207ba83a96e9d0ec7e8e8cd67b30e5ca/voluptuous-0.16.0.tar.gz", hash = "sha256:006535e22fed944aec17bef6e8725472476194743c87bd233e912eb463f8ff05", size = 54238, upload-time = "2025-12-18T23:18:46.08Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/d1/00/0e0da784245c93cf346150ab67634177bf277f93b7a162bb56c928c39c04/voluptuous-0.16.0-py3-none-any.whl", hash = "sha256:ee342095263e1b5afbd4d418cb5adc92810eebfd07696bb033a261210df33db4", size = 31931, upload-time = "2025-12-18T23:18:44.694Z" },
-]
-
-[[package]]
-name = "voluptuous-stubs"
-version = "0.1.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "mypy" },
-    { name = "typing-extensions" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/95/18/9a4c1be6336a4f403ba3237c594fc2c68eb3cbf3774f0c79d8c84968ce9f/voluptuous-stubs-0.1.1.tar.gz", hash = "sha256:70fb1c088242f20e11023252b5648cd77f831f692cd910c8f9713cc135cf8cc8", size = 3654, upload-time = "2020-04-24T04:16:30.028Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/7e/fc/aaf18e1cc066277df80aff1d988284216ca3881f1e6601f2362189b683c5/voluptuous_stubs-0.1.1-py3-none-any.whl", hash = "sha256:f216c427ed7e190b8413e26cf4f67e1bda692ea8225ed0d875f7724d10b7cb10", size = 4971, upload-time = "2020-04-24T04:16:28.667Z" },
 ]
 
 [[package]]
