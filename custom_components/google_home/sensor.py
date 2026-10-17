@@ -113,7 +113,7 @@ async def async_setup_entry(
     platform.async_register_entity_service(
         SERVICE_REBOOT,
         {},
-        GoogleHomeDeviceSensor.async_reboot_device,
+        GoogleHomeBaseEntity.async_reboot_device,
     )
 
     platform.async_register_entity_service(
@@ -125,7 +125,7 @@ async def async_setup_entry(
     return True
 
 
-# A device target calls the action on each of the device's sensors.
+# A device target calls the action on the device's alarms and timers sensors.
 async def async_delete_all_alarms(entity: Entity, call: ServiceCall) -> None:
     """Delete all alarms if the entity is an alarms sensor."""
     if isinstance(entity, GoogleHomeAlarmsSensor):
@@ -190,16 +190,6 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
             "ip_address": device.ip_address,
             "available": device.available,
         }
-
-    async def async_reboot_device(self, _call: ServiceCall) -> None:
-        """Reboot the device."""
-        device = self.get_device()
-
-        if device is None:
-            _LOGGER.error("Device %s is not found.", self.device_name)
-            return
-
-        await self.client.reboot_google_device(device)
 
     async def async_refresh_devices(self, _call: ServiceCall) -> None:
         """Refresh the devices."""

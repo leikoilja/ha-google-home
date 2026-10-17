@@ -42,7 +42,7 @@ You need:
     - **Browser sign-in (recommended):** you sign in to Google in a desktop browser and copy a cookie from it.
     - **Master token:** if you already have one, for example from another tool.
 
-Home Assistant then adds a device for each Google Cast device in your home, with the [entities](entities.md) for it. Devices that have no alarms or timers, such as an NVIDIA Shield, get only a device sensor.
+Home Assistant then adds a device for each Google Cast device in your home, with the [entities](entities.md) for it. Devices that have no alarms or timers, such as an NVIDIA Shield, get only a device sensor and a reboot button.
 
 To change the account or sign in again, delete the integration and add it again.
 
@@ -80,7 +80,7 @@ To update immediately, use the [Refresh devices](actions.md#refresh-devices) act
 
 ## Add devices on another network
 
-The integration finds your devices on your network with multicast DNS (mDNS). mDNS usually doesn't reach other networks, such as a separate VLAN for smart home devices, or a Home Assistant container that doesn't use `host` network mode. Those devices then have only a [device sensor](entities.md#device-sensor). If Home Assistant can reach a device on TCP port 8443, add its IP address instead:
+The integration finds your devices on your network with multicast DNS (mDNS). mDNS usually doesn't reach other networks, such as a separate VLAN for smart home devices, or a Home Assistant container that doesn't use `host` network mode. Those devices then have only a [device sensor](entities.md#device-sensor) and a [reboot button](entities.md#reboot-button), and both are unavailable. If Home Assistant can reach a device on TCP port 8443, add its IP address instead:
 
 1. Go to **Settings** > **Devices & services** > **Google Home** and select **Configure**.
 2. Under **Known hosts**, add the IP address of each device that the integration can't find.

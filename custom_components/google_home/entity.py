@@ -1,9 +1,10 @@
 """Defines base entities for Google Home."""
 
 from abc import ABC, abstractmethod
+import logging
 from typing import override
 
-from homeassistant.core import callback
+from homeassistant.core import ServiceCall, callback
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import (
@@ -15,6 +16,8 @@ from .api import GlocaltokensApiClient
 from .const import DOMAIN, MANUFACTURER
 from .models import GoogleHomeDevice
 from .types import GoogleHomeConfigEntry
+
+_LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
 class GoogleHomeBaseEntity(
@@ -76,6 +79,16 @@ class GoogleHomeBaseEntity(
             if device.device_id == self.device_id
         ]
         return matched_devices[0] if matched_devices else None
+
+    async def async_reboot_device(self, _call: ServiceCall | None = None) -> None:
+        """Reboot the device."""
+        device = self.get_device()
+
+        if device is None:
+            _LOGGER.error("Device %s is not found.", self.device_name)
+            return
+
+        await self.client.reboot_google_device(device)
 
 
 def async_add_device_entities(

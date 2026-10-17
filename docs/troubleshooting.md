@@ -48,7 +48,7 @@ The Google account you signed in with must be a member of the home your devices 
 
 ### No alarms or timers sensors
 
-The integration adds the alarms sensor, timers sensor, Do Not Disturb switch and alarm volume for a device once the device answers. Until then, a device that is offline, or that doesn't support these features, has only a device sensor.
+The integration adds the alarms sensor, timers sensor, Do Not Disturb switch and alarm volume for a device once the device answers. Until then, a device that is offline, or that doesn't support these features, has only a device sensor and a reboot button.
 
 When the device answers, the integration adds the missing entities:
 
