@@ -31,7 +31,14 @@ def found(device_id: str, ip_address: str | None) -> Device:
         if ip_address
         else None
     )
-    return Device(device_id, device_id, LOCAL_AUTH_TOKEN, network_device)
+    return Device(
+        device_id,
+        device_id,
+        LOCAL_AUTH_TOKEN,
+        network_device,
+        hardware="Nest Audio",
+        cloud_device_id=device_id,
+    )
 
 
 def make_client(*ip_addresses: str | None) -> tuple[GlocaltokensApiClient, Mock]:
