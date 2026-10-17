@@ -94,6 +94,26 @@
       },
       "name": "Elimina timer"
     },
+    "delete_all_alarms": {
+      "description": "Elimina tutte le sveglie dai dispositivi Google Home.",
+      "fields": {
+        "skip_refresh": {
+          "description": "Salta l'aggiornamento dei dispositivi Google Home dopo aver eliminato le sveglie.",
+          "name": "Salta aggiornamento"
+        }
+      },
+      "name": "Elimina tutte le sveglie"
+    },
+    "delete_all_timers": {
+      "description": "Elimina tutti i timer dai dispositivi Google Home.",
+      "fields": {
+        "skip_refresh": {
+          "description": "Salta l'aggiornamento dei dispositivi Google Home dopo aver eliminato i timer.",
+          "name": "Salta aggiornamento"
+        }
+      },
+      "name": "Elimina tutti i timer"
+    },
     "reboot_device": {
       "description": "Riavvia un dispositivo Google Home.",
       "name": "Riavvia dispositivo"

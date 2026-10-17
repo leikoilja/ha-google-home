@@ -94,6 +94,26 @@
       },
       "name": "Elimina temporitzador"
     },
+    "delete_all_alarms": {
+      "description": "Elimina totes les alarmes dels dispositius Google Home.",
+      "fields": {
+        "skip_refresh": {
+          "description": "Omet l'actualització dels dispositius de Google Home després d'haver suprimit les alarmes.",
+          "name": "Omet l'actualització"
+        }
+      },
+      "name": "Elimina totes les alarmes"
+    },
+    "delete_all_timers": {
+      "description": "Elimina tots els temporitzadors dels dispositius Google Home.",
+      "fields": {
+        "skip_refresh": {
+          "description": "Omet l'actualització dels dispositius de Google Home després d'haver suprimit els temporitzadors.",
+          "name": "Omet l'actualització"
+        }
+      },
+      "name": "Elimina tots els temporitzadors"
+    },
     "reboot_device": {
       "description": "Reinicia un dispositiu Google Home.",
       "name": "Reinicia dispositiu"

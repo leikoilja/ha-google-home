@@ -94,6 +94,26 @@
       },
       "name": "Eliminar temporizador"
     },
+    "delete_all_alarms": {
+      "description": "Eliminar todas las alarmas de los dispositivos Google Home.",
+      "fields": {
+        "skip_refresh": {
+          "description": "Omitir la actualización de los dispositivos Google Home después de eliminar las alarmas.",
+          "name": "Omitir actualización"
+        }
+      },
+      "name": "Eliminar todas las alarmas"
+    },
+    "delete_all_timers": {
+      "description": "Eliminar todos los temporizadores de los dispositivos Google Home.",
+      "fields": {
+        "skip_refresh": {
+          "description": "Omitir la actualización de los dispositivos Google Home después de eliminar los temporizadores.",
+          "name": "Omitir actualización"
+        }
+      },
+      "name": "Eliminar todos los temporizadores"
+    },
     "reboot_device": {
       "description": "Reiniciar un dispositivo Google Home.",
       "name": "Reiniciar dispositivo"

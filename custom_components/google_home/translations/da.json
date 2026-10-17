@@ -94,6 +94,26 @@
       },
       "name": "Slet timer"
     },
+    "delete_all_alarms": {
+      "description": "Slet alle alarmer fra Google Home-enheder.",
+      "fields": {
+        "skip_refresh": {
+          "description": "Spring opdatering af Google Home-enheder over efter sletning af alarmerne.",
+          "name": "Spring opdatering over"
+        }
+      },
+      "name": "Slet alle alarmer"
+    },
+    "delete_all_timers": {
+      "description": "Slet alle timere fra Google Home-enheder.",
+      "fields": {
+        "skip_refresh": {
+          "description": "Spring opdatering af Google Home-enheder over efter sletning af timerne.",
+          "name": "Spring opdatering over"
+        }
+      },
+      "name": "Slet alle timere"
+    },
     "reboot_device": {
       "description": "Genstart en Google Home-enhed.",
       "name": "Genstart enhed"

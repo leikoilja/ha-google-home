@@ -94,6 +94,26 @@
       },
       "name": "Supprimer le minuteur"
     },
+    "delete_all_alarms": {
+      "description": "Supprimer toutes les alarmes des appareils Google Home.",
+      "fields": {
+        "skip_refresh": {
+          "description": "Ignorer l'actualisation des appareils Google Home après la suppression des alarmes.",
+          "name": "Ignorer l'actualisation"
+        }
+      },
+      "name": "Supprimer toutes les alarmes"
+    },
+    "delete_all_timers": {
+      "description": "Supprimer tous les minuteurs des appareils Google Home.",
+      "fields": {
+        "skip_refresh": {
+          "description": "Ignorer l'actualisation des appareils Google Home après la suppression des minuteurs.",
+          "name": "Ignorer l'actualisation"
+        }
+      },
+      "name": "Supprimer tous les minuteurs"
+    },
     "reboot_device": {
       "description": "Redémarrer un appareil Google Home.",
       "name": "Redémarrer l'appareil"
