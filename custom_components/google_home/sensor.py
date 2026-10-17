@@ -318,6 +318,7 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
         alarm_ids = [alarm.alarm_id for alarm in device.get_sorted_alarms()]
         if not alarm_ids:
             _LOGGER.debug("No alarms to delete for %s", device.name)
+            self.coordinator.async_update_listeners()
             return
 
         await self.client.delete_alarm_or_timer(
@@ -421,6 +422,7 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
         timer_ids = [timer.timer_id for timer in device.get_sorted_timers()]
         if not timer_ids:
             _LOGGER.debug("No timers to delete for %s", device.name)
+            self.coordinator.async_update_listeners()
             return
 
         await self.client.delete_alarm_or_timer(
