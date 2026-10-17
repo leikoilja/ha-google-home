@@ -72,6 +72,11 @@ class GoogleHomeDevice:
             for timer in timers
         ]
 
+    def remove_alarms_and_timers(self, ids: list[str]) -> None:
+        """Remove the alarms and timers with these IDs."""
+        self._alarms = [alarm for alarm in self._alarms if alarm.alarm_id not in ids]
+        self._timers = [timer for timer in self._timers if timer.timer_id not in ids]
+
     def get_sorted_alarms(self) -> list[GoogleHomeAlarm]:
         """Return alarms in a sorted order. Inactive & missed alarms are at the end."""
         return sorted(
