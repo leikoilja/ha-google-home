@@ -100,7 +100,13 @@ Sets how loud alarms ring on the device, from 0 to 100%. It appears under **Conf
 
 ## Reboot button
 
-Press it to reboot the device. It appears under **Configuration** on the device page. It does the same as the [Reboot device](actions.md#reboot-device) action.
+Press it to reboot the device. It appears under **Configuration** on the device page. It sends the same request as the [Reboot device](actions.md#reboot-device) action. To press it from an automation or script, use the `button.press` action:
+
+```yaml
+action: button.press
+target:
+  entity_id: button.living_room_reboot
+```
 
 The button is unavailable until Home Assistant finds the device on your network. If the device goes offline later, the button may stay available, but pressing it then has no effect. The `available` attribute of the [device sensor](#device-sensor) shows whether Home Assistant reached the device at its last request.
 
