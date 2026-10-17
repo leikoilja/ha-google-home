@@ -1,0 +1,126 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "登入 Google",
+        "description": "此整合適用於 Google 音箱和螢幕，例如 Nest Mini、Nest Audio 和 Nest Hub。不會加入 Google Home 應用程式中的其他裝置。\n\n請選擇登入方式，並使用已加入你住家的 Google 帳號登入。如需協助，請參閱 {docs_url}。",
+        "menu_options": {
+          "browser": "透過瀏覽器登入（建議）",
+          "master_token": "Master token"
+        },
+        "menu_option_descriptions": {
+          "browser": "在電腦瀏覽器中登入 Google，然後貼上 Cookie。適用於大多數帳號。",
+          "master_token": "貼上你已取得的 master token。"
+        }
+      },
+      "browser": {
+        "title": "透過瀏覽器登入",
+        "description": "1. 在電腦上開啟瀏覽器的私密瀏覽視窗（例如無痕視窗），前往 {embedded_setup_url} 並登入。同意後，網頁可能會持續載入，這是正常現象。\n2. 開啟瀏覽器的開發人員工具，找出 `accounts.google.com` 的 Cookie。\n3. 複製 `oauth_token` Cookie 的值，並立即貼到下方。此值會在幾分鐘內失效，且只能使用一次。\n\n詳細操作步驟：{browser_docs_url}\n\n如要改用其他登入方式，請關閉此視窗並重新新增整合。",
+        "data": {
+          "oauth_token": "oauth_token Cookie"
+        },
+        "data_description": {
+          "oauth_token": "以 oauth2_4/ 開頭"
+        }
+      },
+      "master_token": {
+        "title": "Master token",
+        "description": "請貼上先前取得的 master token，例如使用其他工具取得的值。\n\n如要改用其他登入方式，請關閉此視窗並重新新增整合。",
+        "data": {
+          "master_token": "Google 帳號的 master token"
+        },
+        "data_description": {
+          "master_token": "以 aas_et/ 開頭"
+        }
+      }
+    },
+    "error": {
+      "oauth-token-invalid": "Google 未接受此 Cookie。請取得新的 Cookie 並立即貼上：此值會在幾分鐘內失效，且只能使用一次。請複製以 oauth2_4/ 開頭的完整值。",
+      "master-token-invalid": "Master token 無效。請確認已輸入完整值，包括 aas_et/。",
+      "oauth-token-format": "這不是 oauth_token Cookie，其值應以 oauth2_4/ 開頭。",
+      "master-token-format": "Master token 以 aas_et/ 開頭，共 223 個字元。請複製完整值。"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "update_interval": "變更更新間隔。如果裝置無法及時回應，請增加此值。預設為 180 秒。",
+          "known_hosts": "已知主機"
+        },
+        "data_description": {
+          "known_hosts": "此整合無法自動找到的音箱和螢幕的 IP 位址，例如位於其他網路或 VLAN 的裝置。"
+        }
+      }
+    },
+    "error": {
+      "known-host-not-ip": "請只輸入 IP 位址，例如 192.168.1.20。"
+    }
+  },
+  "services": {
+    "delete_alarm": {
+      "description": "從 Google Home 裝置刪除一個鬧鐘。",
+      "fields": {
+        "alarm_id": {
+          "description": "鬧鐘的 ID（alarm/xxx）。",
+          "name": "鬧鐘 ID"
+        },
+        "skip_refresh": {
+          "description": "刪除鬧鐘後，略過 Google Home 裝置的狀態更新。",
+          "name": "略過更新"
+        },
+        "entity_id": {
+          "description": "代表 Google Home 裝置的實體（sensor.xxxx_alarms）。",
+          "name": "實體"
+        }
+      },
+      "name": "刪除鬧鐘"
+    },
+    "delete_timer": {
+      "description": "從 Google Home 裝置刪除一個計時器。",
+      "fields": {
+        "timer_id": {
+          "description": "計時器的 ID（timer/xxx）。",
+          "name": "計時器 ID"
+        },
+        "skip_refresh": {
+          "description": "刪除計時器後，略過 Google Home 裝置的狀態更新。",
+          "name": "略過更新"
+        },
+        "entity_id": {
+          "description": "代表 Google Home 裝置的實體（sensor.xxxx_timers）。",
+          "name": "實體"
+        }
+      },
+      "name": "刪除計時器"
+    },
+    "delete_all_alarms": {
+      "description": "從 Google Home 裝置刪除所有鬧鐘。",
+      "fields": {
+        "skip_refresh": {
+          "description": "刪除所有鬧鐘後，略過 Google Home 裝置的狀態更新。",
+          "name": "略過更新"
+        }
+      },
+      "name": "刪除所有鬧鐘"
+    },
+    "delete_all_timers": {
+      "description": "從 Google Home 裝置刪除所有計時器。",
+      "fields": {
+        "skip_refresh": {
+          "description": "刪除所有計時器後，略過 Google Home 裝置的狀態更新。",
+          "name": "略過更新"
+        }
+      },
+      "name": "刪除所有計時器"
+    },
+    "reboot_device": {
+      "description": "重新啟動 Google Home 裝置。",
+      "name": "重新啟動裝置"
+    },
+    "refresh_devices": {
+      "description": "更新所有 Google Home 裝置的狀態。",
+      "name": "更新裝置"
+    }
+  }
+}
