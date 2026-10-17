@@ -94,6 +94,26 @@
       },
       "name": "Delete timer"
     },
+    "delete_all_alarms": {
+      "description": "Delete all alarms from Google Home devices.",
+      "fields": {
+        "skip_refresh": {
+          "description": "Skip refreshing Google Home devices after deleting the alarms.",
+          "name": "Skip refresh"
+        }
+      },
+      "name": "Delete all alarms"
+    },
+    "delete_all_timers": {
+      "description": "Delete all timers from Google Home devices.",
+      "fields": {
+        "skip_refresh": {
+          "description": "Skip refreshing Google Home devices after deleting the timers.",
+          "name": "Skip refresh"
+        }
+      },
+      "name": "Delete all timers"
+    },
     "reboot_device": {
       "description": "Reboot a Google Home device.",
       "name": "Reboot device"
