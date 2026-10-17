@@ -40,6 +40,9 @@ from custom_components.google_home.exceptions import (
 )
 from custom_components.google_home.models import GoogleHomeDevice
 from custom_components.google_home.types import BluetoothJsonDict
+
+# ruff sorts homeassistant as first-party, pylint as third-party
+# pylint: disable-next=wrong-import-order
 from homeassistant.config_entries import ConfigSubentry
 
 # glocaltokens accepts only master tokens of the real length
@@ -283,7 +286,7 @@ def test_failed_scan_start_skips_next_read() -> None:
     speakers.results["kitchen"] = [heard(rpa(IRK))]
     speakers.reads.clear()
     assert update(scanner, speakers, 150) == UNAVAILABLE
-    assert speakers.reads == []
+    assert not speakers.reads
 
 
 def test_recover_after_failed_scan_start() -> None:
@@ -329,7 +332,7 @@ def test_new_token_skips_next_read() -> None:
     speakers.reads.clear()
     update(scanner, speakers, 30)
 
-    assert speakers.reads == []
+    assert not speakers.reads
     assert speakers.starts == ["kitchen", "kitchen"]
 
 
@@ -369,7 +372,7 @@ def test_no_speakers_never_shows_away() -> None:
     scanner = make_scanner(speakers)
 
     assert states(scanner, speakers, range(0, 300, 30)) == [UNKNOWN] * 10
-    assert speakers.starts == []
+    assert not speakers.starts
 
 
 def test_unsupported_speakers_never_show_away() -> None:
@@ -451,11 +454,11 @@ def test_tracker_writes_only_changes() -> None:
     entity = tracker(data)
 
     with patch.object(entity, "async_write_ha_state") as write:
-        entity._handle_coordinator_update()  # noqa: SLF001
+        entity._handle_coordinator_update()  # noqa: SLF001  # pylint: disable=protected-access
         write.assert_not_called()
 
         data[PHONE] = NOT_HOME
-        entity._handle_coordinator_update()  # noqa: SLF001
+        entity._handle_coordinator_update()  # noqa: SLF001  # pylint: disable=protected-access
         write.assert_called_once()
 
 
@@ -615,7 +618,7 @@ def make_subentry_flow(
     flow.hass = Mock()
     flow.handler = ("entry", "bluetooth_device")
     flow.context = {"source": "user"}
-    flow._get_entry = Mock(  # type: ignore[method-assign]  # noqa: SLF001
+    flow._get_entry = Mock(  # type: ignore[method-assign]  # noqa: SLF001  # pylint: disable=protected-access
         return_value=make_entry(options, subentries)
     )
     return flow
