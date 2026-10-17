@@ -10,7 +10,7 @@ Each Google Home device gets the entities below. The examples use a device named
 | Do Not Disturb switch | `switch.living_room_do_not_disturb` | Turns Do Not Disturb on or off                            |
 | Alarm volume          | `number.living_room_alarm_volume`   | Sets the alarm volume, from 0 to 100%                     |
 
-The alarms sensor, timers sensor, switch and alarm volume are added only for devices that Home Assistant can reach when the integration starts. If a device was offline then, see [No alarms or timers sensors](troubleshooting.md#no-alarms-or-timers-sensors).
+The alarms sensor, timers sensor, switch and alarm volume are added once Home Assistant can reach the device. If a device has only a device sensor, see [No alarms or timers sensors](troubleshooting.md#no-alarms-or-timers-sensors).
 
 ## Alarms sensor
 

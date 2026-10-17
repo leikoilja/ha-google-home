@@ -36,7 +36,7 @@ from .const import (
     SERVICE_REBOOT,
     SERVICE_REFRESH,
 )
-from .entity import GoogleHomeBaseEntity
+from .entity import GoogleHomeBaseEntity, async_add_device_entities
 from .models import GoogleHomeAlarmStatus, GoogleHomeDevice, GoogleHomeTimerStatus
 from .types import (
     AlarmsAttributes,
@@ -60,35 +60,22 @@ async def async_setup_entry(
     coordinator: DataUpdateCoordinator[list[GoogleHomeDevice]] = hass.data[DOMAIN][
         entry.entry_id
     ][DATA_COORDINATOR]
-    sensors: list[Entity] = []
-    for device in coordinator.data:
-        sensors.append(
-            GoogleHomeDeviceSensor(
-                coordinator,
-                client,
-                device.device_id,
-                device.name,
-                device.hardware,
-            )
-        )
-        if device.auth_token and device.available:
-            sensors += [
-                GoogleHomeAlarmsSensor(
-                    coordinator,
-                    client,
-                    device.device_id,
-                    device.name,
-                    device.hardware,
-                ),
-                GoogleHomeTimersSensor(
-                    coordinator,
-                    client,
-                    device.device_id,
-                    device.name,
-                    device.hardware,
-                ),
-            ]
-    async_add_devices(sensors)
+    async_add_device_entities(
+        entry,
+        coordinator,
+        client,
+        async_add_devices,
+        GoogleHomeDeviceSensor,
+        needs_answer=False,
+    )
+    async_add_device_entities(
+        entry,
+        coordinator,
+        client,
+        async_add_devices,
+        GoogleHomeAlarmsSensor,
+        GoogleHomeTimersSensor,
+    )
 
     platform = entity_platform.async_get_current_platform()
 

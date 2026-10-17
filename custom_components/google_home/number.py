@@ -21,7 +21,7 @@ from .const import (
     ICON_ALARM_VOLUME_OFF,
     LABEL_ALARM_VOLUME,
 )
-from .entity import GoogleHomeBaseEntity
+from .entity import GoogleHomeBaseEntity, async_add_device_entities
 from .models import GoogleHomeDevice
 from .types import GoogleHomeConfigEntry
 
@@ -39,17 +39,9 @@ async def async_setup_entry(
         entry.entry_id
     ][DATA_COORDINATOR]
 
-    numbers = [
-        AlarmVolumeNumber(
-            coordinator, client, device.device_id, device.name, device.hardware
-        )
-        for device in coordinator.data
-        if device.auth_token and device.available
-    ]
-
-    if numbers:
-        async_add_devices(numbers)
-
+    async_add_device_entities(
+        entry, coordinator, client, async_add_devices, AlarmVolumeNumber
+    )
     return True
 
 

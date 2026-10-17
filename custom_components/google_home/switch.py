@@ -17,7 +17,7 @@ from .const import (
     ICON_DO_NOT_DISTURB,
     LABEL_DO_NOT_DISTURB,
 )
-from .entity import GoogleHomeBaseEntity
+from .entity import GoogleHomeBaseEntity, async_add_device_entities
 from .models import GoogleHomeDevice
 from .types import GoogleHomeConfigEntry
 
@@ -35,21 +35,9 @@ async def async_setup_entry(
         entry.entry_id
     ][DATA_COORDINATOR]
 
-    switches = [
-        DoNotDisturbSwitch(
-            coordinator,
-            client,
-            device.device_id,
-            device.name,
-            device.hardware,
-        )
-        for device in coordinator.data
-        if device.auth_token and device.available
-    ]
-
-    if switches:
-        async_add_devices(switches)
-
+    async_add_device_entities(
+        entry, coordinator, client, async_add_devices, DoNotDisturbSwitch
+    )
     return True
 
 
