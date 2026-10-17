@@ -134,33 +134,21 @@ class GlocaltokensApiClient:
                     self.google_devices_fetched = False
                 return self.google_devices
             self.google_devices_fetched = True
-            # glocaltokens names a device found by mDNS after what it announces, such
-            # as one speaker of a pair, and doesn't keep the ID that devices report
-            # locally. Take both from Google's list instead.
-            google_items = {
-                item.device_info.device_id: item
-                for item in self._client.homegraph.home.devices
-            }
             # mDNS can miss a device that it found before: keep its address
             ip_addresses = {
                 device.device_id: device.ip_address for device in self.google_devices
             }
-            self.google_devices = []
-            for device in google_devices:
-                item = google_items.get(device.device_id)
-                self.google_devices.append(
-                    GoogleHomeDevice(
-                        device_id=device.device_id,
-                        name=item.device_name if item else device.device_name,
-                        auth_token=device.local_auth_token,
-                        ip_address=device.ip_address
-                        or ip_addresses.get(device.device_id),
-                        hardware=device.hardware,
-                        cloud_device_id=(
-                            item.device_info.agent_info.unique_id if item else None
-                        ),
-                    )
+            self.google_devices = [
+                GoogleHomeDevice(
+                    device_id=device.device_id,
+                    name=device.device_name,
+                    auth_token=device.local_auth_token,
+                    ip_address=device.ip_address or ip_addresses.get(device.device_id),
+                    hardware=device.hardware,
+                    cloud_device_id=device.cloud_device_id,
                 )
+                for device in google_devices
+            ]
             # Known hosts are only asked when mDNS left a device without an address
             if self.known_hosts and any(
                 not device.ip_address and device.cloud_device_id

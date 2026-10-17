@@ -4,13 +4,16 @@ import asyncio
 from unittest.mock import AsyncMock, MagicMock, Mock
 
 from aiohttp import ClientError
+from glocaltokens.client import Device
+from glocaltokens.scanner import NetworkDevice
 
 from custom_components.google_home.api import GlocaltokensApiClient
 from custom_components.google_home.config_flow import GoogleHomeOptionsFlowHandler
 from custom_components.google_home.models import GoogleHomeDevice
 
-# glocaltokens accepts only master tokens of the real length
+# glocaltokens accepts only tokens of the real length
 MASTER_TOKEN = "aas_et/" + "x" * 216
+LOCAL_AUTH_TOKEN = "x" * 108
 
 
 def fake_session(answers: dict[str, tuple[str, str] | Exception]) -> Mock:
@@ -155,31 +158,27 @@ def test_options_reject_hostnames() -> None:
     assert result["errors"] == {"known_hosts": "known-host-not-ip"}
 
 
-def test_devices_named_as_in_google_home() -> None:
-    """Name a speaker pair as Google lists it, not after the speaker mDNS found."""
+def test_known_hosts_fill_in_devices_from_glocaltokens() -> None:
+    """Find a device that glocaltokens returns without an address at its known host."""
     hass = Mock()
     hass.async_add_executor_job = AsyncMock(side_effect=lambda func, *args: func(*args))
-    client = GlocaltokensApiClient(hass, Mock(), master_token=MASTER_TOKEN)
-    found_by_mdns = Mock(
-        device_id="pair",
-        device_name="Den speaker left",
-        local_auth_token="token",
-        ip_address="10.0.0.3",
-        hardware="Nest Audio",
+    client = GlocaltokensApiClient(
+        hass,
+        fake_session({"10.0.1.5": ("Den speaker left", "dddd")}),
+        master_token=MASTER_TOKEN,
+        known_hosts=["10.0.1.5"],
     )
-    listed_by_google = Mock(device_name="Den speakers")
-    listed_by_google.device_info.device_id = "pair"
-    listed_by_google.device_info.agent_info.unique_id = "dddd"
+    pair = Device("pair", "Den speakers", LOCAL_AUTH_TOKEN, cloud_device_id="DDDD")
     client._client = Mock(  # noqa: SLF001  # pylint: disable=protected-access
-        get_google_devices=Mock(return_value=[found_by_mdns]),
-        homegraph=Mock(home=Mock(devices=[listed_by_google])),
+        get_google_devices=Mock(return_value=[pair]),
+        homegraph=Mock(),
     )
 
-    [pair] = asyncio.run(client.get_google_devices())
+    [den] = asyncio.run(client.get_google_devices())
 
-    assert pair.name == "Den speakers"
-    assert pair.cloud_device_id == "dddd"
-    assert pair.ip_address == "10.0.0.3"
+    assert den.name == "Den speakers"
+    assert den.cloud_device_id == "dddd"
+    assert den.ip_address == "10.0.1.5"
 
 
 def test_known_hosts_not_asked_when_mdns_found_everything() -> None:
@@ -190,19 +189,16 @@ def test_known_hosts_not_asked_when_mdns_found_everything() -> None:
     client = GlocaltokensApiClient(
         hass, session, master_token=MASTER_TOKEN, known_hosts=["10.0.1.5"]
     )
-    found_by_mdns = Mock(
-        device_id="kitchen",
-        device_name="Kitchen",
-        local_auth_token="token",
-        ip_address="10.0.0.3",
-        hardware="Nest Audio",
+    found_by_mdns = Device(
+        "kitchen",
+        "Kitchen",
+        LOCAL_AUTH_TOKEN,
+        NetworkDevice("Kitchen", "10.0.0.3", 8009, "Nest Audio", "aaaa"),
+        cloud_device_id="AAAA",
     )
-    listed_by_google = Mock(device_name="Kitchen")
-    listed_by_google.device_info.device_id = "kitchen"
-    listed_by_google.device_info.agent_info.unique_id = "AAAA"
     client._client = Mock(  # noqa: SLF001  # pylint: disable=protected-access
         get_google_devices=Mock(return_value=[found_by_mdns]),
-        homegraph=Mock(home=Mock(devices=[listed_by_google])),
+        homegraph=Mock(),
     )
 
     asyncio.run(client.get_google_devices())
