@@ -1,0 +1,126 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Google에 로그인",
+        "description": "이 통합 구성 요소는 Nest Mini, Nest Audio, Nest Hub와 같은 Google 스피커 및 디스플레이에서 작동합니다. Google Home 앱에 있는 다른 기기는 추가하지 않습니다.\n\n집의 구성원으로 등록된 Google 계정에 로그인할 방법을 선택하세요. 도움이 필요하면 {docs_url}을 참고하세요.",
+        "menu_options": {
+          "browser": "브라우저 로그인(권장)",
+          "master_token": "마스터 토큰"
+        },
+        "menu_option_descriptions": {
+          "browser": "컴퓨터의 브라우저에서 Google에 로그인한 다음 쿠키를 붙여넣으세요. 대부분의 계정에서 사용할 수 있습니다.",
+          "master_token": "이미 가지고 있는 마스터 토큰을 붙여넣으세요."
+        }
+      },
+      "browser": {
+        "title": "브라우저 로그인",
+        "description": "1. 컴퓨터에서 브라우저의 비공개 창(예: 시크릿 창)을 열고 {embedded_setup_url}에 접속하여 로그인하세요. 동의한 후에도 페이지가 계속 로드될 수 있으며, 이는 정상입니다.\n2. 브라우저의 개발자 도구를 열고 `accounts.google.com`의 쿠키를 찾으세요.\n3. `oauth_token` 쿠키의 값을 복사하여 아래에 바로 붙여넣으세요. 몇 분 안에 만료되며 한 번만 사용할 수 있습니다.\n\n단계별 안내: {browser_docs_url}\n\n다른 로그인 방법을 선택하려면 이 창을 닫고 통합 구성 요소를 다시 추가하세요.",
+        "data": {
+          "oauth_token": "oauth_token 쿠키"
+        },
+        "data_description": {
+          "oauth_token": "oauth2_4/로 시작합니다"
+        }
+      },
+      "master_token": {
+        "title": "마스터 토큰",
+        "description": "다른 도구 등을 통해 이전에 받은 마스터 토큰을 붙여넣으세요.\n\n다른 로그인 방법을 선택하려면 이 창을 닫고 통합 구성 요소를 다시 추가하세요.",
+        "data": {
+          "master_token": "Google 계정 마스터 토큰"
+        },
+        "data_description": {
+          "master_token": "aas_et/로 시작합니다"
+        }
+      }
+    },
+    "error": {
+      "oauth-token-invalid": "Google에서 쿠키를 수락하지 않았습니다. 새 쿠키를 받아 바로 붙여넣으세요. 몇 분 안에 만료되며 한 번만 사용할 수 있습니다. oauth2_4/로 시작하는 값 전체를 복사하세요.",
+      "master-token-invalid": "마스터 토큰이 유효하지 않습니다. aas_et/를 포함한 토큰 전체를 입력했는지 확인하세요.",
+      "oauth-token-format": "oauth_token 쿠키가 아닙니다. 이 쿠키의 값은 oauth2_4/로 시작합니다.",
+      "master-token-format": "마스터 토큰은 aas_et/로 시작하며 223자입니다. 토큰 전체를 복사하세요."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "update_interval": "업데이트 간격을 변경합니다. 기기가 제때 응답하지 않으면 이 값을 늘리세요. 기본값: 180초.",
+          "known_hosts": "알려진 호스트"
+        },
+        "data_description": {
+          "known_hosts": "다른 네트워크나 VLAN에 있는 경우처럼 통합 구성 요소가 자동으로 찾을 수 없는 스피커 및 디스플레이의 IP 주소입니다."
+        }
+      }
+    },
+    "error": {
+      "known-host-not-ip": "192.168.1.20과 같은 IP 주소만 입력하세요."
+    }
+  },
+  "services": {
+    "delete_alarm": {
+      "description": "Google Home 기기에서 알람 하나를 삭제합니다.",
+      "fields": {
+        "alarm_id": {
+          "description": "알람의 ID(alarm/xxx)입니다.",
+          "name": "알람 ID"
+        },
+        "skip_refresh": {
+          "description": "알람을 삭제한 후 Google Home 기기 상태 새로고침을 건너뜁니다.",
+          "name": "새로고침 건너뛰기"
+        },
+        "entity_id": {
+          "description": "Google Home 기기를 나타내는 엔티티입니다(sensor.xxxx_alarms).",
+          "name": "엔티티"
+        }
+      },
+      "name": "알람 삭제"
+    },
+    "delete_timer": {
+      "description": "Google Home 기기에서 타이머 하나를 삭제합니다.",
+      "fields": {
+        "timer_id": {
+          "description": "타이머의 ID(timer/xxx)입니다.",
+          "name": "타이머 ID"
+        },
+        "skip_refresh": {
+          "description": "타이머를 삭제한 후 Google Home 기기 상태 새로고침을 건너뜁니다.",
+          "name": "새로고침 건너뛰기"
+        },
+        "entity_id": {
+          "description": "Google Home 기기를 나타내는 엔티티입니다(sensor.xxxx_timers).",
+          "name": "엔티티"
+        }
+      },
+      "name": "타이머 삭제"
+    },
+    "delete_all_alarms": {
+      "description": "Google Home 기기에서 모든 알람을 삭제합니다.",
+      "fields": {
+        "skip_refresh": {
+          "description": "모든 알람을 삭제한 후 Google Home 기기 상태 새로고침을 건너뜁니다.",
+          "name": "새로고침 건너뛰기"
+        }
+      },
+      "name": "모든 알람 삭제"
+    },
+    "delete_all_timers": {
+      "description": "Google Home 기기에서 모든 타이머를 삭제합니다.",
+      "fields": {
+        "skip_refresh": {
+          "description": "모든 타이머를 삭제한 후 Google Home 기기 상태 새로고침을 건너뜁니다.",
+          "name": "새로고침 건너뛰기"
+        }
+      },
+      "name": "모든 타이머 삭제"
+    },
+    "reboot_device": {
+      "description": "Google Home 기기를 다시 시작합니다.",
+      "name": "기기 다시 시작"
+    },
+    "refresh_devices": {
+      "description": "모든 Google Home 기기의 상태를 새로고침합니다.",
+      "name": "기기 상태 새로고침"
+    }
+  }
+}
