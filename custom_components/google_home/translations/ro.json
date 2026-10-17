@@ -1,0 +1,126 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Conectează-te la Google",
+        "description": "Această integrare funcționează cu difuzoarele și ecranele Google, cum ar fi Nest Mini, Nest Audio și Nest Hub. Nu adaugă celelalte dispozitive din aplicația Google Home.\n\nAlege cum să te conectezi la un cont Google care este membru al casei tale. Pentru ajutor, consultă {docs_url}.",
+        "menu_options": {
+          "browser": "Conectare prin browser (recomandată)",
+          "master_token": "Token principal"
+        },
+        "menu_option_descriptions": {
+          "browser": "Conectează-te la Google într-un browser de pe computer, apoi lipește un cookie. Funcționează pentru majoritatea conturilor.",
+          "master_token": "Lipește un token principal pe care îl ai deja."
+        }
+      },
+      "browser": {
+        "title": "Conectare prin browser",
+        "description": "1. Pe un computer, deschide {embedded_setup_url} într-o fereastră de navigare privată a browserului, de exemplu o fereastră incognito, și conectează-te. După ce accepți, pagina poate continua să se încarce; acest lucru este normal.\n2. Deschide instrumentele pentru dezvoltatori ale browserului și găsește cookie-urile pentru `accounts.google.com`.\n3. Copiază valoarea cookie-ului `oauth_token` și lipește-o imediat mai jos. Expiră în câteva minute și poate fi folosită o singură dată.\n\nInstrucțiuni pas cu pas: {browser_docs_url}\n\nPentru a alege altă metodă de conectare, închide această fereastră și adaugă din nou integrarea.",
+        "data": {
+          "oauth_token": "Cookie oauth_token"
+        },
+        "data_description": {
+          "oauth_token": "Începe cu oauth2_4/"
+        }
+      },
+      "master_token": {
+        "title": "Token principal",
+        "description": "Lipește un token principal pe care l-ai obținut anterior, de exemplu cu un alt instrument.\n\nPentru a alege altă metodă de conectare, închide această fereastră și adaugă din nou integrarea.",
+        "data": {
+          "master_token": "Token principal al contului Google"
+        },
+        "data_description": {
+          "master_token": "Începe cu aas_et/"
+        }
+      }
+    },
+    "error": {
+      "oauth-token-invalid": "Google nu a acceptat cookie-ul. Obține unul nou și lipește-l imediat: expiră în câteva minute și poate fi folosit o singură dată. Copiază întreaga valoare, care începe cu oauth2_4/.",
+      "master-token-invalid": "Tokenul principal nu este valid. Asigură-te că ai introdus tokenul complet, inclusiv aas_et/.",
+      "oauth-token-format": "Acesta nu este cookie-ul oauth_token. Valoarea lui începe cu oauth2_4/.",
+      "master-token-format": "Un token principal începe cu aas_et/ și are 223 de caractere. Copiază tokenul complet."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "update_interval": "Modifică intervalul de actualizare. Mărește această valoare dacă dispozitivele nu răspund la timp. Valoare implicită: 180 de secunde.",
+          "known_hosts": "Gazde cunoscute"
+        },
+        "data_description": {
+          "known_hosts": "Adresele IP ale difuzoarelor și ecranelor pe care integrarea nu le poate găsi automat, de exemplu pentru că se află în altă rețea sau în alt VLAN."
+        }
+      }
+    },
+    "error": {
+      "known-host-not-ip": "Introdu doar adrese IP, cum ar fi 192.168.1.20."
+    }
+  },
+  "services": {
+    "delete_alarm": {
+      "description": "Șterge o alarmă de pe un dispozitiv Google Home.",
+      "fields": {
+        "alarm_id": {
+          "description": "ID-ul alarmei (alarm/xxx).",
+          "name": "ID alarmă"
+        },
+        "skip_refresh": {
+          "description": "Omite actualizarea stării dispozitivelor Google Home după ștergerea unei alarme.",
+          "name": "Omite actualizarea stării"
+        },
+        "entity_id": {
+          "description": "Reprezintă un dispozitiv Google Home (sensor.xxxx_alarms).",
+          "name": "Entitate"
+        }
+      },
+      "name": "Șterge alarma"
+    },
+    "delete_timer": {
+      "description": "Șterge un cronometru de pe un dispozitiv Google Home.",
+      "fields": {
+        "timer_id": {
+          "description": "ID-ul cronometrului (timer/xxx).",
+          "name": "ID cronometru"
+        },
+        "skip_refresh": {
+          "description": "Omite actualizarea stării dispozitivelor Google Home după ștergerea unui cronometru.",
+          "name": "Omite actualizarea stării"
+        },
+        "entity_id": {
+          "description": "Reprezintă un dispozitiv Google Home (sensor.xxxx_timers).",
+          "name": "Entitate"
+        }
+      },
+      "name": "Șterge cronometrul"
+    },
+    "delete_all_alarms": {
+      "description": "Șterge toate alarmele de pe dispozitivele Google Home.",
+      "fields": {
+        "skip_refresh": {
+          "description": "Omite actualizarea stării dispozitivelor Google Home după ștergerea tuturor alarmelor.",
+          "name": "Omite actualizarea stării"
+        }
+      },
+      "name": "Șterge toate alarmele"
+    },
+    "delete_all_timers": {
+      "description": "Șterge toate cronometrele de pe dispozitivele Google Home.",
+      "fields": {
+        "skip_refresh": {
+          "description": "Omite actualizarea stării dispozitivelor Google Home după ștergerea tuturor cronometrelor.",
+          "name": "Omite actualizarea stării"
+        }
+      },
+      "name": "Șterge toate cronometrele"
+    },
+    "reboot_device": {
+      "description": "Repornește un dispozitiv Google Home.",
+      "name": "Repornește dispozitivul"
+    },
+    "refresh_devices": {
+      "description": "Actualizează starea tuturor dispozitivelor Google Home.",
+      "name": "Actualizează starea dispozitivelor"
+    }
+  }
+}

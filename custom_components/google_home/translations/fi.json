@@ -1,0 +1,126 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Kirjaudu Googleen",
+        "description": "Tämä integraatio toimii Googlen kaiuttimien ja näyttöjen, kuten Nest Minin, Nest Audion ja Nest Hubin, kanssa. Se ei lisää muita Google Home ‑sovelluksen laitteita.\n\nValitse, miten kirjaudut Google-tilille, joka on kotisi jäsen. Ohjeita: {docs_url}.",
+        "menu_options": {
+          "browser": "Kirjautuminen selaimella (suositeltu)",
+          "master_token": "Päätunniste"
+        },
+        "menu_option_descriptions": {
+          "browser": "Kirjaudu Googleen tietokoneen selaimella ja liitä sitten eväste. Toimii useimmilla tileillä.",
+          "master_token": "Liitä päätunniste, joka sinulla jo on."
+        }
+      },
+      "browser": {
+        "title": "Kirjautuminen selaimella",
+        "description": "1. Avaa tietokoneella {embedded_setup_url} selaimen yksityisessä ikkunassa, esimerkiksi incognito-ikkunassa, ja kirjaudu sisään. Hyväksymisen jälkeen sivu saattaa jatkaa lataamista; tämä on normaalia.\n2. Avaa selaimen kehittäjätyökalut ja etsi sivuston `accounts.google.com` evästeet.\n3. Kopioi `oauth_token`-evästeen arvo ja liitä se heti alle. Se vanhenee muutamassa minuutissa ja toimii vain kerran.\n\nVaiheittaiset ohjeet: {browser_docs_url}\n\nJos haluat valita toisen kirjautumistavan, sulje tämä ikkuna ja lisää integraatio uudelleen.",
+        "data": {
+          "oauth_token": "oauth_token-eväste"
+        },
+        "data_description": {
+          "oauth_token": "Alkaa merkkijonolla oauth2_4/"
+        }
+      },
+      "master_token": {
+        "title": "Päätunniste",
+        "description": "Liitä päätunniste, jonka olet saanut aiemmin esimerkiksi toisella työkalulla.\n\nJos haluat valita toisen kirjautumistavan, sulje tämä ikkuna ja lisää integraatio uudelleen.",
+        "data": {
+          "master_token": "Google-tilin päätunniste"
+        },
+        "data_description": {
+          "master_token": "Alkaa merkkijonolla aas_et/"
+        }
+      }
+    },
+    "error": {
+      "oauth-token-invalid": "Google ei hyväksynyt evästettä. Hanki uusi ja liitä se heti: se vanhenee muutamassa minuutissa ja toimii vain kerran. Kopioi koko arvo, joka alkaa merkkijonolla oauth2_4/.",
+      "master-token-invalid": "Päätunniste on virheellinen. Varmista, että olet antanut koko tunnisteen, myös alun aas_et/.",
+      "oauth-token-format": "Tämä ei ole oauth_token-eväste. Sen arvo alkaa merkkijonolla oauth2_4/.",
+      "master-token-format": "Päätunniste alkaa merkkijonolla aas_et/ ja on 223 merkkiä pitkä. Kopioi koko tunniste."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "update_interval": "Muuta päivitysväliä. Suurenna arvoa, jos laitteet eivät vastaa ajoissa. Oletus: 180 sekuntia.",
+          "known_hosts": "Tunnetut isännät"
+        },
+        "data_description": {
+          "known_hosts": "Niiden kaiuttimien ja näyttöjen IP-osoitteet, joita integraatio ei löydä automaattisesti esimerkiksi siksi, että ne ovat toisessa verkossa tai VLAN-verkossa."
+        }
+      }
+    },
+    "error": {
+      "known-host-not-ip": "Anna vain IP-osoitteita, kuten 192.168.1.20."
+    }
+  },
+  "services": {
+    "delete_alarm": {
+      "description": "Poistaa herätyksen Google Home ‑laitteesta.",
+      "fields": {
+        "alarm_id": {
+          "description": "Herätyksen tunnus (alarm/xxx).",
+          "name": "Herätyksen tunnus"
+        },
+        "skip_refresh": {
+          "description": "Ohittaa Google Home ‑laitteiden tilan päivityksen herätyksen poistamisen jälkeen.",
+          "name": "Ohita tilan päivitys"
+        },
+        "entity_id": {
+          "description": "Google Home ‑laitetta edustava entiteetti (sensor.xxxx_alarms).",
+          "name": "Entiteetti"
+        }
+      },
+      "name": "Poista herätys"
+    },
+    "delete_timer": {
+      "description": "Poistaa ajastimen Google Home ‑laitteesta.",
+      "fields": {
+        "timer_id": {
+          "description": "Ajastimen tunnus (timer/xxx).",
+          "name": "Ajastimen tunnus"
+        },
+        "skip_refresh": {
+          "description": "Ohittaa Google Home ‑laitteiden tilan päivityksen ajastimen poistamisen jälkeen.",
+          "name": "Ohita tilan päivitys"
+        },
+        "entity_id": {
+          "description": "Google Home ‑laitetta edustava entiteetti (sensor.xxxx_timers).",
+          "name": "Entiteetti"
+        }
+      },
+      "name": "Poista ajastin"
+    },
+    "delete_all_alarms": {
+      "description": "Poistaa kaikki herätykset Google Home ‑laitteista.",
+      "fields": {
+        "skip_refresh": {
+          "description": "Ohittaa Google Home ‑laitteiden tilan päivityksen kaikkien herätysten poistamisen jälkeen.",
+          "name": "Ohita tilan päivitys"
+        }
+      },
+      "name": "Poista kaikki herätykset"
+    },
+    "delete_all_timers": {
+      "description": "Poistaa kaikki ajastimet Google Home ‑laitteista.",
+      "fields": {
+        "skip_refresh": {
+          "description": "Ohittaa Google Home ‑laitteiden tilan päivityksen kaikkien ajastimien poistamisen jälkeen.",
+          "name": "Ohita tilan päivitys"
+        }
+      },
+      "name": "Poista kaikki ajastimet"
+    },
+    "reboot_device": {
+      "description": "Käynnistää Google Home ‑laitteen uudelleen.",
+      "name": "Käynnistä laite uudelleen"
+    },
+    "refresh_devices": {
+      "description": "Päivittää kaikkien Google Home ‑laitteiden tilan.",
+      "name": "Päivitä laitteiden tila"
+    }
+  }
+}

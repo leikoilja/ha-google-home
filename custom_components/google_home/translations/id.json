@@ -1,0 +1,126 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Login ke Google",
+        "description": "Integrasi ini berfungsi dengan speaker dan layar Google, seperti Nest Mini, Nest Audio, dan Nest Hub. Integrasi ini tidak menambahkan perangkat lain di aplikasi Google Home Anda.\n\nPilih cara login ke akun Google yang menjadi anggota rumah Anda. Untuk bantuan, lihat {docs_url}.",
+        "menu_options": {
+          "browser": "Login melalui browser (direkomendasikan)",
+          "master_token": "Token master"
+        },
+        "menu_option_descriptions": {
+          "browser": "Login ke Google melalui browser di komputer, lalu tempelkan cookie. Berfungsi untuk sebagian besar akun.",
+          "master_token": "Tempelkan token master yang sudah Anda miliki."
+        }
+      },
+      "browser": {
+        "title": "Login melalui browser",
+        "description": "1. Di komputer, buka {embedded_setup_url} di jendela penjelajahan pribadi browser, misalnya jendela Samaran, lalu login. Setelah Anda menyetujui, halaman mungkin terus memuat; ini normal.\n2. Buka alat developer browser dan cari cookie untuk `accounts.google.com`.\n3. Salin nilai cookie `oauth_token` dan segera tempelkan di bawah. Nilai ini kedaluwarsa dalam beberapa menit dan hanya dapat digunakan sekali.\n\nPetunjuk langkah demi langkah: {browser_docs_url}\n\nUntuk memilih cara login lain, tutup jendela ini dan tambahkan kembali integrasi.",
+        "data": {
+          "oauth_token": "Cookie oauth_token"
+        },
+        "data_description": {
+          "oauth_token": "Diawali dengan oauth2_4/"
+        }
+      },
+      "master_token": {
+        "title": "Token master",
+        "description": "Tempelkan token master yang Anda peroleh sebelumnya, misalnya dengan alat lain.\n\nUntuk memilih cara login lain, tutup jendela ini dan tambahkan kembali integrasi.",
+        "data": {
+          "master_token": "Token master akun Google"
+        },
+        "data_description": {
+          "master_token": "Diawali dengan aas_et/"
+        }
+      }
+    },
+    "error": {
+      "oauth-token-invalid": "Google tidak menerima cookie tersebut. Dapatkan cookie baru dan segera tempelkan: cookie kedaluwarsa dalam beberapa menit dan hanya dapat digunakan sekali. Salin seluruh nilai yang diawali dengan oauth2_4/.",
+      "master-token-invalid": "Token master tidak valid. Pastikan Anda telah memasukkan token lengkap, termasuk aas_et/.",
+      "oauth-token-format": "Ini bukan cookie oauth_token. Nilainya diawali dengan oauth2_4/.",
+      "master-token-format": "Token master diawali dengan aas_et/ dan panjangnya 223 karakter. Salin seluruh token."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "update_interval": "Ubah interval pembaruan. Tingkatkan nilai ini jika perangkat Anda tidak merespons tepat waktu. Nilai default: 180 detik.",
+          "known_hosts": "Host yang dikenal"
+        },
+        "data_description": {
+          "known_hosts": "Alamat IP speaker dan layar yang tidak dapat ditemukan secara otomatis oleh integrasi, misalnya karena berada di jaringan atau VLAN lain."
+        }
+      }
+    },
+    "error": {
+      "known-host-not-ip": "Masukkan hanya alamat IP, seperti 192.168.1.20."
+    }
+  },
+  "services": {
+    "delete_alarm": {
+      "description": "Menghapus satu alarm dari perangkat Google Home.",
+      "fields": {
+        "alarm_id": {
+          "description": "ID alarm (alarm/xxx).",
+          "name": "ID alarm"
+        },
+        "skip_refresh": {
+          "description": "Lewati pembaruan status perangkat Google Home setelah menghapus alarm.",
+          "name": "Lewati pembaruan status"
+        },
+        "entity_id": {
+          "description": "Entitas yang mewakili perangkat Google Home (sensor.xxxx_alarms).",
+          "name": "Entitas"
+        }
+      },
+      "name": "Hapus alarm"
+    },
+    "delete_timer": {
+      "description": "Menghapus satu timer dari perangkat Google Home.",
+      "fields": {
+        "timer_id": {
+          "description": "ID timer (timer/xxx).",
+          "name": "ID timer"
+        },
+        "skip_refresh": {
+          "description": "Lewati pembaruan status perangkat Google Home setelah menghapus timer.",
+          "name": "Lewati pembaruan status"
+        },
+        "entity_id": {
+          "description": "Entitas yang mewakili perangkat Google Home (sensor.xxxx_timers).",
+          "name": "Entitas"
+        }
+      },
+      "name": "Hapus timer"
+    },
+    "delete_all_alarms": {
+      "description": "Menghapus semua alarm dari perangkat Google Home.",
+      "fields": {
+        "skip_refresh": {
+          "description": "Lewati pembaruan status perangkat Google Home setelah menghapus semua alarm.",
+          "name": "Lewati pembaruan status"
+        }
+      },
+      "name": "Hapus semua alarm"
+    },
+    "delete_all_timers": {
+      "description": "Menghapus semua timer dari perangkat Google Home.",
+      "fields": {
+        "skip_refresh": {
+          "description": "Lewati pembaruan status perangkat Google Home setelah menghapus semua timer.",
+          "name": "Lewati pembaruan status"
+        }
+      },
+      "name": "Hapus semua timer"
+    },
+    "reboot_device": {
+      "description": "Memulai ulang perangkat Google Home.",
+      "name": "Mulai ulang perangkat"
+    },
+    "refresh_devices": {
+      "description": "Memperbarui status semua perangkat Google Home.",
+      "name": "Perbarui status perangkat"
+    }
+  }
+}

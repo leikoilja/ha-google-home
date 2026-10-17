@@ -1,0 +1,126 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Bejelentkezés a Google-fiókba",
+        "description": "Ez az integráció Google-hangszórókkal és -kijelzőkkel működik, például Nest Mini, Nest Audio és Nest Hub eszközökkel. A Google Home alkalmazásban található többi eszközt nem adja hozzá.\n\nVálassza ki, hogyan szeretne bejelentkezni egy olyan Google-fiókba, amely az otthona tagja. Segítség: {docs_url}.",
+        "menu_options": {
+          "browser": "Bejelentkezés böngészővel (ajánlott)",
+          "master_token": "Mestertoken"
+        },
+        "menu_option_descriptions": {
+          "browser": "Jelentkezzen be a Google-fiókjába egy számítógép böngészőjében, majd illesszen be egy cookie-t. A legtöbb fiókkal működik.",
+          "master_token": "Illesszen be egy már meglévő mestertokent."
+        }
+      },
+      "browser": {
+        "title": "Bejelentkezés böngészővel",
+        "description": "1. Számítógépen nyissa meg a {embedded_setup_url} címet a böngésző privát ablakában, például inkognitó ablakban, és jelentkezzen be. Az elfogadás után az oldal tovább töltődhet; ez normális.\n2. Nyissa meg a böngésző fejlesztői eszközeit, és keresse meg az `accounts.google.com` cookie-jait.\n3. Másolja ki az `oauth_token` cookie értékét, és azonnal illessze be alább. Néhány percen belül lejár, és csak egyszer használható.\n\nRészletes útmutató: {browser_docs_url}\n\nMásik bejelentkezési mód választásához zárja be ezt az ablakot, és adja hozzá újra az integrációt.",
+        "data": {
+          "oauth_token": "oauth_token cookie"
+        },
+        "data_description": {
+          "oauth_token": "oauth2_4/ kezdetű"
+        }
+      },
+      "master_token": {
+        "title": "Mestertoken",
+        "description": "Illesszen be egy korábban, például másik eszközzel megszerzett mestertokent.\n\nMásik bejelentkezési mód választásához zárja be ezt az ablakot, és adja hozzá újra az integrációt.",
+        "data": {
+          "master_token": "A Google-fiók mestertokenje"
+        },
+        "data_description": {
+          "master_token": "aas_et/ kezdetű"
+        }
+      }
+    },
+    "error": {
+      "oauth-token-invalid": "A Google nem fogadta el a cookie-t. Szerezzen be egy újat, és azonnal illessze be: néhány percen belül lejár, és csak egyszer használható. Másolja ki a teljes, oauth2_4/ kezdetű értéket.",
+      "master-token-invalid": "A mestertoken érvénytelen. Ellenőrizze, hogy a teljes tokent megadta-e, az aas_et/ előtaggal együtt.",
+      "oauth-token-format": "Ez nem az oauth_token cookie. Annak értéke oauth2_4/ kezdetű.",
+      "master-token-format": "A mestertoken aas_et/ kezdetű és 223 karakter hosszú. Másolja ki a teljes tokent."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "update_interval": "Módosítsa a frissítési időközt. Növelje ezt az értéket, ha az eszközök nem válaszolnak időben. Alapértelmezett: 180 másodperc.",
+          "known_hosts": "Ismert hosztok"
+        },
+        "data_description": {
+          "known_hosts": "Azon hangszórók és kijelzők IP-címei, amelyeket az integráció nem talál meg automatikusan, például mert másik hálózaton vagy VLAN-on vannak."
+        }
+      }
+    },
+    "error": {
+      "known-host-not-ip": "Csak IP-címeket adjon meg, például: 192.168.1.20."
+    }
+  },
+  "services": {
+    "delete_alarm": {
+      "description": "Töröl egy ébresztést egy Google Home-eszközről.",
+      "fields": {
+        "alarm_id": {
+          "description": "Az ébresztés azonosítója (alarm/xxx).",
+          "name": "Ébresztés azonosítója"
+        },
+        "skip_refresh": {
+          "description": "Kihagyja a Google Home-eszközök állapotának frissítését az ébresztés törlése után.",
+          "name": "Állapotfrissítés kihagyása"
+        },
+        "entity_id": {
+          "description": "Egy Google Home-eszközt képviselő entitás (sensor.xxxx_alarms).",
+          "name": "Entitás"
+        }
+      },
+      "name": "Ébresztés törlése"
+    },
+    "delete_timer": {
+      "description": "Töröl egy időzítőt egy Google Home-eszközről.",
+      "fields": {
+        "timer_id": {
+          "description": "Az időzítő azonosítója (timer/xxx).",
+          "name": "Időzítő azonosítója"
+        },
+        "skip_refresh": {
+          "description": "Kihagyja a Google Home-eszközök állapotának frissítését az időzítő törlése után.",
+          "name": "Állapotfrissítés kihagyása"
+        },
+        "entity_id": {
+          "description": "Egy Google Home-eszközt képviselő entitás (sensor.xxxx_timers).",
+          "name": "Entitás"
+        }
+      },
+      "name": "Időzítő törlése"
+    },
+    "delete_all_alarms": {
+      "description": "Törli az összes ébresztést a Google Home-eszközökről.",
+      "fields": {
+        "skip_refresh": {
+          "description": "Kihagyja a Google Home-eszközök állapotának frissítését az összes ébresztés törlése után.",
+          "name": "Állapotfrissítés kihagyása"
+        }
+      },
+      "name": "Összes ébresztés törlése"
+    },
+    "delete_all_timers": {
+      "description": "Törli az összes időzítőt a Google Home-eszközökről.",
+      "fields": {
+        "skip_refresh": {
+          "description": "Kihagyja a Google Home-eszközök állapotának frissítését az összes időzítő törlése után.",
+          "name": "Állapotfrissítés kihagyása"
+        }
+      },
+      "name": "Összes időzítő törlése"
+    },
+    "reboot_device": {
+      "description": "Újraindít egy Google Home-eszközt.",
+      "name": "Eszköz újraindítása"
+    },
+    "refresh_devices": {
+      "description": "Frissíti az összes Google Home-eszköz állapotát.",
+      "name": "Eszközök állapotának frissítése"
+    }
+  }
+}
