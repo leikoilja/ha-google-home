@@ -33,6 +33,7 @@ package = false
 
 # Lint rules follow Home Assistant core's pyproject.toml at the version pinned
 # above, plus a few extra rules marked below. Re-sync when bumping homeassistant.
+# Also update the pinned language-list link in docs/contributing.md.
 [tool.ruff]
 required-version = ">=0.16.9"
 target-version = "py314"
