@@ -13,8 +13,10 @@ from custom_components.google_home.sensor import (
     GoogleHomeAlarmsSensor,
     GoogleHomeDeviceSensor,
     GoogleHomeTimersSensor,
+    async_delete_alarm,
     async_delete_all_alarms,
     async_delete_all_timers,
+    async_delete_timer,
     async_reboot_devices,
 )
 
@@ -154,6 +156,38 @@ def test_delete_all_skip_refresh(
     _, coordinator, _ = delete_all(ALARM_IDS, TIMER_IDS, sensor_class, data)
 
     assert coordinator.async_request_refresh.await_count == int(refreshed)
+
+
+@pytest.mark.parametrize(
+    ("sensor_class", "deleted"),
+    [
+        (GoogleHomeAlarmsSensor, [ALARM_IDS[0]]),
+        (GoogleHomeTimersSensor, [TIMER_IDS[0]]),
+        (GoogleHomeDeviceSensor, None),
+    ],
+)
+def test_delete_one_only_on_its_sensor(
+    sensor_class: type, deleted: list[str] | None
+) -> None:
+    """Delete an alarm or timer only on its own sensor; a device target selects both."""
+    device = GoogleHomeDevice("device-id", "Kitchen", "token", "192.168.1.10")
+    client = Mock(delete_alarm_or_timer=AsyncMock())
+    coordinator = Mock(data=[device], async_request_refresh=AsyncMock())
+    sensor = sensor_class(coordinator, client, "device-id", "Kitchen", None)
+    call = Mock(data={"alarm_id": ALARM_IDS[0], "timer_id": TIMER_IDS[0]})
+
+    async def run_both() -> None:
+        await async_delete_alarm(sensor, call)
+        await async_delete_timer(sensor, call)
+
+    asyncio.run(run_both())
+
+    if deleted is None:
+        client.delete_alarm_or_timer.assert_not_awaited()
+    else:
+        client.delete_alarm_or_timer.assert_awaited_once_with(
+            device=device, items_to_delete=deleted
+        )
 
 
 def test_reboot_devices_once_each() -> None:

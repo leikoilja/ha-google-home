@@ -88,7 +88,7 @@ async def async_setup_entry(
             probatio.Required(SERVICE_ATTR_ALARM_ID): cv.string,
             probatio.Optional(SERVICE_ATTR_SKIP_REFRESH): cv.boolean,
         },
-        GoogleHomeAlarmsSensor.async_delete_alarm,
+        async_delete_alarm,
     )
 
     platform.async_register_entity_service(
@@ -97,7 +97,7 @@ async def async_setup_entry(
             probatio.Required(SERVICE_ATTR_TIMER_ID): cv.string,
             probatio.Optional(SERVICE_ATTR_SKIP_REFRESH): cv.boolean,
         },
-        GoogleHomeTimersSensor.async_delete_timer,
+        async_delete_timer,
     )
 
     platform.async_register_entity_service(
@@ -131,6 +131,18 @@ async def async_setup_entry(
 
 
 # A device target calls the action on the device's alarms and timers sensors.
+async def async_delete_alarm(entity: Entity, call: ServiceCall) -> None:
+    """Delete the alarm if the entity is an alarms sensor."""
+    if isinstance(entity, GoogleHomeAlarmsSensor):
+        await entity.async_delete_alarm(call)
+
+
+async def async_delete_timer(entity: Entity, call: ServiceCall) -> None:
+    """Delete the timer if the entity is a timers sensor."""
+    if isinstance(entity, GoogleHomeTimersSensor):
+        await entity.async_delete_timer(call)
+
+
 async def async_delete_all_alarms(entity: Entity, call: ServiceCall) -> None:
     """Delete all alarms if the entity is an alarms sensor."""
     if isinstance(entity, GoogleHomeAlarmsSensor):
