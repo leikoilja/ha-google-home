@@ -300,16 +300,16 @@ class GlocaltokensApiClient:
         return device
 
     async def delete_alarm_or_timer(
-        self, device: GoogleHomeDevice, item_to_delete: str
+        self, device: GoogleHomeDevice, items_to_delete: list[str]
     ) -> None:
-        """Delete a timer or alarm.
+        """Delete one or more timers or alarms in a single request."""
 
-        Can also delete multiple if a list is provided (Not implemented yet).
-        """
+        if not items_to_delete:
+            return
 
-        data = {"ids": [item_to_delete]}
+        data = {"ids": items_to_delete}
 
-        item_type = item_to_delete.split("/", maxsplit=1)[0]
+        item_type = items_to_delete[0].split("/", maxsplit=1)[0]
 
         _LOGGER.debug(
             "Deleting %s from Google Home device %s - Raw data: %s",
@@ -340,7 +340,7 @@ class GlocaltokensApiClient:
             else:
                 _LOGGER.error(
                     (
-                        "Failed to get a confirmation that the %s"
+                        "Failed to get a confirmation that the %s "
                         "was deleted for device %s. "
                         "Received = %s"
                     ),

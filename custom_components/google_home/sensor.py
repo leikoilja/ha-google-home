@@ -30,6 +30,8 @@ from .const import (
     SERVICE_ATTR_SKIP_REFRESH,
     SERVICE_ATTR_TIMER_ID,
     SERVICE_DELETE_ALARM,
+    SERVICE_DELETE_ALL_ALARMS,
+    SERVICE_DELETE_ALL_TIMERS,
     SERVICE_DELETE_TIMER,
     SERVICE_REBOOT,
     SERVICE_REFRESH,
@@ -110,6 +112,18 @@ async def async_setup_entry(
     )
 
     platform.async_register_entity_service(
+        SERVICE_DELETE_ALL_ALARMS,
+        {probatio.Optional(SERVICE_ATTR_SKIP_REFRESH): cv.boolean},
+        async_delete_all_alarms,
+    )
+
+    platform.async_register_entity_service(
+        SERVICE_DELETE_ALL_TIMERS,
+        {probatio.Optional(SERVICE_ATTR_SKIP_REFRESH): cv.boolean},
+        async_delete_all_timers,
+    )
+
+    platform.async_register_entity_service(
         SERVICE_REBOOT,
         {},
         GoogleHomeDeviceSensor.async_reboot_device,
@@ -122,6 +136,19 @@ async def async_setup_entry(
     )
 
     return True
+
+
+# A device target calls the action on each of the device's sensors.
+async def async_delete_all_alarms(entity: Entity, call: ServiceCall) -> None:
+    """Delete all alarms if the entity is an alarms sensor."""
+    if isinstance(entity, GoogleHomeAlarmsSensor):
+        await entity.async_delete_all_alarms(call)
+
+
+async def async_delete_all_timers(entity: Entity, call: ServiceCall) -> None:
+    """Delete all timers if the entity is a timers sensor."""
+    if isinstance(entity, GoogleHomeTimersSensor):
+        await entity.async_delete_all_timers(call)
 
 
 class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
@@ -276,7 +303,29 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
             )
             return
 
-        await self.client.delete_alarm_or_timer(device=device, item_to_delete=alarm_id)
+        await self.client.delete_alarm_or_timer(
+            device=device, items_to_delete=[alarm_id]
+        )
+        if not call.data.get(SERVICE_ATTR_SKIP_REFRESH, False):
+            await self.coordinator.async_request_refresh()
+
+    async def async_delete_all_alarms(self, call: ServiceCall) -> None:
+        """Service call to delete all alarms on device."""
+        device = self.get_device()
+
+        if device is None:
+            _LOGGER.error("Device %s is not found.", self.device_name)
+            return
+
+        await self.client.update_alarms_and_timers(device)
+        alarm_ids = [alarm.alarm_id for alarm in device.get_sorted_alarms()]
+        if not alarm_ids:
+            _LOGGER.debug("No alarms to delete for %s", device.name)
+            return
+
+        await self.client.delete_alarm_or_timer(
+            device=device, items_to_delete=alarm_ids
+        )
         if not call.data.get(SERVICE_ATTR_SKIP_REFRESH, False):
             await self.coordinator.async_request_refresh()
 
@@ -356,7 +405,30 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
             )
             return
 
-        await self.client.delete_alarm_or_timer(device=device, item_to_delete=timer_id)
+        await self.client.delete_alarm_or_timer(
+            device=device, items_to_delete=[timer_id]
+        )
+        if not call.data.get(SERVICE_ATTR_SKIP_REFRESH, False):
+            _LOGGER.debug("Refreshing Devices")
+            await self.coordinator.async_request_refresh()
+
+    async def async_delete_all_timers(self, call: ServiceCall) -> None:
+        """Service call to delete all timers on device."""
+        device = self.get_device()
+
+        if device is None:
+            _LOGGER.error("Device %s is not found.", self.device_name)
+            return
+
+        await self.client.update_alarms_and_timers(device)
+        timer_ids = [timer.timer_id for timer in device.get_sorted_timers()]
+        if not timer_ids:
+            _LOGGER.debug("No timers to delete for %s", device.name)
+            return
+
+        await self.client.delete_alarm_or_timer(
+            device=device, items_to_delete=timer_ids
+        )
         if not call.data.get(SERVICE_ATTR_SKIP_REFRESH, False):
             _LOGGER.debug("Refreshing Devices")
             await self.coordinator.async_request_refresh()

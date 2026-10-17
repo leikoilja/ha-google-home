@@ -2,12 +2,14 @@
 
 The integration adds these actions, which older Home Assistant versions called services. Use them in automations and scripts, or try them in [**Developer tools** > **Actions**](https://my.home-assistant.io/redirect/developer_services/).
 
-| Action                                            | What it does                    |
-| ------------------------------------------------- | ------------------------------- |
-| [`google_home.delete_alarm`](#delete-alarm)       | Deletes an alarm from a device  |
-| [`google_home.delete_timer`](#delete-timer)       | Deletes a timer from a device   |
-| [`google_home.reboot_device`](#reboot-device)     | Reboots a device                |
-| [`google_home.refresh_devices`](#refresh-devices) | Updates all devices immediately |
+| Action                                                | What it does                    |
+| ----------------------------------------------------- | ------------------------------- |
+| [`google_home.delete_alarm`](#delete-alarm)           | Deletes an alarm from a device  |
+| [`google_home.delete_timer`](#delete-timer)           | Deletes a timer from a device   |
+| [`google_home.delete_all_alarms`](#delete-all-alarms) | Deletes all alarms from devices |
+| [`google_home.delete_all_timers`](#delete-all-timers) | Deletes all timers from devices |
+| [`google_home.reboot_device`](#reboot-device)         | Reboots a device                |
+| [`google_home.refresh_devices`](#refresh-devices)     | Updates all devices immediately |
 
 ## Delete alarm
 
@@ -56,6 +58,42 @@ data:
 | `entity_id`    | Timers sensor of the device, such as `sensor.kitchen_timers`                                                                             |
 | `timer_id`     | ID of the timer to delete. Find it in the `timers` attribute of the [timers sensor](entities.md#timers-sensor). It starts with `timer/`. |
 | `skip_refresh` | Optional. Same as for [Delete alarm](#delete-alarm).                                                                                     |
+
+## Delete all alarms
+
+Deletes all alarms from one or more devices.
+
+```yaml
+action: google_home.delete_all_alarms
+target:
+  entity_id: sensor.kitchen_alarms
+data:
+  skip_refresh: false
+```
+
+| Field          | Description                                          |
+| -------------- | ---------------------------------------------------- |
+| `skip_refresh` | Optional. Same as for [Delete alarm](#delete-alarm). |
+
+Target the alarms sensor of each device, or the devices themselves. The action asks each device for its current alarms first, so it also deletes alarms set since the last update.
+
+## Delete all timers
+
+Deletes all timers from one or more devices.
+
+```yaml
+action: google_home.delete_all_timers
+target:
+  entity_id: sensor.kitchen_timers
+data:
+  skip_refresh: false
+```
+
+| Field          | Description                                          |
+| -------------- | ---------------------------------------------------- |
+| `skip_refresh` | Optional. Same as for [Delete alarm](#delete-alarm). |
+
+Target the timers sensor of each device, or the devices themselves. The action asks each device for its current timers first, so it also deletes timers set since the last update.
 
 ## Reboot device
 

@@ -48,4 +48,30 @@ delete_timer:
       selector:
         text:
 
+delete_all_alarms:
+  target:
+    entity:
+      domain: sensor
+      integration: google_home
+  fields:
+    skip_refresh:
+      example: true
+      default: false
+      required: false
+      selector:
+        boolean:
+
+delete_all_timers:
+  target:
+    entity:
+      domain: sensor
+      integration: google_home
+  fields:
+    skip_refresh:
+      example: true
+      default: false
+      required: false
+      selector:
+        boolean:
+
 refresh_devices:
