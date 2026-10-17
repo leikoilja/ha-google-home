@@ -94,6 +94,26 @@
       },
       "name": "Timer verwijderen"
     },
+    "delete_all_alarms": {
+      "description": "Verwijder alle alarmen van Google Home-apparaten.",
+      "fields": {
+        "skip_refresh": {
+          "description": "Sla het verversen van Google Home-apparaten over na het verwijderen van de alarmen.",
+          "name": "Verversen overslaan"
+        }
+      },
+      "name": "Alle alarmen verwijderen"
+    },
+    "delete_all_timers": {
+      "description": "Verwijder alle timers van Google Home-apparaten.",
+      "fields": {
+        "skip_refresh": {
+          "description": "Sla het verversen van Google Home-apparaten over na het verwijderen van de timers.",
+          "name": "Verversen overslaan"
+        }
+      },
+      "name": "Alle timers verwijderen"
+    },
     "reboot_device": {
       "description": "Herstart een Google Home-apparaat.",
       "name": "Apparaat herstarten"

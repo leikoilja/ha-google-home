@@ -94,6 +94,26 @@
       },
       "name": "Видалити таймер"
     },
+    "delete_all_alarms": {
+      "description": "Видалити всі будильники з пристроїв Google Home.",
+      "fields": {
+        "skip_refresh": {
+          "description": "Пропустити оновлення пристроїв Google Home після видалення будильників.",
+          "name": "Пропустити оновлення"
+        }
+      },
+      "name": "Видалити всі будильники"
+    },
+    "delete_all_timers": {
+      "description": "Видалити всі таймери з пристроїв Google Home.",
+      "fields": {
+        "skip_refresh": {
+          "description": "Пропустити оновлення пристроїв Google Home після видалення таймерів.",
+          "name": "Пропустити оновлення"
+        }
+      },
+      "name": "Видалити всі таймери"
+    },
     "reboot_device": {
       "description": "Перезавантажити пристрій Google Home.",
       "name": "Перезавантажити пристрій"

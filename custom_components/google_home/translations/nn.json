@@ -94,6 +94,26 @@
       },
       "name": "Slett tidtakar"
     },
+    "delete_all_alarms": {
+      "description": "Slett alle alarmar frå Google Home-einingar.",
+      "fields": {
+        "skip_refresh": {
+          "description": "Hopp over oppdatering av Google Home-einingar etter å ha sletta alarmane.",
+          "name": "Hopp over oppdatering"
+        }
+      },
+      "name": "Slett alle alarmar"
+    },
+    "delete_all_timers": {
+      "description": "Slett alle tidtakarar frå Google Home-einingar.",
+      "fields": {
+        "skip_refresh": {
+          "description": "Hopp over oppdatering av Google Home-einingar etter å ha sletta tidtakarane.",
+          "name": "Hopp over oppdatering"
+        }
+      },
+      "name": "Slett alle tidtakarar"
+    },
     "reboot_device": {
       "description": "Start ei Google Home-eining på nytt.",
       "name": "Start eining på nytt"

@@ -94,6 +94,26 @@
       },
       "name": "Timer löschen"
     },
+    "delete_all_alarms": {
+      "description": "Alle Wecker von Google Home-Geräten löschen.",
+      "fields": {
+        "skip_refresh": {
+          "description": "Aktualisierung der Google Home-Geräte nach dem Löschen der Wecker überspringen.",
+          "name": "Aktualisierung überspringen"
+        }
+      },
+      "name": "Alle Wecker löschen"
+    },
+    "delete_all_timers": {
+      "description": "Alle Timer von Google Home-Geräten löschen.",
+      "fields": {
+        "skip_refresh": {
+          "description": "Aktualisierung der Google Home-Geräte nach dem Löschen der Timer überspringen.",
+          "name": "Aktualisierung überspringen"
+        }
+      },
+      "name": "Alle Timer löschen"
+    },
     "reboot_device": {
       "description": "Ein Google Home-Gerät neu starten.",
       "name": "Gerät neu starten"

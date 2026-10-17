@@ -94,6 +94,26 @@
       },
       "name": "Odstrániť časovač"
     },
+    "delete_all_alarms": {
+      "description": "Odstrániť všetky budíky zo zariadení Google Home.",
+      "fields": {
+        "skip_refresh": {
+          "description": "Preskočiť obnovenie zariadení Google Home po odstránení budíkov.",
+          "name": "Preskočiť obnovenie"
+        }
+      },
+      "name": "Odstrániť všetky budíky"
+    },
+    "delete_all_timers": {
+      "description": "Odstrániť všetky časovače zo zariadení Google Home.",
+      "fields": {
+        "skip_refresh": {
+          "description": "Preskočiť obnovenie zariadení Google Home po odstránení časovačov.",
+          "name": "Preskočiť obnovenie"
+        }
+      },
+      "name": "Odstrániť všetky časovače"
+    },
     "reboot_device": {
       "description": "Reštartovať zariadenie Google Home.",
       "name": "Reštartovať zariadenie"
