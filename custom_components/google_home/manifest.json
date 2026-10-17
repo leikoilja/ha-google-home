@@ -17,6 +17,9 @@
   "documentation": "https://ha-google-home.pages.dev/",
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/leikoilja/ha-google-home/issues",
+  "loggers": [
+    "glocaltokens"
+  ],
   "requirements": [
     "glocaltokens==0.10.0"
   ],
