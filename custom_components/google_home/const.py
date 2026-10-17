@@ -93,6 +93,9 @@ DATETIME_STR_FORMAT: Final = f"{DATE_STR_FORMAT} {TIME_STR_FORMAT}"
 # Access token only lives about 1 hour
 # Update often to fetch timers in timely manner
 UPDATE_INTERVAL: Final = 180  # sec
+# While a device has no IP address, fetch Google's device list again every this
+# many updates. It's a request to Google, so not on every update.
+FETCH_DEVICES_EVERY: Final = 10
 
 # JSON parameter values when retrieving information from devices
 JSON_ALARM: Final = "alarm"
