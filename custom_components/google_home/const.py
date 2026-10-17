@@ -15,9 +15,17 @@ ISSUE_URL: Final = "https://github.com/leikoilja/ha-google-home/issues"
 CONF_UPDATE_INTERVAL: Final = "update_interval"
 # Addresses of devices that mDNS can't find, for example on another network
 CONF_KNOWN_HOSTS: Final = "known_hosts"
+CONF_BLUETOOTH_TRACKING: Final = "bluetooth_tracking"
+# Device IDs of speakers that don't scan for Bluetooth trackers
+CONF_BLUETOOTH_EXCLUDED: Final = "bluetooth_excluded_speakers"
+CONF_IRK: Final = "irk"
+SUBENTRY_BLUETOOTH_DEVICE: Final = "bluetooth_device"
 
 DATA_CLIENT: Final = "client"
 DATA_COORDINATOR: Final = "coordinator"
+DATA_BLUETOOTH: Final = "bluetooth"
+# The Bluetooth settings the entry was set up with, to reload when they change
+DATA_BLUETOOTH_CONFIG: Final = "bluetooth_config"
 
 ALARM_AND_TIMER_ID_LENGTH: Final = 42
 
@@ -36,7 +44,8 @@ SENSOR: Final = "sensor"
 SWITCH: Final = "switch"
 NUMBER: Final = "number"
 BUTTON: Final = "button"
-PLATFORMS: Final = [SENSOR, SWITCH, NUMBER, BUTTON]
+DEVICE_TRACKER: Final = "device_tracker"
+PLATFORMS: Final = [SENSOR, SWITCH, NUMBER, BUTTON, DEVICE_TRACKER]
 
 # Services
 SERVICE_REBOOT: Final = "reboot_device"
@@ -79,6 +88,8 @@ API_ENDPOINT_ALARM_DELETE: Final = "setup/assistant/alarms/delete"
 API_ENDPOINT_ALARM_VOLUME: Final = "setup/assistant/alarms/volume"
 API_ENDPOINT_REBOOT: Final = "setup/reboot"
 API_ENDPOINT_DO_NOT_DISTURB: Final = "setup/assistant/notifications"
+API_ENDPOINT_BLUETOOTH_SCAN: Final = "setup/bluetooth/scan"
+API_ENDPOINT_BLUETOOTH_RESULTS: Final = "setup/bluetooth/scan_results"
 # Answers without a local auth token, so it identifies a known host
 API_ENDPOINT_EUREKA_INFO: Final = "setup/eureka_info?params=name,device_info"
 
@@ -98,6 +109,21 @@ UPDATE_INTERVAL: Final = 180  # sec
 # While a device has no IP address, fetch Google's device list again every this
 # many updates. It's a request to Google, so not on every update.
 FETCH_DEVICES_EVERY: Final = 10
+
+# Bluetooth tracking, in seconds unless noted. Each scan lasts until the next
+# update, which reads its results and starts the next scan.
+BLUETOOTH_SCAN_INTERVAL: Final = 30
+# Results read later than this after their scan started are discarded
+BLUETOOTH_MAX_RESULT_AGE: Final = 45
+# A longer gap between scans breaks a speaker's unbroken coverage
+BLUETOOTH_MAX_SCAN_GAP: Final = 15
+# A tracked device is home this long after the start of a scan that heard it,
+# and away once every speaker has scanned this long without hearing it
+BLUETOOTH_PRESENCE_WINDOW: Final = 90
+# Weaker sightings are ignored: a phone away from home was once heard at -83
+BLUETOOTH_MIN_RSSI: Final = -80  # dBm
+# Warn about a speaker that has kept trackers from showing away this long
+BLUETOOTH_BLOCKING_WARNING: Final = 300
 
 # JSON parameter values when retrieving information from devices
 JSON_ALARM: Final = "alarm"
