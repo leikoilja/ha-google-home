@@ -4,6 +4,7 @@ from unittest.mock import Mock
 
 import pytest
 
+from custom_components.google_home.button import RebootButton
 from custom_components.google_home.number import AlarmVolumeNumber
 from custom_components.google_home.sensor import (
     GoogleHomeAlarmsSensor,
@@ -25,6 +26,7 @@ from homeassistant.helpers.entity_registry import _async_strip_prefix_from_entit
         GoogleHomeDeviceSensor,
         DoNotDisturbSwitch,
         AlarmVolumeNumber,
+        RebootButton,
     ],
 )
 def test_entity_name_starts_with_device_name(entity_class: type) -> None:

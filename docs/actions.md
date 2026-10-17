@@ -105,9 +105,9 @@ target:
   entity_id: sensor.kitchen_device
 ```
 
-Target any Google Home sensor of the device, such as its device sensor.
+Target any Google Home sensor of the device, such as its device sensor. To reboot from the device page or a dashboard, press the device's [reboot button](entities.md#reboot-button) instead.
 
-Not every device supports rebooting. The log can show "Successfully asked Kitchen to reboot." even when the device didn't restart.
+Not every device supports rebooting. The log can show "Successfully asked Kitchen to reboot." even when the device didn't restart. If that happens, [reboot it from the Google Home app or unplug it for a minute](https://support.google.com/googlehome/answer/7072490).
 
 ## Refresh devices
 
