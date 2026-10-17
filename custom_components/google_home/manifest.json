@@ -21,6 +21,7 @@
     "glocaltokens"
   ],
   "requirements": [
+    "bluetooth-data-tools>=1.29.24",
     "glocaltokens==0.11.0"
   ],
   "single_config_entry": true,

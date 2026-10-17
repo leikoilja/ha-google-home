@@ -19,9 +19,12 @@ from .const import (
     API_ENDPOINT_ALARM_DELETE,
     API_ENDPOINT_ALARM_VOLUME,
     API_ENDPOINT_ALARMS,
+    API_ENDPOINT_BLUETOOTH_RESULTS,
+    API_ENDPOINT_BLUETOOTH_SCAN,
     API_ENDPOINT_DO_NOT_DISTURB,
     API_ENDPOINT_EUREKA_INFO,
     API_ENDPOINT_REBOOT,
+    BLUETOOTH_SCAN_INTERVAL,
     FETCH_DEVICES_EVERY,
     HEADER_CAST_LOCAL_AUTH,
     HEADER_CONTENT_TYPE,
@@ -32,9 +35,9 @@ from .const import (
     PORT,
     TIMEOUT,
 )
-from .exceptions import InvalidMasterToken
+from .exceptions import BluetoothScanError, BluetoothScanUnsupported, InvalidMasterToken
 from .models import GoogleHomeDevice
-from .types import AlarmJsonDict, JsonDict, TimerJsonDict
+from .types import AlarmJsonDict, BluetoothJsonDict, JsonDict, TimerJsonDict
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -502,6 +505,79 @@ class GlocaltokensApiClient:
                 )
 
         return device
+
+    async def async_start_bluetooth_scan(self, device: GoogleHomeDevice) -> None:
+        """Start a Bluetooth scan that clears the results of the previous one.
+
+        The scan lasts until the next Bluetooth update reads its results.
+        """
+        await self._async_bluetooth_request(
+            "POST",
+            API_ENDPOINT_BLUETOOTH_SCAN,
+            device,
+            {
+                "enable": True,
+                "clear_results": True,
+                "timeout": BLUETOOTH_SCAN_INTERVAL,
+            },
+        )
+
+    async def async_get_bluetooth_scan_results(
+        self, device: GoogleHomeDevice
+    ) -> list[BluetoothJsonDict]:
+        """Return the Bluetooth devices the device heard since its scan started."""
+        response = await self._async_bluetooth_request(
+            "GET", API_ENDPOINT_BLUETOOTH_RESULTS, device
+        )
+        if not isinstance(response, list):
+            raise BluetoothScanError(f"{device.name} returned no list of results")
+        return [
+            {"mac_address": result["mac_address"], "rssi": result["rssi"]}
+            for result in cast(list[object], response)
+            if isinstance(result, dict)
+            and isinstance(result.get("mac_address"), str)
+            and isinstance(result.get("rssi"), int)
+        ]
+
+    async def _async_bluetooth_request(
+        self,
+        method: Literal["GET", "POST"],
+        endpoint: str,
+        device: GoogleHomeDevice,
+        data: JsonDict | None = None,
+    ) -> object:
+        """Send a Bluetooth request and return its JSON response.
+
+        Unlike request(), a failure leaves the device's availability alone and
+        raises instead of logging, as Bluetooth updates run every 30 seconds.
+        """
+        if not device.ip_address or not device.auth_token:
+            raise BluetoothScanError(f"{device.name} has no IP address or auth token")
+        url = self.create_url(device.ip_address, PORT, endpoint)
+        headers = {
+            HEADER_CAST_LOCAL_AUTH: device.auth_token,
+            HEADER_CONTENT_TYPE: "application/json",
+        }
+        try:
+            async with self._session.request(
+                method,
+                url,
+                json=data,
+                headers=headers,
+                timeout=ClientTimeout(total=TIMEOUT),
+            ) as response:
+                if response.status == HTTPStatus.NOT_FOUND:
+                    raise BluetoothScanUnsupported(f"{device.name} returned 404")
+                if response.status != HTTPStatus.OK:
+                    raise BluetoothScanError(
+                        f"{device.name} returned {response.status}"
+                    )
+                try:
+                    return cast(object, await response.json())
+                except ContentTypeError:
+                    return None
+        except (ClientError, TimeoutError, ValueError) as err:
+            raise BluetoothScanError(f"{device.name} didn't answer: {err!r}") from err
 
     async def request(
         self,

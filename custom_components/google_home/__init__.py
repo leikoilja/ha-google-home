@@ -18,12 +18,18 @@ from homeassistant.helpers.device_registry import DeviceEntry
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .api import GlocaltokensApiClient
+from .bluetooth import BluetoothScanner, TrackerState
 from .const import (
+    BLUETOOTH_SCAN_INTERVAL,
     BROWSER_TITLE,
     CONF_ANDROID_ID,
+    CONF_BLUETOOTH_EXCLUDED,
+    CONF_BLUETOOTH_TRACKING,
     CONF_KNOWN_HOSTS,
     CONF_MASTER_TOKEN,
     CONF_UPDATE_INTERVAL,
+    DATA_BLUETOOTH,
+    DATA_BLUETOOTH_CONFIG,
     DATA_CLIENT,
     DATA_COORDINATOR,
     DOMAIN,
@@ -31,6 +37,7 @@ from .const import (
     PLATFORMS,
     SENSOR,
     STARTUP_MESSAGE,
+    SUBENTRY_BLUETOOTH_DEVICE,
     UPDATE_INTERVAL,
 )
 from .models import GoogleHomeDevice
@@ -102,12 +109,26 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -
 
     await coordinator.async_config_entry_first_refresh()
 
+    bluetooth_coordinator = async_create_bluetooth_coordinator(
+        hass, entry, glocaltokens_client, coordinator
+    )
+
     hass.data[DOMAIN][entry.entry_id] = {
         DATA_CLIENT: glocaltokens_client,
         DATA_COORDINATOR: coordinator,
+        DATA_BLUETOOTH: bluetooth_coordinator,
+        DATA_BLUETOOTH_CONFIG: bluetooth_config(entry),
     }
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+
+    if bluetooth_coordinator is not None:
+        # Not a first refresh: Bluetooth must never fail or delay setup
+        entry.async_create_background_task(
+            hass,
+            bluetooth_coordinator.async_refresh(),
+            "Start Bluetooth scans",
+        )
 
     if entry.title in GENERIC_TITLES:
         entry.async_create_background_task(
@@ -118,6 +139,50 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -
 
     entry.async_on_unload(entry.add_update_listener(async_update_entry))
     return True
+
+
+def bluetooth_config(
+    entry: GoogleHomeConfigEntry,
+) -> tuple[bool, frozenset[str], frozenset[str]]:
+    """Return the settings that Bluetooth tracking is set up with.
+
+    Adding or removing a tracked device only calls the entry's update listener,
+    so it compares these to reload when they change.
+    """
+    return (
+        bool(entry.options.get(CONF_BLUETOOTH_TRACKING, False)),
+        frozenset(entry.options.get(CONF_BLUETOOTH_EXCLUDED, [])),
+        frozenset(
+            subentry.subentry_id
+            for subentry in entry.get_subentries_of_type(SUBENTRY_BLUETOOTH_DEVICE)
+        ),
+    )
+
+
+def async_create_bluetooth_coordinator(
+    hass: HomeAssistant,
+    entry: GoogleHomeConfigEntry,
+    client: GlocaltokensApiClient,
+    coordinator: DataUpdateCoordinator[list[GoogleHomeDevice]],
+) -> DataUpdateCoordinator[dict[str, TrackerState]] | None:
+    """Create the Bluetooth coordinator, if tracking is on and has devices to track."""
+    tracking, excluded, subentry_ids = bluetooth_config(entry)
+    if not tracking or not subentry_ids:
+        return None
+    scanner = BluetoothScanner(
+        client,
+        coordinator,
+        entry.get_subentries_of_type(SUBENTRY_BLUETOOTH_DEVICE),
+        excluded,
+    )
+    return DataUpdateCoordinator(
+        hass,
+        _LOGGER,
+        name=f"{DOMAIN}_bluetooth",
+        update_method=scanner.async_update,
+        update_interval=timedelta(seconds=BLUETOOTH_SCAN_INTERVAL),
+        config_entry=entry,
+    )
 
 
 async def async_name_after_account(
@@ -167,10 +232,15 @@ async def async_remove_config_entry_device(
 
 async def async_update_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -> None:
     """Apply changed options."""
-    client: GlocaltokensApiClient = hass.data[DOMAIN][entry.entry_id][DATA_CLIENT]
+    entry_data = hass.data[DOMAIN][entry.entry_id]
+    client: GlocaltokensApiClient = entry_data[DATA_CLIENT]
     # Known hosts are looked up when Google's device list is fetched, at setup
     if entry.options.get(CONF_KNOWN_HOSTS, []) != client.known_hosts:
         _LOGGER.debug("Known hosts changed, reloading...")
+        hass.config_entries.async_schedule_reload(entry.entry_id)
+        return
+    if bluetooth_config(entry) != entry_data[DATA_BLUETOOTH_CONFIG]:
+        _LOGGER.debug("Bluetooth tracking changed, reloading...")
         hass.config_entries.async_schedule_reload(entry.entry_id)
         return
     _LOGGER.debug("Options updated, updating coordinator interval...")

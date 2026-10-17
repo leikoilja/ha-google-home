@@ -11,6 +11,8 @@ Each Google Home device gets the entities below. The examples use a device named
 | Alarm volume          | `number.living_room_alarm_volume`   | Sets the alarm volume, from 0 to 100%                     |
 | Reboot button         | `button.living_room_reboot`         | Reboots the device                                        |
 
+If you turn on [Bluetooth tracking](bluetooth.md), each phone or other Bluetooth device you track also gets a tracker entity.
+
 The alarms sensor, timers sensor, switch and alarm volume are added once Home Assistant can reach the device. If a device has only a device sensor and a reboot button, see [No alarms or timers sensors](troubleshooting.md#no-alarms-or-timers-sensors).
 
 ## Alarms sensor

@@ -26,6 +26,13 @@ class TimerJsonDict(TypedDict, total=False):
     label: str | None
 
 
+class BluetoothJsonDict(TypedDict):
+    """Typed dict for a Bluetooth device in a Google Home device's scan results."""
+
+    mac_address: str
+    rssi: int
+
+
 class GoogleHomeAlarmDict(TypedDict):
     """Typed dict representation of Google Home alarm."""
 
@@ -80,6 +87,8 @@ class OptionsFlowDict(TypedDict, total=False):
 
     update_interval: int
     known_hosts: list[str]
+    bluetooth_tracking: bool
+    bluetooth_excluded_speakers: list[str]
 
 
 type JsonDict = Mapping[
