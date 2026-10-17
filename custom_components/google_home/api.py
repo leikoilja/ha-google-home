@@ -345,6 +345,7 @@ class GlocaltokensApiClient:
                         item_type,
                         device.name,
                     )
+                    device.remove_alarms_and_timers(items_to_delete)
                 else:
                     _LOGGER.error(
                         "Couldn't delete %s for %s - %s",

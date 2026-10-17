@@ -18,6 +18,10 @@ from custom_components.google_home.sensor import (
     async_reboot_devices,
 )
 
+# ruff sorts homeassistant as first-party, pylint as third-party
+# pylint: disable-next=wrong-import-order
+from homeassistant.const import STATE_UNAVAILABLE
+
 # glocaltokens accepts only master tokens of the real length
 MASTER_TOKEN = "aas_et/" + "x" * 216
 ALARM_IDS = [
@@ -79,10 +83,11 @@ def delete_all(
     timer_ids: list[str],
     sensor_class: type,
     data: dict[str, bool],
-) -> tuple[Mock, Mock, GoogleHomeDevice]:
+) -> tuple[Mock, Mock, GoogleHomeDevice, list[str | None]]:
     """Run the delete-all actions on a sensor of a device that now has these IDs.
 
-    The last poll saw other IDs, which the actions must not use.
+    The last poll saw other IDs, which the actions must not use. Also return
+    the sensor's state each time the entities were updated.
     """
     device = set_alarms_and_timers(
         GoogleHomeDevice("device-id", "Kitchen", "token", "192.168.1.10"),
@@ -90,13 +95,20 @@ def delete_all(
         ["timer/from-last-poll"],
     )
     client = Mock(
-        delete_alarm_or_timer=AsyncMock(),
+        # Like the device confirming the delete
+        delete_alarm_or_timer=AsyncMock(
+            side_effect=lambda device, items_to_delete: device.remove_alarms_and_timers(
+                items_to_delete
+            )
+        ),
         update_alarms_and_timers=AsyncMock(
             side_effect=lambda d: set_alarms_and_timers(d, alarm_ids, timer_ids)
         ),
     )
     coordinator = Mock(data=[device], async_request_refresh=AsyncMock())
     sensor = sensor_class(coordinator, client, "device-id", "Kitchen", None)
+    shown: list[str | None] = []
+    coordinator.async_update_listeners.side_effect = lambda: shown.append(sensor.state)
     call = Mock(data=data)
 
     async def run_both() -> None:
@@ -104,7 +116,7 @@ def delete_all(
         await async_delete_all_timers(sensor, call)
 
     asyncio.run(run_both())
-    return client, coordinator, device
+    return client, coordinator, device, shown
 
 
 @pytest.mark.parametrize(
@@ -115,7 +127,7 @@ def test_delete_all_sends_every_id_in_one_request(
     sensor_class: type, ids: list[str]
 ) -> None:
     """Delete the sensor's current alarms or timers, and only those, in one request."""
-    client, _, device = delete_all(ALARM_IDS, TIMER_IDS, sensor_class, {})
+    client, _, device, _ = delete_all(ALARM_IDS, TIMER_IDS, sensor_class, {})
 
     client.delete_alarm_or_timer.assert_awaited_once_with(
         device=device, items_to_delete=ids
@@ -126,20 +138,34 @@ def test_delete_all_sends_every_id_in_one_request(
     "sensor_class", [GoogleHomeAlarmsSensor, GoogleHomeTimersSensor]
 )
 def test_delete_all_sends_nothing_when_empty(sensor_class: type) -> None:
-    """Send no request and don't refresh when there is nothing to delete.
-
-    The fetch still updated the device, so its entities must show that.
-    """
-    client, coordinator, _ = delete_all([], [], sensor_class, {})
+    """Send no request and don't refresh when there is nothing to delete."""
+    client, coordinator, _, _ = delete_all([], [], sensor_class, {})
 
     client.delete_alarm_or_timer.assert_not_awaited()
     coordinator.async_request_refresh.assert_not_awaited()
-    coordinator.async_update_listeners.assert_called_once_with()
+
+
+@pytest.mark.parametrize(
+    "sensor_class", [GoogleHomeAlarmsSensor, GoogleHomeTimersSensor]
+)
+@pytest.mark.parametrize(("alarm_ids", "timer_ids"), [(ALARM_IDS, TIMER_IDS), ([], [])])
+def test_delete_all_shows_none_left(
+    sensor_class: type, alarm_ids: list[str], timer_ids: list[str]
+) -> None:
+    """Show no alarms or timers right away, even without a refresh.
+
+    Also when the device has none left, such as after deleting them from the phone.
+    """
+    _, _, _, shown = delete_all(
+        alarm_ids, timer_ids, sensor_class, {"skip_refresh": True}
+    )
+
+    assert shown == [STATE_UNAVAILABLE]
 
 
 def test_delete_all_ignores_device_sensor() -> None:
     """Do nothing on the device sensor, which a device target also selects."""
-    client, _, _ = delete_all(ALARM_IDS, TIMER_IDS, GoogleHomeDeviceSensor, {})
+    client, _, _, _ = delete_all(ALARM_IDS, TIMER_IDS, GoogleHomeDeviceSensor, {})
 
     client.delete_alarm_or_timer.assert_not_awaited()
 
@@ -155,7 +181,7 @@ def test_delete_all_skip_refresh(
     sensor_class: type, data: dict[str, bool], refreshed: bool
 ) -> None:
     """Refresh the devices after deleting unless skip_refresh is set."""
-    _, coordinator, _ = delete_all(ALARM_IDS, TIMER_IDS, sensor_class, data)
+    _, coordinator, _, _ = delete_all(ALARM_IDS, TIMER_IDS, sensor_class, data)
 
     assert coordinator.async_request_refresh.await_count == int(refreshed)
 
@@ -222,6 +248,28 @@ def test_delete_alarm_or_timer_posts_all_ids() -> None:
         device=device,
         data={"ids": ALARM_IDS},
     )
+
+
+@pytest.mark.parametrize(
+    ("response", "alarms_left"),
+    [({"success": True}, []), ({"success": False}, ALARM_IDS), (None, ALARM_IDS)],
+)
+def test_delete_alarm_or_timer_removes_deleted_ids(
+    response: dict[str, bool] | None, alarms_left: list[str]
+) -> None:
+    """Remove the IDs from the device once it confirms deleting them."""
+    client = GlocaltokensApiClient(Mock(), Mock(), master_token=MASTER_TOKEN)
+    client.request = AsyncMock(return_value=response)  # type: ignore[method-assign]
+    device = set_alarms_and_timers(
+        GoogleHomeDevice("device-id", "Kitchen", "token", "192.168.1.10"),
+        ALARM_IDS,
+        TIMER_IDS,
+    )
+
+    asyncio.run(client.delete_alarm_or_timer(device, ALARM_IDS))
+
+    assert [alarm.alarm_id for alarm in device.get_sorted_alarms()] == alarms_left
+    assert [timer.timer_id for timer in device.get_sorted_timers()] == TIMER_IDS
 
 
 def test_delete_alarm_or_timer_sends_nothing_for_no_ids() -> None:
