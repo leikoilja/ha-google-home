@@ -3,7 +3,7 @@ name: Publish new release
 on:
   workflow_dispatch:
 
-# Writes go through ADMIN_TOKEN, which can bypass branch protection.
+# Writes go through a GitHub App installation token, which can bypass branch protection.
 permissions:
   contents: read
 
@@ -22,6 +22,14 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Generate app token
+        id: app-token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        with:
+          client-id: Iv23lisGLFQmdk6HAWnK
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          permission-contents: write
+
       - name: Prepare and install deps
         uses: ./.github/actions/install-deps
         with:
@@ -31,4 +39,4 @@ jobs:
         run: |
           uv run python script/publish_release.py
         env:
-          GITHUB_TOKEN: ${{ secrets.ADMIN_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}

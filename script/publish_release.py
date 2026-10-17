@@ -50,9 +50,6 @@ def update_manifests(repo: Repository, version: str) -> None:
 
     branch = repo.get_branch("master")
 
-    # Disable branch protection before commit
-    branch.remove_admin_enforcement()
-
     # Create commit
     elements = []
     for file_path, content in [
@@ -71,9 +68,6 @@ def update_manifests(repo: Repository, version: str) -> None:
     commit = repo.create_git_commit(f"Release v{version}", tree, [parent])
     master_ref = repo.get_git_ref(f"heads/{branch.name}")
     master_ref.edit(sha=commit.sha)
-
-    # Re-enable branch protection
-    branch.set_admin_enforcement()
 
 
 def publish_release(release: GitRelease) -> None:
