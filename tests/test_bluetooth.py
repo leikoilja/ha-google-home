@@ -356,9 +356,10 @@ def test_new_speaker_must_cover_the_window() -> None:
     scanner = make_scanner(speakers)
     assert states(scanner, speakers, range(0, 120, 30))[-1] == NOT_HOME
 
+    # It counts once it returns results, at 150, and has covered 90 seconds at 210
     bedroom.ip_address = "10.0.0.9"
     assert states(scanner, speakers, range(120, 240, 30)) == [
-        UNAVAILABLE,
+        NOT_HOME,
         UNAVAILABLE,
         UNAVAILABLE,
         NOT_HOME,
@@ -393,6 +394,19 @@ def test_unsupported_speaker_left_out() -> None:
     assert states(scanner, speakers, range(0, 120, 30))[-1] == NOT_HOME
 
 
+@pytest.mark.parametrize("fails", ["timeout", "unsupported"])
+def test_device_that_never_answers_never_blocks_away(fails: str) -> None:
+    """Confirm away without a device that never returned results, however it fails."""
+    speakers = Speakers("Kitchen", "TV")
+    if fails == "timeout":
+        speakers.failing.add("tv")
+    else:
+        speakers.unsupported.add("tv")
+    scanner = make_scanner(speakers)
+
+    assert states(scanner, speakers, range(0, 120, 30))[-1] == NOT_HOME
+
+
 def test_excluded_speaker_not_used() -> None:
     """Never ask an excluded speaker, and confirm away without it."""
     speakers = Speakers("Kitchen", "Garage")
@@ -406,13 +420,14 @@ def test_excluded_speaker_not_used() -> None:
 def test_warn_about_speaker_that_blocks_away(caplog: pytest.LogCaptureFixture) -> None:
     """Warn once when a speaker has kept trackers from showing away for 5 minutes."""
     speakers = Speakers("Kitchen", "Garage")
-    speakers.failing.add("garage")
     scanner = make_scanner(speakers)
+    states(scanner, speakers, range(0, 60, 30))
+    speakers.failing.add("garage")
 
     with caplog.at_level(logging.WARNING):
-        states(scanner, speakers, range(0, 300, 30))
+        states(scanner, speakers, range(60, 330, 30))
         assert not caplog.records
-        states(scanner, speakers, range(300, 600, 30))
+        states(scanner, speakers, range(330, 600, 30))
 
     assert len(caplog.records) == 1
     assert "Garage" in caplog.text

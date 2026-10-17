@@ -2,9 +2,11 @@
 
 Each update reads the results of the scan that every speaker started in the
 previous update, then starts the next scan. A tracked device is home while a
-speaker heard it recently. It's away only when every speaker has scanned
-without a break for the whole presence window and none heard it: a speaker that
-doesn't answer can't confirm that a device is gone.
+speaker heard it recently. It's away only when every speaker that has returned
+scan results since setup has scanned without a break for the whole presence
+window and none heard it: a speaker that stops answering can't confirm that a
+device is gone. A device that never returned results, such as a TV that refuses
+the connection instead of answering 404, can't keep trackers from showing away.
 """
 
 import asyncio
@@ -113,6 +115,8 @@ class SpeakerScan:
     run_start: float | None = None
     # End of what the latest read scan covered
     covered_until: float | None = None
+    # Whether it returned scan results since setup, so it supports scans
+    answered: bool = False
     # When the speaker started keeping trackers from showing away
     uncovered_since: float | None = None
     warned: bool = False
@@ -159,11 +163,10 @@ class BluetoothScanner:
             )
         )
         now = self._clock()
-        self._warn_about_blocking_speakers(now)
+        answered = [speaker for speaker in self._speakers.values() if speaker.answered]
+        self._warn_about_blocking_speakers(answered, now)
         # No speaker to scan with can't confirm that a device is away
-        covered = bool(self._speakers) and all(
-            speaker.covers(now) for speaker in self._speakers.values()
-        )
+        covered = bool(answered) and all(speaker.covers(now) for speaker in answered)
         return {
             device.subentry_id: self._state(device, now, covered)
             for device in self.tracked
@@ -172,8 +175,9 @@ class BluetoothScanner:
     def _update_speakers(self) -> dict[str, GoogleHomeDevice]:
         """Update the speakers that scan from Google's device list.
 
-        A speaker starts scanning once it has an address and a token, and keeps
-        counting while Google lists it, even if it stops answering.
+        A speaker starts scanning once it has an address and a token. Once it
+        has returned scan results, it keeps counting while Google lists it, even
+        if it stops answering.
         """
         devices = {device.device_id: device for device in self._coordinator.data or []}
         for device_id in list(self._speakers):
@@ -218,6 +222,7 @@ class BluetoothScanner:
                 _LOGGER.debug("Failed to read Bluetooth scan: %s", err)
                 speaker.run_start = None
             else:
+                speaker.answered = True
                 self._read_scan(speaker, start, results)
         start = self._clock()
         try:
@@ -274,9 +279,10 @@ class BluetoothScanner:
         self._unsupported.add(device_id)
         self._speakers.pop(device_id, None)
 
-    def _warn_about_blocking_speakers(self, now: float) -> None:
+    @staticmethod
+    def _warn_about_blocking_speakers(answered: list[SpeakerScan], now: float) -> None:
         """Warn once about each speaker that keeps trackers from showing away."""
-        for speaker in self._speakers.values():
+        for speaker in answered:
             if speaker.covers(now):
                 speaker.uncovered_since = None
                 speaker.warned = False
