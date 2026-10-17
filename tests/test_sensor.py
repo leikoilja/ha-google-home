@@ -7,6 +7,7 @@ import pytest
 
 from custom_components.google_home.api import GlocaltokensApiClient
 from custom_components.google_home.const import API_ENDPOINT_ALARM_DELETE
+from custom_components.google_home.entity import GoogleHomeBaseEntity
 from custom_components.google_home.models import GoogleHomeDevice
 from custom_components.google_home.sensor import (
     GoogleHomeAlarmsSensor,
@@ -14,6 +15,7 @@ from custom_components.google_home.sensor import (
     GoogleHomeTimersSensor,
     async_delete_all_alarms,
     async_delete_all_timers,
+    async_reboot_devices,
 )
 
 # glocaltokens accepts only master tokens of the real length
@@ -152,6 +154,54 @@ def test_delete_all_skip_refresh(
     _, coordinator, _ = delete_all(ALARM_IDS, TIMER_IDS, sensor_class, data)
 
     assert coordinator.async_request_refresh.await_count == int(refreshed)
+
+
+def test_reboot_devices_once_each() -> None:
+    """Reboot each device once, though a device target selects two of its sensors."""
+    devices = [
+        GoogleHomeDevice(device_id, device_id, "token", "192.168.1.10")
+        for device_id in ("kitchen", "bedroom")
+    ]
+    coordinator = Mock(data=devices)
+    client = Mock(reboot_google_device=AsyncMock())
+    sensors: list[GoogleHomeBaseEntity] = [
+        sensor_class(coordinator, client, device.device_id, device.name, None)
+        for device in devices
+        for sensor_class in (GoogleHomeAlarmsSensor, GoogleHomeTimersSensor)
+    ]
+
+    asyncio.run(async_reboot_devices(sensors, Mock()))
+
+    assert [c.args for c in client.reboot_google_device.await_args_list] == [
+        (devices[0],),
+        (devices[1],),
+    ]
+
+
+def test_reboot_devices_finishes_all_before_raising() -> None:
+    """Finish every reboot before reporting the first error."""
+    devices = [
+        GoogleHomeDevice(device_id, device_id, "token", "192.168.1.10")
+        for device_id in ("kitchen", "bedroom")
+    ]
+    finished: list[str] = []
+
+    async def reboot(device: GoogleHomeDevice) -> None:
+        if device.device_id == "kitchen":
+            raise RuntimeError("kitchen failed")
+        await asyncio.sleep(0.01)
+        finished.append(device.device_id)
+
+    coordinator = Mock(data=devices)
+    client = Mock(reboot_google_device=AsyncMock(side_effect=reboot))
+    sensors: list[GoogleHomeBaseEntity] = [
+        GoogleHomeAlarmsSensor(coordinator, client, d.device_id, d.name, None)
+        for d in devices
+    ]
+
+    with pytest.raises(RuntimeError, match="kitchen failed"):
+        asyncio.run(async_reboot_devices(sensors, Mock()))
+    assert finished == ["bedroom"]
 
 
 def test_delete_alarm_or_timer_posts_all_ids() -> None:

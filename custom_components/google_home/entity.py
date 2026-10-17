@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 import logging
 from typing import override
 
-from homeassistant.core import ServiceCall, callback
+from homeassistant.core import callback
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import (
@@ -80,7 +80,7 @@ class GoogleHomeBaseEntity(
         ]
         return matched_devices[0] if matched_devices else None
 
-    async def async_reboot_device(self, _call: ServiceCall | None = None) -> None:
+    async def async_reboot_device(self) -> None:
         """Reboot the device."""
         device = self.get_device()
 

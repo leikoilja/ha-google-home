@@ -1,5 +1,6 @@
 """Sensor platform for Google Home."""
 
+import asyncio
 import logging
 from typing import override
 
@@ -8,7 +9,7 @@ import probatio
 from homeassistant.components.sensor import SensorDeviceClass
 from homeassistant.const import STATE_UNAVAILABLE, EntityCategory
 from homeassistant.core import HomeAssistant, ServiceCall
-from homeassistant.helpers import config_validation as cv, entity_platform
+from homeassistant.helpers import config_validation as cv, entity_platform, service
 from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
@@ -26,6 +27,7 @@ from .const import (
     LABEL_ALARMS,
     LABEL_DEVICE,
     LABEL_TIMERS,
+    SENSOR,
     SERVICE_ATTR_ALARM_ID,
     SERVICE_ATTR_SKIP_REFRESH,
     SERVICE_ATTR_TIMER_ID,
@@ -110,10 +112,13 @@ async def async_setup_entry(
         async_delete_all_timers,
     )
 
-    platform.async_register_entity_service(
+    service.async_register_batched_platform_entity_service(
+        hass,
+        DOMAIN,
         SERVICE_REBOOT,
-        {},
-        GoogleHomeBaseEntity.async_reboot_device,
+        entity_domain=SENSOR,
+        schema={},
+        func=async_reboot_devices,
     )
 
     platform.async_register_entity_service(
@@ -136,6 +141,21 @@ async def async_delete_all_timers(entity: Entity, call: ServiceCall) -> None:
     """Delete all timers if the entity is a timers sensor."""
     if isinstance(entity, GoogleHomeTimersSensor):
         await entity.async_delete_all_timers(call)
+
+
+async def async_reboot_devices(
+    entities: list[GoogleHomeBaseEntity], _call: ServiceCall
+) -> None:
+    """Reboot the device of each entity, once per device."""
+    one_per_device = {entity.device_id: entity for entity in entities}.values()
+    results = await asyncio.gather(
+        *(entity.async_reboot_device() for entity in one_per_device),
+        return_exceptions=True,
+    )
+    # Like Home Assistant's per-entity calls: finish every reboot, then raise.
+    for result in results:
+        if isinstance(result, BaseException):
+            raise result
 
 
 class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
