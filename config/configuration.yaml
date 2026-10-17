@@ -11,6 +11,7 @@ logger:
   default: info
   logs:
     custom_components.google_home: debug
+    glocaltokens: debug
 
 # Uncomment to attach a debugger on port 5678 (https://www.home-assistant.io/integrations/debugpy/)
 # debugpy:

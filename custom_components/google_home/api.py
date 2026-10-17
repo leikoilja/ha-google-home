@@ -61,14 +61,12 @@ class GlocaltokensApiClient:
         self._password = password
         self._session = session
         self._android_id = android_id
-        verbose = _LOGGER.level == logging.DEBUG
         self._client = GLocalAuthenticationTokens(
             username=username,
             password=password,
             master_token=master_token,
             oauth_token=oauth_token,
             android_id=android_id,
-            verbose=verbose,
         )
         self.google_devices: list[GoogleHomeDevice] = []
         # Whether Google's device list was fetched, as a failed fetch returns none
