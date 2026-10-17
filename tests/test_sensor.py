@@ -126,11 +126,15 @@ def test_delete_all_sends_every_id_in_one_request(
     "sensor_class", [GoogleHomeAlarmsSensor, GoogleHomeTimersSensor]
 )
 def test_delete_all_sends_nothing_when_empty(sensor_class: type) -> None:
-    """Send no request and don't refresh when there is nothing to delete."""
+    """Send no request and don't refresh when there is nothing to delete.
+
+    The fetch still updated the device, so its entities must show that.
+    """
     client, coordinator, _ = delete_all([], [], sensor_class, {})
 
     client.delete_alarm_or_timer.assert_not_awaited()
     coordinator.async_request_refresh.assert_not_awaited()
+    coordinator.async_update_listeners.assert_called_once_with()
 
 
 def test_delete_all_ignores_device_sensor() -> None:
