@@ -54,3 +54,23 @@ jobs:
 
       - name: Run tests
         run: uv run pytest -q
+
+  translations:
+    name: Translations
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # For PRs, the first parent is the target used in the merge checkout.
+          fetch-depth: 2
+          persist-credentials: false
+
+      - name: Prepare and install deps
+        uses: ./.github/actions/install-deps
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Check translations
+        run: uv run python script/check_translations.py --base-ref HEAD^1

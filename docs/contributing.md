@@ -15,11 +15,15 @@ The integration's setup screens, options and action descriptions follow your Hom
 Translations are files in [`custom_components/google_home/translations`](https://github.com/leikoilja/ha-google-home/tree/master/custom_components/google_home/translations). You can edit them on GitHub in your browser:
 
 - **To fix a translation**, open your language's file, select the pencil icon, and make your changes.
-- **To add a language**, open [`en.json`](https://github.com/leikoilja/ha-google-home/blob/master/custom_components/google_home/translations/en.json), copy its contents, then [create a new file](https://github.com/leikoilja/ha-google-home/new/master/custom_components/google_home/translations) and paste them. Name the file after the [BCP 47](https://www.rfc-editor.org/info/bcp47) language tag, such as `de.json` for German or `pt-BR.json` for Brazilian Portuguese, and translate the text.
+- **To add a language**, open [`en.json`](https://github.com/leikoilja/ha-google-home/blob/master/custom_components/google_home/translations/en.json), copy its contents, then [create a new file](https://github.com/leikoilja/ha-google-home/new/master/custom_components/google_home/translations) and paste them. Name the file using a code from [Home Assistant's language list](https://github.com/home-assistant/core/blob/2026.10.0/homeassistant/generated/languages.py), such as `de.json` for German or `pt-BR.json` for Brazilian Portuguese, and translate the text.
 
 Translate only the text after each colon. Keep the keys before the colons and anything in curly brackets, such as `{docs_url}`, unchanged. Home Assistant fills those in.
 
 When you save, GitHub creates a copy of the repository under your account and offers to open a pull request.
+
+You can submit a partial translation. Remove entries you have not translated: copied English text will not follow later changes to the English source, and the coverage table counts it as translated. To see how many strings your file is missing, open **Details** next to the **Translations** check on your pull request, then select **Summary**. If the check shows as awaiting approval, a maintainer needs to [approve the run](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/approve-runs-from-forks) first.
+
+Keep placeholders in their original form: `{docs_url}` is allowed, but `{docs_url!r}` and `{{docs_url}}` are rejected. Added formatting inside the braces is also rejected. Don't use curly brackets except around placeholders. Don't put a letter or `/` directly after `<`. For quotation marks around a placeholder, use `“{docs_url}”` or `‘{docs_url}’`. Use `’` instead of a straight apostrophe before `{`, `}`, `<` or `>`, as in `l’{device}`. Don't double apostrophes: write `L'aide`, not `L''aide`.
 
 ## Develop
 
@@ -46,6 +50,21 @@ Run the tests:
 ```shell
 uv run pytest
 ```
+
+If you add or change a feature, update `en.json`; you do not need to translate it into other languages. Missing strings and keys that became obsolete do not block your PR. Newly added translation keys must exist in English. If the **Translations** check reports “Check for a mistyped key”, correct any spelling mistake or remove the entry if its English key was removed. Placeholder-name mismatches block new or edited text. If the exact text already appeared in the same language file at the base revision, a mismatch produces a warning and Home Assistant uses English instead, even if the key moved.
+
+Every translation file must contain valid JSON encoded as UTF-8 without a byte order mark (BOM), with unique keys, non-empty string values and the [placeholder syntax described above](#translate-the-integration). CI rejects errors in these rules even in files your PR does not change; the `check json` hook catches duplicate keys.
+
+To check your branch locally, fetch the project's `master` branch and compare with its common ancestor. This uses the project's repository even when `origin` points to your fork:
+
+```shell
+git fetch https://github.com/leikoilja/ha-google-home.git master
+uv run python script/check_translations.py --base-ref "$(git merge-base HEAD FETCH_HEAD)"
+```
+
+The command reports translation coverage and identifies errors by file and key. Omit `--base-ref` and its value to treat all placeholder-name mismatches and unknown keys as errors.
+
+CI compares its checkout with its first parent: the target used for a PR's merge checkout, or the preceding commit on a push. It adds coverage and all diagnostics to the workflow summary. These checks cannot judge the accuracy or naturalness of the wording.
 
 [prek](https://prek.j178.dev/) runs the linters and formatters, including [ruff](https://docs.astral.sh/ruff/) and [dprint](https://dprint.dev/). Run them on all files:
 
