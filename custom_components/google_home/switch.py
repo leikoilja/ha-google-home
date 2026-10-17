@@ -72,6 +72,7 @@ class DoNotDisturbSwitch(GoogleHomeBaseEntity, SwitchEntity):
             return
 
         await self.client.update_do_not_disturb(device=device, enable=enable)
+        self.async_write_ha_state()
 
     @override
     async def async_turn_on(self, **kwargs: Any) -> None:  # type: ignore[explicit-any]

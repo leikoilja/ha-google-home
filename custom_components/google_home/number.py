@@ -96,3 +96,4 @@ class AlarmVolumeNumber(GoogleHomeBaseEntity, NumberEntity):
             return
 
         await self.client.update_alarm_volume(device=device, volume=round(value))
+        self.async_write_ha_state()
