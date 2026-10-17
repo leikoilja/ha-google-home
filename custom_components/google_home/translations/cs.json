@@ -1,0 +1,126 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Přihlášení ke Googlu",
+        "description": "Tato integrace funguje s reproduktory a displeji Google, jako jsou Nest Mini, Nest Audio a Nest Hub. Ostatní zařízení z aplikace Google Home nepřidává.\n\nVyberte způsob přihlášení k účtu Google, který je členem vaší domácnosti. Nápovědu najdete na {docs_url}.",
+        "menu_options": {
+          "browser": "Přihlášení přes prohlížeč (doporučeno)",
+          "master_token": "Hlavní token"
+        },
+        "menu_option_descriptions": {
+          "browser": "Přihlaste se ke Googlu v prohlížeči na počítači a poté vložte soubor cookie. Funguje pro většinu účtů.",
+          "master_token": "Vložte hlavní token, který již máte."
+        }
+      },
+      "browser": {
+        "title": "Přihlášení přes prohlížeč",
+        "description": "1. Na počítači otevřete {embedded_setup_url} v anonymním okně prohlížeče a přihlaste se. Po potvrzení souhlasu se stránka může stále načítat; to je v pořádku.\n2. Otevřete vývojářské nástroje prohlížeče a najděte soubory cookie pro `accounts.google.com`.\n3. Zkopírujte hodnotu souboru cookie `oauth_token` a ihned ji vložte níže. Její platnost vyprší během několika minut a lze ji použít pouze jednou.\n\nPodrobný návod: {browser_docs_url}\n\nPokud chcete zvolit jiný způsob přihlášení, zavřete toto okno a přidejte integraci znovu.",
+        "data": {
+          "oauth_token": "Soubor cookie oauth_token"
+        },
+        "data_description": {
+          "oauth_token": "Začíná na oauth2_4/"
+        }
+      },
+      "master_token": {
+        "title": "Hlavní token",
+        "description": "Vložte hlavní token, který jste získali dříve, například pomocí jiného nástroje.\n\nPokud chcete zvolit jiný způsob přihlášení, zavřete toto okno a přidejte integraci znovu.",
+        "data": {
+          "master_token": "Hlavní token účtu Google"
+        },
+        "data_description": {
+          "master_token": "Začíná na aas_et/"
+        }
+      }
+    },
+    "error": {
+      "oauth-token-invalid": "Google soubor cookie nepřijal. Získejte nový a ihned ho vložte: jeho platnost vyprší během několika minut a lze ho použít pouze jednou. Zkopírujte celou hodnotu začínající na oauth2_4/.",
+      "master-token-invalid": "Hlavní token je neplatný. Zkontrolujte, že jste zadali celý token včetně aas_et/.",
+      "oauth-token-format": "Toto není soubor cookie oauth_token. Jeho hodnota začíná na oauth2_4/.",
+      "master-token-format": "Hlavní token začíná na aas_et/ a má 223 znaků. Zkopírujte celý token."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "update_interval": "Změňte interval aktualizace. Pokud zařízení neodpovídají včas, zvyšte tuto hodnotu. Výchozí hodnota: 180 sekund.",
+          "known_hosts": "Známí hostitelé"
+        },
+        "data_description": {
+          "known_hosts": "IP adresy reproduktorů a displejů, které integrace nedokáže sama najít, například protože jsou v jiné síti nebo VLAN."
+        }
+      }
+    },
+    "error": {
+      "known-host-not-ip": "Zadejte pouze IP adresy, například 192.168.1.20."
+    }
+  },
+  "services": {
+    "delete_alarm": {
+      "description": "Smaže budík ze zařízení Google Home.",
+      "fields": {
+        "alarm_id": {
+          "description": "ID budíku (alarm/xxx).",
+          "name": "ID budíku"
+        },
+        "skip_refresh": {
+          "description": "Po smazání budíku přeskočí aktualizaci stavu zařízení Google Home.",
+          "name": "Přeskočit aktualizaci stavu"
+        },
+        "entity_id": {
+          "description": "Představuje zařízení Google Home (sensor.xxxx_alarms).",
+          "name": "Entita"
+        }
+      },
+      "name": "Smazat budík"
+    },
+    "delete_timer": {
+      "description": "Smaže časovač ze zařízení Google Home.",
+      "fields": {
+        "timer_id": {
+          "description": "ID časovače (timer/xxx).",
+          "name": "ID časovače"
+        },
+        "skip_refresh": {
+          "description": "Po smazání časovače přeskočí aktualizaci stavu zařízení Google Home.",
+          "name": "Přeskočit aktualizaci stavu"
+        },
+        "entity_id": {
+          "description": "Představuje zařízení Google Home (sensor.xxxx_timers).",
+          "name": "Entita"
+        }
+      },
+      "name": "Smazat časovač"
+    },
+    "delete_all_alarms": {
+      "description": "Smaže všechny budíky ze zařízení Google Home.",
+      "fields": {
+        "skip_refresh": {
+          "description": "Po smazání všech budíků přeskočí aktualizaci stavu zařízení Google Home.",
+          "name": "Přeskočit aktualizaci stavu"
+        }
+      },
+      "name": "Smazat všechny budíky"
+    },
+    "delete_all_timers": {
+      "description": "Smaže všechny časovače ze zařízení Google Home.",
+      "fields": {
+        "skip_refresh": {
+          "description": "Po smazání všech časovačů přeskočí aktualizaci stavu zařízení Google Home.",
+          "name": "Přeskočit aktualizaci stavu"
+        }
+      },
+      "name": "Smazat všechny časovače"
+    },
+    "reboot_device": {
+      "description": "Restartuje zařízení Google Home.",
+      "name": "Restartovat zařízení"
+    },
+    "refresh_devices": {
+      "description": "Aktualizuje stav všech zařízení Google Home.",
+      "name": "Aktualizovat stav zařízení"
+    }
+  }
+}
