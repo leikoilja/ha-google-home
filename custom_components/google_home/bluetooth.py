@@ -5,8 +5,10 @@ previous update, then starts the next scan. A tracked device is home while a
 speaker heard it recently. It's away only when every speaker that has returned
 scan results since setup has scanned without a break for the whole presence
 window and none heard it: a speaker that stops answering can't confirm that a
-device is gone. A device that never returned results, such as a TV that refuses
-the connection instead of answering 404, can't keep trackers from showing away.
+device is gone. Meanwhile the tracker keeps its last state for a few minutes,
+so a missed scan doesn't make it flap. A device that never returned results,
+such as a TV that refuses the connection instead of answering 404, can't keep
+trackers from showing away.
 """
 
 import asyncio
@@ -26,12 +28,12 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .api import GlocaltokensApiClient
 from .const import (
-    BLUETOOTH_BLOCKING_WARNING,
     BLUETOOTH_MAX_RESULT_AGE,
     BLUETOOTH_MAX_SCAN_GAP,
     BLUETOOTH_MIN_RSSI,
     BLUETOOTH_PRESENCE_WINDOW,
     BLUETOOTH_SCAN_INTERVAL,
+    BLUETOOTH_UNCERTAIN_LIMIT,
     CONF_IRK,
 )
 from .exceptions import BluetoothScanError, BluetoothScanUnsupported
@@ -91,8 +93,9 @@ class TrackedDevice:
         self._mac: str | None = subentry.data.get(CONF_MAC)
         # Start of the latest scan that heard the device
         self.last_sighted: float | None = None
-        # Whether the device was home or away since setup
-        self.state_known = False
+        # The latest home or away state, and when the speakers last confirmed it
+        self.state = TrackerState.UNKNOWN
+        self.confirmed_at: float | None = None
 
     def matches(self, address: str) -> bool:
         """Return whether a normalized address is this device's."""
@@ -290,7 +293,7 @@ class BluetoothScanner:
                 speaker.uncovered_since = now
             elif (
                 not speaker.warned
-                and now - speaker.uncovered_since >= BLUETOOTH_BLOCKING_WARNING
+                and now - speaker.uncovered_since >= BLUETOOTH_UNCERTAIN_LIMIT
             ):
                 speaker.warned = True
                 _LOGGER.warning(
@@ -299,22 +302,25 @@ class BluetoothScanner:
                     "'Speakers not used for Bluetooth tracking' in the integration's "
                     "options",
                     speaker.name,
-                    BLUETOOTH_BLOCKING_WARNING // 60,
+                    BLUETOOTH_UNCERTAIN_LIMIT // 60,
                 )
 
     @staticmethod
     def _state(device: TrackedDevice, now: float, covered: bool) -> TrackerState:
-        """Return the state of a tracked device after an update."""
+        """Return the state of a tracked device after an update.
+
+        When the speakers can't tell, the last state stays for a few minutes:
+        a missed scan, or a speaker coming online, doesn't make it flap.
+        """
         if (
             device.last_sighted is not None
             and device.last_sighted > now - BLUETOOTH_PRESENCE_WINDOW
         ):
-            state = TrackerState.HOME
+            device.state, device.confirmed_at = TrackerState.HOME, now
         elif covered:
-            state = TrackerState.NOT_HOME
-        elif device.state_known:
-            return TrackerState.UNAVAILABLE
-        else:
+            device.state, device.confirmed_at = TrackerState.NOT_HOME, now
+        elif device.confirmed_at is None:
             return TrackerState.UNKNOWN
-        device.state_known = True
-        return state
+        elif now - device.confirmed_at >= BLUETOOTH_UNCERTAIN_LIMIT:
+            return TrackerState.UNAVAILABLE
+        return device.state

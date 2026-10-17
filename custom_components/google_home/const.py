@@ -122,8 +122,10 @@ BLUETOOTH_MAX_SCAN_GAP: Final = 15
 BLUETOOTH_PRESENCE_WINDOW: Final = 90
 # Weaker sightings are ignored: a phone away from home was once heard at -83
 BLUETOOTH_MIN_RSSI: Final = -80  # dBm
-# Warn about a speaker that has kept trackers from showing away this long
-BLUETOOTH_BLOCKING_WARNING: Final = 300
+# While the speakers can't tell whether a tracked device is home, its tracker
+# keeps its last state this long, then shows unavailable. A speaker that has
+# kept trackers from showing away this long is named in a warning.
+BLUETOOTH_UNCERTAIN_LIMIT: Final = 300
 
 # JSON parameter values when retrieving information from devices
 JSON_ALARM: Final = "alarm"

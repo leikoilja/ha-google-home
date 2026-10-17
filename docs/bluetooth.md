@@ -34,7 +34,7 @@ Every 30 seconds, each speaker reports what it heard since the last check and st
 | `home`        | A speaker heard the device in the last 90 seconds.                                                                                          |
 | `not_home`    | Every speaker has scanned without a break for the last 90 seconds, and none heard the device.                                               |
 | `unknown`     | Right after Home Assistant starts or the integration reloads, until the speakers have scanned long enough to tell. This takes 30-90 seconds. |
-| `unavailable` | A speaker stopped answering, so the integration can't tell whether the device is gone. See [Tracker is unavailable](#tracker-is-unavailable). |
+| `unavailable` | A speaker has stopped answering for 5 minutes, so the integration can't tell whether the device is gone. See [Tracker is unavailable](#tracker-is-unavailable). |
 
 So a phone shows `home` within 60 seconds of arriving, and `not_home` 60 to 90 seconds after it leaves.
 
@@ -42,7 +42,9 @@ Starting as `unknown` after a restart keeps automations from seeing you leave an
 
 ## Tracker is unavailable
 
-A tracker shows `not_home` only when every speaker has answered for the last 90 seconds. Once a speaker has returned scan results, it counts until Home Assistant restarts. If it then stops answering, it might be the one that hears you, so while it's silent the tracker shows `unavailable` instead of `not_home`. If a speaker stays silent for 5 minutes, the integration logs a warning that names it.
+A tracker shows `not_home` only when every speaker has answered for the last 90 seconds. Once a speaker has returned scan results, it counts until Home Assistant restarts. If it then stops answering, it might be the one that hears you, so the integration can't tell whether you left.
+
+While it can't tell, the tracker keeps its last state for 5 minutes, so a speaker that misses a scan or comes online doesn't make it flap. If you arrive in that time and only the silent speaker can hear you, `home` waits until another speaker hears you. After 5 minutes the tracker shows `unavailable`, and the integration logs a warning that names the speaker.
 
 If that speaker is unplugged or out of service, tell the integration not to use it:
 

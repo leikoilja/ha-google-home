@@ -282,24 +282,28 @@ def test_failed_scan_start_skips_next_read() -> None:
     speakers.failing_start.add("kitchen")
     assert update(scanner, speakers, 120) == NOT_HOME
     speakers.failing_start.clear()
-    # The old results hold the phone, but aren't read
+    # The old results hold the phone, but aren't read: it stays away
     speakers.results["kitchen"] = [heard(rpa(IRK))]
     speakers.reads.clear()
-    assert update(scanner, speakers, 150) == UNAVAILABLE
+    assert update(scanner, speakers, 150) == NOT_HOME
     assert not speakers.reads
 
 
 def test_recover_after_failed_scan_start() -> None:
-    """Confirm away again 120 seconds after a scan failed to start."""
+    """Confirm away again 120 seconds after the last scan that failed to start."""
     speakers = Speakers("Kitchen")
     scanner = make_scanner(speakers)
-    states(scanner, speakers, range(0, 120, 30))
+    states(scanner, speakers, range(0, 150, 30))
 
+    # Starting scans fails from 150 to 450. The update at 150 still reads the
+    # scan started at 120, so away is last confirmed then.
     speakers.failing_start.add("kitchen")
-    update(scanner, speakers, 120)
+    assert states(scanner, speakers, range(150, 450, 30)) == [NOT_HOME] * 10
+    assert update(scanner, speakers, 450) == UNAVAILABLE
     speakers.failing_start.clear()
 
-    assert states(scanner, speakers, range(150, 270, 30)) == [
+    # The next scan starts at 480, so away is confirmed again at 480 + 90
+    assert states(scanner, speakers, range(480, 600, 30)) == [
         UNAVAILABLE,
         UNAVAILABLE,
         UNAVAILABLE,
@@ -314,8 +318,8 @@ def test_discard_delayed_results() -> None:
     states(scanner, speakers, range(0, 120, 30))
 
     speakers.results["kitchen"] = [heard(rpa(IRK))]
-    # The update after 90 is delayed until 300
-    assert update(scanner, speakers, 300) == UNAVAILABLE
+    # The update after 90 is delayed until 300: the phone it heard isn't used
+    assert update(scanner, speakers, 300) == NOT_HOME
     # The scan started at 300 is read on time: heard, and the run starts again
     assert update(scanner, speakers, 330) == HOME
     speakers.results["kitchen"] = []
@@ -337,33 +341,47 @@ def test_new_token_skips_next_read() -> None:
 
 
 def test_speaker_that_stops_answering_never_shows_away() -> None:
-    """Show unavailable, not away, when the speaker that heard the phone stops answering."""
+    """Keep home, then show unavailable, when the speaker that heard the phone stops answering."""
     speakers = Speakers("Bedroom", "Kitchen")
     speakers.results["bedroom"] = [heard(rpa(IRK))]
     scanner = make_scanner(speakers)
     assert states(scanner, speakers, range(0, 90, 30)) == [UNKNOWN, HOME, HOME]
 
-    # The last bedroom scan to hear it started at 30; the kitchen hears nothing
+    # The last bedroom scan to hear it started at 30, so home is last confirmed
+    # at 90; the kitchen hears nothing
     speakers.failing.add("bedroom")
-    assert states(scanner, speakers, range(90, 600, 30)) == [HOME] + [UNAVAILABLE] * 16
+    assert (
+        states(scanner, speakers, range(90, 600, 30)) == [HOME] * 10 + [UNAVAILABLE] * 7
+    )
 
 
-def test_new_speaker_must_cover_the_window() -> None:
-    """Wait for a speaker found later to scan for the whole window before away."""
+def test_new_speaker_coming_online_keeps_away() -> None:
+    """Stay away while a speaker found later scans for the whole window."""
     speakers = Speakers("Kitchen")
     bedroom = GoogleHomeDevice("bedroom", "Bedroom", "token")
     speakers.devices.append(bedroom)
     scanner = make_scanner(speakers)
     assert states(scanner, speakers, range(0, 120, 30))[-1] == NOT_HOME
 
-    # It counts once it returns results, at 150, and has covered 90 seconds at 210
     bedroom.ip_address = "10.0.0.9"
-    assert states(scanner, speakers, range(120, 240, 30)) == [
-        NOT_HOME,
-        UNAVAILABLE,
-        UNAVAILABLE,
-        NOT_HOME,
-    ]
+    assert states(scanner, speakers, range(120, 240, 30)) == [NOT_HOME] * 4
+
+    # Until it has, it can't confirm away: a phone it alone hears shows home
+    speakers.results["bedroom"] = [heard(rpa(IRK))]
+    assert update(scanner, speakers, 240) == HOME
+
+
+def test_missed_scan_keeps_away() -> None:
+    """Stay away, never unavailable, when a speaker misses a scan."""
+    speakers = Speakers("Kitchen", "Hallway")
+    scanner = make_scanner(speakers)
+    assert states(scanner, speakers, range(0, 120, 30))[-1] == NOT_HOME
+
+    speakers.failing.add("hallway")
+    assert update(scanner, speakers, 120) == NOT_HOME
+    speakers.failing.clear()
+
+    assert states(scanner, speakers, range(150, 360, 30)) == [NOT_HOME] * 7
 
 
 def test_no_speakers_never_shows_away() -> None:
