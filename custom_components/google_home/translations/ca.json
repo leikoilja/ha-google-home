@@ -88,7 +88,7 @@
           "name": "Omet l'actualització"
         },
         "entity_id": {
-          "description": "Correspon a un dispositiu Google Home (sensor.xxxx_alarms).",
+          "description": "Correspon a un dispositiu Google Home (sensor.xxxx_timers).",
           "name": "Entitat"
         }
       },

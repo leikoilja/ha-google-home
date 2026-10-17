@@ -88,7 +88,7 @@
           "name": "Aktualisierung überspringen"
         },
         "entity_id": {
-          "description": "Entspricht einem Google Home-Gerät (sensor.xxxx_alarms).",
+          "description": "Entspricht einem Google Home-Gerät (sensor.xxxx_timers).",
           "name": "Entität"
         }
       },

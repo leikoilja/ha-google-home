@@ -1,0 +1,126 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Google にログイン",
+        "description": "この統合は、Nest Mini、Nest Audio、Nest Hub などの Google 製スピーカーやディスプレイに対応しています。Google Home アプリに登録されているその他のデバイスは追加しません。\n\nGoogle Home の家にメンバーとして参加している Google アカウントへのログイン方法を選択してください。詳しくは {docs_url} をご覧ください。",
+        "menu_options": {
+          "browser": "ブラウザでログイン（推奨）",
+          "master_token": "マスタートークン"
+        },
+        "menu_option_descriptions": {
+          "browser": "パソコンのブラウザで Google にログインし、Cookie を貼り付けます。ほとんどのアカウントで利用できます。",
+          "master_token": "取得済みのマスタートークンを貼り付けます。"
+        }
+      },
+      "browser": {
+        "title": "ブラウザでログイン",
+        "description": "1. パソコンのブラウザでプライベート ウィンドウ（シークレット ウィンドウなど）を開き、{embedded_setup_url} にアクセスしてログインします。同意した後もページの読み込みが続く場合がありますが、問題ありません。\n2. ブラウザの開発者ツールを開き、`accounts.google.com` の Cookie を探します。\n3. `oauth_token` Cookie の値をコピーして、すぐに下の欄に貼り付けてください。数分以内に有効期限が切れ、1 回しか使用できません。\n\n詳しい手順: {browser_docs_url}\n\n別のログイン方法を選ぶには、このウィンドウを閉じて統合を追加し直してください。",
+        "data": {
+          "oauth_token": "oauth_token Cookie"
+        },
+        "data_description": {
+          "oauth_token": "oauth2_4/ で始まります"
+        }
+      },
+      "master_token": {
+        "title": "マスタートークン",
+        "description": "別のツールなどで以前取得したマスタートークンを貼り付けてください。\n\n別のログイン方法を選ぶには、このウィンドウを閉じて統合を追加し直してください。",
+        "data": {
+          "master_token": "Google アカウントのマスタートークン"
+        },
+        "data_description": {
+          "master_token": "aas_et/ で始まります"
+        }
+      }
+    },
+    "error": {
+      "oauth-token-invalid": "Google が Cookie を受け付けませんでした。新しい Cookie を取得し、すぐに貼り付けてください。数分以内に有効期限が切れ、1 回しか使用できません。oauth2_4/ で始まる値をすべてコピーしてください。",
+      "master-token-invalid": "マスタートークンが無効です。aas_et/ を含むトークン全体を入力したか確認してください。",
+      "oauth-token-format": "これは oauth_token Cookie ではありません。値は oauth2_4/ で始まります。",
+      "master-token-format": "マスタートークンは aas_et/ で始まる 223 文字の文字列です。トークン全体をコピーしてください。"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "update_interval": "更新間隔を変更します。デバイスの応答が間に合わない場合は、この値を増やしてください。既定値: 180 秒。",
+          "known_hosts": "既知のホスト"
+        },
+        "data_description": {
+          "known_hosts": "別のネットワークや VLAN にあるなどの理由で、この統合が自動検出できないスピーカーやディスプレイの IP アドレス。"
+        }
+      }
+    },
+    "error": {
+      "known-host-not-ip": "192.168.1.20 などの IP アドレスのみを入力してください。"
+    }
+  },
+  "services": {
+    "delete_alarm": {
+      "description": "Google Home デバイスからアラームを 1 件削除します。",
+      "fields": {
+        "alarm_id": {
+          "description": "アラームの ID（alarm/xxx）。",
+          "name": "アラーム ID"
+        },
+        "skip_refresh": {
+          "description": "アラームを削除した後、Google Home デバイスの状態の更新をスキップします。",
+          "name": "更新をスキップ"
+        },
+        "entity_id": {
+          "description": "Google Home デバイスを表すエンティティ（sensor.xxxx_alarms）。",
+          "name": "エンティティ"
+        }
+      },
+      "name": "アラームを削除"
+    },
+    "delete_timer": {
+      "description": "Google Home デバイスからタイマーを 1 件削除します。",
+      "fields": {
+        "timer_id": {
+          "description": "タイマーの ID（timer/xxx）。",
+          "name": "タイマー ID"
+        },
+        "skip_refresh": {
+          "description": "タイマーを削除した後、Google Home デバイスの状態の更新をスキップします。",
+          "name": "更新をスキップ"
+        },
+        "entity_id": {
+          "description": "Google Home デバイスを表すエンティティ（sensor.xxxx_timers）。",
+          "name": "エンティティ"
+        }
+      },
+      "name": "タイマーを削除"
+    },
+    "delete_all_alarms": {
+      "description": "Google Home デバイスからすべてのアラームを削除します。",
+      "fields": {
+        "skip_refresh": {
+          "description": "すべてのアラームを削除した後、Google Home デバイスの状態の更新をスキップします。",
+          "name": "更新をスキップ"
+        }
+      },
+      "name": "すべてのアラームを削除"
+    },
+    "delete_all_timers": {
+      "description": "Google Home デバイスからすべてのタイマーを削除します。",
+      "fields": {
+        "skip_refresh": {
+          "description": "すべてのタイマーを削除した後、Google Home デバイスの状態の更新をスキップします。",
+          "name": "更新をスキップ"
+        }
+      },
+      "name": "すべてのタイマーを削除"
+    },
+    "reboot_device": {
+      "description": "Google Home デバイスを再起動します。",
+      "name": "デバイスを再起動"
+    },
+    "refresh_devices": {
+      "description": "すべての Google Home デバイスの状態を更新します。",
+      "name": "デバイスを更新"
+    }
+  }
+}

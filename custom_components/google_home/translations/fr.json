@@ -88,7 +88,7 @@
           "name": "Ignorer l'actualisation"
         },
         "entity_id": {
-          "description": "Correspond à un appareil Google Home (sensor.xxxx_alarms).",
+          "description": "Correspond à un appareil Google Home (sensor.xxxx_timers).",
           "name": "Entité"
         }
       },
