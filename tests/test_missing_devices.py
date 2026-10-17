@@ -29,6 +29,7 @@ def found(device_id: str, ip_address: str | None) -> Mock:
         local_auth_token="token",
         ip_address=ip_address,
         hardware="Nest Audio",
+        cloud_device_id=None,
     )
 
 
@@ -50,7 +51,7 @@ def make_client(*ip_addresses: str | None) -> tuple[GlocaltokensApiClient, Mock]
                 for device in client.google_devices
             ]
         ),
-        homegraph=Mock(home=Mock(devices=[])),
+        homegraph=Mock(),
     )
     client._client = glocaltokens  # noqa: SLF001  # pylint: disable=protected-access
     return client, glocaltokens

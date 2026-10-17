@@ -155,33 +155,6 @@ def test_options_reject_hostnames() -> None:
     assert result["errors"] == {"known_hosts": "known-host-not-ip"}
 
 
-def test_devices_named_as_in_google_home() -> None:
-    """Name a speaker pair as Google lists it, not after the speaker mDNS found."""
-    hass = Mock()
-    hass.async_add_executor_job = AsyncMock(side_effect=lambda func, *args: func(*args))
-    client = GlocaltokensApiClient(hass, Mock(), master_token=MASTER_TOKEN)
-    found_by_mdns = Mock(
-        device_id="pair",
-        device_name="Den speaker left",
-        local_auth_token="token",
-        ip_address="10.0.0.3",
-        hardware="Nest Audio",
-    )
-    listed_by_google = Mock(device_name="Den speakers")
-    listed_by_google.device_info.device_id = "pair"
-    listed_by_google.device_info.agent_info.unique_id = "dddd"
-    client._client = Mock(  # noqa: SLF001  # pylint: disable=protected-access
-        get_google_devices=Mock(return_value=[found_by_mdns]),
-        homegraph=Mock(home=Mock(devices=[listed_by_google])),
-    )
-
-    [pair] = asyncio.run(client.get_google_devices())
-
-    assert pair.name == "Den speakers"
-    assert pair.cloud_device_id == "dddd"
-    assert pair.ip_address == "10.0.0.3"
-
-
 def test_known_hosts_not_asked_when_mdns_found_everything() -> None:
     """Don't wait on known hosts when mDNS found an address for every device."""
     hass = Mock()
@@ -196,13 +169,11 @@ def test_known_hosts_not_asked_when_mdns_found_everything() -> None:
         local_auth_token="token",
         ip_address="10.0.0.3",
         hardware="Nest Audio",
+        cloud_device_id="AAAA",
     )
-    listed_by_google = Mock(device_name="Kitchen")
-    listed_by_google.device_info.device_id = "kitchen"
-    listed_by_google.device_info.agent_info.unique_id = "AAAA"
     client._client = Mock(  # noqa: SLF001  # pylint: disable=protected-access
         get_google_devices=Mock(return_value=[found_by_mdns]),
-        homegraph=Mock(home=Mock(devices=[listed_by_google])),
+        homegraph=Mock(),
     )
 
     asyncio.run(client.get_google_devices())
