@@ -88,7 +88,7 @@
           "name": "Пропустити оновлення"
         },
         "entity_id": {
-          "description": "Відповідає пристрою Google Home (sensor.xxxx_alarms).",
+          "description": "Відповідає пристрою Google Home (sensor.xxxx_timers).",
           "name": "Сутність"
         }
       },

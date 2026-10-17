@@ -88,7 +88,7 @@
           "name": "Verversen overslaan"
         },
         "entity_id": {
-          "description": "Komt overeen met een Google Home-apparaat (sensor.xxxx_alarms).",
+          "description": "Komt overeen met een Google Home-apparaat (sensor.xxxx_timers).",
           "name": "Entiteit"
         }
       },

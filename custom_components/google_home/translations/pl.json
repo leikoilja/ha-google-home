@@ -88,7 +88,7 @@
           "name": "Pomiń odświeżanie"
         },
         "entity_id": {
-          "description": "Odpowiada urządzeniu Google Home (sensor.xxxx_alarms).",
+          "description": "Odpowiada urządzeniu Google Home (sensor.xxxx_timers).",
           "name": "Encja"
         }
       },

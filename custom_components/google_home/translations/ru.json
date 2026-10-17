@@ -88,7 +88,7 @@
           "name": "Пропустить обновление"
         },
         "entity_id": {
-          "description": "Соответствует устройству Google Home (sensor.xxxx_alarms).",
+          "description": "Соответствует устройству Google Home (sensor.xxxx_timers).",
           "name": "Объект"
         }
       },

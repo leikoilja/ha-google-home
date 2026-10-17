@@ -88,7 +88,7 @@
           "name": "Παράλειψη ανανέωσης"
         },
         "entity_id": {
-          "description": "Αντιστοιχεί σε μια συσκευή Google Home (sensor.xxxx_alarms).",
+          "description": "Αντιστοιχεί σε μια συσκευή Google Home (sensor.xxxx_timers).",
           "name": "Οντότητα"
         }
       },
