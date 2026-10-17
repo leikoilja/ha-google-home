@@ -66,7 +66,7 @@
           "name": "Alarm-ID"
         },
         "skip_refresh": {
-          "description": "Sla het verversen van Google Home-apparaten over na het verwijderen van een alarm.",
+          "description": "Sla het verversen van de status van Google Home-apparaten over na het verwijderen van een alarm.",
           "name": "Verversen overslaan"
         },
         "entity_id": {
@@ -84,7 +84,7 @@
           "name": "Timer-ID"
         },
         "skip_refresh": {
-          "description": "Sla het verversen van Google Home-apparaten over na het verwijderen van een timer.",
+          "description": "Sla het verversen van de status van Google Home-apparaten over na het verwijderen van een timer.",
           "name": "Verversen overslaan"
         },
         "entity_id": {
@@ -98,7 +98,7 @@
       "description": "Verwijder alle alarmen van Google Home-apparaten.",
       "fields": {
         "skip_refresh": {
-          "description": "Sla het verversen van Google Home-apparaten over na het verwijderen van de alarmen.",
+          "description": "Sla het verversen van de status van Google Home-apparaten over na het verwijderen van de alarmen.",
           "name": "Verversen overslaan"
         }
       },
@@ -108,7 +108,7 @@
       "description": "Verwijder alle timers van Google Home-apparaten.",
       "fields": {
         "skip_refresh": {
-          "description": "Sla het verversen van Google Home-apparaten over na het verwijderen van de timers.",
+          "description": "Sla het verversen van de status van Google Home-apparaten over na het verwijderen van de timers.",
           "name": "Verversen overslaan"
         }
       },

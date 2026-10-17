@@ -66,7 +66,7 @@
           "name": "ID budíka"
         },
         "skip_refresh": {
-          "description": "Preskočiť obnovenie zariadení Google Home po odstránení budíka.",
+          "description": "Preskočiť obnovenie stavu zariadení Google Home po odstránení budíka.",
           "name": "Preskočiť obnovenie"
         },
         "entity_id": {
@@ -84,7 +84,7 @@
           "name": "ID časovača"
         },
         "skip_refresh": {
-          "description": "Preskočiť obnovenie zariadení Google Home po odstránení časovača.",
+          "description": "Preskočiť obnovenie stavu zariadení Google Home po odstránení časovača.",
           "name": "Preskočiť obnovenie"
         },
         "entity_id": {
@@ -98,7 +98,7 @@
       "description": "Odstrániť všetky budíky zo zariadení Google Home.",
       "fields": {
         "skip_refresh": {
-          "description": "Preskočiť obnovenie zariadení Google Home po odstránení budíkov.",
+          "description": "Preskočiť obnovenie stavu zariadení Google Home po odstránení budíkov.",
           "name": "Preskočiť obnovenie"
         }
       },
@@ -108,7 +108,7 @@
       "description": "Odstrániť všetky časovače zo zariadení Google Home.",
       "fields": {
         "skip_refresh": {
-          "description": "Preskočiť obnovenie zariadení Google Home po odstránení časovačov.",
+          "description": "Preskočiť obnovenie stavu zariadení Google Home po odstránení časovačov.",
           "name": "Preskočiť obnovenie"
         }
       },
