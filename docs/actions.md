@@ -41,6 +41,8 @@ data:
 
 If the ID has the wrong format, nothing is deleted and the Home Assistant log shows "Incorrect ID format! Please provide a valid alarm ID."
 
+Instead of the alarms sensor, you can target the device itself, under `target: device_id:`. The action then runs on the device's alarms sensor only. Naming another sensor of the device, such as `sensor.kitchen_timers`, fails with "Entity sensor.kitchen_timers does not support action google_home.delete_alarm." Target one device at a time: an area, floor or label target sends the alarm ID to every speaker it covers, and speakers without that alarm can log an error.
+
 ## Delete timer
 
 Deletes one timer from a device.
@@ -59,6 +61,8 @@ data:
 | `timer_id`     | ID of the timer to delete. Find it in the `timers` attribute of the [timers sensor](entities.md#timers-sensor). It starts with `timer/`. |
 | `skip_refresh` | Optional. Same as for [Delete alarm](#delete-alarm).                                                                                     |
 
+You can target the device instead of its timers sensor, as for [Delete alarm](#delete-alarm). The action then runs on the timers sensor only, and naming another sensor of the device fails.
+
 ## Delete all alarms
 
 Deletes all alarms from one or more devices.
@@ -75,7 +79,7 @@ data:
 | -------------- | ---------------------------------------------------- |
 | `skip_refresh` | Optional. Same as for [Delete alarm](#delete-alarm). |
 
-Target the alarms sensor of each device, or the devices themselves. The action asks each device for its current alarms first, so it also deletes alarms set since the last update.
+Target the alarms sensor of each device, or the devices themselves. Naming another sensor of a device, such as its timers sensor, fails. The action asks each device for its current alarms first, so it also deletes alarms set since the last update.
 
 ## Delete all timers
 
@@ -93,7 +97,7 @@ data:
 | -------------- | ---------------------------------------------------- |
 | `skip_refresh` | Optional. Same as for [Delete alarm](#delete-alarm). |
 
-Target the timers sensor of each device, or the devices themselves. The action asks each device for its current timers first, so it also deletes timers set since the last update.
+Target the timers sensor of each device, or the devices themselves. Naming another sensor of a device, such as its alarms sensor, fails. The action asks each device for its current timers first, so it also deletes timers set since the last update.
 
 ## Reboot device
 
