@@ -88,7 +88,7 @@
           "name": "Salta aggiornamento"
         },
         "entity_id": {
-          "description": "Corrisponde a un dispositivo Google Home (sensor.xxxx_alarms).",
+          "description": "Corrisponde a un dispositivo Google Home (sensor.xxxx_timers).",
           "name": "Entità"
         }
       },

@@ -88,7 +88,7 @@
           "name": "Hopp over oppdatering"
         },
         "entity_id": {
-          "description": "Svarar til ei Google Home-eining (sensor.xxxx_alarms).",
+          "description": "Svarar til ei Google Home-eining (sensor.xxxx_timers).",
           "name": "Entitet"
         }
       },
