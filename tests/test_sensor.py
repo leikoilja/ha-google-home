@@ -1,21 +1,25 @@
 """Tests for Google Home sensors."""
 
 import asyncio
-from unittest.mock import AsyncMock, Mock
+from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
 
 from custom_components.google_home.api import GlocaltokensApiClient
-from custom_components.google_home.const import API_ENDPOINT_ALARM_DELETE
+from custom_components.google_home.const import (
+    API_ENDPOINT_ALARM_DELETE,
+    DATA_CLIENT,
+    DATA_COORDINATOR,
+    DOMAIN,
+)
 from custom_components.google_home.entity import GoogleHomeBaseEntity
 from custom_components.google_home.models import GoogleHomeDevice
 from custom_components.google_home.sensor import (
     GoogleHomeAlarmsSensor,
     GoogleHomeDeviceSensor,
     GoogleHomeTimersSensor,
-    async_delete_all_alarms,
-    async_delete_all_timers,
     async_reboot_devices,
+    async_setup_entry,
 )
 
 # glocaltokens accepts only master tokens of the real length
@@ -74,16 +78,40 @@ def set_alarms_and_timers(
     return device
 
 
-def delete_all(
+def run_action(
+    action: str,
+    data: dict[str, str | bool],
     alarm_ids: list[str],
     timer_ids: list[str],
-    sensor_class: type,
-    data: dict[str, bool],
 ) -> tuple[Mock, Mock, GoogleHomeDevice]:
-    """Run the delete-all actions on a sensor of a device that now has these IDs.
+    """Run an action as registered on every sensor of a device that now has these IDs.
 
-    The last poll saw other IDs, which the actions must not use.
+    Like Home Assistant for a device, area, floor or label target, skip sensors
+    without the action's required features. The last poll saw other IDs, which
+    the delete-all actions must not use.
     """
+    platform = Mock()
+    hass = Mock(
+        data={DOMAIN: {"entry": {DATA_CLIENT: Mock(), DATA_COORDINATOR: Mock(data=[])}}}
+    )
+    with (
+        patch(
+            "homeassistant.helpers.entity_platform.async_get_current_platform",
+            return_value=platform,
+        ),
+        patch(
+            "homeassistant.helpers.service.async_register_batched_platform_entity_service"
+        ),
+    ):
+        asyncio.run(async_setup_entry(hass, Mock(entry_id="entry"), Mock()))
+    [registration] = [
+        c.args
+        for c in platform.async_register_entity_service.call_args_list
+        if c.args[0] == action
+    ]
+    func = registration[2]
+    required_features = registration[3] if len(registration) > 3 else None
+
     device = set_alarms_and_timers(
         GoogleHomeDevice("device-id", "Kitchen", "token", "192.168.1.10"),
         ["alarm/from-last-poll"],
@@ -96,64 +124,74 @@ def delete_all(
         ),
     )
     coordinator = Mock(data=[device], async_request_refresh=AsyncMock())
-    sensor = sensor_class(coordinator, client, "device-id", "Kitchen", None)
     call = Mock(data=data)
 
-    async def run_both() -> None:
-        await async_delete_all_alarms(sensor, call)
-        await async_delete_all_timers(sensor, call)
+    async def run_on_sensors() -> None:
+        for sensor_class in (
+            GoogleHomeDeviceSensor,
+            GoogleHomeAlarmsSensor,
+            GoogleHomeTimersSensor,
+        ):
+            sensor = sensor_class(coordinator, client, "device-id", "Kitchen", None)
+            features = sensor.supported_features
+            if required_features is None or (
+                features is not None
+                and any(features & f == f for f in required_features)
+            ):
+                await func(sensor, call)
 
-    asyncio.run(run_both())
+    asyncio.run(run_on_sensors())
     return client, coordinator, device
 
 
 @pytest.mark.parametrize(
-    ("sensor_class", "ids"),
-    [(GoogleHomeAlarmsSensor, ALARM_IDS), (GoogleHomeTimersSensor, TIMER_IDS)],
+    ("action", "data", "ids"),
+    [
+        ("delete_alarm", {"alarm_id": ALARM_IDS[0]}, [ALARM_IDS[0]]),
+        ("delete_timer", {"timer_id": TIMER_IDS[0]}, [TIMER_IDS[0]]),
+        ("delete_all_alarms", {}, ALARM_IDS),
+        ("delete_all_timers", {}, TIMER_IDS),
+    ],
 )
-def test_delete_all_sends_every_id_in_one_request(
-    sensor_class: type, ids: list[str]
+def test_delete_runs_once_on_its_own_sensor(
+    action: str, data: dict[str, str | bool], ids: list[str]
 ) -> None:
-    """Delete the sensor's current alarms or timers, and only those, in one request."""
-    client, _, device = delete_all(ALARM_IDS, TIMER_IDS, sensor_class, {})
+    """Delete only from the sensor the action is for, in one request."""
+    client, _, device = run_action(action, data, ALARM_IDS, TIMER_IDS)
 
     client.delete_alarm_or_timer.assert_awaited_once_with(
         device=device, items_to_delete=ids
     )
 
 
-@pytest.mark.parametrize(
-    "sensor_class", [GoogleHomeAlarmsSensor, GoogleHomeTimersSensor]
-)
-def test_delete_all_sends_nothing_when_empty(sensor_class: type) -> None:
+@pytest.mark.parametrize("action", ["delete_all_alarms", "delete_all_timers"])
+def test_delete_all_sends_nothing_when_empty(action: str) -> None:
     """Send no request and don't refresh when there is nothing to delete."""
-    client, coordinator, _ = delete_all([], [], sensor_class, {})
+    client, coordinator, _ = run_action(action, {}, [], [])
 
     client.delete_alarm_or_timer.assert_not_awaited()
     coordinator.async_request_refresh.assert_not_awaited()
 
 
-def test_delete_all_ignores_device_sensor() -> None:
-    """Do nothing on the device sensor, which a device target also selects."""
-    client, _, _ = delete_all(ALARM_IDS, TIMER_IDS, GoogleHomeDeviceSensor, {})
-
-    client.delete_alarm_or_timer.assert_not_awaited()
-
-
-@pytest.mark.parametrize(
-    "sensor_class", [GoogleHomeAlarmsSensor, GoogleHomeTimersSensor]
-)
+@pytest.mark.parametrize("action", ["delete_all_alarms", "delete_all_timers"])
 @pytest.mark.parametrize(
     ("data", "refreshed"),
     [({}, True), ({"skip_refresh": False}, True), ({"skip_refresh": True}, False)],
 )
 def test_delete_all_skip_refresh(
-    sensor_class: type, data: dict[str, bool], refreshed: bool
+    action: str, data: dict[str, str | bool], refreshed: bool
 ) -> None:
     """Refresh the devices after deleting unless skip_refresh is set."""
-    _, coordinator, _ = delete_all(ALARM_IDS, TIMER_IDS, sensor_class, data)
+    _, coordinator, _ = run_action(action, data, ALARM_IDS, TIMER_IDS)
 
     assert coordinator.async_request_refresh.await_count == int(refreshed)
+
+
+def test_refresh_devices_from_any_sensor() -> None:
+    """Refresh from every Google Home sensor, not only the device sensor."""
+    _, coordinator, _ = run_action("refresh_devices", {}, ALARM_IDS, TIMER_IDS)
+
+    assert coordinator.async_request_refresh.await_count == 3
 
 
 def test_reboot_devices_once_each() -> None:
