@@ -4,6 +4,8 @@ import asyncio
 from collections.abc import Callable
 from unittest.mock import AsyncMock, Mock
 
+from glocaltokens.client import Device
+from glocaltokens.scanner import NetworkDevice
 import pytest
 from requests.exceptions import ConnectionError as RequestsConnectionError
 
@@ -17,20 +19,19 @@ from custom_components.google_home.sensor import (
     GoogleHomeTimersSensor,
 )
 
-# glocaltokens accepts only master tokens of the real length
+# glocaltokens accepts only tokens of the real length
 MASTER_TOKEN = "aas_et/" + "x" * 216
+LOCAL_AUTH_TOKEN = "x" * 108
 
 
-def found(device_id: str, ip_address: str | None) -> Mock:
+def found(device_id: str, ip_address: str | None) -> Device:
     """Return a device as glocaltokens returns it, with the address mDNS found."""
-    return Mock(
-        device_id=device_id,
-        device_name=device_id,
-        local_auth_token="token",
-        ip_address=ip_address,
-        hardware="Nest Audio",
-        cloud_device_id=None,
+    network_device = (
+        NetworkDevice(device_id, ip_address, 8009, "Nest Audio", device_id)
+        if ip_address
+        else None
     )
+    return Device(device_id, device_id, LOCAL_AUTH_TOKEN, network_device)
 
 
 def make_client(*ip_addresses: str | None) -> tuple[GlocaltokensApiClient, Mock]:
