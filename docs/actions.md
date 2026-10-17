@@ -23,11 +23,11 @@ data:
   skip_refresh: false
 ```
 
-| Field          | Description                                                                                                                                                                      |
-| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `entity_id`    | Alarms sensor of the device, such as `sensor.kitchen_alarms`                                                                                                                     |
-| `alarm_id`     | ID of the alarm to delete. Find it in the `alarms` attribute of the [alarms sensor](entities.md#alarms-sensor). It starts with `alarm/`.                                         |
-| `skip_refresh` | Optional. `false`, the default, updates all devices straight after deleting, so the sensor shows the change immediately. `true` leaves the change for the next scheduled update. |
+| Field          | Description                                                                                                                                                                                                                                          |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `entity_id`    | Alarms sensor of the device, such as `sensor.kitchen_alarms`                                                                                                                                                                                         |
+| `alarm_id`     | ID of the alarm to delete. Find it in the `alarms` attribute of the [alarms sensor](entities.md#alarms-sensor). It starts with `alarm/`.                                                                                                             |
+| `skip_refresh` | Optional. The sensor shows the deletion as soon as the device confirms it. `false`, the default, also updates all devices straight after deleting. `true` leaves other changes, such as an alarm set from your phone, for the next scheduled update. |
 
 To delete the next alarm, use a template:
 
