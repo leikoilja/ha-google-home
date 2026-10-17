@@ -72,6 +72,8 @@ class DoNotDisturbSwitch(GoogleHomeBaseEntity, SwitchEntity):
             return
 
         await self.client.update_do_not_disturb(device=device, enable=enable)
+        # Other entities show this device's data too
+        self.coordinator.async_update_listeners()
 
     @override
     async def async_turn_on(self, **kwargs: Any) -> None:  # type: ignore[explicit-any]
