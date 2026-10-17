@@ -1,0 +1,126 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "ลงชื่อเข้าใช้ Google",
+        "description": "Integration นี้ใช้งานได้กับลำโพงและจอแสดงผลของ Google เช่น Nest Mini, Nest Audio และ Nest Hub โดยจะไม่เพิ่มอุปกรณ์อื่นๆ ในแอป Google Home\n\nเลือกวิธีลงชื่อเข้าใช้บัญชี Google ที่เป็นสมาชิกในบ้านของคุณ ดูคำแนะนำได้ที่ {docs_url}",
+        "menu_options": {
+          "browser": "ลงชื่อเข้าใช้ผ่านเบราว์เซอร์ (แนะนำ)",
+          "master_token": "Master token"
+        },
+        "menu_option_descriptions": {
+          "browser": "ลงชื่อเข้าใช้ Google ในเบราว์เซอร์บนคอมพิวเตอร์ แล้ววางคุกกี้ วิธีนี้ใช้ได้กับบัญชีส่วนใหญ่",
+          "master_token": "วาง master token ที่คุณมีอยู่แล้ว"
+        }
+      },
+      "browser": {
+        "title": "ลงชื่อเข้าใช้ผ่านเบราว์เซอร์",
+        "description": "1. บนคอมพิวเตอร์ เปิด {embedded_setup_url} ในหน้าต่างเรียกดูแบบส่วนตัวของเบราว์เซอร์ เช่น หน้าต่างที่ไม่ระบุตัวตน แล้วลงชื่อเข้าใช้ หลังจากยอมรับแล้ว หน้าเว็บอาจยังคงโหลดอยู่ ซึ่งเป็นเรื่องปกติ\n2. เปิดเครื่องมือสำหรับนักพัฒนาซอฟต์แวร์ของเบราว์เซอร์ แล้วค้นหาคุกกี้ของ `accounts.google.com`\n3. คัดลอกค่าของคุกกี้ `oauth_token` แล้ววางด้านล่างทันที ค่านี้จะหมดอายุภายในไม่กี่นาทีและใช้ได้เพียงครั้งเดียว\n\nคำแนะนำทีละขั้นตอน: {browser_docs_url}\n\nหากต้องการเลือกวิธีลงชื่อเข้าใช้แบบอื่น ให้ปิดหน้าต่างนี้แล้วเพิ่ม Integration อีกครั้ง",
+        "data": {
+          "oauth_token": "คุกกี้ oauth_token"
+        },
+        "data_description": {
+          "oauth_token": "ขึ้นต้นด้วย oauth2_4/"
+        }
+      },
+      "master_token": {
+        "title": "Master token",
+        "description": "วาง master token ที่คุณได้รับมาก่อนหน้านี้ เช่น จากเครื่องมืออื่น\n\nหากต้องการเลือกวิธีลงชื่อเข้าใช้แบบอื่น ให้ปิดหน้าต่างนี้แล้วเพิ่ม Integration อีกครั้ง",
+        "data": {
+          "master_token": "Master token ของบัญชี Google"
+        },
+        "data_description": {
+          "master_token": "ขึ้นต้นด้วย aas_et/"
+        }
+      }
+    },
+    "error": {
+      "oauth-token-invalid": "Google ไม่ยอมรับคุกกี้นี้ ให้รับคุกกี้ใหม่แล้ววางทันที เพราะจะหมดอายุภายในไม่กี่นาทีและใช้ได้เพียงครั้งเดียว คัดลอกค่าทั้งหมดที่ขึ้นต้นด้วย oauth2_4/",
+      "master-token-invalid": "Master token ไม่ถูกต้อง ตรวจสอบว่าคุณได้ระบุโทเค็นครบถ้วน รวมถึง aas_et/ แล้ว",
+      "oauth-token-format": "นี่ไม่ใช่คุกกี้ oauth_token ค่าของคุกกี้นี้ต้องขึ้นต้นด้วย oauth2_4/",
+      "master-token-format": "Master token ขึ้นต้นด้วย aas_et/ และมีความยาว 223 อักขระ คัดลอกโทเค็นให้ครบถ้วน"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "data": {
+          "update_interval": "เปลี่ยนช่วงเวลาระหว่างการอัปเดตสถานะ เพิ่มค่านี้หากอุปกรณ์ตอบสนองไม่ทันเวลา ค่าเริ่มต้น: 180 วินาที",
+          "known_hosts": "โฮสต์ที่รู้จัก"
+        },
+        "data_description": {
+          "known_hosts": "ที่อยู่ IP ของลำโพงและจอแสดงผลที่ Integration ค้นหาเองไม่ได้ เช่น อุปกรณ์ที่อยู่ในเครือข่ายหรือ VLAN อื่น"
+        }
+      }
+    },
+    "error": {
+      "known-host-not-ip": "ป้อนเฉพาะที่อยู่ IP เช่น 192.168.1.20"
+    }
+  },
+  "services": {
+    "delete_alarm": {
+      "description": "ลบการปลุกหนึ่งรายการออกจากอุปกรณ์ Google Home",
+      "fields": {
+        "alarm_id": {
+          "description": "ID ของการปลุก (alarm/xxx)",
+          "name": "ID การปลุก"
+        },
+        "skip_refresh": {
+          "description": "ข้ามการรีเฟรชสถานะของอุปกรณ์ Google Home หลังจากลบการปลุก",
+          "name": "ข้ามการรีเฟรช"
+        },
+        "entity_id": {
+          "description": "เอนทิตีที่แทนอุปกรณ์ Google Home (sensor.xxxx_alarms)",
+          "name": "เอนทิตี"
+        }
+      },
+      "name": "ลบการปลุก"
+    },
+    "delete_timer": {
+      "description": "ลบตัวจับเวลาหนึ่งรายการออกจากอุปกรณ์ Google Home",
+      "fields": {
+        "timer_id": {
+          "description": "ID ของตัวจับเวลา (timer/xxx)",
+          "name": "ID ตัวจับเวลา"
+        },
+        "skip_refresh": {
+          "description": "ข้ามการรีเฟรชสถานะของอุปกรณ์ Google Home หลังจากลบตัวจับเวลา",
+          "name": "ข้ามการรีเฟรช"
+        },
+        "entity_id": {
+          "description": "เอนทิตีที่แทนอุปกรณ์ Google Home (sensor.xxxx_timers)",
+          "name": "เอนทิตี"
+        }
+      },
+      "name": "ลบตัวจับเวลา"
+    },
+    "delete_all_alarms": {
+      "description": "ลบการปลุกทั้งหมดออกจากอุปกรณ์ Google Home",
+      "fields": {
+        "skip_refresh": {
+          "description": "ข้ามการรีเฟรชสถานะของอุปกรณ์ Google Home หลังจากลบการปลุกทั้งหมด",
+          "name": "ข้ามการรีเฟรช"
+        }
+      },
+      "name": "ลบการปลุกทั้งหมด"
+    },
+    "delete_all_timers": {
+      "description": "ลบตัวจับเวลาทั้งหมดออกจากอุปกรณ์ Google Home",
+      "fields": {
+        "skip_refresh": {
+          "description": "ข้ามการรีเฟรชสถานะของอุปกรณ์ Google Home หลังจากลบตัวจับเวลาทั้งหมด",
+          "name": "ข้ามการรีเฟรช"
+        }
+      },
+      "name": "ลบตัวจับเวลาทั้งหมด"
+    },
+    "reboot_device": {
+      "description": "รีสตาร์ทอุปกรณ์ Google Home",
+      "name": "รีสตาร์ทอุปกรณ์"
+    },
+    "refresh_devices": {
+      "description": "รีเฟรชสถานะของอุปกรณ์ Google Home ทั้งหมด",
+      "name": "รีเฟรชสถานะอุปกรณ์"
+    }
+  }
+}
