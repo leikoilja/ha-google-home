@@ -48,9 +48,14 @@ The Google account you signed in with must be a member of the home your devices 
 
 ### No alarms or timers sensors
 
-The integration creates the alarms sensor, timers sensor, Do Not Disturb switch and alarm volume only for devices it can reach when it starts. If a device was offline then, it has only a device sensor.
+The integration adds the alarms sensor, timers sensor, Do Not Disturb switch and alarm volume for a device once the device answers. Until then, a device that is offline, or that doesn't support these features, has only a device sensor.
 
-Make sure the device is online, then reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. If that doesn't help, restart the Google Home device and then Home Assistant.
+When the device answers, the integration adds the missing entities:
+
+- If the device sensor shows an IP address, this happens at the next update.
+- If the device sensor is unavailable, the integration doesn't know the device's IP address. It looks for the device again every 10 updates, which is every 30 minutes with the default [update interval](installation.md#change-the-update-interval).
+
+If you don't want to wait, make sure the device is online, then reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. If that doesn't help, restart the Google Home device and then Home Assistant.
 
 ### Device offline or not compatible
 
