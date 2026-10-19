@@ -9,8 +9,9 @@ Each Google Home device gets the entities below. The examples use a device named
 | Device sensor         | `sensor.living_room_device`         | The device's IP address and connection details            |
 | Do Not Disturb switch | `switch.living_room_do_not_disturb` | Turns Do Not Disturb on or off                            |
 | Alarm volume          | `number.living_room_alarm_volume`   | Sets the alarm volume, from 0 to 100%                     |
+| Reboot button         | `button.living_room_reboot`         | Reboots the device                                        |
 
-The alarms sensor, timers sensor, switch and alarm volume are added once Home Assistant can reach the device. If a device has only a device sensor, see [No alarms or timers sensors](troubleshooting.md#no-alarms-or-timers-sensors).
+The alarms sensor, timers sensor, switch and alarm volume are added once Home Assistant can reach the device. If a device has only a device sensor and a reboot button, see [No alarms or timers sensors](troubleshooting.md#no-alarms-or-timers-sensors).
 
 ## Alarms sensor
 
@@ -96,3 +97,17 @@ Turns Do Not Disturb on or off on the device. It appears under **Configuration**
 ## Alarm volume
 
 Sets how loud alarms ring on the device, from 0 to 100%. It appears under **Configuration** on the device page. To change the volume of media, use the Google Cast integration that comes with Home Assistant.
+
+## Reboot button
+
+Press it to reboot the device. It appears under **Configuration** on the device page. It sends the same request as the [Reboot device](actions.md#reboot-device) action. To press it from an automation or script, use the `button.press` action:
+
+```yaml
+action: button.press
+target:
+  entity_id: button.living_room_reboot
+```
+
+The button is unavailable until Home Assistant finds the device on your network. If the device goes offline later, the button may stay available, but pressing it then has no effect. The `available` attribute of the [device sensor](#device-sensor) shows whether Home Assistant reached the device at its last request.
+
+Not every device supports rebooting. The log can show "Successfully asked Living Room to reboot." even when the device didn't restart. If that happens, [reboot it from the Google Home app or unplug it for a minute](https://support.google.com/googlehome/answer/7072490).

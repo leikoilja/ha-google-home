@@ -21,7 +21,7 @@
 Read the full documentation at **[ha-google-home.pages.dev](https://ha-google-home.pages.dev/)**:
 
 - [Getting Started](https://ha-google-home.pages.dev/installation/): prerequisites, installation and sign-in
-- [Entities](https://ha-google-home.pages.dev/entities/): alarms, timers, Do Not Disturb and alarm volume
+- [Entities](https://ha-google-home.pages.dev/entities/): alarms, timers, Do Not Disturb, alarm volume and reboot
 - [Actions](https://ha-google-home.pages.dev/actions/): delete alarms and timers, reboot and refresh devices
 - [Troubleshooting](https://ha-google-home.pages.dev/troubleshooting/)
 - [Community](https://ha-google-home.pages.dev/community/): dashboard cards and Node-RED flows

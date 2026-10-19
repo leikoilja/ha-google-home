@@ -105,9 +105,9 @@ target:
   entity_id: sensor.kitchen_device
 ```
 
-Target any Google Home sensor of the device, such as its device sensor.
+Target any Google Home sensor of the device, such as its device sensor, or the device itself. A device, area or floor target, or a label on the device, reboots each device once. It silently skips a device that has [only a device sensor](troubleshooting.md#no-alarms-or-timers-sensors), or whose alarms and timers sensors are both hidden or disabled. For a device without alarms, such as an NVIDIA Shield, or with hidden or disabled sensors, target its device sensor instead. An offline device can't be rebooted until it answers. To reboot from the device page or a dashboard, press the device's [reboot button](entities.md#reboot-button) instead.
 
-Not every device supports rebooting. The log can show "Successfully asked Kitchen to reboot." even when the device didn't restart.
+Not every device supports rebooting. The log can show "Successfully asked Kitchen to reboot." even when the device didn't restart. If that happens, [reboot it from the Google Home app or unplug it for a minute](https://support.google.com/googlehome/answer/7072490).
 
 ## Refresh devices
 

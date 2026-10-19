@@ -96,3 +96,5 @@ class AlarmVolumeNumber(GoogleHomeBaseEntity, NumberEntity):
             return
 
         await self.client.update_alarm_volume(device=device, volume=round(value))
+        # Other entities show this device's data too
+        self.coordinator.async_update_listeners()

@@ -35,7 +35,8 @@ ICON_ALARM_VOLUME_OFF: Final = "mdi:volume-off"
 SENSOR: Final = "sensor"
 SWITCH: Final = "switch"
 NUMBER: Final = "number"
-PLATFORMS: Final = [SENSOR, SWITCH, NUMBER]
+BUTTON: Final = "button"
+PLATFORMS: Final = [SENSOR, SWITCH, NUMBER, BUTTON]
 
 # Services
 SERVICE_REBOOT: Final = "reboot_device"
@@ -67,6 +68,7 @@ LABEL_AVAILABLE: Final = "available"
 LABEL_TIMERS: Final = "timers"
 LABEL_DEVICE: Final = "device"
 LABEL_DO_NOT_DISTURB: Final = "Do Not Disturb"
+LABEL_REBOOT: Final = "reboot"
 
 # DEVICE PORT
 PORT: Final = 8443
