@@ -25,7 +25,7 @@ data:
 
 | Field          | Description                                                                                                                                                                                                                                          |
 | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `entity_id`    | Alarms sensor of the device, such as `sensor.kitchen_alarms`                                                                                                                                                                                         |
+| `entity_id`    | Alarms sensor of the device, such as `sensor.kitchen_alarms`. Leave it out when you target the device instead, as described below.                                                                                                                   |
 | `alarm_id`     | ID of the alarm to delete. Find it in the `alarms` attribute of the [alarms sensor](entities.md#alarms-sensor). It starts with `alarm/`.                                                                                                             |
 | `skip_refresh` | Optional. The sensor shows the deletion as soon as the device confirms it. `false`, the default, also updates all devices straight after deleting. `true` leaves other changes, such as an alarm set from your phone, for the next scheduled update. |
 
@@ -67,7 +67,7 @@ data:
 
 | Field          | Description                                                                                                                              |
 | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `entity_id`    | Timers sensor of the device, such as `sensor.kitchen_timers`                                                                             |
+| `entity_id`    | Timers sensor of the device, such as `sensor.kitchen_timers`. Leave it out when you target the device instead, as described below.       |
 | `timer_id`     | ID of the timer to delete. Find it in the `timers` attribute of the [timers sensor](entities.md#timers-sensor). It starts with `timer/`. |
 | `skip_refresh` | Optional. Same as for [Delete alarm](#delete-alarm).                                                                                     |
 
