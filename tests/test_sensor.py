@@ -78,6 +78,11 @@ def set_alarms_and_timers(
     return device
 
 
+def confirm_delete(device: GoogleHomeDevice, items_to_delete: list[str]) -> None:
+    """Remove the items from the device, as the client does once the device confirms."""
+    device.remove_alarms_and_timers(items_to_delete)
+
+
 def delete_all(
     alarm_ids: list[str],
     timer_ids: list[str],
@@ -95,12 +100,7 @@ def delete_all(
         ["timer/from-last-poll"],
     )
     client = Mock(
-        # Like the device confirming the delete
-        delete_alarm_or_timer=AsyncMock(
-            side_effect=lambda device, items_to_delete: device.remove_alarms_and_timers(
-                items_to_delete
-            )
-        ),
+        delete_alarm_or_timer=AsyncMock(side_effect=confirm_delete),
         update_alarms_and_timers=AsyncMock(
             side_effect=lambda d: set_alarms_and_timers(d, alarm_ids, timer_ids)
         ),
@@ -159,6 +159,33 @@ def test_delete_all_shows_none_left(
     _, _, _, shown = delete_all(
         alarm_ids, timer_ids, sensor_class, {"skip_refresh": True}
     )
+
+    assert shown == [STATE_UNAVAILABLE]
+
+
+@pytest.mark.parametrize(
+    ("sensor_class", "action", "data"),
+    [
+        (GoogleHomeAlarmsSensor, "async_delete_alarm", {"alarm_id": ALARM_IDS[0]}),
+        (GoogleHomeTimersSensor, "async_delete_timer", {"timer_id": TIMER_IDS[0]}),
+    ],
+)
+def test_delete_one_shows_it_gone(
+    sensor_class: type, action: str, data: dict[str, str | bool]
+) -> None:
+    """Show the deleted alarm or timer as gone right away, even without a refresh."""
+    device = set_alarms_and_timers(
+        GoogleHomeDevice("device-id", "Kitchen", "token", "192.168.1.10"),
+        ALARM_IDS[:1],
+        TIMER_IDS[:1],
+    )
+    client = Mock(delete_alarm_or_timer=AsyncMock(side_effect=confirm_delete))
+    coordinator = Mock(data=[device])
+    sensor = sensor_class(coordinator, client, "device-id", "Kitchen", None)
+    shown: list[str | None] = []
+    coordinator.async_update_listeners.side_effect = lambda: shown.append(sensor.state)
+
+    asyncio.run(getattr(sensor, action)(Mock(data={**data, "skip_refresh": True})))
 
     assert shown == [STATE_UNAVAILABLE]
 

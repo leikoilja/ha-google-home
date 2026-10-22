@@ -71,9 +71,9 @@ data:
   skip_refresh: false
 ```
 
-| Field          | Description                                          |
-| -------------- | ---------------------------------------------------- |
-| `skip_refresh` | Optional. Same as for [Delete alarm](#delete-alarm). |
+| Field          | Description                                                                                                                                                                                          |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `skip_refresh` | Optional. The alarms and timers sensors show what is on the device straight away, since the action reads it before deleting. `false`, the default, also updates all devices straight after deleting. |
 
 Target the alarms sensor of each device, or the devices themselves. The action asks each device for its current alarms first, so it also deletes alarms set since the last update.
 
@@ -89,9 +89,9 @@ data:
   skip_refresh: false
 ```
 
-| Field          | Description                                          |
-| -------------- | ---------------------------------------------------- |
-| `skip_refresh` | Optional. Same as for [Delete alarm](#delete-alarm). |
+| Field          | Description                                                    |
+| -------------- | -------------------------------------------------------------- |
+| `skip_refresh` | Optional. Same as for [Delete all alarms](#delete-all-alarms). |
 
 Target the timers sensor of each device, or the devices themselves. The action asks each device for its current timers first, so it also deletes timers set since the last update.
 
