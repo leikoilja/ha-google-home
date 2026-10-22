@@ -23,11 +23,11 @@ data:
   skip_refresh: false
 ```
 
-| Field          | Description                                                                                                                                                                      |
-| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `entity_id`    | Alarms sensor of the device, such as `sensor.kitchen_alarms`                                                                                                                     |
-| `alarm_id`     | ID of the alarm to delete. Find it in the `alarms` attribute of the [alarms sensor](entities.md#alarms-sensor). It starts with `alarm/`.                                         |
-| `skip_refresh` | Optional. `false`, the default, updates all devices straight after deleting, so the sensor shows the change immediately. `true` leaves the change for the next scheduled update. |
+| Field          | Description                                                                                                                                                                                                                                          |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `entity_id`    | Alarms sensor of the device, such as `sensor.kitchen_alarms`                                                                                                                                                                                         |
+| `alarm_id`     | ID of the alarm to delete. Find it in the `alarms` attribute of the [alarms sensor](entities.md#alarms-sensor). It starts with `alarm/`.                                                                                                             |
+| `skip_refresh` | Optional. The sensor shows the deletion as soon as the device confirms it. `false`, the default, also updates all devices straight after deleting. `true` leaves other changes, such as an alarm set from your phone, for the next scheduled update. |
 
 To delete the next alarm, use a template:
 
@@ -71,9 +71,9 @@ data:
   skip_refresh: false
 ```
 
-| Field          | Description                                          |
-| -------------- | ---------------------------------------------------- |
-| `skip_refresh` | Optional. Same as for [Delete alarm](#delete-alarm). |
+| Field          | Description                                                                                                                                                                                          |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `skip_refresh` | Optional. The alarms and timers sensors show what is on the device straight away, since the action reads it before deleting. `false`, the default, also updates all devices straight after deleting. |
 
 Target the alarms sensor of each device, or the devices themselves. The action asks each device for its current alarms first, so it also deletes alarms set since the last update.
 
@@ -89,9 +89,9 @@ data:
   skip_refresh: false
 ```
 
-| Field          | Description                                          |
-| -------------- | ---------------------------------------------------- |
-| `skip_refresh` | Optional. Same as for [Delete alarm](#delete-alarm). |
+| Field          | Description                                                    |
+| -------------- | -------------------------------------------------------------- |
+| `skip_refresh` | Optional. Same as for [Delete all alarms](#delete-all-alarms). |
 
 Target the timers sensor of each device, or the devices themselves. The action asks each device for its current timers first, so it also deletes timers set since the last update.
 

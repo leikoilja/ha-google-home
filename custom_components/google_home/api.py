@@ -317,7 +317,10 @@ class GlocaltokensApiClient:
     async def delete_alarm_or_timer(
         self, device: GoogleHomeDevice, items_to_delete: list[str]
     ) -> None:
-        """Delete one or more timers or alarms in a single request."""
+        """Delete one or more timers or alarms in a single request.
+
+        Once the device confirms, also remove them from the device's data.
+        """
 
         if not items_to_delete:
             return
@@ -345,6 +348,7 @@ class GlocaltokensApiClient:
                         item_type,
                         device.name,
                     )
+                    device.remove_alarms_and_timers(items_to_delete)
                 else:
                     _LOGGER.error(
                         "Couldn't delete %s for %s - %s",
