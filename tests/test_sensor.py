@@ -279,12 +279,16 @@ def test_delete_alarm_or_timer_posts_all_ids() -> None:
 
 @pytest.mark.parametrize(
     ("response", "alarms_left"),
-    [({"success": True}, []), ({"success": False}, ALARM_IDS), (None, ALARM_IDS)],
+    [
+        ({"success": True}, ALARM_IDS[1:]),
+        ({"success": False}, ALARM_IDS),
+        (None, ALARM_IDS),
+    ],
 )
 def test_delete_alarm_or_timer_removes_deleted_ids(
     response: dict[str, bool] | None, alarms_left: list[str]
 ) -> None:
-    """Remove the IDs from the device once it confirms deleting them."""
+    """Remove only the deleted IDs from the device, once it confirms deleting them."""
     client = GlocaltokensApiClient(Mock(), Mock(), master_token=MASTER_TOKEN)
     client.request = AsyncMock(return_value=response)  # type: ignore[method-assign]
     device = set_alarms_and_timers(
@@ -293,7 +297,7 @@ def test_delete_alarm_or_timer_removes_deleted_ids(
         TIMER_IDS,
     )
 
-    asyncio.run(client.delete_alarm_or_timer(device, ALARM_IDS))
+    asyncio.run(client.delete_alarm_or_timer(device, ALARM_IDS[:1]))
 
     assert [alarm.alarm_id for alarm in device.get_sorted_alarms()] == alarms_left
     assert [timer.timer_id for timer in device.get_sorted_timers()] == TIMER_IDS
