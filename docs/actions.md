@@ -71,7 +71,7 @@ data:
 | `timer_id`     | ID of the timer to delete. Find it in the `timers` attribute of the [timers sensor](entities.md#timers-sensor). It starts with `timer/`. |
 | `skip_refresh` | Optional. Same as for [Delete alarm](#delete-alarm).                                                                                     |
 
-You can target the device instead of its timers sensor, as for [Delete alarm](#delete-alarm). The action then runs on the timers sensor only, and does nothing if that sensor is hidden or disabled. Name a hidden sensor directly instead, and enable a disabled one first. Naming another sensor of the device fails, and nothing is deleted on any device.
+You can target the device instead of its timers sensor, as for [Delete alarm](#delete-alarm). The action then runs on the timers sensor only, and does nothing if that sensor is hidden or disabled. Name a hidden sensor directly instead, and enable a disabled one first. Naming another sensor of the device fails, and nothing is deleted on any device, even if you also name the timers sensor. Target one device at a time: an area, floor or label target sends the timer ID to every speaker it covers, and speakers without that timer can log an error.
 
 ## Delete all alarms
 

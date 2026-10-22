@@ -10,7 +10,7 @@ delete_alarm:
   fields:
     entity_id:
       example: "sensor.kitchen_alarms"
-      required: true
+      required: false
       selector:
         entity:
           domain: sensor
@@ -31,7 +31,7 @@ delete_timer:
   fields:
     entity_id:
       example: "sensor.kitchen_timers"
-      required: true
+      required: false
       selector:
         entity:
           domain: sensor
