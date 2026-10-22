@@ -51,7 +51,7 @@ data:
   alarm_id: alarm/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51
 ```
 
-The action then runs on the device's alarms sensor only. If that sensor is hidden or disabled, nothing is deleted and nothing is logged. Naming another sensor of the device, such as `sensor.kitchen_timers`, fails with "Entity sensor.kitchen_timers does not support action google_home.delete_alarm." Target one device at a time: an area, floor or label target sends the alarm ID to every speaker it covers, and speakers without that alarm can log an error.
+The action then runs on the device's alarms sensor only. If that sensor is hidden or disabled, nothing is deleted and nothing is logged. Naming another sensor of the device, such as `sensor.kitchen_timers`, fails with "Entity sensor.kitchen_timers does not support action google_home.delete_alarm." and nothing is deleted on any device, even if you also name the alarms sensor. Target one device at a time: an area, floor or label target sends the alarm ID to every speaker it covers, and speakers without that alarm can log an error.
 
 ## Delete timer
 
@@ -71,7 +71,7 @@ data:
 | `timer_id`     | ID of the timer to delete. Find it in the `timers` attribute of the [timers sensor](entities.md#timers-sensor). It starts with `timer/`. |
 | `skip_refresh` | Optional. Same as for [Delete alarm](#delete-alarm).                                                                                     |
 
-You can target the device instead of its timers sensor, as for [Delete alarm](#delete-alarm). The action then runs on the timers sensor only, and does nothing if that sensor is hidden or disabled. Naming another sensor of the device fails.
+You can target the device instead of its timers sensor, as for [Delete alarm](#delete-alarm). The action then runs on the timers sensor only, and does nothing if that sensor is hidden or disabled. Naming another sensor of the device fails, and nothing is deleted on any device.
 
 ## Delete all alarms
 
@@ -89,7 +89,7 @@ data:
 | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `skip_refresh` | Optional. The alarms and timers sensors show what is on the device straight away, since the action reads it before deleting. `false`, the default, also updates all devices straight after deleting. |
 
-Target the alarms sensor of each device, or the devices themselves. A device target skips a device whose alarms sensor is hidden or disabled. Naming another sensor of a device, such as its timers sensor, fails. The action asks each device for its current alarms first, so it also deletes alarms set since the last update.
+Target the alarms sensor of each device, or the devices themselves. A device target skips a device whose alarms sensor is hidden or disabled. Naming another sensor of a device, such as its timers sensor, fails, and nothing is deleted on any device. So does a group or template that includes other Google Home sensors, such as `{{ integration_entities('google_home') }}`. To clear every speaker, target `entity_id: all`. The action asks each device for its current alarms first, so it also deletes alarms set since the last update.
 
 ## Delete all timers
 
@@ -107,7 +107,7 @@ data:
 | -------------- | -------------------------------------------------------------- |
 | `skip_refresh` | Optional. Same as for [Delete all alarms](#delete-all-alarms). |
 
-Target the timers sensor of each device, or the devices themselves. A device target skips a device whose timers sensor is hidden or disabled. Naming another sensor of a device, such as its alarms sensor, fails. The action asks each device for its current timers first, so it also deletes timers set since the last update.
+Target the timers sensor of each device, or the devices themselves. A device target skips a device whose timers sensor is hidden or disabled. Naming another sensor of a device, such as its alarms sensor, fails, and nothing is deleted on any device. So does a group or template that includes other Google Home sensors. To clear every speaker, target `entity_id: all`. The action asks each device for its current timers first, so it also deletes timers set since the last update.
 
 ## Reboot device
 
