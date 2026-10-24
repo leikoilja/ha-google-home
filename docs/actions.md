@@ -130,7 +130,9 @@ Updates alarms, timers and settings for all devices now, instead of waiting for 
 ```yaml
 action: google_home.refresh_devices
 target:
-  entity_id: sensor.kitchen_device
+  entity_id: sensor.kitchen_alarms
 ```
 
-Target any one Google Home sensor; all devices are updated. Without a target, the action does nothing.
+Target an alarms or timers sensor, or a device that has [alarms and timers sensors](troubleshooting.md#no-alarms-or-timers-sensors). All devices are updated once, however many sensors the target covers. The action needs a target.
+
+If the sensors you target are unavailable, run [`homeassistant.update_entity`](https://www.home-assistant.io/actions/homeassistant.update_entity/) on one Google Home sensor instead. Home Assistant runs `refresh_devices` only on available sensors. The device sensor is unavailable while the integration doesn't know the device's IP address or Google no longer lists the device, and every sensor is unavailable after a failed update. An alarms or timers sensor that shows `unavailable` only because nothing is coming up still works: in [**Developer tools** > **States**](https://my.home-assistant.io/redirect/developer_states/) it still has its `alarms` or `timers` attribute. If you name an unavailable sensor directly, the log shows "Referenced entities sensor.kitchen_alarms are missing or not currently available", even if another named sensor updated the devices.

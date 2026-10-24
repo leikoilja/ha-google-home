@@ -132,20 +132,24 @@ async def async_setup_entry(
         func=async_reboot_devices,
     )
 
-    platform.async_register_entity_service(
+    service.async_register_batched_platform_entity_service(
+        hass,
+        DOMAIN,
         SERVICE_REFRESH,
-        {},
-        async_refresh_devices,
+        entity_domain=SENSOR,
+        schema={},
+        func=async_refresh_devices,
     )
 
     return True
 
 
 async def async_refresh_devices(
-    entity: GoogleHomeBaseEntity, _call: ServiceCall
+    entities: list[GoogleHomeBaseEntity], _call: ServiceCall
 ) -> None:
-    """Refresh all devices, from whichever Google Home sensor is targeted."""
-    await entity.coordinator.async_request_refresh()
+    """Refresh all devices once, however many sensors are targeted."""
+    # The integration allows one config entry, so all sensors share its coordinator
+    await entities[0].coordinator.async_request_refresh()
 
 
 async def async_delete(

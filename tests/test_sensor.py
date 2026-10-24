@@ -11,6 +11,9 @@ from custom_components.google_home.const import (
     DATA_CLIENT,
     DATA_COORDINATOR,
     DOMAIN,
+    SENSOR,
+    SERVICE_REBOOT,
+    SERVICE_REFRESH,
 )
 from custom_components.google_home.entity import GoogleHomeBaseEntity
 from custom_components.google_home.models import GoogleHomeDevice
@@ -19,6 +22,7 @@ from custom_components.google_home.sensor import (
     GoogleHomeDeviceSensor,
     GoogleHomeTimersSensor,
     async_reboot_devices,
+    async_refresh_devices,
     async_setup_entry,
 )
 
@@ -87,19 +91,8 @@ def confirm_delete(device: GoogleHomeDevice, items_to_delete: list[str]) -> None
     device.remove_alarms_and_timers(items_to_delete)
 
 
-def run_action(
-    action: str,
-    data: dict[str, str | bool],
-    alarm_ids: list[str],
-    timer_ids: list[str],
-) -> tuple[Mock, Mock, GoogleHomeDevice, list[str | None]]:
-    """Run an action as registered on every sensor of a device that now has these IDs.
-
-    Like Home Assistant for a device, area, floor or label target, skip sensors
-    without the action's required features. The last poll saw other IDs, which
-    the delete-all actions must not use. Also return the state of the sensors
-    the action ran on each time the entities were updated.
-    """
+def set_up_platform() -> tuple[Mock, Mock]:
+    """Set up the sensor platform, returning its entity and batched action registrations."""
     platform = Mock()
     hass = Mock(
         data={DOMAIN: {"entry": {DATA_CLIENT: Mock(), DATA_COORDINATOR: Mock(data=[])}}}
@@ -111,16 +104,44 @@ def run_action(
         ),
         patch(
             "homeassistant.helpers.service.async_register_batched_platform_entity_service"
-        ),
+        ) as register_batched,
     ):
         asyncio.run(async_setup_entry(hass, Mock(entry_id="entry"), Mock()))
-    [registration] = [
+    return platform, register_batched
+
+
+def test_batched_actions_registered() -> None:
+    """Batch the reboot and refresh actions, so Home Assistant calls each once with every targeted sensor."""
+    _, register_batched = set_up_platform()
+
+    assert {
+        c.args[2]: (c.kwargs["entity_domain"], c.kwargs["func"])
+        for c in register_batched.call_args_list
+    } == {
+        SERVICE_REBOOT: (SENSOR, async_reboot_devices),
+        SERVICE_REFRESH: (SENSOR, async_refresh_devices),
+    }
+
+
+def run_action(
+    action: str,
+    data: dict[str, str | bool],
+    alarm_ids: list[str],
+    timer_ids: list[str],
+) -> tuple[Mock, Mock, GoogleHomeDevice, list[str | None]]:
+    """Run a delete action as registered on every sensor of a device that now has these IDs.
+
+    Like Home Assistant for a device, area, floor or label target, skip sensors
+    without the action's required features. The last poll saw other IDs, which
+    the delete-all actions must not use. Also return the state of the sensors
+    the action ran on each time the entities were updated.
+    """
+    platform, _ = set_up_platform()
+    [(_, _, func, required_features)] = [
         c.args
         for c in platform.async_register_entity_service.call_args_list
         if c.args[0] == action
     ]
-    func = registration[2]
-    required_features = registration[3] if len(registration) > 3 else None
 
     device = set_alarms_and_timers(
         GoogleHomeDevice("device-id", "Kitchen", "token", "192.168.1.10"),
@@ -145,11 +166,8 @@ def run_action(
     supported = [
         sensor
         for sensor in sensors
-        if required_features is None
-        or (
-            (features := sensor.supported_features) is not None
-            and any(features & f == f for f in required_features)
-        )
+        if (features := sensor.supported_features) is not None
+        and any(features & f == f for f in required_features)
     ]
     shown: list[str | None] = []
     coordinator.async_update_listeners.side_effect = lambda: shown.extend(
@@ -249,11 +267,22 @@ def test_delete_all_skip_refresh(
     assert coordinator.async_request_refresh.await_count == int(refreshed)
 
 
-def test_refresh_devices_from_any_sensor() -> None:
-    """Refresh from every Google Home sensor, not only the device sensor."""
-    _, coordinator, _, _ = run_action("refresh_devices", {}, ALARM_IDS, TIMER_IDS)
+def test_refresh_devices_once() -> None:
+    """Refresh the devices once, however many sensors and devices are targeted."""
+    coordinator = Mock(async_request_refresh=AsyncMock())
+    sensors: list[GoogleHomeBaseEntity] = [
+        sensor_class(coordinator, Mock(), device_id, name, None)
+        for device_id, name in (("kitchen-id", "Kitchen"), ("bedroom-id", "Bedroom"))
+        for sensor_class in (
+            GoogleHomeDeviceSensor,
+            GoogleHomeAlarmsSensor,
+            GoogleHomeTimersSensor,
+        )
+    ]
 
-    assert coordinator.async_request_refresh.await_count == 3
+    asyncio.run(async_refresh_devices(sensors, Mock()))
+
+    coordinator.async_request_refresh.assert_awaited_once()
 
 
 def test_reboot_devices_once_each() -> None:
