@@ -14,7 +14,6 @@ from requests.exceptions import RequestException
 from zeroconf import Zeroconf
 
 from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import HomeAssistantError
 
 from .const import (
     API_ENDPOINT_ALARM_DELETE,
@@ -23,7 +22,6 @@ from .const import (
     API_ENDPOINT_DO_NOT_DISTURB,
     API_ENDPOINT_EUREKA_INFO,
     API_ENDPOINT_REBOOT,
-    DOMAIN,
     FETCH_DEVICES_EVERY,
     HEADER_CAST_LOCAL_AUTH,
     HEADER_CONTENT_TYPE,
@@ -34,7 +32,7 @@ from .const import (
     PORT,
     TIMEOUT,
 )
-from .exceptions import InvalidMasterToken
+from .exceptions import AlarmsAndTimersNotFetched, InvalidMasterToken
 from .models import GoogleHomeDevice
 from .types import AlarmJsonDict, JsonDict, TimerJsonDict
 
@@ -319,11 +317,7 @@ class GlocaltokensApiClient:
                 response,
             )
         if not polling:
-            raise HomeAssistantError(
-                translation_domain=DOMAIN,
-                translation_key="alarms_and_timers_not_fetched",
-                translation_placeholders={"device": device.name},
-            )
+            raise AlarmsAndTimersNotFetched(device.name)
         return device
 
     async def delete_alarm_or_timer(
