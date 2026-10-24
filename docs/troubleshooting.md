@@ -9,7 +9,7 @@ Debug logs show what the integration is doing. Attach them when you [open an iss
 3. Reproduce the problem.
 4. Open the **⋮** menu again and select **Disable debug logging**. Your browser downloads the log file.
 
-If setup fails, the integration has no **⋮** menu yet. Instead, run this action in [**Developer tools** > **Actions**](https://my.home-assistant.io/redirect/developer_services/), then try to add the integration again and open the [log](https://my.home-assistant.io/redirect/logs/). The action also logs `glocaltokens`, the library the integration uses to sign in:
+If setup fails, the integration has no **⋮** menu yet. Instead, run this action in [**Settings** > **Tools** > **Actions**](https://my.home-assistant.io/redirect/tools_actions/), then try to add the integration again and open the [log](https://my.home-assistant.io/redirect/logs/). The action also logs `glocaltokens`, the library the integration uses to sign in:
 
 ```yaml
 action: logger.set_level

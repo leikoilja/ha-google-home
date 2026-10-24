@@ -52,7 +52,7 @@ actions:
 
 ## When a timer finishes
 
-Send a notification to your phone when the kitchen timer finishes. Replace `notify.mobile_app_your_phone` with the notify action of your phone, which you can find in [**Developer tools** > **Actions**](https://my.home-assistant.io/redirect/developer_services/):
+Send a notification to your phone when the kitchen timer finishes. Replace `notify.mobile_app_your_phone` with the notify action of your phone, which you can find in [**Settings** > **Tools** > **Actions**](https://my.home-assistant.io/redirect/tools_actions/):
 
 ```yaml
 alias: Kitchen timer finished
