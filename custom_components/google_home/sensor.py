@@ -333,7 +333,7 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
             _LOGGER.error("Device %s is not found.", self.device_name)
             return
 
-        await self.client.update_alarms_and_timers(device)
+        await self.client.update_alarms_and_timers(device, polling=False)
         alarm_ids = [alarm.alarm_id for alarm in device.get_sorted_alarms()]
         await async_delete(self, call, device, alarm_ids)
 
@@ -424,6 +424,6 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
             _LOGGER.error("Device %s is not found.", self.device_name)
             return
 
-        await self.client.update_alarms_and_timers(device)
+        await self.client.update_alarms_and_timers(device, polling=False)
         timer_ids = [timer.timer_id for timer in device.get_sorted_timers()]
         await async_delete(self, call, device, timer_ids)

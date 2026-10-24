@@ -14,6 +14,7 @@ from requests.exceptions import RequestException
 from zeroconf import Zeroconf
 
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import HomeAssistantError
 
 from .const import (
     API_ENDPOINT_ALARM_DELETE,
@@ -22,6 +23,7 @@ from .const import (
     API_ENDPOINT_DO_NOT_DISTURB,
     API_ENDPOINT_EUREKA_INFO,
     API_ENDPOINT_REBOOT,
+    DOMAIN,
     FETCH_DEVICES_EVERY,
     HEADER_CAST_LOCAL_AUTH,
     HEADER_CONTENT_TYPE,
@@ -286,32 +288,42 @@ class GlocaltokensApiClient:
         return await self.update_do_not_disturb(device)
 
     async def update_alarms_and_timers(
-        self, device: GoogleHomeDevice
+        self, device: GoogleHomeDevice, *, polling: bool = True
     ) -> GoogleHomeDevice:
-        """Fetch timers and alarms from google device."""
+        """Fetch timers and alarms from google device.
+
+        Unless polling, raise if they can't be fetched, so an action doesn't
+        work from the alarms and timers of the last update.
+        """
         response = await self.request(
-            method="GET", endpoint=API_ENDPOINT_ALARMS, device=device, polling=True
+            method="GET", endpoint=API_ENDPOINT_ALARMS, device=device, polling=polling
         )
 
+        if response is not None and JSON_TIMER in response and JSON_ALARM in response:
+            device.set_timers(cast(list[TimerJsonDict], response[JSON_TIMER]))
+            device.set_alarms(cast(list[AlarmJsonDict], response[JSON_ALARM]))
+            _LOGGER.debug(
+                "Successfully retrieved alarms and timers from %s. Response: %s",
+                device.name,
+                response,
+            )
+            return device
         if response is not None:
-            if JSON_TIMER in response and JSON_ALARM in response:
-                device.set_timers(cast(list[TimerJsonDict], response[JSON_TIMER]))
-                device.set_alarms(cast(list[AlarmJsonDict], response[JSON_ALARM]))
-                _LOGGER.debug(
-                    "Successfully retrieved alarms and timers from %s. Response: %s",
-                    device.name,
-                    response,
-                )
-            else:
-                _LOGGER.error(
-                    (
-                        "Failed to parse fetched alarms and timers for device %s - "
-                        "API returned unknown json structure. "
-                        "Received = %s"
-                    ),
-                    device.name,
-                    response,
-                )
+            _LOGGER.error(
+                (
+                    "Failed to parse fetched alarms and timers for device %s - "
+                    "API returned unknown json structure. "
+                    "Received = %s"
+                ),
+                device.name,
+                response,
+            )
+        if not polling:
+            raise HomeAssistantError(
+                translation_domain=DOMAIN,
+                translation_key="alarms_and_timers_not_fetched",
+                translation_placeholders={"device": device.name},
+            )
         return device
 
     async def delete_alarm_or_timer(

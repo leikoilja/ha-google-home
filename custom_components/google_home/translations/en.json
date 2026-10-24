@@ -41,6 +41,11 @@
       "master-token-format": "A master token starts with aas_et/ and is 223 characters long. Copy the whole token."
     }
   },
+  "exceptions": {
+    "alarms_and_timers_not_fetched": {
+      "message": "Couldn't get the current alarms and timers from {device}, so nothing was deleted from it. Check that it's online and try again later."
+    }
+  },
   "options": {
     "step": {
       "init": {

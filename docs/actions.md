@@ -91,6 +91,8 @@ data:
 
 Target the alarms sensor of each device, or the devices themselves. A device target skips a device whose alarms sensor is hidden or disabled. Name a hidden sensor directly instead, and enable a disabled one first. Naming another sensor of a device, such as its timers sensor, fails, and nothing is deleted on any device. So does a group or template that includes other Google Home sensors, such as `{{ integration_entities('google_home') }}`. To clear every speaker, target `entity_id: all`. The action asks each device for its current alarms first, so it also deletes alarms set since the last update.
 
+If the action can't get a device's current alarms, for example because the device is offline, it sends no delete request to that device, so its alarms stay, and fails with "Couldn't get the current alarms and timers from Kitchen, so nothing was deleted from it. Check that it's online and try again later". The action still runs for the other devices you target, but if it fails for several, the error names only one of them. The error stops your automation or script at this step. To run the next steps anyway, select **Continue on error** in the step's menu, or in YAML add `continue_on_error: true` to the step, next to `action:` rather than under `data:`. That device still keeps its alarms. See [Continuing when a step fails](https://www.home-assistant.io/docs/scripts/#continuing-on-error).
+
 ## Delete all timers
 
 Deletes all timers from one or more devices.
@@ -108,6 +110,8 @@ data:
 | `skip_refresh` | Optional. Same as for [Delete all alarms](#delete-all-alarms). |
 
 Target the timers sensor of each device, or the devices themselves. A device target skips a device whose timers sensor is hidden or disabled. Name a hidden sensor directly instead, and enable a disabled one first. Naming another sensor of a device, such as its alarms sensor, fails, and nothing is deleted on any device. So does a group or template that includes other Google Home sensors. To clear every speaker, target `entity_id: all`. The action asks each device for its current timers first, so it also deletes timers set since the last update.
+
+If the action can't get a device's current timers, it sends no delete request to that device, so its timers stay, and fails with the same error as Delete all alarms. The action still runs for the other devices you target, but if it fails for several, the error names only one of them. To run the next steps of your automation or script anyway, see [Delete all alarms](#delete-all-alarms).
 
 ## Reboot device
 
