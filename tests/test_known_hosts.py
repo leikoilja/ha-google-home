@@ -122,6 +122,7 @@ def make_options_flow(options: dict[str, object]) -> GoogleHomeOptionsFlowHandle
     flow = GoogleHomeOptionsFlowHandler()
     flow.hass = Mock()
     flow.hass.config_entries.async_get_known_entry.return_value = Mock(options=options)
+    flow.hass.data = {}
     flow.handler = "entry-id"
     return flow
 

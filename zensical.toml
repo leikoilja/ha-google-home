@@ -9,6 +9,7 @@ nav = [
     { "Home" = "index.md" },
     { "Getting Started" = "installation.md" },
     { "Entities" = "entities.md" },
+    { "Bluetooth tracking" = "bluetooth.md" },
     { "Actions" = "actions.md" },
     { "Automation examples" = "automations.md" },
     { "Troubleshooting" = "troubleshooting.md" },

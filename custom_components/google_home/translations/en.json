@@ -41,15 +41,53 @@
       "master-token-format": "A master token starts with aas_et/ and is 223 characters long. Copy the whole token."
     }
   },
+  "config_subentries": {
+    "bluetooth_device": {
+      "entry_type": "Bluetooth device",
+      "initiate_flow": {
+        "user": "Add Bluetooth device"
+      },
+      "step": {
+        "user": {
+          "title": "Track a Bluetooth device",
+          "description": "Enter the IRK of a phone, or the MAC address of a device whose address never changes, such as some watches and tags. Phones change their address every few minutes, so track them by IRK. For how to find the IRK, see {docs_url}.",
+          "data": {
+            "name": "Name",
+            "irk": "IRK",
+            "mac": "MAC address"
+          },
+          "data_description": {
+            "name": "Name of the tracker, such as Alex's phone.",
+            "irk": "Identity Resolving Key, in hex or base64. Leave empty to track by MAC address.",
+            "mac": "Such as AA:BB:CC:DD:EE:FF. Leave empty to track by IRK."
+          }
+        }
+      },
+      "error": {
+        "name-empty": "Enter a name.",
+        "irk-or-mac": "Enter either an IRK or a MAC address, not both.",
+        "irk-invalid": "This isn't an IRK. An IRK is 16 bytes: 32 hex digits, or 24 base64 characters ending in ==.",
+        "mac-invalid": "This isn't a MAC address. Enter 12 hex digits, such as AA:BB:CC:DD:EE:FF.",
+        "already-tracked": "This device is already tracked."
+      },
+      "abort": {
+        "bluetooth-tracking-off": "Bluetooth tracking is off. Turn it on in the integration's options first: select Configure on the integration's page."
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {
         "data": {
           "update_interval": "Change the update interval. Increase this if your devices do not respond in time. Default: 180 (seconds)",
-          "known_hosts": "Known hosts"
+          "known_hosts": "Known hosts",
+          "bluetooth_tracking": "Bluetooth tracking",
+          "bluetooth_excluded_speakers": "Speakers not used for Bluetooth tracking"
         },
         "data_description": {
-          "known_hosts": "IP addresses of speakers and displays that the integration can't find on its own, for example because they're on another network or VLAN."
+          "known_hosts": "IP addresses of speakers and displays that the integration can't find on its own, for example because they're on another network or VLAN.",
+          "bluetooth_tracking": "Use your speakers to tell whether your phone or other Bluetooth devices are home. After turning it on, add the devices to track with Add Bluetooth device on the integration's page. While it's off, the integration sends no Bluetooth requests to your speakers.",
+          "bluetooth_excluded_speakers": "Speakers that don't scan for Bluetooth devices. Add a speaker that's unplugged or out of service: while a speaker doesn't answer, trackers can't show away."
         }
       }
     },
