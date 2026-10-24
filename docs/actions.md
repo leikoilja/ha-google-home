@@ -1,6 +1,6 @@
 # Actions
 
-The integration adds these actions, which older Home Assistant versions called services. Use them in automations and scripts, or try them in [**Developer tools** > **Actions**](https://my.home-assistant.io/redirect/developer_services/).
+The integration adds these actions, which older Home Assistant versions called services. Use them in automations and scripts, or try them in [**Settings** > **Tools** > **Actions**](https://my.home-assistant.io/redirect/tools_actions/).
 
 | Action                                                | What it does                    |
 | ----------------------------------------------------- | ------------------------------- |
@@ -41,7 +41,7 @@ data:
 
 If the ID has the wrong format, nothing is deleted and the Home Assistant log shows "Incorrect ID format! Please provide a valid alarm ID."
 
-Instead of the alarms sensor, you can target the device itself. This works only in YAML: the action form in Developer tools offers just the sensor. The device ID is the last part of the device page's address in Home Assistant.
+Instead of the alarms sensor, you can target the device itself. This works only in YAML: the action form in **Tools** > **Actions** offers just the sensor. The device ID is the last part of the device page's address in Home Assistant.
 
 ```yaml
 action: google_home.delete_alarm
@@ -135,4 +135,4 @@ target:
 
 Target an alarms or timers sensor, or a device that has [alarms and timers sensors](troubleshooting.md#no-alarms-or-timers-sensors). All devices are updated once, however many sensors the target covers. The action needs a target.
 
-If the sensors you target are unavailable, run [`homeassistant.update_entity`](https://www.home-assistant.io/actions/homeassistant.update_entity/) on one Google Home sensor instead. Home Assistant runs `refresh_devices` only on available sensors. The device sensor is unavailable while the integration doesn't know the device's IP address or Google no longer lists the device, and every sensor is unavailable after a failed update. An alarms or timers sensor that shows `unavailable` only because nothing is coming up still works: in [**Developer tools** > **States**](https://my.home-assistant.io/redirect/developer_states/) it still has its `alarms` or `timers` attribute. If you name an unavailable sensor directly, the log shows "Referenced entities sensor.kitchen_alarms are missing or not currently available", even if another named sensor updated the devices.
+If the sensors you target are unavailable, run [`homeassistant.update_entity`](https://www.home-assistant.io/actions/homeassistant.update_entity/) on one Google Home sensor instead. Home Assistant runs `refresh_devices` only on available sensors. The device sensor is unavailable while the integration doesn't know the device's IP address or Google no longer lists the device, and every sensor is unavailable after a failed update. An alarms or timers sensor that shows `unavailable` only because nothing is coming up still works: in [**Settings** > **Tools** > **States**](https://my.home-assistant.io/redirect/tools_states/) it still has its `alarms` or `timers` attribute. If you name an unavailable sensor directly, the log shows "Referenced entities sensor.kitchen_alarms are missing or not currently available", even if another named sensor updated the devices.
