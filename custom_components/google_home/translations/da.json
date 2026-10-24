@@ -44,6 +44,9 @@
   "exceptions": {
     "alarms_and_timers_not_fetched": {
       "message": "Kunne ikke hente de aktuelle alarmer og timere fra {device}, så der blev ikke slettet noget fra enheden. Kontrollér, at den er online, og prøv igen senere."
+    },
+    "alarms_and_timers_not_fetched_from_devices": {
+      "message": "Kunne ikke hente de aktuelle alarmer og timere fra disse enheder, så der blev ikke slettet noget fra dem: {devices}. Kontrollér, at de er online, og prøv igen senere."
     }
   },
   "options": {

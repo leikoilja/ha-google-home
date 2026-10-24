@@ -44,6 +44,9 @@
   "exceptions": {
     "alarms_and_timers_not_fetched": {
       "message": "Impossible de récupérer les alarmes et les minuteurs actuels de l'appareil {device}. Rien n'a donc été supprimé de cet appareil. Vérifiez qu'il est en ligne et réessayez plus tard."
+    },
+    "alarms_and_timers_not_fetched_from_devices": {
+      "message": "Impossible de récupérer les alarmes et les minuteurs actuels des appareils suivants : {devices}. Rien n'a donc été supprimé de ces appareils. Vérifiez qu'ils sont en ligne et réessayez plus tard."
     }
   },
   "options": {

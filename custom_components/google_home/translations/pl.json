@@ -44,6 +44,9 @@
   "exceptions": {
     "alarms_and_timers_not_fetched": {
       "message": "Nie udało się pobrać aktualnych alarmów i timerów z urządzenia {device}, więc nic z niego nie usunięto. Sprawdź, czy urządzenie jest online, i spróbuj ponownie później."
+    },
+    "alarms_and_timers_not_fetched_from_devices": {
+      "message": "Nie udało się pobrać aktualnych alarmów i timerów z tych urządzeń, więc nic z nich nie usunięto: {devices}. Sprawdź, czy urządzenia są online, i spróbuj ponownie później."
     }
   },
   "options": {

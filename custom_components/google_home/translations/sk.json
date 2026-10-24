@@ -44,6 +44,9 @@
   "exceptions": {
     "alarms_and_timers_not_fetched": {
       "message": "Nepodarilo sa načítať aktuálne budíky a časovače zo zariadenia {device}, preto sa z neho nič neodstránilo. Skontrolujte, či je zariadenie online, a skúste to znova neskôr."
+    },
+    "alarms_and_timers_not_fetched_from_devices": {
+      "message": "Nepodarilo sa načítať aktuálne budíky a časovače z nasledujúcich zariadení, preto sa z nich nič neodstránilo: {devices}. Skontrolujte, či sú zariadenia online, a skúste to znova neskôr."
     }
   },
   "options": {

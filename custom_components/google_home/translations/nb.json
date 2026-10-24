@@ -44,6 +44,9 @@
   "exceptions": {
     "alarms_and_timers_not_fetched": {
       "message": "Kunne ikke hente gjeldende alarmer og timere fra {device}, så ingenting ble slettet fra denne enheten. Kontroller at enheten er på nett, og prøv igjen senere."
+    },
+    "alarms_and_timers_not_fetched_from_devices": {
+      "message": "Kunne ikke hente gjeldende alarmer og timere fra disse enhetene, så ingenting ble slettet fra dem: {devices}. Kontroller at enhetene er på nett, og prøv igjen senere."
     }
   },
   "options": {
