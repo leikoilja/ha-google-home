@@ -1,6 +1,9 @@
 """Tests for Google Home sensors."""
 
 import asyncio
+from collections.abc import Awaitable, Callable, Sequence
+import json
+from pathlib import Path
 from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
@@ -8,10 +11,13 @@ import pytest
 from custom_components.google_home.api import GlocaltokensApiClient
 from custom_components.google_home.const import (
     API_ENDPOINT_ALARM_DELETE,
+    API_ENDPOINT_ALARMS,
     DATA_CLIENT,
     DATA_COORDINATOR,
     DOMAIN,
     SENSOR,
+    SERVICE_DELETE_ALL_ALARMS,
+    SERVICE_DELETE_ALL_TIMERS,
     SERVICE_REBOOT,
     SERVICE_REFRESH,
 )
@@ -20,15 +26,22 @@ from custom_components.google_home.models import GoogleHomeDevice
 from custom_components.google_home.sensor import (
     GoogleHomeAlarmsSensor,
     GoogleHomeDeviceSensor,
+    GoogleHomeSensorFeature,
     GoogleHomeTimersSensor,
+    async_delete_all_from_devices,
     async_reboot_devices,
     async_refresh_devices,
     async_setup_entry,
 )
+from custom_components.google_home.types import AlarmJsonDict, JsonDict, TimerJsonDict
 
 # ruff sorts homeassistant as first-party, pylint as third-party
-# pylint: disable-next=wrong-import-order
+# pylint: disable=wrong-import-order
 from homeassistant.const import STATE_UNAVAILABLE
+from homeassistant.core import ServiceCall
+from homeassistant.exceptions import HomeAssistantError
+
+# pylint: enable=wrong-import-order
 
 # glocaltokens accepts only master tokens of the real length
 MASTER_TOKEN = "aas_et/" + "x" * 216
@@ -40,6 +53,11 @@ TIMER_IDS = [
     "timer/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51",
     "timer/47dc1fa0-5ec0-2cc7-9ead-a94b85e22769",
 ]
+EN_TRANSLATIONS = json.loads(
+    (
+        Path(__file__).parents[1] / "custom_components/google_home/translations/en.json"
+    ).read_text(encoding="utf-8")
+)
 
 
 @pytest.mark.parametrize(
@@ -62,27 +80,33 @@ def test_device_sensor_unavailable_when_missing() -> None:
     assert sensor.available is False
 
 
+def alarms_json(alarm_ids: list[str]) -> list[AlarmJsonDict]:
+    """Return alarms with these IDs as the device sends them."""
+    return [
+        {"id": alarm_id, "fire_time": 1700000000000, "status": 1}
+        for alarm_id in alarm_ids
+    ]
+
+
+def timers_json(timer_ids: list[str]) -> list[TimerJsonDict]:
+    """Return timers with these IDs as the device sends them."""
+    return [
+        {
+            "id": timer_id,
+            "fire_time": 1700000000000,
+            "original_duration": 60000,
+            "status": 1,
+        }
+        for timer_id in timer_ids
+    ]
+
+
 def set_alarms_and_timers(
     device: GoogleHomeDevice, alarm_ids: list[str], timer_ids: list[str]
 ) -> GoogleHomeDevice:
     """Give the device the given alarms and timers, as a fetch from it would."""
-    device.set_alarms(
-        [
-            {"id": alarm_id, "fire_time": 1700000000000, "status": 1}
-            for alarm_id in alarm_ids
-        ]
-    )
-    device.set_timers(
-        [
-            {
-                "id": timer_id,
-                "fire_time": 1700000000000,
-                "original_duration": 60000,
-                "status": 1,
-            }
-            for timer_id in timer_ids
-        ]
-    )
+    device.set_alarms(alarms_json(alarm_ids))
+    device.set_timers(timers_json(timer_ids))
     return device
 
 
@@ -111,16 +135,48 @@ def set_up_platform() -> tuple[Mock, Mock]:
 
 
 def test_batched_actions_registered() -> None:
-    """Batch the reboot and refresh actions, so Home Assistant calls each once with every targeted sensor."""
+    """Batch the delete all, reboot and refresh actions, so Home Assistant calls each once with every targeted sensor."""
     _, register_batched = set_up_platform()
 
     assert {
         c.args[2]: (c.kwargs["entity_domain"], c.kwargs["func"])
         for c in register_batched.call_args_list
     } == {
+        SERVICE_DELETE_ALL_ALARMS: (SENSOR, async_delete_all_from_devices),
+        SERVICE_DELETE_ALL_TIMERS: (SENSOR, async_delete_all_from_devices),
         SERVICE_REBOOT: (SENSOR, async_reboot_devices),
         SERVICE_REFRESH: (SENSOR, async_refresh_devices),
     }
+
+
+def get_registered_action(
+    action: str,
+) -> tuple[
+    Callable[[Sequence[GoogleHomeBaseEntity], ServiceCall], Awaitable[None]],
+    list[GoogleHomeSensorFeature],
+]:
+    """Return how the platform runs an action on the sensors it targets, and the features it requires.
+
+    Home Assistant calls a batched action once with all of them, and other
+    actions once for each.
+    """
+    platform, register_batched = set_up_platform()
+    for c in register_batched.call_args_list:
+        if c.args[2] == action:
+            return c.kwargs["func"], c.kwargs["required_features"]
+    [(_, _, func, required_features)] = [
+        c.args
+        for c in platform.async_register_entity_service.call_args_list
+        if c.args[0] == action
+    ]
+
+    async def run_on_each(
+        sensors: Sequence[GoogleHomeBaseEntity], call: ServiceCall
+    ) -> None:
+        for sensor in sensors:
+            await func(sensor, call)
+
+    return run_on_each, required_features
 
 
 def run_action(
@@ -128,32 +184,28 @@ def run_action(
     data: dict[str, str | bool],
     alarm_ids: list[str],
     timer_ids: list[str],
-) -> tuple[Mock, Mock, GoogleHomeDevice, list[str | None]]:
+) -> tuple[AsyncMock, Mock, GoogleHomeDevice, list[str | None]]:
     """Run a delete action as registered on every sensor of a device that now has these IDs.
 
     Like Home Assistant for a device, area, floor or label target, skip sensors
-    without the action's required features. The last poll saw other IDs, which
-    the delete-all actions must not use. Also return the state of the sensors
-    the action ran on each time the entities were updated.
+    without the action's required features. The device sends these IDs when
+    asked; the last poll saw other IDs, which the delete-all actions must not
+    use. Return the mocked delete, and the state of the sensors the action ran
+    on each time the entities were updated.
     """
-    platform, _ = set_up_platform()
-    [(_, _, func, required_features)] = [
-        c.args
-        for c in platform.async_register_entity_service.call_args_list
-        if c.args[0] == action
-    ]
+    func, required_features = get_registered_action(action)
 
     device = set_alarms_and_timers(
         GoogleHomeDevice("device-id", "Kitchen", "token", "192.168.1.10"),
         ["alarm/from-last-poll"],
         ["timer/from-last-poll"],
     )
-    client = Mock(
-        delete_alarm_or_timer=AsyncMock(side_effect=confirm_delete),
-        update_alarms_and_timers=AsyncMock(
-            side_effect=lambda d: set_alarms_and_timers(d, alarm_ids, timer_ids)
-        ),
+    client = GlocaltokensApiClient(Mock(), Mock(), master_token=MASTER_TOKEN)
+    client.request = AsyncMock(  # type: ignore[method-assign]
+        return_value={"alarm": alarms_json(alarm_ids), "timer": timers_json(timer_ids)}
     )
+    delete = AsyncMock(side_effect=confirm_delete)
+    client.delete_alarm_or_timer = delete  # type: ignore[method-assign]
     coordinator = Mock(data=[device], async_request_refresh=AsyncMock())
     sensors = [
         sensor_class(coordinator, client, "device-id", "Kitchen", None)
@@ -173,14 +225,8 @@ def run_action(
     coordinator.async_update_listeners.side_effect = lambda: shown.extend(
         sensor.state for sensor in supported
     )
-    call = Mock(data=data)
-
-    async def run_on_supported() -> None:
-        for sensor in supported:
-            await func(sensor, call)
-
-    asyncio.run(run_on_supported())
-    return client, coordinator, device, shown
+    asyncio.run(func(supported, Mock(data=data)))
+    return delete, coordinator, device, shown
 
 
 @pytest.mark.parametrize(
@@ -196,20 +242,182 @@ def test_delete_runs_once_on_its_own_sensor(
     action: str, data: dict[str, str | bool], ids: list[str]
 ) -> None:
     """Delete only from the sensor the action is for, in one request."""
-    client, _, device, _ = run_action(action, data, ALARM_IDS, TIMER_IDS)
+    delete, _, device, _ = run_action(action, data, ALARM_IDS, TIMER_IDS)
 
-    client.delete_alarm_or_timer.assert_awaited_once_with(
-        device=device, items_to_delete=ids
-    )
+    delete.assert_awaited_once_with(device=device, items_to_delete=ids)
 
 
 @pytest.mark.parametrize("action", ["delete_all_alarms", "delete_all_timers"])
 def test_delete_all_sends_nothing_when_empty(action: str) -> None:
     """Send no request and don't refresh when there is nothing to delete."""
-    client, coordinator, _, _ = run_action(action, {}, [], [])
+    delete, coordinator, _, _ = run_action(action, {}, [], [])
 
-    client.delete_alarm_or_timer.assert_not_awaited()
+    delete.assert_not_awaited()
     coordinator.async_request_refresh.assert_not_awaited()
+
+
+@pytest.mark.parametrize(
+    ("action", "sensor_class"),
+    [
+        ("delete_all_alarms", GoogleHomeAlarmsSensor),
+        ("delete_all_timers", GoogleHomeTimersSensor),
+    ],
+)
+@pytest.mark.parametrize("response", [None, {"alarm": []}, {"timer": []}])
+def test_delete_all_fails_when_fetch_fails(
+    action: str, sensor_class: type[GoogleHomeBaseEntity], response: JsonDict | None
+) -> None:
+    """Report an error and delete nothing when the device's current IDs can't be fetched.
+
+    The last poll's IDs may be gone, and alarms or timers set since then would
+    stay while the action looked successful.
+    """
+    func, _ = get_registered_action(action)
+    device = set_alarms_and_timers(
+        GoogleHomeDevice("device-id", "Kitchen", "token", "192.168.1.10"),
+        ALARM_IDS,
+        TIMER_IDS,
+    )
+    client = GlocaltokensApiClient(Mock(), Mock(), master_token=MASTER_TOKEN)
+    request = AsyncMock(return_value=response)
+    client.request = request  # type: ignore[method-assign]
+    coordinator = Mock(data=[device], async_request_refresh=AsyncMock())
+    sensor = sensor_class(coordinator, client, "device-id", "Kitchen", None)
+
+    with pytest.raises(HomeAssistantError) as err:
+        asyncio.run(func([sensor], Mock(data={})))
+
+    # The fetch is the only request: nothing is deleted with the last poll's IDs
+    request.assert_awaited_once_with(
+        method="GET", endpoint=API_ENDPOINT_ALARMS, device=device, polling=False
+    )
+    coordinator.async_request_refresh.assert_not_awaited()
+    # Home Assistant shows the message of this key from en.json
+    assert err.value.translation_domain == DOMAIN
+    message = EN_TRANSLATIONS["exceptions"][err.value.translation_key]["message"]
+    assert "Kitchen" in message.format(**(err.value.translation_placeholders or {}))
+
+
+def set_up_devices(
+    sensor_class: type[GoogleHomeBaseEntity], replies: dict[str, JsonDict | None]
+) -> tuple[list[GoogleHomeBaseEntity], AsyncMock]:
+    """Return a sensor for each device named in replies, and the mocked delete.
+
+    Each device sends its reply when asked for its alarms and timers. The last
+    poll saw other IDs, which the delete-all actions must not use.
+    """
+    devices = [
+        set_alarms_and_timers(
+            GoogleHomeDevice(f"{name}-id", name, "token", "192.168.1.10"),
+            ["alarm/from-last-poll"],
+            ["timer/from-last-poll"],
+        )
+        for name in replies
+    ]
+
+    async def request(*, device: GoogleHomeDevice, **_: object) -> JsonDict | None:
+        # A device that answers does so after the others fail, so the action
+        # must wait for it before raising
+        if (reply := replies[device.name]) == REPLY:
+            await asyncio.sleep(0.01)
+        return reply
+
+    client = GlocaltokensApiClient(Mock(), Mock(), master_token=MASTER_TOKEN)
+    client.request = AsyncMock(side_effect=request)  # type: ignore[method-assign]
+    delete = AsyncMock(side_effect=confirm_delete)
+    client.delete_alarm_or_timer = delete  # type: ignore[method-assign]
+    coordinator = Mock(data=devices, async_request_refresh=AsyncMock())
+    sensors = [
+        sensor_class(coordinator, client, device.device_id, device.name, None)
+        for device in devices
+    ]
+    return sensors, delete
+
+
+REPLY: JsonDict = {"alarm": alarms_json(ALARM_IDS), "timer": timers_json(TIMER_IDS)}
+
+
+@pytest.mark.parametrize(
+    ("action", "sensor_class"),
+    [
+        ("delete_all_alarms", GoogleHomeAlarmsSensor),
+        ("delete_all_timers", GoogleHomeTimersSensor),
+    ],
+)
+@pytest.mark.parametrize(
+    ("offline", "translation_key", "placeholders"),
+    [
+        (["Kitchen"], "alarms_and_timers_not_fetched", {"device": "Kitchen"}),
+        # In alphabetical order, whatever order Home Assistant passes them in
+        (
+            ["Office", "Kitchen"],
+            "alarms_and_timers_not_fetched_from_devices",
+            {"devices": "Kitchen, Office"},
+        ),
+    ],
+)
+def test_delete_all_names_every_device_it_cant_fetch(
+    action: str,
+    sensor_class: type[GoogleHomeBaseEntity],
+    offline: list[str],
+    translation_key: str,
+    placeholders: dict[str, str],
+) -> None:
+    """Delete from the devices that answer, then name all that didn't in one error.
+
+    Home Assistant shows one error for an action, however many devices fail.
+    """
+    func, _ = get_registered_action(action)
+    names = ["Office", "Bedroom", "Kitchen"]
+    sensors, delete = set_up_devices(
+        sensor_class, {name: None if name in offline else REPLY for name in names}
+    )
+    call = Mock(data={})
+
+    with pytest.raises(HomeAssistantError) as err:
+        asyncio.run(func(sensors, call))
+
+    assert sorted(c.kwargs["device"].name for c in delete.await_args_list) == sorted(
+        name for name in names if name not in offline
+    )
+    assert err.value.translation_key == translation_key
+    assert err.value.translation_placeholders == placeholders
+    # Home Assistant shows the message of this key from en.json
+    message = EN_TRANSLATIONS["exceptions"][translation_key]["message"]
+    assert all(name in message.format(**placeholders) for name in offline)
+    # Like Home Assistant's per-entity calls, so the logbook shows the action
+    assert all(
+        sensor._context is call.context  # noqa: SLF001  # pylint: disable=protected-access
+        for sensor in sensors
+    )
+
+
+@pytest.mark.parametrize(
+    ("action", "sensor_class"),
+    [
+        ("delete_all_alarms", GoogleHomeAlarmsSensor),
+        ("delete_all_timers", GoogleHomeTimersSensor),
+    ],
+)
+def test_delete_all_raises_unexpected_error(
+    action: str, sensor_class: type[GoogleHomeBaseEntity]
+) -> None:
+    """Raise an unexpected error, such as from a malformed reply, rather than hide it."""
+    func, _ = get_registered_action(action)
+    sensors, delete = set_up_devices(
+        sensor_class,
+        # A timer without its fields
+        {
+            "Kitchen": None,
+            "Bedroom": REPLY,
+            "Office": {"alarm": [], "timer": [TimerJsonDict()]},
+        },
+    )
+
+    with pytest.raises(KeyError):
+        asyncio.run(func(sensors, Mock(data={})))
+
+    assert [c.kwargs["device"].name for c in delete.await_args_list] == ["Bedroom"]
 
 
 @pytest.mark.parametrize("action", ["delete_all_alarms", "delete_all_timers"])
@@ -384,3 +592,30 @@ def test_delete_alarm_or_timer_sends_nothing_for_no_ids() -> None:
     asyncio.run(client.delete_alarm_or_timer(device, []))
 
     client.request.assert_not_awaited()
+
+
+@pytest.mark.parametrize("response", [None, {"alarm": []}, {"timer": []}])
+def test_poll_keeps_alarms_and_timers_when_fetch_fails(
+    response: JsonDict | None,
+) -> None:
+    """Keep the last alarms and timers without raising when a scheduled update can't fetch them.
+
+    An error would fail the update of every device.
+    """
+    client = GlocaltokensApiClient(Mock(), Mock(), master_token=MASTER_TOKEN)
+    request = AsyncMock(return_value=response)
+    client.request = request  # type: ignore[method-assign]
+    device = set_alarms_and_timers(
+        GoogleHomeDevice("device-id", "Kitchen", "token", "192.168.1.10"),
+        ALARM_IDS,
+        TIMER_IDS,
+    )
+
+    asyncio.run(client.collect_data_from_endpoints(device))
+
+    # As a poll, so an offline device isn't logged as a warning on every update
+    request.assert_any_await(
+        method="GET", endpoint=API_ENDPOINT_ALARMS, device=device, polling=True
+    )
+    assert [alarm.alarm_id for alarm in device.get_sorted_alarms()] == ALARM_IDS
+    assert [timer.timer_id for timer in device.get_sorted_timers()] == TIMER_IDS

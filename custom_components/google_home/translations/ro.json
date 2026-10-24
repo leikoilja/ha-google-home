@@ -41,6 +41,14 @@
       "master-token-format": "Un token principal începe cu aas_et/ și are 223 de caractere. Copiază tokenul complet."
     }
   },
+  "exceptions": {
+    "alarms_and_timers_not_fetched": {
+      "message": "Nu s-au putut prelua alarmele și cronometrele curente de pe dispozitivul {device}, așa că nu s-a șters nimic de pe acesta. Verifică dacă dispozitivul este online și încearcă din nou mai târziu."
+    },
+    "alarms_and_timers_not_fetched_from_devices": {
+      "message": "Nu s-au putut prelua alarmele și cronometrele curente de pe următoarele dispozitive, așa că nu s-a șters nimic de pe acestea: {devices}. Verifică dacă dispozitivele sunt online și încearcă din nou mai târziu."
+    }
+  },
   "options": {
     "step": {
       "init": {

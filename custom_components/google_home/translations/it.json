@@ -41,6 +41,14 @@
       "master-token-format": "Un token master inizia con aas_et/ ed è lungo 223 caratteri. Copia il token completo."
     }
   },
+  "exceptions": {
+    "alarms_and_timers_not_fetched": {
+      "message": "Impossibile recuperare le sveglie e i timer attualmente impostati su {device}, quindi non è stato eliminato nulla da questo dispositivo. Verifica che sia online e riprova più tardi."
+    },
+    "alarms_and_timers_not_fetched_from_devices": {
+      "message": "Impossibile recuperare le sveglie e i timer attualmente impostati sui seguenti dispositivi: {devices}. Non è stato quindi eliminato nulla da questi dispositivi. Verifica che siano online e riprova più tardi."
+    }
+  },
   "options": {
     "step": {
       "init": {
