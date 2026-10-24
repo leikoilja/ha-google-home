@@ -41,6 +41,11 @@
       "master-token-format": "Token główny zaczyna się od aas_et/ i ma 223 znaki. Skopiuj cały token."
     }
   },
+  "exceptions": {
+    "alarms_and_timers_not_fetched": {
+      "message": "Nie udało się pobrać aktualnych alarmów i timerów z urządzenia {device}, więc nic z niego nie usunięto. Sprawdź, czy urządzenie jest online, i spróbuj ponownie później."
+    }
+  },
   "options": {
     "step": {
       "init": {

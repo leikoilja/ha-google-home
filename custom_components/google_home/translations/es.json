@@ -41,6 +41,11 @@
       "master-token-format": "Un token maestro empieza por aas_et/ y tiene 223 caracteres. Copia el token completo."
     }
   },
+  "exceptions": {
+    "alarms_and_timers_not_fetched": {
+      "message": "No se han podido obtener las alarmas y los temporizadores actuales de {device}, por lo que no se ha eliminado nada de ese dispositivo. Comprueba que esté en línea y vuelve a intentarlo más tarde."
+    }
+  },
   "options": {
     "step": {
       "init": {

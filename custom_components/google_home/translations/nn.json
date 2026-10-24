@@ -41,6 +41,11 @@
       "master-token-format": "Eit master token byrjar med aas_et/ og er 223 teikn langt. Kopier heile tokenet."
     }
   },
+  "exceptions": {
+    "alarms_and_timers_not_fetched": {
+      "message": "Klarte ikkje å hente gjeldande alarmar og tidtakarar frå {device}, så ingenting vart sletta frå denne eininga. Kontroller at eininga er på nett, og prøv igjen seinare."
+    }
+  },
   "options": {
     "step": {
       "init": {

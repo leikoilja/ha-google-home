@@ -41,6 +41,11 @@
       "master-token-format": "Et master token starter med aas_et/ og er 223 tegn langt. Kopier hele tokenet."
     }
   },
+  "exceptions": {
+    "alarms_and_timers_not_fetched": {
+      "message": "Kunne ikke hente gjeldende alarmer og timere fra {device}, så ingenting ble slettet fra denne enheten. Kontroller at enheten er på nett, og prøv igjen senere."
+    }
+  },
   "options": {
     "step": {
       "init": {

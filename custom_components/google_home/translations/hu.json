@@ -41,6 +41,11 @@
       "master-token-format": "A mestertoken aas_et/ kezdetű és 223 karakter hosszú. Másolja ki a teljes tokent."
     }
   },
+  "exceptions": {
+    "alarms_and_timers_not_fetched": {
+      "message": "Nem sikerült lekérni a(z) {device} eszköz aktuális ébresztéseit és időzítőit, ezért semmi sem lett törölve erről az eszközről. Ellenőrizze, hogy az eszköz online van-e, és próbálja újra később."
+    }
+  },
   "options": {
     "step": {
       "init": {

@@ -41,6 +41,11 @@
       "master-token-format": "Un testimoni mestre comença per aas_et/ i té 223 caràcters. Copia el testimoni sencer."
     }
   },
+  "exceptions": {
+    "alarms_and_timers_not_fetched": {
+      "message": "No s'han pogut obtenir les alarmes i els temporitzadors actuals de {device}, de manera que no s'ha eliminat res d'aquest dispositiu. Comprova que estigui en línia i torna-ho a provar més tard."
+    }
+  },
   "options": {
     "step": {
       "init": {

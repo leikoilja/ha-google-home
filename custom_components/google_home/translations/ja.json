@@ -41,6 +41,11 @@
       "master-token-format": "マスタートークンは aas_et/ で始まる 223 文字の文字列です。トークン全体をコピーしてください。"
     }
   },
+  "exceptions": {
+    "alarms_and_timers_not_fetched": {
+      "message": "{device} から現在のアラームとタイマーを取得できなかったため、このデバイスからは何も削除されませんでした。デバイスがオンラインであることを確認し、しばらくしてからもう一度お試しください。"
+    }
+  },
   "options": {
     "step": {
       "init": {
