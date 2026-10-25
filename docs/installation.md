@@ -80,7 +80,18 @@ To update immediately, use the [Refresh devices](actions.md#refresh-devices) act
 
 ## Add devices on another network
 
-The integration finds your devices on your network with multicast DNS (mDNS). mDNS usually doesn't reach other networks, such as a separate VLAN for smart home devices, or a Home Assistant container that doesn't use `host` network mode. Those devices then have only a [device sensor](entities.md#device-sensor) and a [reboot button](entities.md#reboot-button), and both are unavailable. If Home Assistant can reach a device on TCP port 8443, add its IP address instead:
+The integration finds your devices on your network with multicast DNS (mDNS). mDNS usually doesn't reach other networks, such as a separate VLAN for smart home devices, or a Home Assistant container that doesn't use `host` network mode. Those devices then have only a [device sensor](entities.md#device-sensor) and a [reboot button](entities.md#reboot-button), and both are unavailable.
+
+For devices on another network, Home Assistant needs:
+
+- **A way to find the devices.** Choose one:
+    - Give Home Assistant a network interface on the devices' network, such as a second network adapter or a VLAN interface. Home Assistant usually uses only one interface for mDNS, so go to **Settings** > **System** > **Network**, clear **Autoconfigure** under **Network adapter**, also select the interface on the devices' network, select **Save** and restart Home Assistant. With this interface, Home Assistant also connects to the devices directly, so a firewall on your router doesn't need to allow TCP 8443.
+    - Set up an mDNS reflector or repeater between the networks, for example on your router.
+    - Add the devices' IP addresses as known hosts, as described below.
+- **TCP port 8443 on each device.** The integration connects to the devices over HTTPS on this port. If a firewall is in between, allow these connections from Home Assistant and their replies. A rule that allows only the Google Cast port, TCP 8009, isn't enough. The devices don't need to connect to Home Assistant.
+- **Internet access for Home Assistant.** The integration gets the device list and the devices' access tokens from Google when it loads, and again later, for example when the tokens expire.
+
+To add devices as known hosts:
 
 1. Go to **Settings** > **Devices & services** > **Google Home** and select **Configure**.
 2. Under **Known hosts**, add the IP address of each device that the integration can't find.
