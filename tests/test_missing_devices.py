@@ -33,6 +33,7 @@ LOCAL_AUTH_TOKEN = "x" * 108
 ALARM_ID = "alarm/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51"
 TIMER_ID = "timer/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51"
 MINUTE = 60
+HOUR = 60 * MINUTE
 
 
 @pytest.fixture(name="clock")
@@ -123,17 +124,21 @@ def update(client: GlocaltokensApiClient) -> list[GoogleHomeDevice]:
 
 
 def test_fetch_every_hour(clock: Mock) -> None:
-    """Ask Google again an hour after the last fetch, to find added and removed devices."""
+    """Ask Google again an hour after the last fetch, to find added and removed devices.
+
+    The hour is written out, not taken from the constant, so the test also
+    catches a change to how often the integration asks.
+    """
     client, glocaltokens = make_client("10.0.0.2", "10.0.0.3")
 
-    clock.return_value = FETCH_DEVICES_INTERVAL - 1
+    clock.return_value = HOUR - 1
     assert fetches_in(client, glocaltokens, 3) == 0
-    clock.return_value = FETCH_DEVICES_INTERVAL
+    clock.return_value = HOUR
     assert fetches_in(client, glocaltokens, 1) == 1
     assert fetches_in(client, glocaltokens, 3) == 1
-    clock.return_value = 2 * FETCH_DEVICES_INTERVAL - 1
+    clock.return_value = 2 * HOUR - 1
     assert fetches_in(client, glocaltokens, 1) == 1
-    clock.return_value = 2 * FETCH_DEVICES_INTERVAL
+    clock.return_value = 2 * HOUR
     assert fetches_in(client, glocaltokens, 1) == 2
 
 
