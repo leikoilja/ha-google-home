@@ -1,7 +1,9 @@
 """Sensor platform for Google Home."""
 
 import asyncio
+from collections.abc import Awaitable, Callable
 from enum import IntFlag
+from functools import partial
 import logging
 from typing import override
 
@@ -11,7 +13,7 @@ from homeassistant.components.sensor import SensorDeviceClass
 from homeassistant.const import STATE_UNAVAILABLE, EntityCategory
 from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.exceptions import HomeAssistantError
-from homeassistant.helpers import config_validation as cv, entity_platform, service
+from homeassistant.helpers import config_validation as cv, service
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
@@ -88,27 +90,35 @@ async def async_setup_entry(
         GoogleHomeTimersSensor,
     )
 
-    platform = entity_platform.async_get_current_platform()
-
     # Services
-    platform.async_register_entity_service(
+    service.async_register_batched_platform_entity_service(
+        hass,
+        DOMAIN,
         SERVICE_DELETE_ALARM,
-        {
+        entity_domain=SENSOR,
+        schema={
             probatio.Required(SERVICE_ATTR_ALARM_ID): cv.string,
             probatio.Optional(SERVICE_ATTR_SKIP_REFRESH): cv.boolean,
         },
-        GoogleHomeAlarmsSensor.async_delete_alarm,
-        [GoogleHomeSensorFeature.ALARMS],
+        func=partial(
+            async_delete_from_devices, GoogleHomeAlarmsSensor.async_delete_alarm
+        ),
+        required_features=[GoogleHomeSensorFeature.ALARMS],
     )
 
-    platform.async_register_entity_service(
+    service.async_register_batched_platform_entity_service(
+        hass,
+        DOMAIN,
         SERVICE_DELETE_TIMER,
-        {
+        entity_domain=SENSOR,
+        schema={
             probatio.Required(SERVICE_ATTR_TIMER_ID): cv.string,
             probatio.Optional(SERVICE_ATTR_SKIP_REFRESH): cv.boolean,
         },
-        GoogleHomeTimersSensor.async_delete_timer,
-        [GoogleHomeSensorFeature.TIMERS],
+        func=partial(
+            async_delete_from_devices, GoogleHomeTimersSensor.async_delete_timer
+        ),
+        required_features=[GoogleHomeSensorFeature.TIMERS],
     )
 
     service.async_register_batched_platform_entity_service(
@@ -117,7 +127,9 @@ async def async_setup_entry(
         SERVICE_DELETE_ALL_ALARMS,
         entity_domain=SENSOR,
         schema={probatio.Optional(SERVICE_ATTR_SKIP_REFRESH): cv.boolean},
-        func=async_delete_all_from_devices,
+        func=partial(
+            async_delete_from_devices, GoogleHomeAlarmsSensor.async_delete_all
+        ),
         required_features=[GoogleHomeSensorFeature.ALARMS],
     )
 
@@ -127,7 +139,9 @@ async def async_setup_entry(
         SERVICE_DELETE_ALL_TIMERS,
         entity_domain=SENSOR,
         schema={probatio.Optional(SERVICE_ATTR_SKIP_REFRESH): cv.boolean},
-        func=async_delete_all_from_devices,
+        func=partial(
+            async_delete_from_devices, GoogleHomeTimersSensor.async_delete_all
+        ),
         required_features=[GoogleHomeSensorFeature.TIMERS],
     )
 
@@ -161,38 +175,45 @@ async def async_refresh_devices(
 
 
 async def async_delete(
-    entity: GoogleHomeBaseEntity,
-    call: ServiceCall,
-    device: GoogleHomeDevice,
-    ids: list[str],
-) -> None:
-    """Delete these alarms or timers from the device and show what is left."""
+    entity: GoogleHomeBaseEntity, device: GoogleHomeDevice, ids: list[str]
+) -> bool:
+    """Delete these alarms or timers from the device and show what is left.
+
+    Return whether there was anything to delete.
+    """
     if ids:
         await entity.client.delete_alarm_or_timer(device=device, items_to_delete=ids)
     else:
         _LOGGER.debug("Nothing to delete for %s", device.name)
     # Other entities show this device's data too
     entity.coordinator.async_update_listeners()
-    if ids and not call.data.get(SERVICE_ATTR_SKIP_REFRESH, False):
-        await entity.coordinator.async_request_refresh()
+    return bool(ids)
 
 
-async def async_delete_all_from_devices(
-    entities: list[GoogleHomeAlarmsSensor | GoogleHomeTimersSensor], call: ServiceCall
+async def async_delete_from_devices[_SensorT: GoogleHomeBaseEntity](
+    delete: Callable[[_SensorT, ServiceCall], Awaitable[bool]],
+    entities: list[_SensorT],
+    call: ServiceCall,
 ) -> None:
-    """Delete all alarms or timers from each device, then name every device that failed."""
+    """Delete from each device, then name every device that failed.
 
-    async def delete_all(
-        entity: GoogleHomeAlarmsSensor | GoogleHomeTimersSensor,
-    ) -> None:
+    Refresh all devices once if a delete request was sent, unless skip_refresh is set.
+    """
+
+    async def delete_from(entity: _SensorT) -> bool:
         # Like Home Assistant's per-entity calls, so the logbook shows that the
         # action changed the sensor
         entity.async_set_context(call.context)
-        await entity.async_delete_all(call)
+        return await delete(entity, call)
 
     results = await asyncio.gather(
-        *(delete_all(entity) for entity in entities), return_exceptions=True
+        *(delete_from(entity) for entity in entities), return_exceptions=True
     )
+    # One refresh updates every device. Another request while it runs or in the
+    # debouncer's cooldown after it would poll them all again when that ends
+    sent = any(result is True for result in results)
+    if sent and not call.data.get(SERVICE_ATTR_SKIP_REFRESH, False):
+        await entities[0].coordinator.async_request_refresh()
     not_fetched: list[AlarmsAndTimersNotFetched] = []
     for result in results:
         if isinstance(result, AlarmsAndTimersNotFetched):
@@ -350,13 +371,13 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
             alarm_id.startswith("alarm/") and len(alarm_id) == ALARM_AND_TIMER_ID_LENGTH
         )
 
-    async def async_delete_alarm(self, call: ServiceCall) -> None:
+    async def async_delete_alarm(self, call: ServiceCall) -> bool:
         """Service call to delete alarm on device."""
         device = self.get_device()
 
         if device is None:
             _LOGGER.error("Device %s is not found.", self.device_name)
-            return
+            return False
 
         alarm_id: str = call.data[SERVICE_ATTR_ALARM_ID]
         if not self.is_valid_alarm_id(alarm_id):
@@ -364,21 +385,21 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
                 "Incorrect ID format! Please provide a valid alarm ID. "
                 "See services tab for more info."
             )
-            return
+            return False
 
-        await async_delete(self, call, device, [alarm_id])
+        return await async_delete(self, device, [alarm_id])
 
-    async def async_delete_all(self, call: ServiceCall) -> None:
+    async def async_delete_all(self, _call: ServiceCall) -> bool:
         """Service call to delete all alarms on device."""
         device = self.get_device()
 
         if device is None:
             _LOGGER.error("Device %s is not found.", self.device_name)
-            return
+            return False
 
         await self.client.update_alarms_and_timers(device, polling=False)
         alarm_ids = [alarm.alarm_id for alarm in device.get_sorted_alarms()]
-        await async_delete(self, call, device, alarm_ids)
+        return await async_delete(self, device, alarm_ids)
 
 
 class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
@@ -441,13 +462,13 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
             timer_id.startswith("timer/") and len(timer_id) == ALARM_AND_TIMER_ID_LENGTH
         )
 
-    async def async_delete_timer(self, call: ServiceCall) -> None:
+    async def async_delete_timer(self, call: ServiceCall) -> bool:
         """Service call to delete timer on device."""
         device = self.get_device()
 
         if device is None:
             _LOGGER.error("Device %s is not found.", self.device_name)
-            return
+            return False
 
         timer_id: str = call.data[SERVICE_ATTR_TIMER_ID]
         if not self.is_valid_timer_id(timer_id):
@@ -455,18 +476,18 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
                 "Incorrect ID format! Please provide a valid timer ID. "
                 "See services tab for more info."
             )
-            return
+            return False
 
-        await async_delete(self, call, device, [timer_id])
+        return await async_delete(self, device, [timer_id])
 
-    async def async_delete_all(self, call: ServiceCall) -> None:
+    async def async_delete_all(self, _call: ServiceCall) -> bool:
         """Service call to delete all timers on device."""
         device = self.get_device()
 
         if device is None:
             _LOGGER.error("Device %s is not found.", self.device_name)
-            return
+            return False
 
         await self.client.update_alarms_and_timers(device, polling=False)
         timer_ids = [timer.timer_id for timer in device.get_sorted_timers()]
-        await async_delete(self, call, device, timer_ids)
+        return await async_delete(self, device, timer_ids)
