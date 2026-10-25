@@ -100,7 +100,7 @@ UPDATE_INTERVAL: Final = 180  # sec
 FETCH_DEVICES_EVERY: Final = 10
 # Also fetch it again this long after the last fetch, to find devices added in or
 # removed from the Google Home app
-FETCH_DEVICES_INTERVAL: Final = 24 * 60 * 60  # sec
+FETCH_DEVICES_INTERVAL: Final = 60 * 60  # sec
 
 # JSON parameter values when retrieving information from devices
 JSON_ALARM: Final = "alarm"

@@ -32,7 +32,7 @@ MASTER_TOKEN = "aas_et/" + "x" * 216
 LOCAL_AUTH_TOKEN = "x" * 108
 ALARM_ID = "alarm/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51"
 TIMER_ID = "timer/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51"
-HOUR = 60 * 60
+MINUTE = 60
 
 
 @pytest.fixture(name="clock")
@@ -122,8 +122,8 @@ def update(client: GlocaltokensApiClient) -> list[GoogleHomeDevice]:
     return asyncio.run(client.update_google_devices_information())
 
 
-def test_fetch_once_a_day(clock: Mock) -> None:
-    """Ask Google again a day after the last fetch, to find added and removed devices."""
+def test_fetch_every_hour(clock: Mock) -> None:
+    """Ask Google again an hour after the last fetch, to find added and removed devices."""
     client, glocaltokens = make_client("10.0.0.2", "10.0.0.3")
 
     clock.return_value = FETCH_DEVICES_INTERVAL - 1
@@ -137,29 +137,29 @@ def test_fetch_once_a_day(clock: Mock) -> None:
     assert fetches_in(client, glocaltokens, 1) == 2
 
 
-def test_fetch_for_missing_device_restarts_the_day(clock: Mock) -> None:
-    """Count the day from the last fetch, even one made to find a missing device."""
+def test_fetch_for_missing_device_restarts_the_hour(clock: Mock) -> None:
+    """Count the hour from the last fetch, even one made to find a missing device."""
     client, glocaltokens = make_client("10.0.0.2", None)
-    # Five hours after setup, mDNS finds the missing device
+    # Twenty minutes after setup, mDNS finds the missing device
     glocaltokens.get_google_devices.return_value = [
         found("device0", "10.0.0.2"),
         found("device1", "10.0.0.3"),
     ]
-    clock.return_value = 5 * HOUR
+    clock.return_value = 20 * MINUTE
     assert fetches_in(client, glocaltokens, FETCH_DEVICES_EVERY) == 1
 
-    clock.return_value = FETCH_DEVICES_INTERVAL + 5 * HOUR - 1
+    clock.return_value = FETCH_DEVICES_INTERVAL + 20 * MINUTE - 1
     assert fetches_in(client, glocaltokens, 1) == 1
-    clock.return_value = FETCH_DEVICES_INTERVAL + 5 * HOUR
+    clock.return_value = FETCH_DEVICES_INTERVAL + 20 * MINUTE
     assert fetches_in(client, glocaltokens, 1) == 2
 
 
 @pytest.mark.parametrize("ip_addresses", [("10.0.0.2",), ()])
 @pytest.mark.parametrize("homegraph_fails", [True, False])
-def test_daily_fetch_fails(
+def test_scheduled_fetch_fails(
     clock: Mock, ip_addresses: tuple[str, ...], homegraph_fails: bool
 ) -> None:
-    """Keep the devices, even none, when Google can't be reached, and try again a day later.
+    """Keep the devices, even none, when Google can't be reached, and try again an hour later.
 
     Trying on every update would ask Google every few minutes while it is failing.
     """
@@ -271,7 +271,7 @@ def test_fetch_on_every_update_after_token_rejected(clock: Mock) -> None:
         "10.0.0.2", session=answering(HTTPStatus.UNAUTHORIZED)
     )
     [kitchen] = client.google_devices
-    # Just when the daily fetch is due, which mustn't make it fetch twice
+    # Just when the hourly fetch is due, which mustn't make it fetch twice
     clock.return_value = FETCH_DEVICES_INTERVAL
     asyncio.run(client.update_alarms_and_timers(kitchen))
     assert not can_delete(client, [kitchen], "removed")
@@ -357,7 +357,7 @@ def test_keep_polled_data_when_list_fetched_again(clock: Mock) -> None:
 
 
 def test_add_entities_for_device_added_in_google_home_app(clock: Mock) -> None:
-    """Add entities for a device that the daily fetch finds, without a reload."""
+    """Add entities for a device that the hourly fetch finds, without a reload."""
     client, glocaltokens = make_client("10.0.0.2")
     coordinator = Mock(data=update(client))
     listener, added = add_entities(coordinator, GoogleHomeAlarmsSensor)

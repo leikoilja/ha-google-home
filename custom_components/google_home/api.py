@@ -79,7 +79,7 @@ class GlocaltokensApiClient:
         self.known_hosts = known_hosts or []
         self.updates_until_fetch = FETCH_DEVICES_EVERY
         # Setup fetches the list straight after creating the client
-        self.next_daily_fetch = monotonic() + FETCH_DEVICES_INTERVAL
+        self.next_scheduled_fetch = monotonic() + FETCH_DEVICES_INTERVAL
 
     async def async_get_master_token(self) -> str:
         """Get master API token."""
@@ -124,8 +124,8 @@ class GlocaltokensApiClient:
         """
 
         if not self.google_devices_fetched or refetch:
-            # Whether this works or not, the daily fetch waits another day
-            self.next_daily_fetch = monotonic() + FETCH_DEVICES_INTERVAL
+            # Whether this works or not, the next scheduled fetch waits a full interval
+            self.next_scheduled_fetch = monotonic() + FETCH_DEVICES_INTERVAL
 
             def _get_google_devices() -> list[Device]:
                 return self._client.get_google_devices(
@@ -175,14 +175,14 @@ class GlocaltokensApiClient:
     async def async_fetch_devices_when_due(self) -> None:
         """Fetch Google's device list again when it may have changed.
 
-        Once a day, to find devices added in or removed from the Google Home app.
+        Once an hour, to find devices added in or removed from the Google Home app.
         And every few updates while a device has no address: a device that was
         offline at setup has none until the list is fetched again.
         """
         # Until the list is known, every update fetches it anyway
         if not self.google_devices_fetched:
             return
-        if monotonic() < self.next_daily_fetch:
+        if monotonic() < self.next_scheduled_fetch:
             if all(device.ip_address for device in self.google_devices):
                 return
             self.updates_until_fetch -= 1
