@@ -13,6 +13,8 @@ Each Google Home device gets the entities below. The examples use a device named
 
 The alarms sensor, timers sensor, switch and alarm volume are added once Home Assistant can reach the device. If a device has only a device sensor and a reboot button, see [No alarms or timers sensors](troubleshooting.md#no-alarms-or-timers-sensors).
 
+All entities of a device are unavailable once Google no longer lists it, for example after you remove it from the Google Home app. See [Remove a device](installation.md#remove-a-device).
+
 ## Alarms sensor
 
 The state is the time of the next alarm, such as `2026-03-07T15:26:17+01:00`. It is `unavailable` when no alarm is set, or when all alarms are inactive or missed.

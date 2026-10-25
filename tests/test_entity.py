@@ -1,10 +1,11 @@
-"""Tests for how Google Home entities are named."""
+"""Tests for how Google Home entities are named and when they are available."""
 
 from unittest.mock import Mock
 
 import pytest
 
 from custom_components.google_home.button import RebootButton
+from custom_components.google_home.models import GoogleHomeDevice
 from custom_components.google_home.number import AlarmVolumeNumber
 from custom_components.google_home.sensor import (
     GoogleHomeAlarmsSensor,
@@ -38,6 +39,34 @@ def test_entity_name_starts_with_device_name(entity_class: type) -> None:
     unprefixed = _async_strip_prefix_from_entity_name(entity.name, "Living Room")
     assert unprefixed is not None
     assert unprefixed.casefold() == entity.label.casefold()
+
+
+@pytest.mark.parametrize(
+    "entity_class",
+    [
+        GoogleHomeAlarmsSensor,
+        GoogleHomeTimersSensor,
+        GoogleHomeDeviceSensor,
+        DoNotDisturbSwitch,
+        AlarmVolumeNumber,
+        RebootButton,
+    ],
+)
+def test_entity_unavailable_when_google_no_longer_lists_device(
+    entity_class: type,
+) -> None:
+    """Show every entity of a device removed in the Google Home app as unavailable.
+
+    Otherwise the switch would show off and the alarm volume 0.
+    """
+    device = GoogleHomeDevice("device-id", "Kitchen", "token", "10.0.0.2")
+    coordinator = Mock(data=[device], last_update_success=True)
+    entity = entity_class(coordinator, Mock(), "device-id", "Kitchen", None)
+    assert entity.available
+
+    coordinator.data = []
+
+    assert not entity.available
 
 
 def test_unique_id_ignores_device_name() -> None:

@@ -181,6 +181,32 @@ def test_known_hosts_fill_in_devices_from_glocaltokens() -> None:
     assert den.ip_address == "10.0.1.5"
 
 
+def test_known_hosts_fill_in_device_fetched_again() -> None:
+    """Find a device at its known host when Google's list, fetched again, gives its ID."""
+    hass = Mock()
+    hass.async_add_executor_job = AsyncMock(side_effect=lambda func, *args: func(*args))
+    client = GlocaltokensApiClient(
+        hass,
+        fake_session({"10.0.1.5": ("Den speaker left", "dddd")}),
+        master_token=MASTER_TOKEN,
+        known_hosts=["10.0.1.5"],
+    )
+    # Google didn't give the pair's ID before
+    den = GoogleHomeDevice("pair", "Den speakers", LOCAL_AUTH_TOKEN)
+    client.google_devices = [den]
+    client.google_devices_fetched = True
+    pair = Device("pair", "Den speakers", LOCAL_AUTH_TOKEN, cloud_device_id="DDDD")
+    client._client = Mock(  # noqa: SLF001  # pylint: disable=protected-access
+        get_google_devices=Mock(return_value=[pair]),
+        homegraph=Mock(),
+    )
+
+    # The same object, which keeps what the last update got from the device
+    assert asyncio.run(client.get_google_devices(refetch=True)) == [den]
+    assert den.cloud_device_id == "dddd"
+    assert den.ip_address == "10.0.1.5"
+
+
 def test_known_hosts_not_asked_when_mdns_found_everything() -> None:
     """Don't wait on known hosts when mDNS found an address for every device."""
     hass = Mock()
