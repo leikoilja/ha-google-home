@@ -41,6 +41,14 @@
       "master-token-format": "Token master diawali dengan aas_et/ dan panjangnya 223 karakter. Salin seluruh token."
     }
   },
+  "exceptions": {
+    "alarms_and_timers_not_fetched": {
+      "message": "Tidak dapat mengambil alarm dan timer saat ini dari perangkat {device}, sehingga tidak ada yang dihapus dari perangkat tersebut. Pastikan perangkat online dan coba lagi nanti."
+    },
+    "alarms_and_timers_not_fetched_from_devices": {
+      "message": "Tidak dapat mengambil alarm dan timer saat ini dari perangkat berikut, sehingga tidak ada yang dihapus dari perangkat tersebut: {devices}. Pastikan semuanya online dan coba lagi nanti."
+    }
+  },
   "options": {
     "step": {
       "init": {

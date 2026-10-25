@@ -41,6 +41,14 @@
       "master-token-format": "Hlavní token začíná na aas_et/ a má 223 znaků. Zkopírujte celý token."
     }
   },
+  "exceptions": {
+    "alarms_and_timers_not_fetched": {
+      "message": "Nepodařilo se načíst aktuální budíky a časovače ze zařízení {device}, proto z něj nebylo nic smazáno. Zkontrolujte, zda je zařízení online, a zkuste to znovu později."
+    },
+    "alarms_and_timers_not_fetched_from_devices": {
+      "message": "Nepodařilo se načíst aktuální budíky a časovače z následujících zařízení, proto z nich nebylo nic smazáno: {devices}. Zkontrolujte, zda jsou zařízení online, a zkuste to znovu později."
+    }
+  },
   "options": {
     "step": {
       "init": {

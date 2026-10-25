@@ -41,6 +41,14 @@
       "master-token-format": "Ein Master-Token beginnt mit aas_et/ und ist 223 Zeichen lang. Kopiere das vollständige Token."
     }
   },
+  "exceptions": {
+    "alarms_and_timers_not_fetched": {
+      "message": "Die aktuellen Wecker und Timer konnten nicht von {device} abgerufen werden. Daher wurde auf diesem Gerät nichts gelöscht. Prüfe, ob es online ist, und versuche es später erneut."
+    },
+    "alarms_and_timers_not_fetched_from_devices": {
+      "message": "Die aktuellen Wecker und Timer konnten von den folgenden Geräten nicht abgerufen werden: {devices}. Daher wurde auf diesen Geräten nichts gelöscht. Prüfe, ob sie online sind, und versuche es später erneut."
+    }
+  },
   "options": {
     "step": {
       "init": {

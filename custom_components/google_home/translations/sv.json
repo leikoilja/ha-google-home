@@ -41,6 +41,14 @@
       "master-token-format": "En master token börjar med aas_et/ och är 223 tecken lång. Kopiera hela värdet."
     }
   },
+  "exceptions": {
+    "alarms_and_timers_not_fetched": {
+      "message": "Det gick inte att hämta aktuella alarm och timers från {device}, så inget raderades från den enheten. Kontrollera att enheten är online och försök igen senare."
+    },
+    "alarms_and_timers_not_fetched_from_devices": {
+      "message": "Det gick inte att hämta aktuella alarm och timers från följande enheter, så inget raderades från dem: {devices}. Kontrollera att enheterna är online och försök igen senare."
+    }
+  },
   "options": {
     "step": {
       "init": {

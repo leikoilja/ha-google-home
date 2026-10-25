@@ -41,6 +41,14 @@
       "master-token-format": "Master token 以 aas_et/ 開頭，共 223 個字元。請複製完整值。"
     }
   },
+  "exceptions": {
+    "alarms_and_timers_not_fetched": {
+      "message": "無法從 {device} 取得目前的鬧鐘和計時器，因此未從該裝置刪除任何項目。請確認裝置已連線，並稍後再試。"
+    },
+    "alarms_and_timers_not_fetched_from_devices": {
+      "message": "無法從下列裝置取得目前的鬧鐘和計時器，因此未從這些裝置刪除任何項目：{devices}。請確認這些裝置已連線，並稍後再試。"
+    }
+  },
   "options": {
     "step": {
       "init": {

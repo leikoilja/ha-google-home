@@ -41,6 +41,14 @@
       "master-token-format": "Päätunniste alkaa merkkijonolla aas_et/ ja on 223 merkkiä pitkä. Kopioi koko tunniste."
     }
   },
+  "exceptions": {
+    "alarms_and_timers_not_fetched": {
+      "message": "Laitteen {device} nykyisiä herätyksiä ja ajastimia ei voitu hakea, joten laitteesta ei poistettu mitään. Tarkista, että laite on verkossa, ja yritä myöhemmin uudelleen."
+    },
+    "alarms_and_timers_not_fetched_from_devices": {
+      "message": "Seuraavien laitteiden nykyisiä herätyksiä ja ajastimia ei voitu hakea: {devices}. Näistä laitteista ei siksi poistettu mitään. Tarkista, että laitteet ovat verkossa, ja yritä myöhemmin uudelleen."
+    }
+  },
   "options": {
     "step": {
       "init": {

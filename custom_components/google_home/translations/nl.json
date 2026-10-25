@@ -41,6 +41,14 @@
       "master-token-format": "Een mastertoken begint met aas_et/ en is 223 tekens lang. Kopieer het volledige token."
     }
   },
+  "exceptions": {
+    "alarms_and_timers_not_fetched": {
+      "message": "De huidige alarmen en timers konden niet worden opgehaald van {device}. Er is daarom niets van dit apparaat verwijderd. Controleer of het apparaat online is en probeer het later opnieuw."
+    },
+    "alarms_and_timers_not_fetched_from_devices": {
+      "message": "De huidige alarmen en timers konden niet worden opgehaald van de volgende apparaten: {devices}. Er is daarom niets van deze apparaten verwijderd. Controleer of de apparaten online zijn en probeer het later opnieuw."
+    }
+  },
   "options": {
     "step": {
       "init": {
