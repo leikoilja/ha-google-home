@@ -80,7 +80,7 @@ To update immediately, use the [Refresh devices](actions.md#refresh-devices) act
 
 ## Add a device
 
-When you add a speaker or display in the Google Home app, the integration normally adds it within about a day, without a reload. It asks Google for your devices about once a day, at its next update. If it can't reach Google then, it tries again a day later.
+When you add a speaker or display in the Google Home app, the integration normally adds it within about a day, without a reload. It asks Google for your devices at the first update a day after it last asked. If it can't reach Google then, it tries again a day later.
 
 To add the device straight away, reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. The integration then asks Google for your devices. The device appears only once Google lists it, and some of its entities only once Home Assistant can reach it; see [Entities](entities.md).
 

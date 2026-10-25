@@ -277,12 +277,42 @@ def test_fetch_on_every_update_after_token_rejected(clock: Mock) -> None:
     assert not can_delete(client, [kitchen], "removed")
 
     glocaltokens.homegraph = None
-    assert fetches_in(client, glocaltokens, 3) == 3
-    assert not can_delete(client, [], "removed")
+    # Keep the devices, which may still accept their tokens, until Google answers
+    assert update(client) == [kitchen]
+    assert fetches_in(client, glocaltokens, 2) == 3
+    assert not can_delete(client, [kitchen], "removed")
 
     glocaltokens.homegraph = Mock()
     assert fetches_in(client, glocaltokens, 3) == 4
     assert can_delete(client, client.google_devices, "removed")
+
+
+def test_keep_polled_data_after_token_rejected() -> None:
+    """Keep the data of the other devices when Google's list is fetched after a device rejects its token.
+
+    The fetch gives new tokens, but a device that doesn't answer that update
+    would otherwise show no alarms, Do Not Disturb off and alarm volume 0.
+    """
+    session = answering(HTTPStatus.UNAUTHORIZED)
+    client, glocaltokens = make_client("10.0.0.2", "10.0.0.3", session=session)
+    kitchen, bedroom = client.google_devices
+    bedroom.set_alarms([{"id": ALARM_ID, "fire_time": 1700000000000, "status": 1}])
+    bedroom.set_do_not_disturb(True)
+    bedroom.set_alarm_volume(70)
+    asyncio.run(client.update_alarms_and_timers(kitchen))
+
+    # Google lists both devices again, and neither answers this update
+    session.request.side_effect = TimeoutError
+    assert asyncio.run(client.update_google_devices_information()) == [
+        kitchen,
+        bedroom,
+    ]
+
+    assert glocaltokens.get_google_devices.call_count == 1
+    assert bedroom.auth_token == LOCAL_AUTH_TOKEN
+    assert [alarm.alarm_id for alarm in bedroom.get_sorted_alarms()] == [ALARM_ID]
+    assert bedroom.get_do_not_disturb()
+    assert bedroom.get_alarm_volume() == 70
 
 
 def test_keep_polled_data_when_list_fetched_again(clock: Mock) -> None:

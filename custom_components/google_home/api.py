@@ -595,8 +595,9 @@ class GlocaltokensApiClient:
                             "Token will be refreshed, please try again later.",
                             device.name,
                         )
-                    # We need to retry the update task instead of just cleaning the list
-                    self.google_devices = []
+                    # Fetch Google's list, with new tokens, at the next update. Keep
+                    # the devices meanwhile, so the fetch keeps their data, and the
+                    # others still update if Google can't be reached.
                     self.google_devices_fetched = False
                     device.available = False
                 elif response.status == HTTPStatus.NOT_FOUND:
