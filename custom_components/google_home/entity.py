@@ -59,6 +59,12 @@ class GoogleHomeBaseEntity(
 
     @property
     @override
+    def available(self) -> bool:
+        """Return whether Google still lists the device."""
+        return super().available and self.get_device() is not None
+
+    @property
+    @override
     def device_info(self) -> DeviceInfo | None:
         """Return device info."""
         # Entity names start with the device name, which Home Assistant strips
