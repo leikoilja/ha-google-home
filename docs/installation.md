@@ -84,7 +84,14 @@ When you add a speaker or display in the Google Home app, the integration normal
 
 To add the device straight away, reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. The integration then asks Google for your devices. The device appears only once Google lists it, and some of its entities only once Home Assistant can reach it; see [Entities](entities.md).
 
-To add back a speaker or display that you removed from the Google Home app, [factory reset it](https://support.google.com/googlenest/answer/7073477), then set it up again in the Google Home app. Restarting it isn't enough. Google gives it a new ID, so Home Assistant adds it as a new device. To keep its entity IDs, such as `sensor.kitchen_alarms` rather than `sensor.kitchen_alarms_2`, delete the old device in Home Assistant once the integration has noticed the removal (see [Remove a device](#remove-a-device)), then set the device up again with the same name.
+To add back a speaker or display that you removed from the Google Home app:
+
+1. Wait until the integration has noticed the removal, or reload it; see [Remove a device](#remove-a-device).
+2. Delete the old device in Home Assistant: open the device's page, open the **⋮** menu and select **Delete**. If you skip this, the new device's entities get IDs such as `sensor.kitchen_alarms_2` instead of `sensor.kitchen_alarms`.
+3. [Factory reset the device](https://support.google.com/googlenest/answer/7073477). Restarting it isn't enough.
+4. Set it up again in the Google Home app. Give it the same name to keep its entity IDs.
+
+Google gives the device a new ID, so the integration adds it as a new device, normally within about 20 minutes.
 
 If you deleted a device in Home Assistant and the Google Home app lists it again without a factory reset, the integration doesn't add it back by itself: reload the integration.
 
