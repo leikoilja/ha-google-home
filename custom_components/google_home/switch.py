@@ -44,13 +44,14 @@ async def async_setup_entry(
 class DoNotDisturbSwitch(GoogleHomeBaseEntity, SwitchEntity):
     """Google Home Do Not Disturb switch."""
 
+    _attr_name = "Do Not Disturb"
     _attr_icon = ICON_DO_NOT_DISTURB
     _attr_entity_category = EntityCategory.CONFIG
 
     @property
     @override
     def label(self) -> str:
-        """Label to use for name and unique id."""
+        """Label to use for unique id."""
         return LABEL_DO_NOT_DISTURB
 
     @property

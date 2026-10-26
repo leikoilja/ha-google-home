@@ -25,6 +25,11 @@ class GoogleHomeBaseEntity(
 ):
     """Base entity base for Google Home sensors."""
 
+    # Subclasses name only themselves, and Home Assistant adds the device's
+    # current name. So entities added after the user renames the device in
+    # Home Assistant use its new name, not its Google Home name.
+    _attr_has_entity_name = True
+
     def __init__(
         self,
         coordinator: DataUpdateCoordinator[list[GoogleHomeDevice]],
@@ -43,13 +48,7 @@ class GoogleHomeBaseEntity(
     @property
     @abstractmethod
     def label(self) -> str:
-        """Label to use for name and unique id."""
-
-    @property
-    @override
-    def name(self) -> str:
-        """Return the name of the sensor."""
-        return f"{self.device_name} {self.label}"
+        """Label to use for unique id."""
 
     @property
     @override
@@ -67,9 +66,6 @@ class GoogleHomeBaseEntity(
     @override
     def device_info(self) -> DeviceInfo | None:
         """Return device info."""
-        # Entity names start with the device name, which Home Assistant strips
-        # when it builds entity IDs from both: sensor.kitchen_alarms, not
-        # sensor.google_home_kitchen_kitchen_alarms.
         return DeviceInfo(
             identifiers={(DOMAIN, self.device_id)},
             name=self.device_name,
