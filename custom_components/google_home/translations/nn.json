@@ -32,6 +32,38 @@
         "data_description": {
           "master_token": "Byrjar med aas_et/"
         }
+      },
+      "reauth": {
+        "title": "Logg på igjen",
+        "description": "Google godtek ikkje lenger den lagra pålogginga for {name}. Logg på den same Google-kontoen igjen: einingane, entitetane og automatiseringane dine blir verande som dei er. Fram til du gjer det, kan entitetane til einingane dine vise utdaterte verdiar eller vere utilgjengelege.",
+        "menu_options": {
+          "browser": "Pålogging i nettlesaren (tilrådd)",
+          "master_token": "Master token"
+        },
+        "menu_option_descriptions": {
+          "browser": "Logg på Google i ein nettlesar på ei datamaskin, og lim deretter inn ein informasjonskapsel. Fungerer for dei fleste kontoane.",
+          "master_token": "Lim inn eit master token du allereie har."
+        }
+      },
+      "reauth_browser": {
+        "title": "Pålogging i nettlesaren",
+        "description": "1. Opne {embedded_setup_url} i eit privat nettlesarvindauge på ei datamaskin, og logg på den same Google-kontoen. Etter at du har godteke, kan sida halde fram med å laste; det er venta.\n2. Opne utviklarverktøya i nettlesaren, og finn informasjonskapslane for `accounts.google.com`.\n3. Kopier verdien til informasjonskapselen `oauth_token`, og lim han inn nedanfor med ein gong. Han er berre gyldig i nokre minutt og fungerer berre éin gong.\n\nRettleiing steg for steg: {browser_docs_url}",
+        "data": {
+          "oauth_token": "Informasjonskapselen oauth_token"
+        },
+        "data_description": {
+          "oauth_token": "Byrjar med oauth2_4/"
+        }
+      },
+      "reauth_master_token": {
+        "title": "Master token",
+        "description": "Lim inn eit master token for den same Google-kontoen, til dømes eit du har fått med eit anna verktøy.",
+        "data": {
+          "master_token": "Master token for Google-kontoen"
+        },
+        "data_description": {
+          "master_token": "Byrjar med aas_et/"
+        }
       }
     },
     "error": {
@@ -39,6 +71,9 @@
       "master-token-invalid": "Master token er ugyldig. Kontroller at heile tokenet er gitt (inkludert 'aas_et/')",
       "oauth-token-format": "Dette er ikkje informasjonskapselen oauth_token. Verdien byrjar med oauth2_4/.",
       "master-token-format": "Eit master token byrjar med aas_et/ og er 223 teikn langt. Kopier heile tokenet."
+    },
+    "abort": {
+      "other-account": "Du logga på ein annan Google-konto, så ingenting vart endra. For å logge på igjen med kontoen som denne integrasjonen brukar, last inn integrasjonen på nytt: gå til Konfigurasjon > Devices & services > Google Home, opne ⋮-menyen og vel Last inn på nytt. For å bruke den andre kontoen i staden, slett integrasjonen og legg han til på nytt."
     }
   },
   "exceptions": {

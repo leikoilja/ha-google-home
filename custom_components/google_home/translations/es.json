@@ -32,6 +32,38 @@
         "data_description": {
           "master_token": "Empieza por aas_et/"
         }
+      },
+      "reauth": {
+        "title": "Volver a iniciar sesión",
+        "description": "Google ya no acepta los datos de inicio de sesión guardados para {name}. Vuelve a iniciar sesión en la misma cuenta de Google: tus dispositivos, entidades y automatizaciones se mantienen como están. Hasta que lo hagas, las entidades de tus dispositivos pueden mostrar valores desactualizados o no estar disponibles.",
+        "menu_options": {
+          "browser": "Inicio de sesión en el navegador (recomendado)",
+          "master_token": "Token maestro"
+        },
+        "menu_option_descriptions": {
+          "browser": "Inicia sesión en Google en un navegador de ordenador y después pega una cookie. Funciona con la mayoría de las cuentas.",
+          "master_token": "Pega un token maestro que ya tengas."
+        }
+      },
+      "reauth_browser": {
+        "title": "Inicio de sesión en el navegador",
+        "description": "1. En un ordenador, abre {embedded_setup_url} en una ventana de navegación privada e inicia sesión en la misma cuenta de Google. Después de aceptar, puede que la página siga cargando; es normal.\n2. Abre las herramientas para desarrolladores del navegador y busca las cookies de `accounts.google.com`.\n3. Copia el valor de la cookie `oauth_token` y pégalo abajo enseguida. Caduca en pocos minutos y solo funciona una vez.\n\nInstrucciones paso a paso (en inglés): {browser_docs_url}",
+        "data": {
+          "oauth_token": "Cookie oauth_token"
+        },
+        "data_description": {
+          "oauth_token": "Empieza por oauth2_4/"
+        }
+      },
+      "reauth_master_token": {
+        "title": "Token maestro",
+        "description": "Pega un token maestro de la misma cuenta de Google, por ejemplo uno que hayas obtenido con otra herramienta.",
+        "data": {
+          "master_token": "Token maestro de Google"
+        },
+        "data_description": {
+          "master_token": "Empieza por aas_et/"
+        }
       }
     },
     "error": {
@@ -39,6 +71,9 @@
       "master-token-invalid": "El token maestro no es válido. Asegúrate de haber introducido el token completo (incluido 'aas_et/')",
       "oauth-token-format": "Esta no es la cookie oauth_token. Su valor empieza por oauth2_4/.",
       "master-token-format": "Un token maestro empieza por aas_et/ y tiene 223 caracteres. Copia el token completo."
+    },
+    "abort": {
+      "other-account": "Has iniciado sesión en otra cuenta de Google, por lo que no se ha cambiado nada. Para volver a iniciar sesión con la cuenta que usa esta integración, recarga la integración: ve a Configuración > Dispositivos y servicios > Google Home, abre el menú ⋮ y selecciona Recargar. Para usar esa otra cuenta, elimina la integración y vuelve a añadirla."
     }
   },
   "exceptions": {

@@ -1,5 +1,6 @@
 """Adds config flow for Google Home."""
 
+from collections.abc import Mapping
 import ipaddress
 import logging
 from typing import Self, override
@@ -8,7 +9,12 @@ from glocaltokens.utils.token import is_aas_et
 import probatio
 from requests.exceptions import RequestException
 
-from homeassistant.config_entries import ConfigFlow, ConfigFlowResult, OptionsFlow
+from homeassistant.config_entries import (
+    SOURCE_REAUTH,
+    ConfigFlow,
+    ConfigFlowResult,
+    OptionsFlow,
+)
 from homeassistant.core import callback
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.selector import SelectSelector, SelectSelectorConfig
@@ -34,8 +40,12 @@ _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 STEP_BROWSER = "browser"
 STEP_MASTER_TOKEN = "master_token"
+STEP_REAUTH = "reauth"
 
 OAUTH_TOKEN_PREFIX = "oauth2_4/"
+
+# Domains where Google ignores dots before the @, and which are the same accounts
+GMAIL_DOMAINS = {"gmail.com", "googlemail.com"}
 
 DESCRIPTION_PLACEHOLDERS = {
     "docs_url": "https://ha-google-home.pages.dev/installation/",
@@ -71,6 +81,28 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
             menu_options=[STEP_BROWSER, STEP_MASTER_TOKEN],
             description_placeholders=DESCRIPTION_PLACEHOLDERS,
         )
+
+    async def async_step_reauth(
+        self, _entry_data: Mapping[str, object]
+    ) -> ConfigFlowResult:
+        """Ask how to sign in again when Google rejects the saved master token."""
+        return self.async_show_menu(
+            step_id=STEP_REAUTH,
+            menu_options=[STEP_BROWSER, STEP_MASTER_TOKEN],
+            description_placeholders={"name": self._get_reauth_entry().title},
+        )
+
+    async def async_step_reauth_browser(
+        self, user_input: dict[str, str] | None = None
+    ) -> ConfigFlowResult:
+        """Sign in again with the oauth_token cookie from a browser sign-in."""
+        return await self.async_step_browser(user_input)
+
+    async def async_step_reauth_master_token(
+        self, user_input: dict[str, str] | None = None
+    ) -> ConfigFlowResult:
+        """Sign in again with an existing master token."""
+        return await self.async_step_master_token(user_input)
 
     async def async_step_browser(
         self, user_input: dict[str, str] | None = None
@@ -137,17 +169,32 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
         username: str,
         title: str,
     ) -> ConfigFlowResult:
-        """Save the master token that every sign-in method ends with."""
-        return self.async_create_entry(
-            title=title,
-            data={
-                CONF_MASTER_TOKEN: await client.async_get_master_token(),
-                CONF_USERNAME: username,
-                # Older versions saved an app password here
-                CONF_PASSWORD: "",
-                CONF_ANDROID_ID: await client.get_android_id(),
-            },
-        )
+        """Save the master token that every sign-in method ends with.
+
+        Signing in again saves it in the existing entry instead, unless Google says
+        it belongs to another account than the entry's.
+        """
+        data = {
+            CONF_MASTER_TOKEN: await client.async_get_master_token(),
+            CONF_USERNAME: username,
+            # Older versions saved an app password here
+            CONF_PASSWORD: "",
+            CONF_ANDROID_ID: await client.get_android_id(),
+        }
+        if self.source != SOURCE_REAUTH:
+            return self.async_create_entry(title=title, data=data)
+        entry = self._get_reauth_entry()
+        accounts = _get_accounts(entry)
+        if username and accounts and _account_id(username) not in accounts:
+            return self.async_abort(reason="other-account")
+        # Keep the saved address when Google doesn't give one
+        data[CONF_USERNAME] = username or entry.data.get(CONF_USERNAME, "")
+        result = self.async_update_and_abort(entry, data_updates=data)
+        # Not async_update_reload_and_abort(), which Home Assistant refuses from
+        # 2026.12 for an entry with an update listener. This entry's listener reloads
+        # it only when known hosts change, and an entry that failed setup has none.
+        self.hass.config_entries.async_schedule_reload(entry.entry_id)
+        return result
 
     def _show_form(
         self,
@@ -156,6 +203,10 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
         errors: dict[str, str],
     ) -> ConfigFlowResult:
         """Show the form of one sign-in method."""
+        if self.source == SOURCE_REAUTH:
+            # The same form, with text that doesn't suggest adding the integration
+            # again: closing the window keeps the sign-in open
+            step_id = f"{STEP_REAUTH}_{step_id}"
         return self.async_show_form(
             step_id=step_id,
             data_schema=probatio.Schema(schema),
@@ -230,6 +281,32 @@ class GoogleHomeOptionsFlowHandler(OptionsFlow):
             ),
             errors=errors,
         )
+
+
+def _get_accounts(entry: GoogleHomeConfigEntry) -> set[str]:
+    """Return the known email addresses of the entry's Google account.
+
+    Older versions saved the address that the user typed, and gave master token
+    entries a generic title, which has no @ until it's renamed after the address
+    that Google gives.
+    """
+    return {
+        _account_id(account)
+        for account in (entry.data.get(CONF_USERNAME), entry.title)
+        if account and "@" in account
+    }
+
+
+def _account_id(email: str) -> str:
+    """Return an email address in a form that is the same for one Google account.
+
+    Case doesn't matter, and Gmail addresses are the same with or without dots and
+    with either domain.
+    """
+    local, _, domain = email.strip().casefold().rpartition("@")
+    if domain in GMAIL_DOMAINS:
+        return f"{local.replace('.', '')}@gmail.com"
+    return f"{local}@{domain}"
 
 
 def _is_ip_address(host: str) -> bool:

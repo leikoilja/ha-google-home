@@ -44,7 +44,7 @@ You need:
 
 Home Assistant then adds a device for each Google Cast device in your home, with the [entities](entities.md) for it. Devices that have no alarms or timers, such as an NVIDIA Shield, get only a device sensor and a reboot button.
 
-To change the account or sign in again, delete the integration and add it again.
+If Google stops accepting the sign-in, [sign in again](#sign-in-again). To use another Google account, delete the integration and add it again.
 
 !!! warning "Keep your sign-in details secret"
 
@@ -69,6 +69,21 @@ Home Assistant exchanges the cookie for a master token, names the entry after th
 ### Master token
 
 Select **Master token**, paste the token into **Google account master token**, and select **Submit**. A master token starts with `aas_et/` and is 223 characters long. The integration looks up which Google account the token belongs to and names the entry after it.
+
+## Sign in again
+
+Google can stop accepting the integration's sign-in, for example after you change your Google account's password. Home Assistant then reports that authentication expired, and the Google Home card in **Settings** > **Devices & services** shows **Reconfigure**. Sign in again with the same Google account to keep your devices, their entity IDs and your automations:
+
+1. Go to **Settings** > **Devices & services** and, on the Google Home card, select **Reconfigure**.
+2. Choose how to sign in, and follow the same steps as for [browser sign-in](#browser-sign-in) or a [master token](#master-token). Use the same Google account as before.
+
+Home Assistant then reloads the integration with the new sign-in.
+
+Sign in again soon. Until you do, the integration can't get the device list or new device tokens from Google. It keeps asking your devices for updates, and some may keep answering, but what Home Assistant shows for your devices can be out of date. After Home Assistant restarts, the integration doesn't start until you sign in again.
+
+- If you closed the sign-in window, select **Reconfigure** again to continue where you left off.
+- To choose another way to sign in after you picked one, reload the integration: go to **Settings** > **Devices & services** > **Google Home**, open the **⋮** menu and select **Reload**. Sign-in starts again from the choice, but the integration stops until you finish, and its entities are unavailable.
+- If Home Assistant says that you signed in to a different Google account, see [Troubleshooting](troubleshooting.md#you-signed-in-to-a-different-google-account).
 
 ## Change the update interval
 

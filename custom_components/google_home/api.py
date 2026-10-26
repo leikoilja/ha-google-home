@@ -75,6 +75,8 @@ class GlocaltokensApiClient:
         # be empty. It isn't until a fetch succeeds, or once a device rejects its
         # token.
         self.google_devices_fetched = False
+        # Why Google last rejected the master token, until a fetch succeeds
+        self.sign_in_error: AuthenticationError | None = None
         self.zeroconf_instance = zeroconf_instance
         self.known_hosts = known_hosts or []
         # Setup fetches the list straight after creating the client
@@ -143,8 +145,13 @@ class GlocaltokensApiClient:
             # a 5xx or 429, which glocaltokens raises as HTTPError
             except (GLocalTokensError, HTTPError) as error:
                 _LOGGER.error("Failed to fetch Google's device list: %s", error)
+                # Only signing in again helps when Google rejects the master token.
+                # Other errors say nothing about it, so an earlier rejection stays.
+                if isinstance(error, AuthenticationError):
+                    self.sign_in_error = error
                 # Keep the devices of an earlier fetch rather than drop them
                 return self.google_devices
+            self.sign_in_error = None
             self.google_devices_fetched = True
             known_devices = {device.device_id: device for device in self.google_devices}
             self.google_devices = []

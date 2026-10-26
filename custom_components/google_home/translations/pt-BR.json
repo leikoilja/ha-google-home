@@ -32,6 +32,38 @@
         "data_description": {
           "master_token": "Começa com aas_et/"
         }
+      },
+      "reauth": {
+        "title": "Entrar novamente",
+        "description": "O Google não aceita mais os dados de login salvos para {name}. Faça login novamente na mesma conta do Google: seus dispositivos, entidades e automações continuam como estão. Até lá, as entidades dos seus dispositivos podem mostrar valores desatualizados ou ficar indisponíveis.",
+        "menu_options": {
+          "browser": "Login pelo navegador (recomendado)",
+          "master_token": "Token mestre"
+        },
+        "menu_option_descriptions": {
+          "browser": "Faça login no Google em um navegador de computador e depois cole um cookie. Funciona na maioria das contas.",
+          "master_token": "Cole um token mestre que você já tem."
+        }
+      },
+      "reauth_browser": {
+        "title": "Login pelo navegador",
+        "description": "1. Em um computador, abra {embedded_setup_url} em uma janela anônima do navegador e faça login na mesma conta do Google. Depois de aceitar, a página pode continuar carregando; isso é esperado.\n2. Abra as ferramentas de desenvolvedor do navegador e encontre os cookies de `accounts.google.com`.\n3. Copie o valor do cookie `oauth_token` e cole abaixo imediatamente. Ele expira em poucos minutos e funciona apenas uma vez.\n\nInstruções passo a passo: {browser_docs_url}",
+        "data": {
+          "oauth_token": "Cookie oauth_token"
+        },
+        "data_description": {
+          "oauth_token": "Começa com oauth2_4/"
+        }
+      },
+      "reauth_master_token": {
+        "title": "Token mestre",
+        "description": "Cole um token mestre da mesma conta do Google, por exemplo um que você obteve com outra ferramenta.",
+        "data": {
+          "master_token": "Token mestre da conta do Google"
+        },
+        "data_description": {
+          "master_token": "Começa com aas_et/"
+        }
       }
     },
     "error": {
@@ -39,6 +71,9 @@
       "master-token-invalid": "Token mestre inválido. Certifique-se de que o token completo tenha sido especificado (incluindo 'aas_et/')",
       "oauth-token-format": "Este não é o cookie oauth_token. O valor dele começa com oauth2_4/.",
       "master-token-format": "Um token mestre começa com aas_et/ e tem 223 caracteres. Copie o token completo."
+    },
+    "abort": {
+      "other-account": "Você fez login em outra conta do Google, então nada foi alterado. Para fazer login novamente com a conta que esta integração usa, recarregue a integração: acesse Configurações > Dispositivos & serviços > Google Home, abra o menu ⋮ e selecione Recarregar. Para usar essa outra conta, exclua a integração e adicione-a novamente."
     }
   },
   "exceptions": {

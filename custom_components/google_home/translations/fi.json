@@ -32,6 +32,38 @@
         "data_description": {
           "master_token": "Alkaa merkkijonolla aas_et/"
         }
+      },
+      "reauth": {
+        "title": "Kirjaudu uudelleen",
+        "description": "Google ei enää hyväksy tallennettuja kirjautumistietoja ({name}). Kirjaudu uudelleen samalle Google-tilille: laitteesi, entiteettisi ja automaatiosi säilyvät ennallaan. Siihen asti laitteidesi entiteetit voivat näyttää vanhentuneita arvoja, tai ne eivät välttämättä ole käytettävissä.",
+        "menu_options": {
+          "browser": "Kirjautuminen selaimella (suositeltu)",
+          "master_token": "Päätunniste"
+        },
+        "menu_option_descriptions": {
+          "browser": "Kirjaudu Googleen tietokoneen selaimella ja liitä sitten eväste. Toimii useimmilla tileillä.",
+          "master_token": "Liitä päätunniste, joka sinulla jo on."
+        }
+      },
+      "reauth_browser": {
+        "title": "Kirjautuminen selaimella",
+        "description": "1. Avaa tietokoneella {embedded_setup_url} selaimen yksityisessä ikkunassa, esimerkiksi incognito-ikkunassa, ja kirjaudu sisään samalle Google-tilille. Hyväksymisen jälkeen sivu saattaa jatkaa lataamista; tämä on normaalia.\n2. Avaa selaimen kehittäjätyökalut ja etsi sivuston `accounts.google.com` evästeet.\n3. Kopioi `oauth_token`-evästeen arvo ja liitä se heti alle. Se vanhenee muutamassa minuutissa ja toimii vain kerran.\n\nVaiheittaiset ohjeet: {browser_docs_url}",
+        "data": {
+          "oauth_token": "oauth_token-eväste"
+        },
+        "data_description": {
+          "oauth_token": "Alkaa merkkijonolla oauth2_4/"
+        }
+      },
+      "reauth_master_token": {
+        "title": "Päätunniste",
+        "description": "Liitä saman Google-tilin päätunniste, jonka olet saanut esimerkiksi toisella työkalulla.",
+        "data": {
+          "master_token": "Google-tilin päätunniste"
+        },
+        "data_description": {
+          "master_token": "Alkaa merkkijonolla aas_et/"
+        }
       }
     },
     "error": {
@@ -39,6 +71,9 @@
       "master-token-invalid": "Päätunniste on virheellinen. Varmista, että olet antanut koko tunnisteen, myös alun aas_et/.",
       "oauth-token-format": "Tämä ei ole oauth_token-eväste. Sen arvo alkaa merkkijonolla oauth2_4/.",
       "master-token-format": "Päätunniste alkaa merkkijonolla aas_et/ ja on 223 merkkiä pitkä. Kopioi koko tunniste."
+    },
+    "abort": {
+      "other-account": "Kirjauduit eri Google-tilille, joten mitään ei muutettu. Jos haluat kirjautua uudelleen tilille, jota tämä integraatio käyttää, lataa integraatio uudelleen: siirry kohtaan Asetukset > Laitteet & palvelut > Google Home, avaa ⋮-valikko ja valitse Lataa uudelleen. Jos haluat käyttää sen sijaan toista tiliä, poista integraatio ja lisää se uudelleen."
     }
   },
   "exceptions": {

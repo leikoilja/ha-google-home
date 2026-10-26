@@ -32,6 +32,38 @@
         "data_description": {
           "master_token": "Beginnt mit aas_et/"
         }
+      },
+      "reauth": {
+        "title": "Erneut anmelden",
+        "description": "Google akzeptiert die für {name} gespeicherte Anmeldung nicht mehr. Melde dich erneut beim selben Google-Konto an: Deine Geräte, Entitäten und Automationen bleiben unverändert. Bis dahin können die Entitäten deiner Geräte veraltete Werte anzeigen oder nicht verfügbar sein.",
+        "menu_options": {
+          "browser": "Anmeldung im Browser (empfohlen)",
+          "master_token": "Master-Token"
+        },
+        "menu_option_descriptions": {
+          "browser": "Melde dich in einem Desktop-Browser bei Google an und füge dann ein Cookie ein. Funktioniert bei den meisten Konten.",
+          "master_token": "Füge ein Master-Token ein, das du bereits hast."
+        }
+      },
+      "reauth_browser": {
+        "title": "Anmeldung im Browser",
+        "description": "1. Öffne auf einem Computer {embedded_setup_url} in einem privaten Browserfenster und melde dich beim selben Google-Konto an. Nachdem du zugestimmt hast, lädt die Seite eventuell weiter; das ist normal.\n2. Öffne die Entwicklertools des Browsers und suche die Cookies für `accounts.google.com`.\n3. Kopiere den Wert des Cookies `oauth_token` und füge ihn sofort unten ein. Er läuft nach wenigen Minuten ab und funktioniert nur einmal.\n\nSchritt-für-Schritt-Anleitung: {browser_docs_url}",
+        "data": {
+          "oauth_token": "Cookie oauth_token"
+        },
+        "data_description": {
+          "oauth_token": "Beginnt mit oauth2_4/"
+        }
+      },
+      "reauth_master_token": {
+        "title": "Master-Token",
+        "description": "Füge ein Master-Token für dasselbe Google-Konto ein, zum Beispiel eines, das du mit einem anderen Tool erhalten hast.",
+        "data": {
+          "master_token": "Master-Token des Google-Kontos"
+        },
+        "data_description": {
+          "master_token": "Beginnt mit aas_et/"
+        }
       }
     },
     "error": {
@@ -39,6 +71,9 @@
       "master-token-invalid": "Master-Token ungültig. Stelle sicher, dass das vollständige Token angegeben wurde (inklusive 'aas_et/')",
       "oauth-token-format": "Das ist nicht das Cookie oauth_token. Sein Wert beginnt mit oauth2_4/.",
       "master-token-format": "Ein Master-Token beginnt mit aas_et/ und ist 223 Zeichen lang. Kopiere das vollständige Token."
+    },
+    "abort": {
+      "other-account": "Du hast dich bei einem anderen Google-Konto angemeldet, daher wurde nichts geändert. Um dich erneut mit dem Konto anzumelden, das diese Integration verwendet, lade die Integration neu: Gehe zu Einstellungen > Geräte & Dienste > Google Home, öffne das Menü ⋮ und wähle Neu laden. Um stattdessen das andere Konto zu verwenden, lösche die Integration und füge sie erneut hinzu."
     }
   },
   "exceptions": {
