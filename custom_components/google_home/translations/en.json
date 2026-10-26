@@ -68,7 +68,10 @@
     },
     "error": {
       "oauth-token-invalid": "Google didn't accept the cookie. Get a new one and paste it straight away: it expires within minutes and works only once. Copy the whole value, starting with oauth2_4/.",
-      "master-token-invalid": "Master token invalid. Make sure that the full token has been specified (including 'aas_et/')",
+      "master-token-invalid": "Google didn't accept the master token. Check that you copied it correctly. If it worked before, for example until you changed your Google password, Google no longer accepts it: use browser sign-in instead.",
+      "google-rejected": "Google didn't accept the sign-in. For details, see the Home Assistant log.",
+      "google-unreachable": "Couldn't reach Google. Check that Home Assistant is connected to the internet, then try again.",
+      "google-busy": "Google is busy or is limiting sign-ins. Wait a few minutes, then sign in again.",
       "oauth-token-format": "This isn't the oauth_token cookie. Its value starts with oauth2_4/.",
       "master-token-format": "A master token starts with aas_et/ and is 223 characters long. Copy the whole token."
     },
