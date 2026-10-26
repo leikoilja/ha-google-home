@@ -40,11 +40,16 @@ Paste the whole token, including the `aas_et/` at the start. If it was correct b
 
 ### "You signed in to a different Google account"
 
-Google reports that you signed in to another account than the one the integration uses, so Home Assistant didn't change anything. To sign in with the original account, reload the integration: go to **Settings** > **Devices & services** > **Google Home**, open the **⋮** menu and select **Reload**. Then select **Reconfigure** and [sign in again](installation.md#sign-in-again). If the integration is still running, Home Assistant may also ask you to sign in again by itself after a later update.
+Google reports that you signed in to another account than the one the integration uses, so Home Assistant didn't change anything. To sign in with the original account:
+
+- If the integration is still running, you don't need to reload it. Home Assistant asks you to sign in again by itself when the integration next updates your devices, every 180 seconds by default. Then select **Reconfigure** and [sign in again](installation.md#sign-in-again).
+- If the integration isn't running, for example when Home Assistant restarted and shows **Failed to set up** for it, reload it: go to **Settings** > **Devices & services** > **Google Home**, open the **⋮** menu and select **Reload**. Then select **Reconfigure** and sign in again.
+
+Reloading also works while the integration is running, but it stops the integration: its entities are unavailable until you sign in again.
 
 To use that account instead, delete the integration and add it again.
 
-Version 1.13 and older saved the email address you typed when you set up the integration. If that isn't your Google account's primary address, for example because you typed an alternate address, and the integration isn't named after the primary address either, Home Assistant can refuse your own account. Delete the integration and add it again.
+Version 1.13 and older saved the email address you typed when you set up the integration. If that isn't your Google account's primary address, for example because you typed an alternate address, and the integration isn't named after the primary address either, Home Assistant refuses your own account. To keep the integration, name it after your primary address: go to **Settings** > **Devices & services** > **Google Home**, open the **⋮** menu, select **Rename** and enter the address. Then sign in again as described above. Otherwise, delete the integration and add it again.
 
 ## Devices are missing
 
