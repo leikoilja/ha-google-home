@@ -23,7 +23,6 @@ from .const import (
     API_ENDPOINT_DO_NOT_DISTURB,
     API_ENDPOINT_EUREKA_INFO,
     API_ENDPOINT_REBOOT,
-    FETCH_DEVICES_EVERY,
     FETCH_DEVICES_INTERVAL,
     HEADER_CAST_LOCAL_AUTH,
     HEADER_CONTENT_TYPE,
@@ -77,7 +76,6 @@ class GlocaltokensApiClient:
         self.google_devices_fetched = False
         self.zeroconf_instance = zeroconf_instance
         self.known_hosts = known_hosts or []
-        self.updates_until_fetch = FETCH_DEVICES_EVERY
         # Setup fetches the list straight after creating the client
         self.next_scheduled_fetch = monotonic() + FETCH_DEVICES_INTERVAL
 
@@ -175,20 +173,13 @@ class GlocaltokensApiClient:
     async def async_fetch_devices_when_due(self) -> None:
         """Fetch Google's device list again when it may have changed.
 
-        Once an hour, to find devices added in or removed from the Google Home app.
-        And every few updates while a device has no address: a device that was
-        offline at setup has none until the list is fetched again.
+        Every 20 minutes, however often the devices are updated, to find devices
+        added in or removed from the Google Home app, and the address of a device
+        that was offline at setup.
         """
         # Until the list is known, every update fetches it anyway
-        if not self.google_devices_fetched:
+        if not self.google_devices_fetched or monotonic() < self.next_scheduled_fetch:
             return
-        if monotonic() < self.next_scheduled_fetch:
-            if all(device.ip_address for device in self.google_devices):
-                return
-            self.updates_until_fetch -= 1
-            if self.updates_until_fetch > 0:
-                return
-        self.updates_until_fetch = FETCH_DEVICES_EVERY
         _LOGGER.debug("Fetching Google's device list again")
         try:
             await self.get_google_devices(refetch=True)

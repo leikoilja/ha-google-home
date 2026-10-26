@@ -95,12 +95,11 @@ DATETIME_STR_FORMAT: Final = f"{DATE_STR_FORMAT} {TIME_STR_FORMAT}"
 # Access token only lives about 1 hour
 # Update often to fetch timers in timely manner
 UPDATE_INTERVAL: Final = 180  # sec
-# While a device has no IP address, fetch Google's device list again every this
-# many updates. It's a request to Google, so not on every update.
-FETCH_DEVICES_EVERY: Final = 10
-# Also fetch it again this long after the last fetch, to find devices added in or
-# removed from the Google Home app
-FETCH_DEVICES_INTERVAL: Final = 60 * 60  # sec
+# Fetch Google's device list again this long after the last fetch, however often
+# the devices are updated, to find devices added in or removed from the Google Home
+# app and the address of a device that was offline. It's a request to Google, so not
+# on every update.
+FETCH_DEVICES_INTERVAL: Final = 20 * 60  # sec
 
 # JSON parameter values when retrieving information from devices
 JSON_ALARM: Final = "alarm"
