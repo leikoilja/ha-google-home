@@ -2,6 +2,7 @@
 
 import asyncio
 from collections.abc import Iterator
+import logging
 from unittest.mock import AsyncMock, Mock, patch
 
 from glocaltokens.exceptions import AuthenticationError
@@ -12,22 +13,39 @@ from custom_components.google_home.api import GlocaltokensApiClient
 from custom_components.google_home.config_flow import GoogleHomeFlowHandler
 from custom_components.google_home.exceptions import InvalidMasterToken
 
+# ruff sorts homeassistant as first-party, pylint as third-party
+# pylint: disable-next=wrong-import-order
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
+
 # A realistic master token: setup checks its length with is_aas_et()
 MASTER_TOKEN = "aas_et/" + "x" * 216
 
 
+@pytest.fixture(name="create_session")
+def fixture_create_session() -> Iterator[Mock]:
+    """Record the aiohttp sessions Home Assistant creates, without opening them."""
+    # Both the shared and the dedicated session helpers create sessions here
+    with patch(
+        "homeassistant.helpers.aiohttp_client._async_create_clientsession"
+    ) as create:
+        yield create
+
+
 @pytest.fixture(name="flow")
-def fixture_flow() -> Iterator[GoogleHomeFlowHandler]:
+def fixture_flow(create_session: Mock) -> GoogleHomeFlowHandler:
     """Return a config flow with a fake Home Assistant that runs jobs inline."""
     hass = Mock()
+    hass.data = {}
     hass.config_entries.async_entries.return_value = []
     hass.async_add_executor_job = AsyncMock(side_effect=lambda func, *args: func(*args))
+    # Home Assistant creates its shared session long before anyone signs in
+    async_get_clientsession(hass)
+    create_session.reset_mock()
     flow = GoogleHomeFlowHandler()
     flow.hass = hass
     flow.handler = "google_home"
     flow.context = {"source": "user"}
-    with patch("custom_components.google_home.config_flow.async_create_clientsession"):
-        yield flow
+    return flow
 
 
 @pytest.fixture(name="client")
@@ -125,8 +143,12 @@ def test_browser_sign_in_with_glocaltokens(flow: GoogleHomeFlowHandler) -> None:
     assert result["data"]["android_id"] == android_id
 
 
-def test_browser_sign_in_rejected_by_google(flow: GoogleHomeFlowHandler) -> None:
-    """Point out a cookie that Google refuses to exchange for a master token."""
+def test_browser_sign_in_rejected_by_google(
+    flow: GoogleHomeFlowHandler,
+    create_session: Mock,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Point out a cookie that Google refuses, logging its reason in one line."""
     with patch(
         "glocaltokens.client.exchange_token",
         return_value={"Error": "BadAuthentication"},
@@ -136,6 +158,10 @@ def test_browser_sign_in_rejected_by_google(flow: GoogleHomeFlowHandler) -> None
         )
 
     assert result["errors"] == {"base": "oauth-token-invalid"}
+    assert_logged_without_traceback(
+        caplog, "Failed to sign in: Google gave no master token: BadAuthentication"
+    )
+    create_session.assert_not_called()
 
 
 def test_master_token(flow: GoogleHomeFlowHandler, client: Mock) -> None:
@@ -179,8 +205,12 @@ def test_master_token_rejected(flow: GoogleHomeFlowHandler, client: Mock) -> Non
     assert result["errors"] == {"base": "master-token-invalid"}
 
 
-def test_master_token_rejected_by_google(flow: GoogleHomeFlowHandler) -> None:
-    """Point out a master token for which Google gives no access token."""
+def test_master_token_rejected_by_google(
+    flow: GoogleHomeFlowHandler,
+    create_session: Mock,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Point out a master token that Google refuses, logging its reason in one line."""
     with patch(
         "glocaltokens.client.perform_oauth",
         return_value={"Error": "BadAuthentication"},
@@ -190,6 +220,39 @@ def test_master_token_rejected_by_google(flow: GoogleHomeFlowHandler) -> None:
         )
 
     assert result["errors"] == {"base": "master-token-invalid"}
+    assert_logged_without_traceback(
+        caplog, "Failed to sign in: Google gave no access token: BadAuthentication"
+    )
+    create_session.assert_not_called()
+
+
+def test_sign_in_without_network(
+    flow: GoogleHomeFlowHandler, client: Mock, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Log the network error in one line when Google can't be reached."""
+    client.return_value.async_get_master_token.side_effect = RequestException(
+        "No network"
+    )
+
+    result = asyncio.run(flow.async_step_master_token({"master_token": MASTER_TOKEN}))
+
+    assert result["errors"] == {"base": "master-token-invalid"}
+    assert_logged_without_traceback(caplog, "Failed to sign in: No network")
+
+
+def assert_logged_without_traceback(
+    caplog: pytest.LogCaptureFixture, message: str
+) -> None:
+    """Check that the integration logged only this warning, without a traceback."""
+    records = [
+        record
+        for record in caplog.records
+        if record.name == "custom_components.google_home"
+    ]
+    assert [(record.levelno, record.getMessage()) for record in records] == [
+        (logging.WARNING, message)
+    ]
+    assert records[0].exc_info is None
 
 
 @pytest.mark.parametrize(
