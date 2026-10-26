@@ -251,13 +251,14 @@ async def async_reboot_devices(
 class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
     """Google Home Device sensor."""
 
+    _attr_name = "Device"
     _attr_icon = ICON_TOKEN
     _attr_entity_category = EntityCategory.DIAGNOSTIC
 
     @property
     @override
     def label(self) -> str:
-        """Label to use for name and unique id."""
+        """Label to use for unique id."""
         return LABEL_DEVICE
 
     @property
@@ -305,6 +306,7 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
 class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
     """Google Home Alarms sensor."""
 
+    _attr_name = "Alarms"
     _attr_icon = ICON_ALARMS
     _attr_device_class = SensorDeviceClass.TIMESTAMP
     _attr_supported_features = GoogleHomeSensorFeature.ALARMS
@@ -312,7 +314,7 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
     @property
     @override
     def label(self) -> str:
-        """Label to use for name and unique id."""
+        """Label to use for unique id."""
         return LABEL_ALARMS
 
     @property
@@ -405,6 +407,7 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
 class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
     """Google Home Timers sensor."""
 
+    _attr_name = "Timers"
     _attr_icon = ICON_TIMERS
     _attr_device_class = SensorDeviceClass.TIMESTAMP
     _attr_supported_features = GoogleHomeSensorFeature.TIMERS
@@ -412,7 +415,7 @@ class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
     @property
     @override
     def label(self) -> str:
-        """Label to use for name and unique id."""
+        """Label to use for unique id."""
         return LABEL_TIMERS
 
     @property

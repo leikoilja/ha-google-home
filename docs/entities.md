@@ -1,6 +1,6 @@
 # Entities
 
-Each Google Home device gets the entities below. The examples use a device named _Living Room_.
+Each Google Home device gets the entities below. The examples use a device named _Living Room_ that isn't in an area. If your entity IDs repeat the room, see [Room name twice in entity IDs](#room-name-twice-in-entity-ids).
 
 | Entity                | Example                             | What it does                                              |
 | --------------------- | ----------------------------------- | --------------------------------------------------------- |
@@ -113,3 +113,21 @@ target:
 The button is unavailable until Home Assistant finds the device on your network. If the device goes offline later, the button may stay available, but pressing it then has no effect. The `available` attribute of the [device sensor](#device-sensor) shows whether Home Assistant reached the device at its last request.
 
 Not every device supports rebooting. The log can show "Successfully asked Living Room to reboot." even when the device didn't restart. If that happens, [reboot it from the Google Home app or unplug it for a minute](https://support.google.com/googlehome/answer/7072490).
+
+## Room name twice in entity IDs
+
+By default, Home Assistant starts new entity IDs with the device's area. A device named _Speaker_ in the _Living Room_ area gets `sensor.living_room_speaker_alarms`. Google Home device names often contain the room already, so a device named _Living Room speaker_ in that area gets `sensor.living_room_living_room_speaker_alarms`.
+
+To avoid this for entities added later, do one of the following:
+
+- Rename the device in Home Assistant without the room, such as _Speaker_. The device keeps its name in the Google Home app.
+- Remove **Area** in **Settings** > **System** > **Entity ID format**. This changes the entity IDs Home Assistant creates for every integration from then on.
+
+Entities you already have keep their entity IDs. Changing them is optional: go to **Settings** > **Devices & services** > **Devices**, select the device, then select **Menu** > **Recreate entity IDs**. This:
+
+- Uses each entity's current name and doesn't change it.
+- Replaces every entity ID of the device, including any you changed yourself.
+
+Home Assistant lists the old and new entity IDs before it changes them. If a new entity ID still contains an earlier device name, cancel. Open that entity's settings, select the restore icon (**Restore default name**) next to its name, select **Update**, then recreate the entity IDs again.
+
+After you confirm, update the automations, scripts and manually configured dashboard cards that use the old entity IDs. See [Customizing entities](https://www.home-assistant.io/docs/configuration/customizing-entities/#changing-the-attributes-of-an-entity).
