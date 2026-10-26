@@ -10,7 +10,7 @@ This custom integration brings your Google Home and Nest speakers and displays i
 
 The full list is on the [Entities](entities.md) and [Actions](actions.md) pages, and [Automation examples](automations.md) shows how to use them.
 
-It can't create, change or snooze alarms and timers. Set them by voice or on a display's screen, and the integration picks them up. It doesn't play media either; for that, use the [Google Cast integration](https://www.home-assistant.io/integrations/cast/).
+It can't create, change or snooze alarms and timers, or turn alarms on or off. Set them by voice or on a display's screen, and the integration picks them up. It doesn't play media either; for that, use the [Google Cast integration](https://www.home-assistant.io/integrations/cast/).
 
 !!! note "Only for Google speakers and displays"
 
