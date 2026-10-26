@@ -10,7 +10,7 @@ from requests.exceptions import RequestException
 
 from homeassistant.config_entries import ConfigFlow, ConfigFlowResult, OptionsFlow
 from homeassistant.core import callback
-from homeassistant.helpers.aiohttp_client import async_create_clientsession
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.selector import SelectSelector, SelectSelectorConfig
 
 from .api import GlocaltokensApiClient
@@ -84,7 +84,7 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
             else:
                 client = GlocaltokensApiClient(
                     hass=self.hass,
-                    session=async_create_clientsession(self.hass),
+                    session=async_get_clientsession(self.hass),
                     oauth_token=oauth_token,
                 )
                 # Getting the master token exchanges the cookie for it
@@ -113,7 +113,7 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
             else:
                 client = GlocaltokensApiClient(
                     hass=self.hass,
-                    session=async_create_clientsession(self.hass),
+                    session=async_get_clientsession(self.hass),
                     username="",
                     password="",
                     master_token=master_token,
@@ -178,8 +178,9 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
         try:
             await client.async_get_master_token()
             await client.async_get_access_token()
-        except InvalidMasterToken, RequestException:
-            _LOGGER.exception("Failed to sign in")
+        except (InvalidMasterToken, RequestException) as error:
+            # The form shows the error, so a traceback would only look like a bug
+            _LOGGER.warning("Failed to sign in: %s", error)
             return False
         return True
 

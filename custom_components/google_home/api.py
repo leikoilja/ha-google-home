@@ -89,9 +89,9 @@ class GlocaltokensApiClient:
         try:
             master_token = await self.hass.async_add_executor_job(_get_master_token)
         except AuthenticationError as error:
-            raise InvalidMasterToken from error
+            raise InvalidMasterToken(str(error)) from error
         if not is_aas_et(master_token):
-            raise InvalidMasterToken
+            raise InvalidMasterToken("Google gave a master token in an unknown format")
         return master_token
 
     async def async_get_access_token(self) -> str:
@@ -103,7 +103,7 @@ class GlocaltokensApiClient:
         try:
             return await self.hass.async_add_executor_job(_get_access_token)
         except AuthenticationError as error:
-            raise InvalidMasterToken from error
+            raise InvalidMasterToken(str(error)) from error
 
     async def async_get_email(self) -> str | None:
         """Return the verified email address of the signed-in account, if Google gives it."""
