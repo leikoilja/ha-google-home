@@ -123,7 +123,7 @@ To avoid this for entities added later, do one of the following:
 - Rename the device in Home Assistant without the room, such as _Speaker_. The device keeps its name in the Google Home app.
 - Remove **Area** in **Settings** > **System** > **Entity ID format**. This is a global setting for new entity IDs, not just Google Home ones. Integrations that suggest their own entity IDs don't use it.
 
-Entities you already have keep their entity IDs. Changing them is optional: go to **Settings** > **Devices & services** > **Devices**, select the device, open the **⋮** menu and select **Recreate entity IDs**. This:
+Entities you already have keep their entity IDs. Changing them is optional. Go to **Settings** > **Devices & services** > **Google Home** and select the device, such as _Kitchen display_. Open the **⋮** menu and select **Recreate entity IDs**. This:
 
 - Builds the entity IDs from the current device name and entity ID format. Do one of the steps above first. Otherwise a device whose name contains its room gets the room twice in all its entity IDs.
 - Uses each entity's current name and doesn't change it.
