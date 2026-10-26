@@ -32,6 +32,38 @@
         "data_description": {
           "master_token": "Starts with aas_et/"
         }
+      },
+      "reauth": {
+        "title": "Sign in again",
+        "description": "Google no longer accepts the sign-in saved for {name}. Sign in to the same Google account again: your devices, entities and automations stay as they are. Until you do, your devices' entities can show out-of-date values or be unavailable.",
+        "menu_options": {
+          "browser": "Browser sign-in (recommended)",
+          "master_token": "Master token"
+        },
+        "menu_option_descriptions": {
+          "browser": "Sign in to Google in a desktop browser, then paste a cookie. Works for most accounts.",
+          "master_token": "Paste a master token you already have."
+        }
+      },
+      "reauth_browser": {
+        "title": "Browser sign-in",
+        "description": "1. On a computer, open {embedded_setup_url} in a private browser window and sign in to the same Google account. After you accept, the page may keep loading; that is expected.\n2. Open the browser's developer tools and find the cookies for `accounts.google.com`.\n3. Copy the value of the `oauth_token` cookie and paste it below straight away. It expires within minutes and works only once.\n\nStep-by-step instructions: {browser_docs_url}",
+        "data": {
+          "oauth_token": "oauth_token cookie"
+        },
+        "data_description": {
+          "oauth_token": "Starts with oauth2_4/"
+        }
+      },
+      "reauth_master_token": {
+        "title": "Master token",
+        "description": "Paste a master token for the same Google account, for example one that you got with another tool.",
+        "data": {
+          "master_token": "Google account master token"
+        },
+        "data_description": {
+          "master_token": "Starts with aas_et/"
+        }
       }
     },
     "error": {
@@ -39,6 +71,9 @@
       "master-token-invalid": "Master token invalid. Make sure that the full token has been specified (including 'aas_et/')",
       "oauth-token-format": "This isn't the oauth_token cookie. Its value starts with oauth2_4/.",
       "master-token-format": "A master token starts with aas_et/ and is 223 characters long. Copy the whole token."
+    },
+    "abort": {
+      "other-account": "You signed in to a different Google account, so nothing was changed. To sign in again with the account this integration uses, reload the integration: go to Settings > Devices & services > Google Home, open the ⋮ menu and select Reload. To use that account instead, delete the integration and add it again."
     }
   },
   "exceptions": {

@@ -2,7 +2,11 @@
 
 import asyncio
 from collections.abc import Iterator
+import json
 import logging
+from pathlib import Path
+import re
+from typing import cast
 from unittest.mock import AsyncMock, Mock, patch
 
 from glocaltokens.exceptions import AuthenticationError
@@ -11,11 +15,15 @@ from requests.exceptions import RequestException
 
 from custom_components.google_home.api import GlocaltokensApiClient
 from custom_components.google_home.config_flow import GoogleHomeFlowHandler
+from custom_components.google_home.const import BROWSER_TITLE, MASTER_TOKEN_TITLE
 from custom_components.google_home.exceptions import InvalidMasterToken
 
 # ruff sorts homeassistant as first-party, pylint as third-party
-# pylint: disable-next=wrong-import-order
+# pylint: disable=wrong-import-order
+from homeassistant.config_entries import ConfigFlowResult
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+
+# pylint: enable=wrong-import-order
 
 # A realistic master token: setup checks its length with is_aas_et()
 MASTER_TOKEN = "aas_et/" + "x" * 216
@@ -273,3 +281,244 @@ def test_get_email_failure(error: Exception) -> None:
         side_effect=error,
     ):
         assert asyncio.run(client.async_get_email()) is None
+
+
+ENGLISH = json.loads(
+    (
+        Path(__file__).parents[1] / "custom_components/google_home/translations/en.json"
+    ).read_text(encoding="utf-8")
+)
+OLD_MASTER_TOKEN = "aas_et/" + "o" * 216
+MASTER_TOKEN_INPUT = {"master_token": MASTER_TOKEN}
+SIGN_IN_STEPS = [
+    pytest.param("reauth_browser", {"oauth_token": "oauth2_4/cookie"}, id="browser"),
+    pytest.param("reauth_master_token", MASTER_TOKEN_INPUT, id="master-token"),
+]
+
+
+def start_reauth(
+    flow: GoogleHomeFlowHandler, username: str, title: str
+) -> ConfigFlowResult:
+    """Start signing in again to an entry whose master token Google rejects."""
+    entry = Mock(
+        entry_id="entry",
+        title=title,
+        data={
+            "master_token": OLD_MASTER_TOKEN,
+            "username": username,
+            "password": "",
+            "android_id": "old-android-id",
+        },
+    )
+    cast(Mock, flow.hass.config_entries).async_get_known_entry.return_value = entry
+    flow.context = {"source": "reauth", "entry_id": "entry"}
+    return asyncio.run(flow.async_step_reauth(entry.data))
+
+
+def sign_in_again(
+    flow: GoogleHomeFlowHandler, step: str, user_input: dict[str, str]
+) -> ConfigFlowResult:
+    """Submit a sign-in form as Home Assistant does when signing in again."""
+    steps = {
+        "reauth_browser": flow.async_step_reauth_browser,
+        "reauth_master_token": flow.async_step_reauth_master_token,
+    }
+    return asyncio.run(steps[step](user_input))
+
+
+def assert_saved(flow: GoogleHomeFlowHandler, username: str) -> None:
+    """Check that the entry got the new master token and is reloaded once."""
+    config_entries = cast(Mock, flow.hass.config_entries)
+    config_entries.async_update_entry.assert_called_once()
+    assert config_entries.async_update_entry.call_args.kwargs["data"] == {
+        "master_token": MASTER_TOKEN,
+        "username": username,
+        "password": "",
+        "android_id": "test-android-id",
+    }
+    config_entries.async_schedule_reload.assert_called_once_with("entry")
+
+
+def assert_not_saved(flow: GoogleHomeFlowHandler) -> None:
+    """Check that the entry and its master token stay as they were."""
+    config_entries = cast(Mock, flow.hass.config_entries)
+    config_entries.async_update_entry.assert_not_called()
+    config_entries.async_schedule_reload.assert_not_called()
+
+
+def test_reauth_menu(flow: GoogleHomeFlowHandler) -> None:
+    """Offer both ways to sign in again, naming the entry."""
+    result = start_reauth(flow, "test@example.com", "Home")
+
+    assert result["type"] == "menu"
+    assert result["step_id"] == "reauth"
+    assert result["menu_options"] == ["browser", "master_token"]
+    assert result["description_placeholders"] == {"name": "Home"}
+    menu_text = ENGLISH["config"]["step"]["reauth"]["menu_options"]
+    assert list(menu_text) == result["menu_options"]
+
+
+@pytest.mark.parametrize("method", ["browser", "master_token"])
+def test_reauth_forms_have_text(flow: GoogleHomeFlowHandler, method: str) -> None:
+    """Show the sign-in forms with text of their own, with every placeholder filled in.
+
+    The setup forms say to add the integration again to choose another way to sign
+    in, which can't be done while the entry exists.
+    """
+    start_reauth(flow, "test@example.com", "test@example.com")
+
+    result = asyncio.run(getattr(flow, f"async_step_{method}")())
+
+    assert result["type"] == "form"
+    assert result["step_id"] == f"reauth_{method}"
+    text = ENGLISH["config"]["step"][result["step_id"]]
+    assert text["title"]
+    placeholders = set(re.findall(r"{(\w+)}", text["description"]))
+    assert placeholders <= set(result["description_placeholders"] or {})
+    assert "add the integration again" not in text["description"]
+
+
+@pytest.mark.parametrize(("step", "user_input"), SIGN_IN_STEPS)
+def test_reauth(
+    flow: GoogleHomeFlowHandler, client: Mock, step: str, user_input: dict[str, str]
+) -> None:
+    """Save the new master token in the entry and reload it, without a new entry."""
+    client.return_value.async_get_email.return_value = "test@example.com"
+    start_reauth(flow, "test@example.com", "Home")
+
+    result = sign_in_again(flow, step, user_input)
+
+    assert result["type"] == "abort"
+    assert result["reason"] == "reauth_successful"
+    assert_saved(flow, "test@example.com")
+
+
+@pytest.mark.parametrize(
+    ("username", "title"),
+    [
+        ("test@example.com", "Home"),
+        # A master token entry of an older version, named after its account
+        # without saving its address
+        ("", "test@example.com"),
+    ],
+)
+@pytest.mark.parametrize(("step", "user_input"), SIGN_IN_STEPS)
+def test_reauth_other_account(
+    flow: GoogleHomeFlowHandler,
+    client: Mock,
+    username: str,
+    title: str,
+    step: str,
+    user_input: dict[str, str],
+) -> None:
+    """Refuse to sign in again to another Google account, leaving the entry unchanged."""
+    client.return_value.async_get_email.return_value = "other@example.com"
+    start_reauth(flow, username, title)
+
+    result = sign_in_again(flow, step, user_input)
+
+    assert result["type"] == "abort"
+    assert result["reason"] == "other-account"
+    assert result["reason"] in ENGLISH["config"]["abort"]
+    assert_not_saved(flow)
+
+
+@pytest.mark.parametrize(
+    ("saved", "email", "same"),
+    [
+        ("Test@Example.com", "test@example.com", True),
+        # Gmail ignores dots, and googlemail.com is the same as gmail.com
+        ("johndoe@gmail.com", "john.doe@gmail.com", True),
+        ("john.doe@googlemail.com", "johndoe@gmail.com", True),
+        # Other addresses with different dots are different accounts
+        ("johndoe@example.com", "john.doe@example.com", False),
+    ],
+)
+def test_reauth_account_spelled_differently(
+    flow: GoogleHomeFlowHandler, client: Mock, saved: str, email: str, same: bool
+) -> None:
+    """Match the address that older versions saved as typed with the one Google gives."""
+    client.return_value.async_get_email.return_value = email
+    start_reauth(flow, saved, saved)
+
+    result = sign_in_again(flow, "reauth_master_token", MASTER_TOKEN_INPUT)
+
+    if same:
+        assert result["reason"] == "reauth_successful"
+        assert_saved(flow, email)
+    else:
+        assert result["reason"] == "other-account"
+        assert_not_saved(flow)
+
+
+def test_reauth_account_in_title(flow: GoogleHomeFlowHandler, client: Mock) -> None:
+    """Accept the account an older entry is named after, though it saved another address.
+
+    Older versions saved the address typed for a master token entry, and its
+    generic title is renamed after the address Google gives.
+    """
+    client.return_value.async_get_email.return_value = "test@example.com"
+    start_reauth(flow, "alias@example.com", "test@example.com")
+
+    result = sign_in_again(flow, "reauth_master_token", MASTER_TOKEN_INPUT)
+
+    assert result["reason"] == "reauth_successful"
+    assert_saved(flow, "test@example.com")
+
+
+@pytest.mark.parametrize(
+    ("username", "title", "email", "saved"),
+    [
+        # Google doesn't give the new token's address: keep the saved one
+        ("test@example.com", "test@example.com", None, "test@example.com"),
+        # The entry doesn't know its account
+        ("", MASTER_TOKEN_TITLE, "test@example.com", "test@example.com"),
+        ("", BROWSER_TITLE, None, ""),
+    ],
+)
+def test_reauth_account_unknown(
+    flow: GoogleHomeFlowHandler,
+    client: Mock,
+    username: str,
+    title: str,
+    email: str | None,
+    saved: str,
+) -> None:
+    """Sign in again when the account can't be compared, saving the address if Google gives it."""
+    client.return_value.async_get_email.return_value = email
+    start_reauth(flow, username, title)
+
+    result = sign_in_again(flow, "reauth_master_token", MASTER_TOKEN_INPUT)
+
+    assert result["reason"] == "reauth_successful"
+    assert_saved(flow, saved)
+
+
+@pytest.mark.parametrize(
+    ("step", "user_input", "error"),
+    [
+        ("reauth_browser", {"oauth_token": "oauth2_4/used"}, "oauth-token-invalid"),
+        (
+            "reauth_master_token",
+            {"master_token": OLD_MASTER_TOKEN},
+            "master-token-invalid",
+        ),
+    ],
+)
+def test_reauth_sign_in_rejected(
+    flow: GoogleHomeFlowHandler,
+    client: Mock,
+    step: str,
+    user_input: dict[str, str],
+    error: str,
+) -> None:
+    """Show the form for signing in again with the error when Google refuses the credentials."""
+    reject_sign_in(client)
+    start_reauth(flow, "test@example.com", "test@example.com")
+
+    result = sign_in_again(flow, step, user_input)
+
+    assert result["type"] == "form"
+    assert result["step_id"] == step
+    assert result["errors"] == {"base": error}
+    assert_not_saved(flow)

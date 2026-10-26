@@ -5,6 +5,7 @@ https://github.com/leikoilja/ha-google-home
 """
 
 from datetime import timedelta
+from functools import partial
 import logging
 from typing import cast
 
@@ -13,6 +14,7 @@ from glocaltokens.utils.token import is_aas_et
 from homeassistant.components import zeroconf
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.device_registry import DeviceEntry
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
@@ -95,7 +97,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -
         hass,
         _LOGGER,
         name=SENSOR,
-        update_method=glocaltokens_client.update_google_devices_information,
+        update_method=partial(async_update_devices, hass, entry, glocaltokens_client),
         update_interval=timedelta(seconds=update_interval),
         config_entry=entry,
     )
@@ -118,6 +120,24 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -
 
     entry.async_on_unload(entry.add_update_listener(async_update_entry))
     return True
+
+
+async def async_update_devices(
+    hass: HomeAssistant, entry: GoogleHomeConfigEntry, client: GlocaltokensApiClient
+) -> list[GoogleHomeDevice]:
+    """Update the devices, and ask to sign in again while Google rejects the master token.
+
+    Without devices, which is always the case at setup, the update fails. Otherwise
+    the devices keep updating, as those whose local tokens Google issued earlier
+    may still answer, and Home Assistant asks to sign in again meanwhile.
+    """
+    devices = await client.update_google_devices_information()
+    if (error := client.sign_in_error) is not None:
+        if not devices:
+            raise ConfigEntryAuthFailed(str(error)) from error
+        # Home Assistant doesn't start another sign-in while one is open
+        entry.async_start_reauth(hass)
+    return devices
 
 
 async def async_name_after_account(
