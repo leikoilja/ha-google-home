@@ -32,6 +32,38 @@
         "data_description": {
           "master_token": "aas_et/ で始まります"
         }
+      },
+      "reauth": {
+        "title": "再度ログイン",
+        "description": "Google が {name} の保存済みログイン情報を受け付けなくなりました。同じ Google アカウントにもう一度ログインしてください。デバイス、エンティティ、オートメーションはそのまま残ります。ログインし直すまで、デバイスのエンティティに古い値が表示されたり、エンティティが利用できなくなったりすることがあります。",
+        "menu_options": {
+          "browser": "ブラウザでログイン（推奨）",
+          "master_token": "マスタートークン"
+        },
+        "menu_option_descriptions": {
+          "browser": "パソコンのブラウザで Google にログインし、Cookie を貼り付けます。ほとんどのアカウントで利用できます。",
+          "master_token": "取得済みのマスタートークンを貼り付けます。"
+        }
+      },
+      "reauth_browser": {
+        "title": "ブラウザでログイン",
+        "description": "1. パソコンのブラウザでプライベート ウィンドウ（シークレット ウィンドウなど）を開き、{embedded_setup_url} にアクセスして同じ Google アカウントにログインします。同意した後もページの読み込みが続く場合がありますが、問題ありません。\n2. ブラウザの開発者ツールを開き、`accounts.google.com` の Cookie を探します。\n3. `oauth_token` Cookie の値をコピーして、すぐに下の欄に貼り付けてください。数分以内に有効期限が切れ、1 回しか使用できません。\n\n詳しい手順: {browser_docs_url}",
+        "data": {
+          "oauth_token": "oauth_token Cookie"
+        },
+        "data_description": {
+          "oauth_token": "oauth2_4/ で始まります"
+        }
+      },
+      "reauth_master_token": {
+        "title": "マスタートークン",
+        "description": "別のツールなどで取得した、同じ Google アカウントのマスタートークンを貼り付けてください。",
+        "data": {
+          "master_token": "Google アカウントのマスタートークン"
+        },
+        "data_description": {
+          "master_token": "aas_et/ で始まります"
+        }
       }
     },
     "error": {
@@ -39,6 +71,9 @@
       "master-token-invalid": "マスタートークンが無効です。aas_et/ を含むトークン全体を入力したか確認してください。",
       "oauth-token-format": "これは oauth_token Cookie ではありません。値は oauth2_4/ で始まります。",
       "master-token-format": "マスタートークンは aas_et/ で始まる 223 文字の文字列です。トークン全体をコピーしてください。"
+    },
+    "abort": {
+      "other-account": "別の Google アカウントでログインしたため、何も変更されていません。この統合で使用しているアカウントでログインし直すには、統合を再読込してください。設定 > デバイスとサービス > Google Home に移動し、⋮ メニューを開いて「再読込」を選択します。代わりに今回ログインしたアカウントを使用するには、統合を削除して追加し直してください。"
     }
   },
   "exceptions": {

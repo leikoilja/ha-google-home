@@ -32,6 +32,38 @@
         "data_description": {
           "master_token": "Začíná na aas_et/"
         }
+      },
+      "reauth": {
+        "title": "Opětovné přihlášení",
+        "description": "Google už nepřijímá přihlašovací údaje uložené pro {name}. Znovu se přihlaste ke stejnému účtu Google: vaše zařízení, entity a automatizace zůstanou beze změny. Dokud to neuděláte, mohou entity vašich zařízení zobrazovat zastaralé hodnoty nebo být nedostupné.",
+        "menu_options": {
+          "browser": "Přihlášení přes prohlížeč (doporučeno)",
+          "master_token": "Hlavní token"
+        },
+        "menu_option_descriptions": {
+          "browser": "Přihlaste se ke Googlu v prohlížeči na počítači a poté vložte soubor cookie. Funguje pro většinu účtů.",
+          "master_token": "Vložte hlavní token, který již máte."
+        }
+      },
+      "reauth_browser": {
+        "title": "Přihlášení přes prohlížeč",
+        "description": "1. Na počítači otevřete {embedded_setup_url} v anonymním okně prohlížeče a přihlaste se ke stejnému účtu Google. Po potvrzení souhlasu se stránka může stále načítat; to je v pořádku.\n2. Otevřete vývojářské nástroje prohlížeče a najděte soubory cookie pro `accounts.google.com`.\n3. Zkopírujte hodnotu souboru cookie `oauth_token` a ihned ji vložte níže. Její platnost vyprší během několika minut a lze ji použít pouze jednou.\n\nPodrobný návod: {browser_docs_url}",
+        "data": {
+          "oauth_token": "Soubor cookie oauth_token"
+        },
+        "data_description": {
+          "oauth_token": "Začíná na oauth2_4/"
+        }
+      },
+      "reauth_master_token": {
+        "title": "Hlavní token",
+        "description": "Vložte hlavní token ke stejnému účtu Google, například takový, který jste získali pomocí jiného nástroje.",
+        "data": {
+          "master_token": "Hlavní token účtu Google"
+        },
+        "data_description": {
+          "master_token": "Začíná na aas_et/"
+        }
       }
     },
     "error": {
@@ -39,6 +71,9 @@
       "master-token-invalid": "Hlavní token je neplatný. Zkontrolujte, že jste zadali celý token včetně aas_et/.",
       "oauth-token-format": "Toto není soubor cookie oauth_token. Jeho hodnota začíná na oauth2_4/.",
       "master-token-format": "Hlavní token začíná na aas_et/ a má 223 znaků. Zkopírujte celý token."
+    },
+    "abort": {
+      "other-account": "Přihlásili jste se k jinému účtu Google, proto se nic nezměnilo. Pokud se chcete znovu přihlásit k účtu, který tato integrace používá, načtěte integraci znovu: přejděte do Nastavení > Zařízení a služby > Google Home, otevřete nabídku ⋮ a vyberte Nově načíst. Pokud chcete místo toho používat ten druhý účet, integraci smažte a přidejte ji znovu."
     }
   },
   "exceptions": {

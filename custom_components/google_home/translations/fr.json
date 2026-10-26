@@ -32,6 +32,38 @@
         "data_description": {
           "master_token": "Commence par aas_et/"
         }
+      },
+      "reauth": {
+        "title": "Se reconnecter",
+        "description": "Google n'accepte plus les identifiants de connexion enregistrés pour {name}. Reconnectez-vous au même compte Google : vos appareils, entités et automatisations restent tels quels. D'ici là, les entités de vos appareils peuvent afficher des valeurs obsolètes ou être indisponibles.",
+        "menu_options": {
+          "browser": "Connexion via le navigateur (recommandée)",
+          "master_token": "Jeton maître"
+        },
+        "menu_option_descriptions": {
+          "browser": "Connectez-vous à Google dans un navigateur sur ordinateur, puis collez un cookie. Fonctionne pour la plupart des comptes.",
+          "master_token": "Collez un jeton maître que vous avez déjà."
+        }
+      },
+      "reauth_browser": {
+        "title": "Connexion via le navigateur",
+        "description": "1. Sur un ordinateur, ouvrez {embedded_setup_url} dans une fenêtre de navigation privée et connectez-vous au même compte Google. Une fois que vous avez accepté, la page peut continuer à charger ; c'est normal.\n2. Ouvrez les outils de développement du navigateur et trouvez les cookies de `accounts.google.com`.\n3. Copiez la valeur du cookie `oauth_token` et collez-la ci-dessous immédiatement. Il expire en quelques minutes et ne fonctionne qu'une seule fois.\n\nInstructions détaillées : {browser_docs_url}",
+        "data": {
+          "oauth_token": "Cookie oauth_token"
+        },
+        "data_description": {
+          "oauth_token": "Commence par oauth2_4/"
+        }
+      },
+      "reauth_master_token": {
+        "title": "Jeton maître",
+        "description": "Collez un jeton maître du même compte Google, par exemple un jeton obtenu avec un autre outil.",
+        "data": {
+          "master_token": "Jeton maître du compte Google"
+        },
+        "data_description": {
+          "master_token": "Commence par aas_et/"
+        }
       }
     },
     "error": {
@@ -39,6 +71,9 @@
       "master-token-invalid": "Jeton maître non valide. Assurez-vous d'avoir saisi le jeton complet (y compris 'aas_et/')",
       "oauth-token-format": "Ce n'est pas le cookie oauth_token. Sa valeur commence par oauth2_4/.",
       "master-token-format": "Un jeton maître commence par aas_et/ et comporte 223 caractères. Copiez le jeton complet."
+    },
+    "abort": {
+      "other-account": "Vous avez utilisé un autre compte Google pour vous connecter, rien n'a donc été modifié. Pour vous reconnecter avec le compte qu'utilise cette intégration, rechargez l'intégration : accédez à Paramètres > Appareils et services > Google Home, ouvrez le menu ⋮ et sélectionnez Recharger. Pour utiliser plutôt cet autre compte, supprimez l'intégration et ajoutez-la à nouveau."
     }
   },
   "exceptions": {

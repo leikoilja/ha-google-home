@@ -32,6 +32,38 @@
         "data_description": {
           "master_token": "Începe cu aas_et/"
         }
+      },
+      "reauth": {
+        "title": "Conectează-te din nou",
+        "description": "Google nu mai acceptă datele de conectare salvate pentru {name}. Conectează-te din nou la același cont Google: dispozitivele, entitățile și automatizările tale rămân neschimbate. Până atunci, entitățile dispozitivelor tale pot afișa valori neactualizate sau pot fi indisponibile.",
+        "menu_options": {
+          "browser": "Conectare prin browser (recomandată)",
+          "master_token": "Token principal"
+        },
+        "menu_option_descriptions": {
+          "browser": "Conectează-te la Google într-un browser de pe computer, apoi lipește un cookie. Funcționează pentru majoritatea conturilor.",
+          "master_token": "Lipește un token principal pe care îl ai deja."
+        }
+      },
+      "reauth_browser": {
+        "title": "Conectare prin browser",
+        "description": "1. Pe un computer, deschide {embedded_setup_url} într-o fereastră de navigare privată a browserului, de exemplu o fereastră incognito, și conectează-te la același cont Google. După ce accepți, pagina poate continua să se încarce; acest lucru este normal.\n2. Deschide instrumentele pentru dezvoltatori ale browserului și găsește cookie-urile pentru `accounts.google.com`.\n3. Copiază valoarea cookie-ului `oauth_token` și lipește-o imediat mai jos. Expiră în câteva minute și poate fi folosită o singură dată.\n\nInstrucțiuni pas cu pas: {browser_docs_url}",
+        "data": {
+          "oauth_token": "Cookie oauth_token"
+        },
+        "data_description": {
+          "oauth_token": "Începe cu oauth2_4/"
+        }
+      },
+      "reauth_master_token": {
+        "title": "Token principal",
+        "description": "Lipește un token principal pentru același cont Google, de exemplu unul pe care l-ai obținut cu un alt instrument.",
+        "data": {
+          "master_token": "Token principal al contului Google"
+        },
+        "data_description": {
+          "master_token": "Începe cu aas_et/"
+        }
       }
     },
     "error": {
@@ -39,6 +71,9 @@
       "master-token-invalid": "Tokenul principal nu este valid. Asigură-te că ai introdus tokenul complet, inclusiv aas_et/.",
       "oauth-token-format": "Acesta nu este cookie-ul oauth_token. Valoarea lui începe cu oauth2_4/.",
       "master-token-format": "Un token principal începe cu aas_et/ și are 223 de caractere. Copiază tokenul complet."
+    },
+    "abort": {
+      "other-account": "Te-ai conectat la un alt cont Google, așa că nu s-a modificat nimic. Pentru a te conecta din nou cu contul pe care îl folosește această integrare, reîncarcă integrarea: mergi la Configurare > Dispozitive și servicii > Google Home, deschide meniul ⋮ și selectează Reîncarcă. Pentru a folosi în schimb celălalt cont, șterge integrarea și adaug-o din nou."
     }
   },
   "exceptions": {

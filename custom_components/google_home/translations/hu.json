@@ -32,6 +32,38 @@
         "data_description": {
           "master_token": "aas_et/ kezdetű"
         }
+      },
+      "reauth": {
+        "title": "Újbóli bejelentkezés",
+        "description": "A Google már nem fogadja el a mentett bejelentkezési adatokat ({name}). Jelentkezzen be újra ugyanabba a Google-fiókba: az eszközei, entitásai és automatizmusai változatlanok maradnak. Amíg ezt meg nem teszi, az eszközei entitásai elavult értékeket mutathatnak, vagy nem érhetők el.",
+        "menu_options": {
+          "browser": "Bejelentkezés böngészővel (ajánlott)",
+          "master_token": "Mestertoken"
+        },
+        "menu_option_descriptions": {
+          "browser": "Jelentkezzen be a Google-fiókjába egy számítógép böngészőjében, majd illesszen be egy cookie-t. A legtöbb fiókkal működik.",
+          "master_token": "Illesszen be egy már meglévő mestertokent."
+        }
+      },
+      "reauth_browser": {
+        "title": "Bejelentkezés böngészővel",
+        "description": "1. Számítógépen nyissa meg a {embedded_setup_url} címet a böngésző privát ablakában, például inkognitó ablakban, és jelentkezzen be ugyanabba a Google-fiókba. Az elfogadás után az oldal tovább töltődhet; ez normális.\n2. Nyissa meg a böngésző fejlesztői eszközeit, és keresse meg az `accounts.google.com` cookie-jait.\n3. Másolja ki az `oauth_token` cookie értékét, és azonnal illessze be alább. Néhány percen belül lejár, és csak egyszer használható.\n\nRészletes útmutató: {browser_docs_url}",
+        "data": {
+          "oauth_token": "oauth_token cookie"
+        },
+        "data_description": {
+          "oauth_token": "oauth2_4/ kezdetű"
+        }
+      },
+      "reauth_master_token": {
+        "title": "Mestertoken",
+        "description": "Illesszen be egy mestertokent ugyanahhoz a Google-fiókhoz, például egy másik eszközzel megszerzettet.",
+        "data": {
+          "master_token": "A Google-fiók mestertokenje"
+        },
+        "data_description": {
+          "master_token": "aas_et/ kezdetű"
+        }
       }
     },
     "error": {
@@ -39,6 +71,9 @@
       "master-token-invalid": "A mestertoken érvénytelen. Ellenőrizze, hogy a teljes tokent megadta-e, az aas_et/ előtaggal együtt.",
       "oauth-token-format": "Ez nem az oauth_token cookie. Annak értéke oauth2_4/ kezdetű.",
       "master-token-format": "A mestertoken aas_et/ kezdetű és 223 karakter hosszú. Másolja ki a teljes tokent."
+    },
+    "abort": {
+      "other-account": "Egy másik Google-fiókba jelentkezett be, ezért semmi sem változott. Ha újra be szeretne jelentkezni az integráció által használt fiókkal, töltse újra az integrációt: lépjen a Beállítások > Eszközök és szolgáltatások > Google Home oldalra, nyissa meg a ⋮ menüt, és válassza a Konfiguráció újratöltése lehetőséget. Ha inkább azt a másik fiókot szeretné használni, törölje az integrációt, és adja hozzá újra."
     }
   },
   "exceptions": {

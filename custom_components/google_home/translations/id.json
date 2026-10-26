@@ -32,6 +32,38 @@
         "data_description": {
           "master_token": "Diawali dengan aas_et/"
         }
+      },
+      "reauth": {
+        "title": "Login ulang",
+        "description": "Google tidak lagi menerima data login yang tersimpan untuk {name}. Login ulang ke akun Google yang sama: perangkat, entitas, dan otomasi Anda tetap seperti semula. Sebelum Anda melakukannya, entitas perangkat Anda mungkin menampilkan nilai yang tidak terbaru atau menjadi tidak tersedia.",
+        "menu_options": {
+          "browser": "Login melalui browser (direkomendasikan)",
+          "master_token": "Token master"
+        },
+        "menu_option_descriptions": {
+          "browser": "Login ke Google melalui browser di komputer, lalu tempelkan cookie. Berfungsi untuk sebagian besar akun.",
+          "master_token": "Tempelkan token master yang sudah Anda miliki."
+        }
+      },
+      "reauth_browser": {
+        "title": "Login melalui browser",
+        "description": "1. Di komputer, buka {embedded_setup_url} di jendela penjelajahan pribadi browser, misalnya jendela Samaran, lalu login ke akun Google yang sama. Setelah Anda menyetujui, halaman mungkin terus memuat; ini normal.\n2. Buka alat developer browser dan cari cookie untuk `accounts.google.com`.\n3. Salin nilai cookie `oauth_token` dan segera tempelkan di bawah. Nilai ini kedaluwarsa dalam beberapa menit dan hanya dapat digunakan sekali.\n\nPetunjuk langkah demi langkah: {browser_docs_url}",
+        "data": {
+          "oauth_token": "Cookie oauth_token"
+        },
+        "data_description": {
+          "oauth_token": "Diawali dengan oauth2_4/"
+        }
+      },
+      "reauth_master_token": {
+        "title": "Token master",
+        "description": "Tempelkan token master untuk akun Google yang sama, misalnya token yang Anda peroleh dengan alat lain.",
+        "data": {
+          "master_token": "Token master akun Google"
+        },
+        "data_description": {
+          "master_token": "Diawali dengan aas_et/"
+        }
       }
     },
     "error": {
@@ -39,6 +71,9 @@
       "master-token-invalid": "Token master tidak valid. Pastikan Anda telah memasukkan token lengkap, termasuk aas_et/.",
       "oauth-token-format": "Ini bukan cookie oauth_token. Nilainya diawali dengan oauth2_4/.",
       "master-token-format": "Token master diawali dengan aas_et/ dan panjangnya 223 karakter. Salin seluruh token."
+    },
+    "abort": {
+      "other-account": "Anda login ke akun Google yang berbeda, sehingga tidak ada yang diubah. Untuk login ulang dengan akun yang digunakan integrasi ini, muat ulang integrasi: buka Pengaturan > Perangkat & layanan > Google Home, buka menu ⋮, lalu pilih Muat Ulang. Untuk menggunakan akun lain tersebut, hapus integrasi lalu tambahkan kembali."
     }
   },
   "exceptions": {

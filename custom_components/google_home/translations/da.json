@@ -32,6 +32,38 @@
         "data_description": {
           "master_token": "Starter med aas_et/"
         }
+      },
+      "reauth": {
+        "title": "Log ind igen",
+        "description": "Google accepterer ikke længere det gemte login for {name}. Log ind på den samme Google-konto igen: dine enheder, entiteter og automatiseringer forbliver, som de er. Indtil du gør det, kan dine enheders entiteter vise forældede værdier eller være utilgængelige.",
+        "menu_options": {
+          "browser": "Login via browser (anbefalet)",
+          "master_token": "Master token"
+        },
+        "menu_option_descriptions": {
+          "browser": "Log ind på Google i en browser på en computer, og indsæt derefter en cookie. Virker for de fleste konti.",
+          "master_token": "Indsæt et master token, du allerede har."
+        }
+      },
+      "reauth_browser": {
+        "title": "Login via browser",
+        "description": "1. Åbn {embedded_setup_url} i et privat browservindue på en computer, og log ind på den samme Google-konto. Når du har accepteret, bliver siden måske ved med at indlæse; det er forventet.\n2. Åbn browserens udviklerværktøjer, og find cookies for `accounts.google.com`.\n3. Kopiér værdien af cookien `oauth_token`, og indsæt den nedenfor med det samme. Den udløber inden for få minutter og virker kun én gang.\n\nTrin-for-trin-vejledning: {browser_docs_url}",
+        "data": {
+          "oauth_token": "Cookien oauth_token"
+        },
+        "data_description": {
+          "oauth_token": "Starter med oauth2_4/"
+        }
+      },
+      "reauth_master_token": {
+        "title": "Master token",
+        "description": "Indsæt et master token til den samme Google-konto, f.eks. et, som du har fået med et andet værktøj.",
+        "data": {
+          "master_token": "Master token til Google-konto"
+        },
+        "data_description": {
+          "master_token": "Starter med aas_et/"
+        }
       }
     },
     "error": {
@@ -39,6 +71,9 @@
       "master-token-invalid": "Master token er ugyldigt. Sørg for, at hele tokenet er angivet (inklusive 'aas_et/')",
       "oauth-token-format": "Dette er ikke cookien oauth_token. Dens værdi starter med oauth2_4/.",
       "master-token-format": "Et master token starter med aas_et/ og er 223 tegn langt. Kopiér hele tokenet."
+    },
+    "abort": {
+      "other-account": "Du loggede ind på en anden Google-konto, så der blev ikke ændret noget. Hvis du vil logge ind igen med den konto, som denne integration bruger, skal du genindlæse integrationen: gå til Indstillinger > Enheder & tjenester > Google Home, åbn menuen ⋮, og vælg Genindlæs. Hvis du i stedet vil bruge den anden konto, skal du slette integrationen og tilføje den igen."
     }
   },
   "exceptions": {

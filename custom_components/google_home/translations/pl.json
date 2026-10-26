@@ -32,6 +32,38 @@
         "data_description": {
           "master_token": "Zaczyna się od aas_et/"
         }
+      },
+      "reauth": {
+        "title": "Zaloguj się ponownie",
+        "description": "Google nie akceptuje już danych logowania zapisanych dla {name}. Zaloguj się ponownie na to samo konto Google: Twoje urządzenia, encje i automatyzacje pozostaną bez zmian. Dopóki tego nie zrobisz, encje Twoich urządzeń mogą pokazywać nieaktualne wartości lub być niedostępne.",
+        "menu_options": {
+          "browser": "Logowanie w przeglądarce (zalecane)",
+          "master_token": "Token główny"
+        },
+        "menu_option_descriptions": {
+          "browser": "Zaloguj się do Google w przeglądarce na komputerze, a następnie wklej plik cookie. Działa w przypadku większości kont.",
+          "master_token": "Wklej token główny, który już masz."
+        }
+      },
+      "reauth_browser": {
+        "title": "Logowanie w przeglądarce",
+        "description": "1. Na komputerze otwórz {embedded_setup_url} w oknie prywatnym przeglądarki i zaloguj się na to samo konto Google. Po zaakceptowaniu strona może się dalej ładować; to normalne.\n2. Otwórz narzędzia deweloperskie przeglądarki i znajdź pliki cookie dla `accounts.google.com`.\n3. Skopiuj wartość pliku cookie `oauth_token` i od razu wklej ją poniżej. Wygasa po kilku minutach i działa tylko raz.\n\nInstrukcje krok po kroku: {browser_docs_url}",
+        "data": {
+          "oauth_token": "Plik cookie oauth_token"
+        },
+        "data_description": {
+          "oauth_token": "Zaczyna się od oauth2_4/"
+        }
+      },
+      "reauth_master_token": {
+        "title": "Token główny",
+        "description": "Wklej token główny tego samego konta Google, na przykład uzyskany za pomocą innego narzędzia.",
+        "data": {
+          "master_token": "Token główny konta Google"
+        },
+        "data_description": {
+          "master_token": "Zaczyna się od aas_et/"
+        }
       }
     },
     "error": {
@@ -39,6 +71,9 @@
       "master-token-invalid": "Główny token jest nieprawidłowy. Upewnij się, że podano pełny token (w tym 'aas_et/')",
       "oauth-token-format": "To nie jest plik cookie oauth_token. Jego wartość zaczyna się od oauth2_4/.",
       "master-token-format": "Token główny zaczyna się od aas_et/ i ma 223 znaki. Skopiuj cały token."
+    },
+    "abort": {
+      "other-account": "Zalogowano się na inne konto Google, więc nic nie zostało zmienione. Aby ponownie zalogować się na konto używane przez tę integrację, wczytaj integrację ponownie: przejdź do sekcji Ustawienia > Urządzenia oraz usługi > Google Home, otwórz menu ⋮ i wybierz Wczytaj ponownie. Aby zamiast tego używać tamtego konta, usuń integrację i dodaj ją ponownie."
     }
   },
   "exceptions": {

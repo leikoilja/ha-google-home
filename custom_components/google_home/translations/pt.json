@@ -32,6 +32,38 @@
         "data_description": {
           "master_token": "Começa por aas_et/"
         }
+      },
+      "reauth": {
+        "title": "Iniciar sessão novamente",
+        "description": "A Google já não aceita os dados de início de sessão guardados para {name}. Inicie sessão novamente na mesma conta Google: os seus dispositivos, entidades e automatizações mantêm-se como estão. Até o fazer, as entidades dos seus dispositivos podem mostrar valores desatualizados ou ficar indisponíveis.",
+        "menu_options": {
+          "browser": "Início de sessão no navegador (recomendado)",
+          "master_token": "Token principal"
+        },
+        "menu_option_descriptions": {
+          "browser": "Inicie sessão na Google num navegador de computador e, em seguida, cole um cookie. Funciona para a maioria das contas.",
+          "master_token": "Cole um token principal que já tenha."
+        }
+      },
+      "reauth_browser": {
+        "title": "Início de sessão no navegador",
+        "description": "1. Num computador, abra {embedded_setup_url} numa janela de navegação privada e inicie sessão na mesma conta Google. Depois de aceitar, a página pode continuar a carregar; isso é esperado.\n2. Abra as ferramentas de programador do navegador e procure os cookies de `accounts.google.com`.\n3. Copie o valor do cookie `oauth_token` e cole-o abaixo de imediato. Expira em poucos minutos e só funciona uma vez.\n\nInstruções passo a passo: {browser_docs_url}",
+        "data": {
+          "oauth_token": "Cookie oauth_token"
+        },
+        "data_description": {
+          "oauth_token": "Começa por oauth2_4/"
+        }
+      },
+      "reauth_master_token": {
+        "title": "Token principal",
+        "description": "Cole um token principal da mesma conta Google, por exemplo um que tenha obtido com outra ferramenta.",
+        "data": {
+          "master_token": "Token principal da conta Google"
+        },
+        "data_description": {
+          "master_token": "Começa por aas_et/"
+        }
       }
     },
     "error": {
@@ -39,6 +71,9 @@
       "master-token-invalid": "Token principal inválido. Certifique-se de que o token completo foi especificado (incluindo 'aas_et/')",
       "oauth-token-format": "Este não é o cookie oauth_token. O seu valor começa por oauth2_4/.",
       "master-token-format": "Um token principal começa por aas_et/ e tem 223 caracteres. Copie o token completo."
+    },
+    "abort": {
+      "other-account": "Iniciou sessão numa conta Google diferente, pelo que nada foi alterado. Para voltar a iniciar sessão com a conta que esta integração utiliza, recarregue a integração: aceda a Configuração > Dispositivos & serviços > Google Home, abra o menu ⋮ e selecione Recarregar. Para passar a utilizar essa outra conta, elimine a integração e adicione-a novamente."
     }
   },
   "exceptions": {

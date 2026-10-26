@@ -32,6 +32,38 @@
         "data_description": {
           "master_token": "aas_et/로 시작합니다"
         }
+      },
+      "reauth": {
+        "title": "다시 로그인",
+        "description": "Google에서 {name}에 저장된 로그인 정보를 더 이상 수락하지 않습니다. 같은 Google 계정에 다시 로그인하세요. 기기, 엔티티, 자동화는 그대로 유지됩니다. 다시 로그인하기 전까지는 기기의 엔티티에 오래된 값이 표시되거나 엔티티를 사용할 수 없을 수 있습니다.",
+        "menu_options": {
+          "browser": "브라우저 로그인(권장)",
+          "master_token": "마스터 토큰"
+        },
+        "menu_option_descriptions": {
+          "browser": "컴퓨터의 브라우저에서 Google에 로그인한 다음 쿠키를 붙여넣으세요. 대부분의 계정에서 사용할 수 있습니다.",
+          "master_token": "이미 가지고 있는 마스터 토큰을 붙여넣으세요."
+        }
+      },
+      "reauth_browser": {
+        "title": "브라우저 로그인",
+        "description": "1. 컴퓨터에서 브라우저의 비공개 창(예: 시크릿 창)을 열고 {embedded_setup_url}에 접속하여 같은 Google 계정에 로그인하세요. 동의한 후에도 페이지가 계속 로드될 수 있으며, 이는 정상입니다.\n2. 브라우저의 개발자 도구를 열고 `accounts.google.com`의 쿠키를 찾으세요.\n3. `oauth_token` 쿠키의 값을 복사하여 아래에 바로 붙여넣으세요. 몇 분 안에 만료되며 한 번만 사용할 수 있습니다.\n\n단계별 안내: {browser_docs_url}",
+        "data": {
+          "oauth_token": "oauth_token 쿠키"
+        },
+        "data_description": {
+          "oauth_token": "oauth2_4/로 시작합니다"
+        }
+      },
+      "reauth_master_token": {
+        "title": "마스터 토큰",
+        "description": "다른 도구 등을 통해 받은, 같은 Google 계정의 마스터 토큰을 붙여넣으세요.",
+        "data": {
+          "master_token": "Google 계정 마스터 토큰"
+        },
+        "data_description": {
+          "master_token": "aas_et/로 시작합니다"
+        }
       }
     },
     "error": {
@@ -39,6 +71,9 @@
       "master-token-invalid": "마스터 토큰이 유효하지 않습니다. aas_et/를 포함한 토큰 전체를 입력했는지 확인하세요.",
       "oauth-token-format": "oauth_token 쿠키가 아닙니다. 이 쿠키의 값은 oauth2_4/로 시작합니다.",
       "master-token-format": "마스터 토큰은 aas_et/로 시작하며 223자입니다. 토큰 전체를 복사하세요."
+    },
+    "abort": {
+      "other-account": "다른 Google 계정으로 로그인했기 때문에 아무것도 변경되지 않았습니다. 이 통합 구성 요소가 사용하는 계정으로 다시 로그인하려면 통합 구성 요소를 다시 로드하세요. 설정 > 기기 및 서비스 > Google Home으로 이동하여 ⋮ 메뉴를 열고 다시 로드를 선택하면 됩니다. 대신 방금 로그인한 계정을 사용하려면 통합 구성 요소를 삭제한 후 다시 추가하세요."
     }
   },
   "exceptions": {
