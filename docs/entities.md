@@ -121,13 +121,14 @@ By default, Home Assistant starts new entity IDs with the device's area. A devic
 To avoid this for entities added later, do one of the following:
 
 - Rename the device in Home Assistant without the room, such as _Speaker_. The device keeps its name in the Google Home app.
-- Remove **Area** in **Settings** > **System** > **Entity ID format**. This changes the entity IDs Home Assistant creates for every integration from then on.
+- Remove **Area** in **Settings** > **System** > **Entity ID format**. This is a global setting for new entity IDs, not just Google Home ones. Integrations that suggest their own entity IDs don't use it.
 
-Entities you already have keep their entity IDs. Changing them is optional: go to **Settings** > **Devices & services** > **Devices**, select the device, then select **Menu** > **Recreate entity IDs**. This:
+Entities you already have keep their entity IDs. Changing them is optional: go to **Settings** > **Devices & services** > **Devices**, select the device, open the **⋮** menu and select **Recreate entity IDs**. This:
 
+- Builds the entity IDs from the current device name and entity ID format. Do one of the steps above first. Otherwise a device whose name contains its room gets the room twice in all its entity IDs.
 - Uses each entity's current name and doesn't change it.
-- Replaces every entity ID of the device, including any you changed yourself.
+- Changes each entity ID of the device that differs from the one Home Assistant would create now, including any you changed yourself. Entity IDs that already match stay the same.
 
 Home Assistant lists the old and new entity IDs before it changes them. If a new entity ID still contains an earlier device name, cancel. Open that entity's settings, select the restore icon (**Restore default name**) next to its name, select **Update**, then recreate the entity IDs again.
 
-After you confirm, update the automations, scripts and manually configured dashboard cards that use the old entity IDs. See [Customizing entities](https://www.home-assistant.io/docs/configuration/customizing-entities/#changing-the-attributes-of-an-entity).
+After you confirm, update the automations, scripts and manually configured dashboard cards that use the entity IDs that changed. See [Customizing entities](https://www.home-assistant.io/docs/configuration/customizing-entities/#changing-the-attributes-of-an-entity).
