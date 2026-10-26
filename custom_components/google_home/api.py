@@ -10,8 +10,9 @@ from typing import Literal, cast
 from aiohttp import ClientError, ClientSession, ClientTimeout
 from aiohttp.client_exceptions import ClientConnectorError, ContentTypeError
 from glocaltokens.client import Device, GLocalAuthenticationTokens
+from glocaltokens.exceptions import AuthenticationError, GLocalTokensError
 from glocaltokens.utils.token import is_aas_et
-from requests.exceptions import RequestException
+from requests.exceptions import HTTPError, RequestException
 from zeroconf import Zeroconf
 
 from homeassistant.core import HomeAssistant
@@ -82,24 +83,27 @@ class GlocaltokensApiClient:
     async def async_get_master_token(self) -> str:
         """Get master API token."""
 
-        def _get_master_token() -> str | None:
+        def _get_master_token() -> str:
             return self._client.get_master_token()
 
-        master_token = await self.hass.async_add_executor_job(_get_master_token)
-        if master_token is None or is_aas_et(master_token) is False:
+        try:
+            master_token = await self.hass.async_add_executor_job(_get_master_token)
+        except AuthenticationError as error:
+            raise InvalidMasterToken from error
+        if not is_aas_et(master_token):
             raise InvalidMasterToken
         return master_token
 
     async def async_get_access_token(self) -> str:
         """Get access token using master token."""
 
-        def _get_access_token() -> str | None:
+        def _get_access_token() -> str:
             return self._client.get_access_token()
 
-        access_token = await self.hass.async_add_executor_job(_get_access_token)
-        if access_token is None:
-            raise InvalidMasterToken
-        return access_token
+        try:
+            return await self.hass.async_add_executor_job(_get_access_token)
+        except AuthenticationError as error:
+            raise InvalidMasterToken from error
 
     async def async_get_email(self) -> str | None:
         """Return the verified email address of the signed-in account, if Google gives it."""
@@ -109,7 +113,7 @@ class GlocaltokensApiClient:
 
         try:
             return await self.hass.async_add_executor_job(_get_email)
-        except RequestException:
+        except RequestException, AuthenticationError:
             _LOGGER.debug("Failed to get the account's email address", exc_info=True)
             return None
 
@@ -131,10 +135,14 @@ class GlocaltokensApiClient:
                     force_homegraph_reload=True,
                 )
 
-            google_devices = await self.hass.async_add_executor_job(_get_google_devices)
-            # glocaltokens drops the home graph before fetching it and returns no
-            # devices if it can't get it again, for example when signing in fails
-            if self._client.homegraph is None:
+            try:
+                google_devices = await self.hass.async_add_executor_job(
+                    _get_google_devices
+                )
+            # Google rejected the master token, gave no home graph, or answered with
+            # a 5xx or 429, which glocaltokens raises as HTTPError
+            except (GLocalTokensError, HTTPError) as error:
+                _LOGGER.error("Failed to fetch Google's device list: %s", error)
                 # Keep the devices of an earlier fetch rather than drop them
                 return self.google_devices
             self.google_devices_fetched = True

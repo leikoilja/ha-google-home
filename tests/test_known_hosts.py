@@ -11,8 +11,9 @@ from custom_components.google_home.api import GlocaltokensApiClient
 from custom_components.google_home.config_flow import GoogleHomeOptionsFlowHandler
 from custom_components.google_home.models import GoogleHomeDevice
 
-# glocaltokens accepts only tokens of the real length
+# A realistic master token: setup checks its length with is_aas_et()
 MASTER_TOKEN = "aas_et/" + "x" * 216
+# glocaltokens returns only devices whose local auth token has this length
 LOCAL_AUTH_TOKEN = "x" * 108
 
 
@@ -171,7 +172,6 @@ def test_known_hosts_fill_in_devices_from_glocaltokens() -> None:
     pair = Device("pair", "Den speakers", LOCAL_AUTH_TOKEN, cloud_device_id="DDDD")
     client._client = Mock(  # noqa: SLF001  # pylint: disable=protected-access
         get_google_devices=Mock(return_value=[pair]),
-        homegraph=Mock(),
     )
 
     [den] = asyncio.run(client.get_google_devices())
@@ -198,7 +198,6 @@ def test_known_hosts_fill_in_device_fetched_again() -> None:
     pair = Device("pair", "Den speakers", LOCAL_AUTH_TOKEN, cloud_device_id="DDDD")
     client._client = Mock(  # noqa: SLF001  # pylint: disable=protected-access
         get_google_devices=Mock(return_value=[pair]),
-        homegraph=Mock(),
     )
 
     # The same object, which keeps what the last update got from the device
@@ -224,7 +223,6 @@ def test_known_hosts_not_asked_when_mdns_found_everything() -> None:
     )
     client._client = Mock(  # noqa: SLF001  # pylint: disable=protected-access
         get_google_devices=Mock(return_value=[found_by_mdns]),
-        homegraph=Mock(),
     )
 
     asyncio.run(client.get_google_devices())

@@ -3,6 +3,7 @@
 import asyncio
 from unittest.mock import AsyncMock, Mock, patch
 
+from glocaltokens.exceptions import AuthenticationError
 import pytest
 
 from custom_components.google_home import (
@@ -20,7 +21,7 @@ from custom_components.google_home.const import (
 )
 from custom_components.google_home.models import GoogleHomeDevice
 
-# glocaltokens accepts only master tokens of the real length
+# A realistic master token: setup checks its length with is_aas_et()
 MASTER_TOKEN = "aas_et/" + "x" * 216
 
 
@@ -154,15 +155,17 @@ def test_keep_devices_of_unloaded_entry() -> None:
     assert not can_delete(Mock(data={}), "removed")
 
 
-def test_keep_devices_when_fetch_fails() -> None:
-    """Keep devices when Google's device list couldn't be fetched."""
+def test_keep_devices_when_fetch_fails(caplog: pytest.LogCaptureFixture) -> None:
+    """Keep devices when Google's device list couldn't be fetched, and log Google's reason."""
     hass = Mock()
     hass.async_add_executor_job = AsyncMock(side_effect=lambda func, *args: func(*args))
     client = GlocaltokensApiClient(hass, Mock(), master_token=MASTER_TOKEN)
 
     with patch(
         "glocaltokens.client.GLocalAuthenticationTokens.get_access_token",
-        return_value=None,
+        side_effect=AuthenticationError(
+            "Google gave no access token", "BadAuthentication"
+        ),
     ):
         devices = asyncio.run(client.get_google_devices())
 
@@ -171,3 +174,11 @@ def test_keep_devices_when_fetch_fails() -> None:
     }
     assert devices == []
     assert not can_delete(hass, "online")
+    [record] = [
+        record
+        for record in caplog.records
+        if record.name == "custom_components.google_home"
+    ]
+    assert record.levelname == "ERROR"
+    assert "BadAuthentication" in record.getMessage()
+    assert record.exc_info is None
