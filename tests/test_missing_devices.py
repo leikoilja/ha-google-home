@@ -6,9 +6,12 @@ from http import HTTPStatus
 from unittest.mock import AsyncMock, MagicMock, Mock, patch
 
 from glocaltokens.client import Device
+from glocaltokens.exceptions import AuthenticationError, HomegraphError
 from glocaltokens.scanner import NetworkDevice
+import grpc  # type: ignore[import-untyped]
 import pytest
-from requests.exceptions import ConnectionError as RequestsConnectionError
+from requests import Response
+from requests.exceptions import ConnectionError as RequestsConnectionError, HTTPError
 
 from custom_components.google_home import async_remove_config_entry_device
 from custom_components.google_home.api import GlocaltokensApiClient
@@ -26,13 +29,38 @@ from custom_components.google_home.sensor import (
     GoogleHomeTimersSensor,
 )
 
-# glocaltokens accepts only tokens of the real length
+# A realistic master token: setup checks its length with is_aas_et()
 MASTER_TOKEN = "aas_et/" + "x" * 216
+# glocaltokens returns only devices whose local auth token has this length
 LOCAL_AUTH_TOKEN = "x" * 108
 ALARM_ID = "alarm/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51"
 TIMER_ID = "timer/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51"
 MINUTE = 60
 HOUR = 60 * MINUTE
+
+
+def answered(status: HTTPStatus) -> HTTPError:
+    """Return the error glocaltokens raises when Google answers with this status."""
+    response = Response()
+    response.status_code = status
+    return HTTPError(response=response)
+
+
+# What glocaltokens raises when Google doesn't give the list, other than when its
+# sign-in can't be reached
+FETCH_ERRORS = [
+    pytest.param(
+        HomegraphError(grpc.StatusCode.UNAVAILABLE, "The service is unavailable."),
+        id="no-home-graph",
+    ),
+    pytest.param(
+        AuthenticationError("Google gave no access token", "BadAuthentication"),
+        id="token-rejected",
+    ),
+    pytest.param(answered(HTTPStatus.SERVICE_UNAVAILABLE), id="http-503"),
+    pytest.param(answered(HTTPStatus.TOO_MANY_REQUESTS), id="http-429"),
+]
+UNREACHABLE = pytest.param(RequestsConnectionError(), id="unreachable")
 
 
 @pytest.fixture(name="clock")
@@ -81,7 +109,6 @@ def make_client(
                 for device in client.google_devices
             ]
         ),
-        homegraph=Mock(),
     )
     client._client = glocaltokens  # noqa: SLF001  # pylint: disable=protected-access
     return client, glocaltokens
@@ -143,20 +170,17 @@ def test_fetch_every_20_minutes(
 
 
 @pytest.mark.parametrize("ip_addresses", [("10.0.0.2",), ()])
-@pytest.mark.parametrize("homegraph_fails", [True, False])
+@pytest.mark.parametrize("error", [*FETCH_ERRORS, UNREACHABLE])
 def test_scheduled_fetch_fails(
-    clock: Mock, ip_addresses: tuple[str, ...], homegraph_fails: bool
+    clock: Mock, ip_addresses: tuple[str, ...], error: Exception
 ) -> None:
-    """Keep the devices, even none, when Google can't be reached, and try again 20 minutes later.
+    """Keep the devices, even none, when Google's list can't be fetched, and try again 20 minutes later.
 
     Trying on every update would ask Google every few minutes while it is failing.
     """
     client, glocaltokens = make_client(*ip_addresses)
     devices = list(client.google_devices)
-    if homegraph_fails:
-        glocaltokens.homegraph = None
-    else:
-        glocaltokens.get_google_devices.side_effect = RequestsConnectionError
+    glocaltokens.get_google_devices.side_effect = error
 
     clock.return_value = FETCH_DEVICES_INTERVAL
     assert update(client) == devices
@@ -250,7 +274,10 @@ def answering(status: HTTPStatus) -> Mock:
     return Mock(request=Mock(return_value=response))
 
 
-def test_fetch_on_every_update_after_token_rejected(clock: Mock) -> None:
+@pytest.mark.parametrize("error", FETCH_ERRORS)
+def test_fetch_on_every_update_after_token_rejected(
+    clock: Mock, error: Exception
+) -> None:
     """Fetch Google's list once on every update after a device rejects its token, until it works.
 
     Until then, the list is unknown, so no device can be deleted.
@@ -264,15 +291,28 @@ def test_fetch_on_every_update_after_token_rejected(clock: Mock) -> None:
     asyncio.run(client.update_alarms_and_timers(kitchen))
     assert not can_delete(client, [kitchen], "removed")
 
-    glocaltokens.homegraph = None
+    glocaltokens.get_google_devices.side_effect = error
     # Keep the devices, which may still accept their tokens, until Google answers
     assert update(client) == [kitchen]
     assert fetches_in(client, glocaltokens, 2) == 3
     assert not can_delete(client, [kitchen], "removed")
 
-    glocaltokens.homegraph = Mock()
+    glocaltokens.get_google_devices.side_effect = None
     assert fetches_in(client, glocaltokens, 3) == 4
     assert can_delete(client, client.google_devices, "removed")
+
+
+def test_unreachable_at_setup() -> None:
+    """Fail the update when Google's sign-in can't be reached before the list is known.
+
+    At setup, Home Assistant then tries setting up the integration again.
+    """
+    client, glocaltokens = make_client()
+    client.google_devices_fetched = False
+    glocaltokens.get_google_devices.side_effect = RequestsConnectionError
+
+    with pytest.raises(RequestsConnectionError):
+        update(client)
 
 
 def test_keep_polled_data_after_token_rejected() -> None:
@@ -389,15 +429,12 @@ def test_keep_address_mdns_missed(clock: Mock) -> None:
     ]
 
 
-@pytest.mark.parametrize("homegraph_fails", [True, False])
-def test_keep_devices_when_fetch_fails(clock: Mock, homegraph_fails: bool) -> None:
-    """Keep the devices of the last fetch when Google can't be reached."""
+@pytest.mark.parametrize("error", [*FETCH_ERRORS, UNREACHABLE])
+def test_keep_devices_when_fetch_fails(clock: Mock, error: Exception) -> None:
+    """Keep the devices of the last fetch when Google's list can't be fetched."""
     client, glocaltokens = make_client("10.0.0.2", None)
     devices = list(client.google_devices)
-    if homegraph_fails:
-        glocaltokens.homegraph = None
-    else:
-        glocaltokens.get_google_devices.side_effect = RequestsConnectionError
+    glocaltokens.get_google_devices.side_effect = error
 
     fetch(client, clock)
 

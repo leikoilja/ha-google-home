@@ -4,6 +4,7 @@ import asyncio
 from collections.abc import Iterator
 from unittest.mock import AsyncMock, Mock, patch
 
+from glocaltokens.exceptions import AuthenticationError
 import pytest
 from requests.exceptions import RequestException
 
@@ -11,7 +12,7 @@ from custom_components.google_home.api import GlocaltokensApiClient
 from custom_components.google_home.config_flow import GoogleHomeFlowHandler
 from custom_components.google_home.exceptions import InvalidMasterToken
 
-# glocaltokens accepts only master tokens of the real length
+# A realistic master token: setup checks its length with is_aas_et()
 MASTER_TOKEN = "aas_et/" + "x" * 216
 
 
@@ -124,6 +125,19 @@ def test_browser_sign_in_with_glocaltokens(flow: GoogleHomeFlowHandler) -> None:
     assert result["data"]["android_id"] == android_id
 
 
+def test_browser_sign_in_rejected_by_google(flow: GoogleHomeFlowHandler) -> None:
+    """Point out a cookie that Google refuses to exchange for a master token."""
+    with patch(
+        "glocaltokens.client.exchange_token",
+        return_value={"Error": "BadAuthentication"},
+    ):
+        result = asyncio.run(
+            flow.async_step_browser({"oauth_token": "oauth2_4/cookie"})
+        )
+
+    assert result["errors"] == {"base": "oauth-token-invalid"}
+
+
 def test_master_token(flow: GoogleHomeFlowHandler, client: Mock) -> None:
     """Save a master token that Google accepts, named after its account."""
     client.return_value.async_get_email.return_value = "test@example.com"
@@ -165,7 +179,27 @@ def test_master_token_rejected(flow: GoogleHomeFlowHandler, client: Mock) -> Non
     assert result["errors"] == {"base": "master-token-invalid"}
 
 
-def test_get_email_failure() -> None:
+def test_master_token_rejected_by_google(flow: GoogleHomeFlowHandler) -> None:
+    """Point out a master token for which Google gives no access token."""
+    with patch(
+        "glocaltokens.client.perform_oauth",
+        return_value={"Error": "BadAuthentication"},
+    ):
+        result = asyncio.run(
+            flow.async_step_master_token({"master_token": MASTER_TOKEN})
+        )
+
+    assert result["errors"] == {"base": "master-token-invalid"}
+
+
+@pytest.mark.parametrize(
+    "error",
+    [
+        RequestException("No network"),
+        AuthenticationError("Google gave no master token", "BadAuthentication"),
+    ],
+)
+def test_get_email_failure(error: Exception) -> None:
     """Treat a failed email lookup as no email address, so setup still succeeds."""
     hass = Mock()
     hass.async_add_executor_job = AsyncMock(side_effect=lambda func, *args: func(*args))
@@ -173,6 +207,6 @@ def test_get_email_failure() -> None:
 
     with patch(
         "glocaltokens.client.GLocalAuthenticationTokens.get_email",
-        side_effect=RequestException("No network"),
+        side_effect=error,
     ):
         assert asyncio.run(client.async_get_email()) is None
