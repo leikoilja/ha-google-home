@@ -106,9 +106,20 @@ def update(client: GlocaltokensApiClient) -> list[GoogleHomeDevice]:
     return asyncio.run(client.update_google_devices_information())
 
 
+@pytest.mark.parametrize(
+    ("interval", "expected"),
+    [
+        (30, [20 * MINUTE, 40 * MINUTE, HOUR]),
+        # The first update 20 minutes after the last fetch is the seventh
+        (180, [21 * MINUTE, 42 * MINUTE]),
+    ],
+)
 @pytest.mark.parametrize("ip_addresses", [("10.0.0.2", "10.0.0.3"), ("10.0.0.2", None)])
 def test_fetch_every_20_minutes(
-    clock: Mock, ip_addresses: tuple[str | None, ...]
+    clock: Mock,
+    ip_addresses: tuple[str | None, ...],
+    interval: int,
+    expected: list[int],
 ) -> None:
     """Ask Google again 20 minutes after the last fetch, however often the devices are updated.
 
@@ -120,15 +131,15 @@ def test_fetch_every_20_minutes(
     client, glocaltokens = make_client(*ip_addresses)
 
     fetched_at: list[int] = []
-    # Update every 30 seconds for an hour after setup
-    for seconds in range(30, HOUR + 1, 30):
+    # Update at this interval for an hour after setup
+    for seconds in range(interval, HOUR + 1, interval):
         clock.return_value = seconds
         fetches = glocaltokens.get_google_devices.call_count
         update(client)
         if glocaltokens.get_google_devices.call_count > fetches:
             fetched_at.append(seconds)
 
-    assert fetched_at == [20 * MINUTE, 40 * MINUTE, HOUR]
+    assert fetched_at == expected
 
 
 @pytest.mark.parametrize("ip_addresses", [("10.0.0.2",), ()])
