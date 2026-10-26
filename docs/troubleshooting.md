@@ -53,7 +53,7 @@ The integration adds the alarms sensor, timers sensor, Do Not Disturb switch and
 When the device answers, the integration adds the missing entities:
 
 - If the device sensor shows an IP address, this happens at the next update.
-- If the device sensor is unavailable, the integration doesn't know the device's IP address. It looks for the device again every 10 updates, which is every 30 minutes with the default [update interval](installation.md#change-the-update-interval).
+- If the device sensor is unavailable, the integration doesn't know the device's IP address. It looks for the device again every 20 minutes, when it asks Google for your devices.
 
 If you don't want to wait, make sure the device is online, then reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. If that doesn't help, restart the Google Home device and then Home Assistant.
 
