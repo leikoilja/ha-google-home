@@ -99,11 +99,11 @@ The state is the device's IP address on your network. If no IP address is availa
 
 ## Do Not Disturb switch
 
-Turns Do Not Disturb on or off on the device. It appears under **Configuration** on the device page. If the device doesn't make or confirm the change, Home Assistant shows an error and the switch keeps its old setting; see [If a setting or reboot fails](#if-a-setting-or-reboot-fails).
+Turns Do Not Disturb on or off on the device. It appears under **Configuration** on the device page. If the request to the device fails, Home Assistant shows an error and the switch keeps its old setting; see [If a setting or reboot fails](#if-a-setting-or-reboot-fails).
 
 ## Alarm volume
 
-Sets how loud alarms ring on the device, from 0 to 100%. It appears under **Configuration** on the device page. If the device doesn't make or confirm the change, Home Assistant shows an error and the old volume stays; see [If a setting or reboot fails](#if-a-setting-or-reboot-fails). To change the volume of media, use the Google Cast integration that comes with Home Assistant.
+Sets how loud alarms ring on the device, from 0 to 100%. It appears under **Configuration** on the device page. If the request to the device fails, Home Assistant shows an error and the old volume stays; see [If a setting or reboot fails](#if-a-setting-or-reboot-fails). To change the volume of media, use the Google Cast integration that comes with Home Assistant.
 
 ## Reboot button
 
@@ -121,13 +121,15 @@ Not every device supports rebooting. A device can accept the request, so there's
 
 ## If a setting or reboot fails
 
-Turning Do Not Disturb on or off, setting the alarm volume and pressing Reboot fail with an error, rather than look successful, when the device doesn't do it or doesn't confirm it. Home Assistant shows the error, which names the device and says why:
+Turning Do Not Disturb on or off, setting the alarm volume and pressing Reboot fail with an error, rather than look successful, when the request to the device fails. Home Assistant shows the error, which names the device and says why:
 
-- "Couldn't reach Living Room. Check that it's on and connected to your network, then try again". The device is offline, or Home Assistant doesn't know its IP address.
-- "Living Room didn't answer, or its answer was cut off, so it may or may not have done this. Check that it's online and try again". The next update shows the device's current Do Not Disturb setting and alarm volume.
+- "Couldn't reach Living Room. Check that it's on and connected to your network, then try again". The device refused the connection or your network reports it as unreachable, or Home Assistant doesn't know its IP address.
+- "Living Room didn't answer, or its answer was cut off, so it may or may not have done this. Check that it's online and try again". The device didn't answer within about 5 seconds, or didn't even accept the connection in that time, or it closed the connection or stopped its answer partway. The next update shows the device's current Do Not Disturb setting and alarm volume.
 - "Living Room rejected its token. The integration will ask Google for a new one at the next update, so try again after that".
 - "Living Room answered that it can't do this. It may still be starting up, or it may not support this".
-- "Couldn't do this on Living Room. The Home Assistant log has the details". Any other error, such as an unexpected answer from the device. Open the [log](https://my.home-assistant.io/redirect/logs/) to see what it was.
+- "Couldn't do this on Living Room. The Home Assistant log has the details". The device answered with another error, or the request failed for another reason. Open the [log](https://my.home-assistant.io/redirect/logs/) to see what it was.
+
+Two answers to a Do Not Disturb or alarm volume change don't give one of these messages. If the device accepts the change but its answer doesn't include the new setting, there's no error, and the switch or volume shows the old setting until the next update. If its answer isn't valid JSON, the action fails with an unexpected error instead.
 
 The error stops your automation or script at this step. To run the next steps anyway, select **Continue on error** in the step's menu, or in YAML add `continue_on_error: true` to the step, next to `action:` rather than under `data:`:
 

@@ -15,7 +15,6 @@ from aiohttp import (
     ClientResponse,
     ClientSession,
     ClientTimeout,
-    ConnectionTimeoutError,
 )
 from aiohttp.client_exceptions import ClientConnectorError, ContentTypeError
 from glocaltokens.client import Device, GLocalAuthenticationTokens
@@ -131,18 +130,6 @@ def answer_failure(
         response.status,
         response,
     )
-    return "request_failed"
-
-
-def client_failure(error: ClientError) -> RequestFailure:
-    """Return why a request to a device that raised this error failed."""
-    # It couldn't connect in time, so nothing was sent
-    if isinstance(error, ConnectionTimeoutError):
-        return "offline"
-    # A connection that closed or an answer that was cut off: the device may
-    # have done it
-    if isinstance(error, ClientConnectionError | ClientPayloadError):
-        return "no_reply"
     return "request_failed"
 
 
@@ -916,7 +903,11 @@ class GlocaltokensApiClient:
                 device.name,
             )
             device.available = False
-            raise DeviceRequestFailed(device.name, client_failure(error)) from error
+            # A connection that closed or an answer that was cut off: the device
+            # may have done it
+            if isinstance(error, ClientConnectionError | ClientPayloadError):
+                raise DeviceRequestFailed(device.name, "no_reply") from error
+            raise DeviceRequestFailed(device.name, "request_failed") from error
         except TimeoutError as error:
             _LOGGER.debug(
                 "%s device timed out while performing a request to it - Raw data: %s",

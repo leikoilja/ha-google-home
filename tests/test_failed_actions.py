@@ -11,7 +11,6 @@ from aiohttp import (
     ClientConnectorError,
     ClientError,
     ClientPayloadError,
-    ConnectionTimeoutError,
     ContentTypeError,
     ServerDisconnectedError,
 )
@@ -65,8 +64,6 @@ CONTROLS = [*SETTINGS, pytest.param(REBOOT, press, id="reboot")]
     ("reply", "reason"),
     [
         pytest.param(ClientConnectorError(Mock(), OSError()), "offline", id="offline"),
-        # Nothing was sent
-        pytest.param(ConnectionTimeoutError(), "offline", id="connect-timed-out"),
         pytest.param(TimeoutError(), "no_reply", id="timed-out"),
         pytest.param(ServerDisconnectedError(), "no_reply", id="disconnected"),
         pytest.param(HTTPStatus.NOT_FOUND, "not_ready", id="not-found"),
@@ -335,7 +332,7 @@ def test_update_keeps_last_data_when_device_doesnt_answer(
 ) -> None:
     """Keep a device's last alarms and settings when it doesn't answer an update, and log it only for debugging.
 
-    The update doesn't fail, and the other devices still update.
+    The update doesn't fail.
     """
     client, _, network = setup(SUPPORTED)
     [device] = poll(client, clock, at(0))
