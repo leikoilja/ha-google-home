@@ -74,9 +74,6 @@
       "google-busy": "Google on ruuhkautunut tai rajoittaa kirjautumisia. Odota muutama minuutti ja kirjaudu sitten uudelleen.",
       "oauth-token-format": "Tämä ei ole oauth_token-eväste. Sen arvo alkaa merkkijonolla oauth2_4/.",
       "master-token-format": "Päätunniste alkaa merkkijonolla aas_et/ ja on 223 merkkiä pitkä. Kopioi koko tunniste."
-    },
-    "abort": {
-      "other-account": "Kirjauduit eri Google-tilille, joten mitään ei muutettu. Jos haluat kirjautua uudelleen tilille, jota tämä integraatio käyttää, lataa integraatio uudelleen: siirry kohtaan Asetukset > Laitteet & palvelut > Google Home, avaa ⋮-valikko ja valitse Lataa uudelleen. Jos haluat käyttää sen sijaan toista tiliä, poista integraatio ja lisää se uudelleen."
     }
   },
   "exceptions": {

@@ -74,9 +74,6 @@
       "google-busy": "Google está ocupado o está limitando los inicios de sesión. Espera unos minutos y vuelve a iniciar sesión.",
       "oauth-token-format": "Esta no es la cookie oauth_token. Su valor empieza por oauth2_4/.",
       "master-token-format": "Un token maestro empieza por aas_et/ y tiene 223 caracteres. Copia el token completo."
-    },
-    "abort": {
-      "other-account": "Has iniciado sesión en otra cuenta de Google, por lo que no se ha cambiado nada. Para volver a iniciar sesión con la cuenta que usa esta integración, recarga la integración: ve a Configuración > Dispositivos y servicios > Google Home, abre el menú ⋮ y selecciona Recargar. Para usar esa otra cuenta, elimina la integración y vuelve a añadirla."
     }
   },
   "exceptions": {

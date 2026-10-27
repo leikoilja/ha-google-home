@@ -74,9 +74,6 @@
       "google-busy": "Google is overbelast of beperkt het aantal inlogpogingen. Wacht een paar minuten en log daarna opnieuw in.",
       "oauth-token-format": "Dit is niet de cookie oauth_token. De waarde begint met oauth2_4/.",
       "master-token-format": "Een mastertoken begint met aas_et/ en is 223 tekens lang. Kopieer het volledige token."
-    },
-    "abort": {
-      "other-account": "Je bent ingelogd met een ander Google-account, dus er is niets gewijzigd. Om opnieuw in te loggen met het account dat deze integratie gebruikt, herlaad je de integratie: ga naar Instellingen > Apparaten en diensten > Google Home, open het menu ⋮ en selecteer Herlaad. Om in plaats daarvan dat andere account te gebruiken, verwijder je de integratie en voeg je deze opnieuw toe."
     }
   },
   "exceptions": {

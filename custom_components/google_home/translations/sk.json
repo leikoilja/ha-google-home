@@ -74,9 +74,6 @@
       "google-busy": "Google je preťažený alebo obmedzuje prihlasovanie. Počkajte niekoľko minút a potom sa znova prihláste.",
       "oauth-token-format": "Toto nie je súbor cookie oauth_token. Jeho hodnota sa začína oauth2_4/.",
       "master-token-format": "Hlavný token sa začína aas_et/ a má 223 znakov. Skopírujte celý token."
-    },
-    "abort": {
-      "other-account": "Prihlásili ste sa do iného účtu Google, preto sa nič nezmenilo. Ak sa chcete znova prihlásiť do účtu, ktorý táto integrácia používa, znova načítajte integráciu: prejdite do časti Nastavenia > Zariadenia a služby > Google Home, otvorte ponuku ⋮ a vyberte Znova načítať. Ak chcete namiesto toho používať ten druhý účet, integráciu odstráňte a pridajte ju znova."
     }
   },
   "exceptions": {

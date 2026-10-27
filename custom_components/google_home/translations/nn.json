@@ -74,9 +74,6 @@
       "google-busy": "Google har stor pågang eller avgrensar påloggingar. Vent nokre minutt, og logg deretter på igjen.",
       "oauth-token-format": "Dette er ikkje informasjonskapselen oauth_token. Verdien byrjar med oauth2_4/.",
       "master-token-format": "Eit master token byrjar med aas_et/ og er 223 teikn langt. Kopier heile tokenet."
-    },
-    "abort": {
-      "other-account": "Du logga på ein annan Google-konto, så ingenting vart endra. For å logge på igjen med kontoen som denne integrasjonen brukar, last inn integrasjonen på nytt: gå til Konfigurasjon > Devices & services > Google Home, opne ⋮-menyen og vel Last inn på nytt. For å bruke den andre kontoen i staden, slett integrasjonen og legg han til på nytt."
     }
   },
   "exceptions": {
