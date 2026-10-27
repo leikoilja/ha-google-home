@@ -81,6 +81,11 @@ class GlocaltokensApiClient:
         self.known_hosts = known_hosts or []
         # Setup fetches the list straight after creating the client
         self.next_scheduled_fetch = monotonic() + FETCH_DEVICES_INTERVAL
+        # Google's list is fetched one at a time, and at most once per update:
+        # fetches that ended, and how many had ended when the current update started
+        self._fetch_lock = asyncio.Lock()
+        self._fetches = 0
+        self._fetches_before_update = 0
 
     async def async_get_master_token(self) -> str:
         """Get master API token."""
@@ -128,62 +133,76 @@ class GlocaltokensApiClient:
         """
 
         if not self.google_devices_fetched or refetch:
-            # Whether this works or not, the next scheduled fetch waits a full interval
-            self.next_scheduled_fetch = monotonic() + FETCH_DEVICES_INTERVAL
-
-            def _get_google_devices() -> list[Device]:
-                return self._client.get_google_devices(
-                    zeroconf_instance=self.zeroconf_instance,
-                    force_homegraph_reload=True,
-                )
-
-            try:
-                google_devices = await self.hass.async_add_executor_job(
-                    _get_google_devices
-                )
-            # Google rejected the master token, gave no home graph, or answered with
-            # a 5xx or 429, which glocaltokens raises as HTTPError
-            except (GLocalTokensError, HTTPError) as error:
-                _LOGGER.error("Failed to fetch Google's device list: %s", error)
-                # Only signing in again helps when Google rejects the master token.
-                # Other errors say nothing about it, so an earlier rejection stays.
-                if isinstance(error, AuthenticationError):
-                    self.sign_in_error = error
-                # Keep the devices of an earlier fetch rather than drop them
-                return self.google_devices
-            self.sign_in_error = None
-            self.google_devices_fetched = True
-            known_devices = {device.device_id: device for device in self.google_devices}
-            self.google_devices = []
-            for google_device in google_devices:
-                device = GoogleHomeDevice(
-                    device_id=google_device.device_id,
-                    name=google_device.device_name,
-                    auth_token=google_device.local_auth_token,
-                    ip_address=google_device.ip_address,
-                    hardware=google_device.hardware,
-                    cloud_device_id=google_device.cloud_device_id,
-                )
-                # Keep a known device's alarms, timers and settings, so a device
-                # that doesn't answer this update doesn't lose them
-                if known_device := known_devices.get(device.device_id):
-                    known_device.name = device.name
-                    known_device.auth_token = device.auth_token
-                    # mDNS can miss a device that it found before: keep its address
-                    known_device.ip_address = (
-                        device.ip_address or known_device.ip_address
-                    )
-                    known_device.hardware = device.hardware
-                    known_device.cloud_device_id = device.cloud_device_id
-                    device = known_device
-                self.google_devices.append(device)
-            # Known hosts are only asked when mDNS left a device without an address
-            if self.known_hosts and any(
-                not device.ip_address and device.cloud_device_id
-                for device in self.google_devices
-            ):
-                await self.async_use_known_hosts()
+            await self._async_fetch_devices(self._fetches_before_update)
         return self.google_devices
+
+    async def _async_fetch_devices(self, fetches: int) -> None:
+        """Fetch Google's device list, unless a fetch has ended since there were `fetches`.
+
+        A caller that waits while another fetch runs uses that fetch's devices and
+        tokens rather than asking Google again.
+        """
+        async with self._fetch_lock:
+            if self._fetches != fetches:
+                return
+            try:
+                await self._async_get_devices_from_google()
+            finally:
+                self._fetches += 1
+
+    async def _async_get_devices_from_google(self) -> None:
+        """Ask Google for the device list, and update the devices from it."""
+        # Whether this works or not, the next scheduled fetch waits a full interval
+        self.next_scheduled_fetch = monotonic() + FETCH_DEVICES_INTERVAL
+
+        def _get_google_devices() -> list[Device]:
+            return self._client.get_google_devices(
+                zeroconf_instance=self.zeroconf_instance,
+                force_homegraph_reload=True,
+            )
+
+        try:
+            google_devices = await self.hass.async_add_executor_job(_get_google_devices)
+        # Google rejected the master token, gave no home graph, or answered with
+        # a 5xx or 429, which glocaltokens raises as HTTPError
+        except (GLocalTokensError, HTTPError) as error:
+            _LOGGER.error("Failed to fetch Google's device list: %s", error)
+            # Only signing in again helps when Google rejects the master token.
+            # Other errors say nothing about it, so an earlier rejection stays.
+            if isinstance(error, AuthenticationError):
+                self.sign_in_error = error
+            # Keep the devices of an earlier fetch rather than drop them
+            return
+        self.sign_in_error = None
+        self.google_devices_fetched = True
+        known_devices = {device.device_id: device for device in self.google_devices}
+        self.google_devices = []
+        for google_device in google_devices:
+            device = GoogleHomeDevice(
+                device_id=google_device.device_id,
+                name=google_device.device_name,
+                auth_token=google_device.local_auth_token,
+                ip_address=google_device.ip_address,
+                hardware=google_device.hardware,
+                cloud_device_id=google_device.cloud_device_id,
+            )
+            # Keep a known device's alarms, timers and settings, so a device
+            # that doesn't answer this update doesn't lose them
+            if known_device := known_devices.get(device.device_id):
+                known_device.name = device.name
+                known_device.auth_token = device.auth_token
+                # mDNS can miss a device that it found before: keep its address
+                known_device.ip_address = device.ip_address or known_device.ip_address
+                known_device.hardware = device.hardware
+                known_device.cloud_device_id = device.cloud_device_id
+                device = known_device
+            self.google_devices.append(device)
+        # Known hosts are only asked when mDNS left a device without an address
+        if self.known_hosts and any(
+            not device.ip_address and device.cloud_device_id
+            for device in self.google_devices
+        ):
+            await self.async_use_known_hosts()
 
     async def async_fetch_devices_when_due(self) -> None:
         """Fetch Google's device list again when it may have changed.
@@ -276,6 +295,9 @@ class GlocaltokensApiClient:
     async def update_google_devices_information(self) -> list[GoogleHomeDevice]:
         """Retrieve devices from glocaltokens and fetches alarm/timer data from each of the device."""
 
+        # From here until the next update, whatever asks for Google's list gets it
+        # at most once: on schedule, when it's unknown, or for a rejected token
+        self._fetches_before_update = self._fetches
         await self.async_fetch_devices_when_due()
         devices = await self.get_google_devices()
 
@@ -546,21 +568,27 @@ class GlocaltokensApiClient:
         device: GoogleHomeDevice,
         data: JsonDict | None = None,
         polling: bool = False,
+        *,
+        retry: bool = True,
     ) -> JsonDict | None:
-        """Shared request method."""
+        """Shared request method.
+
+        If the device rejects its token, get a new one and send the request once
+        more. Only a rejection is retried: a request that timed out may have run.
+        """
 
         if device.ip_address is None:
             _LOGGER.warning("Device %s doesn't have an IP address!", device.name)
             return None
 
-        if device.auth_token is None:
+        if (token := device.auth_token) is None:
             _LOGGER.warning("Device %s doesn't have an auth token!", device.name)
             return None
 
         url = self.create_url(device.ip_address, PORT, endpoint)
 
         headers: dict[str, str] = {
-            HEADER_CAST_LOCAL_AUTH: device.auth_token,
+            HEADER_CAST_LOCAL_AUTH: token,
             HEADER_CONTENT_TYPE: "application/json",
         }
 
@@ -572,6 +600,7 @@ class GlocaltokensApiClient:
         )
 
         resp = None
+        rejected = False
 
         try:
             timeout = ClientTimeout(total=TIMEOUT)
@@ -585,27 +614,8 @@ class GlocaltokensApiClient:
                         resp = {}
                     device.available = True
                 elif response.status == HTTPStatus.UNAUTHORIZED:
-                    # If token is invalid - force reload homegraph providing new token
-                    # and rerun the task.
-                    if polling:
-                        _LOGGER.debug(
-                            (
-                                "Failed to fetch data from %s due to invalid token. "
-                                "Will refresh the token and try again."
-                            ),
-                            device.name,
-                        )
-                    else:
-                        _LOGGER.warning(
-                            "Failed to send the request to %s due to invalid token. "
-                            "Token will be refreshed, please try again later.",
-                            device.name,
-                        )
-                    # Fetch Google's list, with new tokens, at the next update. Keep
-                    # the devices meanwhile, so the fetch keeps their data, and the
-                    # others still update if Google can't be reached.
-                    self.google_devices_fetched = False
-                    device.available = False
+                    _LOGGER.debug("%s rejected its token", device.name)
+                    rejected = True
                 elif response.status == HTTPStatus.NOT_FOUND:
                     _LOGGER.debug(
                         (
@@ -649,4 +659,52 @@ class GlocaltokensApiClient:
             )
             device.available = False
 
-        return resp
+        if not rejected:
+            return resp
+        if retry and await self._async_get_new_token(device, token):
+            _LOGGER.debug(
+                "Sending the request to %s again with its new token", device.name
+            )
+            return await self.request(
+                method, endpoint, device, data, polling, retry=False
+            )
+        self._mark_token_rejected(device, polling=polling)
+        return None
+
+    def _mark_token_rejected(self, device: GoogleHomeDevice, *, polling: bool) -> None:
+        """Mark a device that rejected its token, with no new one to try."""
+        if polling:
+            _LOGGER.debug(
+                (
+                    "Failed to fetch data from %s due to invalid token. "
+                    "Will refresh the token and try again."
+                ),
+                device.name,
+            )
+        else:
+            _LOGGER.warning(
+                "Failed to send the request to %s due to invalid token. "
+                "Token will be refreshed, please try again later.",
+                device.name,
+            )
+        # Fetch Google's list, with new tokens, at the next update. Keep the devices
+        # meanwhile, so the fetch keeps their data, and the others still update if
+        # Google can't be reached.
+        self.google_devices_fetched = False
+        device.available = False
+
+    async def _async_get_new_token(
+        self, device: GoogleHomeDevice, rejected_token: str
+    ) -> bool:
+        """Return whether a device that rejected its token has a new one now.
+
+        If no fetch since the request was sent has brought one, fetch Google's list.
+        Only one fetch runs from one update to the next, so once it has, the device
+        waits for the next update.
+        """
+        if device.auth_token == rejected_token:
+            try:
+                await self._async_fetch_devices(self._fetches_before_update)
+            except RequestException:
+                _LOGGER.debug("Failed to fetch Google's device list", exc_info=True)
+        return device.auth_token != rejected_token
