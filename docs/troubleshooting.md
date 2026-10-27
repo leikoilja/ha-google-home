@@ -81,7 +81,7 @@ The integration adds the alarms sensor, timers sensor, Do Not Disturb switch and
 When the device answers, the integration adds the missing entities:
 
 - If the device sensor shows an IP address, this happens at the next update, unless the integration has found that the device has none of these features.
-- If the device sensor is unavailable, the integration doesn't know the device's IP address. It looks for the device again every 20 minutes, when it asks Google for your devices.
+- If the device sensor is unavailable, the integration doesn't know the device's IP address. If Home Assistant receives the device's mDNS announcements, the integration gets the address when the device announces itself, for example when it comes back online, and asks the device at the next update. Otherwise, it looks for the device when it next asks Google for your devices, normally at the first update 20 minutes after it last asked. It looks with mDNS and, if the device still has no address, at your [known hosts](installation.md#add-devices-on-another-network).
 
 If you don't want to wait, make sure the device is online, then reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. If that doesn't help, restart the Google Home device and then Home Assistant.
 

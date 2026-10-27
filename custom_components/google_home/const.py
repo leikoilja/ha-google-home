@@ -108,6 +108,18 @@ FETCH_DEVICES_INTERVAL: Final = 20 * 60  # sec
 # the next after two in a row, and so on, staying at the last. It's never longer than
 # the fetch interval, so a retry is never due later than the scheduled fetch would be.
 FETCH_RETRY_DELAYS: Final = (1 * 60, 2 * 60, 5 * 60, 10 * 60, FETCH_DEVICES_INTERVAL)
+# The mDNS service that Google Cast devices announce themselves with
+CAST_SERVICE_TYPE: Final = "_googlecast._tcp.local."
+# How long to wait for an mDNS lookup of a Cast device that isn't cached
+CAST_LOOKUP_TIMEOUT: Final = 3000  # ms
+# Fetch Google's device list this long after mDNS first finds a Cast device that the
+# list doesn't have, as the device may have just been added in the Google Home app.
+# Devices found meanwhile share the fetch, and a new device gets time to appear in the
+# list.
+FOUND_DEVICE_FETCH_DELAY: Final = 30  # sec
+# Fetch the list for devices that mDNS found at most this often, counted from the
+# start of the last such fetch. Other fetches don't count, and don't wait for it.
+FOUND_DEVICE_FETCH_GAP: Final = 5 * 60  # sec
 # A device's alarms must still answer "not found" this long after they first did
 # before its device info can show that it has none: a device that is starting
 # answers "not found" for a while. Also the least time between device info requests

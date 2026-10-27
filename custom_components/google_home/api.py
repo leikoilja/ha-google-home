@@ -42,6 +42,7 @@ from .exceptions import (
     AlarmsAndTimersNotFetched,
     InvalidMasterToken,
 )
+from .mdns import FoundDevices
 from .models import GoogleHomeDevice
 from .types import AlarmJsonDict, JsonDict, TimerJsonDict
 
@@ -138,6 +139,8 @@ class GlocaltokensApiClient:
         self.known_hosts = known_hosts or []
         # Setup fetches the list straight after creating the client
         self.next_scheduled_fetch = monotonic() + FETCH_DEVICES_INTERVAL
+        # The Cast devices that mDNS finds between fetches
+        self.found_devices = FoundDevices(self)
         # Google's list is fetched one at a time, and at most once per update:
         # fetches that ended, and how many had ended when the current update started
         self._fetch_lock = asyncio.Lock()
@@ -227,6 +230,7 @@ class GlocaltokensApiClient:
         # Whether this works or not, the next scheduled fetch waits a full interval
         self.next_scheduled_fetch = started + FETCH_DEVICES_INTERVAL
         self._fetch_backoff.fetch_started(started)
+        fetched_for = self.found_devices.fetch_started()
 
         def _get_google_devices() -> list[Device]:
             return self._client.get_google_devices(
@@ -264,6 +268,14 @@ class GlocaltokensApiClient:
                 hardware=google_device.hardware,
                 cloud_device_id=google_device.cloud_device_id,
             )
+            # Prefer an address that mDNS reported while this fetch ran over the fetch's
+            # scan, and the scan over an earlier report.
+            # ponytail: report times aren't compared with when the scan read the
+            # cache, so a report during the fetch wins even if its address expired
+            # meanwhile, until the next report or fetch
+            found_device = self.found_devices.get(device.cloud_device_id)
+            if found_device and found_device.reported_at > started:
+                device.ip_address = found_device.address
             # Keep a known device's alarms, timers and settings, so a device
             # that doesn't answer this update doesn't lose them
             if known_device := known_devices.get(device.device_id):
@@ -278,7 +290,11 @@ class GlocaltokensApiClient:
                 device.alarms_unsupported = (
                     device.device_id in self.unsupported_device_ids
                 )
+                # The scan missed a device that mDNS reported before it was listed
+                if not device.ip_address and found_device:
+                    device.ip_address = found_device.address
             self.google_devices.append(device)
+        self.found_devices.fetch_worked(fetched_for)
         # Known hosts are only asked when mDNS left a device without an address
         if self.known_hosts and any(
             not device.ip_address and device.cloud_device_id
@@ -291,13 +307,21 @@ class GlocaltokensApiClient:
 
         Every 20 minutes, however often the devices are updated, to find devices
         added in or removed from the Google Home app, and the address of a device
-        that was offline at setup.
+        that was offline at setup. Also soon after mDNS finds a Cast device that the
+        list doesn't have.
         """
         # Until the list is known, updates fetch it anyway, as often as the backoff
         # after failed fetches allows
-        if not self.google_devices_fetched or monotonic() < self.next_scheduled_fetch:
+        if not self.google_devices_fetched:
             return
-        _LOGGER.debug("Fetching Google's device list again")
+        now = monotonic()
+        if now >= self.next_scheduled_fetch:
+            _LOGGER.debug("Fetching Google's device list again")
+        elif (due := self.found_devices.fetch_due()) is not None and now >= due:
+            _LOGGER.debug("Fetching Google's device list for devices that mDNS found")
+            self.found_devices.last_fetch = now
+        else:
+            return
         try:
             await self.get_google_devices(refetch=True)
         except RequestException:
