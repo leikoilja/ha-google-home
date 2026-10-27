@@ -109,7 +109,7 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Change the update interval. Increase this if your devices do not respond in time. Default: 180 (seconds)",
+          "update_interval": "Change the update interval. Increase this if your devices do not respond in time. Default: {default_interval} (seconds)",
           "known_hosts": "Known hosts"
         },
         "data_description": {

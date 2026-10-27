@@ -58,7 +58,7 @@ The form for signing in again shows the same errors as setup; see [Setup fails](
 
 Google reports that you signed in to another account than the one the integration uses, so Home Assistant didn't change anything. To sign in with the original account:
 
-- If the integration is still running, you don't need to reload it. Home Assistant asks you to sign in again by itself when the integration next updates your devices, every 180 seconds by default. Then select **Reconfigure** and [sign in again](installation.md#sign-in-again).
+- If the integration is still running, you don't need to reload it. Home Assistant asks you to sign in again by itself when the integration next updates your devices, every 15 seconds by default. Then select **Reconfigure** and [sign in again](installation.md#sign-in-again).
 - If the integration isn't running, for example when Home Assistant restarted and shows **Failed to set up** for it, reload it: go to **Settings** > **Devices & services** > **Google Home**, open the **⋮** menu and select **Reload**. Then select **Reconfigure** and sign in again.
 
 Reloading also works while the integration is running, but it stops the integration: its entities are unavailable until you sign in again.

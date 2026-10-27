@@ -109,7 +109,7 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Ubah interval pembaruan. Tingkatkan nilai ini jika perangkat Anda tidak merespons tepat waktu. Nilai default: 180 detik.",
+          "update_interval": "Ubah interval pembaruan. Tingkatkan nilai ini jika perangkat Anda tidak merespons tepat waktu. Nilai default: {default_interval} detik.",
           "known_hosts": "Host yang dikenal"
         },
         "data_description": {

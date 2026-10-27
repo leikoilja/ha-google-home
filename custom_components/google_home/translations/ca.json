@@ -109,7 +109,7 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Canvia l'interval d'actualització. Augmenta'l si els dispositius sovint no responen a temps. Valor per defecte: 180 (segons)",
+          "update_interval": "Canvia l'interval d'actualització. Augmenta'l si els dispositius sovint no responen a temps. Valor per defecte: {default_interval} (segons)",
           "known_hosts": "Amfitrions coneguts"
         },
         "data_description": {

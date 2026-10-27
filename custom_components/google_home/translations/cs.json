@@ -109,7 +109,7 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Změňte interval aktualizace. Pokud zařízení neodpovídají včas, zvyšte tuto hodnotu. Výchozí hodnota: 180 sekund.",
+          "update_interval": "Změňte interval aktualizace. Pokud zařízení neodpovídají včas, zvyšte tuto hodnotu. Výchozí hodnota: {default_interval} (sekund).",
           "known_hosts": "Známí hostitelé"
         },
         "data_description": {

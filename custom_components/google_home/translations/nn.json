@@ -109,7 +109,7 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Endre oppdateringsintervall. Du kan auke dette om einingane ofte får tidsavbrot. Standard: 180 (sekund)",
+          "update_interval": "Endre oppdateringsintervall. Du kan auke dette om einingane ofte får tidsavbrot. Standard: {default_interval} (sekund)",
           "known_hosts": "Kjende vertar"
         },
         "data_description": {

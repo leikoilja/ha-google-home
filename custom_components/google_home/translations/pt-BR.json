@@ -109,7 +109,7 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Altere o intervalo de atualização. Aumente-o se os dispositivos excederem o tempo limite com frequência. Padrão: 180 (segundos)",
+          "update_interval": "Altere o intervalo de atualização. Aumente-o se os dispositivos excederem o tempo limite com frequência. Padrão: {default_interval} (segundos)",
           "known_hosts": "Hosts conhecidos"
         },
         "data_description": {
