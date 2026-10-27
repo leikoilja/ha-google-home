@@ -85,6 +85,24 @@
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "次のデバイスから現在のアラームとタイマーを取得できなかったため、これらのデバイスからは何も削除されませんでした: {devices}。これらのデバイスがオンラインであることを確認し、しばらくしてからもう一度お試しください。"
+    },
+    "alarms_and_timers_not_deleted": {
+      "message": "{device} からアラームまたはタイマーの削除を確認する応答がなかったため、まだ設定されている可能性があります。デバイスがオンラインであることを確認し、しばらくしてからもう一度お試しください。"
+    },
+    "alarms_and_timers_not_deleted_from_devices": {
+      "message": "次のデバイスでアラームまたはタイマーを削除できなかったか、削除されたことを確認できませんでした: {devices}。これらのデバイスがオンラインであることを確認し、しばらくしてからもう一度お試しください。"
+    },
+    "invalid_alarm_id": {
+      "message": "「{alarm_id}」はアラーム ID ではありません。デバイスのアラームセンサーの alarms 属性から、alarm/ で始まる ID をコピーしてください。"
+    },
+    "invalid_timer_id": {
+      "message": "「{timer_id}」はタイマー ID ではありません。デバイスのタイマーセンサーの timers 属性から、timer/ で始まる ID をコピーしてください。"
+    },
+    "alarm_not_found": {
+      "message": "選択したデバイスでアラーム {alarm_id} が見つかりませんでした。すでに鳴ったか、削除された可能性があります。"
+    },
+    "timer_not_found": {
+      "message": "選択したデバイスでタイマー {timer_id} が見つかりませんでした。すでに終了したか、削除された可能性があります。"
     }
   },
   "options": {

@@ -85,6 +85,24 @@
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Nu s-au putut prelua alarmele și cronometrele curente de pe următoarele dispozitive, așa că nu s-a șters nimic de pe acestea: {devices}. Verifică dacă dispozitivele sunt online și încearcă din nou mai târziu."
+    },
+    "alarms_and_timers_not_deleted": {
+      "message": "Dispozitivul {device} nu a confirmat ștergerea alarmelor sau a cronometrelor, așa că acestea pot fi încă setate. Verifică dacă dispozitivul este online și încearcă din nou mai târziu."
+    },
+    "alarms_and_timers_not_deleted_from_devices": {
+      "message": "Nu s-au putut șterge alarmele sau cronometrele de pe următoarele dispozitive ori nu s-a putut confirma ștergerea lor: {devices}. Verifică dacă dispozitivele sunt online și încearcă din nou mai târziu."
+    },
+    "invalid_alarm_id": {
+      "message": "„{alarm_id}” nu este un ID de alarmă. Copiază ID-ul, care începe cu alarm/, din atributul alarms al senzorului de alarme al dispozitivului."
+    },
+    "invalid_timer_id": {
+      "message": "„{timer_id}” nu este un ID de cronometru. Copiază ID-ul, care începe cu timer/, din atributul timers al senzorului de cronometre al dispozitivului."
+    },
+    "alarm_not_found": {
+      "message": "Nu s-a găsit alarma {alarm_id} pe dispozitivele selectate. Este posibil să fi sunat deja sau să fi fost ștearsă."
+    },
+    "timer_not_found": {
+      "message": "Nu s-a găsit cronometrul {timer_id} pe dispozitivele selectate. Este posibil să se fi încheiat deja numărătoarea inversă sau să fi fost șters."
     }
   },
   "options": {

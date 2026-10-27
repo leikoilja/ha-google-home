@@ -85,6 +85,24 @@
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Impossibile recuperare le sveglie e i timer attualmente impostati sui seguenti dispositivi: {devices}. Non è stato quindi eliminato nulla da questi dispositivi. Verifica che siano online e riprova più tardi."
+    },
+    "alarms_and_timers_not_deleted": {
+      "message": "{device} non ha confermato l'eliminazione delle sveglie o dei timer, quindi potrebbero essere ancora impostati. Verifica che sia online e riprova più tardi."
+    },
+    "alarms_and_timers_not_deleted_from_devices": {
+      "message": "Impossibile eliminare le sveglie o i timer dai seguenti dispositivi, o confermarne l'eliminazione: {devices}. Verifica che siano online e riprova più tardi."
+    },
+    "invalid_alarm_id": {
+      "message": "«{alarm_id}» non è un ID di sveglia. Copia l'ID, che inizia con alarm/, dall'attributo alarms del sensore delle sveglie del dispositivo."
+    },
+    "invalid_timer_id": {
+      "message": "«{timer_id}» non è un ID di timer. Copia l'ID, che inizia con timer/, dall'attributo timers del sensore dei timer del dispositivo."
+    },
+    "alarm_not_found": {
+      "message": "Impossibile trovare la sveglia {alarm_id} sui dispositivi selezionati. Potrebbe essere già suonata o essere stata eliminata."
+    },
+    "timer_not_found": {
+      "message": "Impossibile trovare il timer {timer_id} sui dispositivi selezionati. Potrebbe essere già scaduto o essere stato eliminato."
     }
   },
   "options": {

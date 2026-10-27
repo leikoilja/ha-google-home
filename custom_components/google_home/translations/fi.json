@@ -85,6 +85,24 @@
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Seuraavien laitteiden nykyisiä herätyksiä ja ajastimia ei voitu hakea: {devices}. Näistä laitteista ei siksi poistettu mitään. Tarkista, että laitteet ovat verkossa, ja yritä myöhemmin uudelleen."
+    },
+    "alarms_and_timers_not_deleted": {
+      "message": "Laite {device} ei vahvistanut herätysten tai ajastimien poistamista, joten ne saattavat edelleen olla asetettuina. Tarkista, että laite on verkossa, ja yritä myöhemmin uudelleen."
+    },
+    "alarms_and_timers_not_deleted_from_devices": {
+      "message": "Seuraavista laitteista ei voitu poistaa herätyksiä tai ajastimia tai niiden poistamista ei voitu vahvistaa: {devices}. Tarkista, että laitteet ovat verkossa, ja yritä myöhemmin uudelleen."
+    },
+    "invalid_alarm_id": {
+      "message": "”{alarm_id}” ei ole herätyksen tunnus. Kopioi tunnus, joka alkaa merkkijonolla alarm/, laitteen herätysanturin alarms-attribuutista."
+    },
+    "invalid_timer_id": {
+      "message": "”{timer_id}” ei ole ajastimen tunnus. Kopioi tunnus, joka alkaa merkkijonolla timer/, laitteen ajastinanturin timers-attribuutista."
+    },
+    "alarm_not_found": {
+      "message": "Herätystä {alarm_id} ei löytynyt valituista laitteista. Se on ehkä jo soinut tai poistettu."
+    },
+    "timer_not_found": {
+      "message": "Ajastinta {timer_id} ei löytynyt valituista laitteista. Se on ehkä jo päättynyt tai poistettu."
     }
   },
   "options": {

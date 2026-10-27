@@ -85,6 +85,24 @@
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Kunne ikke hente gjeldende alarmer og timere fra disse enhetene, så ingenting ble slettet fra dem: {devices}. Kontroller at enhetene er på nett, og prøv igjen senere."
+    },
+    "alarms_and_timers_not_deleted": {
+      "message": "{device} bekreftet ikke sletting av alarmene eller timerne, så de kan fortsatt være stilt inn. Kontroller at enheten er på nett, og prøv igjen senere."
+    },
+    "alarms_and_timers_not_deleted_from_devices": {
+      "message": "Kunne ikke slette alarmer eller timere fra disse enhetene, eller bekrefte at de ble slettet: {devices}. Kontroller at enhetene er på nett, og prøv igjen senere."
+    },
+    "invalid_alarm_id": {
+      "message": "«{alarm_id}» er ikke en alarm-ID. Kopier ID-en, som begynner med alarm/, fra attributtet alarms på enhetens alarmsensor."
+    },
+    "invalid_timer_id": {
+      "message": "«{timer_id}» er ikke en timer-ID. Kopier ID-en, som begynner med timer/, fra attributtet timers på enhetens timersensor."
+    },
+    "alarm_not_found": {
+      "message": "Fant ikke alarmen {alarm_id} på de valgte enhetene. Den kan allerede ha ringt eller blitt slettet."
+    },
+    "timer_not_found": {
+      "message": "Fant ikke timeren {timer_id} på de valgte enhetene. Den kan allerede ha utløpt eller blitt slettet."
     }
   },
   "options": {

@@ -85,6 +85,24 @@
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Nie udało się pobrać aktualnych alarmów i timerów z tych urządzeń, więc nic z nich nie usunięto: {devices}. Sprawdź, czy urządzenia są online, i spróbuj ponownie później."
+    },
+    "alarms_and_timers_not_deleted": {
+      "message": "Urządzenie {device} nie potwierdziło usunięcia alarmów lub timerów, więc mogą one nadal być ustawione. Sprawdź, czy urządzenie jest online, i spróbuj ponownie później."
+    },
+    "alarms_and_timers_not_deleted_from_devices": {
+      "message": "Nie udało się usunąć alarmów lub timerów z tych urządzeń albo potwierdzić ich usunięcia: {devices}. Sprawdź, czy urządzenia są online, i spróbuj ponownie później."
+    },
+    "invalid_alarm_id": {
+      "message": "„{alarm_id}” nie jest identyfikatorem alarmu. Skopiuj identyfikator zaczynający się od alarm/ z atrybutu alarms czujnika alarmów urządzenia."
+    },
+    "invalid_timer_id": {
+      "message": "„{timer_id}” nie jest identyfikatorem timera. Skopiuj identyfikator zaczynający się od timer/ z atrybutu timers czujnika timerów urządzenia."
+    },
+    "alarm_not_found": {
+      "message": "Nie znaleziono alarmu {alarm_id} na wybranych urządzeniach. Mógł już zadzwonić lub zostać usunięty."
+    },
+    "timer_not_found": {
+      "message": "Nie znaleziono timera {timer_id} na wybranych urządzeniach. Mógł już zakończyć odliczanie lub zostać usunięty."
     }
   },
   "options": {

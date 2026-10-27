@@ -85,6 +85,24 @@
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Não foi possível obter os alarmes e temporizadores atuais dos seguintes dispositivos, pelo que nada foi eliminado desses dispositivos: {devices}. Verifique se estão online e tente novamente mais tarde."
+    },
+    "alarms_and_timers_not_deleted": {
+      "message": "O dispositivo {device} não confirmou a eliminação dos alarmes ou temporizadores, pelo que poderão continuar definidos. Verifique se está online e tente novamente mais tarde."
+    },
+    "alarms_and_timers_not_deleted_from_devices": {
+      "message": "Não foi possível eliminar os alarmes ou temporizadores dos seguintes dispositivos, ou confirmar a sua eliminação: {devices}. Verifique se estão online e tente novamente mais tarde."
+    },
+    "invalid_alarm_id": {
+      "message": "«{alarm_id}» não é um ID de alarme. Copie o ID, que começa por alarm/, do atributo alarms do sensor de alarmes do dispositivo."
+    },
+    "invalid_timer_id": {
+      "message": "«{timer_id}» não é um ID de temporizador. Copie o ID, que começa por timer/, do atributo timers do sensor de temporizadores do dispositivo."
+    },
+    "alarm_not_found": {
+      "message": "Não foi possível encontrar o alarme {alarm_id} nos dispositivos selecionados. Pode já ter tocado ou ter sido eliminado."
+    },
+    "timer_not_found": {
+      "message": "Não foi possível encontrar o temporizador {timer_id} nos dispositivos selecionados. Pode já ter terminado ou ter sido eliminado."
     }
   },
   "options": {

@@ -85,6 +85,24 @@
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "No s'han pogut obtenir les alarmes i els temporitzadors actuals d'aquests dispositius, de manera que no se n'ha eliminat res: {devices}. Comprova que estiguin en línia i torna-ho a provar més tard."
+    },
+    "alarms_and_timers_not_deleted": {
+      "message": "{device} no ha confirmat l'eliminació de les alarmes o els temporitzadors, de manera que encara poden estar configurats. Comprova que estigui en línia i torna-ho a provar més tard."
+    },
+    "alarms_and_timers_not_deleted_from_devices": {
+      "message": "No s'han pogut eliminar les alarmes o els temporitzadors d'aquests dispositius, o confirmar que s'hagin eliminat: {devices}. Comprova que estiguin en línia i torna-ho a provar més tard."
+    },
+    "invalid_alarm_id": {
+      "message": "«{alarm_id}» no és un ID d'alarma. Copia l'ID, que comença per alarm/, de l'atribut alarms del sensor d'alarmes del dispositiu."
+    },
+    "invalid_timer_id": {
+      "message": "«{timer_id}» no és un ID de temporitzador. Copia l'ID, que comença per timer/, de l'atribut timers del sensor de temporitzadors del dispositiu."
+    },
+    "alarm_not_found": {
+      "message": "No s'ha pogut trobar l'alarma {alarm_id} als dispositius seleccionats. Pot ser que ja hagi sonat o s'hagi eliminat."
+    },
+    "timer_not_found": {
+      "message": "No s'ha pogut trobar el temporitzador {timer_id} als dispositius seleccionats. Pot ser que ja hagi acabat o s'hagi eliminat."
     }
   },
   "options": {

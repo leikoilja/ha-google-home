@@ -85,6 +85,24 @@
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Klarte ikkje å hente gjeldande alarmar og tidtakarar frå desse einingane, så ingenting vart sletta frå dei: {devices}. Kontroller at einingane er på nett, og prøv igjen seinare."
+    },
+    "alarms_and_timers_not_deleted": {
+      "message": "{device} stadfesta ikkje sletting av alarmane eller tidtakarane, så dei kan framleis vere stilte inn. Kontroller at eininga er på nett, og prøv igjen seinare."
+    },
+    "alarms_and_timers_not_deleted_from_devices": {
+      "message": "Klarte ikkje å slette alarmar eller tidtakarar frå desse einingane, eller stadfeste at dei vart sletta: {devices}. Kontroller at einingane er på nett, og prøv igjen seinare."
+    },
+    "invalid_alarm_id": {
+      "message": "«{alarm_id}» er ikkje ein alarm-ID. Kopier ID-en, som byrjar med alarm/, frå attributtet alarms på alarmsensoren til eininga."
+    },
+    "invalid_timer_id": {
+      "message": "«{timer_id}» er ikkje ein tidtakar-ID. Kopier ID-en, som byrjar med timer/, frå attributtet timers på tidtakarsensoren til eininga."
+    },
+    "alarm_not_found": {
+      "message": "Fann ikkje alarmen {alarm_id} på dei valde einingane. Han kan allereie ha ringt eller vorte sletta."
+    },
+    "timer_not_found": {
+      "message": "Fann ikkje tidtakaren {timer_id} på dei valde einingane. Han kan allereie ha gått ut eller vorte sletta."
     }
   },
   "options": {
