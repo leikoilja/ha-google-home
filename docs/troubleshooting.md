@@ -77,6 +77,8 @@ If you signed in with a Google Workspace account, such as many work and school a
 
 The Google account you signed in with must be a member of the home your devices belong to. Open the Google Home app with that account and check that the devices are listed. If not, [invite the account](https://support.google.com/googlenest/answer/9155535) to your home and reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**.
 
+If Google didn't give the integration your devices when it started, for example because Google was busy, the integration starts without devices, and the log shows `Failed to fetch Google's device list` with Google's reason. The integration asks Google again until it gets your devices. The minimum retry delay grows from 1 minute to 20 minutes; the first [update](installation.md#change-the-update-interval) after the delay makes the attempt, so actual gaps can be longer. To ask Google straight away, reload the integration.
+
 ### No alarms or timers sensors
 
 The integration adds the alarms sensor, timers sensor, Do Not Disturb switch and alarm volume for a device once the device answers. Until then, a device that is offline, or that doesn't support these features, has only a device sensor and a reboot button.
@@ -126,6 +128,14 @@ The integration finds your devices on your network with multicast DNS (mDNS) and
 If mDNS can't reach your devices but Home Assistant can reach them on TCP port 8443, add their IP addresses as [known hosts](installation.md#add-devices-on-another-network) instead.
 
 If only some devices show the message, those devices are offline or don't support this integration.
+
+## A device stops updating
+
+If a device's alarms, timers and settings stop changing in Home Assistant while its entities stay available, check the `available` attribute of its [device sensor](entities.md#device-sensor). If it's `false` while the device is on, the [debug log](#collect-debug-logs) shows why. A line such as `Kitchen rejected its token` means that the device refuses the token the integration has for it.
+
+A device's token can change, for example when the device restarts. The integration then gets the new token from Google straight away. If Google can't give it, the device's entities keep the values they had, and the integration asks Google again until it can. The minimum retry delay grows from 1 minute to 20 minutes; the first [update](installation.md#change-the-update-interval) after the delay makes the attempt, so actual gaps can be longer. While Google can't be reached at all, each update that asks Google fails, which makes every entity of the integration unavailable until the next update.
+
+Check that Home Assistant is connected to the internet; see ["Couldn't reach Google"](#couldnt-reach-google). To ask Google straight away, reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**.
 
 ## Still stuck
 

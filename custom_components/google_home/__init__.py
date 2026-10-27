@@ -102,7 +102,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -
         config_entry=entry,
     )
 
-    await coordinator.async_config_entry_first_refresh()
+    glocaltokens_client.setting_up = True
+    try:
+        await coordinator.async_config_entry_first_refresh()
+    finally:
+        glocaltokens_client.setting_up = False
 
     hass.data[DOMAIN][entry.entry_id] = {
         DATA_CLIENT: glocaltokens_client,

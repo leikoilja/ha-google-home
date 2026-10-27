@@ -1,9 +1,13 @@
 """Tests for fetching Google's device list again after setup."""
 
 import asyncio
-from collections.abc import Callable
+from collections.abc import AsyncIterator, Callable
+import contextlib
 from http import HTTPStatus
-from unittest.mock import AsyncMock, MagicMock, Mock, call
+import logging
+from pathlib import Path
+from types import MappingProxyType
+from unittest.mock import AsyncMock, MagicMock, Mock, call, patch
 
 from glocaltokens.client import Device
 from glocaltokens.exceptions import AuthenticationError, HomegraphError
@@ -15,10 +19,13 @@ from requests.exceptions import ConnectionError as RequestsConnectionError, HTTP
 
 from custom_components.google_home import (
     async_remove_config_entry_device,
+    async_setup_entry,
     async_update_devices,
 )
 from custom_components.google_home.api import GlocaltokensApiClient
 from custom_components.google_home.const import (
+    CONF_ANDROID_ID,
+    CONF_MASTER_TOKEN,
     DATA_CLIENT,
     DATA_COORDINATOR,
     DOMAIN,
@@ -31,10 +38,17 @@ from custom_components.google_home.sensor import (
     GoogleHomeDeviceSensor,
     GoogleHomeTimersSensor,
 )
+from custom_components.google_home.types import GoogleHomeConfigEntry
 
 # ruff sorts homeassistant as first-party, pylint as third-party
-# pylint: disable-next=wrong-import-order
+# pylint: disable=wrong-import-order
+from homeassistant.config_entries import SOURCE_USER, ConfigEntry, ConfigEntryState
+from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed
+
+from .test_entity import home_assistant
+
+# pylint: enable=wrong-import-order
 
 # A realistic master token: setup checks its length with is_aas_et()
 MASTER_TOKEN = "aas_et/" + "x" * 216
@@ -75,6 +89,22 @@ NOT_REJECTED = [error for error in FETCH_ERRORS if error.id != "token-rejected"]
 def rejected() -> AuthenticationError:
     """Return what glocaltokens raises when Google rejects the master token."""
     return AuthenticationError("Google gave no access token", "BadAuthentication")
+
+
+# What the integration logs when Google rejects the master token
+REJECTED_LOG = (
+    "Failed to fetch Google's device list: Google gave no access token: "
+    "BadAuthentication"
+)
+
+
+def logged(caplog: pytest.LogCaptureFixture) -> list[tuple[str, str]]:
+    """Return the level and message of each line the integration logged."""
+    return [
+        (record.levelname, record.getMessage())
+        for record in caplog.records
+        if record.name == "custom_components.google_home"
+    ]
 
 
 def found(
@@ -304,13 +334,40 @@ def answering(status: HTTPStatus) -> Mock:
     return Mock(request=Mock(return_value=response))
 
 
-@pytest.mark.parametrize("error", FETCH_ERRORS)
-def test_fetch_on_every_update_after_token_rejected(
+def fetch_times(
+    client: GlocaltokensApiClient, glocaltokens: Mock, clock: Mock, start: int
+) -> list[int]:
+    """Update every 15 seconds for an hour from start, asking the devices, and return when Google's list was fetched.
+
+    An update that fetches the list fails when Google can't be reached.
+    """
+    fetched_at: list[int] = []
+    for seconds in range(start, start + HOUR + 1, 15):
+        clock.return_value = seconds
+        fetches = glocaltokens.get_google_devices.call_count
+        with contextlib.suppress(RequestsConnectionError):
+            asyncio.run(client.update_google_devices_information())
+        if glocaltokens.get_google_devices.call_count > fetches:
+            fetched_at.append(seconds)
+    return fetched_at
+
+
+# When Google's list is fetched while it is unknown and every fetch fails, in minutes
+# after the first failure: 1, 2, 5, 10, 20 and 20 minutes apart. Written out, not
+# taken from the constants, so the test also catches a change to them.
+RETRY_MINUTES = (0, 1, 3, 8, 18, 38, 58)
+
+
+@pytest.mark.parametrize("error", [*FETCH_ERRORS, UNREACHABLE])
+def test_fetch_less_often_while_list_unknown_after_token_rejected(
     clock: Mock, error: Exception
 ) -> None:
-    """Fetch Google's list once on every update after a device rejects even its new token, until it works.
+    """Wait longer and longer between fetches of Google's list while it is unknown and can't be fetched.
 
-    Until then, the list is unknown, so no device can be deleted.
+    After a device rejects even its new token, the list is unknown. Each update
+    would otherwise fetch it while Google fails: at its start, and again when the
+    device rejects its token, which the device does on every update until Google
+    gives it a new one. Until a fetch works, no device can be deleted.
     """
     client, glocaltokens = make_client(
         "10.0.0.2", session=answering(HTTPStatus.UNAUTHORIZED)
@@ -319,19 +376,31 @@ def test_fetch_on_every_update_after_token_rejected(
     asyncio.run(client.update_alarms_and_timers(kitchen))
     # The rejection fetched the list straight away
     assert glocaltokens.get_google_devices.call_count == 1
-    assert not can_delete(client, [kitchen], "removed")
+    assert not client.google_devices_fetched
 
     glocaltokens.get_google_devices.side_effect = error
-    # Just when the scheduled fetch is due, which mustn't make it fetch twice
-    clock.return_value = FETCH_DEVICES_INTERVAL
-    # Keep the devices, which may still accept their tokens, until Google answers
-    assert update(client) == [kitchen]
-    assert fetches_in(client, glocaltokens, 2) == 4
+
+    assert fetch_times(client, glocaltokens, clock, 15) == [
+        15 + minutes * MINUTE for minutes in RETRY_MINUTES
+    ]
     assert not can_delete(client, [kitchen], "removed")
 
-    glocaltokens.get_google_devices.side_effect = None
-    assert fetches_in(client, glocaltokens, 3) == 5
-    assert can_delete(client, client.google_devices, "removed")
+
+@pytest.mark.parametrize("error", NOT_REJECTED)
+def test_fetch_less_often_after_setup_without_devices(
+    clock: Mock, error: Exception
+) -> None:
+    """Wait longer and longer between fetches of Google's list after setup couldn't fetch it.
+
+    Setup then goes on without devices, and the list is unknown until a fetch works.
+    """
+    client, glocaltokens = make_client()
+    client.google_devices_fetched = False
+    glocaltokens.get_google_devices.side_effect = error
+
+    assert fetch_times(client, glocaltokens, clock, 0) == [
+        minutes * MINUTE for minutes in RETRY_MINUTES
+    ]
 
 
 def test_unreachable_at_setup() -> None:
@@ -379,10 +448,119 @@ def test_sign_in_rejected_at_setup() -> None:
     entry.async_start_reauth.assert_not_called()
 
 
-def test_sign_in_rejected_with_devices(clock: Mock) -> None:
-    """Ask to sign in again when Google rejects the master token, and keep updating the devices.
+@contextlib.asynccontextmanager
+async def set_up(
+    tmp_path: Path, google: Mock
+) -> AsyncIterator[tuple[HomeAssistant, GoogleHomeConfigEntry]]:
+    """Set up the integration as Home Assistant does, with google as glocaltokens' fetch of the list.
 
-    Devices may still accept the local tokens they got earlier.
+    Raise what setup raises, or yield Home Assistant and the entry. Home Assistant's
+    first update of the devices is real; loading the platforms is left out.
+    """
+    async with home_assistant(tmp_path) as (hass, _):
+        entry: GoogleHomeConfigEntry = ConfigEntry(
+            data={CONF_MASTER_TOKEN: MASTER_TOKEN, CONF_ANDROID_ID: "android-id"},
+            discovery_keys=MappingProxyType({}),
+            domain=DOMAIN,
+            minor_version=2,
+            options={},
+            source=SOURCE_USER,
+            subentries_data=None,
+            title="test@example.com",
+            unique_id=None,
+            version=1,
+            # The first update checks that it runs during setup
+            state=ConfigEntryState.SETUP_IN_PROGRESS,
+        )
+        with (
+            patch("custom_components.google_home.zeroconf.async_get_instance"),
+            patch("custom_components.google_home.async_get_clientsession"),
+            patch.object(hass.config_entries, "async_forward_entry_setups"),
+            patch(
+                "glocaltokens.client.GLocalAuthenticationTokens.get_google_devices",
+                google,
+            ),
+        ):
+            await async_setup_entry(hass, entry)
+            yield hass, entry
+
+
+def test_setup_leaves_rejected_master_token_to_home_assistant(
+    tmp_path: Path, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Fail setup with Google's reason when it rejects the master token, and log it only for debugging.
+
+    Home Assistant logs why setup fails as a warning, with that reason, so an error
+    from the integration would say the same thing twice.
+    """
+    caplog.set_level(logging.DEBUG, logger="custom_components.google_home")
+
+    async def run() -> None:
+        async with set_up(tmp_path, Mock(side_effect=rejected())):
+            pass
+
+    with pytest.raises(ConfigEntryAuthFailed) as err:
+        asyncio.run(run())
+
+    # What Home Assistant logs after "could not authenticate: "
+    assert str(err.value) == "Google gave no access token: BadAuthentication"
+    lines = logged(caplog)
+    assert ("DEBUG", REJECTED_LOG) in lines
+    assert [line for line in lines if line[0] not in {"DEBUG", "INFO"}] == []
+
+
+@pytest.mark.parametrize("error", NOT_REJECTED)
+def test_setup_logs_other_fetch_errors(
+    tmp_path: Path, caplog: pytest.LogCaptureFixture, error: Exception
+) -> None:
+    """Log why Google's list can't be fetched at setup for another reason, as setup goes on without devices.
+
+    Home Assistant logs nothing then.
+    """
+
+    async def run() -> None:
+        async with set_up(tmp_path, Mock(side_effect=error)):
+            pass
+
+    asyncio.run(run())
+
+    assert ("ERROR", f"Failed to fetch Google's device list: {error}") in logged(caplog)
+
+
+def test_log_sign_in_rejected_after_setup(
+    clock: Mock, tmp_path: Path, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Log why Google rejects the master token once setup is done.
+
+    Only setup leaves that to Home Assistant: later it asks to sign in again
+    without saying why.
+    """
+    # A device without an address, which no update asks
+    google = Mock(return_value=[found("device0", None)])
+
+    async def run() -> None:
+        async with set_up(tmp_path, google) as (hass, entry):
+            client: GlocaltokensApiClient = hass.data[DOMAIN][entry.entry_id][
+                DATA_CLIENT
+            ]
+            google.side_effect = rejected()
+            # The scheduled fetch is due
+            clock.return_value = FETCH_DEVICES_INTERVAL
+            await client.update_google_devices_information()
+
+    asyncio.run(run())
+
+    assert google.call_count == 2
+    assert ("ERROR", REJECTED_LOG) in logged(caplog)
+
+
+def test_sign_in_rejected_with_devices(
+    clock: Mock, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Ask to sign in again when Google rejects the master token, log why, and keep updating the devices.
+
+    Devices may still accept the local tokens they got earlier. Home Assistant
+    doesn't log why it asks to sign in, so the integration does.
     """
     client, glocaltokens = make_client("10.0.0.2", None)
     devices = list(client.google_devices)
@@ -394,6 +572,31 @@ def test_sign_in_rejected_with_devices(clock: Mock) -> None:
 
     assert glocaltokens.get_google_devices.call_count == 1
     entry.async_start_reauth.assert_called_once_with(HASS)
+    assert ("ERROR", REJECTED_LOG) in logged(caplog)
+
+
+def test_log_sign_in_rejected_after_failed_update(
+    clock: Mock, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Log why Google rejects the master token after setup, even without devices.
+
+    The update then fails, but after an update that failed because Google couldn't
+    be reached, Home Assistant doesn't log that it failed again, so the integration
+    does, with Google's reason.
+    """
+    client, glocaltokens = make_client()
+    client.google_devices_fetched = False
+    entry = Mock()
+    glocaltokens.get_google_devices.side_effect = RequestsConnectionError
+    with pytest.raises(RequestsConnectionError):
+        update_entry(client, entry)
+
+    glocaltokens.get_google_devices.side_effect = rejected()
+    clock.return_value = MINUTE
+    with pytest.raises(ConfigEntryAuthFailed):
+        update_entry(client, entry)
+
+    assert ("ERROR", REJECTED_LOG) in logged(caplog)
 
 
 @pytest.mark.parametrize("ip_addresses", [("10.0.0.2",), ()])
@@ -414,8 +617,10 @@ def test_other_fetch_errors_dont_ask_to_sign_in(
 
 
 @pytest.mark.parametrize("error", NOT_REJECTED)
-def test_other_fetch_errors_at_setup_dont_ask_to_sign_in(error: Exception) -> None:
-    """Set up without devices when Google's list can't be fetched for another reason."""
+def test_other_fetch_errors_at_setup_dont_ask_to_sign_in(
+    error: Exception, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Set up without devices when Google's list can't be fetched for another reason, and log why."""
     client, glocaltokens = make_client()
     client.google_devices_fetched = False
     glocaltokens.get_google_devices.side_effect = error
@@ -424,6 +629,7 @@ def test_other_fetch_errors_at_setup_dont_ask_to_sign_in(error: Exception) -> No
     assert update_entry(client, entry) == []
 
     entry.async_start_reauth.assert_not_called()
+    assert ("ERROR", f"Failed to fetch Google's device list: {error}") in logged(caplog)
 
 
 def test_ask_to_sign_in_until_fetch_works(clock: Mock) -> None:
@@ -464,9 +670,10 @@ def test_ask_to_sign_in_until_fetch_works(clock: Mock) -> None:
 def test_ask_to_sign_in_after_failed_update(clock: Mock) -> None:
     """Ask to sign in again on the update after one that fails.
 
-    After a device rejects its token, every update fetches Google's list, and an
-    update fails when Google can't be reached. Google's earlier rejection still
-    stands, so the next update that works asks to sign in again.
+    After a device rejects its token, updates fetch Google's list until it works,
+    and an update that fetches it fails when Google can't be reached. Google's
+    earlier rejection still stands, so the next update that works asks to sign in
+    again.
     """
     client, glocaltokens = make_client(
         "10.0.0.2", session=answering(HTTPStatus.UNAUTHORIZED)
@@ -479,11 +686,14 @@ def test_ask_to_sign_in_after_failed_update(clock: Mock) -> None:
     asyncio.run(client.update_alarms_and_timers(kitchen))
     entry.async_start_reauth.reset_mock()
 
+    # Once the wait after the failed fetch has passed
+    clock.return_value = FETCH_DEVICES_INTERVAL + MINUTE
     glocaltokens.get_google_devices.side_effect = RequestsConnectionError
     with pytest.raises(RequestsConnectionError):
         update_entry(client, entry)
     entry.async_start_reauth.assert_not_called()
 
+    clock.return_value = FETCH_DEVICES_INTERVAL + 3 * MINUTE
     glocaltokens.get_google_devices.side_effect = answered(
         HTTPStatus.SERVICE_UNAVAILABLE
     )

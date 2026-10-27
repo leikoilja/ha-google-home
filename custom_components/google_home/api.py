@@ -26,6 +26,7 @@ from .const import (
     API_ENDPOINT_EUREKA_INFO,
     API_ENDPOINT_REBOOT,
     FETCH_DEVICES_INTERVAL,
+    FETCH_RETRY_DELAYS,
     HEADER_CAST_LOCAL_AUTH,
     HEADER_CONTENT_TYPE,
     JSON_ALARM,
@@ -64,6 +65,36 @@ def lacks_assistant(info: dict[str, object] | None) -> bool:
     return capabilities.get("assistant_supported", False) is False
 
 
+class FetchBackoff:
+    """When Google's device list may be fetched again after fetches fail.
+
+    Each fetch counts as failed from its start until Google answers. After a failure,
+    the next fetch waits at least the next of FETCH_RETRY_DELAYS from that start, longer
+    for each failure in a row, and a fetch that works starts over. Times are monotonic
+    seconds.
+    """
+
+    def __init__(self) -> None:
+        """Start with no failures."""
+        self._failures = 0
+        self._retry_at = 0.0
+
+    def fetch_started(self, now: float) -> None:
+        """Count a fetch that starts now as failed, until fetch_worked() says otherwise."""
+        delay = FETCH_RETRY_DELAYS[min(self._failures, len(FETCH_RETRY_DELAYS) - 1)]
+        self._retry_at = now + delay
+        self._failures += 1
+
+    def fetch_worked(self) -> None:
+        """Forget the failures once Google answers."""
+        self._failures = 0
+        self._retry_at = 0.0
+
+    def waiting(self, now: float) -> bool:
+        """Return whether it's too soon after a failed fetch to fetch again."""
+        return now < self._retry_at
+
+
 class GlocaltokensApiClient:
     """API client."""
 
@@ -100,6 +131,9 @@ class GlocaltokensApiClient:
         self.google_devices_fetched = False
         # Why Google last rejected the master token, until a fetch succeeds
         self.sign_in_error: AuthenticationError | None = None
+        # Whether setup's first update is running. If Google rejects the master token
+        # then, setup fails with Google's reason, which Home Assistant logs.
+        self.setting_up = False
         self.zeroconf_instance = zeroconf_instance
         self.known_hosts = known_hosts or []
         # Setup fetches the list straight after creating the client
@@ -109,6 +143,8 @@ class GlocaltokensApiClient:
         self._fetch_lock = asyncio.Lock()
         self._fetches = 0
         self._fetches_before_update = 0
+        # While the list is unknown, a fetch after a failed one waits a while
+        self._fetch_backoff = FetchBackoff()
         # Devices found to have no alarms, timers and settings. They aren't asked
         # again until the integration is loaded again, even if Google's list drops
         # them and later lists them again.
@@ -167,10 +203,18 @@ class GlocaltokensApiClient:
         """Fetch Google's device list, unless a fetch has ended since there were `fetches`.
 
         A caller that waits while another fetch runs uses that fetch's devices and
-        tokens rather than asking Google again.
+        tokens rather than asking Google again. While the list is unknown, nothing
+        fetches it until the backoff after a failed fetch has passed: neither the
+        update nor a device that rejects its token. With a known list, a rejected
+        token still gets a fetch straight away.
         """
         async with self._fetch_lock:
             if self._fetches != fetches:
+                return
+            if not self.google_devices_fetched and self._fetch_backoff.waiting(
+                monotonic()
+            ):
+                _LOGGER.debug("Waiting to fetch Google's device list after it failed")
                 return
             try:
                 await self._async_get_devices_from_google()
@@ -179,8 +223,10 @@ class GlocaltokensApiClient:
 
     async def _async_get_devices_from_google(self) -> None:
         """Ask Google for the device list, and update the devices from it."""
+        started = monotonic()
         # Whether this works or not, the next scheduled fetch waits a full interval
-        self.next_scheduled_fetch = monotonic() + FETCH_DEVICES_INTERVAL
+        self.next_scheduled_fetch = started + FETCH_DEVICES_INTERVAL
+        self._fetch_backoff.fetch_started(started)
 
         def _get_google_devices() -> list[Device]:
             return self._client.get_google_devices(
@@ -193,13 +239,18 @@ class GlocaltokensApiClient:
         # Google rejected the master token, gave no home graph, or answered with
         # a 5xx or 429, which glocaltokens raises as HTTPError
         except (GLocalTokensError, HTTPError) as error:
-            _LOGGER.error("Failed to fetch Google's device list: %s", error)
+            log = _LOGGER.error
             # Only signing in again helps when Google rejects the master token.
             # Other errors say nothing about it, so an earlier rejection stays.
             if isinstance(error, AuthenticationError):
                 self.sign_in_error = error
+                # Setup then fails with Google's reason, which Home Assistant logs
+                if self.setting_up:
+                    log = _LOGGER.debug
+            log("Failed to fetch Google's device list: %s", error)
             # Keep the devices of an earlier fetch rather than drop them
             return
+        self._fetch_backoff.fetch_worked()
         self.sign_in_error = None
         self.google_devices_fetched = True
         known_devices = {device.device_id: device for device in self.google_devices}
@@ -242,7 +293,8 @@ class GlocaltokensApiClient:
         added in or removed from the Google Home app, and the address of a device
         that was offline at setup.
         """
-        # Until the list is known, every update fetches it anyway
+        # Until the list is known, updates fetch it anyway, as often as the backoff
+        # after failed fetches allows
         if not self.google_devices_fetched or monotonic() < self.next_scheduled_fetch:
             return
         _LOGGER.debug("Fetching Google's device list again")
@@ -820,7 +872,8 @@ class GlocaltokensApiClient:
                 "Token will be refreshed, please try again later.",
                 device.name,
             )
-        # Fetch Google's list, with new tokens, at the next update. Keep the devices
+        # Fetch Google's list, with new tokens, at the next update or, after a failed
+        # fetch, at the first update once the backoff has passed. Keep the devices
         # meanwhile, so the fetch keeps their data, and the others still update if
         # Google can't be reached.
         self.google_devices_fetched = False
@@ -833,7 +886,8 @@ class GlocaltokensApiClient:
 
         If no fetch since the request was sent has brought one, fetch Google's list.
         Only one fetch runs from one update to the next, so once it has, the device
-        waits for the next update.
+        waits for the next update. While the list is unknown, it also waits for the
+        backoff after a failed fetch.
         """
         if device.auth_token == rejected_token:
             try:
