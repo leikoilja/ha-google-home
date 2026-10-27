@@ -73,7 +73,7 @@ class GlocaltokensApiClient:
         self.google_devices: list[GoogleHomeDevice] = []
         # Whether google_devices is the list of the last successful fetch, which can
         # be empty. It isn't until a fetch succeeds, or once a device rejects its
-        # token.
+        # token and gets no new token that it accepts.
         self.google_devices_fetched = False
         # Why Google last rejected the master token, until a fetch succeeds
         self.sign_in_error: AuthenticationError | None = None
