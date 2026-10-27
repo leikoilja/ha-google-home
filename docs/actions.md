@@ -55,7 +55,7 @@ data:
   alarm_id: alarm/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51
 ```
 
-The action then runs on the device's alarms sensor only. If that sensor is hidden or disabled, nothing is deleted and nothing is logged. Name a hidden sensor directly instead, and enable a disabled one first. Naming another sensor of the device, such as `sensor.kitchen_timers`, fails with "Entity sensor.kitchen_timers does not support action google_home.delete_alarm." and nothing is deleted on any device, even if you also name the alarms sensor. An area, floor or label target asks every speaker it covers for its alarms, and sends the delete only to the speakers that have the alarm.
+The action then runs on the device's alarms sensor only. If that sensor is hidden or disabled, nothing is deleted and nothing is logged. Name a hidden sensor directly instead, and enable a disabled one first. Naming another sensor of the device, such as `sensor.kitchen_timers`, fails with "Entity sensor.kitchen_timers does not support action google_home.delete_alarm." and nothing is deleted on any device, even if you also name the alarms sensor. An area, floor or label target asks each speaker it covers for its alarms, except those whose alarms sensor is unavailable, and sends the delete only to the speakers that have the alarm.
 
 ## Delete timer
 
@@ -127,7 +127,7 @@ The four delete actions fail, rather than look successful, when an alarm or time
 - A device that doesn't confirm the delete, because it stops answering, refuses or sends an unexpected reply: "Kitchen didn't confirm deleting the alarms or timers, so they may still be set. Check that it's online and try again later". The device may still have deleted them. Unless `skip_refresh` is `true`, the action asks for an update of all devices, which shows what the device has once it answers.
 - If several devices fail, one error names them all. When none of them sent its current alarms and timers: "Couldn't get the current alarms and timers from these devices, so nothing was deleted from them: Bedroom, Kitchen. Check that they're online and try again later". Otherwise: "Couldn't delete alarms or timers from these devices, or confirm that they were deleted: Bedroom, Kitchen. Check that they're online and try again later".
 
-Delete alarm and Delete timer report that no device has the ID only when every device you target sent its current list. Retrying after a device didn't confirm can give that error if the alarm or timer is gone by then.
+Delete alarm and Delete timer report that no device has the ID when every device the action checks sends its current list without it. Home Assistant skips unavailable sensors, as described below, so a device it skipped may still have the alarm or timer. Retrying after a device didn't confirm can give that error if the alarm or timer is gone by then.
 
 The error stops your automation or script at this step. To run the next steps anyway, select **Continue on error** in the step's menu, or in YAML add `continue_on_error: true` to the step, next to `action:` rather than under `data:`:
 
@@ -140,7 +140,7 @@ The error stops your automation or script at this step. To run the next steps an
 
 This also covers an ID that no device has, or one in the wrong format. It doesn't cover configuration errors, such as a missing `alarm_id`, or one that is a list instead of text. See [Continuing when a step fails](https://www.home-assistant.io/docs/scripts/#continuing-on-error).
 
-Home Assistant runs these actions only on available sensors, and skips the others without an error. Every sensor of a device that Google no longer lists is unavailable, the alarms and timers sensors of a [device without alarms and timers](troubleshooting.md#devices-without-alarms-and-timers) are unavailable, and every sensor is unavailable after a failed update. If all the sensors you target are unavailable, nothing is deleted and the action doesn't fail. If you name an unavailable sensor directly, the log shows "Referenced entities sensor.kitchen_alarms are missing or not currently available".
+Home Assistant runs these actions only on available sensors, and skips the others without an error. Every sensor of a device that Google no longer lists is unavailable, the alarms and timers sensors of a [device without alarms and timers](troubleshooting.md#devices-without-alarms-and-timers) are unavailable, and every sensor is unavailable after a failed update. If all the sensors you target are unavailable, nothing is deleted and the action doesn't fail. An alarms or timers sensor that shows `unavailable` only because nothing is coming up is still available, and the actions run on it. If you name an unavailable sensor directly, the log shows "Referenced entities sensor.kitchen_alarms are missing or not currently available".
 
 ## Reboot device
 
