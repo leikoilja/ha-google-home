@@ -24,7 +24,7 @@ data:
 
 ## Setup fails
 
-Signing in again shows the same errors.
+When you [sign in again](installation.md#sign-in-again), the form shows these errors too.
 
 ### "Username or password is incorrect"
 
@@ -51,6 +51,8 @@ Home Assistant couldn't connect to Google, or Google didn't answer in time. Chec
 Google answered with a server error, or asked the integration to slow down. This doesn't mean that your cookie or master token is wrong. Wait a few minutes, then sign in again. With browser sign-in, get a new cookie, as the old one expires within minutes.
 
 ## Signing in again fails
+
+The form for signing in again shows the same errors as setup; see [Setup fails](#setup-fails).
 
 ### "You signed in to a different Google account"
 
