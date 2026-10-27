@@ -70,7 +70,7 @@
       "oauth-token-invalid": "Google súbor cookie neprijal. Získajte nový a hneď ho vložte: jeho platnosť vyprší o niekoľko minút a funguje len raz. Skopírujte celú hodnotu, ktorá sa začína oauth2_4/.",
       "master-token-invalid": "Google hlavný token neprijal. Skontrolujte, či ste ho skopírovali správne. Ak predtým fungoval, napríklad kým ste nezmenili heslo k účtu Google, Google ho už neprijíma: namiesto toho použite prihlásenie v prehliadači.",
       "google-rejected": "Google prihlásenie neprijal. Podrobnosti nájdete v protokoloch Home Assistant.",
-      "google-unreachable": "Nepodarilo sa pripojiť ku Google. Skontrolujte, či je Home Assistant pripojený k internetu, a skúste to znova.",
+      "google-unreachable": "Nepodarilo sa pripojiť ku Googlu. Skontrolujte, či je Home Assistant pripojený k internetu, a skúste to znova.",
       "google-busy": "Google je preťažený alebo obmedzuje prihlasovanie. Počkajte niekoľko minút a potom sa znova prihláste.",
       "oauth-token-format": "Toto nie je súbor cookie oauth_token. Jeho hodnota sa začína oauth2_4/.",
       "master-token-format": "Hlavný token sa začína aas_et/ a má 223 znakov. Skopírujte celý token."
