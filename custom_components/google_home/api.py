@@ -283,28 +283,37 @@ class GlocaltokensApiClient:
                 device.ip_address = known_host
 
     async def _async_get_device_info(self, host: str) -> dict[str, object] | None:
-        """Return what the device at this host reports about itself, if it answers."""
+        """Return what the device at this host reports about itself, if its answer is that.
+
+        Raise TimeoutError or ClientError if it doesn't answer.
+        """
         url = self.create_url(host, PORT, API_ENDPOINT_EUREKA_INFO)
-        try:
-            async with self._session.get(
-                url, timeout=ClientTimeout(total=TIMEOUT)
-            ) as response:
-                # A device that is starting can answer 404, and an error page
-                # isn't its info
-                if response.status != HTTPStatus.OK:
-                    _LOGGER.debug(
-                        "%s answered %d when asked for its info", host, response.status
-                    )
-                    return None
+        async with self._session.get(
+            url, timeout=ClientTimeout(total=TIMEOUT)
+        ) as response:
+            # A device that is starting can answer 404, and an error page
+            # isn't its info
+            if response.status != HTTPStatus.OK:
+                _LOGGER.debug(
+                    "%s answered %d when asked for its info", host, response.status
+                )
+                return None
+            try:
                 info = await response.json()
-        except ClientError, TimeoutError, ValueError:
-            _LOGGER.debug("%s didn't answer with its info", host, exc_info=True)
-            return None
+            # An answer that isn't JSON
+            except ContentTypeError, ValueError:
+                _LOGGER.debug("%s answered, but not with its info", host, exc_info=True)
+                return None
         return info if isinstance(info, dict) else None
 
     async def _async_get_cloud_device_id(self, host: str) -> str | None:
         """Return Google's ID of the device at a known host."""
-        if (info := await self._async_get_device_info(host)) is None:
+        try:
+            info = await self._async_get_device_info(host)
+        except ClientError, TimeoutError:
+            _LOGGER.debug("%s didn't answer with its info", host, exc_info=True)
+            return None
+        if info is None:
             return None
         device_info = info.get("device_info")
         cloud_device_id = (
@@ -381,7 +390,17 @@ class GlocaltokensApiClient:
         if device.alarms_unsupported:
             return device
         device = await self.update_alarms_and_timers(device)
-        if await self._async_find_alarms_unsupported(device):
+        try:
+            if await self._async_find_alarms_unsupported(device):
+                return device
+        except ClientError, TimeoutError:
+            _LOGGER.debug(
+                "%s didn't answer when asked for its info. Will check again in %d "
+                "minutes.",
+                device.name,
+                SUPPORT_CHECK_DELAY // 60,
+                exc_info=True,
+            )
             return device
         if (API_ENDPOINT_ALARMS, True) not in device.statuses:
             return device
@@ -398,6 +417,9 @@ class GlocaltokensApiClient:
         answers "not found" for a while. Then its info, in that same update, must
         list its features without Google Assistant. Only a 404 counts: a device
         that doesn't answer may be busy or offline.
+
+        Raise TimeoutError or ClientError if the device doesn't answer when asked
+        for its info.
         """
         now = monotonic()
         due = device.support_check_at is not None and now >= device.support_check_at
@@ -411,6 +433,9 @@ class GlocaltokensApiClient:
             return False
         if not due:
             return False
+        # Unless its info shows that it lacks Google Assistant, check again later,
+        # also when it doesn't answer
+        device.support_check_at = now + SUPPORT_CHECK_DELAY
         assert device.ip_address is not None
         info = await self._async_get_device_info(device.ip_address)
         if not lacks_assistant(info):
@@ -420,7 +445,6 @@ class GlocaltokensApiClient:
                 device.name,
                 SUPPORT_CHECK_DELAY // 60,
             )
-            device.support_check_at = now + SUPPORT_CHECK_DELAY
             return False
         _LOGGER.debug(
             (
@@ -712,7 +736,7 @@ class GlocaltokensApiClient:
             async with self._session.request(
                 method, url, json=data, headers=headers, timeout=timeout
             ) as response:
-                device.statuses[endpoint, polling] = response.status
+                status = response.status
                 if response.status == HTTPStatus.OK:
                     try:
                         resp = await response.json()
@@ -742,6 +766,9 @@ class GlocaltokensApiClient:
                         response,
                     )
                     device.available = False
+            # Only once the answer has been read: a 200 whose body times out or
+            # is cut off isn't an answer
+            device.statuses[endpoint, polling] = status
         except ClientConnectorError:
             logger_func = _LOGGER.debug if polling else _LOGGER.warning
             logger_func(

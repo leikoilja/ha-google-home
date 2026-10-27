@@ -79,6 +79,7 @@ def test_known_hosts_fill_in_missing_addresses() -> None:
             "10.0.1.5": ("Kitchen speaker", "aaaa"),
             "10.0.1.6": ("Office", "bbbb"),
             "10.0.1.7": ClientError("No route to host"),
+            "10.0.1.8": TimeoutError(),
         },
     )
 

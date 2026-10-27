@@ -5,7 +5,7 @@ from collections.abc import Awaitable, Callable
 from http import HTTPStatus
 from unittest.mock import Mock
 
-from aiohttp import ClientConnectorError, ClientTimeout
+from aiohttp import ClientConnectorError, ClientPayloadError, ClientTimeout
 from glocaltokens.client import Device
 import pytest
 
@@ -20,7 +20,9 @@ from .test_unsupported_devices import (
     ALARMS,
     DND,
     EVERYTHING,
+    INFO,
     NEW_TOKEN,
+    NO_ALARMS,
     OTHER,
     REBOOT,
     SPEAKER,
@@ -33,14 +35,17 @@ from .test_unsupported_devices import (
     setup,
 )
 
+# A device that doesn't answer: the request times out or can't connect, or the
+# answer stops coming after its status
+NO_ANSWER = [
+    pytest.param(TimeoutError(), id="timeout"),
+    pytest.param(ClientConnectorError(Mock(), OSError()), id="offline"),
+    pytest.param((HTTPStatus.OK, TimeoutError()), id="answer-timed-out"),
+    pytest.param((HTTPStatus.OK, ClientPayloadError("cut off")), id="answer-cut-off"),
+]
 
-@pytest.mark.parametrize(
-    "error",
-    [
-        pytest.param(TimeoutError(), id="timeout"),
-        pytest.param(ClientConnectorError(Mock(), OSError()), id="offline"),
-    ],
-)
+
+@pytest.mark.parametrize("error", NO_ANSWER)
 @pytest.mark.parametrize(
     ("unanswered", "asked"),
     [
@@ -49,7 +54,7 @@ from .test_unsupported_devices import (
     ],
 )
 def test_update_stops_asking_device_that_doesnt_answer(
-    clock: Mock, error: Exception, unanswered: str, asked: list[str]
+    clock: Mock, error: Reply, unanswered: str, asked: list[str]
 ) -> None:
     """Ask a device nothing more in an update once it doesn't answer, so it costs one timeout.
 
@@ -67,7 +72,10 @@ def test_update_stops_asking_device_that_doesnt_answer(
     assert network.asked(SPEAKER) == EVERYTHING
 
 
-def test_update_stops_asking_device_when_retry_doesnt_answer(clock: Mock) -> None:
+@pytest.mark.parametrize("error", NO_ANSWER)
+def test_update_stops_asking_device_when_retry_doesnt_answer(
+    clock: Mock, error: Reply
+) -> None:
     """Ask a device nothing more in an update when it doesn't answer with its new token either.
 
     It rejected its token, and Google gave it a new one in the same update.
@@ -77,7 +85,7 @@ def test_update_stops_asking_device_when_retry_doesnt_answer(clock: Mock) -> Non
     )
 
     def google_answers(**_: object) -> list[Device]:
-        network.replies[SPEAKER][ALARMS] = TimeoutError()
+        network.replies[SPEAKER][ALARMS] = error
         return [found("device0", SPEAKER, NEW_TOKEN)]
 
     glocaltokens.get_google_devices.side_effect = google_answers
@@ -85,6 +93,31 @@ def test_update_stops_asking_device_when_retry_doesnt_answer(clock: Mock) -> Non
 
     assert network.asked(SPEAKER) == [ALARMS, ALARMS]
     assert client.google_devices[0].auth_token == NEW_TOKEN
+
+
+@pytest.mark.parametrize("error", NO_ANSWER)
+def test_update_stops_asking_device_that_doesnt_answer_with_info(
+    clock: Mock, error: Reply
+) -> None:
+    """Ask a device nothing more in an update when it doesn't answer while it's checked for alarms.
+
+    Its alarms answered "not found" 10 minutes ago and again now, so its info is
+    asked. That says nothing either way, so later updates and actions ask the
+    device as usual.
+    """
+    client, _, network = setup(NO_ALARMS | {INFO: error})
+    poll(client, clock, at(0))
+    assert network.asked(SPEAKER) == EVERYTHING
+
+    poll(client, clock, at(10))
+    assert network.asked(SPEAKER) == [ALARMS, INFO]
+    [device] = client.google_devices
+    assert not device.alarms_unsupported
+
+    poll(client, clock, at(13))
+    assert network.asked(SPEAKER) == EVERYTHING
+    asyncio.run(client.reboot_google_device(device))
+    assert network.asked(SPEAKER) == [REBOOT]
 
 
 def test_device_has_5_seconds_to_answer(clock: Mock) -> None:
