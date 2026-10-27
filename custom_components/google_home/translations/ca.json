@@ -68,7 +68,10 @@
     },
     "error": {
       "oauth-token-invalid": "Google no ha acceptat la galeta. Obtén-ne una de nova i enganxa-la immediatament: caduca en pocs minuts i només funciona una vegada. Copia el valor sencer, que comença per oauth2_4/.",
-      "master-token-invalid": "El testimoni mestre no és vàlid. Assegura't que has introduït el testimoni complet (inclòs 'aas_et/')",
+      "master-token-invalid": "Google no ha acceptat el testimoni mestre. Comprova que l'has copiat correctament. Si abans funcionava, per exemple fins que vas canviar la contrasenya de Google, Google ja no l'accepta: en lloc d'això, fes servir l'inici de sessió amb el navegador.",
+      "google-rejected": "Google no ha acceptat l'inici de sessió. Per veure'n els detalls, consulta els registres de Home Assistant.",
+      "google-unreachable": "No s'ha pogut connectar amb Google. Comprova que Home Assistant estigui connectat a Internet i torna-ho a provar.",
+      "google-busy": "Google està ocupat o està limitant els inicis de sessió. Espera uns minuts i torna a iniciar la sessió.",
       "oauth-token-format": "Aquesta no és la galeta oauth_token. El seu valor comença per oauth2_4/.",
       "master-token-format": "Un testimoni mestre comença per aas_et/ i té 223 caràcters. Copia el testimoni sencer."
     },

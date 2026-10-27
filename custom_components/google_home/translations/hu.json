@@ -68,7 +68,10 @@
     },
     "error": {
       "oauth-token-invalid": "A Google nem fogadta el a cookie-t. Szerezzen be egy újat, és azonnal illessze be: néhány percen belül lejár, és csak egyszer használható. Másolja ki a teljes, oauth2_4/ kezdetű értéket.",
-      "master-token-invalid": "A mestertoken érvénytelen. Ellenőrizze, hogy a teljes tokent megadta-e, az aas_et/ előtaggal együtt.",
+      "master-token-invalid": "A Google nem fogadta el a mestertokent. Ellenőrizze, hogy helyesen másolta-e ki. Ha korábban működött, például amíg meg nem változtatta a Google-jelszavát, a Google már nem fogadja el: használja helyette a Bejelentkezés böngészővel lehetőséget.",
+      "google-rejected": "A Google nem fogadta el a bejelentkezést. A részletekért tekintse meg a Home Assistant naplóját.",
+      "google-unreachable": "Nem sikerült elérni a Google-t. Ellenőrizze, hogy a Home Assistant csatlakozik-e az internethez, majd próbálja újra.",
+      "google-busy": "A Google túlterhelt, vagy korlátozza a bejelentkezéseket. Várjon néhány percet, majd jelentkezzen be újra.",
       "oauth-token-format": "Ez nem az oauth_token cookie. Annak értéke oauth2_4/ kezdetű.",
       "master-token-format": "A mestertoken aas_et/ kezdetű és 223 karakter hosszú. Másolja ki a teljes tokent."
     },

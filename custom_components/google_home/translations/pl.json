@@ -68,7 +68,10 @@
     },
     "error": {
       "oauth-token-invalid": "Google nie zaakceptowało pliku cookie. Pobierz nowy i od razu go wklej: wygasa po kilku minutach i działa tylko raz. Skopiuj całą wartość, zaczynającą się od oauth2_4/.",
-      "master-token-invalid": "Główny token jest nieprawidłowy. Upewnij się, że podano pełny token (w tym 'aas_et/')",
+      "master-token-invalid": "Google nie zaakceptowało tokenu głównego. Sprawdź, czy został poprawnie skopiowany. Jeśli wcześniej działał, na przykład do czasu zmiany hasła do konta Google, Google już go nie akceptuje: zamiast tego użyj logowania w przeglądarce.",
+      "google-rejected": "Google nie zaakceptowało logowania. Szczegóły znajdziesz w logach Home Assistanta.",
+      "google-unreachable": "Nie udało się połączyć z Google. Sprawdź, czy Home Assistant ma połączenie z internetem, a następnie spróbuj ponownie.",
+      "google-busy": "Google jest przeciążone lub ogranicza liczbę logowań. Odczekaj kilka minut, a następnie zaloguj się ponownie.",
       "oauth-token-format": "To nie jest plik cookie oauth_token. Jego wartość zaczyna się od oauth2_4/.",
       "master-token-format": "Token główny zaczyna się od aas_et/ i ma 223 znaki. Skopiuj cały token."
     },

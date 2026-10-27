@@ -68,7 +68,10 @@
     },
     "error": {
       "oauth-token-invalid": "Google nu a acceptat cookie-ul. Obține unul nou și lipește-l imediat: expiră în câteva minute și poate fi folosit o singură dată. Copiază întreaga valoare, care începe cu oauth2_4/.",
-      "master-token-invalid": "Tokenul principal nu este valid. Asigură-te că ai introdus tokenul complet, inclusiv aas_et/.",
+      "master-token-invalid": "Google nu a acceptat tokenul principal. Verifică dacă l-ai copiat corect. Dacă a funcționat înainte, de exemplu până când ți-ai schimbat parola Google, Google nu îl mai acceptă: folosește în schimb conectarea prin browser.",
+      "google-rejected": "Google nu a acceptat conectarea. Pentru detalii, consultă jurnalele Home Assistant.",
+      "google-unreachable": "Nu s-a putut contacta Google. Verifică dacă Home Assistant este conectat la internet, apoi încearcă din nou.",
+      "google-busy": "Google este ocupat sau limitează numărul de conectări. Așteaptă câteva minute, apoi conectează-te din nou.",
       "oauth-token-format": "Acesta nu este cookie-ul oauth_token. Valoarea lui începe cu oauth2_4/.",
       "master-token-format": "Un token principal începe cu aas_et/ și are 223 de caractere. Copiază tokenul complet."
     },

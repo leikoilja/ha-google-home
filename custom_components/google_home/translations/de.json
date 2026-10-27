@@ -68,7 +68,10 @@
     },
     "error": {
       "oauth-token-invalid": "Google hat das Cookie nicht akzeptiert. Hol dir ein neues und füge es sofort ein: Es läuft nach wenigen Minuten ab und funktioniert nur einmal. Kopiere den vollständigen Wert, der mit oauth2_4/ beginnt.",
-      "master-token-invalid": "Master-Token ungültig. Stelle sicher, dass das vollständige Token angegeben wurde (inklusive 'aas_et/')",
+      "master-token-invalid": "Google hat das Master-Token nicht akzeptiert. Prüfe, ob du es richtig kopiert hast. Wenn es vorher funktioniert hat, zum Beispiel bis du dein Google-Passwort geändert hast, akzeptiert Google es nicht mehr: Verwende stattdessen die Anmeldung im Browser.",
+      "google-rejected": "Google hat die Anmeldung nicht akzeptiert. Details findest du in den Protokollen von Home Assistant.",
+      "google-unreachable": "Google konnte nicht erreicht werden. Prüfe, ob Home Assistant mit dem Internet verbunden ist, und versuche es dann erneut.",
+      "google-busy": "Google ist ausgelastet oder begrenzt Anmeldungen. Warte ein paar Minuten und melde dich dann erneut an.",
       "oauth-token-format": "Das ist nicht das Cookie oauth_token. Sein Wert beginnt mit oauth2_4/.",
       "master-token-format": "Ein Master-Token beginnt mit aas_et/ und ist 223 Zeichen lang. Kopiere das vollständige Token."
     },
