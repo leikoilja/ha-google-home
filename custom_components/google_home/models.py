@@ -2,6 +2,7 @@
 
 from datetime import timedelta
 from enum import Enum
+import math
 import sys
 
 from homeassistant.util.dt import as_local, utc_from_timestamp
@@ -76,6 +77,7 @@ class GoogleHomeDevice:
                 timer_id=timer["id"],
                 fire_time=timer.get("fire_time"),
                 duration=timer["original_duration"],
+                remaining=timer.get("remaining_duration"),
                 status=timer["status"],
                 label=timer.get("label"),
             )
@@ -141,6 +143,7 @@ class GoogleHomeTimer:
         timer_id: str,
         fire_time: int | None,
         duration: int,
+        remaining: int | None,
         status: int,
         label: str | None,
     ) -> None:
@@ -149,6 +152,13 @@ class GoogleHomeTimer:
         self.duration = str(timedelta(seconds=convert_from_ms_to_s(duration)))
         self.status = GoogleHomeTimerStatus(status)
         self.label = label
+        # Only for a paused timer: a running one has a fire time, and the time left it
+        # had at the last update would be out of date. Rounded up, as the speaker shows it.
+        self.remaining = (
+            str(timedelta(seconds=math.ceil(remaining / 1000)))
+            if remaining is not None and self.status is GoogleHomeTimerStatus.PAUSED
+            else None
+        )
 
         if fire_time is None:
             self.fire_time = None
@@ -169,6 +179,7 @@ class GoogleHomeTimer:
             "local_time": self.local_time,
             "local_time_iso": self.local_time_iso,
             "duration": self.duration,
+            "remaining": self.remaining,
             "status": self.status.name.lower(),
             "label": self.label,
         }

@@ -22,6 +22,7 @@ class TimerJsonDict(TypedDict, total=False):
     id: str
     fire_time: int
     original_duration: int
+    remaining_duration: int
     status: int
     label: str | None
 
@@ -46,6 +47,7 @@ class GoogleHomeTimerDict(TypedDict):
     local_time: str | None
     local_time_iso: str | None
     duration: str
+    remaining: str | None
     status: str
     label: str | None
 
