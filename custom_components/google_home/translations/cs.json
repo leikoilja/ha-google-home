@@ -73,10 +73,8 @@
       "google-unreachable": "Nepodařilo se spojit s Googlem. Zkontrolujte, zda je Home Assistant připojen k internetu, a zkuste to znovu.",
       "google-busy": "Google je přetížený nebo omezuje přihlašování. Počkejte několik minut a pak se znovu přihlaste.",
       "oauth-token-format": "Toto není soubor cookie oauth_token. Jeho hodnota začíná na oauth2_4/.",
-      "master-token-format": "Hlavní token začíná na aas_et/ a má 223 znaků. Zkopírujte celý token."
-    },
-    "abort": {
-      "other-account": "Přihlásili jste se k jinému účtu Google, proto se nic nezměnilo. Pokud se chcete znovu přihlásit k účtu, který tato integrace používá, načtěte integraci znovu: přejděte do Nastavení > Zařízení a služby > Google Home, otevřete nabídku ⋮ a vyberte Nově načíst. Pokud chcete místo toho používat ten druhý účet, integraci smažte a přidejte ji znovu."
+      "master-token-format": "Hlavní token začíná na aas_et/ a má 223 znaků. Zkopírujte celý token.",
+      "other-account": "Přihlásili jste se k jinému účtu Google, proto se nic nezměnilo. Přihlaste se k účtu, který tato integrace používá. Pokud chcete místo toho používat ten druhý účet, integraci smažte a přidejte ji znovu."
     }
   },
   "exceptions": {

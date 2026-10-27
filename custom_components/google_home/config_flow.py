@@ -3,7 +3,7 @@
 from collections.abc import Mapping
 import ipaddress
 import logging
-from typing import Self, override
+from typing import Self, cast, override
 
 from glocaltokens.exceptions import AuthenticationError
 from glocaltokens.utils.token import is_aas_et
@@ -119,15 +119,18 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
                     hass=self.hass,
                     session=async_get_clientsession(self.hass),
                     oauth_token=oauth_token,
+                    android_id=self._saved_android_id(),
                 )
                 # Getting the master token exchanges the cookie for it
                 error = await self._sign_in(client, "oauth-token-invalid")
                 if error is None:
                     username = await client.async_get_email() or ""
-                    self.username = username
-                    return await self._create_entry(
-                        client, username, username or BROWSER_TITLE
-                    )
+                    if not self._is_other_account(username):
+                        self.username = username
+                        return await self._create_entry(
+                            client, username, username or BROWSER_TITLE
+                        )
+                    error = "other-account"
                 errors["base"] = error
         return self._show_form(
             STEP_BROWSER,
@@ -151,14 +154,17 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
                     username="",
                     password="",
                     master_token=master_token,
+                    android_id=self._saved_android_id(),
                 )
                 error = await self._sign_in(client, "master-token-invalid")
                 if error is None:
                     username = await client.async_get_email() or ""
-                    self.username = username
-                    return await self._create_entry(
-                        client, username, username or MASTER_TOKEN_TITLE
-                    )
+                    if not self._is_other_account(username):
+                        self.username = username
+                        return await self._create_entry(
+                            client, username, username or MASTER_TOKEN_TITLE
+                        )
+                    error = "other-account"
                 errors["base"] = error
         return self._show_form(
             STEP_MASTER_TOKEN,
@@ -174,8 +180,7 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
     ) -> ConfigFlowResult:
         """Save the master token that every sign-in method ends with.
 
-        Signing in again saves it in the existing entry instead, unless Google says
-        it belongs to another account than the entry's.
+        Signing in again saves it in the existing entry instead.
         """
         data = {
             CONF_MASTER_TOKEN: await client.async_get_master_token(),
@@ -187,9 +192,6 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
         if self.source != SOURCE_REAUTH:
             return self.async_create_entry(title=title, data=data)
         entry = self._get_reauth_entry()
-        accounts = _get_accounts(entry)
-        if username and accounts and _account_id(username) not in accounts:
-            return self.async_abort(reason="other-account")
         # Keep the saved address when Google doesn't give one
         data[CONF_USERNAME] = username or entry.data.get(CONF_USERNAME, "")
         result = self.async_update_and_abort(entry, data_updates=data)
@@ -198,6 +200,26 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
         # it only when known hosts change, and an entry that failed setup has none.
         self.hass.config_entries.async_schedule_reload(entry.entry_id)
         return result
+
+    def _saved_android_id(self) -> str | None:
+        """Return the entry's Android ID when signing in again, to save it unchanged.
+
+        Without one, glocaltokens makes up a new Android ID.
+        """
+        if self.source != SOURCE_REAUTH:
+            return None
+        return cast(str | None, self._get_reauth_entry().data.get(CONF_ANDROID_ID))
+
+    def _is_other_account(self, username: str) -> bool:
+        """Return whether signing in again gives another account than the entry's.
+
+        An address that Google doesn't give, or an entry without a known address,
+        can't be compared, so it counts as the same account.
+        """
+        if self.source != SOURCE_REAUTH or not username:
+            return False
+        accounts = _get_accounts(self._get_reauth_entry())
+        return bool(accounts) and _account_id(username) not in accounts
 
     def _show_form(
         self,

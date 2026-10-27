@@ -73,10 +73,8 @@
       "google-unreachable": "No s'ha pogut connectar amb Google. Comprova que Home Assistant estigui connectat a Internet i torna-ho a provar.",
       "google-busy": "Google està ocupat o està limitant els inicis de sessió. Espera uns minuts i torna a iniciar la sessió.",
       "oauth-token-format": "Aquesta no és la galeta oauth_token. El seu valor comença per oauth2_4/.",
-      "master-token-format": "Un testimoni mestre comença per aas_et/ i té 223 caràcters. Copia el testimoni sencer."
-    },
-    "abort": {
-      "other-account": "Has iniciat la sessió en un altre compte de Google, de manera que no s'ha canviat res. Per tornar a iniciar la sessió amb el compte que fa servir aquesta integració, torna a carregar la integració: ves a Configuració > Dispositius i serveis > Google Home, obre el menú ⋮ i selecciona Torna a carregar. Per fer servir aquest altre compte, elimina la integració i torna-la a afegir."
+      "master-token-format": "Un testimoni mestre comença per aas_et/ i té 223 caràcters. Copia el testimoni sencer.",
+      "other-account": "Has iniciat la sessió en un altre compte de Google, de manera que no s'ha canviat res. Inicia la sessió amb el compte que fa servir aquesta integració. Per fer servir aquest altre compte, elimina la integració i torna-la a afegir."
     }
   },
   "exceptions": {
