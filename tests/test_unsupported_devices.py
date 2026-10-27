@@ -6,6 +6,7 @@ from http import HTTPStatus
 from json import JSONDecodeError
 from unittest.mock import AsyncMock, MagicMock, Mock
 
+from aiohttp import ContentTypeError
 import pytest
 
 from custom_components.google_home.api import GlocaltokensApiClient
@@ -335,7 +336,10 @@ def test_keep_asking_starting_speaker(clock: Mock) -> None:
         pytest.param(
             (HTTPStatus.INTERNAL_SERVER_ERROR, info()[1]), False, id="http-500"
         ),
-        pytest.param(TimeoutError(), False, id="timeout"),
+        # An error page
+        pytest.param(
+            (HTTPStatus.OK, ContentTypeError(Mock(), ())), False, id="not-json"
+        ),
         pytest.param(
             (HTTPStatus.OK, JSONDecodeError("Expecting value", "<html>", 0)),
             False,
@@ -364,19 +368,27 @@ def test_suppress_only_when_info_shows_no_assistant(
 
 
 @pytest.mark.parametrize(
-    ("first", "second", "suppressed"),
+    ("first", "first_asked", "second", "suppressed"),
     [
         pytest.param(
             info(assistant_supported=True),
+            [ALARMS, INFO, VOLUME, DND],
             info(assistant_supported=True),
             False,
             id="assistant",
         ),
-        pytest.param(TimeoutError(), info(), True, id="no-answer-first"),
+        # A device that doesn't answer isn't asked the rest of that update
+        pytest.param(
+            TimeoutError(), [ALARMS, INFO], info(), True, id="no-answer-first"
+        ),
     ],
 )
 def test_ask_info_at_most_every_10_minutes(
-    clock: Mock, first: Reply, second: Reply, suppressed: bool
+    clock: Mock,
+    first: Reply,
+    first_asked: list[str],
+    second: Reply,
+    suppressed: bool,
 ) -> None:
     """Ask a device whose alarms keep answering "not found" for its info at most every 10 minutes.
 
@@ -390,7 +402,7 @@ def test_ask_info_at_most_every_10_minutes(
         poll(client, clock, seconds)
         assert network.asked(SPEAKER) == EVERYTHING
     poll(client, clock, at(10))
-    assert network.asked(SPEAKER) == [ALARMS, INFO, VOLUME, DND]
+    assert network.asked(SPEAKER) == first_asked
     network.replies[SPEAKER][INFO] = second
     poll(client, clock, at(19, 59))
     assert network.asked(SPEAKER) == EVERYTHING
@@ -405,7 +417,7 @@ def test_ask_info_at_most_every_10_minutes(
 
 
 def test_keep_asking_while_device_doesnt_answer(clock: Mock) -> None:
-    """Keep asking a device as usual while it doesn't answer, however long that lasts.
+    """Keep asking a device for its alarms while it doesn't answer, however long that lasts.
 
     A Chromecast Audio took 11 to 16 minutes to answer again after restarting.
     Only "not found" counts, so the 10 minutes start once it answers.
@@ -413,7 +425,7 @@ def test_keep_asking_while_device_doesnt_answer(clock: Mock) -> None:
     client, glocaltokens, network = setup(dict.fromkeys(NO_ALARMS, TimeoutError()))
     for seconds in range(at(0), at(15) + 1, at(3)):
         poll(client, clock, seconds)
-        assert network.asked(SPEAKER) == EVERYTHING
+        assert network.asked(SPEAKER) == [ALARMS]
 
     network.replies[SPEAKER] = dict(NO_ALARMS)
     for seconds in (at(18), at(21), at(24), at(27)):

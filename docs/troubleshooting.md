@@ -97,7 +97,7 @@ The integration decides this from how the device answers, not from a list of mod
 - The device answers "not found" when asked for its alarms, and still does at an update at least 10 minutes later. A device that is starting answers "not found" for a while too, so one answer isn't enough.
 - In that later update, the device's information lists its features without Google Assistant.
 
-Until then, the integration asks the device as usual on every update, even while it doesn't answer, for example while it restarts.
+Until then, the integration keeps asking the device on every update, even while it doesn't answer, for example while it restarts.
 
 When it stops asking a device, the [debug log](#collect-debug-logs) shows a line like this, with your device's name and model:
 
