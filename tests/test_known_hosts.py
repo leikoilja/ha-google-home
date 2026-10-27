@@ -1,6 +1,7 @@
 """Tests for finding devices at known hosts when mDNS can't."""
 
 import asyncio
+from http import HTTPStatus
 from unittest.mock import AsyncMock, MagicMock, Mock
 
 from aiohttp import ClientError
@@ -27,6 +28,7 @@ def fake_session(answers: dict[str, tuple[str, str] | Exception]) -> Mock:
             response.__aenter__.side_effect = answer
         else:
             name, cloud_device_id = answer
+            response.__aenter__.return_value.status = HTTPStatus.OK
             response.__aenter__.return_value.json = AsyncMock(
                 return_value={
                     "name": name,

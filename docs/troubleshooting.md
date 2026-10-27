@@ -83,10 +83,25 @@ The integration adds the alarms sensor, timers sensor, Do Not Disturb switch and
 
 When the device answers, the integration adds the missing entities:
 
-- If the device sensor shows an IP address, this happens at the next update.
+- If the device sensor shows an IP address, this happens at the next update, unless the integration has found that the device has none of these features.
 - If the device sensor is unavailable, the integration doesn't know the device's IP address. It looks for the device again every 20 minutes, when it asks Google for your devices.
 
 If you don't want to wait, make sure the device is online, then reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. If that doesn't help, restart the Google Home device and then Home Assistant.
+
+#### Devices without alarms and timers
+
+Some Cast devices, such as Chromecast Audio, have no alarms, timers, Do Not Disturb or alarm volume. Once the integration finds that a device has none of these features, it stops asking the device for them. The device keeps only its device sensor and reboot button. If it had the other entities, they become unavailable.
+
+The integration decides this from how the device answers, not from a list of models:
+
+- The device answers "not found" when asked for its alarms, and still does at an update at least 10 minutes later. A device that is starting answers "not found" for a while too, so one answer isn't enough.
+- In that later update, the device's information lists its features without Google Assistant.
+
+Until then, the integration asks the device as usual on every update, even while it doesn't answer, for example while it restarts. The [debug logs](#collect-debug-logs) show when it stops asking a device.
+
+The integration checks such a device again only when it starts: when Home Assistant restarts, or when you reload the integration. While it runs, it doesn't ask the device again, even if the device restarts or a firmware update adds these features. The `google_home.refresh_devices` action doesn't check it again either.
+
+If the integration stopped asking a device that has alarms and timers, or a device gains these features, make sure the device is online, then reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. The integration asks the device as usual again and adds the entities once it answers. If its alarms still answer "not found" 10 minutes later, and its information still lists no Google Assistant, the integration stops asking it again.
 
 ### Device offline or not compatible
 

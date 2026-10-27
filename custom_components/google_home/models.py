@@ -41,6 +41,15 @@ class GoogleHomeDevice:
         # Google's ID for the device, which it also reports locally
         self.cloud_device_id = cloud_device_id.lower() if cloud_device_id else None
         self.available = True
+        # Whether the device has no alarms, timers and settings, so it isn't asked
+        # for them until the integration is loaded again
+        self.alarms_unsupported = False
+        # The HTTP status of the last request to each endpoint, by whether it was
+        # scheduled, if it got an answer
+        self.statuses: dict[tuple[str, bool], int] = {}
+        # When to check again whether a device whose alarms answered "not found" has
+        # any, if they still do then
+        self.support_check_at: float | None = None
         self._do_not_disturb = False
         self._alarm_volume = GOOGLE_HOME_ALARM_DEFAULT_VALUE
         self._timers: list[GoogleHomeTimer] = []

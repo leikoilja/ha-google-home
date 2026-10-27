@@ -93,6 +93,19 @@ class GoogleHomeBaseEntity(
         await self.client.reboot_google_device(device)
 
 
+class GoogleHomeFeatureEntity(GoogleHomeBaseEntity):
+    """Base entity for alarms, timers and their settings, which some devices don't have."""
+
+    @property
+    @override
+    def available(self) -> bool:
+        """Return whether Google still lists the device and it has these features."""
+        device = self.get_device()
+        return (
+            super().available and device is not None and not device.alarms_unsupported
+        )
+
+
 def async_add_device_entities(
     entry: GoogleHomeConfigEntry,
     coordinator: DataUpdateCoordinator[list[GoogleHomeDevice]],
@@ -114,7 +127,14 @@ def async_add_device_entities(
             device
             for device in coordinator.data
             if device.device_id not in added
-            and (not needs_answer or (device.auth_token and device.available))
+            and (
+                not needs_answer
+                or (
+                    device.auth_token
+                    and device.available
+                    and not device.alarms_unsupported
+                )
+            )
         ]
         if not devices:
             return

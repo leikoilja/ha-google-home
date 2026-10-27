@@ -21,7 +21,7 @@ from .const import (
     ICON_ALARM_VOLUME_OFF,
     LABEL_ALARM_VOLUME,
 )
-from .entity import GoogleHomeBaseEntity, async_add_device_entities
+from .entity import GoogleHomeFeatureEntity, async_add_device_entities
 from .models import GoogleHomeDevice
 from .types import GoogleHomeConfigEntry
 
@@ -45,7 +45,7 @@ async def async_setup_entry(
     return True
 
 
-class AlarmVolumeNumber(GoogleHomeBaseEntity, NumberEntity):
+class AlarmVolumeNumber(GoogleHomeFeatureEntity, NumberEntity):
     """Google Home Alarm Volume Number entity."""
 
     _attr_name = "Alarm volume"
