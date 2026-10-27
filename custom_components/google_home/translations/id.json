@@ -73,7 +73,8 @@
       "google-unreachable": "Tidak dapat terhubung ke Google. Pastikan Home Assistant terhubung ke internet, lalu coba lagi.",
       "google-busy": "Google sedang sibuk atau membatasi login. Tunggu beberapa menit, lalu login ulang.",
       "oauth-token-format": "Ini bukan cookie oauth_token. Nilainya diawali dengan oauth2_4/.",
-      "master-token-format": "Token master diawali dengan aas_et/ dan panjangnya 223 karakter. Salin seluruh token."
+      "master-token-format": "Token master diawali dengan aas_et/ dan panjangnya 223 karakter. Salin seluruh token.",
+      "other-account": "Anda login ke akun Google yang berbeda, sehingga tidak ada yang diubah. Login dengan akun yang digunakan integrasi ini. Untuk menggunakan akun lain tersebut, hapus integrasi lalu tambahkan kembali."
     }
   },
   "exceptions": {

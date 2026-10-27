@@ -73,7 +73,8 @@
       "google-unreachable": "Nie udało się połączyć z Google. Sprawdź, czy Home Assistant ma połączenie z internetem, a następnie spróbuj ponownie.",
       "google-busy": "Google jest przeciążone lub ogranicza liczbę logowań. Odczekaj kilka minut, a następnie zaloguj się ponownie.",
       "oauth-token-format": "To nie jest plik cookie oauth_token. Jego wartość zaczyna się od oauth2_4/.",
-      "master-token-format": "Token główny zaczyna się od aas_et/ i ma 223 znaki. Skopiuj cały token."
+      "master-token-format": "Token główny zaczyna się od aas_et/ i ma 223 znaki. Skopiuj cały token.",
+      "other-account": "Zalogowano się na inne konto Google, więc nic nie zostało zmienione. Zaloguj się na konto używane przez tę integrację. Aby zamiast tego używać tamtego konta, usuń integrację i dodaj ją ponownie."
     }
   },
   "exceptions": {

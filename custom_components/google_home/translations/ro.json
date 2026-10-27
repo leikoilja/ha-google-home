@@ -73,7 +73,8 @@
       "google-unreachable": "Nu s-a putut contacta Google. Verifică dacă Home Assistant este conectat la internet, apoi încearcă din nou.",
       "google-busy": "Google este ocupat sau limitează numărul de conectări. Așteaptă câteva minute, apoi conectează-te din nou.",
       "oauth-token-format": "Acesta nu este cookie-ul oauth_token. Valoarea lui începe cu oauth2_4/.",
-      "master-token-format": "Un token principal începe cu aas_et/ și are 223 de caractere. Copiază tokenul complet."
+      "master-token-format": "Un token principal începe cu aas_et/ și are 223 de caractere. Copiază tokenul complet.",
+      "other-account": "Te-ai conectat la un alt cont Google, așa că nu s-a modificat nimic. Conectează-te cu contul pe care îl folosește această integrare. Pentru a folosi în schimb celălalt cont, șterge integrarea și adaug-o din nou."
     }
   },
   "exceptions": {

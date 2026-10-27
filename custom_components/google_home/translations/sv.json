@@ -73,7 +73,8 @@
       "google-unreachable": "Det gick inte att nå Google. Kontrollera att Home Assistant har internetanslutning och försök sedan igen.",
       "google-busy": "Google har hög belastning eller begränsar inloggningar. Vänta några minuter och logga sedan in igen.",
       "oauth-token-format": "Det här är inte cookien oauth_token. Dess värde börjar med oauth2_4/.",
-      "master-token-format": "En master token börjar med aas_et/ och är 223 tecken lång. Kopiera hela värdet."
+      "master-token-format": "En master token börjar med aas_et/ och är 223 tecken lång. Kopiera hela värdet.",
+      "other-account": "Du loggade in på ett annat Google-konto, så inget ändrades. Logga in med kontot som den här integrationen använder. Om du i stället vill använda det andra kontot raderar du integrationen och lägger till den igen."
     }
   },
   "exceptions": {
