@@ -54,15 +54,18 @@ The state is the time the next timer goes off, such as `2026-03-07T15:26:17+01:0
 
 Each timer in `timers` has these keys:
 
-| Key              | Example                                      | Description                                                                               |
-| ---------------- | -------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| `timer_id`       | `timer/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51` | ID of the timer. Use it to [delete the timer](actions.md#delete-timer).                   |
-| `fire_time`      | `1772893577`                                 | When the timer goes off, as a Unix timestamp in seconds. Empty while the timer is paused. |
-| `local_time`     | `2026-03-07 15:26:17`                        | When the timer goes off, in Home Assistant's time zone. Empty while paused.               |
-| `local_time_iso` | `2026-03-07T15:26:17+01:00`                  | The same time in ISO 8601 format. Empty while paused.                                     |
-| `duration`       | `0:10:00`                                    | Length the timer was set for, as hours:minutes:seconds                                    |
-| `status`         | `set`                                        | [Status](#alarm-and-timer-status) of the timer                                            |
-| `label`          | `Pasta`                                      | Name of the timer, if you gave it one                                                     |
+| Key              | Example                                      | Description                                                                                                                                          |
+| ---------------- | -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `timer_id`       | `timer/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51` | ID of the timer. Use it to [delete the timer](actions.md#delete-timer).                                                                              |
+| `fire_time`      | `1772893577`                                 | When the timer goes off, as a Unix timestamp in seconds. `None` while paused.                                                                        |
+| `local_time`     | `2026-03-07 15:26:17`                        | When the timer goes off, in Home Assistant's time zone. `None` while paused.                                                                         |
+| `local_time_iso` | `2026-03-07T15:26:17+01:00`                  | The same time in ISO 8601 format. `None` while paused.                                                                                               |
+| `duration`       | `0:10:00`                                    | Length the timer was set for, as hours:minutes:seconds                                                                                               |
+| `remaining`      | `0:07:45`                                    | Time left on a paused timer, as hours:minutes:seconds. `None` for other timers, which have `fire_time` instead, or if the speaker doesn't report it. |
+| `status`         | `set`                                        | [Status](#alarm-and-timer-status) of the timer                                                                                                       |
+| `label`          | `Pasta`                                      | Name of the timer, if you gave it one                                                                                                                |
+
+To use the time left in a template or automation, convert `remaining` to seconds with `as_timedelta`. For example, `{{ as_timedelta('0:07:45').total_seconds() }}` gives 465 seconds. `remaining` is `None` (shown as `null`) for timers that aren't paused or if the speaker doesn't report it, and `as_timedelta` raises an error for `None`, so check first, for example with `timer.remaining is not none`.
 
 ## Alarm and timer status
 
