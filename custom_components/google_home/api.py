@@ -283,8 +283,9 @@ class GlocaltokensApiClient:
                 device.ip_address = known_host
 
     async def _async_get_device_info(self, host: str) -> dict[str, object] | None:
-        """Return what the device at this host reports about itself, if its answer is that.
+        """Return what the device at this host reports about itself.
 
+        Return None if it answers with something else, such as an error page.
         Raise TimeoutError or ClientError if it doesn't answer.
         """
         url = self.create_url(host, PORT, API_ENDPOINT_EUREKA_INFO)
