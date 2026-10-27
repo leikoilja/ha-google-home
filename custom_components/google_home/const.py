@@ -87,7 +87,9 @@ API_ENDPOINT_EUREKA_INFO: Final = "setup/eureka_info?params=name,device_info"
 HEADER_CAST_LOCAL_AUTH: Final = "cast-local-authorization-token"
 HEADER_CONTENT_TYPE: Final = "content-type"
 
-TIMEOUT: Final = 2  # Request Timeout in seconds
+# How long a device has to answer a request, in seconds. A busy device can take
+# more than 2 seconds.
+TIMEOUT: Final = 5
 
 # TIMESTRINGS
 TIME_STR_FORMAT: Final = "%H:%M:%S"

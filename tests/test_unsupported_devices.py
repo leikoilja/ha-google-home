@@ -405,7 +405,7 @@ def test_ask_info_at_most_every_10_minutes(
 
 
 def test_keep_asking_while_device_doesnt_answer(clock: Mock) -> None:
-    """Keep asking a device as usual while it doesn't answer, however long that lasts.
+    """Keep asking a device for its alarms while it doesn't answer, however long that lasts.
 
     A Chromecast Audio took 11 to 16 minutes to answer again after restarting.
     Only "not found" counts, so the 10 minutes start once it answers.
@@ -413,7 +413,7 @@ def test_keep_asking_while_device_doesnt_answer(clock: Mock) -> None:
     client, glocaltokens, network = setup(dict.fromkeys(NO_ALARMS, TimeoutError()))
     for seconds in range(at(0), at(15) + 1, at(3)):
         poll(client, clock, seconds)
-        assert network.asked(SPEAKER) == EVERYTHING
+        assert network.asked(SPEAKER) == [ALARMS]
 
     network.replies[SPEAKER] = dict(NO_ALARMS)
     for seconds in (at(18), at(21), at(24), at(27)):

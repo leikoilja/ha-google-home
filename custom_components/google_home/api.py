@@ -372,13 +372,22 @@ class GlocaltokensApiClient:
     async def collect_data_from_endpoints(
         self, device: GoogleHomeDevice
     ) -> GoogleHomeDevice:
-        """Collect data from different endpoints."""
+        """Collect data from different endpoints.
+
+        Once the device doesn't answer a request, it isn't asked the rest until the
+        next update, so an offline device makes the update wait for one timeout,
+        not three. Actions don't come here, so they're always sent.
+        """
         if device.alarms_unsupported:
             return device
         device = await self.update_alarms_and_timers(device)
         if await self._async_find_alarms_unsupported(device):
             return device
+        if (API_ENDPOINT_ALARMS, True) not in device.statuses:
+            return device
         device = await self.update_alarm_volume(device)
+        if (API_ENDPOINT_ALARM_VOLUME, True) not in device.statuses:
+            return device
         return await self.update_do_not_disturb(device)
 
     async def _async_find_alarms_unsupported(self, device: GoogleHomeDevice) -> bool:
