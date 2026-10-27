@@ -41,7 +41,11 @@ from .const import (
     SERVICE_REBOOT,
     SERVICE_REFRESH,
 )
-from .entity import GoogleHomeBaseEntity, async_add_device_entities
+from .entity import (
+    GoogleHomeBaseEntity,
+    GoogleHomeFeatureEntity,
+    async_add_device_entities,
+)
 from .exceptions import AlarmsAndTimersNotFetched
 from .models import GoogleHomeAlarmStatus, GoogleHomeDevice, GoogleHomeTimerStatus
 from .types import (
@@ -303,7 +307,7 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
         }
 
 
-class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
+class GoogleHomeAlarmsSensor(GoogleHomeFeatureEntity):
     """Google Home Alarms sensor."""
 
     _attr_name = "Alarms"
@@ -404,7 +408,7 @@ class GoogleHomeAlarmsSensor(GoogleHomeBaseEntity):
         return await async_delete(self, device, alarm_ids)
 
 
-class GoogleHomeTimersSensor(GoogleHomeBaseEntity):
+class GoogleHomeTimersSensor(GoogleHomeFeatureEntity):
     """Google Home Timers sensor."""
 
     _attr_name = "Timers"

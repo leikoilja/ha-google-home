@@ -79,7 +79,8 @@ API_ENDPOINT_ALARM_DELETE: Final = "setup/assistant/alarms/delete"
 API_ENDPOINT_ALARM_VOLUME: Final = "setup/assistant/alarms/volume"
 API_ENDPOINT_REBOOT: Final = "setup/reboot"
 API_ENDPOINT_DO_NOT_DISTURB: Final = "setup/assistant/notifications"
-# Answers without a local auth token, so it identifies a known host
+# Answers without a local auth token, so it identifies a known host and shows
+# whether a device whose alarms answer "not found" has Google Assistant
 API_ENDPOINT_EUREKA_INFO: Final = "setup/eureka_info?params=name,device_info"
 
 # HEADERS
@@ -100,6 +101,12 @@ UPDATE_INTERVAL: Final = 180  # sec
 # app and the address of a device that was offline. It's a request to Google, so not
 # on every update.
 FETCH_DEVICES_INTERVAL: Final = 20 * 60  # sec
+# A device's alarms must still answer "not found" this long after they first did
+# before its device info can show that it has none: a device that is starting
+# answers "not found" for a while. Also the least time between device info requests
+# to a device whose alarms keep answering "not found" but which reports Google
+# Assistant or gives no clear answer.
+SUPPORT_CHECK_DELAY: Final = 10 * 60  # sec
 
 # JSON parameter values when retrieving information from devices
 JSON_ALARM: Final = "alarm"

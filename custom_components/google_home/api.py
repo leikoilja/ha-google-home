@@ -32,6 +32,7 @@ from .const import (
     JSON_NOTIFICATIONS_ENABLED,
     JSON_TIMER,
     PORT,
+    SUPPORT_CHECK_DELAY,
     TIMEOUT,
 )
 from .exceptions import AlarmsAndTimersNotFetched, InvalidMasterToken
@@ -39,6 +40,23 @@ from .models import GoogleHomeDevice
 from .types import AlarmJsonDict, JsonDict, TimerJsonDict
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
+
+
+def lacks_assistant(info: dict[str, object] | None) -> bool:
+    """Return whether a device's info lists its features without Google Assistant.
+
+    Google and Nest speakers and displays report assistant_supported as true. A
+    Chromecast Audio leaves it out of its list, so a missing key counts as no, as
+    does false. No list, an empty one, or any other value says nothing either way.
+    """
+    device_info = info.get("device_info") if info else None
+    capabilities = (
+        device_info.get("capabilities") if isinstance(device_info, dict) else None
+    )
+    if not isinstance(capabilities, dict) or not capabilities:
+        return False
+    # Only the JSON false: 0, null or "false" isn't a clear answer
+    return capabilities.get("assistant_supported", False) is False
 
 
 class GlocaltokensApiClient:
@@ -86,6 +104,10 @@ class GlocaltokensApiClient:
         self._fetch_lock = asyncio.Lock()
         self._fetches = 0
         self._fetches_before_update = 0
+        # Devices found to have no alarms, timers and settings. They aren't asked
+        # again until the integration is loaded again, even if Google's list drops
+        # them and later lists them again.
+        self.unsupported_device_ids: set[str] = set()
 
     async def async_get_master_token(self) -> str:
         """Get master API token."""
@@ -196,6 +218,10 @@ class GlocaltokensApiClient:
                 known_device.hardware = device.hardware
                 known_device.cloud_device_id = device.cloud_device_id
                 device = known_device
+            else:
+                device.alarms_unsupported = (
+                    device.device_id in self.unsupported_device_ids
+                )
             self.google_devices.append(device)
         # Known hosts are only asked when mDNS left a device without an address
         if self.known_hosts and any(
@@ -251,18 +277,31 @@ class GlocaltokensApiClient:
                 _LOGGER.debug("Found %s at known host %s", device.name, known_host)
                 device.ip_address = known_host
 
-    async def _async_get_cloud_device_id(self, host: str) -> str | None:
-        """Return Google's ID of the device at a known host."""
+    async def _async_get_device_info(self, host: str) -> dict[str, object] | None:
+        """Return what the device at this host reports about itself, if it answers."""
         url = self.create_url(host, PORT, API_ENDPOINT_EUREKA_INFO)
         try:
             async with self._session.get(
                 url, timeout=ClientTimeout(total=TIMEOUT)
             ) as response:
+                # A device that is starting can answer 404, and an error page
+                # isn't its info
+                if response.status != HTTPStatus.OK:
+                    _LOGGER.debug(
+                        "%s answered %d when asked for its info", host, response.status
+                    )
+                    return None
                 info = await response.json()
         except ClientError, TimeoutError, ValueError:
-            _LOGGER.debug("Known host %s didn't answer", host, exc_info=True)
+            _LOGGER.debug("%s didn't answer with its info", host, exc_info=True)
             return None
-        device_info = info.get("device_info") if isinstance(info, dict) else None
+        return info if isinstance(info, dict) else None
+
+    async def _async_get_cloud_device_id(self, host: str) -> str | None:
+        """Return Google's ID of the device at a known host."""
+        if (info := await self._async_get_device_info(host)) is None:
+            return None
+        device_info = info.get("device_info")
         cloud_device_id = (
             device_info.get("cloud_device_id")
             if isinstance(device_info, dict)
@@ -329,9 +368,61 @@ class GlocaltokensApiClient:
         self, device: GoogleHomeDevice
     ) -> GoogleHomeDevice:
         """Collect data from different endpoints."""
+        if device.alarms_unsupported:
+            return device
         device = await self.update_alarms_and_timers(device)
+        if await self._async_find_alarms_unsupported(device):
+            return device
         device = await self.update_alarm_volume(device)
         return await self.update_do_not_disturb(device)
+
+    async def _async_find_alarms_unsupported(self, device: GoogleHomeDevice) -> bool:
+        """Return whether the device has turned out to have no alarms, timers and settings.
+
+        Its alarms must answer "not found" at an update, and again at the first
+        update at least SUPPORT_CHECK_DELAY later, as a device that is starting
+        answers "not found" for a while. Then its info, in that same update, must
+        list its features without Google Assistant. Only a 404 counts: a device
+        that doesn't answer may be busy or offline.
+        """
+        now = monotonic()
+        due = device.support_check_at is not None and now >= device.support_check_at
+        status = device.statuses.get((API_ENDPOINT_ALARMS, True))
+        if status != HTTPStatus.NOT_FOUND:
+            if status == HTTPStatus.OK or due:
+                device.support_check_at = None
+            return False
+        if device.support_check_at is None:
+            device.support_check_at = now + SUPPORT_CHECK_DELAY
+            return False
+        if not due:
+            return False
+        assert device.ip_address is not None
+        info = await self._async_get_device_info(device.ip_address)
+        if not lacks_assistant(info):
+            _LOGGER.debug(
+                "%s still answers 404 for alarms, but its info doesn't show that it "
+                "lacks Google Assistant. Will check again in %d minutes.",
+                device.name,
+                SUPPORT_CHECK_DELAY // 60,
+            )
+            device.support_check_at = now + SUPPORT_CHECK_DELAY
+            return False
+        _LOGGER.debug(
+            (
+                "%s (hardware='%s') still answers 404 for alarms after at least %d "
+                "minutes, and its info lists its features without Google Assistant. "
+                "It won't be asked for alarms, timers and settings until the "
+                "integration is reloaded."
+            ),
+            device.name,
+            device.hardware,
+            SUPPORT_CHECK_DELAY // 60,
+        )
+        device.alarms_unsupported = True
+        device.support_check_at = None
+        self.unsupported_device_ids.add(device.device_id)
+        return True
 
     async def update_alarms_and_timers(
         self, device: GoogleHomeDevice, *, polling: bool = True
@@ -577,6 +668,9 @@ class GlocaltokensApiClient:
         more. Only a rejection is retried: a request that timed out may have run.
         """
 
+        # A request sent again with a new token replaces the status
+        device.statuses.pop((endpoint, polling), None)
+
         if device.ip_address is None:
             _LOGGER.warning("Device %s doesn't have an IP address!", device.name)
             return None
@@ -607,6 +701,7 @@ class GlocaltokensApiClient:
             async with self._session.request(
                 method, url, json=data, headers=headers, timeout=timeout
             ) as response:
+                device.statuses[endpoint, polling] = response.status
                 if response.status == HTTPStatus.OK:
                     try:
                         resp = await response.json()
@@ -620,9 +715,8 @@ class GlocaltokensApiClient:
                     _LOGGER.debug(
                         (
                             "Failed to perform request to %s, API returned %d. "
-                            "The device(hardware='%s') is possibly not Google Home "
-                            "compatible and has no alarms/timers. "
-                            "Will retry later."
+                            "The device(hardware='%s') may be starting, or may "
+                            "have no alarms/timers."
                         ),
                         device.name,
                         response.status,
