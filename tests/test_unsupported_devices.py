@@ -484,9 +484,10 @@ def test_keep_waiting_while_alarms_dont_answer(clock: Mock, alarms: Reply) -> No
 
 
 def test_action_doesnt_start_check(clock: Mock) -> None:
-    """Don't count a "not found" answer to an action that reads the alarms.
+    """Don't count a "not found" answer to an action that reads the alarms before an update.
 
-    Only scheduled updates decide whether a device has alarms.
+    Only scheduled updates decide whether a device has alarms, so the update 10
+    minutes later is the first "not found".
     """
     client, _, network = setup(NO_ALARMS)
     [device] = client.google_devices

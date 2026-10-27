@@ -44,8 +44,9 @@ class GoogleHomeDevice:
         # Whether the device has no alarms, timers and settings, so it isn't asked
         # for them until the integration is loaded again
         self.alarms_unsupported = False
-        # The HTTP status of the last request to each endpoint, by whether it was
-        # scheduled, if it got an answer
+        # The HTTP status of the last request to each endpoint, if it got an answer.
+        # Kept apart by whether it was scheduled, so an action that gets an answer
+        # while an update runs doesn't replace the one the update checks.
         self.statuses: dict[tuple[str, bool], int] = {}
         # When to check again whether a device whose alarms answered "not found" has
         # any, if they still do then

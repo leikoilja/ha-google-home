@@ -97,7 +97,13 @@ The integration decides this from how the device answers, not from a list of mod
 - The device answers "not found" when asked for its alarms, and still does at an update at least 10 minutes later. A device that is starting answers "not found" for a while too, so one answer isn't enough.
 - In that later update, the device's information lists its features without Google Assistant.
 
-Until then, the integration asks the device as usual on every update, even while it doesn't answer, for example while it restarts. The [debug logs](#collect-debug-logs) show when it stops asking a device.
+Until then, the integration asks the device as usual on every update, even while it doesn't answer, for example while it restarts.
+
+When it stops asking a device, the [debug log](#collect-debug-logs) shows a line like this, with your device's name and model:
+
+```
+Stereo (hardware='Chromecast Audio') still answers 404 for alarms after at least 10 minutes, and its info lists its features without Google Assistant. It won't be asked for alarms, timers and settings until the integration is reloaded.
+```
 
 The integration checks such a device again only when it starts: when Home Assistant restarts, or when you reload the integration. While it runs, it doesn't ask the device again, even if the device restarts or a firmware update adds these features. The `google_home.refresh_devices` action doesn't check it again either.
 

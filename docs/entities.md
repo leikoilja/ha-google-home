@@ -13,7 +13,7 @@ Each Google Home device gets the entities below. The examples use a device named
 
 The alarms sensor, timers sensor, switch and alarm volume are added once Home Assistant can reach the device. If a device has only a device sensor and a reboot button, see [No alarms or timers sensors](troubleshooting.md#no-alarms-or-timers-sensors).
 
-A device without alarms and timers, such as a Chromecast Audio, doesn't get these four entities. If it already had them, they become unavailable until the integration is reloaded or Home Assistant restarts. See [Devices without alarms and timers](troubleshooting.md#devices-without-alarms-and-timers).
+A device without alarms and timers, such as a Chromecast Audio, doesn't get these four entities. If it already had them, they become unavailable. Reloading the integration or restarting Home Assistant brings them back only if the device then answers for these features. See [Devices without alarms and timers](troubleshooting.md#devices-without-alarms-and-timers).
 
 All entities of a device are unavailable once Google no longer lists it, for example after you remove it from the Google Home app. See [Remove a device](installation.md#remove-a-device).
 
