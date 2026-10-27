@@ -11,6 +11,10 @@ The integration adds these actions, which older Home Assistant versions called s
 | [`google_home.reboot_device`](#reboot-device)         | Reboots a device                |
 | [`google_home.refresh_devices`](#refresh-devices)     | Updates all devices immediately |
 
+There are no actions to create, change or snooze alarms and timers, or to turn alarms on or off. The local API that the integration uses can only read and delete them. Set them by voice or on a display's screen. The [alarms](entities.md#alarms-sensor) and [timers](entities.md#timers-sensor) sensors show them after the next [scheduled update](installation.md#change-the-update-interval), or straight away when you run [`google_home.refresh_devices`](#refresh-devices).
+
+The [Google Assistant SDK](https://www.home-assistant.io/integrations/google_assistant_sdk/) integration can't set them either: [Google's Assistant SDK](https://developers.google.com/assistant/sdk/overview) doesn't support timers and alarms.
+
 ## Delete alarm
 
 Deletes one alarm from a device.
@@ -23,11 +27,11 @@ data:
   skip_refresh: false
 ```
 
-| Field          | Description                                                                                                                                                                                                                                          |
-| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `entity_id`    | Alarms sensor of the device, such as `sensor.kitchen_alarms`. Leave it out when you target the device instead, as described below.                                                                                                                   |
-| `alarm_id`     | ID of the alarm to delete. Find it in the `alarms` attribute of the [alarms sensor](entities.md#alarms-sensor). It starts with `alarm/`.                                                                                                             |
-| `skip_refresh` | Optional. The sensor shows the deletion as soon as the device confirms it. `false`, the default, also updates all devices straight after deleting. `true` leaves other changes, such as an alarm set from your phone, for the next scheduled update. |
+| Field          | Description                                                                                                                                                                                                                                   |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `entity_id`    | Alarms sensor of the device, such as `sensor.kitchen_alarms`. Leave it out when you target the device instead, as described below.                                                                                                            |
+| `alarm_id`     | ID of the alarm to delete. Find it in the `alarms` attribute of the [alarms sensor](entities.md#alarms-sensor). It starts with `alarm/`.                                                                                                      |
+| `skip_refresh` | Optional. The sensor shows the deletion as soon as the device confirms it. `false`, the default, also updates all devices straight after deleting. `true` leaves other changes, such as an alarm set by voice, for the next scheduled update. |
 
 To delete the next alarm, use a template:
 
