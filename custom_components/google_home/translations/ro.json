@@ -102,7 +102,7 @@
       "message": "Nu s-a găsit alarma {alarm_id} pe dispozitivele selectate. Este posibil să fi sunat deja sau să fi fost ștearsă."
     },
     "timer_not_found": {
-      "message": "Nu s-a găsit cronometrul {timer_id} pe dispozitivele selectate. Este posibil să se fi încheiat deja numărătoarea inversă sau să fi fost șters."
+      "message": "Nu s-a găsit cronometrul {timer_id} pe dispozitivele selectate. Este posibil să se fi încheiat deja sau să fi fost șters."
     }
   },
   "options": {

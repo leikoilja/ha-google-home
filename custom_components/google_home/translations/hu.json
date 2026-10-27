@@ -96,7 +96,7 @@
       "message": "A(z) „{alarm_id}” nem ébresztésazonosító. Másolja ki az alarm/ kezdetű azonosítót az eszköz ébresztésérzékelőjének alarms attribútumából."
     },
     "invalid_timer_id": {
-      "message": "A(z) „{timer_id}” nem időzítő-azonosító. Másolja ki a timer/ kezdetű azonosítót az eszköz időzítő-érzékelőjének timers attribútumából."
+      "message": "A(z) „{timer_id}” nem időzítőazonosító. Másolja ki a timer/ kezdetű azonosítót az eszköz időzítőérzékelőjének timers attribútumából."
     },
     "alarm_not_found": {
       "message": "Nem található a(z) {alarm_id} ébresztés a kiválasztott eszközökön. Lehet, hogy már megszólalt vagy törölték."

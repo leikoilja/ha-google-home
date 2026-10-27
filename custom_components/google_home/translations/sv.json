@@ -87,7 +87,7 @@
       "message": "Det gick inte att hämta aktuella alarm och timers från följande enheter, så inget raderades från dem: {devices}. Kontrollera att enheterna är online och försök igen senare."
     },
     "alarms_and_timers_not_deleted": {
-      "message": "{device} bekräftade inte att alarmen eller timerna raderades, så de kan fortfarande vara inställda. Kontrollera att enheten är online och försök igen senare."
+      "message": "{device} bekräftade inte att alarm eller timers raderades, så de kan fortfarande vara inställda. Kontrollera att enheten är online och försök igen senare."
     },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "Det gick inte att radera alarm eller timers från följande enheter eller bekräfta att de raderades: {devices}. Kontrollera att enheterna är online och försök igen senare."
