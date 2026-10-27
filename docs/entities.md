@@ -65,7 +65,7 @@ Each timer in `timers` has these keys:
 | `status`         | `set`                                        | [Status](#alarm-and-timer-status) of the timer                                                                                                      |
 | `label`          | `Pasta`                                      | Name of the timer, if you gave it one                                                                                                               |
 
-To use the time left in a template or automation, convert `remaining` to seconds with `as_timedelta`. For example, `{{ as_timedelta('0:29:46').total_seconds() }}` gives 1786 seconds. Do this only when `remaining` has a value: it is empty for timers that aren't paused or if the speaker doesn't report it, and the template fails on an empty value.
+To use the time left in a template or automation, convert `remaining` to seconds with `as_timedelta`. For example, `{{ as_timedelta('0:07:45').total_seconds() }}` gives 465 seconds. Check first that `remaining` has a value, for example with `timer.remaining is not none`: it has no value for timers that aren't paused or if the speaker doesn't report it, and `as_timedelta` raises an error when there is none.
 
 ## Alarm and timer status
 
