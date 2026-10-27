@@ -87,9 +87,11 @@ Sign in again soon. Until you do, the integration can't get the device list or n
 
 ## Change the update interval
 
-The integration checks your devices for changes every 180 seconds.
+The integration checks your devices for changes every 15 seconds by default.
 
 To change the interval, go to **Settings** > **Devices & services** > **Google Home** and select **Configure**. If your devices time out, increase the interval until they stay stable. Shorter intervals update alarms and timers sooner but send more requests to your devices.
+
+**Configure** shows the interval in use. If you saved these options in version 1.15 or older, for example to add known hosts, it's the interval you saved, which was 180 seconds unless you changed it. To use the new default, enter 15 and select **Submit**.
 
 To update immediately, use the [Refresh devices](actions.md#refresh-devices) action.
 

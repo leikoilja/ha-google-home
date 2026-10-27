@@ -109,7 +109,7 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "업데이트 간격을 변경합니다. 기기가 제때 응답하지 않으면 이 값을 늘리세요. 기본값: 180초.",
+          "update_interval": "업데이트 간격을 변경합니다. 기기가 제때 응답하지 않으면 이 값을 늘리세요. 기본값: {default_interval}초.",
           "known_hosts": "알려진 호스트"
         },
         "data_description": {

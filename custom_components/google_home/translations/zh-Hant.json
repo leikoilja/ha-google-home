@@ -109,7 +109,7 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "變更更新間隔。如果裝置無法及時回應，請增加此值。預設為 180 秒。",
+          "update_interval": "變更更新間隔。如果裝置無法及時回應，請增加此值。預設為 {default_interval} 秒。",
           "known_hosts": "已知主機"
         },
         "data_description": {

@@ -205,7 +205,8 @@ def test_scheduled_fetch_fails(
 ) -> None:
     """Keep the devices, even none, when Google's list can't be fetched, and try again 20 minutes later.
 
-    Trying on every update would ask Google every few minutes while it is failing.
+    Trying on every update would ask Google as often as the devices update while it
+    is failing.
     """
     client, glocaltokens = make_client(*ip_addresses)
     devices = list(client.google_devices)

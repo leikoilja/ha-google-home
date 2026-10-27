@@ -109,7 +109,7 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Ändra uppdateringsintervallet. Öka det om enheterna inte svarar i tid. Standard: 180 sekunder.",
+          "update_interval": "Ändra uppdateringsintervallet. Öka det om enheterna inte svarar i tid. Standard: {default_interval} sekunder.",
           "known_hosts": "Kända värdar"
         },
         "data_description": {

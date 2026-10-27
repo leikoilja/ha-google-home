@@ -30,6 +30,8 @@ from custom_components.google_home.const import BROWSER_TITLE, MASTER_TOKEN_TITL
 from homeassistant.config_entries import ConfigFlowResult
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
+from .test_known_hosts import make_options_flow
+
 # pylint: enable=wrong-import-order
 
 # A realistic master token: setup checks its length with is_aas_et()
@@ -359,6 +361,29 @@ def test_reauth_forms_have_text(flow: GoogleHomeFlowHandler, method: str) -> Non
     placeholders = set(re.findall(r"{(\w+)}", text["description"]))
     assert placeholders <= set(result["description_placeholders"] or {})
     assert "add the integration again" not in text["description"]
+
+
+@pytest.mark.parametrize("options", [{}, {"update_interval": 180}])
+def test_options_show_default_interval(options: dict[str, object]) -> None:
+    """Show the default interval in the label, as the form fills it in for a new entry.
+
+    An entry that saved another interval still sees the default in the label.
+    Home Assistant can't show the label without its placeholder's value.
+    """
+    new_entry = asyncio.run(make_options_flow({}).async_step_init())
+    schema = new_entry["data_schema"]
+    assert schema is not None
+    # The form's own defaults, which it fills in when nothing is entered
+    default = schema({})["update_interval"]
+
+    result = asyncio.run(make_options_flow(options).async_step_init())
+
+    assert result["type"] == "form"
+    text = ENGLISH["options"]["step"]["init"]
+    placeholders = result["description_placeholders"] or {}
+    assert set(re.findall(r"{(\w+)}", json.dumps(text))) <= set(placeholders)
+    label = text["data"]["update_interval"].format_map(placeholders)
+    assert f"Default: {default} (seconds)" in label
 
 
 @pytest.mark.parametrize(("step", "user_input"), SIGN_IN_STEPS)
