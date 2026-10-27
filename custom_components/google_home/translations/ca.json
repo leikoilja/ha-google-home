@@ -106,16 +106,16 @@
       "message": "No s'ha pogut connectar amb {device}. Comprova que estigui encès i connectat a la xarxa, i torna-ho a provar."
     },
     "device_no_reply": {
-      "message": "{device} no ha respost, o la resposta s'ha tallat, de manera que pot ser que ho hagi fet o no. Comprova que estigui en línia i torna-ho a provar."
+      "message": "{device} no ha confirmat que ho hagi fet: no ha respost a temps, o la resposta s'ha tallat. Comprova que estigui en línia i torna-ho a provar."
     },
     "device_token_rejected": {
-      "message": "{device} ha rebutjat el seu testimoni. La integració en demanarà un de nou a Google a la següent actualització, així que torna-ho a provar després."
+      "message": "{device} ha rebutjat el seu testimoni, i obtenir-ne un altre de Google no ha servit de res. La integració continua demanant-ne un de nou a Google, així que torna-ho a provar més tard."
     },
     "device_not_ready": {
-      "message": "{device} ha respost que no ho pot fer. És possible que encara s'estigui iniciant o que no ho admeti."
+      "message": "{device} ha respost «no s'ha trobat». És possible que encara s'estigui iniciant, així que torna-ho a provar més tard, o que no admeti aquesta acció."
     },
     "device_request_failed": {
-      "message": "No s'ha pogut dur a terme l'acció a {device}. Trobaràs els detalls als registres de Home Assistant."
+      "message": "No s'ha pogut dur a terme l'acció a {device}. Per veure'n els detalls, consulta els registres de Home Assistant."
     },
     "devices_not_rebooted": {
       "message": "Aquests dispositius no han confirmat que es reiniciaran: {devices}. Comprova que estiguin en línia i torna-ho a provar més tard."

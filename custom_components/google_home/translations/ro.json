@@ -106,16 +106,16 @@
       "message": "Nu s-a putut contacta dispozitivul {device}. Verifică dacă este pornit și conectat la rețeaua ta, apoi încearcă din nou."
     },
     "device_no_reply": {
-      "message": "Dispozitivul {device} nu a răspuns sau răspunsul său a fost întrerupt, așa că este posibil să fi executat acțiunea sau nu. Verifică dacă dispozitivul este online și încearcă din nou."
+      "message": "Dispozitivul {device} nu a confirmat că a executat acțiunea: nu a răspuns la timp sau răspunsul său a fost întrerupt. Verifică dacă dispozitivul este online și încearcă din nou."
     },
     "device_token_rejected": {
-      "message": "Dispozitivul {device} a respins tokenul. Integrarea va cere unul nou de la Google la următoarea actualizare, așa că încearcă din nou după aceea."
+      "message": "Dispozitivul {device} a respins tokenul, iar obținerea unuia nou de la Google nu a ajutat. Integrarea continuă să ceară unul nou de la Google, așa că încearcă din nou mai târziu."
     },
     "device_not_ready": {
-      "message": "Dispozitivul {device} a răspuns că nu poate face acest lucru. Este posibil să fie încă în curs de pornire sau să nu accepte acest lucru."
+      "message": "Dispozitivul {device} a răspuns „negăsit”. Este posibil să fie încă în curs de pornire, așa că încearcă din nou mai târziu, sau să nu accepte acest lucru."
     },
     "device_request_failed": {
-      "message": "Nu s-a putut executa acțiunea pe dispozitivul {device}. Detaliile se află în jurnalele Home Assistant."
+      "message": "Nu s-a putut executa acțiunea pe dispozitivul {device}. Pentru detalii, consultă jurnalele Home Assistant."
     },
     "devices_not_rebooted": {
       "message": "Următoarele dispozitive nu au confirmat că vor reporni: {devices}. Verifică dacă dispozitivele sunt online și încearcă din nou mai târziu."

@@ -106,13 +106,13 @@
       "message": "Laitteeseen {device} ei saatu yhteyttä. Tarkista, että laite on päällä ja yhteydessä verkkoosi, ja yritä sitten uudelleen."
     },
     "device_no_reply": {
-      "message": "Laite {device} ei vastannut tai sen vastaus katkesi kesken, joten se on ehkä suorittanut toiminnon, ehkä ei. Tarkista, että laite on verkossa, ja yritä uudelleen."
+      "message": "Laite {device} ei vahvistanut suorittaneensa toimintoa: se ei vastannut ajoissa tai sen vastaus katkesi kesken. Tarkista, että laite on verkossa, ja yritä uudelleen."
     },
     "device_token_rejected": {
-      "message": "Laite {device} hylkäsi tunnisteensa. Integraatio pyytää Googlelta uuden seuraavan päivityksen yhteydessä, joten yritä sen jälkeen uudelleen."
+      "message": "Laite {device} hylkäsi tunnisteensa, eikä uuden hakeminen Googlelta auttanut. Integraatio jatkaa uuden pyytämistä Googlelta, joten yritä myöhemmin uudelleen."
     },
     "device_not_ready": {
-      "message": "Laite {device} vastasi, ettei se voi tehdä tätä. Se voi olla vielä käynnistymässä, tai se ei ehkä tue tätä."
+      "message": "Laite {device} vastasi ”ei löytynyt”. Se voi olla vielä käynnistymässä, joten yritä myöhemmin uudelleen, tai se ei ehkä tue tätä."
     },
     "device_request_failed": {
       "message": "Toimintoa ei voitu suorittaa laitteella {device}. Lisätietoja on Home Assistantin lokeissa."

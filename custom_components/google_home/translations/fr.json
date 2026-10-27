@@ -106,16 +106,16 @@
       "message": "Impossible de joindre l'appareil {device}. Vérifiez qu'il est allumé et connecté à votre réseau, puis réessayez."
     },
     "device_no_reply": {
-      "message": "L'appareil {device} n'a pas répondu ou sa réponse a été interrompue ; il a donc peut-être effectué l'action, ou peut-être pas. Vérifiez qu'il est en ligne et réessayez."
+      "message": "L'appareil {device} n'a pas confirmé avoir effectué l'action : il n'a pas répondu à temps ou sa réponse a été interrompue. Vérifiez qu'il est en ligne et réessayez."
     },
     "device_token_rejected": {
-      "message": "L'appareil {device} a refusé son jeton. L'intégration en demandera un nouveau à Google lors de la prochaine mise à jour ; réessayez ensuite."
+      "message": "L'appareil {device} a refusé son jeton, et en obtenir un nouveau auprès de Google n'a rien changé. L'intégration continue d'en demander un nouveau à Google ; réessayez plus tard."
     },
     "device_not_ready": {
-      "message": "L'appareil {device} a répondu qu'il ne peut pas effectuer cette action. Il est peut-être encore en cours de démarrage, ou il ne la prend peut-être pas en charge."
+      "message": "L'appareil {device} a répondu « introuvable ». Il est peut-être encore en cours de démarrage, auquel cas réessayez plus tard, ou il ne prend peut-être pas en charge cette action."
     },
     "device_request_failed": {
-      "message": "Impossible d'effectuer cette action sur l'appareil {device}. Les détails figurent dans les journaux de Home Assistant."
+      "message": "Impossible d'effectuer cette action sur l'appareil {device}. Pour en savoir plus, consultez les journaux de Home Assistant."
     },
     "devices_not_rebooted": {
       "message": "Les appareils suivants n'ont pas confirmé qu'ils vont redémarrer : {devices}. Vérifiez qu'ils sont en ligne et réessayez plus tard."

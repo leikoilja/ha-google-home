@@ -106,13 +106,13 @@
       "message": "Det gick inte att nå {device}. Kontrollera att enheten är påslagen och ansluten till ditt nätverk, och försök sedan igen."
     },
     "device_no_reply": {
-      "message": "{device} svarade inte, eller så avbröts svaret, så den kan ha utfört åtgärden eller inte. Kontrollera att enheten är online och försök igen."
+      "message": "{device} bekräftade inte att den utförde åtgärden: den svarade inte i tid, eller så avbröts svaret. Kontrollera att enheten är online och försök igen."
     },
     "device_token_rejected": {
-      "message": "{device} avvisade sin token. Integrationen ber Google om en ny vid nästa uppdatering, så försök igen efter det."
+      "message": "{device} avvisade sin token, och det hjälpte inte att hämta en ny från Google. Integrationen fortsätter att be Google om en ny, så försök igen senare."
     },
     "device_not_ready": {
-      "message": "{device} svarade att den inte kan göra detta. Den håller kanske fortfarande på att starta, eller så stöder den inte detta."
+      "message": "{device} svarade ”hittades inte”. Den håller kanske fortfarande på att starta, så försök igen senare, eller så stöder den inte detta."
     },
     "device_request_failed": {
       "message": "Det gick inte att utföra åtgärden på {device}. Mer information finns i Home Assistants loggar."

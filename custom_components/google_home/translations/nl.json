@@ -106,16 +106,16 @@
       "message": "{device} kon niet worden bereikt. Controleer of het apparaat aanstaat en met je netwerk is verbonden, en probeer het daarna opnieuw."
     },
     "device_no_reply": {
-      "message": "{device} heeft niet geantwoord of het antwoord werd afgebroken, dus de actie is misschien wel en misschien niet uitgevoerd. Controleer of het apparaat online is en probeer het opnieuw."
+      "message": "{device} heeft niet bevestigd dat de actie is uitgevoerd: het heeft niet op tijd geantwoord of het antwoord werd afgebroken. Controleer of het apparaat online is en probeer het opnieuw."
     },
     "device_token_rejected": {
-      "message": "{device} heeft zijn token geweigerd. De integratie vraagt bij de volgende update een nieuw token aan bij Google, dus probeer het daarna opnieuw."
+      "message": "{device} heeft zijn token geweigerd, en het ophalen van een nieuw token bij Google heeft niet geholpen. De integratie blijft een nieuw token aanvragen bij Google, dus probeer het later opnieuw."
     },
     "device_not_ready": {
-      "message": "{device} heeft geantwoord dat het dit niet kan doen. Het apparaat is misschien nog aan het opstarten, of het ondersteunt dit misschien niet."
+      "message": "{device} heeft ‘niet gevonden’ geantwoord. Het apparaat is misschien nog aan het opstarten, dus probeer het later opnieuw, of het ondersteunt dit misschien niet."
     },
     "device_request_failed": {
-      "message": "Dit kon niet worden uitgevoerd op {device}. De details staan in de logboeken van Home Assistant."
+      "message": "Dit kon niet worden uitgevoerd op {device}. Bekijk de logboeken van Home Assistant voor details."
     },
     "devices_not_rebooted": {
       "message": "De volgende apparaten hebben niet bevestigd dat ze herstarten: {devices}. Controleer of de apparaten online zijn en probeer het later opnieuw."

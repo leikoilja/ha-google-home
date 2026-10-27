@@ -106,16 +106,16 @@
       "message": "No se ha podido conectar con {device}. Comprueba que esté encendido y conectado a tu red, y vuelve a intentarlo."
     },
     "device_no_reply": {
-      "message": "{device} no ha respondido o su respuesta se ha cortado, por lo que puede que lo haya hecho o no. Comprueba que esté en línea y vuelve a intentarlo."
+      "message": "{device} no ha confirmado que lo haya hecho: no ha respondido a tiempo o su respuesta se ha cortado. Comprueba que esté en línea y vuelve a intentarlo."
     },
     "device_token_rejected": {
-      "message": "{device} ha rechazado su token. La integración pedirá uno nuevo a Google en la próxima actualización, así que vuelve a intentarlo después."
+      "message": "{device} ha rechazado su token y obtener uno nuevo de Google no ha servido de nada. La integración sigue pidiendo uno nuevo a Google, así que vuelve a intentarlo más tarde."
     },
     "device_not_ready": {
-      "message": "{device} ha respondido que no puede hacerlo. Puede que aún se esté iniciando o que no lo admita."
+      "message": "{device} ha respondido «no encontrado». Puede que aún se esté iniciando, así que vuelve a intentarlo más tarde, o que no admita esta acción."
     },
     "device_request_failed": {
-      "message": "No se ha podido realizar la acción en {device}. Los detalles están en los registros de Home Assistant."
+      "message": "No se ha podido realizar la acción en {device}. Para ver los detalles, consulta los registros de Home Assistant."
     },
     "devices_not_rebooted": {
       "message": "Estos dispositivos no han confirmado que se vayan a reiniciar: {devices}. Comprueba que estén en línea y vuelve a intentarlo más tarde."

@@ -106,16 +106,16 @@
       "message": "Impossibile raggiungere {device}. Verifica che sia acceso e connesso alla tua rete, poi riprova."
     },
     "device_no_reply": {
-      "message": "{device} non ha risposto o la sua risposta si è interrotta, quindi potrebbe aver eseguito l'azione oppure no. Verifica che sia online e riprova."
+      "message": "{device} non ha confermato di aver eseguito l'azione: non ha risposto in tempo o la sua risposta si è interrotta. Verifica che sia online e riprova."
     },
     "device_token_rejected": {
-      "message": "{device} ha rifiutato il suo token. L'integrazione ne chiederà uno nuovo a Google al prossimo aggiornamento, quindi riprova dopo."
+      "message": "{device} ha rifiutato il suo token e ottenerne uno nuovo da Google non è servito. L'integrazione continua a chiederne uno nuovo a Google, quindi riprova più tardi."
     },
     "device_not_ready": {
-      "message": "{device} ha risposto che non può farlo. Potrebbe essere ancora in fase di avvio, oppure potrebbe non supportarlo."
+      "message": "{device} ha risposto «non trovato». Potrebbe essere ancora in fase di avvio, quindi riprova più tardi, oppure potrebbe non supportare questa azione."
     },
     "device_request_failed": {
-      "message": "Impossibile eseguire l'azione su {device}. I dettagli sono nei registri di Home Assistant."
+      "message": "Impossibile eseguire l'azione su {device}. Per i dettagli, consulta i registri di Home Assistant."
     },
     "devices_not_rebooted": {
       "message": "Questi dispositivi non hanno confermato che si riavvieranno: {devices}. Verifica che siano online e riprova più tardi."

@@ -106,16 +106,16 @@
       "message": "Kunne ikke nå {device}. Kontroller at enheten er slått på og koblet til nettverket ditt, og prøv deretter igjen."
     },
     "device_no_reply": {
-      "message": "{device} svarte ikke, eller svaret ble avbrutt, så den kan ha utført handlingen, eller ikke. Kontroller at enheten er på nett, og prøv igjen."
+      "message": "{device} bekreftet ikke at den utførte handlingen: den svarte ikke i tide, eller svaret ble avbrutt. Kontroller at enheten er på nett, og prøv igjen."
     },
     "device_token_rejected": {
-      "message": "{device} avviste tokenet sitt. Integrasjonen ber Google om et nytt ved neste oppdatering, så prøv igjen etter det."
+      "message": "{device} avviste tokenet sitt, og det hjalp ikke å hente et nytt fra Google. Integrasjonen fortsetter å be Google om et nytt, så prøv igjen senere."
     },
     "device_not_ready": {
-      "message": "{device} svarte at den ikke kan gjøre dette. Den holder kanskje fortsatt på å starte, eller den støtter kanskje ikke dette."
+      "message": "{device} svarte «ikke funnet». Den holder kanskje fortsatt på å starte, så prøv igjen senere, eller den støtter kanskje ikke dette."
     },
     "device_request_failed": {
-      "message": "Kunne ikke utføre handlingen på {device}. Detaljene finnes i Home Assistant-loggene."
+      "message": "Kunne ikke utføre handlingen på {device}. Se Home Assistant-loggene for detaljer."
     },
     "devices_not_rebooted": {
       "message": "Disse enhetene bekreftet ikke at de vil starte på nytt: {devices}. Kontroller at enhetene er på nett, og prøv igjen senere."

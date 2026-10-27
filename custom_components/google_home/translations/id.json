@@ -106,16 +106,16 @@
       "message": "Tidak dapat terhubung ke perangkat {device}. Pastikan perangkat menyala dan terhubung ke jaringan Anda, lalu coba lagi."
     },
     "device_no_reply": {
-      "message": "Perangkat {device} tidak merespons, atau responsnya terputus, sehingga tindakan ini mungkin sudah dilakukan atau mungkin belum. Pastikan perangkat online dan coba lagi."
+      "message": "Perangkat {device} tidak mengonfirmasi bahwa tindakan ini sudah dilakukan: perangkat tidak merespons tepat waktu, atau responsnya terputus. Pastikan perangkat online dan coba lagi."
     },
     "device_token_rejected": {
-      "message": "Perangkat {device} menolak tokennya. Integrasi akan meminta token baru dari Google pada pembaruan berikutnya, jadi coba lagi setelah itu."
+      "message": "Perangkat {device} menolak tokennya, dan mendapatkan token baru dari Google tidak membantu. Integrasi terus meminta token baru dari Google, jadi coba lagi nanti."
     },
     "device_not_ready": {
-      "message": "Perangkat {device} merespons bahwa tindakan ini tidak dapat dilakukan. Perangkat mungkin masih dalam proses penyalaan atau mungkin tidak mendukung tindakan ini."
+      "message": "Perangkat {device} merespons “tidak ditemukan”. Perangkat mungkin masih dalam proses penyalaan, jadi coba lagi nanti, atau mungkin tidak mendukung tindakan ini."
     },
     "device_request_failed": {
-      "message": "Tidak dapat melakukan tindakan ini di perangkat {device}. Detailnya ada di log Home Assistant."
+      "message": "Tidak dapat melakukan tindakan ini di perangkat {device}. Untuk detailnya, lihat log Home Assistant."
     },
     "devices_not_rebooted": {
       "message": "Perangkat berikut tidak mengonfirmasi bahwa perangkat tersebut akan dimulai ulang: {devices}. Pastikan semuanya online dan coba lagi nanti."

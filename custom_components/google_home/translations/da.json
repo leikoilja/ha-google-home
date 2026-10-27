@@ -106,13 +106,13 @@
       "message": "Kunne ikke oprette forbindelse til {device}. Kontrollér, at den er tændt og forbundet til dit netværk, og prøv derefter igen."
     },
     "device_no_reply": {
-      "message": "{device} svarede ikke, eller svaret blev afbrudt, så den har måske udført handlingen og måske ikke. Kontrollér, at den er online, og prøv igen."
+      "message": "{device} bekræftede ikke, at den udførte handlingen: den svarede ikke i tide, eller svaret blev afbrudt. Kontrollér, at den er online, og prøv igen."
     },
     "device_token_rejected": {
-      "message": "{device} afviste sit token. Integrationen beder Google om et nyt ved næste opdatering, så prøv igen derefter."
+      "message": "{device} afviste sit token, og det hjalp ikke at hente et nyt fra Google. Integrationen bliver ved med at bede Google om et nyt, så prøv igen senere."
     },
     "device_not_ready": {
-      "message": "{device} svarede, at den ikke kan gøre dette. Den er måske stadig ved at starte, eller den understøtter det måske ikke."
+      "message": "{device} svarede »ikke fundet«. Den er måske stadig ved at starte, så prøv igen senere, eller den understøtter det måske ikke."
     },
     "device_request_failed": {
       "message": "Kunne ikke udføre handlingen på {device}. Du kan se detaljerne i logfilerne i Home Assistant."

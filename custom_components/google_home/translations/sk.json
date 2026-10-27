@@ -106,13 +106,13 @@
       "message": "Nepodarilo sa pripojiť k zariadeniu {device}. Skontrolujte, či je zapnuté a pripojené k sieti, a skúste to znova."
     },
     "device_no_reply": {
-      "message": "Zariadenie {device} neodpovedalo alebo sa jeho odpoveď prerušila, takže akciu možno vykonalo, a možno nie. Skontrolujte, či je zariadenie online, a skúste to znova."
+      "message": "Zariadenie {device} nepotvrdilo, že akciu vykonalo: neodpovedalo včas alebo sa jeho odpoveď prerušila. Skontrolujte, či je zariadenie online, a skúste to znova."
     },
     "device_token_rejected": {
-      "message": "Zariadenie {device} odmietlo svoj token. Integrácia si pri ďalšej aktualizácii vyžiada od Googlu nový, takže to potom skúste znova."
+      "message": "Zariadenie {device} odmietlo svoj token a získanie nového od Googlu nepomohlo. Integrácia bude naďalej žiadať Google o nový, takže to skúste znova neskôr."
     },
     "device_not_ready": {
-      "message": "Zariadenie {device} odpovedalo, že to nemôže vykonať. Možno sa ešte spúšťa alebo to nepodporuje."
+      "message": "Zariadenie {device} odpovedalo „nenájdené“. Možno sa ešte spúšťa, takže to skúste znova neskôr, alebo to možno nepodporuje."
     },
     "device_request_failed": {
       "message": "Na zariadení {device} sa to nepodarilo vykonať. Podrobnosti nájdete v protokoloch Home Assistant."
