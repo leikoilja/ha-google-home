@@ -1,9 +1,9 @@
 """Tests for fetching Google's device list again after setup."""
 
 import asyncio
-from collections.abc import Callable, Iterator
+from collections.abc import Callable
 from http import HTTPStatus
-from unittest.mock import AsyncMock, MagicMock, Mock, call, patch
+from unittest.mock import AsyncMock, MagicMock, Mock, call
 
 from glocaltokens.client import Device
 from glocaltokens.exceptions import AuthenticationError, HomegraphError
@@ -77,16 +77,9 @@ def rejected() -> AuthenticationError:
     return AuthenticationError("Google gave no access token", "BadAuthentication")
 
 
-@pytest.fixture(name="clock")
-def fixture_clock() -> Iterator[Mock]:
-    """Set the time the client reads, in seconds since setup fetched Google's list."""
-    with patch(
-        "custom_components.google_home.api.monotonic", return_value=0.0
-    ) as monotonic:
-        yield monotonic
-
-
-def found(device_id: str, ip_address: str | None) -> Device:
+def found(
+    device_id: str, ip_address: str | None, token: str = LOCAL_AUTH_TOKEN
+) -> Device:
     """Return a device as glocaltokens returns it, with the address mDNS found."""
     network_device = (
         NetworkDevice(device_id, ip_address, 8009, "Nest Audio", device_id)
@@ -96,19 +89,41 @@ def found(device_id: str, ip_address: str | None) -> Device:
     return Device(
         device_id,
         device_id,
-        LOCAL_AUTH_TOKEN,
+        token,
         network_device,
         hardware="Nest Audio",
         cloud_device_id=device_id,
     )
 
 
+async def until(condition: Callable[[], bool]) -> None:
+    """Let the other tasks run until the condition holds.
+
+    The fake devices and Google answer without letting other tasks run, so this
+    sets the order in which overlapping requests and fetches meet.
+    """
+    async with asyncio.timeout(1):
+        while not condition():
+            await asyncio.sleep(0)
+
+
 def make_client(
-    *ip_addresses: str | None, session: Mock | None = None
+    *ip_addresses: str | None,
+    session: Mock | None = None,
+    google_answers_when: Callable[[], bool] | None = None,
 ) -> tuple[GlocaltokensApiClient, Mock]:
-    """Return a client that fetched Google's list once, and its fake glocaltokens."""
+    """Return a client that fetched Google's list once, and its fake glocaltokens.
+
+    With google_answers_when, a fetch of Google's list waits until it holds.
+    """
+
+    async def executor(func: Callable[[], object]) -> object:
+        if google_answers_when is not None:
+            await until(google_answers_when)
+        return func()
+
     hass = Mock()
-    hass.async_add_executor_job = AsyncMock(side_effect=lambda func, *args: func(*args))
+    hass.async_add_executor_job = AsyncMock(side_effect=executor)
     client = GlocaltokensApiClient(hass, session or Mock(), master_token=MASTER_TOKEN)
     client.google_devices = [
         GoogleHomeDevice(f"device{index}", f"Device {index}", "token", ip_address)
@@ -292,7 +307,7 @@ def answering(status: HTTPStatus) -> Mock:
 def test_fetch_on_every_update_after_token_rejected(
     clock: Mock, error: Exception
 ) -> None:
-    """Fetch Google's list once on every update after a device rejects its token, until it works.
+    """Fetch Google's list once on every update after a device rejects even its new token, until it works.
 
     Until then, the list is unknown, so no device can be deleted.
     """
@@ -300,19 +315,21 @@ def test_fetch_on_every_update_after_token_rejected(
         "10.0.0.2", session=answering(HTTPStatus.UNAUTHORIZED)
     )
     [kitchen] = client.google_devices
-    # Just when the scheduled fetch is due, which mustn't make it fetch twice
-    clock.return_value = FETCH_DEVICES_INTERVAL
     asyncio.run(client.update_alarms_and_timers(kitchen))
+    # The rejection fetched the list straight away
+    assert glocaltokens.get_google_devices.call_count == 1
     assert not can_delete(client, [kitchen], "removed")
 
     glocaltokens.get_google_devices.side_effect = error
+    # Just when the scheduled fetch is due, which mustn't make it fetch twice
+    clock.return_value = FETCH_DEVICES_INTERVAL
     # Keep the devices, which may still accept their tokens, until Google answers
     assert update(client) == [kitchen]
-    assert fetches_in(client, glocaltokens, 2) == 3
+    assert fetches_in(client, glocaltokens, 2) == 4
     assert not can_delete(client, [kitchen], "removed")
 
     glocaltokens.get_google_devices.side_effect = None
-    assert fetches_in(client, glocaltokens, 3) == 4
+    assert fetches_in(client, glocaltokens, 3) == 5
     assert can_delete(client, client.google_devices, "removed")
 
 
@@ -485,6 +502,8 @@ def test_keep_polled_data_after_token_rejected() -> None:
     bedroom.set_alarms([{"id": ALARM_ID, "fire_time": 1700000000000, "status": 1}])
     bedroom.set_do_not_disturb(True)
     bedroom.set_alarm_volume(70)
+    # The rejection fetches the list straight away, and the kitchen rejects its
+    # new token too, so the next update fetches it again
     asyncio.run(client.update_alarms_and_timers(kitchen))
 
     # Google lists both devices again, and neither answers this update
@@ -494,7 +513,7 @@ def test_keep_polled_data_after_token_rejected() -> None:
         bedroom,
     ]
 
-    assert glocaltokens.get_google_devices.call_count == 1
+    assert glocaltokens.get_google_devices.call_count == 2
     assert bedroom.auth_token == LOCAL_AUTH_TOKEN
     assert [alarm.alarm_id for alarm in bedroom.get_sorted_alarms()] == [ALARM_ID]
     assert bedroom.get_do_not_disturb()
