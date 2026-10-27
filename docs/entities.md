@@ -129,7 +129,7 @@ Turning Do Not Disturb on or off, setting the alarm volume and pressing Reboot f
 - "Living Room answered that it can't do this. It may still be starting up, or it may not support this".
 - "Couldn't do this on Living Room. The Home Assistant log has the details". The device answered with another error, or the request failed for another reason. Open the [log](https://my.home-assistant.io/redirect/logs/) to see what it was.
 
-Two answers to a Do Not Disturb or alarm volume change don't give one of these messages. If the device accepts the change but its answer doesn't include the new setting, there's no error, and the switch or volume shows the old setting until the next update. If its answer isn't valid JSON, the action fails with an unexpected error instead.
+Two answers to a Do Not Disturb or alarm volume change don't give one of these messages. If the device accepts the change but its answer doesn't include the new setting, there's no error, and the switch or volume shows the old setting until the next update. If its answer says it's JSON but can't be read as JSON, the action fails with an unexpected error instead.
 
 The error stops your automation or script at this step. To run the next steps anyway, select **Continue on error** in the step's menu, or in YAML add `continue_on_error: true` to the step, next to `action:` rather than under `data:`:
 
