@@ -85,6 +85,24 @@
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Nepodarilo sa načítať aktuálne budíky a časovače z nasledujúcich zariadení, preto sa z nich nič neodstránilo: {devices}. Skontrolujte, či sú zariadenia online, a skúste to znova neskôr."
+    },
+    "alarms_and_timers_not_deleted": {
+      "message": "Zariadenie {device} nepotvrdilo odstránenie budíkov alebo časovačov, takže môžu byť stále nastavené. Skontrolujte, či je zariadenie online, a skúste to znova neskôr."
+    },
+    "alarms_and_timers_not_deleted_from_devices": {
+      "message": "Nepodarilo sa odstrániť budíky alebo časovače z nasledujúcich zariadení alebo potvrdiť ich odstránenie: {devices}. Skontrolujte, či sú zariadenia online, a skúste to znova neskôr."
+    },
+    "invalid_alarm_id": {
+      "message": "„{alarm_id}“ nie je ID budíka. Skopírujte ID začínajúce na alarm/ z atribútu alarms senzora budíkov daného zariadenia."
+    },
+    "invalid_timer_id": {
+      "message": "„{timer_id}“ nie je ID časovača. Skopírujte ID začínajúce na timer/ z atribútu timers senzora časovačov daného zariadenia."
+    },
+    "alarm_not_found": {
+      "message": "Na vybraných zariadeniach sa nepodarilo nájsť budík {alarm_id}. Možno už zazvonil alebo bol odstránený."
+    },
+    "timer_not_found": {
+      "message": "Na vybraných zariadeniach sa nepodarilo nájsť časovač {timer_id}. Možno už dokončil odpočítavanie alebo bol odstránený."
     }
   },
   "options": {

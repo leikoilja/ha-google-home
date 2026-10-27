@@ -85,6 +85,24 @@
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Nepodařilo se načíst aktuální budíky a časovače z následujících zařízení, proto z nich nebylo nic smazáno: {devices}. Zkontrolujte, zda jsou zařízení online, a zkuste to znovu později."
+    },
+    "alarms_and_timers_not_deleted": {
+      "message": "Zařízení {device} nepotvrdilo smazání budíků nebo časovačů, takže mohou být stále nastavené. Zkontrolujte, zda je zařízení online, a zkuste to znovu později."
+    },
+    "alarms_and_timers_not_deleted_from_devices": {
+      "message": "Nepodařilo se smazat budíky nebo časovače z následujících zařízení nebo potvrdit jejich smazání: {devices}. Zkontrolujte, zda jsou zařízení online, a zkuste to znovu později."
+    },
+    "invalid_alarm_id": {
+      "message": "„{alarm_id}“ není ID budíku. Zkopírujte ID začínající na alarm/ z atributu alarms senzoru budíků daného zařízení."
+    },
+    "invalid_timer_id": {
+      "message": "„{timer_id}“ není ID časovače. Zkopírujte ID začínající na timer/ z atributu timers senzoru časovačů daného zařízení."
+    },
+    "alarm_not_found": {
+      "message": "Na vybraných zařízeních se nepodařilo najít budík {alarm_id}. Možná už zazvonil nebo byl smazán."
+    },
+    "timer_not_found": {
+      "message": "Na vybraných zařízeních se nepodařilo najít časovač {timer_id}. Možná už doběhl nebo byl smazán."
     }
   },
   "options": {

@@ -85,6 +85,24 @@
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Die aktuellen Wecker und Timer konnten von den folgenden Geräten nicht abgerufen werden: {devices}. Daher wurde auf diesen Geräten nichts gelöscht. Prüfe, ob sie online sind, und versuche es später erneut."
+    },
+    "alarms_and_timers_not_deleted": {
+      "message": "Das Gerät {device} hat das Löschen der Wecker oder Timer nicht bestätigt, daher sind sie möglicherweise noch eingestellt. Prüfe, ob es online ist, und versuche es später erneut."
+    },
+    "alarms_and_timers_not_deleted_from_devices": {
+      "message": "Wecker oder Timer konnten auf den folgenden Geräten nicht gelöscht werden, oder das Löschen konnte nicht bestätigt werden: {devices}. Prüfe, ob sie online sind, und versuche es später erneut."
+    },
+    "invalid_alarm_id": {
+      "message": "„{alarm_id}“ ist keine Wecker-ID. Kopiere die ID, die mit alarm/ beginnt, aus dem Attribut alarms des Weckersensors des Geräts."
+    },
+    "invalid_timer_id": {
+      "message": "„{timer_id}“ ist keine Timer-ID. Kopiere die ID, die mit timer/ beginnt, aus dem Attribut timers des Timersensors des Geräts."
+    },
+    "alarm_not_found": {
+      "message": "Der Wecker {alarm_id} konnte auf den ausgewählten Geräten nicht gefunden werden. Er hat möglicherweise bereits geklingelt oder wurde gelöscht."
+    },
+    "timer_not_found": {
+      "message": "Der Timer {timer_id} konnte auf den ausgewählten Geräten nicht gefunden werden. Er ist möglicherweise bereits abgelaufen oder wurde gelöscht."
     }
   },
   "options": {

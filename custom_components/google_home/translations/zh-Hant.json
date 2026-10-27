@@ -85,6 +85,24 @@
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "無法從下列裝置取得目前的鬧鐘和計時器，因此未從這些裝置刪除任何項目：{devices}。請確認這些裝置已連線，並稍後再試。"
+    },
+    "alarms_and_timers_not_deleted": {
+      "message": "{device} 未確認已刪除鬧鐘或計時器，因此這些項目可能仍處於已設定狀態。請確認裝置已連線，並稍後再試。"
+    },
+    "alarms_and_timers_not_deleted_from_devices": {
+      "message": "無法從下列裝置刪除鬧鐘或計時器，或無法確認是否已刪除：{devices}。請確認這些裝置已連線，並稍後再試。"
+    },
+    "invalid_alarm_id": {
+      "message": "「{alarm_id}」不是鬧鐘 ID。請從裝置的鬧鐘感測器的 alarms 屬性複製以 alarm/ 開頭的 ID。"
+    },
+    "invalid_timer_id": {
+      "message": "「{timer_id}」不是計時器 ID。請從裝置的計時器感測器的 timers 屬性複製以 timer/ 開頭的 ID。"
+    },
+    "alarm_not_found": {
+      "message": "在選取的裝置上找不到鬧鐘 {alarm_id}。它可能已響過或被刪除。"
+    },
+    "timer_not_found": {
+      "message": "在選取的裝置上找不到計時器 {timer_id}。它可能已結束或被刪除。"
     }
   },
   "options": {

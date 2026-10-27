@@ -85,6 +85,24 @@
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Nem sikerült lekérni a következő eszközök aktuális ébresztéseit és időzítőit: {devices}. Ezért semmi sem lett törölve ezekről az eszközökről. Ellenőrizze, hogy az eszközök online vannak-e, és próbálja újra később."
+    },
+    "alarms_and_timers_not_deleted": {
+      "message": "A(z) {device} eszköz nem erősítette meg az ébresztések vagy időzítők törlését, ezért azok továbbra is be lehetnek állítva. Ellenőrizze, hogy az eszköz online van-e, és próbálja újra később."
+    },
+    "alarms_and_timers_not_deleted_from_devices": {
+      "message": "Nem sikerült törölni az ébresztéseket vagy időzítőket a következő eszközökről, vagy megerősíteni a törlésüket: {devices}. Ellenőrizze, hogy az eszközök online vannak-e, és próbálja újra később."
+    },
+    "invalid_alarm_id": {
+      "message": "A(z) „{alarm_id}” nem ébresztésazonosító. Másolja ki az alarm/ kezdetű azonosítót az eszköz ébresztésérzékelőjének alarms attribútumából."
+    },
+    "invalid_timer_id": {
+      "message": "A(z) „{timer_id}” nem időzítőazonosító. Másolja ki a timer/ kezdetű azonosítót az eszköz időzítőérzékelőjének timers attribútumából."
+    },
+    "alarm_not_found": {
+      "message": "Nem található a(z) {alarm_id} ébresztés a kiválasztott eszközökön. Lehet, hogy már megszólalt vagy törölték."
+    },
+    "timer_not_found": {
+      "message": "Nem található a(z) {timer_id} időzítő a kiválasztott eszközökön. Lehet, hogy már lejárt vagy törölték."
     }
   },
   "options": {

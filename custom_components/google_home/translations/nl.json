@@ -85,6 +85,24 @@
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "De huidige alarmen en timers konden niet worden opgehaald van de volgende apparaten: {devices}. Er is daarom niets van deze apparaten verwijderd. Controleer of de apparaten online zijn en probeer het later opnieuw."
+    },
+    "alarms_and_timers_not_deleted": {
+      "message": "{device} heeft het verwijderen van de alarmen of timers niet bevestigd. Ze kunnen dus nog ingesteld zijn. Controleer of het apparaat online is en probeer het later opnieuw."
+    },
+    "alarms_and_timers_not_deleted_from_devices": {
+      "message": "Alarmen of timers konden niet worden verwijderd van de volgende apparaten, of het verwijderen kon niet worden bevestigd: {devices}. Controleer of de apparaten online zijn en probeer het later opnieuw."
+    },
+    "invalid_alarm_id": {
+      "message": "‘{alarm_id}’ is geen alarm-ID. Kopieer de ID, die begint met alarm/, uit het attribuut alarms van de alarmsensor van het apparaat."
+    },
+    "invalid_timer_id": {
+      "message": "‘{timer_id}’ is geen timer-ID. Kopieer de ID, die begint met timer/, uit het attribuut timers van de timersensor van het apparaat."
+    },
+    "alarm_not_found": {
+      "message": "Het alarm {alarm_id} is niet gevonden op de geselecteerde apparaten. Het is mogelijk al afgegaan of verwijderd."
+    },
+    "timer_not_found": {
+      "message": "De timer {timer_id} is niet gevonden op de geselecteerde apparaten. Deze is mogelijk al afgelopen of verwijderd."
     }
   },
   "options": {

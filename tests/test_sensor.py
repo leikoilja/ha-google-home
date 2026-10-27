@@ -2,10 +2,14 @@
 
 import asyncio
 from collections.abc import Awaitable, Callable, Sequence
+from http import HTTPStatus
 import json
 from pathlib import Path
-from unittest.mock import ANY, AsyncMock, Mock, patch
+from unittest.mock import AsyncMock, MagicMock, Mock, patch
 
+from aiohttp import ClientConnectorError
+from aiohttp.client_exceptions import ContentTypeError
+import probatio
 import pytest
 
 from custom_components.google_home.api import GlocaltokensApiClient
@@ -24,12 +28,14 @@ from custom_components.google_home.const import (
     SERVICE_REFRESH,
 )
 from custom_components.google_home.entity import GoogleHomeBaseEntity
+from custom_components.google_home.exceptions import AlarmsAndTimersNotDeleted
 from custom_components.google_home.models import GoogleHomeDevice
 from custom_components.google_home.sensor import (
     GoogleHomeAlarmsSensor,
     GoogleHomeDeviceSensor,
     GoogleHomeSensorFeature,
     GoogleHomeTimersSensor,
+    async_delete_from_devices,
     async_reboot_devices,
     async_refresh_devices,
     async_setup_entry,
@@ -40,7 +46,8 @@ from custom_components.google_home.types import AlarmJsonDict, JsonDict, TimerJs
 # pylint: disable=wrong-import-order
 from homeassistant.const import STATE_UNAVAILABLE
 from homeassistant.core import ServiceCall
-from homeassistant.exceptions import HomeAssistantError
+from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
+from homeassistant.helpers import config_validation as cv
 
 # pylint: enable=wrong-import-order
 
@@ -133,9 +140,12 @@ def test_batched_actions_registered() -> None:
     register_batched = set_up_platform()
 
     # The delete tests run each delete action as registered
-    delete = (SENSOR, ANY)
+    delete = (SENSOR, async_delete_from_devices)
     assert {
-        c.args[2]: (c.kwargs["entity_domain"], c.kwargs["func"])
+        c.args[2]: (
+            c.kwargs["entity_domain"],
+            getattr(c.kwargs["func"], "func", c.kwargs["func"]),
+        )
         for c in register_batched.call_args_list
     } == {
         SERVICE_DELETE_ALARM: delete,
@@ -159,6 +169,74 @@ def get_registered_action(
     """
     [c] = [c for c in set_up_platform().call_args_list if c.args[2] == action]
     return c.kwargs["func"], c.kwargs["required_features"]
+
+
+def validate(action: str, data: dict[str, object]) -> dict[str, object]:
+    """Validate an action's data with its registered schema, as Home Assistant does before running it."""
+    [c] = [c for c in set_up_platform().call_args_list if c.args[2] == action]
+    validated: dict[str, object] = cv.make_entity_service_schema(c.kwargs["schema"])(
+        {"entity_id": "sensor.kitchen_alarms", **data}
+    )
+    return validated
+
+
+def error_message(error: HomeAssistantError) -> str:
+    """Return the message Home Assistant shows for a translated error, from en.json."""
+    assert error.translation_domain == DOMAIN
+    assert error.translation_key is not None
+    text: str = EN_TRANSLATIONS["exceptions"][error.translation_key]["message"]
+    return text.format(**(error.translation_placeholders or {}))
+
+
+@pytest.mark.parametrize(
+    ("action", "field", "item_id"),
+    [
+        ("delete_alarm", "alarm_id", ALARM_IDS[0]),
+        ("delete_timer", "timer_id", TIMER_IDS[0]),
+    ],
+)
+def test_valid_id_accepted(action: str, field: str, item_id: str) -> None:
+    """Accept an ID in the format the device uses."""
+    assert validate(action, {field: item_id})[field] == item_id
+
+
+@pytest.mark.parametrize(
+    ("action", "field", "item_id", "shown_id"),
+    [
+        ("delete_alarm", "alarm_id", "alarm/wrong-format", "alarm/wrong-format"),
+        ("delete_alarm", "alarm_id", TIMER_IDS[0], TIMER_IDS[0]),
+        # Such as from a template when the sensor has no alarms
+        ("delete_alarm", "alarm_id", "", ""),
+        # Turned into text first, like any other text field
+        ("delete_alarm", "alarm_id", 12, "12"),
+        ("delete_timer", "timer_id", "timer/wrong-format", "timer/wrong-format"),
+        ("delete_timer", "timer_id", ALARM_IDS[0], ALARM_IDS[0]),
+    ],
+)
+def test_wrong_id_format_rejected(
+    action: str, field: str, item_id: object, shown_id: str
+) -> None:
+    """Reject an ID in the wrong format before asking any device, with a translated error.
+
+    Unlike a schema error, it lets a step with continue_on_error carry on.
+    """
+    with pytest.raises(ServiceValidationError) as err:
+        validate(action, {field: item_id})
+
+    assert err.value.translation_placeholders == {field: shown_id}
+    assert f"“{shown_id}”" in error_message(err.value)
+
+
+@pytest.mark.parametrize(
+    ("action", "field"), [("delete_alarm", "alarm_id"), ("delete_timer", "timer_id")]
+)
+@pytest.mark.parametrize("value", ["missing", None, [ALARM_IDS[0]]])
+def test_missing_id_is_a_configuration_error(
+    action: str, field: str, value: object
+) -> None:
+    """Keep a missing ID, or one that is null or a list, a configuration error, which continue_on_error doesn't cover."""
+    with pytest.raises(probatio.Invalid):
+        validate(action, {} if value == "missing" else {field: value})
 
 
 def run_action(
@@ -281,12 +359,15 @@ def test_delete_all_fails_when_fetch_fails(
 
 
 def set_up_devices(
-    sensor_class: type[GoogleHomeBaseEntity], replies: dict[str, JsonDict | None]
+    sensor_class: type[GoogleHomeBaseEntity],
+    replies: dict[str, JsonDict | None],
+    delete_replies: dict[str, JsonDict | None] | None = None,
 ) -> tuple[list[GoogleHomeBaseEntity], AsyncMock, Mock]:
-    """Return a sensor for each device named in replies, the mocked delete and coordinator.
+    """Return a sensor for each device named in replies, the delete, as a mock, and coordinator.
 
     Each device sends its reply when asked for its alarms and timers. The last
-    poll saw other IDs, which the delete-all actions must not use.
+    poll saw other IDs, which the delete actions must not use. A device
+    confirms a delete unless delete_replies gives its reply.
     """
     devices = [
         set_alarms_and_timers(
@@ -297,16 +378,20 @@ def set_up_devices(
         for name in replies
     ]
 
-    async def request(*, device: GoogleHomeDevice, **_: object) -> JsonDict | None:
+    async def request(
+        *, method: str, device: GoogleHomeDevice, **_: object
+    ) -> JsonDict | None:
+        if method == "POST":
+            return (delete_replies or {}).get(device.name, {"success": True})
         # A device that answers does so after the others fail, so the action
         # must wait for it before raising
-        if (reply := replies[device.name]) == REPLY:
+        if (reply := replies[device.name]) is not None:
             await asyncio.sleep(0.01)
         return reply
 
     client = GlocaltokensApiClient(Mock(), Mock(), master_token=MASTER_TOKEN)
     client.request = AsyncMock(side_effect=request)  # type: ignore[method-assign]
-    delete = AsyncMock(side_effect=confirm_delete)
+    delete = AsyncMock(side_effect=client.delete_alarm_or_timer)
     client.delete_alarm_or_timer = delete  # type: ignore[method-assign]
     coordinator = Mock(data=devices, async_request_refresh=AsyncMock())
     sensors = [
@@ -405,6 +490,164 @@ def test_delete_all_raises_unexpected_error(
     coordinator.async_request_refresh.assert_awaited_once()
 
 
+# Each delete-one action, its sensor, and its data for an ID the devices have
+DELETE_ONE = [
+    ("delete_alarm", GoogleHomeAlarmsSensor, {"alarm_id": ALARM_IDS[0]}),
+    ("delete_timer", GoogleHomeTimersSensor, {"timer_id": TIMER_IDS[0]}),
+]
+NONE_LEFT: JsonDict = {"alarm": [], "timer": []}
+
+
+@pytest.mark.parametrize(("action", "sensor_class", "data"), DELETE_ONE)
+def test_delete_one_only_where_listed(
+    action: str, sensor_class: type[GoogleHomeBaseEntity], data: dict[str, str]
+) -> None:
+    """Send the ID only to the devices that have it now, such as with an area target."""
+    func, _ = get_registered_action(action)
+    sensors, delete, coordinator = set_up_devices(
+        sensor_class, {"Kitchen": REPLY, "Bedroom": NONE_LEFT}
+    )
+
+    asyncio.run(func(sensors, Mock(data=data)))
+
+    assert [
+        (c.kwargs["device"].name, c.kwargs["items_to_delete"])
+        for c in delete.await_args_list
+    ] == [("Kitchen", list(data.values()))]
+    coordinator.async_request_refresh.assert_awaited_once()
+
+
+@pytest.mark.parametrize(("action", "sensor_class", "data"), DELETE_ONE)
+def test_delete_one_fails_when_no_device_has_it(
+    action: str, sensor_class: type[GoogleHomeBaseEntity], data: dict[str, str]
+) -> None:
+    """Report an ID that no targeted device has, such as from a sensor that hasn't updated yet.
+
+    Devices answer that they deleted an ID they don't have, so the action asks
+    them first. The sensor stops showing it.
+    """
+    func, _ = get_registered_action(action)
+    [(field, item_id)] = data.items()
+    sensors, delete, coordinator = set_up_devices(
+        sensor_class, {"Kitchen": NONE_LEFT, "Bedroom": NONE_LEFT}
+    )
+    # The last poll still saw it
+    for sensor in sensors:
+        device = sensor.get_device()
+        assert device is not None
+        set_alarms_and_timers(device, ALARM_IDS[:1], TIMER_IDS[:1])
+
+    with pytest.raises(ServiceValidationError) as err:
+        asyncio.run(func(sensors, Mock(data=data)))
+
+    delete.assert_not_awaited()
+    coordinator.async_request_refresh.assert_not_awaited()
+    # alarm_not_found or timer_not_found, not the invalid-ID error, which also names it
+    assert err.value.translation_key == f"{field.removesuffix('_id')}_not_found"
+    assert item_id in error_message(err.value)
+    assert all(sensor.state == STATE_UNAVAILABLE for sensor in sensors)
+    assert coordinator.async_update_listeners.call_count == len(sensors)
+
+
+@pytest.mark.parametrize(("action", "sensor_class", "data"), DELETE_ONE)
+@pytest.mark.parametrize(
+    ("others", "deleted"),
+    [
+        # It may be on the device that didn't answer
+        (NONE_LEFT, []),
+        # Deleted from the other device, but it may also be on this one
+        (REPLY, ["Bedroom"]),
+    ],
+)
+def test_delete_one_names_device_it_cant_fetch(
+    action: str,
+    sensor_class: type[GoogleHomeBaseEntity],
+    data: dict[str, str],
+    others: JsonDict,
+    deleted: list[str],
+) -> None:
+    """Name a device that didn't answer, rather than say that no device has the ID."""
+    func, _ = get_registered_action(action)
+    sensors, delete, coordinator = set_up_devices(
+        sensor_class, {"Kitchen": None, "Bedroom": others}
+    )
+
+    with pytest.raises(HomeAssistantError) as err:
+        asyncio.run(func(sensors, Mock(data=data)))
+
+    assert [c.kwargs["device"].name for c in delete.await_args_list] == deleted
+    assert coordinator.async_request_refresh.await_count == len(deleted)
+    assert err.value.translation_key == "alarms_and_timers_not_fetched"
+    assert "Kitchen" in error_message(err.value)
+
+
+@pytest.mark.parametrize(
+    ("action", "sensor_class", "data"),
+    [
+        *DELETE_ONE,
+        ("delete_all_alarms", GoogleHomeAlarmsSensor, {}),
+        ("delete_all_timers", GoogleHomeTimersSensor, {}),
+    ],
+)
+def test_delete_names_every_device_that_failed(
+    action: str, sensor_class: type[GoogleHomeBaseEntity], data: dict[str, str]
+) -> None:
+    """Name every device that didn't answer or confirm the delete, in one error.
+
+    Ask for one refresh: a delete that wasn't confirmed may still have happened.
+    """
+    func, _ = get_registered_action(action)
+    sensors, _, coordinator = set_up_devices(
+        sensor_class,
+        {"Office": None, "Bedroom": NONE_LEFT, "Kitchen": REPLY},
+        delete_replies={"Kitchen": {"success": False}},
+    )
+
+    with pytest.raises(HomeAssistantError) as err:
+        asyncio.run(func(sensors, Mock(data=data)))
+
+    coordinator.async_request_refresh.assert_awaited_once()
+    assert err.value.translation_key == "alarms_and_timers_not_deleted_from_devices"
+    # In alphabetical order, without the device that had nothing to delete
+    assert err.value.translation_placeholders == {"devices": "Kitchen, Office"}
+    assert "Kitchen, Office" in error_message(err.value)
+
+
+@pytest.mark.parametrize(
+    ("action", "data"),
+    [("delete_alarm", {"alarm_id": ALARM_IDS[0]}), ("delete_all_alarms", {})],
+)
+def test_delete_not_confirmed_shows_current_alarms(
+    action: str, data: dict[str, str]
+) -> None:
+    """Show the alarms the device has now, although it didn't confirm the delete.
+
+    Without a refresh, the sensor would otherwise show the last poll's alarms
+    until the next update.
+    """
+    func, _ = get_registered_action(action)
+    sensors, _, coordinator = set_up_devices(
+        GoogleHomeAlarmsSensor,
+        {"Kitchen": REPLY},
+        delete_replies={"Kitchen": {"success": False}},
+    )
+    [sensor] = sensors
+    assert isinstance(sensor, GoogleHomeAlarmsSensor)
+    shown: list[list[str]] = []
+    coordinator.async_update_listeners.side_effect = lambda: shown.append(
+        [alarm["alarm_id"] for alarm in sensor.extra_state_attributes["alarms"]]
+    )
+
+    with pytest.raises(HomeAssistantError) as err:
+        asyncio.run(func(sensors, Mock(data={**data, "skip_refresh": True})))
+
+    # Not the last poll's alarm/from-last-poll; the alarms it may still have stay
+    assert shown == [ALARM_IDS]
+    coordinator.async_request_refresh.assert_not_awaited()
+    assert err.value.translation_key == "alarms_and_timers_not_deleted"
+    assert "Kitchen" in error_message(err.value)
+
+
 @pytest.mark.parametrize("action", ["delete_all_alarms", "delete_all_timers"])
 @pytest.mark.parametrize(("alarm_ids", "timer_ids"), [(ALARM_IDS, TIMER_IDS), ([], [])])
 def test_delete_all_shows_none_left(
@@ -435,7 +678,11 @@ def test_delete_one_shows_it_gone(
         ALARM_IDS[:1],
         TIMER_IDS[:1],
     )
-    client = Mock(delete_alarm_or_timer=AsyncMock(side_effect=confirm_delete))
+    client = Mock(
+        # The device still has them
+        update_alarms_and_timers=AsyncMock(return_value=device),
+        delete_alarm_or_timer=AsyncMock(side_effect=confirm_delete),
+    )
     coordinator = Mock(data=[device])
     sensor = sensor_class(coordinator, client, "device-id", "Kitchen", None)
     shown: list[str | None] = []
@@ -508,44 +755,27 @@ def test_delete_from_several_devices_refreshes_once(
 @pytest.mark.parametrize(
     ("action", "sensor_class", "data"),
     [
-        ("delete_alarm", GoogleHomeAlarmsSensor, {"alarm_id": "alarm/wrong-format"}),
-        ("delete_timer", GoogleHomeTimersSensor, {"timer_id": "timer/wrong-format"}),
-    ],
-)
-def test_delete_one_sends_nothing_for_wrong_id_format(
-    action: str, sensor_class: type[GoogleHomeBaseEntity], data: dict[str, str]
-) -> None:
-    """Send no request and don't refresh when the ID has the wrong format."""
-    func, _ = get_registered_action(action)
-    sensors, delete, coordinator = set_up_devices(sensor_class, {"Kitchen": REPLY})
-
-    asyncio.run(func(sensors, Mock(data=data)))
-
-    delete.assert_not_awaited()
-    coordinator.async_request_refresh.assert_not_awaited()
-
-
-@pytest.mark.parametrize(
-    ("action", "sensor_class", "data"),
-    [
         ("delete_alarm", GoogleHomeAlarmsSensor, {"alarm_id": ALARM_IDS[0]}),
         ("delete_timer", GoogleHomeTimersSensor, {"timer_id": TIMER_IDS[0]}),
         ("delete_all_alarms", GoogleHomeAlarmsSensor, {}),
         ("delete_all_timers", GoogleHomeTimersSensor, {}),
     ],
 )
-def test_delete_sends_nothing_when_device_is_gone(
+def test_delete_fails_when_device_is_gone(
     action: str, sensor_class: type[GoogleHomeBaseEntity], data: dict[str, str]
 ) -> None:
-    """Send no request and don't refresh when the last update no longer has the device."""
+    """Report an error, send no request and don't refresh when the last update no longer has the device."""
     func, _ = get_registered_action(action)
     sensors, delete, coordinator = set_up_devices(sensor_class, {"Kitchen": REPLY})
     coordinator.data = []
 
-    asyncio.run(func(sensors, Mock(data=data)))
+    with pytest.raises(HomeAssistantError) as err:
+        asyncio.run(func(sensors, Mock(data=data)))
 
     delete.assert_not_awaited()
     coordinator.async_request_refresh.assert_not_awaited()
+    assert err.value.translation_key == "alarms_and_timers_not_fetched"
+    assert "Kitchen" in error_message(err.value)
 
 
 def test_refresh_devices_once() -> None:
@@ -630,20 +860,10 @@ def test_delete_alarm_or_timer_posts_all_ids() -> None:
     )
 
 
-@pytest.mark.parametrize(
-    ("response", "alarms_left"),
-    [
-        ({"success": True}, ALARM_IDS[1:]),
-        ({"success": False}, ALARM_IDS),
-        (None, ALARM_IDS),
-    ],
-)
-def test_delete_alarm_or_timer_removes_deleted_ids(
-    response: dict[str, bool] | None, alarms_left: list[str]
-) -> None:
+def test_delete_alarm_or_timer_removes_deleted_ids() -> None:
     """Remove only the deleted IDs from the device, once it confirms deleting them."""
     client = GlocaltokensApiClient(Mock(), Mock(), master_token=MASTER_TOKEN)
-    client.request = AsyncMock(return_value=response)  # type: ignore[method-assign]
+    client.request = AsyncMock(return_value={"success": True})  # type: ignore[method-assign]
     device = set_alarms_and_timers(
         GoogleHomeDevice("device-id", "Kitchen", "token", "192.168.1.10"),
         ALARM_IDS,
@@ -652,8 +872,89 @@ def test_delete_alarm_or_timer_removes_deleted_ids(
 
     asyncio.run(client.delete_alarm_or_timer(device, ALARM_IDS[:1]))
 
-    assert [alarm.alarm_id for alarm in device.get_sorted_alarms()] == alarms_left
+    assert [alarm.alarm_id for alarm in device.get_sorted_alarms()] == ALARM_IDS[1:]
     assert [timer.timer_id for timer in device.get_sorted_timers()] == TIMER_IDS
+
+
+def answering(status: HTTPStatus = HTTPStatus.OK, **json_mock: object) -> Mock:
+    """Return a session to which the device answers with this status, and json() set up as given."""
+    answer = MagicMock(status=status, json=AsyncMock(**json_mock))
+    response = MagicMock()
+    response.__aenter__.return_value = answer
+    return Mock(request=Mock(return_value=response))
+
+
+INVALID_JSON = json.JSONDecodeError("Expecting value", "<html>", 0)
+
+
+@pytest.mark.parametrize(
+    "session",
+    [
+        # A reply whose content type says JSON, but isn't
+        pytest.param(answering(side_effect=INVALID_JSON), id="invalid-json"),
+        pytest.param(
+            answering(side_effect=UnicodeDecodeError("utf-8", b"\xff", 0, 1, "bad")),
+            id="undecodable",
+        ),
+        pytest.param(
+            answering(side_effect=ContentTypeError(Mock(), ())), id="not-json"
+        ),
+        pytest.param(answering(return_value=None), id="empty-body"),
+        pytest.param(answering(HTTPStatus.INTERNAL_SERVER_ERROR), id="server-error"),
+        pytest.param(
+            Mock(request=Mock(side_effect=ClientConnectorError(Mock(), OSError()))),
+            id="offline",
+        ),
+        pytest.param(Mock(request=Mock(side_effect=TimeoutError())), id="timed-out"),
+        pytest.param(answering(return_value={"success": False}), id="refused"),
+        pytest.param(answering(return_value={}), id="no-success"),
+        # Only the boolean confirms
+        pytest.param(answering(return_value={"success": "true"}), id="text-true"),
+        pytest.param(answering(return_value={"success": 1}), id="number"),
+        pytest.param(answering(return_value=[{"success": True}]), id="list"),
+        pytest.param(answering(return_value="success"), id="text"),
+    ],
+)
+def test_delete_alarm_or_timer_fails_unless_confirmed(session: Mock) -> None:
+    """Report a delete the device doesn't confirm, naming it, and keep the IDs it may still have."""
+    client = GlocaltokensApiClient(Mock(), session, master_token=MASTER_TOKEN)
+    device = set_alarms_and_timers(
+        GoogleHomeDevice("device-id", "Kitchen", "token", "192.168.1.10"),
+        ALARM_IDS,
+        TIMER_IDS,
+    )
+
+    with pytest.raises(AlarmsAndTimersNotDeleted) as err:
+        asyncio.run(client.delete_alarm_or_timer(device, ALARM_IDS[:1]))
+
+    assert session.request.call_count == 1
+    assert "Kitchen" in error_message(err.value)
+    assert [alarm.alarm_id for alarm in device.get_sorted_alarms()] == ALARM_IDS
+
+
+def test_delete_alarm_or_timer_keeps_why_reply_is_invalid() -> None:
+    """Keep the decoding error as the cause."""
+    client = GlocaltokensApiClient(
+        Mock(), answering(side_effect=INVALID_JSON), master_token=MASTER_TOKEN
+    )
+    device = GoogleHomeDevice("device-id", "Kitchen", "token", "192.168.1.10")
+
+    with pytest.raises(AlarmsAndTimersNotDeleted) as err:
+        asyncio.run(client.delete_alarm_or_timer(device, ALARM_IDS[:1]))
+
+    assert err.value.__cause__ is INVALID_JSON
+
+
+def test_delete_alarm_or_timer_raises_other_errors() -> None:
+    """Raise an error that isn't about the device's reply as it is, such as a stored address that isn't one."""
+    session = answering(return_value={"success": True})
+    client = GlocaltokensApiClient(Mock(), session, master_token=MASTER_TOKEN)
+    device = GoogleHomeDevice("device-id", "Kitchen", "token", "not-an-address")
+
+    with pytest.raises(ValueError, match="not-an-address"):
+        asyncio.run(client.delete_alarm_or_timer(device, ALARM_IDS[:1]))
+
+    session.request.assert_not_called()
 
 
 def test_delete_alarm_or_timer_sends_nothing_for_no_ids() -> None:

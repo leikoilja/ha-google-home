@@ -15,6 +15,7 @@ from custom_components.google_home.const import (
     FETCH_DEVICES_INTERVAL,
     HEADER_CAST_LOCAL_AUTH,
 )
+from custom_components.google_home.exceptions import AlarmsAndTimersNotDeleted
 from custom_components.google_home.models import GoogleHomeDevice
 from custom_components.google_home.sensor import GoogleHomeAlarmsSensor
 from custom_components.google_home.types import JsonDict
@@ -470,3 +471,25 @@ def test_delete_all_after_token_rejected() -> None:
     assert tokens_sent(session, data=None) == [OLD_TOKEN, LOCAL_AUTH_TOKEN]
     assert tokens_sent(session, data={"ids": [ALARM_ID]}) == [LOCAL_AUTH_TOKEN]
     assert kitchen.get_sorted_alarms() == []
+
+
+def test_delete_fails_when_new_token_rejected() -> None:
+    """Report a delete that the device rejects with its old token and with the new one Google gives.
+
+    It keeps the alarm, which the device may still have.
+    """
+    session = accepting(NEWER_TOKEN)
+    client, glocaltokens = make_client("10.0.0.2", session=session)
+    [kitchen] = client.google_devices
+    kitchen.set_alarms([{"id": ALARM_ID, "fire_time": 1700000000000, "status": 1}])
+
+    with pytest.raises(AlarmsAndTimersNotDeleted) as err:
+        asyncio.run(client.delete_alarm_or_timer(kitchen, [ALARM_ID]))
+
+    assert err.value.device_name == kitchen.name
+    assert glocaltokens.get_google_devices.call_count == 1
+    assert tokens_sent(session, data={"ids": [ALARM_ID]}) == [
+        OLD_TOKEN,
+        LOCAL_AUTH_TOKEN,
+    ]
+    assert [alarm.alarm_id for alarm in kitchen.get_sorted_alarms()] == [ALARM_ID]

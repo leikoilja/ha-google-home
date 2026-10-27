@@ -85,6 +85,24 @@
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Tidak dapat mengambil alarm dan timer saat ini dari perangkat berikut, sehingga tidak ada yang dihapus dari perangkat tersebut: {devices}. Pastikan semuanya online dan coba lagi nanti."
+    },
+    "alarms_and_timers_not_deleted": {
+      "message": "Perangkat {device} tidak mengonfirmasi penghapusan alarm atau timer, sehingga alarm atau timer tersebut mungkin masih disetel. Pastikan perangkat online dan coba lagi nanti."
+    },
+    "alarms_and_timers_not_deleted_from_devices": {
+      "message": "Tidak dapat menghapus alarm atau timer dari perangkat berikut, atau mengonfirmasi bahwa alarm atau timer tersebut telah dihapus: {devices}. Pastikan semuanya online dan coba lagi nanti."
+    },
+    "invalid_alarm_id": {
+      "message": "“{alarm_id}” bukan ID alarm. Salin ID yang diawali dengan alarm/ dari atribut alarms pada sensor alarm perangkat."
+    },
+    "invalid_timer_id": {
+      "message": "“{timer_id}” bukan ID timer. Salin ID yang diawali dengan timer/ dari atribut timers pada sensor timer perangkat."
+    },
+    "alarm_not_found": {
+      "message": "Tidak dapat menemukan alarm {alarm_id} di perangkat yang Anda pilih. Alarm mungkin sudah berbunyi atau dihapus."
+    },
+    "timer_not_found": {
+      "message": "Tidak dapat menemukan timer {timer_id} di perangkat yang Anda pilih. Timer mungkin sudah berakhir atau dihapus."
     }
   },
   "options": {

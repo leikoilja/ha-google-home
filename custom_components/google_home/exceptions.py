@@ -20,3 +20,16 @@ class AlarmsAndTimersNotFetched(HomeAssistantError):
             translation_placeholders={"device": device_name},
         )
         self.device_name = device_name
+
+
+class AlarmsAndTimersNotDeleted(HomeAssistantError):
+    """Error to indicate a device didn't confirm deleting alarms or timers."""
+
+    def __init__(self, device_name: str) -> None:
+        """Name the device in the message."""
+        super().__init__(
+            translation_domain=DOMAIN,
+            translation_key="alarms_and_timers_not_deleted",
+            translation_placeholders={"device": device_name},
+        )
+        self.device_name = device_name
