@@ -17,7 +17,7 @@ from .const import (
     ICON_DO_NOT_DISTURB,
     LABEL_DO_NOT_DISTURB,
 )
-from .entity import GoogleHomeBaseEntity, async_add_device_entities
+from .entity import GoogleHomeFeatureEntity, async_add_device_entities
 from .models import GoogleHomeDevice
 from .types import GoogleHomeConfigEntry
 
@@ -41,7 +41,7 @@ async def async_setup_entry(
     return True
 
 
-class DoNotDisturbSwitch(GoogleHomeBaseEntity, SwitchEntity):
+class DoNotDisturbSwitch(GoogleHomeFeatureEntity, SwitchEntity):
     """Google Home Do Not Disturb switch."""
 
     _attr_name = "Do Not Disturb"
