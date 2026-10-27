@@ -465,7 +465,7 @@ def test_reauth_keeps_android_id(
         patch(
             "glocaltokens.client.perform_oauth", return_value={"Auth": "access"}
         ) as oauth,
-        # Not simulated: the master token step looks up the address elsewhere
+        # Google's userinfo endpoint, which gives the address, isn't simulated
         patch.object(
             GlocaltokensApiClient, "async_get_email", return_value="test@example.com"
         ),
