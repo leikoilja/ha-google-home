@@ -68,7 +68,10 @@
     },
     "error": {
       "oauth-token-invalid": "Google n'a pas accepté le cookie. Récupérez-en un nouveau et collez-le immédiatement : il expire en quelques minutes et ne fonctionne qu'une seule fois. Copiez la valeur complète, qui commence par oauth2_4/.",
-      "master-token-invalid": "Jeton maître non valide. Assurez-vous d'avoir saisi le jeton complet (y compris 'aas_et/')",
+      "master-token-invalid": "Google n'a pas accepté le jeton maître. Vérifiez que vous l'avez copié correctement. S'il fonctionnait auparavant, par exemple jusqu'à ce que vous changiez votre mot de passe Google, Google ne l'accepte plus : utilisez plutôt la connexion via le navigateur.",
+      "google-rejected": "Google n'a pas accepté la connexion. Pour en savoir plus, consultez les journaux de Home Assistant.",
+      "google-unreachable": "Impossible de joindre Google. Vérifiez que Home Assistant est connecté à Internet, puis réessayez.",
+      "google-busy": "Google est occupé ou limite les connexions. Patientez quelques minutes, puis reconnectez-vous.",
       "oauth-token-format": "Ce n'est pas le cookie oauth_token. Sa valeur commence par oauth2_4/.",
       "master-token-format": "Un jeton maître commence par aas_et/ et comporte 223 caractères. Copiez le jeton complet."
     },

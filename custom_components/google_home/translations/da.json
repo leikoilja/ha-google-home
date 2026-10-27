@@ -68,7 +68,10 @@
     },
     "error": {
       "oauth-token-invalid": "Google accepterede ikke cookien. Hent en ny, og indsæt den med det samme: den udløber inden for få minutter og virker kun én gang. Kopiér hele værdien, der starter med oauth2_4/.",
-      "master-token-invalid": "Master token er ugyldigt. Sørg for, at hele tokenet er angivet (inklusive 'aas_et/')",
+      "master-token-invalid": "Google accepterede ikke master tokenet. Kontrollér, at du har kopieret det korrekt. Hvis det virkede før, f.eks. indtil du ændrede din Google-adgangskode, accepterer Google det ikke længere: brug login via browser i stedet.",
+      "google-rejected": "Google accepterede ikke loginet. Du kan se detaljerne i logfilerne i Home Assistant.",
+      "google-unreachable": "Kunne ikke oprette forbindelse til Google. Kontrollér, at Home Assistant har forbindelse til internettet, og prøv derefter igen.",
+      "google-busy": "Google er overbelastet eller begrænser loginforsøg. Vent et par minutter, og log derefter ind igen.",
       "oauth-token-format": "Dette er ikke cookien oauth_token. Dens værdi starter med oauth2_4/.",
       "master-token-format": "Et master token starter med aas_et/ og er 223 tegn langt. Kopiér hele tokenet."
     },

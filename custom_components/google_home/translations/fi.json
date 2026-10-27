@@ -68,7 +68,10 @@
     },
     "error": {
       "oauth-token-invalid": "Google ei hyväksynyt evästettä. Hanki uusi ja liitä se heti: se vanhenee muutamassa minuutissa ja toimii vain kerran. Kopioi koko arvo, joka alkaa merkkijonolla oauth2_4/.",
-      "master-token-invalid": "Päätunniste on virheellinen. Varmista, että olet antanut koko tunnisteen, myös alun aas_et/.",
+      "master-token-invalid": "Google ei hyväksynyt päätunnistetta. Tarkista, että kopioit sen oikein. Jos se toimi aiemmin, esimerkiksi siihen asti, kunnes vaihdoit Google-salasanasi, Google ei enää hyväksy sitä: käytä sen sijaan kirjautumista selaimella.",
+      "google-rejected": "Google ei hyväksynyt kirjautumista. Lisätietoja on Home Assistantin lokeissa.",
+      "google-unreachable": "Googleen ei saatu yhteyttä. Tarkista, että Home Assistant on yhteydessä internetiin, ja yritä sitten uudelleen.",
+      "google-busy": "Google on ruuhkautunut tai rajoittaa kirjautumisia. Odota muutama minuutti ja kirjaudu sitten uudelleen.",
       "oauth-token-format": "Tämä ei ole oauth_token-eväste. Sen arvo alkaa merkkijonolla oauth2_4/.",
       "master-token-format": "Päätunniste alkaa merkkijonolla aas_et/ ja on 223 merkkiä pitkä. Kopioi koko tunniste."
     },

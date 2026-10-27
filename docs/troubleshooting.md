@@ -24,6 +24,8 @@ data:
 
 ## Setup fails
 
+When you [sign in again](installation.md#sign-in-again), the form shows these errors too.
+
 ### "Username or password is incorrect"
 
 Older versions of the integration signed in with an app password, which Google rejects for many accounts. [Update the integration](https://github.com/leikoilja/ha-google-home/releases/latest) and use [browser sign-in](installation.md#browser-sign-in) instead.
@@ -32,11 +34,25 @@ Older versions of the integration signed in with an app password, which Google r
 
 The `oauth_token` cookie expires within minutes and works only once. Close the private window and repeat [browser sign-in](installation.md#browser-sign-in) from step 1, then paste the new cookie straight away. Copy the whole value, starting with `oauth2_4/`.
 
-### "Master token invalid"
+### "Google didn't accept the master token"
 
-Paste the whole token, including the `aas_et/` at the start. If it was correct before and has stopped working, for example after you changed your Google password, Google no longer accepts it: use [browser sign-in](installation.md#browser-sign-in) instead. If the integration is already set up, [sign in again](installation.md#sign-in-again) rather than deleting it.
+Check that you pasted the token exactly as you got it. If it was correct before and has stopped working, for example after you changed your Google password, Google no longer accepts it: use [browser sign-in](installation.md#browser-sign-in) instead. If the integration is already set up, [sign in again](installation.md#sign-in-again) rather than deleting it.
+
+### "Google didn't accept the sign-in"
+
+Google refused the cookie or master token for a reason that the integration doesn't know or without a reason, or it answered in a way that the integration doesn't understand. Open the [log](https://my.home-assistant.io/redirect/logs/) and find the warning that starts with `Failed to sign in`; Google's reason, if it gave one, is at the end. [Open an issue](https://github.com/leikoilja/ha-google-home/issues/new/choose) with that line.
+
+### "Couldn't reach Google"
+
+Home Assistant couldn't connect to Google, or Google didn't answer in time. Check that Home Assistant is connected to the internet. The integration signs in at `android.clients.google.com`, and after setup gets your devices from `googlehomefoyer-pa.googleapis.com`. If a DNS filter or firewall, such as Pi-hole or AdGuard Home, blocks either, allow it. Then try again. With browser sign-in, get a new cookie if a few minutes have passed.
+
+### "Google is busy or is limiting sign-ins"
+
+Google answered with a server error, or asked the integration to slow down. This doesn't mean that your cookie or master token is wrong. Wait a few minutes, then sign in again. With browser sign-in, get a new cookie, as the old one expires within minutes.
 
 ## Signing in again fails
+
+The form for signing in again shows the same errors as setup; see [Setup fails](#setup-fails).
 
 ### "You signed in to a different Google account"
 

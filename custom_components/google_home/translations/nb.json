@@ -68,7 +68,10 @@
     },
     "error": {
       "oauth-token-invalid": "Google godtok ikke informasjonskapselen. Hent en ny, og lim den inn med en gang: den utløper i løpet av noen minutter og fungerer bare én gang. Kopier hele verdien, som starter med oauth2_4/.",
-      "master-token-invalid": "Master token er ugyldig. Kontroller at hele tokenet er angitt (inkludert 'aas_et/')",
+      "master-token-invalid": "Google godtok ikke master tokenet. Kontroller at du har kopiert det riktig. Hvis det fungerte før, for eksempel frem til du endret Google-passordet ditt, godtar ikke Google det lenger: bruk pålogging i nettleseren i stedet.",
+      "google-rejected": "Google godtok ikke påloggingen. Se Home Assistant-loggene for detaljer.",
+      "google-unreachable": "Kunne ikke nå Google. Kontroller at Home Assistant er koblet til internett, og prøv deretter igjen.",
+      "google-busy": "Google har stor pågang eller begrenser pålogginger. Vent noen minutter, og logg deretter på igjen.",
       "oauth-token-format": "Dette er ikke informasjonskapselen oauth_token. Verdien starter med oauth2_4/.",
       "master-token-format": "Et master token starter med aas_et/ og er 223 tegn langt. Kopier hele tokenet."
     },

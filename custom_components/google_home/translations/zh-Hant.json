@@ -68,7 +68,10 @@
     },
     "error": {
       "oauth-token-invalid": "Google 未接受此 Cookie。請取得新的 Cookie 並立即貼上：此值會在幾分鐘內失效，且只能使用一次。請複製以 oauth2_4/ 開頭的完整值。",
-      "master-token-invalid": "Master token 無效。請確認已輸入完整值，包括 aas_et/。",
+      "master-token-invalid": "Google 未接受此 master token。請確認是否已正確複製。如果此 master token 之前可以使用（例如在你變更 Google 密碼之前），表示 Google 已不再接受它：請改用「透過瀏覽器登入」。",
+      "google-rejected": "Google 未接受此登入。如需詳細資訊，請查看 Home Assistant 日誌。",
+      "google-unreachable": "無法連線至 Google。請確認 Home Assistant 已連上網際網路，然後再試一次。",
+      "google-busy": "Google 目前忙碌中或正在限制登入。請稍候幾分鐘，然後重新登入。",
       "oauth-token-format": "這不是 oauth_token Cookie，其值應以 oauth2_4/ 開頭。",
       "master-token-format": "Master token 以 aas_et/ 開頭，共 223 個字元。請複製完整值。"
     },

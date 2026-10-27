@@ -68,7 +68,10 @@
     },
     "error": {
       "oauth-token-invalid": "Google에서 쿠키를 수락하지 않았습니다. 새 쿠키를 받아 바로 붙여넣으세요. 몇 분 안에 만료되며 한 번만 사용할 수 있습니다. oauth2_4/로 시작하는 값 전체를 복사하세요.",
-      "master-token-invalid": "마스터 토큰이 유효하지 않습니다. aas_et/를 포함한 토큰 전체를 입력했는지 확인하세요.",
+      "master-token-invalid": "Google에서 마스터 토큰을 수락하지 않았습니다. 올바르게 복사했는지 확인하세요. 이전에 작동했다면(예: Google 비밀번호를 변경하기 전까지) Google에서 더 이상 이 토큰을 수락하지 않습니다. 대신 브라우저 로그인을 사용하세요.",
+      "google-rejected": "Google에서 로그인을 수락하지 않았습니다. 자세한 내용은 Home Assistant 로그를 확인하세요.",
+      "google-unreachable": "Google에 연결하지 못했습니다. Home Assistant가 인터넷에 연결되어 있는지 확인한 후 다시 시도하세요.",
+      "google-busy": "Google이 혼잡하거나 로그인을 제한하고 있습니다. 몇 분 기다린 후 다시 로그인하세요.",
       "oauth-token-format": "oauth_token 쿠키가 아닙니다. 이 쿠키의 값은 oauth2_4/로 시작합니다.",
       "master-token-format": "마스터 토큰은 aas_et/로 시작하며 223자입니다. 토큰 전체를 복사하세요."
     },

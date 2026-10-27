@@ -5,9 +5,10 @@ import ipaddress
 import logging
 from typing import Self, override
 
+from glocaltokens.exceptions import AuthenticationError
 from glocaltokens.utils.token import is_aas_et
 import probatio
-from requests.exceptions import RequestException
+from requests.exceptions import HTTPError, RequestException
 
 from homeassistant.config_entries import (
     SOURCE_REAUTH,
@@ -120,13 +121,14 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
                     oauth_token=oauth_token,
                 )
                 # Getting the master token exchanges the cookie for it
-                if await self._sign_in(client):
+                error = await self._sign_in(client, "oauth-token-invalid")
+                if error is None:
                     username = await client.async_get_email() or ""
                     self.username = username
                     return await self._create_entry(
                         client, username, username or BROWSER_TITLE
                     )
-                errors["base"] = "oauth-token-invalid"
+                errors["base"] = error
         return self._show_form(
             STEP_BROWSER,
             {probatio.Required(CONF_OAUTH_TOKEN): str},
@@ -150,13 +152,14 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
                     password="",
                     master_token=master_token,
                 )
-                if await self._sign_in(client):
+                error = await self._sign_in(client, "master-token-invalid")
+                if error is None:
                     username = await client.async_get_email() or ""
                     self.username = username
                     return await self._create_entry(
                         client, username, username or MASTER_TOKEN_TITLE
                     )
-                errors["base"] = "master-token-invalid"
+                errors["base"] = error
         return self._show_form(
             STEP_MASTER_TOKEN,
             {probatio.Required(CONF_MASTER_TOKEN): str},
@@ -224,16 +227,20 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
         return GoogleHomeOptionsFlowHandler()
 
     @staticmethod
-    async def _sign_in(client: GlocaltokensApiClient) -> bool:
-        """Return whether Google gives a master token and an access token."""
+    async def _sign_in(client: GlocaltokensApiClient, rejected: str) -> str | None:
+        """Return the form error saying why Google gives no master or access token.
+
+        None means that Google gives both. rejected is the form's error for the cookie
+        or master token that Google refuses.
+        """
         try:
             await client.async_get_master_token()
             await client.async_get_access_token()
         except (InvalidMasterToken, RequestException) as error:
             # The form shows the error, so a traceback would only look like a bug
             _LOGGER.warning("Failed to sign in: %s", error)
-            return False
-        return True
+            return _sign_in_error(error, rejected)
+        return None
 
 
 class GoogleHomeOptionsFlowHandler(OptionsFlow):
@@ -281,6 +288,21 @@ class GoogleHomeOptionsFlowHandler(OptionsFlow):
             ),
             errors=errors,
         )
+
+
+def _sign_in_error(error: InvalidMasterToken | RequestException, rejected: str) -> str:
+    """Return the form error for why Google gave no master token or access token."""
+    # glocaltokens raises HTTPError only when Google answers with a 5xx or 429
+    if isinstance(error, HTTPError):
+        return "google-busy"
+    if isinstance(error, RequestException):
+        return "google-unreachable"
+    # Google refuses a used or expired cookie and a revoked master token with
+    # BadAuthentication. Other reasons don't say that a new one would help.
+    cause = error.__cause__
+    if isinstance(cause, AuthenticationError) and cause.error == "BadAuthentication":
+        return rejected
+    return "google-rejected"
 
 
 def _get_accounts(entry: GoogleHomeConfigEntry) -> set[str]:

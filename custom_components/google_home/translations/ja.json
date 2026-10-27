@@ -68,7 +68,10 @@
     },
     "error": {
       "oauth-token-invalid": "Google が Cookie を受け付けませんでした。新しい Cookie を取得し、すぐに貼り付けてください。数分以内に有効期限が切れ、1 回しか使用できません。oauth2_4/ で始まる値をすべてコピーしてください。",
-      "master-token-invalid": "マスタートークンが無効です。aas_et/ を含むトークン全体を入力したか確認してください。",
+      "master-token-invalid": "Google がマスタートークンを受け付けませんでした。正しくコピーしたか確認してください。以前は使えていた場合（たとえば Google のパスワードを変更するまで）、Google はこのトークンを受け付けなくなっています。代わりに「ブラウザでログイン」を使用してください。",
+      "google-rejected": "Google がログインを受け付けませんでした。詳細は Home Assistant のログを確認してください。",
+      "google-unreachable": "Google に接続できませんでした。Home Assistant がインターネットに接続されていることを確認してから、もう一度お試しください。",
+      "google-busy": "Google が混雑しているか、ログインを制限しています。数分待ってから、再度ログインしてください。",
       "oauth-token-format": "これは oauth_token Cookie ではありません。値は oauth2_4/ で始まります。",
       "master-token-format": "マスタートークンは aas_et/ で始まる 223 文字の文字列です。トークン全体をコピーしてください。"
     },

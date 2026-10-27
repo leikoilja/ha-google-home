@@ -2,6 +2,8 @@
 
 import asyncio
 from collections.abc import Iterator
+from contextlib import contextmanager
+from http import HTTPStatus
 import json
 import logging
 from pathlib import Path
@@ -11,12 +13,17 @@ from unittest.mock import AsyncMock, Mock, patch
 
 from glocaltokens.exceptions import AuthenticationError
 import pytest
-from requests.exceptions import RequestException
+from requests import Response
+from requests.exceptions import (
+    ConnectionError as RequestsConnectionError,
+    HTTPError,
+    ReadTimeout,
+    RequestException,
+)
 
 from custom_components.google_home.api import GlocaltokensApiClient
 from custom_components.google_home.config_flow import GoogleHomeFlowHandler
 from custom_components.google_home.const import BROWSER_TITLE, MASTER_TOKEN_TITLE
-from custom_components.google_home.exceptions import InvalidMasterToken
 
 # ruff sorts homeassistant as first-party, pylint as third-party
 # pylint: disable=wrong-import-order
@@ -71,11 +78,6 @@ def fixture_client() -> Iterator[Mock]:
         yield client
 
 
-def reject_sign_in(client: Mock) -> None:
-    """Make Google refuse the credentials."""
-    client.return_value.async_get_master_token.side_effect = InvalidMasterToken
-
-
 def test_menu(flow: GoogleHomeFlowHandler) -> None:
     """Offer browser sign-in first, then the master token."""
     result = asyncio.run(flow.async_step_user())
@@ -110,16 +112,6 @@ def test_browser_sign_in_without_email(flow: GoogleHomeFlowHandler) -> None:
     assert result["type"] == "create_entry"
     assert result["title"] == "Google Home (browser)"
     assert result["data"]["username"] == ""
-
-
-def test_browser_sign_in_rejected(flow: GoogleHomeFlowHandler, client: Mock) -> None:
-    """Ask for a new cookie when Google doesn't accept it."""
-    reject_sign_in(client)
-
-    result = asyncio.run(flow.async_step_browser({"oauth_token": "oauth2_4/used"}))
-
-    assert result["type"] == "form"
-    assert result["errors"] == {"base": "oauth-token-invalid"}
 
 
 def test_browser_cookie_format(flow: GoogleHomeFlowHandler, client: Mock) -> None:
@@ -204,15 +196,6 @@ def test_master_token_format(flow: GoogleHomeFlowHandler, client: Mock) -> None:
     client.assert_not_called()
 
 
-def test_master_token_rejected(flow: GoogleHomeFlowHandler, client: Mock) -> None:
-    """Reject a master token that Google refuses."""
-    reject_sign_in(client)
-
-    result = asyncio.run(flow.async_step_master_token({"master_token": MASTER_TOKEN}))
-
-    assert result["errors"] == {"base": "master-token-invalid"}
-
-
 def test_master_token_rejected_by_google(
     flow: GoogleHomeFlowHandler,
     create_session: Mock,
@@ -244,7 +227,7 @@ def test_sign_in_without_network(
 
     result = asyncio.run(flow.async_step_master_token({"master_token": MASTER_TOKEN}))
 
-    assert result["errors"] == {"base": "master-token-invalid"}
+    assert result["errors"] == {"base": "google-unreachable"}
     assert_logged_without_traceback(caplog, "Failed to sign in: No network")
 
 
@@ -494,31 +477,93 @@ def test_reauth_account_unknown(
     assert_saved(flow, saved)
 
 
+def answered(status: HTTPStatus) -> HTTPError:
+    """Return the error glocaltokens raises when Google answers with this status."""
+    response = Response()
+    response.status_code = status
+    return HTTPError(response=response)
+
+
+@contextmanager
+def google_answers(answer: dict[str, str] | Exception) -> Iterator[None]:
+    """Give this answer to glocaltokens' requests for a master token and an access token."""
+    reply = (
+        {"side_effect": answer}
+        if isinstance(answer, Exception)
+        else {"return_value": answer}
+    )
+    with (
+        patch("glocaltokens.client.exchange_token", **reply),
+        patch("glocaltokens.client.perform_oauth", **reply),
+    ):
+        yield
+
+
+@pytest.mark.parametrize("reauth", [False, True], ids=["setup", "reauth"])
 @pytest.mark.parametrize(
-    ("step", "user_input", "error"),
+    ("answer", "error"),
     [
-        ("reauth_browser", {"oauth_token": "oauth2_4/used"}, "oauth-token-invalid"),
-        (
-            "reauth_master_token",
-            {"master_token": OLD_MASTER_TOKEN},
+        # None is the form's own error for a cookie or master token Google refuses
+        pytest.param({"Error": "BadAuthentication"}, None, id="rejected"),
+        pytest.param({"Error": "NeedsBrowser"}, "google-rejected", id="other-reason"),
+        pytest.param({}, "google-rejected", id="no-reason"),
+        pytest.param(answered(HTTPStatus.SERVICE_UNAVAILABLE), "google-busy", id="503"),
+        pytest.param(answered(HTTPStatus.TOO_MANY_REQUESTS), "google-busy", id="429"),
+        pytest.param(
+            RequestsConnectionError("Connection refused"),
+            "google-unreachable",
+            id="unreachable",
+        ),
+        pytest.param(ReadTimeout(), "google-unreachable", id="timeout"),
+    ],
+)
+@pytest.mark.parametrize(
+    ("method", "user_input", "rejected"),
+    [
+        pytest.param(
+            "browser",
+            {"oauth_token": "oauth2_4/cookie"},
+            "oauth-token-invalid",
+            id="browser",
+        ),
+        pytest.param(
+            "master_token",
+            MASTER_TOKEN_INPUT,
             "master-token-invalid",
+            id="master-token",
         ),
     ],
 )
-def test_reauth_sign_in_rejected(
+def test_sign_in_failed(
     flow: GoogleHomeFlowHandler,
-    client: Mock,
-    step: str,
+    method: str,
     user_input: dict[str, str],
-    error: str,
+    rejected: str,
+    answer: dict[str, str] | Exception,
+    error: str | None,
+    reauth: bool,
 ) -> None:
-    """Show the form for signing in again with the error when Google refuses the credentials."""
-    reject_sign_in(client)
-    start_reauth(flow, "test@example.com", "test@example.com")
+    """Show the form again with why Google gave no token, so the entry stays unchanged."""
+    step = method
+    if reauth:
+        start_reauth(flow, "test@example.com", "test@example.com")
+        step = f"reauth_{method}"
 
-    result = sign_in_again(flow, step, user_input)
+    with google_answers(answer):
+        result = asyncio.run(getattr(flow, f"async_step_{step}")(user_input))
 
     assert result["type"] == "form"
     assert result["step_id"] == step
-    assert result["errors"] == {"base": error}
+    assert result["errors"] == {"base": error or rejected}
+    assert result["errors"]["base"] in ENGLISH["config"]["error"]
     assert_not_saved(flow)
+
+
+def test_master_token_in_unknown_format(flow: GoogleHomeFlowHandler) -> None:
+    """Attribute a master token that can't be right to Google, not to the cookie."""
+    with google_answers({"Token": "not-a-master-token"}):
+        result = asyncio.run(
+            flow.async_step_browser({"oauth_token": "oauth2_4/cookie"})
+        )
+
+    assert result["errors"] == {"base": "google-rejected"}
