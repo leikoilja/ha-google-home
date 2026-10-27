@@ -103,6 +103,11 @@ UPDATE_INTERVAL: Final = 15  # sec
 # app and the address of a device that was offline. It's a request to Google, so not
 # on every update.
 FETCH_DEVICES_INTERVAL: Final = 20 * 60  # sec
+# While Google's device list is unknown, wait at least this many seconds after the start
+# of a fetch that failed before fetching it again: the first value after one failure,
+# the next after two in a row, and so on, staying at the last. It's never longer than
+# the fetch interval, so a retry is never due later than the scheduled fetch would be.
+FETCH_RETRY_DELAYS: Final = (1 * 60, 2 * 60, 5 * 60, 10 * 60, FETCH_DEVICES_INTERVAL)
 # A device's alarms must still answer "not found" this long after they first did
 # before its device info can show that it has none: a device that is starting
 # answers "not found" for a while. Also the least time between device info requests
