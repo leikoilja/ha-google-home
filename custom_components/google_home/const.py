@@ -95,7 +95,7 @@ DATETIME_STR_FORMAT: Final = f"{DATE_STR_FORMAT} {TIME_STR_FORMAT}"
 
 # Access token only lives about 1 hour
 # Update often to fetch timers in timely manner
-UPDATE_INTERVAL: Final = 180  # sec
+UPDATE_INTERVAL: Final = 15  # sec
 # Fetch Google's device list again this long after the last fetch, however often
 # the devices are updated, to find devices added in or removed from the Google Home
 # app and the address of a device that was offline. It's a request to Google, so not

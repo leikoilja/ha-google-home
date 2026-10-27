@@ -109,7 +109,7 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Zmień interwał aktualizacji. Zwiększ go, jeśli urządzenia często przekraczają limit czasu odpowiedzi. Domyślnie: 180 (sekund)",
+          "update_interval": "Zmień interwał aktualizacji. Zwiększ go, jeśli urządzenia często przekraczają limit czasu odpowiedzi. Domyślnie: {default_interval} (sekund)",
           "known_hosts": "Znane hosty"
         },
         "data_description": {

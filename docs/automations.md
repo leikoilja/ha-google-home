@@ -67,9 +67,9 @@ actions:
 
 ## When the trigger runs
 
-The trigger follows the time that the integration last saw. The integration [checks your devices](installation.md#change-the-update-interval) every 180 seconds, so:
+The trigger follows the time that the integration last saw. The integration [checks your devices](installation.md#change-the-update-interval) every 15 seconds by default, so:
 
-- An alarm or timer that the integration has seen triggers on time, even between checks. One that goes off before the integration sees it, such as a one-minute timer, doesn't trigger anything.
+- An alarm or timer that the integration has seen triggers on time, even between checks. One that goes off before the integration sees it, which can happen to a timer shorter than the update interval, doesn't trigger anything.
 - If you pause, cancel or change an alarm or timer, the automation follows the change only after the next check, so it can still run at the old time if that comes first.
 - Inactive and missed alarms and paused timers don't trigger anything. A timer you resume triggers at its new end time, once the integration has seen it.
-- You can also trigger on the `next_alarm_status` or `next_timer_status` attribute changing to `ringing`, but that trigger runs only at the next check, up to 180 seconds late, and it misses an alarm or timer that you stop before the next check.
+- You can also trigger on the `next_alarm_status` or `next_timer_status` attribute changing to `ringing`, but that trigger runs only at the next check, up to one update interval late, and it misses an alarm or timer that you stop before the next check.

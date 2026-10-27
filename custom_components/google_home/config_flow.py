@@ -287,6 +287,7 @@ class GoogleHomeOptionsFlowHandler(OptionsFlow):
                 }
             ),
             errors=errors,
+            description_placeholders={"default_interval": str(UPDATE_INTERVAL)},
         )
 
 

@@ -109,7 +109,7 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Módosítsa a frissítési időközt. Növelje ezt az értéket, ha az eszközök nem válaszolnak időben. Alapértelmezett: 180 másodperc.",
+          "update_interval": "Módosítsa a frissítési időközt. Növelje ezt az értéket, ha az eszközök nem válaszolnak időben. Alapértelmezett: {default_interval} másodperc.",
           "known_hosts": "Ismert hosztok"
         },
         "data_description": {

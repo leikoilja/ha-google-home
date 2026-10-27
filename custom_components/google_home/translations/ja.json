@@ -109,7 +109,7 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "更新間隔を変更します。デバイスの応答が間に合わない場合は、この値を増やしてください。既定値: 180 秒。",
+          "update_interval": "更新間隔を変更します。デバイスの応答が間に合わない場合は、この値を増やしてください。既定値: {default_interval} 秒。",
           "known_hosts": "既知のホスト"
         },
         "data_description": {

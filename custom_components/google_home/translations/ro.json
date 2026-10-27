@@ -109,7 +109,7 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Modifică intervalul de actualizare. Mărește această valoare dacă dispozitivele nu răspund la timp. Valoare implicită: 180 de secunde.",
+          "update_interval": "Modifică intervalul de actualizare. Mărește această valoare dacă dispozitivele nu răspund la timp. Valoare implicită: {default_interval} (secunde).",
           "known_hosts": "Gazde cunoscute"
         },
         "data_description": {

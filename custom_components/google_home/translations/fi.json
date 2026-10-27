@@ -109,7 +109,7 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Muuta päivitysväliä. Suurenna arvoa, jos laitteet eivät vastaa ajoissa. Oletus: 180 sekuntia.",
+          "update_interval": "Muuta päivitysväliä. Suurenna arvoa, jos laitteet eivät vastaa ajoissa. Oletus: {default_interval} sekuntia.",
           "known_hosts": "Tunnetut isännät"
         },
         "data_description": {
