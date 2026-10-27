@@ -364,14 +364,16 @@ def test_log_sign_in_rejected_in_action(caplog: pytest.LogCaptureFixture) -> Non
     """Log why Google rejects the master token when an action fetches the list for a new token.
 
     Home Assistant asks to sign in again only at the next update, and doesn't log
-    why.
+    why. The action fails, as the device still has no token it accepts.
     """
     client, glocaltokens = make_client("10.0.0.2", session=accepting(LOCAL_AUTH_TOKEN))
     [kitchen] = client.google_devices
     glocaltokens.get_google_devices.side_effect = rejected()
 
-    asyncio.run(client.update_do_not_disturb(kitchen, enable=True))
+    with pytest.raises(DeviceRequestFailed) as err:
+        asyncio.run(client.update_do_not_disturb(kitchen, enable=True))
 
+    assert err.value.reason == "token_rejected"
     assert glocaltokens.get_google_devices.call_count == 1
     assert ("ERROR", REJECTED_LOG) in logged(caplog)
 
@@ -493,7 +495,10 @@ def test_action_fetches_once_wait_is_over(clock: Mock) -> None:
 
     def turn_on_do_not_disturb_at(seconds: int) -> int:
         clock.return_value = seconds
-        asyncio.run(client.update_do_not_disturb(kitchen, enable=True))
+        # Google still can't be reached, so the device has no token it accepts
+        with pytest.raises(DeviceRequestFailed) as err:
+            asyncio.run(client.update_do_not_disturb(kitchen, enable=True))
+        assert err.value.reason == "token_rejected"
         return int(glocaltokens.get_google_devices.call_count)
 
     # 1 minute after the failed fetch started, before the next update
