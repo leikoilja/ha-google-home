@@ -85,6 +85,24 @@
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Couldn't get the current alarms and timers from these devices, so nothing was deleted from them: {devices}. Check that they're online and try again later."
+    },
+    "alarms_and_timers_not_deleted": {
+      "message": "{device} didn't confirm deleting the alarms or timers, so they may still be set. Check that it's online and try again later."
+    },
+    "alarms_and_timers_not_deleted_from_devices": {
+      "message": "Couldn't delete alarms or timers from these devices, or confirm that they were deleted: {devices}. Check that they're online and try again later."
+    },
+    "invalid_alarm_id": {
+      "message": "“{alarm_id}” isn't an alarm ID. Copy the ID, which starts with alarm/, from the alarms attribute of the device's alarms sensor."
+    },
+    "invalid_timer_id": {
+      "message": "“{timer_id}” isn't a timer ID. Copy the ID, which starts with timer/, from the timers attribute of the device's timers sensor."
+    },
+    "alarm_not_found": {
+      "message": "Couldn't find the alarm {alarm_id} on the devices you targeted. It may already have gone off or been deleted."
+    },
+    "timer_not_found": {
+      "message": "Couldn't find the timer {timer_id} on the devices you targeted. It may already have gone off or been deleted."
     }
   },
   "options": {

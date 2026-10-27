@@ -5,14 +5,14 @@ from collections.abc import Awaitable, Callable
 from enum import IntFlag
 from functools import partial
 import logging
-from typing import override
+from typing import Literal, override
 
 import probatio
 
 from homeassistant.components.sensor import SensorDeviceClass
 from homeassistant.const import STATE_UNAVAILABLE, EntityCategory
 from homeassistant.core import HomeAssistant, ServiceCall
-from homeassistant.exceptions import HomeAssistantError
+from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from homeassistant.helpers import config_validation as cv, service
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
@@ -46,7 +46,7 @@ from .entity import (
     GoogleHomeFeatureEntity,
     async_add_device_entities,
 )
-from .exceptions import AlarmsAndTimersNotFetched
+from .exceptions import AlarmsAndTimersNotDeleted, AlarmsAndTimersNotFetched
 from .models import GoogleHomeAlarmStatus, GoogleHomeDevice, GoogleHomeTimerStatus
 from .types import (
     AlarmsAttributes,
@@ -65,6 +65,28 @@ class GoogleHomeSensorFeature(IntFlag):
 
     ALARMS = 1
     TIMERS = 2
+
+
+def valid_id(kind: Literal["alarm", "timer"]) -> Callable[[str], str]:
+    """Return a check that an ID is an alarm or a timer ID, for an action's schema.
+
+    It raises an error that is translated and that continue_on_error covers,
+    unlike a schema error.
+    """
+
+    def check(item_id: str) -> str:
+        if not (
+            item_id.startswith(f"{kind}/") and len(item_id) == ALARM_AND_TIMER_ID_LENGTH
+        ):
+            raise ServiceValidationError(
+                translation_domain=DOMAIN,
+                # invalid_alarm_id or invalid_timer_id
+                translation_key=f"invalid_{kind}_id",
+                translation_placeholders={f"{kind}_id": item_id},
+            )
+        return item_id
+
+    return check
 
 
 async def async_setup_entry(
@@ -101,11 +123,15 @@ async def async_setup_entry(
         SERVICE_DELETE_ALARM,
         entity_domain=SENSOR,
         schema={
-            probatio.Required(SERVICE_ATTR_ALARM_ID): cv.string,
+            probatio.Required(SERVICE_ATTR_ALARM_ID): probatio.All(
+                cv.string, valid_id("alarm")
+            ),
             probatio.Optional(SERVICE_ATTR_SKIP_REFRESH): cv.boolean,
         },
         func=partial(
-            async_delete_from_devices, GoogleHomeAlarmsSensor.async_delete_alarm
+            async_delete_from_devices,
+            GoogleHomeAlarmsSensor.async_delete_alarm,
+            kind="alarm",
         ),
         required_features=[GoogleHomeSensorFeature.ALARMS],
     )
@@ -116,11 +142,15 @@ async def async_setup_entry(
         SERVICE_DELETE_TIMER,
         entity_domain=SENSOR,
         schema={
-            probatio.Required(SERVICE_ATTR_TIMER_ID): cv.string,
+            probatio.Required(SERVICE_ATTR_TIMER_ID): probatio.All(
+                cv.string, valid_id("timer")
+            ),
             probatio.Optional(SERVICE_ATTR_SKIP_REFRESH): cv.boolean,
         },
         func=partial(
-            async_delete_from_devices, GoogleHomeTimersSensor.async_delete_timer
+            async_delete_from_devices,
+            GoogleHomeTimersSensor.async_delete_timer,
+            kind="timer",
         ),
         required_features=[GoogleHomeSensorFeature.TIMERS],
     )
@@ -178,6 +208,13 @@ async def async_refresh_devices(
     await entities[0].coordinator.async_request_refresh()
 
 
+async def async_fetch_current(entity: GoogleHomeBaseEntity) -> GoogleHomeDevice:
+    """Return the entity's device with the alarms and timers it has now."""
+    if (device := entity.get_device()) is None:
+        raise AlarmsAndTimersNotFetched(entity.device_name)
+    return await entity.client.update_alarms_and_timers(device, polling=False)
+
+
 async def async_delete(
     entity: GoogleHomeBaseEntity, device: GoogleHomeDevice, ids: list[str]
 ) -> bool:
@@ -185,12 +222,17 @@ async def async_delete(
 
     Return whether there was anything to delete.
     """
-    if ids:
-        await entity.client.delete_alarm_or_timer(device=device, items_to_delete=ids)
-    else:
-        _LOGGER.debug("Nothing to delete for %s", device.name)
-    # Other entities show this device's data too
-    entity.coordinator.async_update_listeners()
+    try:
+        if ids:
+            await entity.client.delete_alarm_or_timer(
+                device=device, items_to_delete=ids
+            )
+        else:
+            _LOGGER.debug("Nothing to delete for %s", device.name)
+    finally:
+        # Other entities show this device's data too. Show what was just fetched
+        # also when the device doesn't confirm the delete.
+        entity.coordinator.async_update_listeners()
     return bool(ids)
 
 
@@ -198,10 +240,14 @@ async def async_delete_from_devices[_SensorT: GoogleHomeBaseEntity](
     delete: Callable[[_SensorT, ServiceCall], Awaitable[bool]],
     entities: list[_SensorT],
     call: ServiceCall,
+    *,
+    kind: Literal["alarm", "timer"] | None = None,
 ) -> None:
     """Delete from each device, then name every device that failed.
 
-    Refresh all devices once if a delete request was sent, unless skip_refresh is set.
+    Request a refresh of all devices once if a delete request was sent, unless
+    skip_refresh is set. With kind, the action deletes one alarm or timer, and
+    fails if every device answered and none has it.
     """
 
     async def delete_from(entity: _SensorT) -> bool:
@@ -214,27 +260,43 @@ async def async_delete_from_devices[_SensorT: GoogleHomeBaseEntity](
         *(delete_from(entity) for entity in entities), return_exceptions=True
     )
     # One refresh updates every device. Another request while it runs or in the
-    # debouncer's cooldown after it would poll them all again when that ends
-    sent = any(result is True for result in results)
+    # debouncer's cooldown after it would poll them all again when that ends. A
+    # delete that the device didn't confirm may still have happened.
+    sent = any(
+        result is True or isinstance(result, AlarmsAndTimersNotDeleted)
+        for result in results
+    )
     if sent and not call.data.get(SERVICE_ATTR_SKIP_REFRESH, False):
         await entities[0].coordinator.async_request_refresh()
-    not_fetched: list[AlarmsAndTimersNotFetched] = []
+    failed: list[AlarmsAndTimersNotFetched | AlarmsAndTimersNotDeleted] = []
     for result in results:
-        if isinstance(result, AlarmsAndTimersNotFetched):
-            not_fetched.append(result)
+        if isinstance(result, AlarmsAndTimersNotFetched | AlarmsAndTimersNotDeleted):
+            failed.append(result)
         # Don't hide an unexpected error, such as from a malformed reply
         elif isinstance(result, BaseException):
             raise result
-    if len(not_fetched) > 1:
+    if len(failed) > 1:
         raise HomeAssistantError(
             translation_domain=DOMAIN,
-            translation_key="alarms_and_timers_not_fetched_from_devices",
+            translation_key=(
+                "alarms_and_timers_not_fetched_from_devices"
+                if all(isinstance(error, AlarmsAndTimersNotFetched) for error in failed)
+                else "alarms_and_timers_not_deleted_from_devices"
+            ),
             translation_placeholders={
-                "devices": ", ".join(sorted(error.device_name for error in not_fetched))
+                "devices": ", ".join(sorted(error.device_name for error in failed))
             },
         )
-    if not_fetched:
-        raise not_fetched[0]
+    if failed:
+        raise failed[0]
+    # Every device answered. A device that failed could have had the alarm or timer.
+    if kind is not None and not sent:
+        raise ServiceValidationError(
+            translation_domain=DOMAIN,
+            # alarm_not_found or timer_not_found
+            translation_key=f"{kind}_not_found",
+            translation_placeholders={f"{kind}_id": call.data[f"{kind}_id"]},
+        )
 
 
 async def async_reboot_devices(
@@ -370,40 +432,16 @@ class GoogleHomeAlarmsSensor(GoogleHomeFeatureEntity):
             [alarm.as_dict() for alarm in device.get_sorted_alarms()] if device else []
         )
 
-    @staticmethod
-    def is_valid_alarm_id(alarm_id: str) -> bool:
-        """Check if the alarm id provided is valid."""
-        return (
-            alarm_id.startswith("alarm/") and len(alarm_id) == ALARM_AND_TIMER_ID_LENGTH
-        )
-
     async def async_delete_alarm(self, call: ServiceCall) -> bool:
-        """Service call to delete alarm on device."""
-        device = self.get_device()
-
-        if device is None:
-            _LOGGER.error("Device %s is not found.", self.device_name)
-            return False
-
+        """Service call to delete alarm on device, if the device has it now."""
+        device = await async_fetch_current(self)
         alarm_id: str = call.data[SERVICE_ATTR_ALARM_ID]
-        if not self.is_valid_alarm_id(alarm_id):
-            _LOGGER.error(
-                "Incorrect ID format! Please provide a valid alarm ID. "
-                "See services tab for more info."
-            )
-            return False
-
-        return await async_delete(self, device, [alarm_id])
+        has_it = any(alarm.alarm_id == alarm_id for alarm in device.get_sorted_alarms())
+        return await async_delete(self, device, [alarm_id] if has_it else [])
 
     async def async_delete_all(self, _call: ServiceCall) -> bool:
         """Service call to delete all alarms on device."""
-        device = self.get_device()
-
-        if device is None:
-            _LOGGER.error("Device %s is not found.", self.device_name)
-            return False
-
-        await self.client.update_alarms_and_timers(device, polling=False)
+        device = await async_fetch_current(self)
         alarm_ids = [alarm.alarm_id for alarm in device.get_sorted_alarms()]
         return await async_delete(self, device, alarm_ids)
 
@@ -462,39 +500,15 @@ class GoogleHomeTimersSensor(GoogleHomeFeatureEntity):
             [timer.as_dict() for timer in device.get_sorted_timers()] if device else []
         )
 
-    @staticmethod
-    def is_valid_timer_id(timer_id: str) -> bool:
-        """Check if the timer id provided is valid."""
-        return (
-            timer_id.startswith("timer/") and len(timer_id) == ALARM_AND_TIMER_ID_LENGTH
-        )
-
     async def async_delete_timer(self, call: ServiceCall) -> bool:
-        """Service call to delete timer on device."""
-        device = self.get_device()
-
-        if device is None:
-            _LOGGER.error("Device %s is not found.", self.device_name)
-            return False
-
+        """Service call to delete timer on device, if the device has it now."""
+        device = await async_fetch_current(self)
         timer_id: str = call.data[SERVICE_ATTR_TIMER_ID]
-        if not self.is_valid_timer_id(timer_id):
-            _LOGGER.error(
-                "Incorrect ID format! Please provide a valid timer ID. "
-                "See services tab for more info."
-            )
-            return False
-
-        return await async_delete(self, device, [timer_id])
+        has_it = any(timer.timer_id == timer_id for timer in device.get_sorted_timers())
+        return await async_delete(self, device, [timer_id] if has_it else [])
 
     async def async_delete_all(self, _call: ServiceCall) -> bool:
         """Service call to delete all timers on device."""
-        device = self.get_device()
-
-        if device is None:
-            _LOGGER.error("Device %s is not found.", self.device_name)
-            return False
-
-        await self.client.update_alarms_and_timers(device, polling=False)
+        device = await async_fetch_current(self)
         timer_ids = [timer.timer_id for timer in device.get_sorted_timers()]
         return await async_delete(self, device, timer_ids)

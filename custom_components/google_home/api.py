@@ -3,6 +3,7 @@
 import asyncio
 from http import HTTPStatus
 import ipaddress
+import json
 import logging
 from time import monotonic
 from typing import Literal, cast
@@ -35,7 +36,11 @@ from .const import (
     SUPPORT_CHECK_DELAY,
     TIMEOUT,
 )
-from .exceptions import AlarmsAndTimersNotFetched, InvalidMasterToken
+from .exceptions import (
+    AlarmsAndTimersNotDeleted,
+    AlarmsAndTimersNotFetched,
+    InvalidMasterToken,
+)
 from .models import GoogleHomeDevice
 from .types import AlarmJsonDict, JsonDict, TimerJsonDict
 
@@ -464,7 +469,8 @@ class GlocaltokensApiClient:
     ) -> None:
         """Delete one or more timers or alarms in a single request.
 
-        Once the device confirms, also remove them from the device's data.
+        Once the device confirms, also remove them from the device's data. Raise
+        if it doesn't, as it may still have them.
         """
 
         if not items_to_delete:
@@ -481,37 +487,33 @@ class GlocaltokensApiClient:
             data,
         )
 
-        response = await self.request(
-            method="POST", endpoint=API_ENDPOINT_ALARM_DELETE, device=device, data=data
-        )
+        try:
+            response = await self.request(
+                method="POST",
+                endpoint=API_ENDPOINT_ALARM_DELETE,
+                device=device,
+                data=data,
+            )
+        # A reply that isn't valid JSON, although its content type says it is
+        except (json.JSONDecodeError, UnicodeDecodeError) as error:
+            _LOGGER.error(
+                "%s sent a reply that isn't valid JSON: %s", device.name, error
+            )
+            raise AlarmsAndTimersNotDeleted(device.name) from error
 
+        # Only this reply is known to confirm a delete
+        if isinstance(response, dict) and response.get("success") is True:
+            _LOGGER.debug("Successfully deleted %s for %s", item_type, device.name)
+            device.remove_alarms_and_timers(items_to_delete)
+            return
         if response is not None:
-            if "success" in response:
-                if response["success"]:
-                    _LOGGER.debug(
-                        "Successfully deleted %s for %s",
-                        item_type,
-                        device.name,
-                    )
-                    device.remove_alarms_and_timers(items_to_delete)
-                else:
-                    _LOGGER.error(
-                        "Couldn't delete %s for %s - %s",
-                        item_type,
-                        device.name,
-                        response,
-                    )
-            else:
-                _LOGGER.error(
-                    (
-                        "Failed to get a confirmation that the %s "
-                        "was deleted for device %s. "
-                        "Received = %s"
-                    ),
-                    item_type,
-                    device.name,
-                    response,
-                )
+            _LOGGER.error(
+                "%s didn't confirm the %s delete. Received = %s",
+                device.name,
+                item_type,
+                response,
+            )
+        raise AlarmsAndTimersNotDeleted(device.name)
 
     async def reboot_google_device(self, device: GoogleHomeDevice) -> None:
         """Reboot a Google Home device if it supports this."""
