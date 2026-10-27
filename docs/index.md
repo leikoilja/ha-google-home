@@ -22,7 +22,7 @@ The integration uses your Google account to get access tokens for your devices f
 
 - Home Assistant must be able to reach your devices. It finds them automatically on the same network; for devices on another network, see [Add devices on another network](installation.md#add-devices-on-another-network).
 - The Google account you use must be a member of the home your devices belong to in the Google Home app.
-- You can add the integration only once, so it works with one Google account.
+- You can add the integration only once, so it works with one Google account. To use devices from several homes, [invite that account](https://support.google.com/googlenest/answer/9155535) to each home: the integration adds the devices of every home the account is a member of. Devices that Home Assistant can't find on its network, for example in a home at another address, have only a device sensor and a reboot button, and both are unavailable.
 
 ## Other Google Home devices
 

@@ -73,10 +73,8 @@
       "google-unreachable": "Impossible de joindre Google. Vérifiez que Home Assistant est connecté à Internet, puis réessayez.",
       "google-busy": "Google est occupé ou limite les connexions. Patientez quelques minutes, puis reconnectez-vous.",
       "oauth-token-format": "Ce n'est pas le cookie oauth_token. Sa valeur commence par oauth2_4/.",
-      "master-token-format": "Un jeton maître commence par aas_et/ et comporte 223 caractères. Copiez le jeton complet."
-    },
-    "abort": {
-      "other-account": "Vous avez utilisé un autre compte Google pour vous connecter, rien n'a donc été modifié. Pour vous reconnecter avec le compte qu'utilise cette intégration, rechargez l'intégration : accédez à Paramètres > Appareils et services > Google Home, ouvrez le menu ⋮ et sélectionnez Recharger. Pour utiliser plutôt cet autre compte, supprimez l'intégration et ajoutez-la à nouveau."
+      "master-token-format": "Un jeton maître commence par aas_et/ et comporte 223 caractères. Copiez le jeton complet.",
+      "other-account": "Vous avez utilisé un autre compte Google pour vous connecter, rien n'a donc été modifié. Connectez-vous avec le compte qu'utilise cette intégration. Pour utiliser plutôt cet autre compte, supprimez l'intégration et ajoutez-la à nouveau."
     }
   },
   "exceptions": {

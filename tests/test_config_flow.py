@@ -75,7 +75,12 @@ def fixture_client() -> Iterator[Mock]:
             return_value=MASTER_TOKEN
         )
         client.return_value.async_get_access_token = AsyncMock(return_value="access")
-        client.return_value.get_android_id = AsyncMock(return_value="test-android-id")
+        # Like glocaltokens, make up an Android ID only when it isn't given one
+        client.return_value.get_android_id = AsyncMock(
+            side_effect=lambda: (
+                client.call_args.kwargs.get("android_id") or "test-android-id"
+            )
+        )
         client.return_value.async_get_email = AsyncMock(return_value=None)
         yield client
 
@@ -274,6 +279,7 @@ ENGLISH = json.loads(
     ).read_text(encoding="utf-8")
 )
 OLD_MASTER_TOKEN = "aas_et/" + "o" * 216
+OTHER_ACCOUNT_MASTER_TOKEN = "aas_et/" + "a" * 216
 MASTER_TOKEN_INPUT = {"master_token": MASTER_TOKEN}
 SIGN_IN_STEPS = [
     pytest.param("reauth_browser", {"oauth_token": "oauth2_4/cookie"}, id="browser"),
@@ -312,14 +318,14 @@ def sign_in_again(
 
 
 def assert_saved(flow: GoogleHomeFlowHandler, username: str) -> None:
-    """Check that the entry got the new master token and is reloaded once."""
+    """Check that the entry got the new master token, kept its Android ID and is reloaded once."""
     config_entries = cast(Mock, flow.hass.config_entries)
     config_entries.async_update_entry.assert_called_once()
     assert config_entries.async_update_entry.call_args.kwargs["data"] == {
         "master_token": MASTER_TOKEN,
         "username": username,
         "password": "",
-        "android_id": "test-android-id",
+        "android_id": "old-android-id",
     }
     config_entries.async_schedule_reload.assert_called_once_with("entry")
 
@@ -421,16 +427,57 @@ def test_reauth_other_account(
     step: str,
     user_input: dict[str, str],
 ) -> None:
-    """Refuse to sign in again to another Google account, leaving the entry unchanged."""
+    """Refuse another Google account on the same form, so the entry's can sign in at once.
+
+    Nothing of the other account is saved, then or with the entry's account.
+    """
     client.return_value.async_get_email.return_value = "other@example.com"
+    client.return_value.async_get_master_token.return_value = OTHER_ACCOUNT_MASTER_TOKEN
     start_reauth(flow, username, title)
 
     result = sign_in_again(flow, step, user_input)
 
-    assert result["type"] == "abort"
-    assert result["reason"] == "other-account"
-    assert result["reason"] in ENGLISH["config"]["abort"]
+    assert result["type"] == "form"
+    assert result["step_id"] == step
+    assert result["errors"] == {"base": "other-account"}
+    assert result["errors"]["base"] in ENGLISH["config"]["error"]
     assert_not_saved(flow)
+
+    client.return_value.async_get_email.return_value = "test@example.com"
+    client.return_value.async_get_master_token.return_value = MASTER_TOKEN
+    result = sign_in_again(flow, step, user_input)
+
+    assert result["reason"] == "reauth_successful"
+    assert_saved(flow, "test@example.com")
+
+
+@pytest.mark.parametrize(("step", "user_input"), SIGN_IN_STEPS)
+def test_reauth_keeps_android_id(
+    flow: GoogleHomeFlowHandler, step: str, user_input: dict[str, str]
+) -> None:
+    """Sign in again to Google with the entry's Android ID, and save it unchanged."""
+    start_reauth(flow, "test@example.com", "Home")
+
+    with (
+        patch(
+            "glocaltokens.client.exchange_token", return_value={"Token": MASTER_TOKEN}
+        ) as exchange,
+        patch(
+            "glocaltokens.client.perform_oauth", return_value={"Auth": "access"}
+        ) as oauth,
+        # Google's userinfo endpoint, which gives the address, isn't simulated
+        patch.object(
+            GlocaltokensApiClient, "async_get_email", return_value="test@example.com"
+        ),
+    ):
+        result = sign_in_again(flow, step, user_input)
+
+    assert result["reason"] == "reauth_successful"
+    calls = exchange.call_args_list + oauth.call_args_list
+    assert {call.args[2] for call in calls} == {"old-android-id"}
+    config_entries = cast(Mock, flow.hass.config_entries)
+    saved = config_entries.async_update_entry.call_args.kwargs["data"]
+    assert saved["android_id"] == "old-android-id"
 
 
 @pytest.mark.parametrize(
@@ -457,7 +504,7 @@ def test_reauth_account_spelled_differently(
         assert result["reason"] == "reauth_successful"
         assert_saved(flow, email)
     else:
-        assert result["reason"] == "other-account"
+        assert result["errors"] == {"base": "other-account"}
         assert_not_saved(flow)
 
 

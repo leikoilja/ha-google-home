@@ -73,10 +73,8 @@
       "google-unreachable": "無法連線至 Google。請確認 Home Assistant 已連上網際網路，然後再試一次。",
       "google-busy": "Google 目前忙碌中或正在限制登入。請稍候幾分鐘，然後重新登入。",
       "oauth-token-format": "這不是 oauth_token Cookie，其值應以 oauth2_4/ 開頭。",
-      "master-token-format": "Master token 以 aas_et/ 開頭，共 223 個字元。請複製完整值。"
-    },
-    "abort": {
-      "other-account": "你登入的是其他 Google 帳號，因此未進行任何變更。如要使用此整合所用的帳號重新登入，請重新載入整合：前往「設定 > 裝置與服務 > Google Home」，開啟 ⋮ 選單並選擇「重新載入」。如要改用剛才登入的帳號，請刪除整合後再重新新增。"
+      "master-token-format": "Master token 以 aas_et/ 開頭，共 223 個字元。請複製完整值。",
+      "other-account": "你登入的是其他 Google 帳號，因此未進行任何變更。請使用此整合所用的帳號登入。如要改用剛才登入的帳號，請刪除整合後再重新新增。"
     }
   },
   "exceptions": {

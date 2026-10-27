@@ -73,10 +73,8 @@
       "google-unreachable": "Google konnte nicht erreicht werden. Prüfe, ob Home Assistant mit dem Internet verbunden ist, und versuche es dann erneut.",
       "google-busy": "Google ist ausgelastet oder begrenzt Anmeldungen. Warte ein paar Minuten und melde dich dann erneut an.",
       "oauth-token-format": "Das ist nicht das Cookie oauth_token. Sein Wert beginnt mit oauth2_4/.",
-      "master-token-format": "Ein Master-Token beginnt mit aas_et/ und ist 223 Zeichen lang. Kopiere das vollständige Token."
-    },
-    "abort": {
-      "other-account": "Du hast dich bei einem anderen Google-Konto angemeldet, daher wurde nichts geändert. Um dich erneut mit dem Konto anzumelden, das diese Integration verwendet, lade die Integration neu: Gehe zu Einstellungen > Geräte & Dienste > Google Home, öffne das Menü ⋮ und wähle Neu laden. Um stattdessen das andere Konto zu verwenden, lösche die Integration und füge sie erneut hinzu."
+      "master-token-format": "Ein Master-Token beginnt mit aas_et/ und ist 223 Zeichen lang. Kopiere das vollständige Token.",
+      "other-account": "Du hast dich bei einem anderen Google-Konto angemeldet, daher wurde nichts geändert. Melde dich mit dem Konto an, das diese Integration verwendet. Um stattdessen das andere Konto zu verwenden, lösche die Integration und füge sie erneut hinzu."
     }
   },
   "exceptions": {
