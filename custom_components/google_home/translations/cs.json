@@ -101,6 +101,24 @@
     },
     "timer_not_found": {
       "message": "Na vybraných zařízeních se nepodařilo najít časovač {timer_id}. Možná už doběhl nebo byl smazán."
+    },
+    "device_offline": {
+      "message": "Nepodařilo se spojit se zařízením {device}. Zkontrolujte, zda je zapnuté a připojené k síti, a zkuste to znovu."
+    },
+    "device_no_reply": {
+      "message": "Zařízení {device} neodpovědělo nebo byla jeho odpověď přerušena, takže akci možná provedlo, a možná ne. Zkontrolujte, zda je zařízení online, a zkuste to znovu."
+    },
+    "device_token_rejected": {
+      "message": "Zařízení {device} odmítlo svůj token. Integrace si při příští aktualizaci vyžádá od Googlu nový, takže to potom zkuste znovu."
+    },
+    "device_not_ready": {
+      "message": "Zařízení {device} odpovědělo, že to nemůže provést. Možná se ještě spouští, nebo to nepodporuje."
+    },
+    "device_request_failed": {
+      "message": "Na zařízení {device} se to nepodařilo provést. Podrobnosti najdete v protokolech Home Assistanta."
+    },
+    "devices_not_rebooted": {
+      "message": "Následující zařízení nepotvrdila, že se restartují: {devices}. Zkontrolujte, zda jsou zařízení online, a zkuste to znovu později."
     }
   },
   "options": {

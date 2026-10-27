@@ -101,6 +101,24 @@
     },
     "timer_not_found": {
       "message": "在選取的裝置上找不到計時器 {timer_id}。它可能已結束或被刪除。"
+    },
+    "device_offline": {
+      "message": "無法連線至 {device}。請確認裝置已開啟並連上你的網路，然後再試一次。"
+    },
+    "device_no_reply": {
+      "message": "{device} 沒有回應，或回應中途中斷，因此可能已執行此操作，也可能沒有。請確認裝置已連線，然後再試一次。"
+    },
+    "device_token_rejected": {
+      "message": "{device} 拒絕了它的存取權杖。整合會在下次更新時向 Google 要求新的權杖，請在那之後再試一次。"
+    },
+    "device_not_ready": {
+      "message": "{device} 回應表示無法執行此操作。裝置可能仍在啟動中，或不支援此操作。"
+    },
+    "device_request_failed": {
+      "message": "無法在 {device} 上執行此操作。詳細資訊請查看 Home Assistant 日誌。"
+    },
+    "devices_not_rebooted": {
+      "message": "下列裝置未確認將會重新啟動：{devices}。請確認這些裝置已連線，並稍後再試。"
     }
   },
   "options": {

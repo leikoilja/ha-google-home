@@ -101,6 +101,24 @@
     },
     "timer_not_found": {
       "message": "Der Timer {timer_id} konnte auf den ausgewählten Geräten nicht gefunden werden. Er ist möglicherweise bereits abgelaufen oder wurde gelöscht."
+    },
+    "device_offline": {
+      "message": "Das Gerät {device} konnte nicht erreicht werden. Prüfe, ob es eingeschaltet und mit deinem Netzwerk verbunden ist, und versuche es dann erneut."
+    },
+    "device_no_reply": {
+      "message": "Das Gerät {device} hat nicht geantwortet oder seine Antwort wurde unterbrochen, daher hat es die Aktion möglicherweise ausgeführt, möglicherweise aber auch nicht. Prüfe, ob es online ist, und versuche es erneut."
+    },
+    "device_token_rejected": {
+      "message": "Das Gerät {device} hat sein Token abgelehnt. Die Integration fordert bei der nächsten Aktualisierung ein neues bei Google an, versuche es also danach erneut."
+    },
+    "device_not_ready": {
+      "message": "Das Gerät {device} hat geantwortet, dass es dies nicht ausführen kann. Möglicherweise startet es noch, oder es unterstützt dies nicht."
+    },
+    "device_request_failed": {
+      "message": "Die Aktion konnte auf dem Gerät {device} nicht ausgeführt werden. Details findest du in den Protokollen von Home Assistant."
+    },
+    "devices_not_rebooted": {
+      "message": "Die folgenden Geräte haben nicht bestätigt, dass sie neu starten: {devices}. Prüfe, ob sie online sind, und versuche es später erneut."
     }
   },
   "options": {

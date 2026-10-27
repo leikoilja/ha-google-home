@@ -101,6 +101,24 @@
     },
     "timer_not_found": {
       "message": "Nem található a(z) {timer_id} időzítő a kiválasztott eszközökön. Lehet, hogy már lejárt vagy törölték."
+    },
+    "device_offline": {
+      "message": "Nem sikerült elérni a(z) {device} eszközt. Ellenőrizze, hogy be van-e kapcsolva, és csatlakozik-e a hálózathoz, majd próbálja újra."
+    },
+    "device_no_reply": {
+      "message": "A(z) {device} eszköz nem válaszolt, vagy a válasza megszakadt, így lehet, hogy végrehajtotta a műveletet, de az is lehet, hogy nem. Ellenőrizze, hogy az eszköz online van-e, és próbálja újra."
+    },
+    "device_token_rejected": {
+      "message": "A(z) {device} eszköz elutasította a tokenjét. Az integráció a következő frissítéskor újat kér a Google-tól, ezért utána próbálja újra."
+    },
+    "device_not_ready": {
+      "message": "A(z) {device} eszköz azt válaszolta, hogy ezt nem tudja végrehajtani. Lehet, hogy még indul, vagy nem támogatja ezt."
+    },
+    "device_request_failed": {
+      "message": "Nem sikerült végrehajtani a műveletet a(z) {device} eszközön. A részletek a Home Assistant naplójában találhatók."
+    },
+    "devices_not_rebooted": {
+      "message": "A következő eszközök nem erősítették meg, hogy újraindulnak: {devices}. Ellenőrizze, hogy az eszközök online vannak-e, és próbálja újra később."
     }
   },
   "options": {

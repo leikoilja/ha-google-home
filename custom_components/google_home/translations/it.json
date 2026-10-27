@@ -101,6 +101,24 @@
     },
     "timer_not_found": {
       "message": "Impossibile trovare il timer {timer_id} sui dispositivi selezionati. Potrebbe essere già scaduto o essere stato eliminato."
+    },
+    "device_offline": {
+      "message": "Impossibile raggiungere {device}. Verifica che sia acceso e connesso alla tua rete, poi riprova."
+    },
+    "device_no_reply": {
+      "message": "{device} non ha risposto o la sua risposta si è interrotta, quindi potrebbe aver eseguito l'azione oppure no. Verifica che sia online e riprova."
+    },
+    "device_token_rejected": {
+      "message": "{device} ha rifiutato il suo token. L'integrazione ne chiederà uno nuovo a Google al prossimo aggiornamento, quindi riprova dopo."
+    },
+    "device_not_ready": {
+      "message": "{device} ha risposto che non può farlo. Potrebbe essere ancora in fase di avvio, oppure potrebbe non supportarlo."
+    },
+    "device_request_failed": {
+      "message": "Impossibile eseguire l'azione su {device}. I dettagli sono nei registri di Home Assistant."
+    },
+    "devices_not_rebooted": {
+      "message": "Questi dispositivi non hanno confermato che si riavvieranno: {devices}. Verifica che siano online e riprova più tardi."
     }
   },
   "options": {

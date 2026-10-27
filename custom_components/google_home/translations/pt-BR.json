@@ -101,6 +101,24 @@
     },
     "timer_not_found": {
       "message": "Não foi possível encontrar o temporizador {timer_id} nos dispositivos selecionados. Ele pode já ter terminado ou ter sido excluído."
+    },
+    "device_offline": {
+      "message": "Não foi possível se conectar ao dispositivo {device}. Verifique se ele está ligado e conectado à sua rede e tente novamente."
+    },
+    "device_no_reply": {
+      "message": "O dispositivo {device} não respondeu ou a resposta foi interrompida, por isso ele pode ou não ter executado a ação. Verifique se o dispositivo está online e tente novamente."
+    },
+    "device_token_rejected": {
+      "message": "O dispositivo {device} rejeitou seu token. A integração vai solicitar um novo ao Google na próxima atualização, então tente novamente depois disso."
+    },
+    "device_not_ready": {
+      "message": "O dispositivo {device} respondeu que não pode fazer isso. Ele pode ainda estar iniciando ou pode não ter suporte para isso."
+    },
+    "device_request_failed": {
+      "message": "Não foi possível executar a ação no dispositivo {device}. Os detalhes estão nos logs do Home Assistant."
+    },
+    "devices_not_rebooted": {
+      "message": "Os seguintes dispositivos não confirmaram que vão reiniciar: {devices}. Verifique se os dispositivos estão online e tente novamente mais tarde."
     }
   },
   "options": {

@@ -101,6 +101,24 @@
     },
     "timer_not_found": {
       "message": "No s'ha pogut trobar el temporitzador {timer_id} als dispositius seleccionats. Pot ser que ja hagi acabat o s'hagi eliminat."
+    },
+    "device_offline": {
+      "message": "No s'ha pogut connectar amb {device}. Comprova que estigui encès i connectat a la xarxa, i torna-ho a provar."
+    },
+    "device_no_reply": {
+      "message": "{device} no ha respost, o la resposta s'ha tallat, de manera que pot ser que ho hagi fet o no. Comprova que estigui en línia i torna-ho a provar."
+    },
+    "device_token_rejected": {
+      "message": "{device} ha rebutjat el seu testimoni. La integració en demanarà un de nou a Google a la següent actualització, així que torna-ho a provar després."
+    },
+    "device_not_ready": {
+      "message": "{device} ha respost que no ho pot fer. És possible que encara s'estigui iniciant o que no ho admeti."
+    },
+    "device_request_failed": {
+      "message": "No s'ha pogut dur a terme l'acció a {device}. Trobaràs els detalls als registres de Home Assistant."
+    },
+    "devices_not_rebooted": {
+      "message": "Aquests dispositius no han confirmat que es reiniciaran: {devices}. Comprova que estiguin en línia i torna-ho a provar més tard."
     }
   },
   "options": {

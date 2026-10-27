@@ -23,7 +23,10 @@ from custom_components.google_home.const import (
     FETCH_DEVICES_INTERVAL,
     HEADER_CAST_LOCAL_AUTH,
 )
-from custom_components.google_home.exceptions import AlarmsAndTimersNotDeleted
+from custom_components.google_home.exceptions import (
+    AlarmsAndTimersNotDeleted,
+    DeviceRequestFailed,
+)
 from custom_components.google_home.models import GoogleHomeDevice
 from custom_components.google_home.sensor import GoogleHomeAlarmsSensor
 from custom_components.google_home.types import JsonDict
@@ -298,8 +301,8 @@ def test_fetch_once_in_update_after_action_rejects_new_token(clock: Mock) -> Non
     The scheduled fetch gives the new token and then looks for a device at a
     known host. Meanwhile an action, sent with the old token, gets rejected,
     and its retry with the new token is rejected too, so the list becomes
-    unknown. The update has already used its fetch, so the next update gets the
-    token the device accepts.
+    unknown and the action fails. The update has already used its fetch, so the
+    next update gets the token the device accepts.
     """
 
     async def until_new_token(token: str) -> None:
@@ -333,7 +336,9 @@ def test_fetch_once_in_update_after_action_rejects_new_token(clock: Mock) -> Non
         # The action has sent its request before the update starts
         await until(lambda: session.request.call_count == 1)
         await client.update_google_devices_information()
-        await action
+        with pytest.raises(DeviceRequestFailed) as err:
+            await action
+        assert err.value.reason == "token_rejected"
 
     asyncio.run(run())
 
@@ -692,14 +697,18 @@ def test_action_after_token_rejected(
 
 
 @pytest.mark.parametrize(
-    "error",
+    ("error", "reason"),
     [
-        pytest.param(TimeoutError(), id="timed-out"),
-        pytest.param(ClientConnectorError(Mock(), OSError()), id="connection-error"),
+        pytest.param(TimeoutError(), "no_reply", id="timed-out"),
+        pytest.param(
+            ClientConnectorError(Mock(), OSError()), "offline", id="connection-error"
+        ),
     ],
 )
-def test_action_not_sent_again_when_device_doesnt_answer(error: Exception) -> None:
-    """Send an action once when the device doesn't answer, as it may have carried it out.
+def test_action_not_sent_again_when_device_doesnt_answer(
+    error: Exception, reason: str
+) -> None:
+    """Send an action once when the device doesn't answer, as it may have carried it out, and fail.
 
     Only a rejected token makes the request go out again.
     """
@@ -707,8 +716,10 @@ def test_action_not_sent_again_when_device_doesnt_answer(error: Exception) -> No
     client, glocaltokens = make_client("10.0.0.2", session=session)
     [kitchen] = client.google_devices
 
-    asyncio.run(client.reboot_google_device(kitchen))
+    with pytest.raises(DeviceRequestFailed) as err:
+        asyncio.run(client.reboot_google_device(kitchen))
 
+    assert err.value.reason == reason
     assert session.request.call_count == 1
     assert glocaltokens.get_google_devices.call_count == 0
     assert not kitchen.available
