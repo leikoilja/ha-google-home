@@ -133,9 +133,11 @@ If only some devices show the message, those devices are offline or don't suppor
 
 If a device's alarms, timers and settings stop changing in Home Assistant while its entities stay available, check the `available` attribute of its [device sensor](entities.md#device-sensor). If it's `false` while the device is on, the [debug log](#collect-debug-logs) shows why. A line such as `Kitchen rejected its token` means that the device refuses the token the integration has for it.
 
-A device's token can change, for example when the device restarts. The integration then gets the new token from Google straight away. If Google can't give it, the device's entities keep the values they had, and the integration asks Google again until it can. The minimum retry delay grows from 1 minute to 20 minutes; the first [update](installation.md#change-the-update-interval) after the delay makes the attempt, so actual gaps can be longer. While Google can't be reached at all, each update that asks Google fails, which makes every entity of the integration unavailable until the next update.
+A device's token can change, for example when the device restarts. The integration then gets the new token from Google straight away. If Google can't give it, the device's entities keep the values they had, and the integration asks Google again until it can. The minimum retry delay grows from 1 minute to 20 minutes; the first [update](installation.md#change-the-update-interval) after the delay makes the attempt, so actual gaps can be longer. If Google can't be reached at all, that update fails, which makes every entity of the integration unavailable until the next update.
 
-Check that Home Assistant is connected to the internet; see ["Couldn't reach Google"](#couldnt-reach-google). To ask Google straight away, reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**.
+To find out why Google didn't give the token, open the [log](https://my.home-assistant.io/redirect/logs/) and find the error that starts with `Failed to fetch Google's device list`. Google's reason is at the end, such as 429 when Google limits requests or 503 when it's busy; the integration keeps asking by itself. If there is no such error, check that Home Assistant is connected to the internet; see ["Couldn't reach Google"](#couldnt-reach-google).
+
+To ask Google straight away, reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**.
 
 ## Still stuck
 
