@@ -37,7 +37,7 @@ Integrations that come with Home Assistant do more with your speakers and displa
 
 The Google Home app lists every device you've linked to it, including lights, plugs and thermostats from other brands. This integration doesn't read that list. It works only with Google Cast devices, which it talks to directly over your network. To bring your other devices into Home Assistant:
 
-- **Most devices:** add them with their own integration. Go to **Settings** > **Devices & services** > **Add integration** and search for the brand.
+- **Most devices:** add them with the integration for their brand or platform, such as [Philips Hue](https://www.home-assistant.io/integrations/hue/) for bulbs on a Hue Bridge, [Philips Hue BLE](https://www.home-assistant.io/integrations/hue_ble/) for Bluetooth bulbs without one, or [Tuya](https://www.home-assistant.io/integrations/tuya/) for devices in the Smart Life app. Go to **Settings** > **Devices & services** > **Add integration** and search for the brand or platform.
 - **Matter devices:** share them from Google Home, so they work in both. In the Home Assistant app on your phone, go to **Settings** > **Connectivity** > **Matter** > **Add device**, select **Yes. It's already in use.**, and choose **Google Home**. See the [Matter integration](https://www.home-assistant.io/integrations/matter/) for what you need.
 - **Nest thermostats, cameras and doorbells:** use the [Google Nest integration](https://www.home-assistant.io/integrations/nest/). It needs Google's Device Access, which has a one-time, non-refundable US$5 registration fee. Nest smoke and CO alarms aren't supported.
 
