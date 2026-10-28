@@ -90,11 +90,11 @@ If it doesn't work:
 
 The examples use entity IDs such as `sensor.kitchen_timers`. Replace them with your own: on the device page, select **Timers**, then the settings (gear) icon. **Entity ID** shows the sensor's ID. If it has the room name twice, see [Room name twice in entity IDs](entities.md#room-name-twice-in-entity-ids).
 
-## After setup
+## Manage the integration
 
 - [Change the update interval](configuration.md#change-the-update-interval){#change-the-update-interval}, for example if a speaker often misses updates.
 - [Add a device](configuration.md#add-a-device){#add-a-device} that you set up in the Google Home app later.
 - [Add devices on another network](configuration.md#add-devices-on-another-network){#add-devices-on-another-network}, such as a separate VLAN.
 - [Remove a device](configuration.md#remove-a-device){#remove-a-device} that you removed from the Google Home app.
-- [Remove the integration](configuration.md#remove-the-integration){#remove-the-integration}, and what to do about its master token.
 - [Sign in again](troubleshooting.md#sign-in-again){#sign-in-again} if Home Assistant reports that authentication expired.
+- [Remove the integration](configuration.md#remove-the-integration){#remove-the-integration}, and what to do about its master token.
