@@ -101,6 +101,24 @@
     },
     "timer_not_found": {
       "message": "Det gick inte att hitta timern {timer_id} på de valda enheterna. Den kan redan ha löpt ut eller raderats."
+    },
+    "device_offline": {
+      "message": "Det gick inte att nå {device}. Kontrollera att enheten är påslagen och ansluten till ditt nätverk, och försök sedan igen."
+    },
+    "device_no_reply": {
+      "message": "{device} bekräftade inte att den utförde åtgärden: den svarade inte i tid, eller så avbröts svaret. Kontrollera att enheten är online och försök igen."
+    },
+    "device_token_rejected": {
+      "message": "{device} avvisade sin token, och det hjälpte inte att hämta en ny från Google. Integrationen fortsätter att be Google om en ny, så försök igen senare."
+    },
+    "device_not_ready": {
+      "message": "{device} svarade ”hittades inte”. Den håller kanske fortfarande på att starta, så försök igen senare, eller så stöder den inte detta."
+    },
+    "device_request_failed": {
+      "message": "Det gick inte att utföra åtgärden på {device}. Mer information finns i Home Assistants loggar."
+    },
+    "devices_not_rebooted": {
+      "message": "Följande enheter bekräftade inte att de kommer att starta om: {devices}. Kontrollera att enheterna är online och försök igen senare."
     }
   },
   "options": {

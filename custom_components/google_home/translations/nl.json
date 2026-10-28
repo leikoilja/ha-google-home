@@ -101,6 +101,24 @@
     },
     "timer_not_found": {
       "message": "De timer {timer_id} is niet gevonden op de geselecteerde apparaten. Deze is mogelijk al afgelopen of verwijderd."
+    },
+    "device_offline": {
+      "message": "{device} kon niet worden bereikt. Controleer of het apparaat aanstaat en met je netwerk is verbonden, en probeer het daarna opnieuw."
+    },
+    "device_no_reply": {
+      "message": "{device} heeft niet bevestigd dat de actie is uitgevoerd: het heeft niet op tijd geantwoord of het antwoord werd afgebroken. Controleer of het apparaat online is en probeer het opnieuw."
+    },
+    "device_token_rejected": {
+      "message": "{device} heeft zijn token geweigerd, en het ophalen van een nieuw token bij Google heeft niet geholpen. De integratie blijft een nieuw token aanvragen bij Google, dus probeer het later opnieuw."
+    },
+    "device_not_ready": {
+      "message": "{device} heeft ‘niet gevonden’ geantwoord. Het apparaat is misschien nog aan het opstarten, dus probeer het later opnieuw, of het ondersteunt dit misschien niet."
+    },
+    "device_request_failed": {
+      "message": "Dit kon niet worden uitgevoerd op {device}. Bekijk de logboeken van Home Assistant voor details."
+    },
+    "devices_not_rebooted": {
+      "message": "De volgende apparaten hebben niet bevestigd dat ze herstarten: {devices}. Controleer of de apparaten online zijn en probeer het later opnieuw."
     }
   },
   "options": {

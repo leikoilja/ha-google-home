@@ -46,7 +46,11 @@ from .entity import (
     GoogleHomeFeatureEntity,
     async_add_device_entities,
 )
-from .exceptions import AlarmsAndTimersNotDeleted, AlarmsAndTimersNotFetched
+from .exceptions import (
+    AlarmsAndTimersNotDeleted,
+    AlarmsAndTimersNotFetched,
+    DeviceRequestFailed,
+)
 from .models import GoogleHomeAlarmStatus, GoogleHomeDevice, GoogleHomeTimerStatus
 from .types import (
     AlarmsAttributes,
@@ -302,16 +306,32 @@ async def async_delete_from_devices[_SensorT: GoogleHomeBaseEntity](
 async def async_reboot_devices(
     entities: list[GoogleHomeBaseEntity], _call: ServiceCall
 ) -> None:
-    """Reboot the device of each entity, once per device."""
+    """Reboot the device of each entity, once per device, then name every device that failed.
+
+    One device that failed raises its own error, which says why.
+    """
     one_per_device = {entity.device_id: entity for entity in entities}.values()
     results = await asyncio.gather(
         *(entity.async_reboot_device() for entity in one_per_device),
         return_exceptions=True,
     )
     # Like Home Assistant's per-entity calls: finish every reboot, then raise.
+    failed: list[DeviceRequestFailed] = []
     for result in results:
-        if isinstance(result, BaseException):
+        if isinstance(result, DeviceRequestFailed):
+            failed.append(result)
+        elif isinstance(result, BaseException):
             raise result
+    if len(failed) > 1:
+        raise HomeAssistantError(
+            translation_domain=DOMAIN,
+            translation_key="devices_not_rebooted",
+            translation_placeholders={
+                "devices": ", ".join(sorted(error.device_name for error in failed))
+            },
+        )
+    if failed:
+        raise failed[0]
 
 
 class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):

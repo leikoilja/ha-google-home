@@ -18,6 +18,7 @@ from .const import (
     LABEL_DO_NOT_DISTURB,
 )
 from .entity import GoogleHomeFeatureEntity, async_add_device_entities
+from .exceptions import DeviceRequestFailed
 from .models import GoogleHomeDevice
 from .types import GoogleHomeConfigEntry
 
@@ -70,7 +71,7 @@ class DoNotDisturbSwitch(GoogleHomeFeatureEntity, SwitchEntity):
         device = self.get_device()
         if device is None:
             _LOGGER.error("Device %s is not found.", self.device_name)
-            return
+            raise DeviceRequestFailed(self.device_name, "request_failed")
 
         await self.client.update_do_not_disturb(device=device, enable=enable)
         # Other entities show this device's data too

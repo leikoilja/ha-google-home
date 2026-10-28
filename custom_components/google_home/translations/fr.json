@@ -101,6 +101,24 @@
     },
     "timer_not_found": {
       "message": "Impossible de trouver le minuteur {timer_id} sur les appareils sélectionnés. Il est peut-être déjà arrivé à son terme ou a été supprimé."
+    },
+    "device_offline": {
+      "message": "Impossible de joindre l'appareil {device}. Vérifiez qu'il est allumé et connecté à votre réseau, puis réessayez."
+    },
+    "device_no_reply": {
+      "message": "L'appareil {device} n'a pas confirmé avoir effectué l'action : il n'a pas répondu à temps ou sa réponse a été interrompue. Vérifiez qu'il est en ligne et réessayez."
+    },
+    "device_token_rejected": {
+      "message": "L'appareil {device} a refusé son jeton, et en obtenir un nouveau auprès de Google n'a rien changé. L'intégration continue d'en demander un nouveau à Google ; réessayez plus tard."
+    },
+    "device_not_ready": {
+      "message": "L'appareil {device} a répondu « introuvable ». Il est peut-être encore en cours de démarrage, auquel cas réessayez plus tard, ou il ne prend peut-être pas en charge cette action."
+    },
+    "device_request_failed": {
+      "message": "Impossible d'effectuer cette action sur l'appareil {device}. Pour en savoir plus, consultez les journaux de Home Assistant."
+    },
+    "devices_not_rebooted": {
+      "message": "Les appareils suivants n'ont pas confirmé qu'ils vont redémarrer : {devices}. Vérifiez qu'ils sont en ligne et réessayez plus tard."
     }
   },
   "options": {

@@ -101,6 +101,24 @@
     },
     "timer_not_found": {
       "message": "Nie znaleziono timera {timer_id} na wybranych urządzeniach. Mógł już zakończyć odliczanie lub zostać usunięty."
+    },
+    "device_offline": {
+      "message": "Nie udało się połączyć z urządzeniem {device}. Sprawdź, czy jest włączone i podłączone do sieci, a następnie spróbuj ponownie."
+    },
+    "device_no_reply": {
+      "message": "Urządzenie {device} nie potwierdziło, że wykonało akcję: nie odpowiedziało na czas lub jego odpowiedź została przerwana. Sprawdź, czy urządzenie jest online, i spróbuj ponownie."
+    },
+    "device_token_rejected": {
+      "message": "Urządzenie {device} odrzuciło swój token, a pobranie nowego z Google nie pomogło. Integracja nadal prosi Google o nowy, więc spróbuj ponownie później."
+    },
+    "device_not_ready": {
+      "message": "Urządzenie {device} odpowiedziało „nie znaleziono”. Być może nadal się uruchamia, więc spróbuj ponownie później, albo może tego nie obsługiwać."
+    },
+    "device_request_failed": {
+      "message": "Nie udało się wykonać akcji na urządzeniu {device}. Szczegóły znajdziesz w logach Home Assistanta."
+    },
+    "devices_not_rebooted": {
+      "message": "Te urządzenia nie potwierdziły, że uruchomią się ponownie: {devices}. Sprawdź, czy urządzenia są online, i spróbuj ponownie później."
     }
   },
   "options": {

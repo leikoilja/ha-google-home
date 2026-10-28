@@ -99,11 +99,11 @@ The state is the device's IP address on your network. If no IP address is availa
 
 ## Do Not Disturb switch
 
-Turns Do Not Disturb on or off on the device. It appears under **Configuration** on the device page.
+Turns Do Not Disturb on or off on the device. It appears under **Configuration** on the device page. If the request to the device fails, Home Assistant shows an error and the switch keeps its old setting; see [If a setting or reboot fails](#if-a-setting-or-reboot-fails).
 
 ## Alarm volume
 
-Sets how loud alarms ring on the device, from 0 to 100%. It appears under **Configuration** on the device page. To change the volume of media, use the Google Cast integration that comes with Home Assistant.
+Sets how loud alarms ring on the device, from 0 to 100%. It appears under **Configuration** on the device page. If the request to the device fails, Home Assistant shows an error and the old volume stays; see [If a setting or reboot fails](#if-a-setting-or-reboot-fails). To change the volume of media, use the Google Cast integration that comes with Home Assistant.
 
 ## Reboot button
 
@@ -115,9 +115,34 @@ target:
   entity_id: button.living_room_reboot
 ```
 
-The button is unavailable until Home Assistant finds the device on your network. If the device goes offline later, the button may stay available, but pressing it then has no effect. The `available` attribute of the [device sensor](#device-sensor) shows whether Home Assistant reached the device at its last request.
+The button is unavailable until Home Assistant finds the device on your network. If the device goes offline later, the button may stay available, and pressing it then fails with an error; see [If a setting or reboot fails](#if-a-setting-or-reboot-fails). The `available` attribute of the [device sensor](#device-sensor) shows whether Home Assistant reached the device at its last request.
 
-Not every device supports rebooting. The log can show "Successfully asked Living Room to reboot." even when the device didn't restart. If that happens, [reboot it from the Google Home app or unplug it for a minute](https://support.google.com/googlehome/answer/7072490).
+Not every device supports rebooting. A device can accept the request, so there's no error and the log shows "Successfully asked Living Room to reboot.", even when it doesn't restart. If that happens, [reboot it from the Google Home app or unplug it for a minute](https://support.google.com/googlehome/answer/7072490).
+
+## If a setting or reboot fails
+
+Turning Do Not Disturb on or off, setting the alarm volume and pressing Reboot fail with an error, rather than look successful, when the request to the device fails. Home Assistant shows the error, which names the device and says why:
+
+- "Couldn't reach Living Room. Check that it's on and connected to your network, then try again". The device refused the connection or your network reports it as unreachable, or Home Assistant doesn't know its IP address.
+- "Living Room didn't confirm that it did this: it didn't answer in time, or its answer was cut off. Check that it's online and try again". The device didn't answer within about 5 seconds, or didn't even accept the connection in that time, or it closed the connection or stopped its answer partway. The next update shows the device's current Do Not Disturb setting and alarm volume.
+- "Living Room rejected its token, and getting a new one from Google didn't help. The integration keeps asking Google for one, so try again later". Before this error, the integration asks Google for a new token and sends the request again if it gets one. It asks at most once between updates, and after Google fails to answer it can wait several minutes before asking again; see [A device stops updating](troubleshooting.md#a-device-stops-updating). If Home Assistant asks you to [sign in again](installation.md#sign-in-again), do that first.
+- "Living Room answered “not found”. It may still be starting up, so try again later, or it may not support this".
+- "Couldn't do this on Living Room. For details, see the Home Assistant log". The device answered with another error, or the request failed for another reason. Open the [log](https://my.home-assistant.io/redirect/logs/) to see what it was.
+
+Two answers to a Do Not Disturb or alarm volume change don't give one of these messages. If the device accepts the change but its answer doesn't include the new setting, there's no error, and the switch or volume shows the old setting until the next update. If its answer says it's JSON but can't be read as JSON, the action fails with an unexpected error instead.
+
+The error stops your automation or script at this step. To run the next steps anyway, select **Continue on error** in the step's menu, or in YAML add `continue_on_error: true` to the step, next to `action:` rather than under `data:`:
+
+```yaml
+- action: switch.turn_on
+  target:
+    entity_id: switch.living_room_do_not_disturb
+  continue_on_error: true
+```
+
+See [Continuing when a step fails](https://www.home-assistant.io/docs/scripts/#continuing-on-error).
+
+Home Assistant skips an unavailable entity without an error, so an action on it does nothing and doesn't fail. The switch and alarm volume of a device are unavailable once Google no longer lists it, on a [device without alarms and timers](troubleshooting.md#devices-without-alarms-and-timers), and after a failed update. The Reboot button is unavailable once Google no longer lists the device, after a failed update, and while Home Assistant doesn't know the device's IP address. If one action targets several entities, such as the Do Not Disturb switches of two devices, Home Assistant runs it on all of them and shows only the first error. For several reboots, use [Reboot device](actions.md#reboot-device), which names every device that failed.
 
 ## Room name twice in entity IDs
 
