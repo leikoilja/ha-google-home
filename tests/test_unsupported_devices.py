@@ -52,6 +52,9 @@ ENDPOINTS = {
 }
 # What every update asks a device
 EVERYTHING = [ALARMS, VOLUME, DND]
+# What a device whose alarms don't answer 200 is asked in an update: its info too,
+# for the available attribute of its device sensor
+WITH_INFO = [ALARMS, INFO, VOLUME, DND]
 
 # What a device answers: a status, a status and a body, or what the request raises.
 # A body that is an exception is what reading it raises.
@@ -242,7 +245,7 @@ def test_stop_asking_device_without_alarms(clock: Mock) -> None:
     """
     client, glocaltokens, network = setup(NO_ALARMS, SUPPORTED)
     coordinator = Mock(data=poll(client, clock, at(0)))
-    assert network.asked(SPEAKER) == EVERYTHING
+    assert network.asked(SPEAKER) == WITH_INFO
     assert network.asked(OTHER) == EVERYTHING
     add_features, features_added = add_entities(coordinator, *FEATURES)
     _, always_added = add_entities(coordinator, *ALWAYS, needs_answer=False)
@@ -257,7 +260,7 @@ def test_stop_asking_device_without_alarms(clock: Mock) -> None:
     # Before 10 minutes, it may be starting
     for seconds in (at(3), at(9, 59)):
         poll(client, clock, seconds)
-        assert network.asked(SPEAKER) == EVERYTHING
+        assert network.asked(SPEAKER) == WITH_INFO
         assert network.asked(OTHER) == EVERYTHING
 
     poll(client, clock, at(10))
@@ -290,25 +293,29 @@ def test_keep_asking_starting_speaker(clock: Mock) -> None:
     In the order seen on a restarting Home Mini: "not found", then its old token
     rejected, then its alarms with the new token, 40 seconds after the first "not
     found". That answer starts the 10 minutes over, so a "not found" 10 minutes
-    after the first one is a new first one, and its info isn't asked.
+    after the first one is a new first one, and it isn't checked for Google
+    Assistant then: its info, which would show none, doesn't mark it.
     """
     client, glocaltokens, network = setup(
         dict.fromkeys([*EVERYTHING, INFO], HTTPStatus.NOT_FOUND)
     )
     [mini] = client.google_devices
     coordinator = Mock(data=poll(client, clock, at(0)))
-    assert network.asked(SPEAKER) == EVERYTHING
+    assert network.asked(SPEAKER) == WITH_INFO
     add_features, features_added = add_entities(coordinator, *FEATURES)
     assert features_added() == []
 
     # It rejects its old token, and Google's list, fetched straight away, still
     # gives that token
-    network.replies[SPEAKER] = dict.fromkeys(EVERYTHING, HTTPStatus.UNAUTHORIZED)
+    network.replies[SPEAKER] = {
+        **dict.fromkeys(EVERYTHING, HTTPStatus.UNAUTHORIZED),
+        INFO: info(assistant_supported=True),
+    }
     glocaltokens.get_google_devices.return_value = [
         found("device0", SPEAKER, OLD_TOKEN)
     ]
     poll(client, clock, at(0, 28))
-    assert network.asked(SPEAKER) == EVERYTHING
+    assert network.asked(SPEAKER) == WITH_INFO
     assert glocaltokens.get_google_devices.call_count == 1
     add_features()
     assert features_added() == []
@@ -324,9 +331,9 @@ def test_keep_asking_starting_speaker(clock: Mock) -> None:
     assert {label for _, label in features_added()} == FEATURE_LABELS
 
     # A later "not found" starts the 10 minutes over
-    network.replies[SPEAKER][ALARMS] = HTTPStatus.NOT_FOUND
+    network.replies[SPEAKER] |= {ALARMS: HTTPStatus.NOT_FOUND, INFO: info()}
     poll(client, clock, at(10))
-    assert network.asked(SPEAKER) == EVERYTHING
+    assert network.asked(SPEAKER) == WITH_INFO
     assert not mini.alarms_unsupported
 
 
@@ -372,10 +379,11 @@ def test_suppress_only_when_info_shows_no_assistant(
 
     Any other reply says nothing either way, so the device is still asked as usual.
     """
-    client, _, network = setup(NO_ALARMS | {INFO: reply})
+    client, _, network = setup(NO_ALARMS)
     poll(client, clock, at(0))
-    assert network.asked(SPEAKER) == EVERYTHING
+    assert network.asked(SPEAKER) == WITH_INFO
 
+    network.replies[SPEAKER][INFO] = reply
     poll(client, clock, at(10))
 
     assert client.google_devices[0].alarms_unsupported is suppressed
@@ -400,29 +408,31 @@ def test_suppress_only_when_info_shows_no_assistant(
         ),
     ],
 )
-def test_ask_info_at_most_every_10_minutes(
+def test_check_for_assistant_at_most_every_10_minutes(
     clock: Mock,
     first: Reply,
     first_asked: list[str],
     second: Reply,
     suppressed: bool,
 ) -> None:
-    """Ask a device whose alarms keep answering "not found" for its info at most every 10 minutes.
+    """Check a device whose alarms keep answering "not found" for Google Assistant at most every 10 minutes.
 
-    A device that reports Google Assistant but has no alarms, such as possibly a
-    TV box, is otherwise asked as usual, and never treated as having no alarms.
+    Each update still asks for its info once, for the available attribute of its
+    device sensor; the check uses that request when it's due. A device that reports
+    Google Assistant but has no alarms, such as possibly a TV box, is otherwise
+    asked as usual, and never treated as having no alarms.
     """
     client, _, network = setup(NO_ALARMS | {INFO: first})
     [device] = client.google_devices
 
     for seconds in (at(0), at(9, 59)):
         poll(client, clock, seconds)
-        assert network.asked(SPEAKER) == EVERYTHING
+        assert network.asked(SPEAKER) == WITH_INFO
     poll(client, clock, at(10))
     assert network.asked(SPEAKER) == first_asked
     network.replies[SPEAKER][INFO] = second
     poll(client, clock, at(19, 59))
-    assert network.asked(SPEAKER) == EVERYTHING
+    assert network.asked(SPEAKER) == WITH_INFO
     assert not device.alarms_unsupported
 
     poll(client, clock, at(20))
@@ -442,12 +452,12 @@ def test_keep_asking_while_device_doesnt_answer(clock: Mock) -> None:
     client, glocaltokens, network = setup(dict.fromkeys(NO_ALARMS, TimeoutError()))
     for seconds in range(at(0), at(15) + 1, at(3)):
         poll(client, clock, seconds)
-        assert network.asked(SPEAKER) == [ALARMS]
+        assert network.asked(SPEAKER) == [ALARMS, INFO]
 
     network.replies[SPEAKER] = dict(NO_ALARMS)
     for seconds in (at(18), at(21), at(24), at(27)):
         poll(client, clock, seconds)
-        assert network.asked(SPEAKER) == EVERYTHING
+        assert network.asked(SPEAKER) == WITH_INFO
     # Google's list was fetched again at 21 minutes, with the same token
     assert glocaltokens.get_google_devices.call_count == 1
 
@@ -471,20 +481,24 @@ def test_start_over_when_alarms_answer(
 ) -> None:
     """Start the 10 minutes over when a device's alarms answer, or don't answer when they're up.
 
-    Its info isn't asked then, and the next "not found" starts the 10 minutes.
+    It isn't checked for Google Assistant then, and the next "not found" starts the
+    10 minutes. Its info shows no Google Assistant, so a check would mark it.
     """
     client, _, network = setup(NO_ALARMS)
+    [device] = client.google_devices
     poll(client, clock, at(0))
     network.replies[SPEAKER][ALARMS] = alarms
     poll(client, clock, seconds)
-    assert INFO not in network.asked(SPEAKER)
+    assert not device.alarms_unsupported
 
     network.replies[SPEAKER][ALARMS] = HTTPStatus.NOT_FOUND
     poll(client, clock, at(13))
     poll(client, clock, at(22, 59))
-    assert INFO not in network.asked(SPEAKER)
+    assert not device.alarms_unsupported
+    network.asked(SPEAKER)
     poll(client, clock, at(23))
     assert network.asked(SPEAKER) == [ALARMS, INFO]
+    assert device.alarms_unsupported
 
 
 @pytest.mark.parametrize(
@@ -526,7 +540,7 @@ def test_action_doesnt_start_check(clock: Mock) -> None:
     assert network.asked(SPEAKER) == [ALARMS]
 
     poll(client, clock, at(10))
-    assert network.asked(SPEAKER) == EVERYTHING
+    assert network.asked(SPEAKER) == WITH_INFO
     poll(client, clock, at(20))
     assert network.asked(SPEAKER) == [ALARMS, INFO]
 
@@ -547,7 +561,7 @@ def test_dont_ask_again_until_reload(clock: Mock) -> None:
     network.replies[SPEAKER] = dict(NO_ALARMS)
     poll(client, clock, at(3))
     poll(client, clock, at(13))
-    assert network.asked(SPEAKER) == [*EVERYTHING, ALARMS, INFO]
+    assert network.asked(SPEAKER) == [*WITH_INFO, ALARMS, INFO]
     assert available(speaker) == ALWAYS_LABELS
 
     network.replies[SPEAKER] = dict(SUPPORTED)
@@ -580,13 +594,13 @@ def test_reload_checks_again(clock: Mock) -> None:
     client, _, network = setup(NO_ALARMS)
     poll(client, clock, at(0))
     poll(client, clock, at(10))
-    assert network.asked(SPEAKER) == [*EVERYTHING, ALARMS, INFO]
+    assert network.asked(SPEAKER) == [*WITH_INFO, ALARMS, INFO]
     assert client.google_devices[0].alarms_unsupported
 
     client = reload(network, SPEAKER)
     for seconds in (at(30), at(33), at(39, 59)):
         poll(client, clock, seconds)
-        assert network.asked(SPEAKER) == EVERYTHING
+        assert network.asked(SPEAKER) == WITH_INFO
     poll(client, clock, at(40))
     assert network.asked(SPEAKER) == [ALARMS, INFO]
     assert client.google_devices[0].alarms_unsupported
@@ -609,7 +623,7 @@ def test_dont_ask_again_when_google_lists_device_again(clock: Mock) -> None:
     network.replies[SPEAKER] = dict(NO_ALARMS)
     poll(client, clock, at(3))
     coordinator.data = poll(client, clock, at(13))
-    assert network.asked(SPEAKER) == [*EVERYTHING, *EVERYTHING, ALARMS, INFO]
+    assert network.asked(SPEAKER) == [*EVERYTHING, *WITH_INFO, ALARMS, INFO]
 
     glocaltokens.get_google_devices.return_value = []
     for seconds in (at(20), at(30)):
@@ -638,11 +652,11 @@ def test_dont_ask_again_when_google_lists_device_again(clock: Mock) -> None:
     # Reloading checks it again, after the 10 minutes
     client = reload(network, SPEAKER, OTHER)
     coordinator = Mock(data=poll(client, clock, at(60)), last_update_success=True)
-    assert network.asked(SPEAKER) == EVERYTHING
+    assert network.asked(SPEAKER) == WITH_INFO
     add_features, features_added = add_entities(coordinator, *FEATURES)
     assert {device_id for device_id, _ in features_added()} == {"device1"}
     poll(client, clock, at(69, 59))
-    assert network.asked(SPEAKER) == EVERYTHING
+    assert network.asked(SPEAKER) == WITH_INFO
     poll(client, clock, at(70))
     assert network.asked(SPEAKER) == [ALARMS, INFO]
     assert client.google_devices[0].alarms_unsupported

@@ -328,10 +328,10 @@ def test_google_lists_no_devices(clock: Mock) -> None:
 
 
 def answering(status: HTTPStatus) -> Mock:
-    """Return a session to which every device answers with this HTTP status."""
+    """Return a session to which every device answers with this HTTP status, also when asked for its info."""
     response = MagicMock()
     response.__aenter__.return_value.status = status
-    return Mock(request=Mock(return_value=response))
+    return Mock(request=Mock(return_value=response), get=Mock(return_value=response))
 
 
 def fetch_times(
@@ -740,7 +740,10 @@ def test_keep_polled_data_when_list_fetched_again(clock: Mock) -> None:
     until it answers.
     """
     client, _ = make_client(
-        "10.0.0.2", session=Mock(request=Mock(side_effect=TimeoutError))
+        "10.0.0.2",
+        session=Mock(
+            request=Mock(side_effect=TimeoutError), get=Mock(side_effect=TimeoutError)
+        ),
     )
     [kitchen] = client.google_devices
     kitchen.set_alarms([{"id": ALARM_ID, "fire_time": 1700000000000, "status": 1}])

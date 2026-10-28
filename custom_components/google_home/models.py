@@ -49,7 +49,12 @@ class GoogleHomeDevice:
         self.hardware = hardware
         # Google's ID for the device, which it also reports locally
         self.cloud_device_id = cloud_device_id.lower() if cloud_device_id else None
+        # Whether the last request for alarms, settings or a reboot succeeded. Its
+        # alarms, timers and settings entities are added only then.
         self.available = True
+        # Whether its alarms, or else its info, answered 200 at the last update: the
+        # device sensor's available attribute
+        self.reachable = True
         # Whether the device has no alarms, timers and settings, so it isn't asked
         # for them until the integration is loaded again
         self.alarms_unsupported = False

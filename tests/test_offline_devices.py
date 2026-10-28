@@ -6,7 +6,12 @@ from http import HTTPStatus
 import logging
 from unittest.mock import Mock
 
-from aiohttp import ClientConnectorError, ClientPayloadError, ClientTimeout
+from aiohttp import (
+    ClientConnectorError,
+    ClientPayloadError,
+    ClientTimeout,
+    ContentTypeError,
+)
 from glocaltokens.client import Device
 import pytest
 
@@ -40,6 +45,7 @@ from .test_unsupported_devices import (
     SPEAKER,
     SUPPORTED,
     VOLUME,
+    WITH_INFO,
     Network,
     Reply,
     at,
@@ -64,16 +70,18 @@ NO_ANSWER = [
 @pytest.mark.parametrize(
     ("unanswered", "asked"),
     [
-        pytest.param(ALARMS, [ALARMS], id="alarms"),
+        # Its info is asked once after its alarms, for its available attribute
+        pytest.param(ALARMS, [ALARMS, INFO], id="alarms"),
         pytest.param(VOLUME, [ALARMS, VOLUME], id="alarm-volume"),
     ],
 )
 def test_update_stops_asking_device_that_doesnt_answer(
     clock: Mock, error: Reply, unanswered: str, asked: list[str]
 ) -> None:
-    """Ask a device nothing more in an update once it doesn't answer, so it costs one timeout.
+    """Ask a device nothing more in an update once it doesn't answer, but its info once after its alarms.
 
-    Other devices are asked as usual, and the next update asks it again.
+    So it costs at most two timeouts, not four. Other devices are asked as usual,
+    and the next update asks it again.
     """
     client, _, network = setup({**SUPPORTED, unanswered: error}, SUPPORTED)
 
@@ -91,7 +99,7 @@ def test_update_stops_asking_device_that_doesnt_answer(
 def test_update_stops_asking_device_when_retry_doesnt_answer(
     clock: Mock, error: Reply
 ) -> None:
-    """Ask a device nothing more in an update when it doesn't answer with its new token either.
+    """Ask a device only for its info in the rest of an update when it doesn't answer with its new token either.
 
     It rejected its token, and Google gave it a new one in the same update.
     """
@@ -106,7 +114,7 @@ def test_update_stops_asking_device_when_retry_doesnt_answer(
     glocaltokens.get_google_devices.side_effect = google_answers
     poll(client, clock, at(0))
 
-    assert network.asked(SPEAKER) == [ALARMS, ALARMS]
+    assert network.asked(SPEAKER) == [ALARMS, ALARMS, INFO]
     assert client.google_devices[0].auth_token == NEW_TOKEN
 
 
@@ -122,7 +130,7 @@ def test_update_stops_asking_device_that_doesnt_answer_with_info(
     """
     client, _, network = setup(NO_ALARMS | {INFO: error})
     poll(client, clock, at(0))
-    assert network.asked(SPEAKER) == EVERYTHING
+    assert network.asked(SPEAKER) == WITH_INFO
 
     poll(client, clock, at(10))
     assert network.asked(SPEAKER) == [ALARMS, INFO]
@@ -130,7 +138,7 @@ def test_update_stops_asking_device_that_doesnt_answer_with_info(
     assert not device.alarms_unsupported
 
     poll(client, clock, at(13))
-    assert network.asked(SPEAKER) == EVERYTHING
+    assert network.asked(SPEAKER) == WITH_INFO
     asyncio.run(client.reboot_google_device(device))
     assert network.asked(SPEAKER) == [REBOOT]
 
@@ -203,7 +211,7 @@ def test_action_after_update_device_didnt_answer(
     replies: dict[str, Reply] = dict.fromkeys(SUPPORTED, TimeoutError())
     client, _, network = setup(replies)
     coordinator = Mock(data=poll(client, clock, at(0)))
-    assert network.asked(SPEAKER) == [ALARMS]
+    assert network.asked(SPEAKER) == [ALARMS, INFO]
     [device] = client.google_devices
     assert not device.available
 
@@ -403,7 +411,7 @@ def test_address_from_mdns_isnt_an_answer(clock: Mock) -> None:
     assert device.ip_address == MOVED
     assert available(speaker) == set()
     poll(client, clock, at(1, 30))
-    assert network.asked(MOVED) == [ALARMS]
+    assert network.asked(MOVED) == [ALARMS, INFO]
     assert available(speaker) == set()
 
     network.replies[MOVED] = dict(SUPPORTED)
@@ -430,7 +438,7 @@ def test_stay_unavailable_while_starting(clock: Mock) -> None:
     network.asked(SPEAKER)
     for update in range(6, 8):
         poll(client, clock, at(0, 15 * update))
-        assert network.asked(SPEAKER) == EVERYTHING
+        assert network.asked(SPEAKER) == WITH_INFO
         assert available(speaker) == set()
 
     def google_answers(**_: object) -> list[Device]:
@@ -782,21 +790,157 @@ def test_no_request_without_token_or_address(clock: Mock) -> None:
     assert network.asked(OTHER) == []
 
 
-def test_device_sensor_of_device_without_alarms(clock: Mock) -> None:
-    """Show the device sensor of a device without alarms when its info answers, whatever its available attribute.
+def device_sensor(
+    client: GlocaltokensApiClient, coordinator: Mock
+) -> GoogleHomeDeviceSensor:
+    """Return the device sensor of the device at SPEAKER."""
+    sensor = entities(client, coordinator, "device0")["device"]
+    assert isinstance(sensor, GoogleHomeDeviceSensor)
+    return sensor
 
-    The attribute follows the requests for alarms, settings and reboots, which
-    answered "not found", not its info.
+
+@pytest.mark.parametrize(
+    ("replies", "asked", "shown"),
+    [
+        # Its info isn't asked then
+        pytest.param(SUPPORTED, EVERYTHING, True, id="alarms-200"),
+        # As a speaker answers while it starts, while its info already answers or
+        # not yet
+        pytest.param(STARTING | {INFO: info()}, WITH_INFO, True, id="404-info-200"),
+        pytest.param(STARTING, WITH_INFO, False, id="404-info-404"),
+        pytest.param(
+            {**dict.fromkeys(SUPPORTED, HTTPStatus.UNAUTHORIZED), INFO: info()},
+            WITH_INFO,
+            True,
+            id="token-rejected-info-200",
+        ),
+        pytest.param(
+            {**dict.fromkeys(SUPPORTED, HTTPStatus.SERVICE_UNAVAILABLE), INFO: info()},
+            WITH_INFO,
+            True,
+            id="503-info-200",
+        ),
+        # Its info counts once its body has come
+        pytest.param(
+            STARTING | {INFO: (HTTPStatus.OK, TimeoutError())},
+            WITH_INFO,
+            False,
+            id="404-info-body-timed-out",
+        ),
+        pytest.param(
+            SILENT | {INFO: info()}, [ALARMS, INFO], True, id="silent-info-200"
+        ),
+        pytest.param(SILENT, [ALARMS, INFO], False, id="silent"),
+    ],
+)
+def test_available_attribute_from_alarms_or_info(
+    clock: Mock, replies: dict[str, Reply], asked: list[str], shown: bool
+) -> None:
+    """Show in the available attribute whether a speaker's alarms answer 200, or else its info does.
+
+    Its info is asked at most once an update, without its token, and only when its
+    alarms don't answer 200. Each case starts from the other value.
+    """
+    client, _, network = setup(SILENT if shown else SUPPORTED)
+    coordinator = Mock(data=poll(client, clock, at(0)))
+    sensor = device_sensor(client, coordinator)
+    attribute = [sensor.extra_state_attributes["available"]]
+    network.asked(SPEAKER)
+
+    network.replies[SPEAKER] = dict(replies)
+    poll(client, clock, at(0, 15))
+    attribute.append(sensor.extra_state_attributes["available"])
+
+    assert network.asked(SPEAKER) == asked
+    assert attribute == [not shown, shown]
+    assert sensor.available
+
+
+@pytest.mark.parametrize(
+    ("reply", "shown", "asked"),
+    [
+        # Its info lists no Google Assistant: it's marked as having no alarms
+        pytest.param(info(), True, [ALARMS, INFO], id="200-no-assistant"),
+        pytest.param(
+            info(assistant_supported=True), True, WITH_INFO, id="200-assistant"
+        ),
+        # An error page has come whole
+        pytest.param(
+            (HTTPStatus.OK, ContentTypeError(Mock(), ())),
+            True,
+            WITH_INFO,
+            id="200-not-json",
+        ),
+        pytest.param(HTTPStatus.INTERNAL_SERVER_ERROR, False, WITH_INFO, id="500"),
+        # It isn't asked the rest of the update
+        pytest.param(
+            (HTTPStatus.OK, TimeoutError()),
+            False,
+            [ALARMS, INFO],
+            id="200-body-timed-out",
+        ),
+        pytest.param(TimeoutError(), False, [ALARMS, INFO], id="timeout"),
+    ],
+)
+def test_available_attribute_when_alarm_check_asks_info(
+    clock: Mock, reply: Reply, shown: bool, asked: list[str]
+) -> None:
+    """Show in the available attribute whether the info asked to check for alarms answered 200.
+
+    That's the update's one info request: the device isn't asked for its info
+    again. Each case starts from the other value.
+    """
+    client, _, network = setup(
+        NO_ALARMS | {INFO: TimeoutError() if shown else info(assistant_supported=True)}
+    )
+    coordinator = Mock(data=poll(client, clock, at(0)))
+    sensor = device_sensor(client, coordinator)
+    attribute = [sensor.extra_state_attributes["available"]]
+    network.asked(SPEAKER)
+
+    network.replies[SPEAKER][INFO] = reply
+    poll(client, clock, at(10))
+    attribute.append(sensor.extra_state_attributes["available"])
+
+    assert network.asked(SPEAKER) == asked
+    assert attribute == [not shown, shown]
+    assert sensor.available
+
+
+@pytest.mark.parametrize(
+    ("reply", "shown"),
+    [
+        pytest.param(info(), True, id="200"),
+        pytest.param(HTTPStatus.NOT_FOUND, False, id="404"),
+        pytest.param(HTTPStatus.UNAUTHORIZED, False, id="401"),
+        pytest.param(HTTPStatus.FOUND, False, id="302"),
+        pytest.param((HTTPStatus.OK, TimeoutError()), False, id="200-body-timed-out"),
+        pytest.param(TimeoutError(), False, id="timeout"),
+    ],
+)
+def test_available_attribute_of_device_without_alarms(
+    clock: Mock, reply: Reply, shown: bool
+) -> None:
+    """Show in the available attribute whether a device without alarms answers 200 when asked for its info.
+
+    It's true once the check for alarms got its info. Each case then starts from
+    the other value.
     """
     client, _, network, chromecast = without_alarms(clock)
-    go_silent(client, clock, network, 5)
-    network.replies[SPEAKER][INFO] = info()
-    poll(client, clock, at(11, 30))
-
     sensor = chromecast["device"]
     assert isinstance(sensor, GoogleHomeDeviceSensor)
+    attribute = [sensor.extra_state_attributes["available"]]
+
+    network.replies[SPEAKER][INFO] = TimeoutError() if shown else info()
+    poll(client, clock, at(10, 15))
+    attribute.append(sensor.extra_state_attributes["available"])
+    network.replies[SPEAKER][INFO] = reply
+    poll(client, clock, at(10, 30))
+    attribute.append(sensor.extra_state_attributes["available"])
+
+    assert network.asked(SPEAKER) == [INFO] * 2
+    assert attribute == [True, not shown, shown]
     assert sensor.available
-    assert sensor.extra_state_attributes["available"] is False
 
 
 def info_messages(caplog: pytest.LogCaptureFixture) -> list[str]:

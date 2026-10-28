@@ -187,6 +187,9 @@ class GlocaltokensApiClient:
         self._fetch_lock = asyncio.Lock()
         self._fetches = 0
         self._fetches_before_update = 0
+        # Devices found at a known host in the current update. Their info answered 200
+        # then, so they aren't asked for it again in that update.
+        self._found_at_known_host: set[str] = set()
         # While the list is unknown, a fetch after a failed one waits a while
         self._fetch_backoff = FetchBackoff()
         # Devices found to have no alarms, timers and settings. They aren't asked for
@@ -397,30 +400,42 @@ class GlocaltokensApiClient:
             if known_host := hosts_by_id.get(device.cloud_device_id):
                 _LOGGER.debug("Found %s at known host %s", device.name, known_host)
                 device.ip_address = known_host
+                self._found_at_known_host.add(device.device_id)
 
-    async def _async_get_device_info(self, host: str) -> dict[str, object] | None:
+    async def _async_get_device_info(
+        self, host: str, device: GoogleHomeDevice | None = None
+    ) -> dict[str, object] | None:
         """Return what the device at this host reports about itself.
 
         Return None if it answers with something else, such as an error page.
-        Raise TimeoutError or ClientError if it doesn't answer.
+        Raise TimeoutError or ClientError if it doesn't answer. With a device, set
+        whether it's reachable: whether a 200 came, with its whole body.
         """
         url = self.create_url(host, PORT, API_ENDPOINT_EUREKA_INFO)
-        async with self._session.get(
-            url, timeout=ClientTimeout(total=TIMEOUT)
-        ) as response:
-            # A device that is starting can answer 404, and an error page
-            # isn't its info
-            if response.status != HTTPStatus.OK:
-                _LOGGER.debug(
-                    "%s answered %d when asked for its info", host, response.status
-                )
-                return None
-            try:
-                info = await response.json()
-            # An answer that isn't JSON
-            except ContentTypeError, ValueError:
-                _LOGGER.debug("%s answered, but not with its info", host, exc_info=True)
-                return None
+        reachable = False
+        try:
+            async with self._session.get(
+                url, timeout=ClientTimeout(total=TIMEOUT)
+            ) as response:
+                # A device that is starting can answer 404, and an error page
+                # isn't its info
+                if response.status != HTTPStatus.OK:
+                    _LOGGER.debug(
+                        "%s answered %d when asked for its info", host, response.status
+                    )
+                    return None
+                try:
+                    info = await response.json()
+                # An answer that isn't JSON, though it has come whole
+                except ContentTypeError, ValueError:
+                    _LOGGER.debug(
+                        "%s answered, but not with its info", host, exc_info=True
+                    )
+                    info = None
+                reachable = True
+        finally:
+            if device is not None:
+                device.reachable = reachable
         return info if isinstance(info, dict) else None
 
     async def _async_get_info_status(self, device: GoogleHomeDevice) -> int | None:
@@ -497,6 +512,7 @@ class GlocaltokensApiClient:
         # From here until the next update, whatever asks for Google's list gets it
         # at most once: on schedule, when it's unknown, or for a rejected token
         self._fetches_before_update = self._fetches
+        self._found_at_known_host.clear()
         await self.async_fetch_devices_when_due()
         devices = await self.get_google_devices()
 
@@ -531,18 +547,30 @@ class GlocaltokensApiClient:
         """Collect data from different endpoints.
 
         A device that doesn't answer isn't asked the rest until the next update, so it
-        costs one timeout, not three. A device without alarms is asked only for its
-        info, which shows whether it answers. Actions don't come here, so they're
-        always sent.
+        costs two timeouts, for its alarms and its info, not four. A device without
+        alarms is asked only for its info, which shows whether it answers. Actions
+        don't come here, so they're always sent.
+
+        The device is reachable if its alarms answer 200, or else its info does. When
+        the check for alarms asks for its info, or the device was just found at a known
+        host, that answer counts, so it isn't asked again.
         """
+        found_at_known_host = device.device_id in self._found_at_known_host
         if device.alarms_unsupported:
-            device.count_answer(await self._async_get_info_status(device))
+            status = (
+                HTTPStatus.OK
+                if found_at_known_host
+                else await self._async_get_info_status(device)
+            )
+            device.reachable = status == HTTPStatus.OK
+            device.count_answer(status)
             return device
         device = await self.update_alarms_and_timers(device)
-        answered = device.count_answer(device.statuses.get((API_ENDPOINT_ALARMS, True)))
+        status = device.statuses.get((API_ENDPOINT_ALARMS, True))
+        answered = device.count_answer(status)
+        device.reachable = status == HTTPStatus.OK
         try:
-            if await self._async_find_alarms_unsupported(device):
-                return device
+            asked_info = await self._async_find_alarms_unsupported(device)
         except ClientError, TimeoutError:
             _LOGGER.debug(
                 "%s didn't answer when asked for its info. Will check again in %d "
@@ -552,6 +580,12 @@ class GlocaltokensApiClient:
                 exc_info=True,
             )
             return device
+        if device.alarms_unsupported:
+            return device
+        if not device.reachable and not asked_info:
+            device.reachable = found_at_known_host or (
+                await self._async_get_info_status(device) == HTTPStatus.OK
+            )
         if not answered:
             return device
         device = await self.update_alarm_volume(device)
@@ -560,7 +594,10 @@ class GlocaltokensApiClient:
         return await self.update_do_not_disturb(device)
 
     async def _async_find_alarms_unsupported(self, device: GoogleHomeDevice) -> bool:
-        """Return whether the device has turned out to have no alarms, timers and settings.
+        """Find whether the device has turned out to have no alarms, timers and settings.
+
+        Set alarms_unsupported if so. Return whether the device was asked for its
+        info, which also sets whether it's reachable.
 
         Its alarms must answer "not found" at an update, and again at the first
         update at least SUPPORT_CHECK_DELAY later, as a device that is starting
@@ -587,7 +624,7 @@ class GlocaltokensApiClient:
         # also when it doesn't answer
         device.support_check_at = now + SUPPORT_CHECK_DELAY
         assert device.ip_address is not None
-        info = await self._async_get_device_info(device.ip_address)
+        info = await self._async_get_device_info(device.ip_address, device)
         if not lacks_assistant(info):
             _LOGGER.debug(
                 "%s still answers 404 for alarms, but its info doesn't show that it "
@@ -595,7 +632,7 @@ class GlocaltokensApiClient:
                 device.name,
                 SUPPORT_CHECK_DELAY // 60,
             )
-            return False
+            return True
         _LOGGER.debug(
             (
                 "%s (hardware='%s') still answers 404 for alarms after at least %d "
