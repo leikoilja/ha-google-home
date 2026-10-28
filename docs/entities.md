@@ -17,7 +17,7 @@ A device without alarms and timers, such as a Chromecast Audio, doesn't get thes
 
 All entities of a device are unavailable once Google no longer lists it, for example after you remove it from the Google Home app. See [Remove a device](configuration.md#remove-a-device).
 
-The alarms sensor, timers sensor, switch and alarm volume of a device become unavailable once it hasn't answered 5 [updates](configuration.md#change-the-update-interval) in a row, for example while it's unplugged. At the default 15-second interval, that's usually after one to two minutes. With a shorter interval, a speaker that restarts can miss 5 updates and become unavailable for a moment; with a longer one, it takes longer to notice. The device sensor and reboot button stay available.
+All entities of a device also become unavailable once it hasn't answered 5 [updates](configuration.md#change-the-update-interval) in a row, for example while it's unplugged. At the default 15-second interval, that's usually after one to two minutes. With a shorter interval, a speaker that restarts can miss 5 updates and become unavailable for a moment; with a longer one, it takes longer to notice. A [device without alarms and timers](troubleshooting.md#devices-without-alarms-and-timers) is asked only for its information at each update, and its device sensor and reboot button follow its answers the same way.
 
 They're available again at the next update the device answers with anything other than "not found". A speaker that is starting answers "not found" for a while, so they stay unavailable until then. Being available again doesn't always mean new values: if the device rejects its token and Google gives no new one, or answers with another error, they show the values they had. See [A device stops updating](troubleshooting.md#a-device-stops-updating).
 
@@ -87,15 +87,17 @@ Timers have no `snoozed` status. If you snooze a ringing timer, it restarts and 
 
 ## Device sensor
 
-The state is the device's IP address on your network. If no IP address is available for the device, the sensor is unavailable and the device details listed below are hidden. The sensor appears under **Diagnostic** on the device page.
+The state is the device's IP address on your network. If no IP address is available for the device, or the device hasn't answered 5 updates in a row, the sensor is unavailable and the device details listed below are hidden. The sensor appears under **Diagnostic** on the device page.
 
-| Attribute     | Description                                                                                                                                                                               |
-| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `device_id`   | Google's ID for the device                                                                                                                                                                |
-| `device_name` | Name of the device in the Google Home app                                                                                                                                                 |
-| `ip_address`  | IP address of the device                                                                                                                                                                  |
-| `available`   | `true` if the device answered its last request successfully. `false` if it didn't answer, or answered with an error, such as "not found" from a device that is starting or has no alarms. |
-| `auth_token`  | Token Home Assistant uses to talk to the device                                                                                                                                           |
+| Attribute     | Description                                                                                                                                                                                                                    |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `device_id`   | Google's ID for the device                                                                                                                                                                                                     |
+| `device_name` | Name of the device in the Google Home app                                                                                                                                                                                      |
+| `ip_address`  | IP address of the device                                                                                                                                                                                                       |
+| `available`   | `true` if the device answered the last request for its alarms, settings or a reboot successfully. `false` if it didn't answer, or answered with an error, such as "not found" from a device that is starting or has no alarms. |
+| `auth_token`  | Token Home Assistant uses to talk to the device                                                                                                                                                                                |
+
+A [device without alarms and timers](troubleshooting.md#devices-without-alarms-and-timers) is asked only for its information, which `available` doesn't reflect, so for such a device it can be `true` or `false` while the device is on. Whether its device sensor is available shows whether the device answers.
 
 !!! warning
 
@@ -119,7 +121,7 @@ target:
   entity_id: button.living_room_reboot
 ```
 
-The button is unavailable until Home Assistant finds the device on your network. If the device goes offline later, the button may stay available, and pressing it then fails with an error; see [If a setting or reboot fails](#if-a-setting-or-reboot-fails). The `available` attribute of the [device sensor](#device-sensor) shows whether the device answered its last request successfully.
+The button is unavailable until Home Assistant finds the device on your network, and once the device hasn't answered 5 updates in a row. If the device goes offline, pressing the button before then fails with an error; see [If a setting or reboot fails](#if-a-setting-or-reboot-fails). The `available` attribute of the [device sensor](#device-sensor) shows whether the device answered the last request for its alarms, settings or a reboot successfully.
 
 Not every device supports rebooting. A device can accept the request, so there's no error and the log shows "Successfully asked Living Room to reboot.", even when it doesn't restart. If that happens, [reboot it from the Google Home app or unplug it for a minute](https://support.google.com/googlehome/answer/7072490).
 
@@ -146,7 +148,7 @@ The error stops your automation or script at this step. To run the next steps an
 
 See [Continuing when a step fails](https://www.home-assistant.io/docs/scripts/#continuing-on-error).
 
-Home Assistant skips an unavailable entity without an error, so an action on it does nothing and doesn't fail. The switch and alarm volume of a device are unavailable once Google no longer lists it, on a [device without alarms and timers](troubleshooting.md#devices-without-alarms-and-timers), once the device hasn't answered 5 updates in a row, and after a failed update. The Reboot button is unavailable once Google no longer lists the device, after a failed update, and while Home Assistant doesn't know the device's IP address. If one action targets several entities, such as the Do Not Disturb switches of two devices, Home Assistant runs it on all of them and shows only the first error. For several reboots, use [Reboot device](actions.md#reboot-device), which names every device that failed.
+Home Assistant skips an unavailable entity without an error, so an action on it does nothing and doesn't fail. The switch and alarm volume of a device are unavailable once Google no longer lists it, on a [device without alarms and timers](troubleshooting.md#devices-without-alarms-and-timers), once the device hasn't answered 5 updates in a row, and after a failed update. The Reboot button is unavailable once Google no longer lists the device, once the device hasn't answered 5 updates in a row, after a failed update, and while Home Assistant doesn't know the device's IP address. If one action targets several entities, such as the Do Not Disturb switches of two devices, Home Assistant runs it on all of them and shows only the first error. For several reboots, use [Reboot device](actions.md#reboot-device), which names every device that failed.
 
 ## Room name twice in entity IDs
 

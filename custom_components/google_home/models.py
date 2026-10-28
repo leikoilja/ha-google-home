@@ -10,7 +10,6 @@ import sys
 from homeassistant.util.dt import as_local, utc_from_timestamp
 
 from .const import (
-    API_ENDPOINT_ALARMS,
     DATETIME_STR_FORMAT,
     GOOGLE_HOME_ALARM_DEFAULT_VALUE,
     UNANSWERED_UPDATES,
@@ -61,41 +60,46 @@ class GoogleHomeDevice:
         # When to check again whether a device whose alarms answered "not found" has
         # any, if they still do then
         self.support_check_at: float | None = None
-        # Updates in a row whose alarms request the device didn't answer
+        # Updates in a row whose alarms request, or info request if it has no alarms,
+        # the device didn't answer
         self.unanswered_updates = 0
         self._do_not_disturb = False
         self._alarm_volume = GOOGLE_HOME_ALARM_DEFAULT_VALUE
         self._timers: list[GoogleHomeTimer] = []
         self._alarms: list[GoogleHomeAlarm] = []
 
-    def count_answer(self) -> bool:
-        """Count whether the device answered this update's alarms request, and return it.
+    def count_answer(self, status: int | None) -> bool:
+        """Count the answer to this update's request, and return whether there was one.
 
-        Once it hasn't answered UNANSWERED_UPDATES in a row, its alarms, timers and
-        settings are unavailable until an answer, even an error, other than "not
-        found". A speaker that is starting answers that for a while: it ends a
-        shorter run, but doesn't bring back what a run made unavailable.
+        The status is that of its alarms request, or of its info request if it has no
+        alarms, and None if it didn't answer. Once it hasn't answered
+        UNANSWERED_UPDATES in a row, its entities are unavailable until an answer,
+        even an error, other than "not found". A speaker that is starting answers that
+        for a while: it ends a shorter run, but doesn't bring back what a run made
+        unavailable.
         """
-        status = self.statuses.get((API_ENDPOINT_ALARMS, True))
         unavailable = self.unanswered_updates >= UNANSWERED_UPDATES
         if status is None:
             self.unanswered_updates += 1
             if self.unanswered_updates == UNANSWERED_UPDATES:
                 _LOGGER.info(
-                    "%s didn't answer %d updates in a row. Its alarms, timers and "
-                    "settings are unavailable until it answers with something other "
-                    'than "not found".',
+                    "%s didn't answer %d updates in a row. Its entities are "
+                    'unavailable until it answers with something other than "not '
+                    'found".',
                     self.name,
                     UNANSWERED_UPDATES,
                 )
             return False
         if unavailable and status == HTTPStatus.NOT_FOUND:
             return True
-        if unavailable:
+        if unavailable and self.alarms_unsupported:
             _LOGGER.info(
-                "%s answers again. Its alarms, timers and settings are available.",
+                "%s answers again. Its device sensor and reboot button are available; "
+                "it has no alarms, timers or settings.",
                 self.name,
             )
+        elif unavailable:
+            _LOGGER.info("%s answers again. Its entities are available.", self.name)
         self.unanswered_updates = 0
         return True
 

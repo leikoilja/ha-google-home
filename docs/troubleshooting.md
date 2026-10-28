@@ -96,13 +96,13 @@ The integration adds the alarms sensor, timers sensor, Do Not Disturb switch and
 When the device answers, the integration adds the missing entities:
 
 - If the device sensor shows an IP address, this happens at the next update, unless the integration has found that the device has none of these features.
-- If the device sensor is unavailable, the integration doesn't know the device's IP address. If Home Assistant receives the device's mDNS announcements, the integration gets the address when the device announces itself, for example when it comes back online, and asks the device at the next update. Otherwise, it looks for the device when it next asks Google for your devices, normally at the first update 20 minutes after it last asked. It looks with mDNS and, if the device still has no address, at your [known hosts](configuration.md#add-devices-on-another-network).
+- If the device sensor is unavailable, the integration doesn't know the device's IP address, or the device hasn't answered 5 updates in a row; see [A device stops updating](#a-device-stops-updating). If it doesn't know the address and Home Assistant receives the device's mDNS announcements, the integration gets the address when the device announces itself, for example when it comes back online, and asks the device at the next update. Otherwise, it looks for the device when it next asks Google for your devices, normally at the first update 20 minutes after it last asked. It looks with mDNS and, if the device still has no address, at your [known hosts](configuration.md#add-devices-on-another-network).
 
 If you don't want to wait, make sure the device is online, then reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. If that doesn't help, restart the Google Home device and then Home Assistant.
 
 #### Devices without alarms and timers
 
-Some Cast devices, such as Chromecast Audio, have no alarms, timers, Do Not Disturb or alarm volume. Once the integration finds that a device has none of these features, it stops asking the device for them. The device keeps only its device sensor and reboot button. If it had the other entities, they become unavailable.
+Some Cast devices, such as Chromecast Audio, have no alarms, timers, Do Not Disturb or alarm volume. Once the integration finds that a device has none of these features, it stops asking the device for them. The device keeps only its device sensor and reboot button. If it had the other entities, they become unavailable. The integration still asks the device for its information at each update, to see whether it answers: once it hasn't answered 5 updates in a row, its device sensor and reboot button are unavailable until it answers with anything other than "not found".
 
 The integration decides this from how the device answers, not from a list of models:
 
@@ -117,7 +117,7 @@ When it stops asking a device, the [debug log](#collect-debug-logs) shows a line
 Stereo (hardware='Chromecast Audio') still answers 404 for alarms after at least 10 minutes, and its info lists its features without Google Assistant. It won't be asked for alarms, timers and settings until the integration is reloaded.
 ```
 
-The integration checks such a device again only when it starts: when Home Assistant restarts, or when you reload the integration. While it runs, it doesn't ask the device again, even if the device restarts or a firmware update adds these features. The `google_home.refresh_devices` action doesn't check it again either.
+The integration checks such a device again only when it starts: when Home Assistant restarts, or when you reload the integration. While it runs, it doesn't ask the device for these features again, even if the device restarts or a firmware update adds them. The `google_home.refresh_devices` action doesn't check it again either.
 
 If the integration stopped asking a device that has alarms and timers, or a device gains these features, make sure the device is online, then reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. The integration asks the device as usual again and adds the entities once it answers. If its alarms still answer "not found" 10 minutes later, and its information still lists no Google Assistant, the integration stops asking it again.
 
@@ -141,13 +141,13 @@ If only some devices show the message, those devices are offline or don't suppor
 
 ## A device stops updating
 
-If a device's alarms sensor, timers sensor, Do Not Disturb switch and alarm volume are unavailable while its device sensor shows an IP address, one possible cause is that the device hasn't answered 5 updates in a row. To check, [collect debug logs](#collect-debug-logs) for a few updates while the entities are unavailable. For a device that doesn't answer, each update logs a line such as `Failed to connect to Kitchen device. The device is probably offline.` or `Kitchen device timed out while performing a request to it`. If debug logging was already on when the entities became unavailable, the log also has this line, which appears only once:
+If all entities of a device are unavailable, including its device sensor, one possible cause is that the device hasn't answered 5 updates in a row. To check, [collect debug logs](#collect-debug-logs) for a few updates while the entities are unavailable. For a device that doesn't answer, each update logs a line such as `Failed to connect to Kitchen device. The device is probably offline.` or `Kitchen device timed out while performing a request to it`. For a [device without alarms and timers](#devices-without-alarms-and-timers), which is asked only for its information, the line is `Kitchen didn't answer when asked for its info`. If debug logging was already on when the entities became unavailable, the log also has this line, which appears only once:
 
 ```
-Kitchen didn't answer 5 updates in a row. Its alarms, timers and settings are unavailable until it answers with something other than "not found".
+Kitchen didn't answer 5 updates in a row. Its entities are unavailable until it answers with something other than "not found".
 ```
 
-Check that the device is on and connected to your network. The entities come back at the next update it answers with anything other than "not found". If they become unavailable for a moment while a speaker restarts and you use a short update interval, [increase the interval](configuration.md#change-the-update-interval). If the debug log has no lines that start with `Requesting endpoint` for the device at all, the integration may have stopped asking it because it found that the device has [no alarms and timers](#devices-without-alarms-and-timers). An alarms or timers sensor on its own also shows `unavailable` when nothing is coming up; see [Alarms sensor](entities.md#alarms-sensor).
+Check that the device is on and connected to your network. The entities come back at the next update it answers with anything other than "not found". If they become unavailable for a moment while a speaker restarts and you use a short update interval, [increase the interval](configuration.md#change-the-update-interval). If only the alarms sensor, timers sensor, switch and alarm volume are unavailable while the device sensor shows an IP address, the integration may have found that the device has [no alarms and timers](#devices-without-alarms-and-timers). The debug log then has no lines that start with `Requesting endpoint` for the device: the integration stopped asking it for alarms, though it still asks for its information at each update. An alarms or timers sensor on its own also shows `unavailable` when nothing is coming up; see [Alarms sensor](entities.md#alarms-sensor).
 
 If a device's alarms, timers and settings stop changing in Home Assistant while its entities stay available, check the `available` attribute of its [device sensor](entities.md#device-sensor). If it's `false` while the device is on, the [debug log](#collect-debug-logs) shows why. A line such as `Kitchen rejected its token` means that the device refuses the token the integration has for it.
 

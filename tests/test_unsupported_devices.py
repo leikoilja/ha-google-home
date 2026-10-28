@@ -113,16 +113,27 @@ NO_ALARMS: dict[str, Reply] = {
 
 
 class Network:
-    """Devices that answer each request as `replies` says, by address, and record it."""
+    """Devices that answer each request as `replies` says, by address, and record it.
+
+    It records each call the client makes on the session, not what goes over the
+    wire. Closing an answer from an address in `close_errors` raises that error.
+    """
 
     def __init__(self) -> None:
         """Start with no devices."""
         self.replies: dict[str, dict[str, Reply]] = {}
+        self.close_errors: dict[str, Exception] = {}
+        # Each session.get() call: its URL and keyword arguments
+        self.gets: list[tuple[str, dict[str, object]]] = []
         self._asked: list[tuple[str, str]] = []
         self.session = Mock(
             request=Mock(side_effect=lambda _method, url, **_: self._answer(url)),
-            get=Mock(side_effect=lambda url, **_: self._answer(url)),
+            get=Mock(side_effect=self._get),
         )
+
+    def _get(self, url: str, **kwargs: object) -> MagicMock:
+        self.gets.append((url, kwargs))
+        return self._answer(url)
 
     def _answer(self, url: str) -> MagicMock:
         host, endpoint = url.removeprefix("https://").split("/", 1)
@@ -139,7 +150,12 @@ class Network:
             json=AsyncMock(side_effect=body)
             if isinstance(body, Exception)
             else AsyncMock(return_value=body),
+            read=AsyncMock(side_effect=body)
+            if isinstance(body, Exception)
+            else AsyncMock(return_value=body if isinstance(body, bytes) else b"{}"),
         )
+        if close_error := self.close_errors.get(address):
+            response.__aexit__.side_effect = close_error
         return response
 
     def asked(self, address: str) -> list[str]:
@@ -221,7 +237,8 @@ def test_stop_asking_device_without_alarms(clock: Mock) -> None:
     A Chromecast Audio answers "not found" to these requests, and being asked on
     every update slows it down. A device that is starting answers "not found" for
     a while too, so its alarms must still answer so 10 minutes later, and its info
-    must show no Google Assistant. Other devices are asked as before.
+    must show no Google Assistant. From then on it's asked only for its info, which
+    shows whether it answers. Other devices are asked as before.
     """
     client, glocaltokens, network = setup(NO_ALARMS, SUPPORTED)
     coordinator = Mock(data=poll(client, clock, at(0)))
@@ -255,14 +272,14 @@ def test_stop_asking_device_without_alarms(clock: Mock) -> None:
     poll(client, clock, at(13))
     add_features()
     assert features_added() == []
-    assert network.asked(SPEAKER) == []
+    assert network.asked(SPEAKER) == [INFO]
 
     poll(client, clock, at(19, 59))
-    assert network.asked(SPEAKER) == []
+    assert network.asked(SPEAKER) == [INFO]
     # Google's list is fetched again, with the same token
     poll(client, clock, at(20))
     assert glocaltokens.get_google_devices.call_count == 1
-    assert network.asked(SPEAKER) == []
+    assert network.asked(SPEAKER) == [INFO]
     # At 13, 19:59 and 20 minutes
     assert network.asked(OTHER) == EVERYTHING * 3
 
@@ -515,11 +532,11 @@ def test_action_doesnt_start_check(clock: Mock) -> None:
 
 
 def test_dont_ask_again_until_reload(clock: Mock) -> None:
-    """Don't ask a device without alarms again until the integration is reloaded, whatever happens.
+    """Don't ask a device without alarms for them again until the integration is reloaded, whatever happens.
 
     Not when Google gives it a new token, and not when it would answer: support
     that a firmware update adds shows only after a reload. Until then, its alarms,
-    timers and settings stay unavailable.
+    timers and settings stay unavailable. Meanwhile it's asked only for its info.
     """
     client, glocaltokens, network = setup(SUPPORTED)
     coordinator = Mock(data=poll(client, clock, at(0)), last_update_success=True)
@@ -540,7 +557,7 @@ def test_dont_ask_again_until_reload(clock: Mock) -> None:
             found("device0", SPEAKER, token)
         ]
         coordinator.data = poll(client, clock, seconds)
-        assert network.asked(SPEAKER) == []
+        assert network.asked(SPEAKER) == [INFO]
     # Fetched at 20, 40, 60, 80 and 100 minutes
     assert glocaltokens.get_google_devices.call_count == 5
     assert client.google_devices[0].auth_token == NEWER_TOKEN
@@ -576,10 +593,10 @@ def test_reload_checks_again(clock: Mock) -> None:
 
 
 def test_dont_ask_again_when_google_lists_device_again(clock: Mock) -> None:
-    """Don't ask a device without alarms again when Google's list drops it and later lists it again.
+    """Don't ask a device without alarms for them again when Google's list drops it and later lists it again.
 
-    Only a reload does that. A device that Google lists for the first time is
-    asked as usual.
+    Only a reload does that; meanwhile it's asked only for its info. A device that
+    Google lists for the first time is asked as usual.
     """
     client, glocaltokens, network = setup(SUPPORTED)
     network.replies[OTHER] = dict(SUPPORTED)
@@ -608,7 +625,7 @@ def test_dont_ask_again_when_google_lists_device_again(clock: Mock) -> None:
     ]
     for seconds in (at(40), at(50)):
         coordinator.data = poll(client, clock, seconds)
-        assert network.asked(SPEAKER) == []
+        assert network.asked(SPEAKER) == [INFO]
     assert network.asked(OTHER) == EVERYTHING * 2
     assert available(speaker) == ALWAYS_LABELS
     add_features()

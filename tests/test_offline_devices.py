@@ -10,12 +10,20 @@ from aiohttp import ClientConnectorError, ClientPayloadError, ClientTimeout
 from glocaltokens.client import Device
 import pytest
 
+from custom_components.google_home.api import GlocaltokensApiClient
 from custom_components.google_home.button import RebootButton
 from custom_components.google_home.entity import GoogleHomeBaseEntity
 from custom_components.google_home.models import GoogleHomeDevice
 from custom_components.google_home.number import AlarmVolumeNumber
-from custom_components.google_home.sensor import GoogleHomeAlarmsSensor
+from custom_components.google_home.sensor import (
+    GoogleHomeAlarmsSensor,
+    GoogleHomeDeviceSensor,
+)
 from custom_components.google_home.switch import DoNotDisturbSwitch
+
+# ruff sorts homeassistant as first-party, pylint as third-party
+# pylint: disable-next=wrong-import-order
+from homeassistant.helpers.aiohttp_client import SSRFRedirectError
 
 from .test_missing_devices import ALARM_ID, found
 from .test_unsupported_devices import (
@@ -32,6 +40,7 @@ from .test_unsupported_devices import (
     SPEAKER,
     SUPPORTED,
     VOLUME,
+    Network,
     Reply,
     at,
     available,
@@ -216,11 +225,11 @@ STARTING: dict[str, Reply] = dict.fromkeys(SUPPORTED, HTTPStatus.NOT_FOUND)
 
 @pytest.mark.parametrize("error", NO_ANSWER)
 def test_unavailable_after_5_updates_without_answer(clock: Mock, error: Reply) -> None:
-    """Make a device's alarms, timers and settings unavailable once it doesn't answer 5 updates in a row.
+    """Make all of a device's entities unavailable once it doesn't answer 5 updates in a row.
 
     A speaker that restarts at night doesn't answer a few updates, so fewer don't
-    count. Its device sensor and Reboot button stay available, and so does the
-    other device. At the next update it answers, they're back with what it has then.
+    count. The other device stays available. At the next update it answers, they're
+    all back, with what it has then.
     """
     client, _, network = setup(SUPPORTED, SUPPORTED)
     coordinator = Mock(data=poll(client, clock, at(0)))
@@ -232,7 +241,7 @@ def test_unavailable_after_5_updates_without_answer(clock: Mock, error: Reply) -
         poll(client, clock, at(0, 15 * update))
         assert available(speaker) == EVERY_LABEL
     poll(client, clock, at(1, 15))
-    assert available(speaker) == ALWAYS_LABELS
+    assert available(speaker) == set()
     assert available(other) == EVERY_LABEL
 
     # The alarm went off while it didn't answer
@@ -297,7 +306,7 @@ def test_only_alarms_answer_counts(clock: Mock) -> None:
     ("silent", "shown", "next_replies"),
     [
         # It stays unavailable, and is back at the next update with its alarms
-        pytest.param(5, ALWAYS_LABELS, SUPPORTED, id="unavailable"),
+        pytest.param(5, set(), SUPPORTED, id="unavailable"),
         # The run ends, so one more update without an answer starts a new one
         pytest.param(4, EVERY_LABEL, SILENT, id="run-of-4"),
     ],
@@ -360,7 +369,7 @@ def test_available_again_without_new_alarms(clock: Mock, answer: Reply) -> None:
     network.replies[SPEAKER] = dict(SILENT)
     for update in range(1, 6):
         poll(client, clock, at(0, 15 * update))
-    assert available(speaker) == ALWAYS_LABELS
+    assert available(speaker) == set()
 
     network.replies[SPEAKER] = dict.fromkeys(SUPPORTED, answer)
     poll(client, clock, at(1, 30))
@@ -387,15 +396,15 @@ def test_address_from_mdns_isnt_an_answer(clock: Mock) -> None:
     network.replies[SPEAKER] = dict(SILENT)
     for update in range(1, 6):
         poll(client, clock, at(0, 15 * update))
-    assert available(speaker) == ALWAYS_LABELS
+    assert available(speaker) == set()
 
     network.replies[MOVED] = dict(SILENT)
     client.found_devices.async_device_found("device0", "Device 0", MOVED)
     assert device.ip_address == MOVED
-    assert available(speaker) == ALWAYS_LABELS
+    assert available(speaker) == set()
     poll(client, clock, at(1, 30))
     assert network.asked(MOVED) == [ALARMS]
-    assert available(speaker) == ALWAYS_LABELS
+    assert available(speaker) == set()
 
     network.replies[MOVED] = dict(SUPPORTED)
     poll(client, clock, at(1, 45))
@@ -415,14 +424,14 @@ def test_stay_unavailable_while_starting(clock: Mock) -> None:
     network.replies[SPEAKER] = dict(SILENT)
     for update in range(1, 6):
         poll(client, clock, at(0, 15 * update))
-    assert available(speaker) == ALWAYS_LABELS
+    assert available(speaker) == set()
 
     network.replies[SPEAKER] = dict(STARTING)
     network.asked(SPEAKER)
     for update in range(6, 8):
         poll(client, clock, at(0, 15 * update))
         assert network.asked(SPEAKER) == EVERYTHING
-        assert available(speaker) == ALWAYS_LABELS
+        assert available(speaker) == set()
 
     def google_answers(**_: object) -> list[Device]:
         # The alarm went off while it was off
@@ -469,13 +478,24 @@ def test_not_found_ends_run(clock: Mock, updates: list[dict[str, Reply]]) -> Non
         assert available(speaker) == EVERY_LABEL
 
 
-def test_unavailable_until_found_without_alarms(clock: Mock) -> None:
+@pytest.mark.parametrize(
+    ("probe", "shown"),
+    [
+        pytest.param(info(), ALWAYS_LABELS, id="answers"),
+        pytest.param(TimeoutError(), set(), id="doesnt-answer"),
+    ],
+)
+def test_unavailable_until_found_without_alarms(
+    clock: Mock, probe: Reply, shown: set[str]
+) -> None:
     """Count a device whose alarms answer "not found" or nothing until it turns out to have none.
 
     Its settings answer, so it can have these entities. "Not found" ends each run of
     updates it didn't answer, so only 5 in a row make them unavailable, and they
-    stay so while it answers "not found". Once its info shows no Google Assistant,
-    they stay unavailable for that reason, and it's asked nothing more.
+    stay so while it answers "not found", also when its info shows no Google
+    Assistant. From the next update, it's asked only for its info: an answer brings
+    back its device sensor and reboot button, while its alarms, timers and settings
+    stay unavailable.
     """
     replies: dict[str, Reply] = {
         **SUPPORTED,
@@ -494,25 +514,310 @@ def test_unavailable_until_found_without_alarms(clock: Mock) -> None:
         poll(client, clock, next(times))
         assert available(speaker) == EVERY_LABEL
     poll(client, clock, next(times))
-    assert available(speaker) == ALWAYS_LABELS
+    assert available(speaker) == set()
     network.replies[SPEAKER][ALARMS] = HTTPStatus.NOT_FOUND
     poll(client, clock, next(times))
-    assert available(speaker) == ALWAYS_LABELS
+    assert available(speaker) == set()
     network.asked(SPEAKER)
 
     poll(client, clock, at(10))
     assert network.asked(SPEAKER) == [ALARMS, INFO]
     assert client.google_devices[0].alarms_unsupported
-    for seconds in (at(10, 15), at(11)):
+    assert available(speaker) == set()
+    network.replies[SPEAKER][INFO] = probe
+    for seconds in (at(10, 15), at(10, 30)):
         poll(client, clock, seconds)
-        assert network.asked(SPEAKER) == []
-        assert available(speaker) == ALWAYS_LABELS
+        assert network.asked(SPEAKER) == [INFO]
+        assert available(speaker) == shown
+
+
+def without_alarms(
+    clock: Mock,
+) -> tuple[GlocaltokensApiClient, Mock, Network, dict[str, GoogleHomeBaseEntity]]:
+    """Return a client whose device has turned out to have no alarms, as at 10 minutes.
+
+    Also return its fake glocaltokens, the network and the device's entities. What
+    the device was asked so far is forgotten.
+    """
+    client, glocaltokens, network = setup(NO_ALARMS)
+    coordinator = Mock(data=poll(client, clock, at(0)))
+    poll(client, clock, at(10))
+    assert client.google_devices[0].alarms_unsupported
+    network.asked(SPEAKER)
+    network.gets.clear()
+    return client, glocaltokens, network, entities(client, coordinator, "device0")
+
+
+def go_silent(
+    client: GlocaltokensApiClient, clock: Mock, network: Network, updates: int
+) -> None:
+    """Run this many updates, from 10:15, in which the device's info times out."""
+    network.replies[SPEAKER][INFO] = TimeoutError()
+    for update in range(1, updates + 1):
+        poll(client, clock, at(10, 15 * update))
+
+
+def test_device_without_alarms_asked_for_info(clock: Mock) -> None:
+    """Ask a device without alarms for its info once an update, without its token, and nothing else.
+
+    Redirects aren't followed.
+    """
+    client, _, network, _ = without_alarms(clock)
+    for seconds in (at(10, 15), at(10, 30), at(10, 45)):
+        poll(client, clock, seconds)
+        assert network.asked(SPEAKER) == [INFO]
+
+    url = "https://10.0.0.2:8443/setup/eureka_info?params=name,device_info"
+    options = {"timeout": ClientTimeout(total=5), "allow_redirects": False}
+    assert network.gets == [(url, options)] * 3
+
+
+@pytest.mark.parametrize(
+    "error",
+    [
+        pytest.param(TimeoutError(), id="timeout"),
+        pytest.param(ClientConnectorError(Mock(), OSError()), id="offline"),
+        # The session rejects a redirect to a blocked address before the answer
+        # reaches the integration
+        pytest.param(SSRFRedirectError("blocked"), id="redirect-rejected"),
+    ],
+)
+def test_device_without_alarms_unavailable_while_info_doesnt_answer(
+    clock: Mock, caplog: pytest.LogCaptureFixture, error: Exception
+) -> None:
+    """Make a device without alarms unavailable once its info doesn't answer 5 updates in a row.
+
+    Its device sensor and reboot button are back at the next answer. Its alarms,
+    timers and settings stay unavailable throughout.
+    """
+    client, _, network, chromecast = without_alarms(clock)
+    network.replies[SPEAKER][INFO] = error
+    caplog.set_level(logging.DEBUG)
+    for update in range(1, 5):
+        poll(client, clock, at(10, 15 * update))
+        assert available(chromecast) == ALWAYS_LABELS
+    poll(client, clock, at(11, 15))
+    assert available(chromecast) == set()
+    assert [
+        record.getMessage()
+        for record in caplog.records
+        if record.getMessage().endswith("when asked for its info")
+    ] == ["Device 0 didn't answer when asked for its info"] * 5
+
+    network.replies[SPEAKER][INFO] = info()
+    poll(client, clock, at(11, 30))
+    assert available(chromecast) == ALWAYS_LABELS
+
+
+@pytest.mark.parametrize(
+    ("reply", "close_error", "shown"),
+    [
+        pytest.param(
+            (HTTPStatus.OK, TimeoutError()), None, set(), id="200-body-times-out"
+        ),
+        pytest.param(
+            (HTTPStatus.OK, ClientPayloadError("cut off")),
+            None,
+            set(),
+            id="200-body-cut-off",
+        ),
+        pytest.param(
+            (HTTPStatus.OK, b"<html>"), None, ALWAYS_LABELS, id="200-not-json"
+        ),
+        pytest.param(HTTPStatus.NOT_FOUND, None, set(), id="404-holds"),
+        pytest.param(
+            (HTTPStatus.INTERNAL_SERVER_ERROR, ClientPayloadError("cut off")),
+            None,
+            ALWAYS_LABELS,
+            id="500-body-fails",
+        ),
+        pytest.param(
+            HTTPStatus.INTERNAL_SERVER_ERROR,
+            ClientPayloadError("closed"),
+            ALWAYS_LABELS,
+            id="500-close-fails",
+        ),
+        pytest.param(HTTPStatus.FOUND, None, ALWAYS_LABELS, id="302"),
+    ],
+)
+def test_info_answer_after_device_without_alarms_was_unavailable(
+    clock: Mock, reply: Reply, close_error: Exception | None, shown: set[str]
+) -> None:
+    """Count an info answer as the integration receives it.
+
+    A 200 counts once its body has come, whatever it is. Another status counts as
+    soon as it comes, even if its body or closing then fails. A redirect that
+    reaches the integration is an answer.
+    """
+    client, _, network, chromecast = without_alarms(clock)
+    go_silent(client, clock, network, 5)
+    assert available(chromecast) == set()
+
+    network.replies[SPEAKER][INFO] = reply
+    if close_error:
+        network.close_errors[SPEAKER] = close_error
+    poll(client, clock, at(11, 30))
+
+    assert network.asked(SPEAKER)[-1:] == [INFO]
+    assert available(chromecast) == shown
+
+
+@pytest.mark.parametrize(
+    ("reply", "close_error"),
+    [
+        pytest.param(
+            (HTTPStatus.NOT_FOUND, ClientPayloadError("cut off")),
+            None,
+            id="body-fails",
+        ),
+        pytest.param(
+            HTTPStatus.NOT_FOUND, ClientPayloadError("closed"), id="close-fails"
+        ),
+    ],
+)
+def test_info_not_found_ends_run_of_device_without_alarms(
+    clock: Mock, reply: Reply, close_error: Exception
+) -> None:
+    """End a run of updates without an answer when a device without alarms answers "not found" to its info.
+
+    Even if its body or closing then fails: the updates before it don't add to those
+    after it.
+    """
+    client, _, network, chromecast = without_alarms(clock)
+    go_silent(client, clock, network, 4)
+
+    network.replies[SPEAKER][INFO] = reply
+    if close_error:
+        network.close_errors[SPEAKER] = close_error
+    poll(client, clock, at(11, 15))
+    network.close_errors.clear()
+    network.replies[SPEAKER][INFO] = TimeoutError()
+    poll(client, clock, at(11, 30))
+
+    assert available(chromecast) == ALWAYS_LABELS
+
+
+def test_info_counted_once_per_call(clock: Mock) -> None:
+    """Count each update's info call once, from how it ends.
+
+    The session may try once more inside one call after a lost connection; the
+    integration sees only the call's outcome. So an update counts once, also when
+    the call ends with an answer.
+    """
+    client, _, network, chromecast = without_alarms(clock)
+    go_silent(client, clock, network, 4)
+    network.replies[SPEAKER][INFO] = info()
+    poll(client, clock, at(11, 15))
+    assert network.asked(SPEAKER) == [INFO] * 5
+
+    network.replies[SPEAKER][INFO] = TimeoutError()
+    for seconds in range(at(11, 30), at(12, 30), 15):
+        poll(client, clock, seconds)
+        assert available(chromecast) == ALWAYS_LABELS
+    poll(client, clock, at(12, 30))
+    assert available(chromecast) == set()
+
+
+@pytest.mark.parametrize(
+    "status",
+    [
+        pytest.param(HTTPStatus.UNAUTHORIZED, id="401"),
+        pytest.param(HTTPStatus.SERVICE_UNAVAILABLE, id="503"),
+    ],
+)
+def test_info_error_answer_without_new_token(clock: Mock, status: HTTPStatus) -> None:
+    """Count an error answer to a device's info as an answer, without asking Google for a token.
+
+    The request has no token, so there's none to replace, and it isn't sent again.
+    """
+    client, glocaltokens, network, chromecast = without_alarms(clock)
+    fetches = glocaltokens.get_google_devices.call_count
+    go_silent(client, clock, network, 5)
+    network.asked(SPEAKER)
+
+    network.replies[SPEAKER][INFO] = status
+    poll(client, clock, at(11, 30))
+
+    assert network.asked(SPEAKER) == [INFO]
+    assert available(chromecast) == ALWAYS_LABELS
+    assert glocaltokens.get_google_devices.call_count == fetches
+    assert client.google_devices_fetched
+
+
+def test_device_without_alarms_or_token_asked_for_info(clock: Mock) -> None:
+    """Ask a device without alarms for its info even when Google gives it no token.
+
+    It isn't asked for alarms, and Google isn't asked for a token.
+    """
+    client, glocaltokens, network, chromecast = without_alarms(clock)
+    client.google_devices[0].auth_token = None
+    fetches = glocaltokens.get_google_devices.call_count
+    go_silent(client, clock, network, 5)
+    assert network.asked(SPEAKER) == [INFO] * 5
+    assert available(chromecast) == set()
+
+    network.replies[SPEAKER][INFO] = info()
+    poll(client, clock, at(11, 30))
+
+    assert network.asked(SPEAKER) == [INFO]
+    assert available(chromecast) == ALWAYS_LABELS
+    assert glocaltokens.get_google_devices.call_count == fetches
+
+
+def test_no_request_without_token_or_address(clock: Mock) -> None:
+    """Ask nothing of a device with alarms but no token, nor of a device without an address."""
+    client, _, network = setup(SUPPORTED, NO_ALARMS)
+    poll(client, clock, at(0))
+    poll(client, clock, at(10))
+    speaker, chromecast = client.google_devices
+    assert chromecast.alarms_unsupported
+    speaker.auth_token = None
+    chromecast.ip_address = None
+    network.asked(SPEAKER)
+    network.asked(OTHER)
+
+    poll(client, clock, at(10, 15))
+
+    assert network.asked(SPEAKER) == []
+    assert network.asked(OTHER) == []
+
+
+def test_device_sensor_of_device_without_alarms(clock: Mock) -> None:
+    """Show the device sensor of a device without alarms when its info answers, whatever its available attribute.
+
+    The attribute follows the requests for alarms, settings and reboots, which
+    answered "not found", not its info.
+    """
+    client, _, network, chromecast = without_alarms(clock)
+    go_silent(client, clock, network, 5)
+    network.replies[SPEAKER][INFO] = info()
+    poll(client, clock, at(11, 30))
+
+    sensor = chromecast["device"]
+    assert isinstance(sensor, GoogleHomeDeviceSensor)
+    assert sensor.available
+    assert sensor.extra_state_attributes["available"] is False
+
+
+def info_messages(caplog: pytest.LogCaptureFixture) -> list[str]:
+    """Return the messages logged at info level or above."""
+    return [
+        record.getMessage()
+        for record in caplog.records
+        if record.levelno >= logging.INFO
+    ]
+
+
+UNAVAILABLE_MESSAGE = (
+    "Device 0 didn't answer 5 updates in a row. Its entities are unavailable until "
+    'it answers with something other than "not found".'
+)
 
 
 def test_log_when_unavailable_and_back(
     clock: Mock, caplog: pytest.LogCaptureFixture
 ) -> None:
-    """Log once when a device's alarms, timers and settings become unavailable, and once when they're back.
+    """Log once when a device's entities become unavailable, and once when they're back.
 
     "Not found" while it starts doesn't bring them back, so nothing is logged then.
     """
@@ -525,15 +830,27 @@ def test_log_when_unavailable_and_back(
         network.replies[SPEAKER] = dict(replies)
         poll(client, clock, next(times))
 
-    assert [
-        record.getMessage()
-        for record in caplog.records
-        if record.levelno >= logging.INFO
-    ] == [
+    assert info_messages(caplog) == [
+        UNAVAILABLE_MESSAGE,
+        "Device 0 answers again. Its entities are available.",
+    ]
+
+
+def test_log_device_without_alarms_unavailable_and_back(
+    clock: Mock, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Log that only the device sensor and reboot button of a device without alarms are back."""
+    client, _, network, _ = without_alarms(clock)
+    caplog.set_level(logging.INFO)
+    go_silent(client, clock, network, 7)
+    network.replies[SPEAKER][INFO] = info()
+    for seconds in (at(12, 0), at(12, 15)):
+        poll(client, clock, seconds)
+
+    assert info_messages(caplog) == [
+        UNAVAILABLE_MESSAGE,
         (
-            "Device 0 didn't answer 5 updates in a row. Its alarms, timers and "
-            "settings are unavailable until it answers with something other than "
-            '"not found".'
+            "Device 0 answers again. Its device sensor and reboot button are "
+            "available; it has no alarms, timers or settings."
         ),
-        "Device 0 answers again. Its alarms, timers and settings are available.",
     ]
