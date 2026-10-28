@@ -99,7 +99,10 @@ To update immediately, use the [Refresh devices](actions.md#refresh-devices) act
 
 ## Add a device
 
-When you add a speaker or display in the Google Home app, the integration normally adds it within about 20 minutes, without a reload. It asks Google for your devices at the first update 20 minutes after it last asked. If it can't reach Google then, it tries again 20 minutes later.
+When you add a speaker or display in the Google Home app, the integration adds it without a reload:
+
+- If Home Assistant is on the same network as the device, or receives its mDNS announcements from another network, the integration notices the device when it joins your network and announces itself. It asks Google for your devices 30 seconds later, so if Google lists the device by then, it appears within about a minute. The integration asks Google about new devices at most every 5 minutes, so if it asked about another device it didn't know in the last 5 minutes, it waits until those 5 minutes have passed.
+- Otherwise, or if Google doesn't list the device yet when the integration asks, the device appears when the integration next asks Google for your devices: at the first update 20 minutes after it last asked. If it can't reach Google then, it tries again 20 minutes later.
 
 To add the device straight away, reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. The integration then asks Google for your devices. The device appears only once Google lists it, and some of its entities only once Home Assistant can reach it; see [Entities](entities.md).
 
@@ -110,7 +113,7 @@ To add back a speaker or display that you removed from the Google Home app:
 3. [Factory reset the device](https://support.google.com/googlenest/answer/7073477). Restarting it isn't enough.
 4. Set it up again in the Google Home app. Give it the same name to keep its entity IDs.
 
-Google gives the device a new ID, so the integration adds it as a new device, normally within about 20 minutes.
+Google gives the device a new ID, so the integration adds it as a new device, as described at the start of this section.
 
 If you deleted a device in Home Assistant and the Google Home app lists it again without a factory reset, the integration doesn't add it back by itself: reload the integration.
 
@@ -132,6 +135,8 @@ To add devices as known hosts:
 1. Go to **Settings** > **Devices & services** > **Google Home** and select **Configure**.
 2. Under **Known hosts**, add the IP address of each device that the integration can't find.
 3. Select **Submit**. The integration reloads, asks each address which device it is, and uses the address for that device.
+
+After that, the integration asks your known hosts only when it asks Google for your devices, and only for devices that still have no address. For example, a device that was offline when the integration loaded is looked up at your known hosts at the first update 20 minutes after the integration last asked Google. With a network interface on the devices' network or an mDNS reflector, the integration gets a device's address as soon as the device announces itself, as on the same network.
 
 Give these devices fixed IP addresses in your router, so the addresses don't change. For a speaker pair, add the addresses of both speakers. Only the speaker that leads the pair reports it, so the integration uses that one and ignores the other.
 

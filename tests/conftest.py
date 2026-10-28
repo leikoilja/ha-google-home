@@ -9,7 +9,10 @@ import pytest
 @pytest.fixture(name="clock")
 def fixture_clock() -> Iterator[Mock]:
     """Set the time the client reads, in seconds since setup fetched Google's list."""
-    with patch(
-        "custom_components.google_home.api.monotonic", return_value=0.0
-    ) as monotonic:
+    with (
+        patch(
+            "custom_components.google_home.api.monotonic", return_value=0.0
+        ) as monotonic,
+        patch("custom_components.google_home.mdns.monotonic", monotonic),
+    ):
         yield monotonic
