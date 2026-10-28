@@ -141,6 +141,14 @@ If only some devices show the message, those devices are offline or don't suppor
 
 ## A device stops updating
 
+If a device's alarms sensor, timers sensor, Do Not Disturb switch and alarm volume are unavailable while its device sensor shows an IP address, one possible cause is that the device hasn't answered 5 updates in a row. The [debug log](#collect-debug-logs) then shows a line like this:
+
+```
+Kitchen didn't answer 5 updates in a row. Its alarms, timers and settings are unavailable until it answers with something other than "not found".
+```
+
+Check that the device is on and connected to your network. The entities come back at the next update it answers with anything other than "not found". If they become unavailable for a moment while a speaker restarts and you use a short update interval, [increase the interval](configuration.md#change-the-update-interval). If the log has no such line, the integration may have found that the device has [no alarms and timers](#devices-without-alarms-and-timers). An alarms or timers sensor on its own also shows `unavailable` when nothing is coming up; see [Alarms sensor](entities.md#alarms-sensor).
+
 If a device's alarms, timers and settings stop changing in Home Assistant while its entities stay available, check the `available` attribute of its [device sensor](entities.md#device-sensor). If it's `false` while the device is on, the [debug log](#collect-debug-logs) shows why. A line such as `Kitchen rejected its token` means that the device refuses the token the integration has for it.
 
 A device's token can change, for example when the device restarts. The integration then gets the new token from Google straight away. If Google can't give it, the device's entities keep the values they had, and the integration asks Google again until it can. The minimum retry delay grows from 1 minute to 20 minutes; the first [update](configuration.md#change-the-update-interval) after the delay makes the attempt, so actual gaps can be longer. If Google can't be reached at all, that update fails, which makes every entity of the integration unavailable until the next update.

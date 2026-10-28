@@ -2,18 +2,27 @@
 
 from datetime import timedelta
 from enum import Enum
+from http import HTTPStatus
+import logging
 import math
 import sys
 
 from homeassistant.util.dt import as_local, utc_from_timestamp
 
-from .const import DATETIME_STR_FORMAT, GOOGLE_HOME_ALARM_DEFAULT_VALUE
+from .const import (
+    API_ENDPOINT_ALARMS,
+    DATETIME_STR_FORMAT,
+    GOOGLE_HOME_ALARM_DEFAULT_VALUE,
+    UNANSWERED_UPDATES,
+)
 from .types import (
     AlarmJsonDict,
     GoogleHomeAlarmDict,
     GoogleHomeTimerDict,
     TimerJsonDict,
 )
+
+_LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
 def convert_from_ms_to_s(timestamp: int) -> int:
@@ -52,10 +61,43 @@ class GoogleHomeDevice:
         # When to check again whether a device whose alarms answered "not found" has
         # any, if they still do then
         self.support_check_at: float | None = None
+        # Updates in a row whose alarms request the device didn't answer
+        self.unanswered_updates = 0
         self._do_not_disturb = False
         self._alarm_volume = GOOGLE_HOME_ALARM_DEFAULT_VALUE
         self._timers: list[GoogleHomeTimer] = []
         self._alarms: list[GoogleHomeAlarm] = []
+
+    def count_answer(self) -> bool:
+        """Count whether the device answered this update's alarms request, and return it.
+
+        Once it hasn't answered UNANSWERED_UPDATES in a row, its alarms, timers and
+        settings are unavailable until an answer, even an error, other than "not
+        found". A speaker that is starting answers that for a while: it ends a
+        shorter run, but doesn't bring back what a run made unavailable.
+        """
+        status = self.statuses.get((API_ENDPOINT_ALARMS, True))
+        unavailable = self.unanswered_updates >= UNANSWERED_UPDATES
+        if status is None:
+            self.unanswered_updates += 1
+            if self.unanswered_updates == UNANSWERED_UPDATES:
+                _LOGGER.info(
+                    "%s didn't answer %d updates in a row. Its alarms, timers and "
+                    "settings are unavailable until it answers with something other "
+                    'than "not found".',
+                    self.name,
+                    UNANSWERED_UPDATES,
+                )
+            return False
+        if unavailable and status == HTTPStatus.NOT_FOUND:
+            return True
+        if unavailable:
+            _LOGGER.info(
+                "%s answers again. Its alarms, timers and settings are available.",
+                self.name,
+            )
+        self.unanswered_updates = 0
+        return True
 
     def set_alarms(self, alarms: list[AlarmJsonDict]) -> None:
         """Store alarms as GoogleHomeAlarm objects."""

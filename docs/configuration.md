@@ -8,7 +8,7 @@ The integration checks your devices for changes every 15 seconds by default.
 
 To change the interval, go to **Settings** > **Devices & services** > **Google Home** and select **Configure**. Shorter intervals update alarms and timers sooner but send more requests to your devices.
 
-If a speaker or display with alarms and timers often shows `false` in the `available` attribute of its [device sensor](entities.md#device-sensor) while it's on, increase the interval, for example to 180 seconds, the default before version 1.16. A device without alarms and timers, such as a Chromecast Audio, shows `false` there anyway, because it answers "not found" when asked for alarms; see [Devices without alarms and timers](troubleshooting.md#devices-without-alarms-and-timers).
+If a speaker or display with alarms and timers often shows `false` in the `available` attribute of its [device sensor](entities.md#device-sensor) while it's on, or its alarms, timers and settings become unavailable for a moment while it restarts, increase the interval, for example to 180 seconds, the default before version 1.16. A device without alarms and timers, such as a Chromecast Audio, shows `false` there anyway, because it answers "not found" when asked for alarms; see [Devices without alarms and timers](troubleshooting.md#devices-without-alarms-and-timers).
 
 **Configure** shows the interval in use. If you saved these options in version 1.15 or older, for example to add known hosts, it's the interval you saved, which was 180 seconds unless you changed it. To use the new default, enter 15 and select **Submit**.
 

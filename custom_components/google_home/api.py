@@ -497,13 +497,13 @@ class GlocaltokensApiClient:
     ) -> GoogleHomeDevice:
         """Collect data from different endpoints.
 
-        Once the device doesn't answer a request, it isn't asked the rest until the
-        next update, so an offline device makes the update wait for one timeout,
-        not three. Actions don't come here, so they're always sent.
+        A device that doesn't answer isn't asked the rest until the next update, so it
+        costs one timeout, not three. Actions don't come here, so they're always sent.
         """
         if device.alarms_unsupported:
             return device
         device = await self.update_alarms_and_timers(device)
+        answered = device.count_answer()
         try:
             if await self._async_find_alarms_unsupported(device):
                 return device
@@ -516,7 +516,7 @@ class GlocaltokensApiClient:
                 exc_info=True,
             )
             return device
-        if (API_ENDPOINT_ALARMS, True) not in device.statuses:
+        if not answered:
             return device
         device = await self.update_alarm_volume(device)
         if (API_ENDPOINT_ALARM_VOLUME, True) not in device.statuses:
