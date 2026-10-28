@@ -125,7 +125,7 @@ All entities of a device are unavailable:
 
 - Once Google no longer lists the device, for example after you remove it from the Google Home app. See [Remove a device](configuration.md#remove-a-device).
 - Once the device hasn't answered 5 [updates](configuration.md#change-the-update-interval) in a row, for example while it's unplugged. At the default 15-second interval, that's usually after one to two minutes. With a shorter interval, a speaker that restarts can miss 5 updates and become unavailable for a moment; with a longer one, it takes longer to notice. A [device without alarms and timers](troubleshooting.md#devices-without-alarms-and-timers) is asked only for its information at each update, and its device sensor and reboot button follow its answers the same way.
-- After an update fails, until the next update. This affects every device of the integration; see [Alarms, timers or settings stop changing](troubleshooting.md#alarms-timers-or-settings-stop-changing).
+- After an update fails, until the next update. This affects every device of the integration; see [All entities of a device are unavailable](troubleshooting.md#all-entities-of-a-device-are-unavailable).
 
 Some entities are also unavailable on their own:
 
