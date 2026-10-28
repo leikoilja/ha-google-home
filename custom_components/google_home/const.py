@@ -90,6 +90,10 @@ HEADER_CONTENT_TYPE: Final = "content-type"
 # How long a device has to answer a request, in seconds. A busy device can take
 # more than 2 seconds.
 TIMEOUT: Final = 5
+# A device's alarms and timers sensors, Do Not Disturb switch and alarm volume are
+# unavailable once it hasn't answered this many updates in a row. In logs at a
+# 10-second interval, speakers that restarted at night missed 2 or 3.
+UNANSWERED_UPDATES: Final = 5
 
 # TIMESTRINGS
 TIME_STR_FORMAT: Final = "%H:%M:%S"

@@ -8,7 +8,7 @@ The integration checks your devices for changes every 15 seconds by default.
 
 To change the interval, go to **Settings** > **Devices & services** > **Google Home** and select **Configure**. Shorter intervals update alarms and timers sooner but send more requests to your devices.
 
-If a speaker or display with alarms and timers often shows `false` in the `available` attribute of its [device sensor](entities.md#device-sensor) while it's on, increase the interval, for example to 180 seconds, the default before version 1.16. A device without alarms and timers, such as a Chromecast Audio, shows `false` there anyway, because it answers "not found" when asked for alarms; see [Devices without alarms and timers](troubleshooting.md#devices-without-alarms-and-timers).
+If a speaker or display with alarms and timers often shows `false` in the `available` attribute of its [device sensor](entities.md#device-sensor) while it's on, or its entities become unavailable for a moment while it restarts, increase the interval, for example to 180 seconds, the default before version 1.16. For a device without alarms and timers, such as a Chromecast Audio, `available` doesn't show whether it's on, as it's no longer asked for alarms: it can be `true` or `false`. Whether its device sensor is available shows whether it answers; see [Devices without alarms and timers](troubleshooting.md#devices-without-alarms-and-timers).
 
 **Configure** shows the interval in use. If you saved these options in version 1.15 or older, for example to add known hosts, it's the interval you saved, which was 180 seconds unless you changed it. To use the new default, enter 15 and select **Submit**.
 
@@ -61,9 +61,9 @@ Give these devices fixed IP addresses in your router, so the addresses don't cha
 
 ## Remove a device
 
-When you remove a device from the Google Home app or factory reset it, the integration normally notices within about 20 minutes, when it next asks Google for your devices, and the device's entities become unavailable. Removing a device from the Google Home app doesn't reset it: it stays on your network, and the integration keeps updating it until it next asks Google for your devices. To make the integration notice straight away, reload it: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. Once it has noticed, open the device's page in Home Assistant, open the **⋮** menu and select **Delete**.
+When you remove a device from the Google Home app or factory reset it, the integration normally notices within about 20 minutes, when it next asks Google for your devices, and the device's entities become unavailable. Removing a device from the Google Home app doesn't reset it: it stays on your network, and the integration keeps updating it until it next asks Google for your devices. After a factory reset, a device forgets your Wi-Fi network and usually stops answering, so its entities can become unavailable sooner, once it hasn't answered 5 updates in a row, before the integration has noticed. Before you delete the device, reload the integration so that it notices straight away: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. Then open the device's page in Home Assistant, open the **⋮** menu and select **Delete**.
 
-Home Assistant offers **Delete** for every device of the integration, but you can't delete one that Google still lists in your home, even if it shows as unavailable: it would come back the next time the integration loads. Home Assistant then shows "Failed to remove device entry, rejected by integration".
+Home Assistant offers **Delete** for every device of the integration, but you can't delete one that Google still lists in your home, even if it shows as unavailable: it would come back the next time the integration loads. Until the integration has noticed that Google no longer lists a device, you can't delete that one either. Home Assistant then shows "Failed to remove device entry, rejected by integration".
 
 To use a removed device again, factory reset it first; see [Add a device](#add-a-device).
 

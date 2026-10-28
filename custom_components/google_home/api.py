@@ -1,5 +1,8 @@
 """Sample API Client."""
 
+# The module is due to be split into smaller ones
+# pylint: disable=too-many-lines
+
 import asyncio
 from http import HTTPStatus
 import ipaddress
@@ -186,9 +189,9 @@ class GlocaltokensApiClient:
         self._fetches_before_update = 0
         # While the list is unknown, a fetch after a failed one waits a while
         self._fetch_backoff = FetchBackoff()
-        # Devices found to have no alarms, timers and settings. They aren't asked
-        # again until the integration is loaded again, even if Google's list drops
-        # them and later lists them again.
+        # Devices found to have no alarms, timers and settings. They aren't asked for
+        # them again until the integration is loaded again, even if Google's list
+        # drops them and later lists them again.
         self.unsupported_device_ids: set[str] = set()
 
     async def async_get_master_token(self) -> str:
@@ -420,6 +423,35 @@ class GlocaltokensApiClient:
                 return None
         return info if isinstance(info, dict) else None
 
+    async def _async_get_info_status(self, device: GoogleHomeDevice) -> int | None:
+        """Return the status of the device's answer when asked for its info, without its token.
+
+        A 200 counts once its body has come, another status as soon as it comes, and
+        isn't undone if the answer then breaks off. Return None if no answer comes, for
+        example when the session rejects a redirect. Redirects aren't followed. The
+        session itself may try once more after a lost connection.
+        """
+        assert device.ip_address is not None
+        url = self.create_url(device.ip_address, PORT, API_ENDPOINT_EUREKA_INFO)
+        status: int | None = None
+        try:
+            async with self._session.get(
+                url, timeout=ClientTimeout(total=TIMEOUT), allow_redirects=False
+            ) as response:
+                if response.status != HTTPStatus.OK:
+                    status = response.status
+                else:
+                    await response.read()
+                    status = HTTPStatus.OK
+        except ClientError, TimeoutError:
+            if status is None:
+                _LOGGER.debug(
+                    "%s didn't answer when asked for its info",
+                    device.name,
+                    exc_info=True,
+                )
+        return status
+
     async def _async_get_cloud_device_id(self, host: str) -> str | None:
         """Return Google's ID of the device at a known host."""
         try:
@@ -486,7 +518,8 @@ class GlocaltokensApiClient:
             *[
                 self.collect_data_from_endpoints(device)
                 for device in devices
-                if device.ip_address and device.auth_token
+                if device.ip_address
+                and (device.auth_token or device.alarms_unsupported)
             ]
         )
 
@@ -497,13 +530,16 @@ class GlocaltokensApiClient:
     ) -> GoogleHomeDevice:
         """Collect data from different endpoints.
 
-        Once the device doesn't answer a request, it isn't asked the rest until the
-        next update, so an offline device makes the update wait for one timeout,
-        not three. Actions don't come here, so they're always sent.
+        A device that doesn't answer isn't asked the rest until the next update, so it
+        costs one timeout, not three. A device without alarms is asked only for its
+        info, which shows whether it answers. Actions don't come here, so they're
+        always sent.
         """
         if device.alarms_unsupported:
+            device.count_answer(await self._async_get_info_status(device))
             return device
         device = await self.update_alarms_and_timers(device)
+        answered = device.count_answer(device.statuses.get((API_ENDPOINT_ALARMS, True)))
         try:
             if await self._async_find_alarms_unsupported(device):
                 return device
@@ -516,7 +552,7 @@ class GlocaltokensApiClient:
                 exc_info=True,
             )
             return device
-        if (API_ENDPOINT_ALARMS, True) not in device.statuses:
+        if not answered:
             return device
         device = await self.update_alarm_volume(device)
         if (API_ENDPOINT_ALARM_VOLUME, True) not in device.statuses:

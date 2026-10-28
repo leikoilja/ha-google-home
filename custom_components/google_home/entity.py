@@ -13,7 +13,7 @@ from homeassistant.helpers.update_coordinator import (
 )
 
 from .api import GlocaltokensApiClient
-from .const import DOMAIN, MANUFACTURER
+from .const import DOMAIN, MANUFACTURER, UNANSWERED_UPDATES
 from .exceptions import DeviceRequestFailed
 from .models import GoogleHomeDevice
 from .types import GoogleHomeConfigEntry
@@ -60,8 +60,13 @@ class GoogleHomeBaseEntity(
     @property
     @override
     def available(self) -> bool:
-        """Return whether Google still lists the device."""
-        return super().available and self.get_device() is not None
+        """Return whether Google still lists the device and it answers."""
+        device = self.get_device()
+        return (
+            super().available
+            and device is not None
+            and device.unanswered_updates < UNANSWERED_UPDATES
+        )
 
     @property
     @override
@@ -100,7 +105,7 @@ class GoogleHomeFeatureEntity(GoogleHomeBaseEntity):
     @property
     @override
     def available(self) -> bool:
-        """Return whether Google still lists the device and it has these features."""
+        """Return whether Google still lists the device, it answers and it has these features."""
         device = self.get_device()
         return (
             super().available and device is not None and not device.alarms_unsupported

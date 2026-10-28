@@ -542,8 +542,7 @@ def test_update_devices_between_fetches_while_google_unreachable(
     next update. The updates in between work: a device that answers shows its new
     alarms, and one that rejects its token is still asked for its alarms and
     settings, keeps what it showed and doesn't make the integration fetch the list.
-    Its entities stay available, as they follow the update and Google's list, not
-    whether the device answers.
+    Its entities stay available: rejecting its token is an answer.
     """
     kitchen_reply = dict(REPLY)
     session = two_devices_one_rejecting(kitchen_reply)
