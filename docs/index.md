@@ -8,7 +8,7 @@ This custom integration brings your Google Home and Nest speakers and displays i
 - Change the alarm volume.
 - Reboot a device.
 
-[Get started](installation.md){ .md-button .md-button--primary }
+To start, follow **[Getting Started](installation.md)** to install the integration and sign in.
 
 ## What you can automate
 
