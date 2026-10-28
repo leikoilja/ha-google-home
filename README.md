@@ -16,26 +16,40 @@
   Alarms, timers and more from your Google Home and Nest speakers and displays.
 </p>
 
+## About
+
+This integration brings your Google Home and Nest speakers and displays into Home Assistant. You can see and delete their alarms and timers, turn Do Not Disturb on or off, change the alarm volume and reboot them.
+
+Use the alarms and timers in automations, for example to:
+
+- Turn on the bedroom lights 10 minutes before the next alarm.
+- Open the bedroom blinds when the alarm goes off.
+- Send a notification to your phone when the kitchen timer finishes.
+
+[Automation examples](https://ha-google-home.pages.dev/automations/) has the YAML for each one.
+
+It can't create, change or snooze alarms and timers, or turn alarms on or off; set them by voice or on a display's screen. It doesn't add the other devices in your Google Home app, such as lights or thermostats; see [Other Google Home devices](https://ha-google-home.pages.dev/other-integrations/#other-google-home-devices). It doesn't play media, change the media volume, speak messages or send Google Assistant commands either; see [Other integrations for the same devices](https://ha-google-home.pages.dev/other-integrations/#other-integrations-for-the-same-devices) for what does.
+
+<a name="hacs-installation"></a>
+
+## Installation
+
+You need a Google account that is a member of your home in the Google Home app. Home Assistant finds your speakers and displays on its local network; devices on another network need extra setup.
+
+Install the integration from HACS: search for **Google Home**. Then follow **[Getting Started](https://ha-google-home.pages.dev/installation/)** to add it and sign in. It also lists all the requirements and covers manual installation.
+
 ## Documentation
 
 Read the full documentation at **[ha-google-home.pages.dev](https://ha-google-home.pages.dev/)**:
 
 - [Getting Started](https://ha-google-home.pages.dev/installation/): prerequisites, installation and sign-in
+- [Automation examples](https://ha-google-home.pages.dev/automations/): lights before an alarm, blinds when it goes off and timer notifications
 - [Entities](https://ha-google-home.pages.dev/entities/): alarms, timers, Do Not Disturb, alarm volume and reboot
 - [Actions](https://ha-google-home.pages.dev/actions/): delete alarms and timers, reboot and refresh devices
+- [Other integrations](https://ha-google-home.pages.dev/other-integrations/): media, media volume, spoken messages, Assistant commands and other Google Home devices
 - [Troubleshooting](https://ha-google-home.pages.dev/troubleshooting/)
 - [Community](https://ha-google-home.pages.dev/community/): dashboard cards and Node-RED flows
 - [Contributing](https://ha-google-home.pages.dev/contributing/): questions, bug reports, translations and development
-
-## About
-
-This integration brings your Google Home and Nest speakers and displays into Home Assistant. You can see and delete their alarms and timers, turn Do Not Disturb on or off, change the alarm volume and reboot them. It doesn't add the other devices in your Google Home app, such as lights or thermostats; see [Other Google Home devices](https://ha-google-home.pages.dev/#other-google-home-devices). It doesn't play media, change the media volume, speak messages or send Google Assistant commands either; see [Other integrations for the same devices](https://ha-google-home.pages.dev/#other-integrations-for-the-same-devices) for what does. It started from a [community discussion][community-discussion] about reading Google Home alarms and timers in Home Assistant.
-
-## HACS Installation
-
-You can find it in the default HACS repo. Just search `Google Home`.
-
-For manual installation and setup, see [Getting Started](https://ha-google-home.pages.dev/installation/).
 
 ## Contribution
 
@@ -43,6 +57,7 @@ Ask questions in [GitHub Discussions](https://github.com/leikoilja/ha-google-hom
 
 ## Credits
 
+- The integration started from a [community discussion][community-discussion] about reading Google Home alarms and timers in Home Assistant.
 - This project was generated from [@oncleben31](https://github.com/oncleben31)'s [Home Assistant Custom Component Cookiecutter](https://github.com/oncleben31/cookiecutter-homeassistant-custom-component) template.
 - Code template was mainly taken from [@Ludeeus](https://github.com/ludeeus)'s [integration_blueprint][integration_blueprint] template.
 - Under the hood the integration uses [glocaltokens](https://github.com/leikoilja/glocaltokens) python package.
