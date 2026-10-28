@@ -93,9 +93,9 @@ If Google didn't give the integration your devices when it started, for example 
 
 The integration adds the alarms sensor, timers sensor, Do Not Disturb switch and alarm volume for a device once the device answers. Until then, a device that is offline, or that doesn't support these features, has only a device sensor and a reboot button.
 
-When the device answers, the integration adds the missing entities:
+When the device answers, the integration adds the missing entities, unless it has found that the device has none of these features:
 
-- If the device sensor shows an IP address, this happens at the next update, unless the integration has found that the device has none of these features.
+- If the device sensor shows an IP address, this happens at the next update.
 - If the device sensor is unavailable because the device hasn't answered 5 updates in a row, the integration still asks it at its known IP address at every update, so this happens at the first update it answers; see [A device stops updating](#a-device-stops-updating).
 - If the device sensor is unavailable because the integration doesn't know the device's IP address, it gets the address from the device's mDNS announcements, if Home Assistant receives them, for example when the device comes back online, and asks the device at the next update. Otherwise, it looks for the device when it next asks Google for your devices, normally at the first update 20 minutes after it last asked. It looks with mDNS and, if the device still has no address, at your [known hosts](configuration.md#add-devices-on-another-network).
 
