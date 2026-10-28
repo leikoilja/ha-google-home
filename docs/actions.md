@@ -15,6 +15,8 @@ There are no actions to create, change or snooze alarms and timers, or to turn a
 
 The [Google Assistant SDK](https://www.home-assistant.io/integrations/google_assistant_sdk/) integration can't set them either: [Google's Assistant SDK](https://developers.google.com/assistant/sdk/overview) doesn't support timers and alarms.
 
+Integrations that come with Home Assistant add other actions for the same devices, such as playing media, setting the media volume and broadcasting messages. See [Other integrations for the same devices](index.md#other-integrations-for-the-same-devices).
+
 ## Delete alarm
 
 Deletes one alarm from a device.
