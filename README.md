@@ -30,11 +30,13 @@ Use the alarms and timers in automations, for example to:
 
 It can't create, change or snooze alarms and timers, or turn alarms on or off; set them by voice or on a display's screen. It doesn't add the other devices in your Google Home app, such as lights or thermostats; see [Other Google Home devices](https://ha-google-home.pages.dev/other-integrations/#other-google-home-devices). It doesn't play media, change the media volume, speak messages or send Google Assistant commands either; see [Other integrations for the same devices](https://ha-google-home.pages.dev/other-integrations/#other-integrations-for-the-same-devices) for what does.
 
+<a name="hacs-installation"></a>
+
 ## Get started
 
-You need a Google account that is a member of your home in the Google Home app, and Home Assistant on the same local network as your speakers and displays, or some extra network setup for devices on another network.
+You need a Google account that is a member of your home in the Google Home app. Home Assistant finds your speakers and displays on its local network; devices on another network need extra setup.
 
-Install the integration from HACS: search for **Google Home**. Then follow **[Getting Started](https://ha-google-home.pages.dev/installation/)** to add it and sign in. It also covers manual installation.
+Install the integration from HACS: search for **Google Home**. Then follow **[Getting Started](https://ha-google-home.pages.dev/installation/)** to add it and sign in. It also lists all the requirements and covers manual installation.
 
 ## Documentation
 
