@@ -26,17 +26,11 @@ It can't create, change or snooze alarms and timers, or turn alarms on or off. S
 
 ### Other integrations for the same devices
 
-Integrations that come with Home Assistant do more with your speakers and displays. You can use them alongside this one:
-
-- **Play media and change the media volume:** use the [Google Cast integration](https://www.home-assistant.io/integrations/cast/). The media volume is separate from the [alarm volume](entities.md#alarm-volume).
-- **Speak a message:** use the [Speak](https://www.home-assistant.io/actions/tts.speak/) action with a text-to-speech entity to play it on the Google Cast media player.
-- **Send Google Assistant commands and broadcasts:** use the [Google Assistant SDK integration](https://www.home-assistant.io/integrations/google_assistant_sdk/). It can't set alarms or timers either.
-
-See [Other integrations](other-integrations.md#other-integrations-for-the-same-devices) for how to use them and their limits.
+Home Assistant's own integrations work alongside this one. Use [Google Cast](https://www.home-assistant.io/integrations/cast/) to play media and change the media volume, which is separate from the [alarm volume](entities.md#alarm-volume). Use the [Speak](https://www.home-assistant.io/actions/tts.speak/) action to play a spoken message on the Google Cast media player, and the [Google Assistant SDK](https://www.home-assistant.io/integrations/google_assistant_sdk/) for Assistant commands and broadcasts; it can't set alarms or timers either. See [Other integrations](other-integrations.md#other-integrations-for-the-same-devices) for how to use them.
 
 ### Other Google Home devices
 
-The integration doesn't add the other devices in your Google Home app, such as lights, plugs, thermostats or cameras. Add them with the integration for their brand or platform, share Matter devices from Google Home, or use the Google Nest integration for Nest thermostats, cameras and doorbells. See [Other Google Home devices](other-integrations.md#other-google-home-devices) for how.
+The integration doesn't add the other devices in your Google Home app, such as lights, plugs, thermostats or cameras. See [Other Google Home devices](other-integrations.md#other-google-home-devices) for how to add them to Home Assistant.
 
 ## Get started
 
