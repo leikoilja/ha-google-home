@@ -151,8 +151,9 @@ class FoundDevices:
                 self._devices[cloud_device_id].name,
             )
         # A device that Google removed may be added again with the same ID, so the
-        # next report of it is a first report, as for a new device. Reports until now
-        # come from before the removal.
+        # next report of it is a first report, as for a new device. Only this list
+        # shows the removal, so reports until now are forgotten with it, even from a
+        # device set up again meanwhile, which gets its fetch after its next report.
         for cloud_device_id in self._listed - listed:
             self._devices.pop(cloud_device_id, None)
             self._covered_ids.discard(cloud_device_id)

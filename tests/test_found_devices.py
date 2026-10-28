@@ -488,7 +488,7 @@ def test_requested_update_doesnt_run(clock: Mock, timers: list[Timer]) -> None:
     ("removal", "found_at", "fetches"),
     [
         ("scheduled", 1300, [0, 1200, 1330]),
-        # The report during the fetch that drops the device is from before the removal
+        # Reported while the fetch that drops the device runs, before its list arrives
         ("while fetching", 1300, [0, 1200, 1330]),
         # Within 5 minutes of the fetch for the TV at 230
         ("discovery", 300, [0, 230, 530]),
@@ -503,8 +503,8 @@ def test_removed_device_found_again(
 ) -> None:
     """Fetch for a device that Google removed as for a new one when mDNS finds it again with the same ID.
 
-    It may have been added back, so an earlier report, from before the removal,
-    neither starts nor delays the fetch.
+    It may have been added back, so its next report is a first report. A report
+    before the list that drops it arrives neither starts nor delays the fetch.
     """
     network = Network(
         clock, timers, [found("kitchen", "10.0.0.2"), found("office", "10.0.0.3")]

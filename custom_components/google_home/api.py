@@ -270,9 +270,8 @@ class GlocaltokensApiClient:
             )
             # Prefer an address that mDNS reported while this fetch ran over the fetch's
             # scan, and the scan over an earlier report.
-            # ponytail: report times aren't compared with when the scan read the
-            # cache, so a report during the fetch wins even if its address expired
-            # meanwhile, until the next report or fetch
+            # ponytail: a report during the fetch wins even if the scan read a newer
+            # address, until the next report or fetch
             found_device = self.found_devices.get(device.cloud_device_id)
             if found_device and found_device.reported_at > started:
                 device.ip_address = found_device.address
