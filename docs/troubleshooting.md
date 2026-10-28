@@ -98,17 +98,19 @@ If you don't want to wait, make sure the device is online, then reload the integ
 
 Some Cast devices, such as Chromecast Audio, have no alarms, timers, Do Not Disturb or alarm volume. Such a device keeps only its device sensor and reboot button. If it had the other entities, they become unavailable.
 
-If this happens to a device that has alarms and timers, or a device gains these features, make sure the device is online, then reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. The integration adds the entities once the device answers for them. If its alarms still answer "not found" 10 minutes later, and its information still lists no Google Assistant, the integration stops asking it again.
+If this happens to a device that has alarms and timers, or a device gains these features, make sure the device is online, then reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. The integration adds the entities once the device answers for them. It checks a device for these features again only when it starts, so restarting the device or running `google_home.refresh_devices` doesn't bring them back.
 
-The integration finds that a device has none of these features from how it answers, not from a list of models: the device still answers "not found" when asked for its alarms at least 10 minutes after it first did, and its information lists its features without Google Assistant. A device that is starting answers "not found" for a while too, so until both are true, the integration keeps asking the device for alarms at every update, even while it doesn't answer.
+??? note "Advanced: how the integration recognizes these devices"
 
-After that, it asks the device only for its information at each update, to see whether it answers; see [When entities are unavailable](entities.md#when-entities-are-unavailable). It checks the device's alarms again only when it starts: when Home Assistant restarts, or when you reload the integration. Restarting the device, a firmware update that adds these features and the `google_home.refresh_devices` action don't make it check again.
+    The integration finds that a device has none of these features from how it answers, not from a list of models: the device still answers "not found" when asked for its alarms at least 10 minutes after it first did, and its information lists its features without Google Assistant. A device that is starting answers "not found" for a while too, so until both are true, the integration keeps asking the device for alarms at every update, even while it doesn't answer. After a reload, a device that still answers this way is recognized again after 10 minutes.
 
-When the integration stops asking a device, the [debug log](#collect-debug-logs) shows a line like this, with your device's name and model:
+    Once it has recognized such a device, it asks the device only for its information at each update, to see whether it answers; see [When entities are unavailable](entities.md#when-entities-are-unavailable). A firmware update that adds these features doesn't make it check again either.
 
-```
-Stereo (hardware='Chromecast Audio') still answers 404 for alarms after at least 10 minutes, and its info lists its features without Google Assistant. It won't be asked for alarms, timers and settings until the integration is reloaded.
-```
+    When the integration stops asking a device, the [debug log](#collect-debug-logs) shows a line like this, with your device's name and model:
+
+    ```
+    Stereo (hardware='Chromecast Audio') still answers 404 for alarms after at least 10 minutes, and its info lists its features without Google Assistant. It won't be asked for alarms, timers and settings until the integration is reloaded.
+    ```
 
 ### Home Assistant can't reach your devices {#device-offline-or-not-compatible}
 
@@ -128,7 +130,7 @@ If Home Assistant can't find a device's IP address, the [debug log](#collect-deb
 Failed to fetch timers/alarms information from device Kitchen. We could not determine its IP address, the device is either offline or is not compatible Google Home device. Will try again later.
 ```
 
-If only some devices are affected, those devices are offline or don't support this integration.
+If only some devices are affected, check that Home Assistant can discover and reach those devices too.
 
 ## A device stops updating
 
