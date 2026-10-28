@@ -98,13 +98,13 @@ If you don't want to wait, make sure the device is online, then reload the integ
 
 Some Cast devices, such as Chromecast Audio, have no alarms, timers, Do Not Disturb or alarm volume. Such a device keeps only its device sensor and reboot button. If it had the other entities, they become unavailable.
 
-If this happens to a device that has alarms and timers, or a device gains these features, make sure the device is online, then reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. The integration adds the entities once the device answers for them. It checks a device for these features again only when it starts, so restarting the device or running `google_home.refresh_devices` doesn't bring them back.
+If this happens to a device that has alarms and timers, or a device gains these features, make sure the device is online, then reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. The integration adds the entities once the device answers for them. The integration checks the device again only when it starts, after you reload it or restart Home Assistant, so restarting the device or running `google_home.refresh_devices` doesn't bring them back.
 
 ??? note "Advanced: how the integration recognizes these devices"
 
-    The integration finds that a device has none of these features from how it answers, not from a list of models: the device still answers "not found" when asked for its alarms at least 10 minutes after it first did, and its information lists its features without Google Assistant. A device that is starting answers "not found" for a while too, so until both are true, the integration keeps asking the device for alarms at every update, even while it doesn't answer. After a reload, a device that still answers this way is recognized again after 10 minutes.
+    The integration finds that a device has none of these features from how it answers, not from a list of models: the device still answers "not found" when asked for its alarms at least 10 minutes after it first did, and its information lists its features without Google Assistant. A device that is starting answers "not found" for a while too, so until both are true, the integration keeps asking the device for alarms at every update, even while it doesn't answer. After a reload, a device that still answers this way is recognized again at least 10 minutes later.
 
-    Once it has recognized such a device, it asks the device only for its information at each update, to see whether it answers; see [When entities are unavailable](entities.md#when-entities-are-unavailable). A firmware update that adds these features doesn't make it check again either.
+    Once it has recognized such a device, it asks the device only for its information at each update, to see whether it answers; see [When entities are unavailable](entities.md#when-entities-are-unavailable). A firmware update that adds these features doesn't make it check again; reload the integration.
 
     When the integration stops asking a device, the [debug log](#collect-debug-logs) shows a line like this, with your device's name and model:
 
