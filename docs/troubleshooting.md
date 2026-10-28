@@ -141,13 +141,13 @@ If only some devices show the message, those devices are offline or don't suppor
 
 ## A device stops updating
 
-If a device's alarms sensor, timers sensor, Do Not Disturb switch and alarm volume are unavailable while its device sensor shows an IP address, one possible cause is that the device hasn't answered 5 updates in a row. The [debug log](#collect-debug-logs) then shows a line like this:
+If a device's alarms sensor, timers sensor, Do Not Disturb switch and alarm volume are unavailable while its device sensor shows an IP address, one possible cause is that the device hasn't answered 5 updates in a row. To check, [collect debug logs](#collect-debug-logs) for a few updates while the entities are unavailable. For a device that doesn't answer, each update logs a line such as `Failed to connect to Kitchen device. The device is probably offline.` or `Kitchen device timed out while performing a request to it`. If debug logging was already on when the entities became unavailable, the log also has this line, which appears only once:
 
 ```
 Kitchen didn't answer 5 updates in a row. Its alarms, timers and settings are unavailable until it answers with something other than "not found".
 ```
 
-Check that the device is on and connected to your network. The entities come back at the next update it answers with anything other than "not found". If they become unavailable for a moment while a speaker restarts and you use a short update interval, [increase the interval](configuration.md#change-the-update-interval). If the log has no such line, the integration may have found that the device has [no alarms and timers](#devices-without-alarms-and-timers). An alarms or timers sensor on its own also shows `unavailable` when nothing is coming up; see [Alarms sensor](entities.md#alarms-sensor).
+Check that the device is on and connected to your network. The entities come back at the next update it answers with anything other than "not found". If they become unavailable for a moment while a speaker restarts and you use a short update interval, [increase the interval](configuration.md#change-the-update-interval). If the debug log has no lines that start with `Requesting endpoint` for the device at all, the integration may have stopped asking it because it found that the device has [no alarms and timers](#devices-without-alarms-and-timers). An alarms or timers sensor on its own also shows `unavailable` when nothing is coming up; see [Alarms sensor](entities.md#alarms-sensor).
 
 If a device's alarms, timers and settings stop changing in Home Assistant while its entities stay available, check the `available` attribute of its [device sensor](entities.md#device-sensor). If it's `false` while the device is on, the [debug log](#collect-debug-logs) shows why. A line such as `Kitchen rejected its token` means that the device refuses the token the integration has for it.
 

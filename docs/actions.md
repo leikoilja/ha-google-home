@@ -99,7 +99,7 @@ data:
 
 Target the alarms sensor of each device, or the devices themselves. A device target skips a device whose alarms sensor is hidden or disabled. Name a hidden sensor directly instead, and enable a disabled one first. Naming another sensor of a device, such as its timers sensor, fails, and nothing is deleted on any device. So does a group or template that includes other Google Home sensors, such as `{{ integration_entities('google_home') }}`. To clear every speaker, target `entity_id: all`. The action asks each device for its current alarms first, so it also deletes alarms set since the last update.
 
-If the action can't get a device's current alarms, for example because the device is offline, it sends no delete request to that device, so its alarms stay. It still runs for the other devices you target, then fails. See [If a delete fails](#if-a-delete-fails).
+If the action can't get a device's current alarms, for example because the device has just gone offline, it sends no delete request to that device, so its alarms stay. It still runs for the other devices you target, then fails. Once a device hasn't answered 5 updates in a row, its alarms sensor is unavailable, and Home Assistant skips it without an error. See [If a delete fails](#if-a-delete-fails).
 
 ## Delete all timers
 
@@ -125,7 +125,7 @@ If the action can't get a device's current timers, it sends no delete request to
 
 The four delete actions fail, rather than look successful, when an alarm or timer may still be set. The error names each device that failed. The action still runs for the other devices you target before it fails.
 
-- A device that doesn't send its current alarms and timers, for example because it's offline or rejects its token, gets no delete request: "Couldn't get the current alarms and timers from Kitchen, so nothing was deleted from it. Check that it's online and try again later".
+- A device that doesn't send its current alarms and timers, for example because it has just become unreachable or rejects its token, gets no delete request: "Couldn't get the current alarms and timers from Kitchen, so nothing was deleted from it. Check that it's online and try again later". Once it hasn't answered 5 updates in a row, its alarms and timers sensors are unavailable instead, and Home Assistant skips them without an error, as described below.
 - A device that doesn't confirm the delete, because it stops answering, refuses or sends an unexpected reply: "Kitchen didn't confirm deleting the alarms or timers, so they may still be set. Check that it's online and try again later". The device may still have deleted them. Unless `skip_refresh` is `true`, the action asks for an update of all devices, which shows what the device has once it answers.
 - If several devices fail, one error names them all. When none of them sent its current alarms and timers: "Couldn't get the current alarms and timers from these devices, so nothing was deleted from them: Bedroom, Kitchen. Check that they're online and try again later". Otherwise: "Couldn't delete alarms or timers from these devices, or confirm that they were deleted: Bedroom, Kitchen. Check that they're online and try again later".
 
