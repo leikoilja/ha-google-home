@@ -101,6 +101,24 @@
     },
     "timer_not_found": {
       "message": "Ajastinta {timer_id} ei löytynyt valituista laitteista. Se on ehkä jo päättynyt tai poistettu."
+    },
+    "device_offline": {
+      "message": "Laitteeseen {device} ei saatu yhteyttä. Tarkista, että laite on päällä ja yhteydessä verkkoosi, ja yritä sitten uudelleen."
+    },
+    "device_no_reply": {
+      "message": "Laite {device} ei vahvistanut suorittaneensa toimintoa: se ei vastannut ajoissa tai sen vastaus katkesi kesken. Tarkista, että laite on verkossa, ja yritä uudelleen."
+    },
+    "device_token_rejected": {
+      "message": "Laite {device} hylkäsi tunnisteensa, eikä uuden hakeminen Googlelta auttanut. Integraatio jatkaa uuden pyytämistä Googlelta, joten yritä myöhemmin uudelleen."
+    },
+    "device_not_ready": {
+      "message": "Laite {device} vastasi ”ei löytynyt”. Se voi olla vielä käynnistymässä, joten yritä myöhemmin uudelleen, tai se ei ehkä tue tätä."
+    },
+    "device_request_failed": {
+      "message": "Toimintoa ei voitu suorittaa laitteella {device}. Lisätietoja on Home Assistantin lokeissa."
+    },
+    "devices_not_rebooted": {
+      "message": "Seuraavat laitteet eivät vahvistaneet käynnistyvänsä uudelleen: {devices}. Tarkista, että laitteet ovat verkossa, ja yritä myöhemmin uudelleen."
     }
   },
   "options": {

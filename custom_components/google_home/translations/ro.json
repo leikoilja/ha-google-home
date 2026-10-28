@@ -101,6 +101,24 @@
     },
     "timer_not_found": {
       "message": "Nu s-a găsit cronometrul {timer_id} pe dispozitivele selectate. Este posibil să se fi încheiat deja sau să fi fost șters."
+    },
+    "device_offline": {
+      "message": "Nu s-a putut contacta dispozitivul {device}. Verifică dacă este pornit și conectat la rețeaua ta, apoi încearcă din nou."
+    },
+    "device_no_reply": {
+      "message": "Dispozitivul {device} nu a confirmat că a executat acțiunea: nu a răspuns la timp sau răspunsul său a fost întrerupt. Verifică dacă dispozitivul este online și încearcă din nou."
+    },
+    "device_token_rejected": {
+      "message": "Dispozitivul {device} a respins tokenul, iar obținerea unuia nou de la Google nu a ajutat. Integrarea continuă să ceară unul nou de la Google, așa că încearcă din nou mai târziu."
+    },
+    "device_not_ready": {
+      "message": "Dispozitivul {device} a răspuns „negăsit”. Este posibil să fie încă în curs de pornire, așa că încearcă din nou mai târziu, sau să nu accepte acest lucru."
+    },
+    "device_request_failed": {
+      "message": "Nu s-a putut executa acțiunea pe dispozitivul {device}. Pentru detalii, consultă jurnalele Home Assistant."
+    },
+    "devices_not_rebooted": {
+      "message": "Următoarele dispozitive nu au confirmat că vor reporni: {devices}. Verifică dacă dispozitivele sunt online și încearcă din nou mai târziu."
     }
   },
   "options": {

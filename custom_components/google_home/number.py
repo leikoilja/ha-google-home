@@ -22,6 +22,7 @@ from .const import (
     LABEL_ALARM_VOLUME,
 )
 from .entity import GoogleHomeFeatureEntity, async_add_device_entities
+from .exceptions import DeviceRequestFailed
 from .models import GoogleHomeDevice
 from .types import GoogleHomeConfigEntry
 
@@ -94,7 +95,7 @@ class AlarmVolumeNumber(GoogleHomeFeatureEntity, NumberEntity):
         device = self.get_device()
         if device is None:
             _LOGGER.error("Device %s not found.", self.device_name)
-            return
+            raise DeviceRequestFailed(self.device_name, "request_failed")
 
         await self.client.update_alarm_volume(device=device, volume=round(value))
         # Other entities show this device's data too

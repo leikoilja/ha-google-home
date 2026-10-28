@@ -101,6 +101,24 @@
     },
     "timer_not_found": {
       "message": "Fann ikkje tidtakaren {timer_id} på dei valde einingane. Han kan allereie ha gått ut eller vorte sletta."
+    },
+    "device_offline": {
+      "message": "Klarte ikkje å nå {device}. Kontroller at eininga er slått på og kopla til nettverket ditt, og prøv deretter igjen."
+    },
+    "device_no_reply": {
+      "message": "{device} stadfesta ikkje at handlinga vart utført: eininga svarte ikkje i tide, eller svaret vart avbrote. Kontroller at eininga er på nett, og prøv igjen."
+    },
+    "device_token_rejected": {
+      "message": "{device} avviste tokenet sitt, og det hjelpte ikkje å hente eit nytt frå Google. Integrasjonen held fram med å be Google om eit nytt, så prøv igjen seinare."
+    },
+    "device_not_ready": {
+      "message": "{device} svarte «ikkje funne». Eininga held kanskje framleis på å starte opp, så prøv igjen seinare, eller eininga støttar kanskje ikkje dette."
+    },
+    "device_request_failed": {
+      "message": "Klarte ikkje å utføre handlinga på {device}. Sjå Home Assistant-loggane for detaljar."
+    },
+    "devices_not_rebooted": {
+      "message": "Desse einingane stadfesta ikkje at dei vil starte på nytt: {devices}. Kontroller at einingane er på nett, og prøv igjen seinare."
     }
   },
   "options": {

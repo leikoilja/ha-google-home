@@ -14,6 +14,7 @@ from homeassistant.helpers.update_coordinator import (
 
 from .api import GlocaltokensApiClient
 from .const import DOMAIN, MANUFACTURER
+from .exceptions import DeviceRequestFailed
 from .models import GoogleHomeDevice
 from .types import GoogleHomeConfigEntry
 
@@ -88,7 +89,7 @@ class GoogleHomeBaseEntity(
 
         if device is None:
             _LOGGER.error("Device %s is not found.", self.device_name)
-            return
+            raise DeviceRequestFailed(self.device_name, "request_failed")
 
         await self.client.reboot_google_device(device)
 

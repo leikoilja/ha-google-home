@@ -8,7 +8,14 @@ import logging
 from time import monotonic
 from typing import Literal, cast
 
-from aiohttp import ClientError, ClientSession, ClientTimeout
+from aiohttp import (
+    ClientConnectionError,
+    ClientError,
+    ClientPayloadError,
+    ClientResponse,
+    ClientSession,
+    ClientTimeout,
+)
 from aiohttp.client_exceptions import ClientConnectorError, ContentTypeError
 from glocaltokens.client import Device, GLocalAuthenticationTokens
 from glocaltokens.exceptions import AuthenticationError, GLocalTokensError
@@ -40,7 +47,9 @@ from .const import (
 from .exceptions import (
     AlarmsAndTimersNotDeleted,
     AlarmsAndTimersNotFetched,
+    DeviceRequestFailed,
     InvalidMasterToken,
+    RequestFailure,
 )
 from .mdns import FoundDevices
 from .models import GoogleHomeDevice
@@ -94,6 +103,35 @@ class FetchBackoff:
     def waiting(self, now: float) -> bool:
         """Return whether it's too soon after a failed fetch to fetch again."""
         return now < self._retry_at
+
+
+def answer_failure(
+    device: GoogleHomeDevice, response: ClientResponse
+) -> RequestFailure:
+    """Log an answer other than 200 from the device, and return why it failed."""
+    if response.status == HTTPStatus.UNAUTHORIZED:
+        _LOGGER.debug("%s rejected its token", device.name)
+        return "token_rejected"
+    device.available = False
+    if response.status == HTTPStatus.NOT_FOUND:
+        _LOGGER.debug(
+            (
+                "Failed to perform request to %s, API returned %d. "
+                "The device(hardware='%s') may be starting, or may "
+                "have no alarms/timers."
+            ),
+            device.name,
+            response.status,
+            device.hardware,
+        )
+        return "not_ready"
+    _LOGGER.error(
+        "Failed to access %s, API returned %d: %s",
+        device.name,
+        response.status,
+        response,
+    )
+    return "request_failed"
 
 
 class GlocaltokensApiClient:
@@ -546,9 +584,15 @@ class GlocaltokensApiClient:
         Unless polling, raise if they can't be fetched, so an action doesn't
         work from the alarms and timers of the last update.
         """
-        response = await self.request(
-            method="GET", endpoint=API_ENDPOINT_ALARMS, device=device, polling=polling
-        )
+        try:
+            response = await self.request(
+                method="GET",
+                endpoint=API_ENDPOINT_ALARMS,
+                device=device,
+                polling=polling,
+            )
+        except DeviceRequestFailed as error:
+            raise AlarmsAndTimersNotFetched(device.name) from error
 
         if response is not None and JSON_TIMER in response and JSON_ALARM in response:
             device.set_timers(cast(list[TimerJsonDict], response[JSON_TIMER]))
@@ -609,6 +653,8 @@ class GlocaltokensApiClient:
                 "%s sent a reply that isn't valid JSON: %s", device.name, error
             )
             raise AlarmsAndTimersNotDeleted(device.name) from error
+        except DeviceRequestFailed as error:
+            raise AlarmsAndTimersNotDeleted(device.name) from error
 
         # Only this reply is known to confirm a delete
         if isinstance(response, dict) and response.get("success") is True:
@@ -625,7 +671,11 @@ class GlocaltokensApiClient:
         raise AlarmsAndTimersNotDeleted(device.name)
 
     async def reboot_google_device(self, device: GoogleHomeDevice) -> None:
-        """Reboot a Google Home device if it supports this."""
+        """Reboot a Google Home device if it supports this.
+
+        Raise DeviceRequestFailed if it doesn't answer 200. The rest of its answer
+        isn't read, as it may go down while sending it.
+        """
 
         # "now" means reboot and "fdr" means factory reset (Not implemented).
         data = {"params": "now"}
@@ -635,21 +685,26 @@ class GlocaltokensApiClient:
             device.name,
         )
 
-        response = await self.request(
-            method="POST", endpoint=API_ENDPOINT_REBOOT, device=device, data=data
+        await self.request(
+            method="POST",
+            endpoint=API_ENDPOINT_REBOOT,
+            device=device,
+            data=data,
+            read_reply=False,
         )
-
-        if response is not None:
-            # It will return true even if the device does not support rebooting.
-            _LOGGER.info(
-                "Successfully asked %s to reboot.",
-                device.name,
-            )
+        # It answers so even if the device does not support rebooting.
+        _LOGGER.info(
+            "Successfully asked %s to reboot.",
+            device.name,
+        )
 
     async def update_do_not_disturb(
         self, device: GoogleHomeDevice, enable: bool | None = None
     ) -> GoogleHomeDevice:
-        """Get or set the do not disturb setting on a Google Home device."""
+        """Get or set the do not disturb setting on a Google Home device.
+
+        Raise DeviceRequestFailed if setting it fails.
+        """
 
         data = None
         polling = False
@@ -702,7 +757,10 @@ class GlocaltokensApiClient:
     async def update_alarm_volume(
         self, device: GoogleHomeDevice, volume: int | None = None
     ) -> GoogleHomeDevice:
-        """Get or set the alarm volume setting on a Google Home device."""
+        """Get or set the alarm volume setting on a Google Home device.
+
+        Raise DeviceRequestFailed if setting it fails.
+        """
 
         data: JsonDict | None = None
         polling = False
@@ -771,9 +829,36 @@ class GlocaltokensApiClient:
         data: JsonDict | None = None,
         polling: bool = False,
         *,
-        retry: bool = True,
+        read_reply: bool = True,
     ) -> JsonDict | None:
         """Shared request method.
+
+        Unless polling, raise DeviceRequestFailed when the device doesn't answer
+        200 or its answer can't be read. An update only logs it, and gets None.
+        Without read_reply, the 200 is the whole answer: the rest isn't read, and
+        {} is returned.
+        """
+        try:
+            return await self._send(
+                method, endpoint, device, data, polling, read_reply=read_reply
+            )
+        except DeviceRequestFailed:
+            if polling:
+                return None
+            raise
+
+    async def _send(
+        self,
+        method: Literal["GET", "POST"],
+        endpoint: str,
+        device: GoogleHomeDevice,
+        data: JsonDict | None,
+        polling: bool,
+        *,
+        read_reply: bool,
+        retry: bool = True,
+    ) -> JsonDict | None:
+        """Send a request and return the answer, or raise DeviceRequestFailed.
 
         If the device rejects its token, get a new one and send the request once
         more. Only a rejection is retried: a request that timed out may have run.
@@ -784,11 +869,11 @@ class GlocaltokensApiClient:
 
         if device.ip_address is None:
             _LOGGER.warning("Device %s doesn't have an IP address!", device.name)
-            return None
+            raise DeviceRequestFailed(device.name, "offline")
 
         if (token := device.auth_token) is None:
             _LOGGER.warning("Device %s doesn't have an auth token!", device.name)
-            return None
+            raise DeviceRequestFailed(device.name, "request_failed")
 
         url = self.create_url(device.ip_address, PORT, endpoint)
 
@@ -805,7 +890,7 @@ class GlocaltokensApiClient:
         )
 
         resp = None
-        rejected = False
+        failure: RequestFailure | None = None
 
         try:
             timeout = ClientTimeout(total=TIMEOUT)
@@ -815,69 +900,64 @@ class GlocaltokensApiClient:
                 status = response.status
                 if response.status == HTTPStatus.OK:
                     try:
-                        resp = await response.json()
+                        # Without read_reply, what comes after the status, or
+                        # doesn't, can't undo it
+                        resp = await response.json() if read_reply else {}
                     except ContentTypeError:
                         resp = {}
                     device.available = True
-                elif response.status == HTTPStatus.UNAUTHORIZED:
-                    _LOGGER.debug("%s rejected its token", device.name)
-                    rejected = True
-                elif response.status == HTTPStatus.NOT_FOUND:
-                    _LOGGER.debug(
-                        (
-                            "Failed to perform request to %s, API returned %d. "
-                            "The device(hardware='%s') may be starting, or may "
-                            "have no alarms/timers."
-                        ),
-                        device.name,
-                        response.status,
-                        device.hardware,
-                    )
-                    device.available = False
                 else:
-                    _LOGGER.error(
-                        "Failed to access %s, API returned %d: %s",
-                        device.name,
-                        response.status,
-                        response,
-                    )
-                    device.available = False
-            # Only once the answer has been read: a 200 whose body times out or
-            # is cut off isn't an answer
+                    failure = answer_failure(device, response)
+            # Only once the answer has been read, if it's read: a 200 whose body
+            # times out or is cut off isn't an answer
             device.statuses[endpoint, polling] = status
-        except ClientConnectorError:
+        except ClientConnectorError as error:
             logger_func = _LOGGER.debug if polling else _LOGGER.warning
             logger_func(
                 "Failed to connect to %s device. The device is probably offline.",
                 device.name,
             )
             device.available = False
-        except ClientError:
+            raise DeviceRequestFailed(device.name, "offline") from error
+        except ClientError as error:
             # Make sure that we log the exception from the client if one occurred.
             _LOGGER.exception(
                 "Request from %s device error",
                 device.name,
             )
             device.available = False
-        except TimeoutError:
+            # A connection that closed or an answer that was cut off: the device
+            # may have done it
+            if isinstance(error, ClientConnectionError | ClientPayloadError):
+                raise DeviceRequestFailed(device.name, "no_reply") from error
+            raise DeviceRequestFailed(device.name, "request_failed") from error
+        except TimeoutError as error:
             _LOGGER.debug(
                 "%s device timed out while performing a request to it - Raw data: %s",
                 device.name,
                 data,
             )
             device.available = False
+            raise DeviceRequestFailed(device.name, "no_reply") from error
 
-        if not rejected:
-            return resp
-        if retry and await self._async_get_new_token(device, token):
-            _LOGGER.debug(
-                "Sending the request to %s again with its new token", device.name
-            )
-            return await self.request(
-                method, endpoint, device, data, polling, retry=False
-            )
-        self._mark_token_rejected(device, polling=polling)
-        return None
+        if failure == "token_rejected":
+            if retry and await self._async_get_new_token(device, token):
+                _LOGGER.debug(
+                    "Sending the request to %s again with its new token", device.name
+                )
+                return await self._send(
+                    method,
+                    endpoint,
+                    device,
+                    data,
+                    polling,
+                    read_reply=read_reply,
+                    retry=False,
+                )
+            self._mark_token_rejected(device, polling=polling)
+        if failure is not None:
+            raise DeviceRequestFailed(device.name, failure)
+        return resp
 
     def _mark_token_rejected(self, device: GoogleHomeDevice, *, polling: bool) -> None:
         """Mark a device that rejected its token, with no new one to try."""
