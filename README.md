@@ -42,7 +42,8 @@ Install the integration from HACS: search for **Google Home**. Then follow **[Ge
 
 Read the full documentation at **[ha-google-home.pages.dev](https://ha-google-home.pages.dev/)**:
 
-- [Getting Started](https://ha-google-home.pages.dev/installation/): prerequisites, installation and sign-in
+- [Getting Started](https://ha-google-home.pages.dev/installation/): prerequisites, installation, sign-in and a first check with a timer
+- [Configuration and management](https://ha-google-home.pages.dev/configuration/): update interval, adding and removing devices, devices on another network and removing the integration
 - [Automation examples](https://ha-google-home.pages.dev/automations/): lights before an alarm, blinds when it goes off and timer notifications
 - [Entities](https://ha-google-home.pages.dev/entities/): alarms, timers, Do Not Disturb, alarm volume and reboot
 - [Actions](https://ha-google-home.pages.dev/actions/): delete alarms and timers, reboot and refresh devices

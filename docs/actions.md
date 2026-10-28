@@ -11,7 +11,7 @@ The integration adds these actions, which older Home Assistant versions called s
 | [`google_home.reboot_device`](#reboot-device)         | Reboots a device                |
 | [`google_home.refresh_devices`](#refresh-devices)     | Updates all devices immediately |
 
-There are no actions to create, change or snooze alarms and timers, or to turn alarms on or off. The local API that the integration uses can only read and delete them. Set them by voice or on a display's screen. The [alarms](entities.md#alarms-sensor) and [timers](entities.md#timers-sensor) sensors show them after the next [scheduled update](installation.md#change-the-update-interval), or straight away when you run [`google_home.refresh_devices`](#refresh-devices).
+There are no actions to create, change or snooze alarms and timers, or to turn alarms on or off. The local API that the integration uses can only read and delete them. Set them by voice or on a display's screen. The [alarms](entities.md#alarms-sensor) and [timers](entities.md#timers-sensor) sensors show them after the next [scheduled update](configuration.md#change-the-update-interval), or straight away when you run [`google_home.refresh_devices`](#refresh-devices).
 
 The [Google Assistant SDK](https://www.home-assistant.io/integrations/google_assistant_sdk/) integration can't set them either: [Google's Assistant SDK](https://developers.google.com/assistant/sdk/overview) doesn't support timers and alarms.
 

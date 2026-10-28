@@ -15,7 +15,7 @@ The alarms sensor, timers sensor, switch and alarm volume are added once Home As
 
 A device without alarms and timers, such as a Chromecast Audio, doesn't get these four entities. If it already had them, they become unavailable. Reloading the integration or restarting Home Assistant brings them back only if the device then answers for these features. See [Devices without alarms and timers](troubleshooting.md#devices-without-alarms-and-timers).
 
-All entities of a device are unavailable once Google no longer lists it, for example after you remove it from the Google Home app. See [Remove a device](installation.md#remove-a-device).
+All entities of a device are unavailable once Google no longer lists it, for example after you remove it from the Google Home app. See [Remove a device](configuration.md#remove-a-device).
 
 ## Alarms sensor
 
@@ -125,7 +125,7 @@ Turning Do Not Disturb on or off, setting the alarm volume and pressing Reboot f
 
 - "Couldn't reach Living Room. Check that it's on and connected to your network, then try again". The device refused the connection or your network reports it as unreachable, or Home Assistant doesn't know its IP address.
 - "Living Room didn't confirm that it did this: it didn't answer in time, or its answer was cut off. Check that it's online and try again". The device didn't answer within about 5 seconds, or didn't even accept the connection in that time, or it closed the connection or stopped its answer partway. The next update shows the device's current Do Not Disturb setting and alarm volume.
-- "Living Room rejected its token, and getting a new one from Google didn't help. The integration keeps asking Google for one, so try again later". Before this error, the integration asks Google for a new token and sends the request again if it gets one. It asks at most once between updates, and after Google fails to answer it can wait several minutes before asking again; see [A device stops updating](troubleshooting.md#a-device-stops-updating). If Home Assistant asks you to [sign in again](installation.md#sign-in-again), do that first.
+- "Living Room rejected its token, and getting a new one from Google didn't help. The integration keeps asking Google for one, so try again later". Before this error, the integration asks Google for a new token and sends the request again if it gets one. It asks at most once between updates, and after Google fails to answer it can wait several minutes before asking again; see [A device stops updating](troubleshooting.md#a-device-stops-updating). If Home Assistant asks you to [sign in again](troubleshooting.md#sign-in-again), do that first.
 - "Living Room answered “not found”. It may still be starting up, so try again later, or it may not support this".
 - "Couldn't do this on Living Room. For details, see the Home Assistant log". The device answered with another error, or the request failed for another reason. Open the [log](https://my.home-assistant.io/redirect/logs/) to see what it was.
 

@@ -35,7 +35,7 @@ The integration doesn't add the other devices in your Google Home app, such as l
 ## What you need { #get-started }
 
 - A Google account that is a member of the home your devices belong to in the Google Home app.
-- Home Assistant on the same local network as your devices, so it finds them automatically. For devices on another network, see [Add devices on another network](installation.md#add-devices-on-another-network).
+- Home Assistant on the same local network as your devices, so it finds them automatically. For devices on another network, see [Add devices on another network](configuration.md#add-devices-on-another-network).
 
 These are the main requirements; [Before you start](installation.md#before-you-start) has the full list, including the minimum Home Assistant version. Then follow [Getting Started](installation.md) to install the integration and sign in. If something doesn't work, check [Troubleshooting](troubleshooting.md).
 

@@ -67,7 +67,7 @@ actions:
 
 ## When the trigger runs
 
-The trigger follows the time that the integration last saw. The integration [checks your devices](installation.md#change-the-update-interval) every 15 seconds by default, so:
+The trigger follows the time that the integration last saw. The integration [checks your devices](configuration.md#change-the-update-interval) every 15 seconds by default, so:
 
 - An alarm or timer that the integration has seen triggers on time, even between checks. One that goes off before the integration sees it, which can happen to a timer shorter than the update interval, doesn't trigger anything.
 - If you pause, cancel or change an alarm or timer, the automation follows the change only after the next check, so it can still run at the old time if that comes first.
