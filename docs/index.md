@@ -32,20 +32,12 @@ Home Assistant's own integrations work alongside this one. Use [Google Cast](htt
 
 The integration doesn't add the other devices in your Google Home app, such as lights, plugs, thermostats or cameras. See [Other Google Home devices](other-integrations.md#other-google-home-devices) for how to add them to Home Assistant.
 
-## Get started
-
-The main requirements are:
+## What you need { #get-started }
 
 - A Google account that is a member of the home your devices belong to in the Google Home app.
 - Home Assistant on the same local network as your devices, so it finds them automatically. For devices on another network, see [Add devices on another network](installation.md#add-devices-on-another-network).
 
-[Before you start](installation.md#before-you-start) has the full list, including the minimum Home Assistant version.
-
-Then:
-
-1. [Install the integration and sign in](installation.md).
-2. Look up which [entities](entities.md) you get for each device.
-3. If something doesn't work, check [Troubleshooting](troubleshooting.md).
+These are the main requirements; [Before you start](installation.md#before-you-start) has the full list, including the minimum Home Assistant version. Then follow [Getting Started](installation.md) to install the integration and sign in. If something doesn't work, check [Troubleshooting](troubleshooting.md).
 
 ## How it works
 

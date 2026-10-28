@@ -32,7 +32,7 @@ It can't create, change or snooze alarms and timers, or turn alarms on or off; s
 
 <a name="hacs-installation"></a>
 
-## Get started
+## Installation
 
 You need a Google account that is a member of your home in the Google Home app. Home Assistant finds your speakers and displays on its local network; devices on another network need extra setup.
 
