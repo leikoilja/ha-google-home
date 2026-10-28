@@ -125,14 +125,14 @@ All entities of a device are unavailable:
 
 - Once Google no longer lists the device, for example after you remove it from the Google Home app. See [Remove a device](configuration.md#remove-a-device).
 - Once the device hasn't answered 5 [updates](configuration.md#change-the-update-interval) in a row, for example while it's unplugged. At the default 15-second interval, that's usually after one to two minutes. With a shorter interval, a speaker that restarts can miss 5 updates and become unavailable for a moment; with a longer one, it takes longer to notice. A [device without alarms and timers](troubleshooting.md#devices-without-alarms-and-timers) is asked only for its information at each update, and its device sensor and reboot button follow its answers the same way.
-- After an update fails, until the next update. This affects every device of the integration; see [A device stops updating](troubleshooting.md#a-device-stops-updating).
+- After an update fails, until the next update. This affects every device of the integration; see [Alarms, timers or settings stop changing](troubleshooting.md#alarms-timers-or-settings-stop-changing).
 
 Some entities are also unavailable on their own:
 
 - On a [device without alarms and timers](troubleshooting.md#devices-without-alarms-and-timers), such as a Chromecast Audio, the alarms sensor, timers sensor, switch and alarm volume, if it had them. Reloading the integration or restarting Home Assistant brings them back only if the device then answers for these features.
 - The device sensor and reboot button, while Home Assistant doesn't know the device's IP address.
 
-Entities that became unavailable because the device didn't answer are available again at the next update the device answers with anything other than "not found". A speaker that is starting answers "not found" for a while, so they stay unavailable until then. Being available again doesn't always mean new values: if the device rejects its token and Google gives no new one, or answers with another error, they show the values they had. See [A device stops updating](troubleshooting.md#a-device-stops-updating).
+Entities that became unavailable because the device didn't answer are available again at the next update the device answers with anything other than "not found". A speaker that is starting answers "not found" for a while, so they stay unavailable until then. Being available again doesn't always mean new values: if the device rejects its token and Google gives no new one, or answers with another error, they show the values they had. See [Alarms, timers or settings stop changing](troubleshooting.md#alarms-timers-or-settings-stop-changing).
 
 Home Assistant skips an unavailable entity without an error, so an action on it does nothing and doesn't fail. For the integration's own actions, see [Unavailable sensors](actions.md#unavailable-sensors).
 
