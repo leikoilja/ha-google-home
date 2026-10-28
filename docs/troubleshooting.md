@@ -24,7 +24,7 @@ data:
 
 ## Setup fails
 
-When you [sign in again](installation.md#sign-in-again), the form shows these errors too.
+When you [sign in again](#sign-in-again), the form shows these errors too.
 
 ### "Username or password is incorrect"
 
@@ -36,7 +36,7 @@ The `oauth_token` cookie expires within minutes and works only once. Close the p
 
 ### "Google didn't accept the master token"
 
-Check that you pasted the token exactly as you got it. If it was correct before and has stopped working, for example after you changed your Google password, Google no longer accepts it: use [browser sign-in](installation.md#browser-sign-in) instead. If the integration is already set up, [sign in again](installation.md#sign-in-again) rather than deleting it.
+Check that you pasted the token exactly as you got it. If it was correct before and has stopped working, for example after you changed your Google password, Google no longer accepts it: use [browser sign-in](installation.md#browser-sign-in) instead. If the integration is already set up, [sign in again](#sign-in-again) rather than deleting it.
 
 ### "Google didn't accept the sign-in"
 
@@ -50,6 +50,21 @@ Home Assistant couldn't connect to Google, or Google didn't answer in time. Chec
 
 Google answered with a server error, or asked the integration to slow down. This doesn't mean that your cookie or master token is wrong. Wait a few minutes, then sign in again. With browser sign-in, get a new cookie, as the old one expires within minutes.
 
+## Sign in again
+
+Google can stop accepting the integration's sign-in, for example after you change your Google account's password. Home Assistant then reports that authentication expired, and the Google Home card in **Settings** > **Devices & services** shows **Reconfigure**. Sign in again with the same Google account to keep your devices, their entity IDs and your automations:
+
+1. Go to **Settings** > **Devices & services** and, on the Google Home card, select **Reconfigure**.
+2. Choose how to sign in, and follow the same steps as for [browser sign-in](installation.md#browser-sign-in) or a [master token](installation.md#master-token). Use the same Google account as before.
+
+Home Assistant then reloads the integration with the new sign-in.
+
+Sign in again soon. Until you do, your devices can stop updating one by one, so what Home Assistant shows for them can be out of date, and new devices don't appear. After Home Assistant restarts, the integration doesn't start until you sign in again.
+
+- If you closed the sign-in window, select **Reconfigure** again to continue where you left off.
+- To choose another way to sign in after you picked one, reload the integration: go to **Settings** > **Devices & services** > **Google Home**, open the **⋮** menu and select **Reload**. Sign-in starts again from the choice, but the integration stops until you finish, and its entities are unavailable.
+- If Home Assistant says that you signed in to a different Google account, see ["You signed in to a different Google account"](#you-signed-in-to-a-different-google-account).
+
 ## Signing in again fails
 
 The form for signing in again shows the same errors as setup; see [Setup fails](#setup-fails).
@@ -60,7 +75,7 @@ Google reports that you signed in to another account than the one the integratio
 
 To use the other account instead, delete the integration and add it again.
 
-Version 1.13 and older saved the email address you typed when you set up the integration. If that isn't your Google account's primary address, for example because you typed an alternate address, and the integration isn't named after the primary address either, Home Assistant refuses your own account. To keep the integration, name it after your primary address: close the sign-in window, go to **Settings** > **Devices & services** > **Google Home**, open the **⋮** menu, select **Rename** and enter the address. Then select **Reconfigure** and [sign in again](installation.md#sign-in-again). Otherwise, delete the integration and add it again.
+Version 1.13 and older saved the email address you typed when you set up the integration. If that isn't your Google account's primary address, for example because you typed an alternate address, and the integration isn't named after the primary address either, Home Assistant refuses your own account. To keep the integration, name it after your primary address: close the sign-in window, go to **Settings** > **Devices & services** > **Google Home**, open the **⋮** menu, select **Rename** and enter the address. Then select **Reconfigure** and [sign in again](#sign-in-again). Otherwise, delete the integration and add it again.
 
 ## Devices are missing
 
@@ -72,7 +87,7 @@ If you signed in with a Google Workspace account, such as many work and school a
 
 The Google account you signed in with must be a member of the home your devices belong to. Open the Google Home app with that account and check that the devices are listed. If not, [invite the account](https://support.google.com/googlenest/answer/9155535) to your home and reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**.
 
-If Google didn't give the integration your devices when it started, for example because Google was busy, the integration starts without devices, and the log shows `Failed to fetch Google's device list` with Google's reason. The integration asks Google again until it gets your devices. The minimum retry delay grows from 1 minute to 20 minutes; the first [update](installation.md#change-the-update-interval) after the delay makes the attempt, so actual gaps can be longer. To ask Google straight away, reload the integration.
+If Google didn't give the integration your devices when it started, for example because Google was busy, the integration starts without devices, and the log shows `Failed to fetch Google's device list` with Google's reason. The integration asks Google again until it gets your devices. The minimum retry delay grows from 1 minute to 20 minutes; the first [update](configuration.md#change-the-update-interval) after the delay makes the attempt, so actual gaps can be longer. To ask Google straight away, reload the integration.
 
 ### No alarms or timers sensors
 
@@ -81,7 +96,7 @@ The integration adds the alarms sensor, timers sensor, Do Not Disturb switch and
 When the device answers, the integration adds the missing entities:
 
 - If the device sensor shows an IP address, this happens at the next update, unless the integration has found that the device has none of these features.
-- If the device sensor is unavailable, the integration doesn't know the device's IP address. If Home Assistant receives the device's mDNS announcements, the integration gets the address when the device announces itself, for example when it comes back online, and asks the device at the next update. Otherwise, it looks for the device when it next asks Google for your devices, normally at the first update 20 minutes after it last asked. It looks with mDNS and, if the device still has no address, at your [known hosts](installation.md#add-devices-on-another-network).
+- If the device sensor is unavailable, the integration doesn't know the device's IP address. If Home Assistant receives the device's mDNS announcements, the integration gets the address when the device announces itself, for example when it comes back online, and asks the device at the next update. Otherwise, it looks for the device when it next asks Google for your devices, normally at the first update 20 minutes after it last asked. It looks with mDNS and, if the device still has no address, at your [known hosts](configuration.md#add-devices-on-another-network).
 
 If you don't want to wait, make sure the device is online, then reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. If that doesn't help, restart the Google Home device and then Home Assistant.
 
@@ -120,7 +135,7 @@ The integration finds your devices on your network with multicast DNS (mDNS) and
 - If Home Assistant runs in Docker, the container uses `host` network mode.
 - If your devices are on a separate network or VLAN, your router forwards mDNS between the networks, and Home Assistant can reach the devices on TCP port 8443.
 
-If mDNS can't reach your devices but Home Assistant can reach them on TCP port 8443, add their IP addresses as [known hosts](installation.md#add-devices-on-another-network) instead.
+If mDNS can't reach your devices but Home Assistant can reach them on TCP port 8443, add their IP addresses as [known hosts](configuration.md#add-devices-on-another-network) instead.
 
 If only some devices show the message, those devices are offline or don't support this integration.
 
@@ -128,7 +143,7 @@ If only some devices show the message, those devices are offline or don't suppor
 
 If a device's alarms, timers and settings stop changing in Home Assistant while its entities stay available, check the `available` attribute of its [device sensor](entities.md#device-sensor). If it's `false` while the device is on, the [debug log](#collect-debug-logs) shows why. A line such as `Kitchen rejected its token` means that the device refuses the token the integration has for it.
 
-A device's token can change, for example when the device restarts. The integration then gets the new token from Google straight away. If Google can't give it, the device's entities keep the values they had, and the integration asks Google again until it can. The minimum retry delay grows from 1 minute to 20 minutes; the first [update](installation.md#change-the-update-interval) after the delay makes the attempt, so actual gaps can be longer. If Google can't be reached at all, that update fails, which makes every entity of the integration unavailable until the next update.
+A device's token can change, for example when the device restarts. The integration then gets the new token from Google straight away. If Google can't give it, the device's entities keep the values they had, and the integration asks Google again until it can. The minimum retry delay grows from 1 minute to 20 minutes; the first [update](configuration.md#change-the-update-interval) after the delay makes the attempt, so actual gaps can be longer. If Google can't be reached at all, that update fails, which makes every entity of the integration unavailable until the next update.
 
 To find out why Google didn't give the token, open the [log](https://my.home-assistant.io/redirect/logs/) and find the error that starts with `Failed to fetch Google's device list`. Google's reason is at the end, such as 429 when Google limits requests or 503 when it's busy; the integration keeps asking by itself. If there is no such error, check that Home Assistant is connected to the internet; see ["Couldn't reach Google"](#couldnt-reach-google).
 

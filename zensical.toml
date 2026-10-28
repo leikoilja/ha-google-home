@@ -8,6 +8,7 @@ edit_uri = "edit/master/docs/"
 nav = [
     { "Home" = "index.md" },
     { "Getting Started" = "installation.md" },
+    { "Configuration and management" = "configuration.md" },
     { "Automation examples" = "automations.md" },
     { "Entities" = "entities.md" },
     { "Actions" = "actions.md" },

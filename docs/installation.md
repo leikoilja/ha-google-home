@@ -5,9 +5,9 @@
 You need:
 
 - Home Assistant 2026.10.0 or later.
-- Google speakers or displays, such as a Nest Mini, Nest Audio or Nest Hub. The integration doesn't add the other devices in your Google Home app, such as lights or thermostats. See [Other Google Home devices](index.md#other-google-home-devices).
+- Google speakers or displays, such as a Nest Mini, Nest Audio or Nest Hub. The integration doesn't add the other devices in your Google Home app, such as lights or thermostats. See [Other Google Home devices](other-integrations.md#other-google-home-devices).
 - A Google account that is a member of your home in the Google Home app, or of each home if your devices are in several. Open the Google Home app with that account and check that your devices are listed.
-- Home Assistant on the same local network as your devices, so the integration finds them automatically. If you run Home Assistant in Docker, set the container's network mode to `host`, as the [official installation guide](https://www.home-assistant.io/installation/linux) does. If your devices are on another network, or the container can't use `host` mode, [add them as known hosts](#add-devices-on-another-network) instead.
+- Home Assistant on the same local network as your devices, so the integration finds them automatically. If you run Home Assistant in Docker, set the container's network mode to `host`, as the [official installation guide](https://www.home-assistant.io/installation/linux) does. If your devices are on another network, or the container can't use `host` mode, [add them as known hosts](configuration.md#add-devices-on-another-network) instead.
 
 !!! tip "Use a separate Google account"
 
@@ -44,8 +44,6 @@ You need:
 
 Home Assistant then adds a device for each Google Cast device in your home, with the [entities](entities.md) for it. Devices that have no alarms or timers, such as an NVIDIA Shield, get only a device sensor and a reboot button.
 
-If Google stops accepting the sign-in, [sign in again](#sign-in-again). To use another Google account, delete the integration and add it again.
-
 !!! warning "Keep your sign-in details secret"
 
     The cookie and the master token each give access to your Google account. Don't share them or post them in an issue.
@@ -70,91 +68,33 @@ Home Assistant exchanges the cookie for a master token, names the entry after th
 
 Select **Master token**, paste the token into **Google account master token**, and select **Submit**. A master token starts with `aas_et/` and is 223 characters long. The integration looks up which Google account the token belongs to and names the entry after it.
 
-## Sign in again
+## Check that it works
 
-Google can stop accepting the integration's sign-in, for example after you change your Google account's password. Home Assistant then reports that authentication expired, and the Google Home card in **Settings** > **Devices & services** shows **Reconfigure**. Sign in again with the same Google account to keep your devices, their entity IDs and your automations:
+Set a timer on one speaker and check that Home Assistant shows it:
 
-1. Go to **Settings** > **Devices & services** and, on the Google Home card, select **Reconfigure**.
-2. Choose how to sign in, and follow the same steps as for [browser sign-in](#browser-sign-in) or a [master token](#master-token). Use the same Google account as before.
+1. Go to **Settings** > **Devices & services** > **Google Home** and select one of your speakers or displays.
+2. On its device page, find the **Timers** sensor. It shows **Unavailable** while no timer is running, as **Alarms** does while no alarm is coming up; that is expected, not an error. If **Timers** shows a time, a timer is already running on that speaker: choose another speaker, or wait until the timer finishes.
+3. Ask that speaker to set a timer, for example "Hey Google, set a timer for 10 minutes". A timer belongs to the speaker that set it, so ask the one whose page you opened.
+4. Wait for the next update. The integration checks your devices every 15 seconds, unless you [changed the update interval](configuration.md#change-the-update-interval). **Timers** then shows when the timer goes off.
+5. Say "Hey Google, cancel the timer". After the next update, **Timers** shows **Unavailable** again.
 
-Home Assistant then reloads the integration with the new sign-in.
+If it doesn't work:
 
-Sign in again soon. Until you do, the integration can't get the device list or new device tokens from Google. It keeps asking your devices for updates, and some may keep answering, but what Home Assistant shows for your devices can be out of date. After Home Assistant restarts, the integration doesn't start until you sign in again.
+- If the Google Home integration shows no devices in Home Assistant, see [No devices appear](troubleshooting.md#no-devices-appear).
+- If the speaker has only a device sensor and a reboot button, Home Assistant hasn't reached it yet, or it has no alarms and timers. See [No alarms or timers sensors](troubleshooting.md#no-alarms-or-timers-sensors).
+- If **Timers** still shows **Unavailable** after the update, check that you asked the speaker whose page you opened, and that it's on and connected to your network. Then see [A device stops updating](troubleshooting.md#a-device-stops-updating).
 
-- If you closed the sign-in window, select **Reconfigure** again to continue where you left off.
-- To choose another way to sign in after you picked one, reload the integration: go to **Settings** > **Devices & services** > **Google Home**, open the **⋮** menu and select **Reload**. Sign-in starts again from the choice, but the integration stops until you finish, and its entities are unavailable.
-- If Home Assistant says that you signed in to a different Google account, see [Troubleshooting](troubleshooting.md#you-signed-in-to-a-different-google-account).
+## Use it in an automation
 
-## Change the update interval
+[When a timer finishes](automations.md#when-a-timer-finishes) sends a notification to your phone when a speaker's timer finishes. [Automation examples](automations.md) has more, such as turning on lights before an alarm.
 
-The integration checks your devices for changes every 15 seconds by default.
+The examples use entity IDs such as `sensor.kitchen_timers`. Replace them with your own: on the device page, select **Timers**, then the settings (gear) icon. **Entity ID** shows the sensor's ID. If it has the room name twice, see [Room name twice in entity IDs](entities.md#room-name-twice-in-entity-ids).
 
-To change the interval, go to **Settings** > **Devices & services** > **Google Home** and select **Configure**. Shorter intervals update alarms and timers sooner but send more requests to your devices.
+## After setup
 
-If a speaker or display with alarms and timers often shows `false` in the `available` attribute of its [device sensor](entities.md#device-sensor) while it's on, increase the interval, for example to 180 seconds, the default before version 1.16. A device without alarms and timers, such as a Chromecast Audio, shows `false` there anyway, because it answers "not found" when asked for alarms; see [Devices without alarms and timers](troubleshooting.md#devices-without-alarms-and-timers).
-
-**Configure** shows the interval in use. If you saved these options in version 1.15 or older, for example to add known hosts, it's the interval you saved, which was 180 seconds unless you changed it. To use the new default, enter 15 and select **Submit**.
-
-To update immediately, use the [Refresh devices](actions.md#refresh-devices) action.
-
-## Add a device
-
-When you add a speaker or display in the Google Home app, the integration adds it without a reload:
-
-- If Home Assistant is on the same network as the device, or receives its mDNS announcements from another network, the integration notices the device when it joins your network and announces itself. It asks Google for your devices 30 seconds later, so if Google lists the device by then, it appears within about a minute. The integration asks Google about new devices at most every 5 minutes, so if it asked about another device it didn't know in the last 5 minutes, it waits until those 5 minutes have passed.
-- Otherwise, or if Google doesn't list the device yet when the integration asks, the device appears when the integration next asks Google for your devices: at the first update 20 minutes after it last asked. If it can't reach Google then, it tries again 20 minutes later.
-
-To add the device straight away, reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. The integration then asks Google for your devices. The device appears only once Google lists it, and some of its entities only once Home Assistant can reach it; see [Entities](entities.md).
-
-To add back a speaker or display that you removed from the Google Home app:
-
-1. Wait until the integration has noticed the removal, or reload it; see [Remove a device](#remove-a-device).
-2. Delete the old device in Home Assistant: open the device's page, open the **⋮** menu and select **Delete**. If you skip this, the new device's entities get IDs such as `sensor.kitchen_alarms_2` instead of `sensor.kitchen_alarms`.
-3. [Factory reset the device](https://support.google.com/googlenest/answer/7073477). Restarting it isn't enough.
-4. Set it up again in the Google Home app. Give it the same name to keep its entity IDs.
-
-Google gives the device a new ID, so the integration adds it as a new device, as described at the start of this section.
-
-If you deleted a device in Home Assistant and the Google Home app lists it again without a factory reset, the integration doesn't add it back by itself: reload the integration.
-
-## Add devices on another network
-
-The integration finds your devices on your network with multicast DNS (mDNS). mDNS usually doesn't reach other networks, such as a separate VLAN for smart home devices, or a Home Assistant container that doesn't use `host` network mode. Those devices then have only a [device sensor](entities.md#device-sensor) and a [reboot button](entities.md#reboot-button), and both are unavailable.
-
-For devices on another network, Home Assistant needs:
-
-- **A way to find the devices.** Choose one:
-    - Give Home Assistant a network interface on the devices' network, such as a second network adapter or a VLAN interface. Home Assistant usually uses only one interface for mDNS, so go to **Settings** > **System** > **Network**, clear **Autoconfigure** under **Network adapter**, also select the interface on the devices' network, select **Save** and restart Home Assistant. With this interface, Home Assistant also connects to the devices directly, so a firewall on your router doesn't need to allow TCP 8443.
-    - Set up an mDNS reflector or repeater between the networks, for example on your router.
-    - Add the devices' IP addresses as known hosts, as described below.
-- **TCP port 8443 on each device.** The integration connects to the devices over HTTPS on this port. If a firewall is in between, allow these connections from Home Assistant and their replies. A rule that allows only the Google Cast port, TCP 8009, isn't enough. The devices don't need to connect to Home Assistant.
-- **Internet access for Home Assistant.** The integration gets the device list and the devices' access tokens from Google when it loads, and again later, for example when the tokens expire.
-
-To add devices as known hosts:
-
-1. Go to **Settings** > **Devices & services** > **Google Home** and select **Configure**.
-2. Under **Known hosts**, add the IP address of each device that the integration can't find.
-3. Select **Submit**. The integration reloads, asks each address which device it is, and uses the address for that device.
-
-After that, the integration asks your known hosts only when it asks Google for your devices, and only for devices that still have no address. For example, a device that was offline when the integration loaded is looked up at your known hosts at the first update 20 minutes after the integration last asked Google. With a network interface on the devices' network or an mDNS reflector, the integration gets a device's address as soon as the device announces itself, as on the same network.
-
-Give these devices fixed IP addresses in your router, so the addresses don't change. For a speaker pair, add the addresses of both speakers. Only the speaker that leads the pair reports it, so the integration uses that one and ignores the other.
-
-## Remove a device
-
-When you remove a device from the Google Home app or factory reset it, the integration normally notices within about 20 minutes, when it next asks Google for your devices, and the device's entities become unavailable. Removing a device from the Google Home app doesn't reset it: it stays on your network, and the integration keeps updating it until it next asks Google for your devices. To make the integration notice straight away, reload it: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. Once it has noticed, open the device's page in Home Assistant, open the **⋮** menu and select **Delete**.
-
-Home Assistant offers **Delete** for every device of the integration, but you can't delete one that Google still lists in your home, even if it shows as unavailable: it would come back the next time the integration loads. Home Assistant then shows "Failed to remove device entry, rejected by integration".
-
-To use a removed device again, factory reset it first; see [Add a device](#add-a-device).
-
-## Remove the integration
-
-1. Go to **Settings** > **Devices & services** > **Google Home**, open the **⋮** menu and select **Delete**. Home Assistant deletes the master token it stored.
-2. If you installed with HACS, open HACS, select **Google Home**, open the **⋮** menu and select **Remove**. If you installed manually, delete the `custom_components/google_home` folder.
-3. Restart Home Assistant.
-
-Deleting the integration doesn't stop the master token from working, and the integration can't revoke it. If the token might have been copied, for example from a Home Assistant backup:
-
-- If you created a separate Google account for the integration, delete that account.
-- Otherwise, [change the Google account's password](https://support.google.com/accounts/answer/41078). Google then signs you out on most devices and apps, but it lists exceptions, so this isn't guaranteed to stop the master token.
+- [Change the update interval](configuration.md#change-the-update-interval){#change-the-update-interval}, for example if a speaker often misses updates.
+- [Add a device](configuration.md#add-a-device){#add-a-device} that you set up in the Google Home app later.
+- [Add devices on another network](configuration.md#add-devices-on-another-network){#add-devices-on-another-network}, such as a separate VLAN.
+- [Remove a device](configuration.md#remove-a-device){#remove-a-device} that you removed from the Google Home app.
+- [Remove the integration](configuration.md#remove-the-integration){#remove-the-integration}, and what to do about its master token.
+- [Sign in again](troubleshooting.md#sign-in-again){#sign-in-again} if Home Assistant reports that authentication expired.
