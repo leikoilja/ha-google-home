@@ -8,46 +8,54 @@ This custom integration brings your Google Home and Nest speakers and displays i
 - Change the alarm volume.
 - Reboot a device.
 
-The full list is on the [Entities](entities.md) and [Actions](actions.md) pages, and [Automation examples](automations.md) shows how to use them.
+[Get started](installation.md){ .md-button .md-button--primary }
 
-It can't create, change or snooze alarms and timers, or turn alarms on or off. Set them by voice or on a display's screen, and the integration picks them up. It doesn't play media, change the media volume or speak messages either; see [Other integrations for the same devices](#other-integrations-for-the-same-devices) for what does.
+## What you can automate
 
-!!! note "Only for Google speakers and displays"
+The alarms and timers sensors show the time of the next alarm or timer, so an automation can start at that time or a set time before it. For example, you can:
 
-    The integration doesn't add the other devices in your Google Home app, such as lights, plugs, thermostats or cameras. See [Other Google Home devices](#other-google-home-devices) for how to add them to Home Assistant.
+- [Turn on the bedroom lights 10 minutes before the next alarm](automations.md#before-the-next-alarm).
+- [Open the bedroom blinds when the alarm goes off](automations.md#when-an-alarm-goes-off).
+- [Send a notification to your phone when the kitchen timer finishes](automations.md#when-a-timer-finishes).
 
-## How it works
+[Automation examples](automations.md) has the YAML for each one. The full list of what the integration adds is on the [Entities](entities.md) and [Actions](actions.md) pages.
 
-The integration uses your Google account to get access tokens for your devices from Google, and renews them regularly. Everything else, such as reading alarms or changing the alarm volume, goes directly to the devices over your local network. For this to work:
+## What it can't do
 
-- Home Assistant must be able to reach your devices. It finds them automatically on the same network; for devices on another network, see [Add devices on another network](installation.md#add-devices-on-another-network).
-- The Google account you use must be a member of the home your devices belong to in the Google Home app.
-- You can add the integration only once, so it works with one Google account. To use devices from several homes, [invite that account](https://support.google.com/googlenest/answer/9155535) to each home: the integration adds the devices of every home the account is a member of. Devices that Home Assistant can't find on its network, for example in a home at another address, have only a device sensor and a reboot button, and both are unavailable.
+It can't create, change or snooze alarms and timers, or turn alarms on or off. Set them by voice or on a display's screen, and the integration picks them up.
 
-## Other integrations for the same devices
+### Other integrations for the same devices
 
 Integrations that come with Home Assistant do more with your speakers and displays. You can use them alongside this one:
 
-- **Play music, radio and other media:** use the [Google Cast integration](https://www.home-assistant.io/integrations/cast/). It adds a media player for each speaker, display and Chromecast.
-- **Change or mute the media volume:** use the [Set media player volume](https://www.home-assistant.io/actions/media_player.volume_set/) and [Mute/unmute media player](https://www.home-assistant.io/actions/media_player.volume_mute/) actions on the Google Cast media player. This volume is separate from the [alarm volume](entities.md#alarm-volume). While nothing is casting to a device, its media player shows as **Off**, without a volume control or a `volume_level` attribute, but the Set media player volume action still changes the volume.
-- **Speak a message:** use the [Speak](https://www.home-assistant.io/actions/tts.speak/) action with a text-to-speech entity, such as one from [Google Translate text-to-speech](https://www.home-assistant.io/integrations/google_translate/), to play the message on the Google Cast media player. If nothing plays, see [Troubleshooting](https://www.home-assistant.io/integrations/tts/#troubleshooting) in the text-to-speech docs.
-- **Send Google Assistant commands and broadcasts:** use the [Google Assistant SDK integration](https://www.home-assistant.io/integrations/google_assistant_sdk/). Its [Send text command](https://www.home-assistant.io/actions/google_assistant_sdk.send_text_command/) action works as if you'd said the command, and [`notify.google_assistant_sdk`](https://www.home-assistant.io/integrations/google_assistant_sdk/#broadcast-message) broadcasts a message to your speakers and displays. You set it up with your own Google Cloud credentials. It can't set alarms or timers (see [Actions](actions.md)), and some other commands, such as routines, don't work either; see its [known issues](https://www.home-assistant.io/integrations/google_assistant_sdk/#limitationsknown-issues).
+- **Play media and change the media volume:** use the [Google Cast integration](https://www.home-assistant.io/integrations/cast/). The media volume is separate from the [alarm volume](entities.md#alarm-volume).
+- **Speak a message:** use the [Speak](https://www.home-assistant.io/actions/tts.speak/) action with a text-to-speech entity to play it on the Google Cast media player.
+- **Send Google Assistant commands and broadcasts:** use the [Google Assistant SDK integration](https://www.home-assistant.io/integrations/google_assistant_sdk/). It can't set alarms or timers either.
 
-## Other Google Home devices
+See [Other integrations](other-integrations.md#other-integrations-for-the-same-devices) for how to use them and their limits.
 
-The Google Home app lists every device you've linked to it, including lights, plugs and thermostats from other brands. This integration doesn't read that list. It works only with Google Cast devices, which it talks to directly over your network. To bring your other devices into Home Assistant:
+### Other Google Home devices
 
-- **Most devices:** add them with the integration for their brand or platform, such as [Philips Hue](https://www.home-assistant.io/integrations/hue/) for bulbs on a Hue Bridge, [Philips Hue BLE](https://www.home-assistant.io/integrations/hue_ble/) for Bluetooth bulbs without one, or [Tuya](https://www.home-assistant.io/integrations/tuya/) for devices in the Smart Life app. Go to **Settings** > **Devices & services** > **Add integration** and search for the brand or platform.
-- **Matter devices:** share them from Google Home, so they work in both. In the Home Assistant app on your phone, go to **Settings** > **Connectivity** > **Matter** > **Add device**, select **Yes. It's already in use.**, and choose **Google Home**. See the [Matter integration](https://www.home-assistant.io/integrations/matter/) for what you need.
-- **Nest thermostats, cameras and doorbells:** use the [Google Nest integration](https://www.home-assistant.io/integrations/nest/). It needs Google's Device Access, which has a one-time, non-refundable US$5 registration fee. Nest smoke and CO alarms aren't supported.
-
-The [Google Assistant integration](https://www.home-assistant.io/integrations/google_assistant/) works the other way round: it lets Google Assistant control your Home Assistant devices.
+The integration doesn't add the other devices in your Google Home app, such as lights, plugs, thermostats or cameras. Add them with the integration for their brand or platform, share Matter devices from Google Home, or use the Google Nest integration for Nest thermostats, cameras and doorbells. See [Other Google Home devices](other-integrations.md#other-google-home-devices) for how.
 
 ## Get started
+
+You need:
+
+- A Google account that is a member of the home your devices belong to in the Google Home app.
+- Home Assistant on the same local network as your devices, so it finds them automatically. For devices on another network, see [Add devices on another network](installation.md#add-devices-on-another-network).
+
+Then:
 
 1. [Install the integration and sign in](installation.md).
 2. Look up which [entities](entities.md) you get for each device.
 3. If something doesn't work, check [Troubleshooting](troubleshooting.md).
+
+## How it works
+
+The integration uses your Google account to get access tokens for your devices from Google, and renews them regularly. Everything else, such as reading alarms or changing the alarm volume, goes directly to the devices over your local network.
+
+You can add the integration only once, so it works with one Google account. To use devices from several homes, [invite that account](https://support.google.com/googlenest/answer/9155535) to each home: the integration adds the devices of every home the account is a member of. Devices that Home Assistant can't find on its network, for example in a home at another address, have only a device sensor and a reboot button, and both are unavailable.
 
 ## Languages
 
