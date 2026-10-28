@@ -103,7 +103,7 @@ Turns Do Not Disturb on or off on the device. It appears under **Configuration**
 
 ## Alarm volume
 
-Sets how loud alarms ring on the device, from 0 to 100%. It appears under **Configuration** on the device page. If the request to the device fails, Home Assistant shows an error and the old volume stays; see [If a setting or reboot fails](#if-a-setting-or-reboot-fails). The volume of music and other media is a separate setting; see [Other integrations for the same devices](index.md#other-integrations-for-the-same-devices).
+Sets how loud alarms ring on the device, from 0 to 100%. It appears under **Configuration** on the device page. If the request to the device fails, Home Assistant shows an error and the old volume stays; see [If a setting or reboot fails](#if-a-setting-or-reboot-fails). The volume of music and other media is a separate setting that you change on the Google Cast media player; see [Other integrations for the same devices](index.md#other-integrations-for-the-same-devices).
 
 ## Reboot button
 
