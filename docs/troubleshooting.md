@@ -158,6 +158,31 @@ To find out why Google didn't give the token, open the [log](https://my.home-ass
 
 To ask Google straight away, reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**.
 
+## An action or setting fails
+
+Deleting alarms or timers, rebooting, turning Do Not Disturb on or off and setting the alarm volume fail with an error, rather than look successful, when a device may not have done what you asked. Most errors name the device and say why. To let your automation or script carry on after an error, see [Continue after an error](actions.md#continue-after-an-error).
+
+### A delete fails
+
+The four [delete actions](actions.md#delete-alarm) fail when an alarm or timer may still be set. The error names each device that failed, and the action still runs for the other devices you target before it fails. Delete alarm and Delete timer also fail when no device has the ID, or when it isn't a valid ID.
+
+- "Couldn't get the current alarms and timers from Kitchen, so nothing was deleted from it. Check that it's online and try again later". The device didn't send its current alarms and timers, for example because it has just become unreachable or rejects its token, so it got no delete request. Once it hasn't answered 5 updates in a row, its alarms and timers sensors are unavailable instead, and Home Assistant skips them without an error; see [Unavailable sensors](actions.md#unavailable-sensors).
+- "Kitchen didn't confirm deleting the alarms or timers, so they may still be set. Check that it's online and try again later". The device stopped answering, refused or sent an unexpected reply. It may still have deleted them. Unless `skip_refresh` is `true`, the action asks for an update of all devices, which shows what the device has once it answers.
+- If several devices fail, one error names them all. When none of them sent its current alarms and timers: "Couldn't get the current alarms and timers from these devices, so nothing was deleted from them: Bedroom, Kitchen. Check that they're online and try again later". Otherwise: "Couldn't delete alarms or timers from these devices, or confirm that they were deleted: Bedroom, Kitchen. Check that they're online and try again later".
+- "Couldn't find the alarm alarm/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51 on the devices you targeted. It may already have gone off or been deleted", or the same for a timer. Delete alarm and Delete timer report this when every device the action checks sends its current list without the ID. Home Assistant skips unavailable sensors, and with a device, area, floor or label target also hidden or disabled ones, so a device it skipped may still have the alarm or timer. Retrying after a device didn't confirm can give this error if the alarm or timer is gone by then.
+- "“alarm/123” isn't an alarm ID. Copy the ID, which starts with alarm/, from the alarms attribute of the device's alarms sensor", or the same for a timer. The ID doesn't start with `alarm/` or `timer/`, or has the wrong length, so no device was asked.
+
+### A setting or reboot fails
+
+Turning Do Not Disturb on or off, setting the alarm volume, pressing Reboot and the [Reboot device](actions.md#reboot-device) action fail with an error, rather than look successful, when the request to the device fails. The error names the device and says why:
+
+- "Couldn't reach Living Room. Check that it's on and connected to your network, then try again". The device refused the connection or your network reports it as unreachable, or Home Assistant doesn't know its IP address.
+- "Living Room didn't confirm that it did this: it didn't answer in time, or its answer was cut off. Check that it's online and try again". The device didn't answer within about 5 seconds, or didn't even accept the connection in that time, or it closed the connection or stopped its answer partway. The next update shows the device's current Do Not Disturb setting and alarm volume.
+- "Living Room rejected its token, and getting a new one from Google didn't help. The integration keeps asking Google for one, so try again later". The integration has already asked Google for a new token. It asks again at the next update or, if Google didn't answer, at the first update after a wait that grows from 1 minute to 20 minutes, so try again after that; see [A device stops updating](#a-device-stops-updating). If Home Assistant asks you to [sign in again](#sign-in-again), do that first.
+- "Living Room answered “not found”. It may still be starting up, so try again later, or it may not support this".
+- "Couldn't do this on Living Room. For details, see the Home Assistant log". The device answered with another error, or the request failed for another reason. Open the [log](https://my.home-assistant.io/redirect/logs/) to see what it was.
+- "These devices didn't confirm that they'll reboot: Bedroom, Kitchen. Check that they're online and try again later". Reboot device gives this when more than one device fails. It still reboots every device that answers.
+
 ## Still stuck
 
 Search [GitHub Discussions](https://github.com/leikoilja/ha-google-home/discussions) and the [issues](https://github.com/leikoilja/ha-google-home/issues?q=is%3Aissue) for your problem. If nobody has reported it, ask in [Q&A](https://github.com/leikoilja/ha-google-home/discussions/categories/q-a), or [open an issue](https://github.com/leikoilja/ha-google-home/issues/new/choose) with your [debug logs](#collect-debug-logs).

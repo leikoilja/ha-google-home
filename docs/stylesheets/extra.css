@@ -43,3 +43,17 @@
   background-color: #00000033;
   color: var(--md-primary-bg-color);
 }
+
+/* Keep entity IDs, field names and example values in the narrow columns of
+   tables on one line. The last column, usually a description, still wraps.
+   Phones keep wrapping them, so tables don't scroll sideways. */
+@media screen and (min-width: 45em) {
+  .md-typeset td:not(:last-child) code {
+    white-space: nowrap;
+  }
+
+  /* Alarm and timer IDs are too long for one line; let them break at a hyphen. */
+  .md-typeset td code.break {
+    white-space: normal;
+  }
+}
