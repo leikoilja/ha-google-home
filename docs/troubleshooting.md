@@ -1,26 +1,16 @@
 # Troubleshooting
 
-## Collect debug logs
+Find what you see, then start with the first check in its section:
 
-Debug logs show what the integration is doing. Attach them when you [open an issue](https://github.com/leikoilja/ha-google-home/issues/new/choose).
+- [Adding the integration shows an error](#setup-fails)
+- [Home Assistant says that authentication expired](#sign-in-again), or [signing in again fails](#signing-in-again-fails)
+- [The integration shows no devices](#no-devices-appear)
+- [A device has only a device sensor and a reboot button](#no-alarms-or-timers-sensors)
+- [All entities of a device are unavailable](#all-entities-of-a-device-are-unavailable)
+- [A device's alarms, timers or settings stop changing](#alarms-timers-or-settings-stop-changing)
+- [Deleting an alarm or timer, rebooting or changing a setting shows an error](#an-action-or-setting-fails)
 
-1. Go to **Settings** > **Devices & services** > **Google Home**.
-2. Open the **⋮** menu and select **Enable debug logging**.
-3. Reproduce the problem.
-4. Open the **⋮** menu again and select **Disable debug logging**. Your browser downloads the log file.
-
-If setup fails, the integration has no **⋮** menu yet. Instead, run this action in [**Settings** > **Tools** > **Actions**](https://my.home-assistant.io/redirect/tools_actions/), then try to add the integration again and open the [log](https://my.home-assistant.io/redirect/logs/). The action also logs `glocaltokens`, the library the integration uses to sign in:
-
-```yaml
-action: logger.set_level
-data:
-  custom_components.google_home: debug
-  glocaltokens: debug
-```
-
-!!! warning "Remove secrets before sharing logs"
-
-    Debug logs can contain your email address, tokens and the IP addresses of your devices. Replace them with `xxx` before you post the log.
+If that doesn't help, see [Still stuck](#still-stuck). Some sections ask you to [collect debug logs](#collect-debug-logs) to find the cause.
 
 ## Setup fails
 
@@ -28,11 +18,11 @@ When you [sign in again](#sign-in-again), the form shows these errors too.
 
 ### "Username or password is incorrect"
 
-Older versions of the integration signed in with an app password, which Google rejects for many accounts. [Update the integration](https://github.com/leikoilja/ha-google-home/releases/latest) and use [browser sign-in](installation.md#browser-sign-in) instead.
+[Update the integration](https://github.com/leikoilja/ha-google-home/releases/latest) and use [browser sign-in](installation.md#browser-sign-in). Older versions of the integration signed in with an app password, which Google rejects for many accounts.
 
 ### "Google didn't accept the cookie"
 
-The `oauth_token` cookie expires within minutes and works only once. Close the private window and repeat [browser sign-in](installation.md#browser-sign-in) from step 1, then paste the new cookie straight away. Copy the whole value, starting with `oauth2_4/`.
+Close the private window and repeat [browser sign-in](installation.md#browser-sign-in) from step 1, then paste the new cookie straight away. Copy the whole value, starting with `oauth2_4/`. The `oauth_token` cookie expires within minutes and works only once.
 
 ### "Google didn't accept the master token"
 
@@ -40,7 +30,7 @@ Check that you pasted the token exactly as you got it. If it was correct before 
 
 ### "Google didn't accept the sign-in"
 
-Google refused the cookie or master token for a reason that the integration doesn't know or without a reason, or it answered in a way that the integration doesn't understand. Open the [log](https://my.home-assistant.io/redirect/logs/) and find the warning that starts with `Failed to sign in`; Google's reason, if it gave one, is at the end. [Open an issue](https://github.com/leikoilja/ha-google-home/issues/new/choose) with that line.
+Google refused the cookie or master token for a reason that the integration doesn't know or without a reason, or it answered in a way that the integration doesn't understand. Open the [log](https://my.home-assistant.io/redirect/logs/) and find the warning that starts with `Failed to sign in`; Google's reason, if it gave one, is at the end. [Open an issue](https://github.com/leikoilja/ha-google-home/issues/new/choose) with that line, after you replace any email address or token in it with `xxx`.
 
 ### "Couldn't reach Google"
 
@@ -83,54 +73,50 @@ Version 1.13 and older saved the email address you typed when you set up the int
 
 The integration adds only Google Cast devices, such as Google speakers and displays. Lights, plugs, thermostats and other devices in your Google Home app don't appear; see [Other Google Home devices](other-integrations.md#other-google-home-devices).
 
-If you signed in with a Google Workspace account, such as many work and school accounts, it can't be a member of your home: [Google doesn't allow inviting Workspace accounts](https://support.google.com/googlehome/answer/9155535). Sign in with a Gmail account, one ending in `@gmail.com`, that is a member of your home instead. Some users with personal Google accounts using non-Gmail addresses have also reported missing devices; [switching to a Gmail account resolved the problem](https://github.com/leikoilja/ha-google-home/issues/1014#issuecomment-4466736100).
-
 The Google account you signed in with must be a member of the home your devices belong to. Open the Google Home app with that account and check that the devices are listed. If not, [invite the account](https://support.google.com/googlenest/answer/9155535) to your home and reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**.
 
-If Google didn't give the integration your devices when it started, for example because Google was busy, the integration starts without devices, and the log shows `Failed to fetch Google's device list` with Google's reason. The integration asks Google again until it gets your devices. The minimum retry delay grows from 1 minute to 20 minutes; the first [update](configuration.md#change-the-update-interval) after the delay makes the attempt, so actual gaps can be longer. To ask Google straight away, reload the integration.
+If you signed in with a Google Workspace account, such as many work and school accounts, it can't be a member of your home: [Google doesn't allow inviting Workspace accounts](https://support.google.com/googlehome/answer/9155535). Sign in with a Gmail account, one ending in `@gmail.com`, that is a member of your home instead. Some users with personal Google accounts using non-Gmail addresses have also reported missing devices; [switching to a Gmail account resolved the problem](https://github.com/leikoilja/ha-google-home/issues/1014#issuecomment-4466736100).
+
+If Google didn't give the integration your devices when it started, for example because Google was busy, the integration starts without devices, and the log shows `Failed to fetch Google's device list` with Google's reason at the end. The integration keeps asking Google by itself: after each failed attempt it waits longer, up to 20 minutes, and asks again at the first [update](configuration.md#change-the-update-interval) after that wait, so a long update interval makes the wait longer.
+
+- If the reason is 429, a 5xx code such as 503, `RESOURCE_EXHAUSTED` or `UNAVAILABLE`, Google is busy, has a temporary problem or is limiting requests: wait.
+- If `UNAVAILABLE` doesn't go away, check that Home Assistant can reach Google; see ["Couldn't reach Google"](#couldnt-reach-google).
+
+Once the cause is fixed, you can reload the integration to ask Google straight away.
 
 ### No alarms or timers sensors
 
-The integration adds the alarms sensor, timers sensor, Do Not Disturb switch and alarm volume for a device once the device answers. Until then, a device that is offline, or that doesn't support these features, has only a device sensor and a reboot button.
+The integration adds the alarms sensor, timers sensor, Do Not Disturb switch and alarm volume for a device once the device answers. Until then, a device that is offline, or that doesn't support these features, has only a device sensor and a reboot button. Check the device sensor:
 
-When the device answers, the integration adds the missing entities, unless it has found that the device has none of these features:
-
-- If the device sensor shows an IP address, this happens at the next update.
-- If the device sensor is unavailable because the device hasn't answered 5 updates in a row, the integration still asks it at its known IP address at every update, so this happens at the first update it answers; see [A device stops updating](#a-device-stops-updating).
-- If the device sensor is unavailable because the integration doesn't know the device's IP address, it gets the address from the device's mDNS announcements, if Home Assistant receives them, for example when the device comes back online, and asks the device at the next update. Otherwise, it looks for the device when it next asks Google for your devices, normally at the first update 20 minutes after it last asked. It looks with mDNS and, if the device still has no address, at your [known hosts](configuration.md#add-devices-on-another-network).
+- **It shows an IP address:** the entities appear at the next update the device answers. If they don't, the device may have [no alarms and timers](#devices-without-alarms-and-timers).
+- **It's unavailable on all your devices:** first check that Home Assistant can reach them on your network; see [Home Assistant can't reach your devices](#device-offline-or-not-compatible). For other causes, see [When entities are unavailable](entities.md#when-entities-are-unavailable).
+- **It's unavailable on this device:** make sure the device is on and connected to your network. The entities appear at the first update it answers. If the integration doesn't know the device's IP address, it gets it from the device's mDNS announcements, if Home Assistant receives them. Otherwise, it looks for the device, also at your [known hosts](configuration.md#add-devices-on-another-network), when it next asks Google for your devices, at the first [update](configuration.md#change-the-update-interval) at least 20 minutes after it last asked.
 
 If you don't want to wait, make sure the device is online, then reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. If that doesn't help, restart the Google Home device and then Home Assistant.
 
 #### Devices without alarms and timers
 
-Some Cast devices, such as Chromecast Audio, have no alarms, timers, Do Not Disturb or alarm volume. Once the integration finds that a device has none of these features, it stops asking the device for them. The device keeps only its device sensor and reboot button. If it had the other entities, they become unavailable. The integration still asks the device for its information at each update, to see whether it answers: once it hasn't answered 5 updates in a row, its device sensor and reboot button are unavailable until it answers with anything other than "not found".
+Some Cast devices, such as Chromecast Audio, have no alarms, timers, Do Not Disturb or alarm volume. Such a device keeps only its device sensor and reboot button. If it had the other entities, they become unavailable.
 
-The integration decides this from how the device answers, not from a list of models:
+If this happens to a device that has alarms and timers, or a device gains these features, make sure the device is online, then reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. The integration adds the entities once the device answers for them. The integration checks the device again only when it starts, after you reload it or restart Home Assistant, so restarting the device or running `google_home.refresh_devices` doesn't bring them back.
 
-- The device answers "not found" when asked for its alarms, and still does at an update at least 10 minutes later. A device that is starting answers "not found" for a while too, so one answer isn't enough.
-- In that later update, the device's information lists its features without Google Assistant.
+??? note "Advanced: how the integration recognizes these devices"
 
-Until then, the integration keeps asking the device on every update, even while it doesn't answer, for example while it restarts.
+    The integration finds that a device has none of these features from how it answers, not from a list of models: the device still answers "not found" when asked for its alarms at least 10 minutes after it first did, and its information lists its features without Google Assistant. A device that is starting answers "not found" for a while too, so until both are true, the integration keeps asking the device for alarms at every update, even while it doesn't answer. After a reload, a device that still answers this way is recognized again at least 10 minutes later.
 
-When it stops asking a device, the [debug log](#collect-debug-logs) shows a line like this, with your device's name and model:
+    Once it has recognized such a device, it asks the device only for its information at each update, to see whether it answers; see [When entities are unavailable](entities.md#when-entities-are-unavailable). A firmware update that adds these features doesn't make it check again; reload the integration.
 
-```
-Stereo (hardware='Chromecast Audio') still answers 404 for alarms after at least 10 minutes, and its info lists its features without Google Assistant. It won't be asked for alarms, timers and settings until the integration is reloaded.
-```
+    When the integration stops asking a device, the [debug log](#collect-debug-logs) shows a line like this, with your device's name and model:
 
-The integration checks such a device again only when it starts: when Home Assistant restarts, or when you reload the integration. While it runs, it doesn't ask the device for these features again, even if the device restarts or a firmware update adds them. The `google_home.refresh_devices` action doesn't check it again either.
+    ```
+    Stereo (hardware='Chromecast Audio') still answers 404 for alarms after at least 10 minutes, and its info lists its features without Google Assistant. It won't be asked for alarms, timers and settings until the integration is reloaded.
+    ```
 
-If the integration stopped asking a device that has alarms and timers, or a device gains these features, make sure the device is online, then reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. The integration asks the device as usual again and adds the entities once it answers. If its alarms still answer "not found" 10 minutes later, and its information still lists no Google Assistant, the integration stops asking it again.
+### Home Assistant can't reach your devices {#device-offline-or-not-compatible}
 
-### Device offline or not compatible
+If all your devices have only a device sensor and a reboot button, and both are unavailable, or all their entities became unavailable after they worked, first check that Home Assistant can find and reach the devices on your network. Entities can also be unavailable for other reasons, for example once Google no longer lists a device; see [When entities are unavailable](entities.md#when-entities-are-unavailable).
 
-If the debug log shows this message for **all** of your devices, Home Assistant can't find them on your network:
-
-```
-Failed to fetch timers/alarms information from device Kitchen. We could not determine its IP address, the device is either offline or is not compatible Google Home device. Will try again later.
-```
-
-The integration finds your devices on your network with multicast DNS (mDNS) and then talks to them directly. Only signing in and getting device tokens go through Google. Check that:
+The integration finds your devices with multicast DNS (mDNS) and then talks to them directly. Only signing in and getting device tokens go through Google. Check that:
 
 - Home Assistant and the devices are on the same network.
 - If Home Assistant runs in Docker, the container uses `host` network mode.
@@ -138,25 +124,43 @@ The integration finds your devices on your network with multicast DNS (mDNS) and
 
 If mDNS can't reach your devices but Home Assistant can reach them on TCP port 8443, add their IP addresses as [known hosts](configuration.md#add-devices-on-another-network) instead.
 
-If only some devices show the message, those devices are offline or don't support this integration.
+If Home Assistant can't find a device's IP address, the [debug log](#collect-debug-logs) shows this message for it once, after the integration starts. To see it, enable debug logging, then reload the integration:
+
+```
+Failed to fetch timers/alarms information from device Kitchen. We could not determine its IP address, the device is either offline or is not compatible Google Home device. Will try again later.
+```
+
+If only some devices are affected, check that Home Assistant can discover and reach those devices too.
 
 ## A device stops updating
 
-If all entities of a device are unavailable, including its device sensor, one possible cause is that the device hasn't answered 5 updates in a row. To check, [collect debug logs](#collect-debug-logs) for a few updates while the entities are unavailable. For a device that doesn't answer, each update logs a line such as `Failed to connect to Kitchen device. The device is probably offline.` or `Kitchen device timed out while performing a request to it`. For a [device without alarms and timers](#devices-without-alarms-and-timers), which is asked only for its information, the line is `Kitchen didn't answer when asked for its info`. If debug logging was already on when the entities became unavailable, the log also has this line, which appears only once:
+### All entities of a device are unavailable
+
+Check that the device is on and connected to your network. The entities become unavailable once the device hasn't answered 5 updates in a row, and come back at the next update it answers with anything other than "not found". A speaker that is starting answers "not found" for a while. See [When entities are unavailable](entities.md#when-entities-are-unavailable).
+
+- If they become unavailable for a moment while a speaker restarts and you use a short update interval, [increase the interval](configuration.md#change-the-update-interval).
+- If only the alarms sensor, timers sensor, switch and alarm volume are unavailable while the device sensor shows an IP address, the integration may have found that the device has [no alarms and timers](#devices-without-alarms-and-timers).
+- An alarms or timers sensor on its own also shows `unavailable` when nothing is coming up; see [Alarms sensor](entities.md#alarms-sensor).
+- If the entities of all your devices are unavailable, check that Home Assistant can still reach them on your network; see [Home Assistant can't reach your devices](#device-offline-or-not-compatible). They're also all unavailable after an update fails, which can happen while the integration gets a device a new token; see [Alarms, timers or settings stop changing](#alarms-timers-or-settings-stop-changing).
+
+To check that the device doesn't answer, [collect debug logs](#collect-debug-logs) for a few updates while the entities are unavailable. For a device that doesn't answer, each update logs a line such as `Failed to connect to Kitchen device. The device is probably offline.` or `Kitchen device timed out while performing a request to it`. For a [device without alarms and timers](#devices-without-alarms-and-timers), which is asked only for its information, the line is `Kitchen didn't answer when asked for its info`, and there are no lines that start with `Requesting endpoint` for the device. If debug logging was already on when the entities became unavailable, the log also has this line, which appears only once:
 
 ```
 Kitchen didn't answer 5 updates in a row. Its entities are unavailable until it answers with something other than "not found".
 ```
 
-Check that the device is on and connected to your network. The entities come back at the next update it answers with anything other than "not found". If they become unavailable for a moment while a speaker restarts and you use a short update interval, [increase the interval](configuration.md#change-the-update-interval). If only the alarms sensor, timers sensor, switch and alarm volume are unavailable while the device sensor shows an IP address, the integration may have found that the device has [no alarms and timers](#devices-without-alarms-and-timers). The debug log then has no lines that start with `Requesting endpoint` for the device: the integration stopped asking it for alarms, though it still asks for its information at each update. An alarms or timers sensor on its own also shows `unavailable` when nothing is coming up; see [Alarms sensor](entities.md#alarms-sensor).
+### Alarms, timers or settings stop changing
 
 If a device's alarms, timers and settings stop changing in Home Assistant while its entities stay available, check the `available` attribute of its [device sensor](entities.md#device-sensor). If it's `false` while the device is on, the [debug log](#collect-debug-logs) shows why. A line such as `Kitchen rejected its token` means that the device refuses the token the integration has for it.
 
-A device's token can change, for example when the device restarts. The integration then gets the new token from Google straight away. If Google can't give it, the device's entities keep the values they had, and the integration asks Google again until it can. The minimum retry delay grows from 1 minute to 20 minutes; the first [update](configuration.md#change-the-update-interval) after the delay makes the attempt, so actual gaps can be longer. If Google can't be reached at all, that update fails, which makes every entity of the integration unavailable until the next update.
+A device's token can change, for example when the device restarts. The integration then gets the new token from Google straight away. If Google can't give it, the device's entities keep the values they had. The integration keeps asking Google by itself: after each failed attempt it waits longer, up to 20 minutes, and asks again at the first [update](configuration.md#change-the-update-interval) after that wait, so a long update interval makes the wait longer. If Google can't be reached at all, the update fails, which makes every entity of the integration unavailable until the next update.
 
-To find out why Google didn't give the token, open the [log](https://my.home-assistant.io/redirect/logs/) and find the error that starts with `Failed to fetch Google's device list`. Google's reason is at the end, such as 429 when Google limits requests or 503 when it's busy; the integration keeps asking by itself. If there is no such error, check that Home Assistant is connected to the internet; see ["Couldn't reach Google"](#couldnt-reach-google).
+If Home Assistant asks you to [sign in again](#sign-in-again), do that first. Otherwise, to find out why Google didn't give the token, open the [log](https://my.home-assistant.io/redirect/logs/) and find the error that starts with `Failed to fetch Google's device list`. Google's reason is at the end:
 
-To ask Google straight away, reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**.
+- If the reason is 429, a 5xx code such as 503, `RESOURCE_EXHAUSTED` or `UNAVAILABLE`, Google is busy, has a temporary problem or is limiting requests: wait, as the integration keeps asking by itself.
+- If `UNAVAILABLE` doesn't go away, or there is no such error, check that Home Assistant can reach Google; see ["Couldn't reach Google"](#couldnt-reach-google).
+
+Once the cause is fixed, you can reload the integration to ask Google straight away: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**.
 
 ## An action or setting fails
 
@@ -178,10 +182,32 @@ Turning Do Not Disturb on or off, setting the alarm volume, pressing Reboot and 
 
 - "Couldn't reach Living Room. Check that it's on and connected to your network, then try again". The device refused the connection or your network reports it as unreachable, or Home Assistant doesn't know its IP address.
 - "Living Room didn't confirm that it did this: it didn't answer in time, or its answer was cut off. Check that it's online and try again". The device didn't answer within about 5 seconds, or didn't even accept the connection in that time, or it closed the connection or stopped its answer partway. The next update shows the device's current Do Not Disturb setting and alarm volume.
-- "Living Room rejected its token, and getting a new one from Google didn't help. The integration keeps asking Google for one, so try again later". The integration has already asked Google for a new token. It asks again at the next update or, if Google didn't answer, at the first update after a wait that grows from 1 minute to 20 minutes, so try again after that; see [A device stops updating](#a-device-stops-updating). If Home Assistant asks you to [sign in again](#sign-in-again), do that first.
+- "Living Room rejected its token, and getting a new one from Google didn't help. The integration keeps asking Google for one, so try again later". The integration has already asked Google for a new token. It asks again at the next update or, if Google didn't answer, at the first update after a wait that grows from 1 minute to 20 minutes, so try again after that; see [Alarms, timers or settings stop changing](#alarms-timers-or-settings-stop-changing). If Home Assistant asks you to [sign in again](#sign-in-again), do that first.
 - "Living Room answered “not found”. It may still be starting up, so try again later, or it may not support this".
 - "Couldn't do this on Living Room. For details, see the Home Assistant log". The device answered with another error, or the request failed for another reason. Open the [log](https://my.home-assistant.io/redirect/logs/) to see what it was.
 - "These devices didn't confirm that they'll reboot: Bedroom, Kitchen. Check that they're online and try again later". Reboot device gives this when more than one device fails. It still reboots every device that answers.
+
+## Collect debug logs
+
+Debug logs show what the integration is doing. Attach them when you [open an issue](https://github.com/leikoilja/ha-google-home/issues/new/choose).
+
+1. Go to **Settings** > **Devices & services** > **Google Home**.
+2. Open the **⋮** menu and select **Enable debug logging**.
+3. Reproduce the problem.
+4. Open the **⋮** menu again and select **Disable debug logging**. Your browser downloads the log file.
+
+If setup fails, the integration has no **⋮** menu yet. Instead, run this action in [**Settings** > **Tools** > **Actions**](https://my.home-assistant.io/redirect/tools_actions/), then try to add the integration again and open the [log](https://my.home-assistant.io/redirect/logs/). The action also logs `glocaltokens`, the library the integration uses to sign in:
+
+```yaml
+action: logger.set_level
+data:
+  custom_components.google_home: debug
+  glocaltokens: debug
+```
+
+!!! warning "Remove secrets before sharing logs"
+
+    Debug logs can contain your email address, tokens and the IP addresses of your devices. Replace them with `xxx` before you post the log.
 
 ## Still stuck
 
