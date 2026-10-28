@@ -11,7 +11,7 @@ Each Google Home device gets the entities below. The examples use a device named
 | Alarm volume          | `number.living_room_alarm_volume`   | Sets the alarm volume, from 0 to 100%                     |
 | Reboot button         | `button.living_room_reboot`         | Reboots the device                                        |
 
-The alarms sensor, timers sensor, switch and alarm volume are added once Home Assistant can reach the device. If a device has only a device sensor and a reboot button, see [No alarms or timers sensors](troubleshooting.md#no-alarms-or-timers-sensors). A device without alarms and timers, such as a Chromecast Audio, doesn't get these four entities.
+The alarms sensor, timers sensor, switch and alarm volume are added once the device answers successfully. If a device has only a device sensor and a reboot button, see [No alarms or timers sensors](troubleshooting.md#no-alarms-or-timers-sensors). A device without alarms and timers, such as a Chromecast Audio, doesn't get these four entities.
 
 Entities become unavailable, for example, while a device is unplugged or after you remove it from the Google Home app. See [When entities are unavailable](#when-entities-are-unavailable).
 
@@ -83,15 +83,13 @@ Timers have no `snoozed` status. If you snooze a ringing timer, it restarts and 
 
 The state is the device's IP address on your network. If no IP address is available for the device, or the device hasn't answered 5 updates in a row, the sensor is unavailable and the device details listed below are hidden. The sensor appears under **Diagnostic** on the device page.
 
-| Attribute     | Description                                                                                                                                                                                                                    |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `device_id`   | Google's ID for the device                                                                                                                                                                                                     |
-| `device_name` | Name of the device in the Google Home app                                                                                                                                                                                      |
-| `ip_address`  | IP address of the device                                                                                                                                                                                                       |
-| `available`   | `true` if the device answered the last request for its alarms, settings or a reboot successfully. `false` if it didn't answer, or answered with an error, such as "not found" from a device that is starting or has no alarms. |
-| `auth_token`  | Token Home Assistant uses to talk to the device                                                                                                                                                                                |
-
-A [device without alarms and timers](troubleshooting.md#devices-without-alarms-and-timers) is asked only for its information, which `available` doesn't reflect, so for such a device it can be `true` or `false` while the device is on. Whether its device sensor is available shows whether the device answers.
+| Attribute     | Description                                                                                                                                                                                                          |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `device_id`   | Google's ID for the device                                                                                                                                                                                           |
+| `device_name` | Name of the device in the Google Home app                                                                                                                                                                            |
+| `ip_address`  | IP address of the device                                                                                                                                                                                             |
+| `available`   | `true` if, at the last update, the device answered successfully when asked for its alarms, or else when asked for its information, which needs no token. `false` otherwise, for example while the device is offline. |
+| `auth_token`  | Token Home Assistant uses to talk to the device                                                                                                                                                                      |
 
 !!! warning
 
@@ -115,7 +113,7 @@ target:
   entity_id: button.living_room_reboot
 ```
 
-The button is unavailable until Home Assistant finds the device on your network, and once the device hasn't answered 5 updates in a row. If the device goes offline, pressing the button before then fails with an error; see [If a setting or reboot fails](#if-a-setting-or-reboot-fails). The `available` attribute of the [device sensor](#device-sensor) shows whether the device answered the last request for its alarms, settings or a reboot successfully.
+The button is unavailable until Home Assistant finds the device on your network, and once the device hasn't answered 5 updates in a row. If the device goes offline, pressing the button before then fails with an error; see [If a setting or reboot fails](#if-a-setting-or-reboot-fails). The `available` attribute of the [device sensor](#device-sensor) shows whether the device answered successfully at the last update.
 
 Not every device supports rebooting. A device can accept the request, so there's no error and the log shows "Successfully asked Living Room to reboot.", even when it doesn't restart. If that happens, [reboot it from the Google Home app or unplug it for a minute](https://support.google.com/googlehome/answer/7072490).
 

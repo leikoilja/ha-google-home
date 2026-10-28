@@ -76,6 +76,7 @@ def accepting(
     """Return a session to which every device answers REPLY with this token, and 401 to any other.
 
     If given, before_answer is awaited with the token sent before the device answers.
+    Asked for its info, which needs no token, every device answers 200.
     """
 
     def request(
@@ -96,7 +97,14 @@ def accepting(
         response.__aenter__.side_effect = enter
         return response
 
-    return Mock(request=Mock(side_effect=request))
+    def get(_url: str, **_: object) -> MagicMock:
+        response = MagicMock()
+        response.__aenter__.return_value = MagicMock(
+            status=HTTPStatus.OK, read=AsyncMock(return_value=b"{}")
+        )
+        return response
+
+    return Mock(request=Mock(side_effect=request), get=Mock(side_effect=get))
 
 
 def tokens_sent(
@@ -510,7 +518,8 @@ def two_devices_one_rejecting(kitchen_reply: dict[str, object]) -> Mock:
     """Return a session to which the device at 10.0.0.2 answers kitchen_reply and the one at 10.0.0.3 answers 401.
 
     The device at 10.0.0.3 rejects every token, as if it had a new one that Google
-    can't give while it can't be reached.
+    can't give while it can't be reached. Asked for their info, which needs no
+    token, both answer 200.
     """
 
     def request(_method: str, url: str, **_: object) -> MagicMock:
@@ -521,7 +530,7 @@ def two_devices_one_rejecting(kitchen_reply: dict[str, object]) -> Mock:
         )
         return response
 
-    return Mock(request=Mock(side_effect=request))
+    return Mock(request=Mock(side_effect=request), get=accepting(OLD_TOKEN).get)
 
 
 def asked(session: Mock, since: int, address: str) -> list[str]:

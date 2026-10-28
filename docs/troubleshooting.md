@@ -86,11 +86,11 @@ Once the cause is fixed, you can reload the integration to ask Google straight a
 
 ### No alarms or timers sensors
 
-The integration adds the alarms sensor, timers sensor, Do Not Disturb switch and alarm volume for a device once the device answers. Until then, a device that is offline, or that doesn't support these features, has only a device sensor and a reboot button. Check the device sensor:
+The integration adds the alarms sensor, timers sensor, Do Not Disturb switch and alarm volume for a device once the device answers successfully. Until then, a device that is offline, or that doesn't support these features, has only a device sensor and a reboot button. Check the device sensor:
 
-- **It shows an IP address:** the entities appear at the next update the device answers. If they don't, the device may have [no alarms and timers](#devices-without-alarms-and-timers).
+- **It shows an IP address:** the entities appear at the next update the device answers successfully. If they don't, the device may have [no alarms and timers](#devices-without-alarms-and-timers).
 - **It's unavailable on all your devices:** first check that Home Assistant can reach them on your network; see [Home Assistant can't reach your devices](#device-offline-or-not-compatible). For other causes, see [When entities are unavailable](entities.md#when-entities-are-unavailable).
-- **It's unavailable on this device:** make sure the device is on and connected to your network. The entities appear at the first update it answers. If the integration doesn't know the device's IP address, it gets it from the device's mDNS announcements, if Home Assistant receives them. Otherwise, it looks for the device, also at your [known hosts](configuration.md#add-devices-on-another-network), when it next asks Google for your devices, at the first [update](configuration.md#change-the-update-interval) at least 20 minutes after it last asked.
+- **It's unavailable on this device:** make sure the device is on and connected to your network. The entities appear at the first update it answers successfully. If the integration doesn't know the device's IP address, it gets it from the device's mDNS announcements, if Home Assistant receives them. Otherwise, it looks for the device, also at your [known hosts](configuration.md#add-devices-on-another-network), when it next asks Google for your devices, at the first [update](configuration.md#change-the-update-interval) at least 20 minutes after it last asked.
 
 If you don't want to wait, make sure the device is online, then reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. If that doesn't help, restart the Google Home device and then Home Assistant.
 
@@ -151,7 +151,7 @@ Kitchen didn't answer 5 updates in a row. Its entities are unavailable until it 
 
 ### Alarms, timers or settings stop changing
 
-If a device's alarms, timers and settings stop changing in Home Assistant while its entities stay available, check the `available` attribute of its [device sensor](entities.md#device-sensor). If it's `false` while the device is on, the [debug log](#collect-debug-logs) shows why. A line such as `Kitchen rejected its token` means that the device refuses the token the integration has for it.
+If a device's alarms, timers and settings stop changing in Home Assistant while its entities stay available, [collect debug logs](#collect-debug-logs) for a few updates. A line such as `Kitchen rejected its token` means that the device refuses the token the integration has for it.
 
 A device's token can change, for example when the device restarts. The integration then gets the new token from Google straight away. If Google can't give it, the device's entities keep the values they had. The integration keeps asking Google by itself: after each failed attempt it waits longer, up to 20 minutes, and asks again at the first [update](configuration.md#change-the-update-interval) after that wait, so a long update interval makes the wait longer. If Google can't be reached at all, the update fails, which makes every entity of the integration unavailable until the next update.
 

@@ -976,7 +976,9 @@ def test_poll_keeps_alarms_and_timers_when_fetch_fails(
 
     An error would fail the update of every device.
     """
-    client = GlocaltokensApiClient(Mock(), Mock(), master_token=MASTER_TOKEN)
+    # Its info doesn't answer either
+    session = Mock(get=Mock(side_effect=TimeoutError()))
+    client = GlocaltokensApiClient(Mock(), session, master_token=MASTER_TOKEN)
     request = AsyncMock(return_value=response)
     client.request = request  # type: ignore[method-assign]
     device = set_alarms_and_timers(

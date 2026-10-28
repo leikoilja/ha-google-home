@@ -385,7 +385,7 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
             "device_name": device.name,
             "auth_token": device.auth_token,
             "ip_address": device.ip_address,
-            "available": device.available,
+            "available": device.reachable,
         }
 
 

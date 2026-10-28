@@ -7,10 +7,26 @@ from unittest.mock import AsyncMock, MagicMock, Mock
 from aiohttp import ClientError
 from glocaltokens.client import Device
 from glocaltokens.scanner import NetworkDevice
+import pytest
 
 from custom_components.google_home.api import GlocaltokensApiClient
 from custom_components.google_home.config_flow import GoogleHomeOptionsFlowHandler
 from custom_components.google_home.models import GoogleHomeDevice
+
+from .test_missing_devices import make_client
+from .test_offline_devices import STARTING, device_sensor
+from .test_unsupported_devices import (
+    ALARMS,
+    DND,
+    INFO,
+    NO_ALARMS,
+    SPEAKER,
+    VOLUME,
+    Network,
+    Reply,
+    at,
+    poll,
+)
 
 # A realistic master token: setup checks its length with is_aas_et()
 MASTER_TOKEN = "aas_et/" + "x" * 216
@@ -247,3 +263,44 @@ def test_known_hosts_skip_addresses_mdns_found() -> None:
 
     assert kitchen.ip_address == "10.0.1.5"
     assert office.ip_address == "fd00::2"
+
+
+@pytest.mark.parametrize(
+    ("no_alarms", "replies", "asked"),
+    [
+        pytest.param(False, STARTING, [ALARMS, VOLUME, DND], id="starting"),
+        pytest.param(True, NO_ALARMS, [], id="without-alarms"),
+    ],
+)
+def test_available_attribute_of_device_found_at_known_host(
+    clock: Mock, no_alarms: bool, replies: dict[str, Reply], asked: list[str]
+) -> None:
+    """Use the info that found a device at a known host, rather than asking for it again in that update.
+
+    That info answered 200, so the device is available, though its alarms answer
+    "not found", or it has none. The next update asks for its info as usual.
+    """
+    network = Network()
+    network.replies[SPEAKER] = replies | {
+        INFO: (HTTPStatus.OK, {"device_info": {"cloud_device_id": "device0"}})
+    }
+    client, glocaltokens = make_client(None, session=network.session)
+    client.google_devices = []
+    client.google_devices_fetched = False
+    client.known_hosts = [SPEAKER]
+    if no_alarms:
+        client.unsupported_device_ids.add("device0")
+    coordinator = Mock(data=poll(client, clock, at(0)))
+    assert glocaltokens.get_google_devices.call_count == 1
+    sensor = device_sensor(client, coordinator)
+    assert client.google_devices[0].ip_address == SPEAKER
+
+    assert network.asked(SPEAKER) == [INFO, *asked]
+    assert sensor.extra_state_attributes["available"] is True
+
+    network.replies[SPEAKER][INFO] = HTTPStatus.NOT_FOUND
+    poll(client, clock, at(0, 15))
+    assert network.asked(SPEAKER) == (
+        [INFO] if no_alarms else [ALARMS, INFO, VOLUME, DND]
+    )
+    assert sensor.extra_state_attributes["available"] is False
