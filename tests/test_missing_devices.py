@@ -474,6 +474,8 @@ async def set_up(
         )
         with (
             patch("custom_components.google_home.zeroconf.async_get_instance"),
+            # Browsing needs a real zeroconf instance
+            patch("custom_components.google_home.async_browse_cast_devices"),
             patch("custom_components.google_home.async_get_clientsession"),
             patch.object(hass.config_entries, "async_forward_entry_setups"),
             patch(

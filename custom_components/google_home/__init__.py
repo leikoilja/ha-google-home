@@ -35,6 +35,7 @@ from .const import (
     STARTUP_MESSAGE,
     UPDATE_INTERVAL,
 )
+from .mdns import async_browse_cast_devices
 from .models import GoogleHomeDevice
 from .types import GoogleHomeConfigEntry
 
@@ -101,6 +102,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -
         update_interval=timedelta(seconds=update_interval),
         config_entry=entry,
     )
+    found_devices = glocaltokens_client.found_devices
+    # Not async_request_refresh(), which drops the request when an update that
+    # started too early to fetch for found devices runs longer than its cooldown
+    found_devices.request_update = coordinator.async_refresh
+    entry.async_on_unload(found_devices.async_stop)
+    # Before the first refresh, so the devices that mDNS already knows are found
+    # before setup fetches Google's list, which then covers them
+    async_browse_cast_devices(hass, entry, zeroconf_instance, found_devices)
 
     glocaltokens_client.setting_up = True
     try:
