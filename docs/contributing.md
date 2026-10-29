@@ -62,7 +62,7 @@ uv run pytest --cov
 script/check_coverage
 ```
 
-The first command lists each file's coverage and the lines the tests miss; `176->178` means the tests never go from line 176 to line 178, and `283->exit` that they never leave the function from line 283. The second names each file below 90%. CI adds the table to the workflow summary: open **Details** next to the **Pre-commit** check on your pull request, then select **Summary**. If your change adds code that no test reaches, add a test that checks what the code does, not one that only runs it.
+The first command lists each file's coverage and the lines the tests miss; `176->178` means the tests never go from line 176 to line 178, and `283->exit` that they never leave the function from line 283. The second prints each file's coverage and names each one below 90%. CI adds the table to the workflow summary: open **Details** next to the **Pre-commit** check on your pull request, then select **Summary**. If your change adds code that no test reaches, add a test that checks what the code does, not one that only runs it.
 
 If you add or change a feature, update `en.json`; you do not need to translate it into other languages. Missing strings and keys that became obsolete do not block your PR. Newly added translation keys must exist in English. If the **Translations** check reports “Check for a mistyped key”, correct any spelling mistake or remove the entry if its English key was removed. Placeholder-name mismatches block new or edited text. If the exact text already appeared in the same language file at the base revision, a mismatch produces a warning and Home Assistant uses English instead, even if the key moved.
 
