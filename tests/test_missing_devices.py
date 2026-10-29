@@ -193,7 +193,7 @@ def fetches_in(client: GlocaltokensApiClient, glocaltokens: Mock, updates: int) 
     return int(glocaltokens.get_google_devices.call_count)
 
 
-def update(client: GlocaltokensApiClient) -> list[GoogleHomeDevice]:
+def update(client: GlocaltokensApiClient) -> dict[str, GoogleHomeDevice]:
     """Run one update without asking the devices, and return its devices."""
     client.collect_data_from_endpoints = AsyncMock()  # type: ignore[method-assign]
     return asyncio.run(client.update_google_devices_information())
@@ -250,7 +250,7 @@ def test_scheduled_fetch_fails(
     glocaltokens.get_google_devices.side_effect = error
 
     clock.return_value = FETCH_DEVICES_INTERVAL
-    assert update(client) == devices
+    assert list(update(client).values()) == devices
     assert glocaltokens.get_google_devices.call_count == 1
     assert client.google_devices_fetched
 
@@ -261,7 +261,7 @@ def test_scheduled_fetch_fails(
 
 
 def can_delete(
-    client: GlocaltokensApiClient, devices: list[GoogleHomeDevice], device_id: str
+    client: GlocaltokensApiClient, devices: dict[str, GoogleHomeDevice], device_id: str
 ) -> bool:
     """Ask the integration whether the device with this ID can be deleted."""
     entry = Mock(
@@ -317,9 +317,9 @@ def test_google_lists_no_devices(clock: Mock) -> None:
     glocaltokens.get_google_devices.return_value = []
 
     clock.return_value = FETCH_DEVICES_INTERVAL
-    assert update(client) == []
+    assert update(client) == {}
     assert glocaltokens.get_google_devices.call_count == 1
-    assert can_delete(client, [], "device0")
+    assert can_delete(client, {}, "device0")
 
     clock.return_value = 2 * FETCH_DEVICES_INTERVAL - 1
     assert fetches_in(client, glocaltokens, 3) == 1
@@ -327,7 +327,7 @@ def test_google_lists_no_devices(clock: Mock) -> None:
     # A device is added in the Google Home app
     glocaltokens.get_google_devices.return_value = [found("office", "10.0.0.4")]
     clock.return_value = 2 * FETCH_DEVICES_INTERVAL
-    assert [device.device_id for device in update(client)] == ["office"]
+    assert list(update(client)) == ["office"]
     assert glocaltokens.get_google_devices.call_count == 2
 
 
@@ -387,7 +387,7 @@ def test_fetch_less_often_while_list_unknown_after_token_rejected(
     assert fetch_times(client, glocaltokens, clock, 15) == [
         15 + minutes * MINUTE for minutes in RETRY_MINUTES
     ]
-    assert not can_delete(client, [kitchen], "removed")
+    assert not can_delete(client, {"device0": kitchen}, "removed")
 
 
 @pytest.mark.parametrize("error", NOT_REJECTED)
@@ -423,7 +423,9 @@ def test_unreachable_at_setup() -> None:
 HASS = Mock()
 
 
-def update_entry(client: GlocaltokensApiClient, entry: Mock) -> list[GoogleHomeDevice]:
+def update_entry(
+    client: GlocaltokensApiClient, entry: Mock
+) -> dict[str, GoogleHomeDevice]:
     """Run one update as the coordinator does, and return its devices.
 
     The devices aren't asked, but the update must still reach them.
@@ -431,7 +433,7 @@ def update_entry(client: GlocaltokensApiClient, entry: Mock) -> list[GoogleHomeD
     client.collect_data_from_endpoints = AsyncMock()  # type: ignore[method-assign]
     devices = asyncio.run(async_update_devices(HASS, entry, client))
     client.collect_data_from_endpoints.assert_has_awaits(
-        [call(device) for device in devices if device.ip_address]
+        [call(device) for device in devices.values() if device.ip_address]
     )
     return devices
 
@@ -572,7 +574,7 @@ def test_sign_in_rejected_with_devices(
     entry = Mock()
 
     clock.return_value = FETCH_DEVICES_INTERVAL
-    assert update_entry(client, entry) == devices
+    assert list(update_entry(client, entry).values()) == devices
 
     assert glocaltokens.get_google_devices.call_count == 1
     entry.async_start_reauth.assert_called_once_with(HASS)
@@ -630,7 +632,7 @@ def test_other_fetch_errors_at_setup_dont_ask_to_sign_in(
     glocaltokens.get_google_devices.side_effect = error
     entry = Mock()
 
-    assert update_entry(client, entry) == []
+    assert update_entry(client, entry) == {}
 
     entry.async_start_reauth.assert_not_called()
     assert ("ERROR", f"Failed to fetch Google's device list: {error}") in logged(caplog)
@@ -701,7 +703,7 @@ def test_ask_to_sign_in_after_failed_update(clock: Mock) -> None:
     glocaltokens.get_google_devices.side_effect = answered(
         HTTPStatus.SERVICE_UNAVAILABLE
     )
-    assert update_entry(client, entry) == [kitchen]
+    assert list(update_entry(client, entry).values()) == [kitchen]
     entry.async_start_reauth.assert_called_once_with(HASS)
 
 
@@ -723,7 +725,7 @@ def test_keep_polled_data_after_token_rejected() -> None:
 
     # Google lists both devices again, and neither answers this update
     session.request.side_effect = TimeoutError
-    assert asyncio.run(client.update_google_devices_information()) == [
+    assert list(asyncio.run(client.update_google_devices_information()).values()) == [
         kitchen,
         bedroom,
     ]
@@ -763,7 +765,7 @@ def test_keep_polled_data_when_list_fetched_again(clock: Mock) -> None:
     kitchen.set_alarm_volume(70)
 
     clock.return_value = FETCH_DEVICES_INTERVAL
-    [device] = asyncio.run(client.update_google_devices_information())
+    [device] = asyncio.run(client.update_google_devices_information()).values()
 
     assert device is kitchen
     assert not device.available
@@ -870,7 +872,7 @@ def test_add_entities_once_device_answers() -> None:
     kitchen = GoogleHomeDevice("kitchen", "Kitchen", "token", "10.0.0.2")
     bedroom = GoogleHomeDevice("bedroom", "Bedroom", "token")
     bedroom.available = False
-    coordinator = Mock(data=[kitchen, bedroom])
+    coordinator = Mock(data={"kitchen": kitchen, "bedroom": bedroom})
 
     listener, added = add_entities(
         coordinator, GoogleHomeAlarmsSensor, GoogleHomeTimersSensor
@@ -893,14 +895,14 @@ def test_add_device_sensor_for_device_found_later() -> None:
     kitchen = GoogleHomeDevice("kitchen", "Kitchen", "token")
     kitchen.available = False
     # Setup couldn't reach Google, so it found no devices
-    coordinator = Mock(data=[])
+    coordinator = Mock(data={})
 
     listener, added = add_entities(
         coordinator, GoogleHomeDeviceSensor, needs_answer=False
     )
 
     assert added() == []
-    coordinator.data = [kitchen]
+    coordinator.data = {"kitchen": kitchen}
     listener()
     assert added() == [("kitchen", "device")]
     listener()

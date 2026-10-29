@@ -10,7 +10,7 @@ from custom_components.google_home.number import AlarmVolumeNumber
 def test_set_value_updates_entities() -> None:
     """Show the new volume on every entity as soon as the device answers."""
     device = GoogleHomeDevice("device-id", "Kitchen", "token")
-    coordinator = Mock(data=[device])
+    coordinator = Mock(data={"device-id": device})
     client = Mock(
         update_alarm_volume=AsyncMock(
             side_effect=lambda device, volume: device.set_alarm_volume(volume)

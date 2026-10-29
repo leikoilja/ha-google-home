@@ -119,7 +119,9 @@ def loaded_entry(
     """Return a loaded config entry whose update returned these devices."""
     return Mock(
         state=ConfigEntryState.LOADED,
-        runtime_data=GoogleHomeData(client, Mock(data=devices)),
+        runtime_data=GoogleHomeData(
+            client, Mock(data={device.device_id: device for device in devices})
+        ),
     )
 
 

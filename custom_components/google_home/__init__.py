@@ -133,7 +133,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -
 
 async def async_update_devices(
     hass: HomeAssistant, entry: GoogleHomeConfigEntry, client: GlocaltokensApiClient
-) -> list[GoogleHomeDevice]:
+) -> dict[str, GoogleHomeDevice]:
     """Update the devices, and ask to sign in again while Google rejects the master token.
 
     Without devices, which is always the case at setup, the update fails. Otherwise
@@ -188,7 +188,7 @@ async def async_remove_config_entry_device(
     ):
         return False
     google_ids = {
-        (DOMAIN, device.device_id) for device in entry.runtime_data.coordinator.data
+        (DOMAIN, device_id) for device_id in entry.runtime_data.coordinator.data
     }
     return not device_entry.identifiers & google_ids
 

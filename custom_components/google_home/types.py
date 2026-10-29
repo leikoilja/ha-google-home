@@ -101,7 +101,7 @@ class GoogleHomeData:
     """What a loaded entry keeps: the client and its coordinator."""
 
     client: GlocaltokensApiClient
-    coordinator: DataUpdateCoordinator[list[GoogleHomeDevice]]
+    coordinator: DataUpdateCoordinator[dict[str, GoogleHomeDevice]]
 
 
 type GoogleHomeConfigEntry = ConfigEntry[GoogleHomeData]

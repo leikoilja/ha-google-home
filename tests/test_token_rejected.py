@@ -210,7 +210,7 @@ def test_no_usable_token_after_token_rejected(
 
     glocaltokens.get_google_devices.side_effect = google_answers
 
-    assert asyncio.run(client.update_google_devices_information()) == [
+    assert list(asyncio.run(client.update_google_devices_information()).values()) == [
         kitchen,
         bedroom,
     ]
@@ -219,7 +219,7 @@ def test_no_usable_token_after_token_rejected(
     assert (kitchen.available, bedroom.available) == (False, False)
     assert [alarm.alarm_id for alarm in kitchen.get_sorted_alarms()] == [ALARM_ID]
     assert kitchen.get_alarm_volume() == 70
-    assert not can_delete(client, [kitchen, bedroom], "removed")
+    assert not can_delete(client, {"device0": kitchen, "device1": bedroom}, "removed")
 
     # Google gives tokens they accept by the next update
     glocaltokens.get_google_devices.side_effect = None
@@ -392,8 +392,9 @@ def test_ask_to_sign_in_when_token_fetch_rejected() -> None:
     glocaltokens.get_google_devices.side_effect = rejected()
     entry = Mock()
 
-    assert asyncio.run(async_update_devices(HASS, entry, client)) == (
-        client.google_devices
+    assert (
+        list(asyncio.run(async_update_devices(HASS, entry, client)).values())
+        == client.google_devices
     )
 
     assert glocaltokens.get_google_devices.call_count == 1
@@ -561,7 +562,7 @@ def test_update_devices_between_fetches_while_google_unreachable(
 
     async def run() -> None:
         async with home_assistant(tmp_path) as (hass, entry):
-            coordinator: DataUpdateCoordinator[list[GoogleHomeDevice]] = (
+            coordinator: DataUpdateCoordinator[dict[str, GoogleHomeDevice]] = (
                 DataUpdateCoordinator(
                     hass,
                     logging.getLogger(__name__),
@@ -747,7 +748,7 @@ def test_delete_all_after_token_rejected() -> None:
     client, glocaltokens = make_client("10.0.0.2", session=session)
     [kitchen] = client.google_devices
     sensor = GoogleHomeAlarmsSensor(
-        Mock(data=client.google_devices), client, "device0", "device0", None
+        Mock(data={"device0": kitchen}), client, "device0", "device0", None
     )
 
     assert asyncio.run(sensor.async_delete_all(Mock()))

@@ -84,8 +84,11 @@ def answer_failure(
 class GlocaltokensApiClient(GoogleAccountClient):
     """API client."""
 
-    async def update_google_devices_information(self) -> list[GoogleHomeDevice]:
-        """Retrieve devices from glocaltokens and fetches alarm/timer data from each of the device."""
+    async def update_google_devices_information(self) -> dict[str, GoogleHomeDevice]:
+        """Retrieve devices from glocaltokens and fetches alarm/timer data from each of the device.
+
+        Return the devices by their ID.
+        """
 
         # From here until the next update, whatever asks for Google's list gets it
         # at most once: on schedule, when it's unknown, or for a rejected token
@@ -117,7 +120,7 @@ class GlocaltokensApiClient(GoogleAccountClient):
             ]
         )
 
-        return devices
+        return {device.device_id: device for device in devices}
 
     async def collect_data_from_endpoints(
         self, device: GoogleHomeDevice
