@@ -85,7 +85,7 @@ class GlocaltokensApiClient(GoogleAccountClient):
     """API client."""
 
     async def update_google_devices_information(self) -> dict[str, GoogleHomeDevice]:
-        """Retrieve devices from glocaltokens and fetches alarm/timer data from each of the device.
+        """Ask each device on Google's list for its alarms, timers and settings.
 
         Return the devices by their ID.
         """
