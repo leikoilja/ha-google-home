@@ -58,6 +58,7 @@ def fixture_clock() -> Iterator[Mock]:
         patch(
             "custom_components.google_home.api.monotonic", return_value=0.0
         ) as monotonic,
+        patch("custom_components.google_home.account.monotonic", monotonic),
         patch("custom_components.google_home.mdns.monotonic", monotonic),
     ):
         yield monotonic
