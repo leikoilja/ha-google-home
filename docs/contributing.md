@@ -53,6 +53,8 @@ uv run pytest
 
 Some tests run the integration inside Home Assistant, with fixtures from [pytest-homeassistant-custom-component](https://github.com/MatthewFlamm/pytest-homeassistant-custom-component). Each of its releases requires one exact Home Assistant version, so when you change `homeassistant` in `pyproject.toml`, change `pytest-homeassistant-custom-component` to the release that requires the same version. `uv lock` fails if they don't match.
 
+If you change an entity's name, icon, state, attributes or registry entry on purpose, update the snapshots with `uv run pytest --snapshot-update`, and review the changes under `tests/snapshots/` before you commit.
+
 If you add or change a feature, update `en.json`; you do not need to translate it into other languages. Missing strings and keys that became obsolete do not block your PR. Newly added translation keys must exist in English. If the **Translations** check reports “Check for a mistyped key”, correct any spelling mistake or remove the entry if its English key was removed. Placeholder-name mismatches block new or edited text. If the exact text already appeared in the same language file at the base revision, a mismatch produces a warning and Home Assistant uses English instead, even if the key moved.
 
 Every translation file must contain valid JSON encoded as UTF-8 without a byte order mark (BOM), with unique keys, non-empty string values and the [placeholder syntax described above](#translate-the-integration). CI rejects errors in these rules even in files your PR does not change; the `check json` hook catches duplicate keys.
