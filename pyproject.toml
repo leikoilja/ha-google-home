@@ -9,7 +9,7 @@ license = "MIT"
 requires-python = ">=3.14.2"
 dependencies = [
     "glocaltokens>=1.2.0",
-    "homeassistant==2026.10.0",
+    "homeassistant==2026.11.0b0",
 ]
 
 [dependency-groups]
@@ -20,7 +20,7 @@ dev = [
     "PyGithub>=2.10.0",
     "pylint>=4.1.3",
     "pytest>=9.1.1",
-    "ruff>=0.17.1",
+    "ruff>=0.17.3",
     "types-requests>=2.33.0.20261006",
 ]
 docs = [
@@ -35,7 +35,7 @@ package = false
 # above, plus a few extra rules marked below. Re-sync when bumping homeassistant.
 # Also update the pinned language-list link in docs/contributing.md.
 [tool.ruff]
-required-version = ">=0.16.9"
+required-version = ">=0.17.3"
 target-version = "py314"
 
 [tool.ruff.lint]
@@ -194,6 +194,8 @@ mark-parentheses = false
 "async_timeout".msg = "use asyncio.timeout instead"
 "pytz".msg = "use zoneinfo instead"
 "voluptuous".msg = "use probatio instead"
+"httpx".msg = "use httpx2 instead"
+"httpcore".msg = "use httpcore2 instead"
 "homeassistant.helpers.config_validation.ensure_list".msg = "use probatio.EnsureList() instead"
 "homeassistant.helpers.config_validation.port".msg = "use probatio.Port() instead"
 "homeassistant.helpers.config_validation.has_at_least_one_key".msg = "use probatio.AtLeastOne instead"

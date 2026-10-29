@@ -1,6 +1,7 @@
-"""Tests for migrating and naming config entries and deleting devices."""
+"""Tests for migrating, naming and unloading config entries and deleting devices."""
 
 import asyncio
+from functools import partial
 from unittest.mock import AsyncMock, Mock, patch
 
 from glocaltokens.exceptions import AuthenticationError
@@ -10,6 +11,7 @@ from custom_components.google_home import (
     async_migrate_entry,
     async_name_after_account,
     async_remove_config_entry_device,
+    async_unload_entry,
 )
 from custom_components.google_home.api import GlocaltokensApiClient
 from custom_components.google_home.const import (
@@ -20,6 +22,13 @@ from custom_components.google_home.const import (
     MASTER_TOKEN_TITLE,
 )
 from custom_components.google_home.models import GoogleHomeDevice
+
+# ruff sorts homeassistant as first-party, pylint as third-party
+# pylint: disable=wrong-import-order
+from homeassistant.config_entries import ConfigEntries
+from homeassistant.exceptions import ConfigEntryError
+
+# pylint: enable=wrong-import-order
 
 # A realistic master token: setup checks its length with is_aas_et()
 MASTER_TOKEN = "aas_et/" + "x" * 216
@@ -48,7 +57,7 @@ def test_migrate_clears_unused_password(master_token: str, password: str) -> Non
         }
     )
 
-    assert asyncio.run(async_migrate_entry(hass, entry))
+    asyncio.run(async_migrate_entry(hass, entry))
 
     hass.config_entries.async_update_entry.assert_called_once()
     kwargs = hass.config_entries.async_update_entry.call_args.kwargs
@@ -62,7 +71,7 @@ def test_migrate_skips_current_entries() -> None:
     hass = Mock()
 
     entry = make_entry({"password": "", "master_token": MASTER_TOKEN}, minor_version=2)
-    assert asyncio.run(async_migrate_entry(hass, entry))
+    asyncio.run(async_migrate_entry(hass, entry))
 
     hass.config_entries.async_update_entry.assert_not_called()
 
@@ -182,3 +191,44 @@ def test_keep_devices_when_fetch_fails(caplog: pytest.LogCaptureFixture) -> None
     assert record.levelname == "ERROR"
     assert "BadAuthentication" in record.getMessage()
     assert record.exc_info is None
+
+
+def loaded_hass(platforms_unloaded: bool) -> Mock:
+    """Return a fake Home Assistant with the entry loaded.
+
+    Unloading uses Home Assistant's own unload-or-raise, with the platforms
+    unloading or not.
+    """
+    hass = Mock()
+    hass.data = {DOMAIN: {"entry": {DATA_CLIENT: Mock(), DATA_COORDINATOR: Mock()}}}
+    hass.config_entries.async_unload_platforms = AsyncMock(
+        return_value=platforms_unloaded
+    )
+    hass.config_entries.async_unload_platforms_or_raise = partial(
+        ConfigEntries.async_unload_platforms_or_raise, hass.config_entries
+    )
+    return hass
+
+
+def test_unload_forgets_entry() -> None:
+    """Drop the entry's client and coordinator once its platforms are unloaded."""
+    hass = loaded_hass(platforms_unloaded=True)
+
+    asyncio.run(async_unload_entry(hass, Mock(entry_id="entry")))
+
+    assert hass.data == {DOMAIN: {}}
+
+
+def test_failed_unload_keeps_entry() -> None:
+    """Keep the client and coordinator when a platform fails to unload, and say why.
+
+    The entities still loaded use them, and Home Assistant shows the translated
+    reason on the entry.
+    """
+    hass = loaded_hass(platforms_unloaded=False)
+
+    with pytest.raises(ConfigEntryError) as err:
+        asyncio.run(async_unload_entry(hass, Mock(entry_id="entry")))
+
+    assert err.value.translation_key == "unload_platforms_failed"
+    assert set(hass.data[DOMAIN]["entry"]) == {DATA_CLIENT, DATA_COORDINATOR}

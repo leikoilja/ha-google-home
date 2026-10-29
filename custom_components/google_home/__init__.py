@@ -47,10 +47,12 @@ GENERIC_TITLES = {MASTER_TOKEN_TITLE, BROWSER_TITLE}
 
 async def async_migrate_entry(
     hass: HomeAssistant, entry: GoogleHomeConfigEntry
-) -> bool:
-    """Migrate a config entry saved by an older version."""
-    if entry.version > 1:
-        return False
+) -> None:
+    """Migrate a config entry saved by an older version.
+
+    Home Assistant itself refuses an entry from a newer major version, before
+    calling this.
+    """
     if entry.minor_version < 2:
         data = dict(entry.data)
         # Setup has always saved a master token, and the integration signs in
@@ -59,10 +61,9 @@ async def async_migrate_entry(
             data[CONF_PASSWORD] = ""
             _LOGGER.debug("Cleared the app password, which is no longer used")
         hass.config_entries.async_update_entry(entry, data=data, minor_version=2)
-    return True
 
 
-async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -> bool:
+async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -> None:
     """Set up this integration using UI."""
     if hass.data.get(DOMAIN) is None:
         hass.data.setdefault(DOMAIN, {})
@@ -132,7 +133,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -
         )
 
     entry.async_on_unload(entry.add_update_listener(async_update_entry))
-    return True
 
 
 async def async_update_devices(
@@ -169,13 +169,11 @@ async def async_name_after_account(
         hass.config_entries.async_update_entry(entry, title=email)
 
 
-async def async_unload_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -> bool:
+async def async_unload_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -> None:
     """Handle removal of an entry."""
     _LOGGER.debug("Unloading entry...")
-    unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
-    if unload_ok:
-        hass.data[DOMAIN].pop(entry.entry_id)
-    return unload_ok
+    await hass.config_entries.async_unload_platforms_or_raise(entry, PLATFORMS)
+    hass.data[DOMAIN].pop(entry.entry_id)
 
 
 async def async_remove_config_entry_device(
