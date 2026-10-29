@@ -1,7 +1,13 @@
-"""Tests for Google Home setup validation."""
+"""Tests for signing in and the options.
+
+Each flow runs through Home Assistant's flow manager. The tests that call the flow's
+steps directly check what the flow manager adds nothing to: how glocaltokens
+exchanges the cookie and looks up the address, which error a failed sign-in shows
+and logs, and which accounts count as the entry's.
+"""
 
 import asyncio
-from collections.abc import Iterator
+from collections.abc import AsyncIterator, Iterator
 from contextlib import contextmanager
 from http import HTTPStatus
 import json
@@ -13,6 +19,7 @@ from unittest.mock import AsyncMock, Mock, patch
 
 from glocaltokens.exceptions import AuthenticationError
 import pytest
+from pytest_homeassistant_custom_component.common import MockConfigEntry
 from requests import Response
 from requests.exceptions import (
     ConnectionError as RequestsConnectionError,
@@ -23,14 +30,18 @@ from requests.exceptions import (
 
 from custom_components.google_home.api import GlocaltokensApiClient
 from custom_components.google_home.config_flow import GoogleHomeFlowHandler
-from custom_components.google_home.const import BROWSER_TITLE, MASTER_TOKEN_TITLE
+from custom_components.google_home.const import (
+    BROWSER_TITLE,
+    DOMAIN,
+    MASTER_TOKEN_TITLE,
+)
 
 # ruff sorts homeassistant as first-party, pylint as third-party
 # pylint: disable=wrong-import-order
-from homeassistant.config_entries import ConfigFlowResult
+from homeassistant.config_entries import SOURCE_USER, ConfigEntryState, ConfigFlowResult
+from homeassistant.core import HomeAssistant
+from homeassistant.data_entry_flow import FlowResultType
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
-
-from .test_known_hosts import make_options_flow
 
 # pylint: enable=wrong-import-order
 
@@ -85,52 +96,11 @@ def fixture_client() -> Iterator[Mock]:
         yield client
 
 
-def test_menu(flow: GoogleHomeFlowHandler) -> None:
-    """Offer browser sign-in first, then the master token."""
-    result = asyncio.run(flow.async_step_user())
-
-    assert result["type"] == "menu"
-    assert result["menu_options"] == ["browser", "master_token"]
-
-
-def test_browser_sign_in(flow: GoogleHomeFlowHandler, client: Mock) -> None:
-    """Save the exchanged master token under the email Google returns for it."""
-    client.return_value.async_get_email = AsyncMock(return_value="test@example.com")
-
-    result = asyncio.run(flow.async_step_browser({"oauth_token": " oauth2_4/cookie\n"}))
-
-    assert "username" not in client.call_args.kwargs
-    assert client.call_args.kwargs["oauth_token"] == "oauth2_4/cookie"
-    assert result["type"] == "create_entry"
-    assert result["title"] == "test@example.com"
-    assert result["data"] == {
-        "master_token": MASTER_TOKEN,
-        "username": "test@example.com",
-        "password": "",
-        "android_id": "test-android-id",
-    }
-
-
-@pytest.mark.usefixtures("client")
-def test_browser_sign_in_without_email(flow: GoogleHomeFlowHandler) -> None:
-    """Still save the master token when Google doesn't give the email address."""
-    result = asyncio.run(flow.async_step_browser({"oauth_token": "oauth2_4/cookie"}))
-
-    assert result["type"] == "create_entry"
-    assert result["title"] == "Google Home (browser)"
-    assert result["data"]["username"] == ""
-
-
-def test_browser_cookie_format(flow: GoogleHomeFlowHandler, client: Mock) -> None:
-    """Point out a value that isn't the oauth_token cookie without asking Google."""
-    result = asyncio.run(flow.async_step_browser({"oauth_token": "SAPISID=abc"}))
-
-    assert result["errors"] == {"oauth_token": "oauth-token-format"}
-    client.assert_not_called()
-
-
 def test_browser_sign_in_with_glocaltokens(flow: GoogleHomeFlowHandler) -> None:
-    """Exchange the cookie through glocaltokens with the Android ID that is saved."""
+    """Exchange the cookie through glocaltokens with the Android ID that is saved.
+
+    The address is the one Google gives with the master token.
+    """
     with (
         patch(
             "glocaltokens.client.exchange_token",
@@ -169,38 +139,6 @@ def test_browser_sign_in_rejected_by_google(
         caplog, "Failed to sign in: Google gave no master token: BadAuthentication"
     )
     create_session.assert_not_called()
-
-
-def test_master_token(flow: GoogleHomeFlowHandler, client: Mock) -> None:
-    """Save a master token that Google accepts, named after its account."""
-    client.return_value.async_get_email.return_value = "test@example.com"
-
-    result = asyncio.run(flow.async_step_master_token({"master_token": MASTER_TOKEN}))
-
-    assert result["type"] == "create_entry"
-    assert result["title"] == "test@example.com"
-    assert result["data"]["master_token"] == MASTER_TOKEN
-    assert result["data"]["username"] == "test@example.com"
-
-
-@pytest.mark.usefixtures("client")
-def test_master_token_without_email(flow: GoogleHomeFlowHandler) -> None:
-    """Still save the master token when Google doesn't give the email address."""
-    result = asyncio.run(flow.async_step_master_token({"master_token": MASTER_TOKEN}))
-
-    assert result["type"] == "create_entry"
-    assert result["title"] == "Google Home (master_token)"
-    assert result["data"]["username"] == ""
-
-
-def test_master_token_format(flow: GoogleHomeFlowHandler, client: Mock) -> None:
-    """Point out an incomplete master token without asking Google."""
-    result = asyncio.run(
-        flow.async_step_master_token({"master_token": MASTER_TOKEN[:100]})
-    )
-
-    assert result["errors"] == {"master_token": "master-token-format"}
-    client.assert_not_called()
 
 
 def test_master_token_rejected_by_google(
@@ -281,10 +219,6 @@ ENGLISH = json.loads(
 OLD_MASTER_TOKEN = "aas_et/" + "o" * 216
 OTHER_ACCOUNT_MASTER_TOKEN = "aas_et/" + "a" * 216
 MASTER_TOKEN_INPUT = {"master_token": MASTER_TOKEN}
-SIGN_IN_STEPS = [
-    pytest.param("reauth_browser", {"oauth_token": "oauth2_4/cookie"}, id="browser"),
-    pytest.param("reauth_master_token", MASTER_TOKEN_INPUT, id="master-token"),
-]
 
 
 def start_reauth(
@@ -306,15 +240,9 @@ def start_reauth(
     return asyncio.run(flow.async_step_reauth(entry.data))
 
 
-def sign_in_again(
-    flow: GoogleHomeFlowHandler, step: str, user_input: dict[str, str]
-) -> ConfigFlowResult:
-    """Submit a sign-in form as Home Assistant does when signing in again."""
-    steps = {
-        "reauth_browser": flow.async_step_reauth_browser,
-        "reauth_master_token": flow.async_step_reauth_master_token,
-    }
-    return asyncio.run(steps[step](user_input))
+def sign_in_again(flow: GoogleHomeFlowHandler) -> ConfigFlowResult:
+    """Submit a master token as Home Assistant does when signing in again."""
+    return asyncio.run(flow.async_step_reauth_master_token(MASTER_TOKEN_INPUT))
 
 
 def assert_saved(flow: GoogleHomeFlowHandler, username: str) -> None:
@@ -337,149 +265,6 @@ def assert_not_saved(flow: GoogleHomeFlowHandler) -> None:
     config_entries.async_schedule_reload.assert_not_called()
 
 
-def test_reauth_menu(flow: GoogleHomeFlowHandler) -> None:
-    """Offer both ways to sign in again, naming the entry."""
-    result = start_reauth(flow, "test@example.com", "Home")
-
-    assert result["type"] == "menu"
-    assert result["step_id"] == "reauth"
-    assert result["menu_options"] == ["browser", "master_token"]
-    assert result["description_placeholders"] == {"name": "Home"}
-    menu_text = ENGLISH["config"]["step"]["reauth"]["menu_options"]
-    assert list(menu_text) == result["menu_options"]
-
-
-@pytest.mark.parametrize("method", ["browser", "master_token"])
-def test_reauth_forms_have_text(flow: GoogleHomeFlowHandler, method: str) -> None:
-    """Show the sign-in forms with text of their own, with every placeholder filled in.
-
-    The setup forms say to add the integration again to choose another way to sign
-    in, which can't be done while the entry exists.
-    """
-    start_reauth(flow, "test@example.com", "test@example.com")
-
-    result = asyncio.run(getattr(flow, f"async_step_{method}")())
-
-    assert result["type"] == "form"
-    assert result["step_id"] == f"reauth_{method}"
-    text = ENGLISH["config"]["step"][result["step_id"]]
-    assert text["title"]
-    placeholders = set(re.findall(r"{(\w+)}", text["description"]))
-    assert placeholders <= set(result["description_placeholders"] or {})
-    assert "add the integration again" not in text["description"]
-
-
-@pytest.mark.parametrize(
-    ("options", "interval"), [({}, 15), ({"update_interval": 180}, 180)]
-)
-def test_options_show_default_interval(
-    options: dict[str, object], interval: int
-) -> None:
-    """Fill in 15 seconds for an entry without a saved interval, and show it as the default.
-
-    An entry that saved another interval keeps it, and still sees the default in
-    the label. Home Assistant can't show the label without its placeholder's value.
-    """
-    result = asyncio.run(make_options_flow(options).async_step_init())
-
-    assert result["type"] == "form"
-    schema = result["data_schema"]
-    assert schema is not None
-    # What the form fills in when nothing is entered
-    assert schema({})["update_interval"] == interval
-    text = ENGLISH["options"]["step"]["init"]
-    placeholders = result["description_placeholders"] or {}
-    assert set(re.findall(r"{(\w+)}", json.dumps(text))) <= set(placeholders)
-    label = text["data"]["update_interval"].format_map(placeholders)
-    assert "Default: 15 (seconds)" in label
-
-
-@pytest.mark.parametrize(("step", "user_input"), SIGN_IN_STEPS)
-def test_reauth(
-    flow: GoogleHomeFlowHandler, client: Mock, step: str, user_input: dict[str, str]
-) -> None:
-    """Save the new master token in the entry and reload it, without a new entry."""
-    client.return_value.async_get_email.return_value = "test@example.com"
-    start_reauth(flow, "test@example.com", "Home")
-
-    result = sign_in_again(flow, step, user_input)
-
-    assert result["type"] == "abort"
-    assert result["reason"] == "reauth_successful"
-    assert_saved(flow, "test@example.com")
-
-
-@pytest.mark.parametrize(
-    ("username", "title"),
-    [
-        ("test@example.com", "Home"),
-        # A master token entry of an older version, named after its account
-        # without saving its address
-        ("", "test@example.com"),
-    ],
-)
-@pytest.mark.parametrize(("step", "user_input"), SIGN_IN_STEPS)
-def test_reauth_other_account(
-    flow: GoogleHomeFlowHandler,
-    client: Mock,
-    username: str,
-    title: str,
-    step: str,
-    user_input: dict[str, str],
-) -> None:
-    """Refuse another Google account on the same form, so the entry's can sign in at once.
-
-    Nothing of the other account is saved, then or with the entry's account.
-    """
-    client.return_value.async_get_email.return_value = "other@example.com"
-    client.return_value.async_get_master_token.return_value = OTHER_ACCOUNT_MASTER_TOKEN
-    start_reauth(flow, username, title)
-
-    result = sign_in_again(flow, step, user_input)
-
-    assert result["type"] == "form"
-    assert result["step_id"] == step
-    assert result["errors"] == {"base": "other-account"}
-    assert result["errors"]["base"] in ENGLISH["config"]["error"]
-    assert_not_saved(flow)
-
-    client.return_value.async_get_email.return_value = "test@example.com"
-    client.return_value.async_get_master_token.return_value = MASTER_TOKEN
-    result = sign_in_again(flow, step, user_input)
-
-    assert result["reason"] == "reauth_successful"
-    assert_saved(flow, "test@example.com")
-
-
-@pytest.mark.parametrize(("step", "user_input"), SIGN_IN_STEPS)
-def test_reauth_keeps_android_id(
-    flow: GoogleHomeFlowHandler, step: str, user_input: dict[str, str]
-) -> None:
-    """Sign in again to Google with the entry's Android ID, and save it unchanged."""
-    start_reauth(flow, "test@example.com", "Home")
-
-    with (
-        patch(
-            "glocaltokens.client.exchange_token", return_value={"Token": MASTER_TOKEN}
-        ) as exchange,
-        patch(
-            "glocaltokens.client.perform_oauth", return_value={"Auth": "access"}
-        ) as oauth,
-        # Google's userinfo endpoint, which gives the address, isn't simulated
-        patch.object(
-            GlocaltokensApiClient, "async_get_email", return_value="test@example.com"
-        ),
-    ):
-        result = sign_in_again(flow, step, user_input)
-
-    assert result["reason"] == "reauth_successful"
-    calls = exchange.call_args_list + oauth.call_args_list
-    assert {call.args[2] for call in calls} == {"old-android-id"}
-    config_entries = cast(Mock, flow.hass.config_entries)
-    saved = config_entries.async_update_entry.call_args.kwargs["data"]
-    assert saved["android_id"] == "old-android-id"
-
-
 @pytest.mark.parametrize(
     ("saved", "email", "same"),
     [
@@ -498,7 +283,7 @@ def test_reauth_account_spelled_differently(
     client.return_value.async_get_email.return_value = email
     start_reauth(flow, saved, saved)
 
-    result = sign_in_again(flow, "reauth_master_token", MASTER_TOKEN_INPUT)
+    result = sign_in_again(flow)
 
     if same:
         assert result["reason"] == "reauth_successful"
@@ -517,7 +302,7 @@ def test_reauth_account_in_title(flow: GoogleHomeFlowHandler, client: Mock) -> N
     client.return_value.async_get_email.return_value = "test@example.com"
     start_reauth(flow, "alias@example.com", "test@example.com")
 
-    result = sign_in_again(flow, "reauth_master_token", MASTER_TOKEN_INPUT)
+    result = sign_in_again(flow)
 
     assert result["reason"] == "reauth_successful"
     assert_saved(flow, "test@example.com")
@@ -545,7 +330,7 @@ def test_reauth_account_unknown(
     client.return_value.async_get_email.return_value = email
     start_reauth(flow, username, title)
 
-    result = sign_in_again(flow, "reauth_master_token", MASTER_TOKEN_INPUT)
+    result = sign_in_again(flow)
 
     assert result["reason"] == "reauth_successful"
     assert_saved(flow, saved)
@@ -641,3 +426,422 @@ def test_master_token_in_unknown_format(flow: GoogleHomeFlowHandler) -> None:
         )
 
     assert result["errors"] == {"base": "google-rejected"}
+
+
+# Signing in and the options through Home Assistant's flow manager, which checks the
+# input against the form, starts signing in again and saves the entry
+
+EMAIL = "test@example.com"
+# The master token that signing in gets, other than the entry's
+NEW_MASTER_TOKEN = "aas_et/" + "n" * 216
+SIGN_IN_INPUT = {
+    "browser": {"oauth_token": "oauth2_4/cookie"},
+    "master_token": {"master_token": NEW_MASTER_TOKEN},
+}
+METHODS = list(SIGN_IN_INPUT)
+# Signing in to another account than the entry's, which gives OTHER_ACCOUNT_MASTER_TOKEN
+OTHER_ACCOUNT_INPUT = {
+    "browser": {"oauth_token": "oauth2_4/other-cookie"},
+    "master_token": {"master_token": OTHER_ACCOUNT_MASTER_TOKEN},
+}
+
+
+@pytest.fixture(name="mock_setup_entry")
+async def fixture_mock_setup_entry(hass: HomeAssistant) -> AsyncIterator[AsyncMock]:
+    """Set up and unload an entry without asking Google or the speakers."""
+    with (
+        patch(
+            "custom_components.google_home.async_setup_entry", return_value=True
+        ) as setup_entry,
+        patch("custom_components.google_home.async_unload_entry", return_value=True),
+    ):
+        yield setup_entry
+        # Home Assistant unloads it when it stops, after these patches end
+        for entry in hass.config_entries.async_loaded_entries(DOMAIN):
+            assert await hass.config_entries.async_unload(entry.entry_id)
+
+
+@pytest.fixture(name="sign_in")
+def fixture_sign_in() -> Iterator[Mock]:
+    """Fake Google accepting any cookie or master token, as test@example.com's.
+
+    It exchanges a cookie for NEW_MASTER_TOKEN, and gives an access token for any
+    master token. glocaltokens' requests to it are recorded.
+    """
+    with (
+        patch(
+            "glocaltokens.client.exchange_token",
+            return_value={"Token": NEW_MASTER_TOKEN},
+        ) as exchange_token,
+        patch(
+            "glocaltokens.client.perform_oauth", return_value={"Auth": "access"}
+        ) as perform_oauth,
+        # Google's userinfo endpoint, which gives the address, isn't simulated
+        patch(
+            "glocaltokens.client.GLocalAuthenticationTokens.get_email",
+            autospec=True,
+            return_value=EMAIL,
+        ) as get_email,
+    ):
+        yield Mock(
+            exchange_token=exchange_token,
+            perform_oauth=perform_oauth,
+            get_email=get_email,
+        )
+
+
+def sent_to_google(sign_in: Mock) -> list[tuple[str, str]]:
+    """Return the cookie or master token and the Android ID of each request to Google."""
+    return [
+        (call.args[1], call.args[2])
+        for call in sign_in.exchange_token.call_args_list
+        + sign_in.perform_oauth.call_args_list
+    ]
+
+
+async def choose(hass: HomeAssistant, method: str) -> ConfigFlowResult:
+    """Start adding the integration, and choose how to sign in."""
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": SOURCE_USER}
+    )
+    return await hass.config_entries.flow.async_configure(
+        result["flow_id"], {"next_step_id": method}
+    )
+
+
+async def submit(
+    hass: HomeAssistant, result: ConfigFlowResult, user_input: dict[str, str]
+) -> ConfigFlowResult:
+    """Submit the form that the flow shows."""
+    return await hass.config_entries.flow.async_configure(result["flow_id"], user_input)
+
+
+@pytest.mark.usefixtures("enable_custom_integrations", "mock_setup_entry")
+@pytest.mark.parametrize(
+    ("method", "pasted", "email", "title"),
+    [
+        pytest.param("browser", " oauth2_4/cookie\n", EMAIL, EMAIL, id="browser"),
+        pytest.param(
+            "browser", "oauth2_4/cookie", None, BROWSER_TITLE, id="browser-no-email"
+        ),
+        pytest.param(
+            "master_token", f" {NEW_MASTER_TOKEN}\n", EMAIL, EMAIL, id="master-token"
+        ),
+        pytest.param(
+            "master_token",
+            NEW_MASTER_TOKEN,
+            None,
+            MASTER_TOKEN_TITLE,
+            id="master-token-no-email",
+        ),
+    ],
+)
+async def test_sign_in(
+    hass: HomeAssistant,
+    sign_in: Mock,
+    method: str,
+    pasted: str,
+    email: str | None,
+    title: str,
+) -> None:
+    """Save the master token that signing in gets, named after its account if Google gives it.
+
+    Google gets the pasted value without the spaces around it, and the Android ID
+    that is saved with the master token.
+    """
+    sign_in.get_email.return_value = email
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": SOURCE_USER}
+    )
+    assert result["type"] is FlowResultType.MENU
+    assert result["menu_options"] == ["browser", "master_token"]
+
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"], {"next_step_id": method}
+    )
+    assert (result["type"], result["step_id"]) == (FlowResultType.FORM, method)
+    [field] = SIGN_IN_INPUT[method]
+    result = await submit(hass, result, {field: pasted})
+
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    [entry] = hass.config_entries.async_entries(DOMAIN)
+    sent = sent_to_google(sign_in)
+    android_id = sent[0][1]
+    assert entry.title == title
+    assert entry.data == {
+        "master_token": NEW_MASTER_TOKEN,
+        "username": email or "",
+        "password": "",
+        "android_id": android_id,
+    }
+    assert pasted.strip() in {token for token, _ in sent}
+    assert {sent_id for _, sent_id in sent} == {android_id}
+
+
+@pytest.mark.usefixtures("enable_custom_integrations", "mock_setup_entry")
+@pytest.mark.parametrize(
+    ("method", "pasted", "error"),
+    [
+        pytest.param(
+            "browser",
+            {"oauth_token": "SAPISID=abc"},
+            {"oauth_token": "oauth-token-format"},
+            id="oauth-token-format",
+        ),
+        pytest.param(
+            "master_token",
+            {"master_token": NEW_MASTER_TOKEN[:100]},
+            {"master_token": "master-token-format"},
+            id="master-token-format",
+        ),
+    ],
+)
+async def test_sign_in_format_error(
+    hass: HomeAssistant,
+    sign_in: Mock,
+    method: str,
+    pasted: dict[str, str],
+    error: dict[str, str],
+) -> None:
+    """Point out a value that can't be the cookie or master token without asking Google.
+
+    Pasting the right one then adds the integration.
+    """
+    result = await submit(hass, await choose(hass, method), pasted)
+
+    assert (result["type"], result["step_id"]) == (FlowResultType.FORM, method)
+    assert result["errors"] == error
+    assert sent_to_google(sign_in) == []
+
+    result = await submit(hass, result, SIGN_IN_INPUT[method])
+
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+
+
+@pytest.mark.usefixtures("enable_custom_integrations", "mock_setup_entry", "sign_in")
+@pytest.mark.parametrize(
+    ("method", "answer", "error"),
+    [
+        pytest.param(
+            "browser",
+            {"Error": "BadAuthentication"},
+            "oauth-token-invalid",
+            id="oauth-token-invalid",
+        ),
+        pytest.param(
+            "master_token",
+            {"Error": "BadAuthentication"},
+            "master-token-invalid",
+            id="master-token-invalid",
+        ),
+        pytest.param(
+            "browser",
+            {"Error": "NeedsBrowser"},
+            "google-rejected",
+            id="google-rejected",
+        ),
+        pytest.param(
+            "master_token",
+            RequestsConnectionError("Connection refused"),
+            "google-unreachable",
+            id="google-unreachable",
+        ),
+        pytest.param(
+            "browser",
+            answered(HTTPStatus.SERVICE_UNAVAILABLE),
+            "google-busy",
+            id="google-busy",
+        ),
+    ],
+)
+async def test_sign_in_error(
+    hass: HomeAssistant,
+    method: str,
+    answer: dict[str, str] | Exception,
+    error: str,
+) -> None:
+    """Show why Google gave no master token on the same form, without adding the integration.
+
+    Once Google gives one, submitting the form again adds it.
+    """
+    result = await choose(hass, method)
+    with google_answers(answer):
+        result = await submit(hass, result, SIGN_IN_INPUT[method])
+
+    assert (result["type"], result["step_id"]) == (FlowResultType.FORM, method)
+    assert result["errors"] == {"base": error}
+    assert hass.config_entries.async_entries(DOMAIN) == []
+
+    result = await submit(hass, result, SIGN_IN_INPUT[method])
+
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+
+
+@pytest.mark.usefixtures("config_entry")
+async def test_single_entry(hass: HomeAssistant) -> None:
+    """Refuse to add the integration again, as its entry has all the account's devices."""
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": SOURCE_USER}
+    )
+
+    assert result["type"] is FlowResultType.ABORT
+    assert result["reason"] == "single_instance_allowed"
+
+
+@pytest.mark.parametrize("method", METHODS)
+async def test_reauth(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    sign_in: Mock,
+    mock_setup_entry: AsyncMock,
+    method: str,
+) -> None:
+    """Save the new master token in the entry and reload it, keeping its Android ID.
+
+    The menu names the entry. The forms have text of their own, with every
+    placeholder filled in: the setup forms say to add the integration again to
+    choose another way to sign in, which can't be done while the entry exists.
+    """
+    hass.config_entries.async_update_entry(config_entry, title="Home")
+    result = await config_entry.start_reauth_flow(hass)
+    assert (result["type"], result["step_id"]) == (FlowResultType.MENU, "reauth")
+    assert result["menu_options"] == ["browser", "master_token"]
+    assert result["description_placeholders"] == {"name": "Home"}
+
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"], {"next_step_id": method}
+    )
+    assert result["step_id"] == f"reauth_{method}"
+    text = ENGLISH["config"]["step"][result["step_id"]]["description"]
+    placeholders = set(re.findall(r"{(\w+)}", text))
+    assert placeholders <= set(result["description_placeholders"] or {})
+    assert "add the integration again" not in text
+
+    result = await submit(hass, result, SIGN_IN_INPUT[method])
+    await hass.async_block_till_done()
+
+    assert result["type"] is FlowResultType.ABORT
+    assert result["reason"] == "reauth_successful"
+    assert hass.config_entries.async_entries(DOMAIN) == [config_entry]
+    assert config_entry.data == {
+        "master_token": NEW_MASTER_TOKEN,
+        "username": EMAIL,
+        "password": "",
+        "android_id": "android-id",
+    }
+    assert {android_id for _, android_id in sent_to_google(sign_in)} == {"android-id"}
+    mock_setup_entry.assert_awaited_once()
+    assert config_entry.state is ConfigEntryState.LOADED
+
+
+@pytest.mark.usefixtures("mock_setup_entry")
+@pytest.mark.parametrize(
+    ("username", "title"),
+    [
+        (EMAIL, "Home"),
+        # A master token entry of an older version, named after its account
+        # without saving its address
+        ("", EMAIL),
+    ],
+)
+@pytest.mark.parametrize("method", METHODS)
+async def test_reauth_other_account(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    sign_in: Mock,
+    username: str,
+    title: str,
+    method: str,
+) -> None:
+    """Refuse another Google account on the same form, so the entry's can sign in at once.
+
+    Nothing of the other account is saved, then or with the entry's account.
+    """
+    hass.config_entries.async_update_entry(
+        config_entry, title=title, data={**config_entry.data, "username": username}
+    )
+    saved = dict(config_entry.data)
+    result = await config_entry.start_reauth_flow(hass)
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"], {"next_step_id": method}
+    )
+    sign_in.get_email.return_value = "other@example.com"
+    sign_in.exchange_token.return_value = {"Token": OTHER_ACCOUNT_MASTER_TOKEN}
+    result = await submit(hass, result, OTHER_ACCOUNT_INPUT[method])
+
+    assert (result["type"], result["step_id"]) == (
+        FlowResultType.FORM,
+        f"reauth_{method}",
+    )
+    assert result["errors"] == {"base": "other-account"}
+    assert config_entry.data == saved
+
+    sign_in.get_email.return_value = EMAIL
+    sign_in.exchange_token.return_value = {"Token": NEW_MASTER_TOKEN}
+    result = await submit(hass, result, SIGN_IN_INPUT[method])
+
+    assert result["reason"] == "reauth_successful"
+    assert config_entry.data["master_token"] == NEW_MASTER_TOKEN
+    assert config_entry.data["username"] == EMAIL
+
+
+@pytest.mark.parametrize(
+    ("options", "interval"), [({}, 15), ({"update_interval": 180}, 180)]
+)
+async def test_options_show_default_interval(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    options: dict[str, object],
+    interval: int,
+) -> None:
+    """Fill in 15 seconds for an entry without a saved interval, and show it as the default.
+
+    An entry that saved another interval keeps it, and still sees the default in
+    the label. Home Assistant can't show the label without its placeholder's value.
+    """
+    hass.config_entries.async_update_entry(config_entry, options=options)
+
+    result = await hass.config_entries.options.async_init(config_entry.entry_id)
+
+    assert result["type"] is FlowResultType.FORM
+    schema = result["data_schema"]
+    assert schema is not None
+    # What the form fills in when nothing is entered
+    assert schema({})["update_interval"] == interval
+    text = ENGLISH["options"]["step"]["init"]
+    placeholders = result["description_placeholders"] or {}
+    assert set(re.findall(r"{(\w+)}", json.dumps(text))) <= set(placeholders)
+    label = text["data"]["update_interval"].format_map(placeholders)
+    assert "Default: 15 (seconds)" in label
+
+
+async def test_options(hass: HomeAssistant, config_entry: MockConfigEntry) -> None:
+    """Ask for IP addresses, as requests to devices are built from them.
+
+    Then save known hosts without blanks, surrounding spaces and repeats, in order.
+    """
+    hass.config_entries.async_update_entry(
+        config_entry, options={"known_hosts": ["10.0.1.5"]}
+    )
+    result = await hass.config_entries.options.async_init(config_entry.entry_id)
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"], {"update_interval": 180, "known_hosts": ["kitchen.local"]}
+    )
+
+    assert result["type"] is FlowResultType.FORM
+    assert result["errors"] == {"known_hosts": "known-host-not-ip"}
+    assert config_entry.options == {"known_hosts": ["10.0.1.5"]}
+
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"],
+        {
+            "update_interval": 180,
+            "known_hosts": [" 10.0.1.5 ", "", "fd00::5", "10.0.1.5"],
+        },
+    )
+
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert config_entry.options == {
+        "update_interval": 180,
+        "known_hosts": ["10.0.1.5", "fd00::5"],
+    }

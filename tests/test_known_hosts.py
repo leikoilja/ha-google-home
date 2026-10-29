@@ -10,7 +10,6 @@ from glocaltokens.scanner import NetworkDevice
 import pytest
 
 from custom_components.google_home.api import GlocaltokensApiClient
-from custom_components.google_home.config_flow import GoogleHomeOptionsFlowHandler
 from custom_components.google_home.models import GoogleHomeDevice
 
 from .test_missing_devices import make_client
@@ -135,47 +134,6 @@ def test_known_hosts_use_first_host_of_a_device() -> None:
     )
 
     assert pair.ip_address == "10.0.1.8"
-
-
-def make_options_flow(options: dict[str, object]) -> GoogleHomeOptionsFlowHandler:
-    """Return the options flow of an entry with these options."""
-    flow = GoogleHomeOptionsFlowHandler()
-    flow.hass = Mock()
-    flow.hass.config_entries.async_get_known_entry.return_value = Mock(options=options)
-    flow.handler = "entry-id"
-    return flow
-
-
-def test_options_save_known_hosts() -> None:
-    """Save known hosts without blanks, surrounding spaces and repeats, in order."""
-    flow = make_options_flow({})
-
-    result = asyncio.run(
-        flow.async_step_init(
-            {
-                "update_interval": 180,
-                "known_hosts": [" 10.0.1.5 ", "", "fd00::5", "10.0.1.5"],
-            }
-        )
-    )
-
-    assert result["type"] == "create_entry"
-    assert result["data"] == {
-        "update_interval": 180,
-        "known_hosts": ["10.0.1.5", "fd00::5"],
-    }
-
-
-def test_options_reject_hostnames() -> None:
-    """Ask for IP addresses, as requests to devices are built from them."""
-    flow = make_options_flow({"known_hosts": ["10.0.1.5"]})
-
-    result = asyncio.run(
-        flow.async_step_init({"update_interval": 180, "known_hosts": ["kitchen.local"]})
-    )
-
-    assert result["type"] == "form"
-    assert result["errors"] == {"known_hosts": "known-host-not-ip"}
 
 
 def test_known_hosts_fill_in_devices_from_glocaltokens() -> None:
