@@ -84,5 +84,5 @@ class AlarmVolumeNumber(GoogleHomeFeatureEntity, NumberEntity):
             _LOGGER.error("Device %s not found.", self.device_name)
             raise DeviceRequestFailed(self.device_name, "request_failed")
 
-        await self.client.update_alarm_volume(device=device, volume=round(value))
+        await self.client.set_alarm_volume(device=device, volume=round(value))
         self.async_show_device_changes()

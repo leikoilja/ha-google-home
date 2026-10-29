@@ -147,7 +147,7 @@ def test_device_has_5_seconds_to_answer(clock: Mock) -> None:
     """Wait 5 seconds for each answer: a busy device can take more than 2."""
     client, _, network = setup(SUPPORTED)
     poll(client, clock, at(0))
-    asyncio.run(client.update_do_not_disturb(client.google_devices[0], enable=True))
+    asyncio.run(client.set_do_not_disturb(client.google_devices[0], enable=True))
 
     timeouts = [call.kwargs["timeout"] for call in network.session.request.mock_calls]
     assert timeouts == [ClientTimeout(total=5)] * 4

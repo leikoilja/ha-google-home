@@ -253,7 +253,7 @@ def test_action_during_scheduled_fetch(clock: Mock) -> None:
         update_task = asyncio.create_task(client.update_google_devices_information())
         # The scheduled fetch has started, and waits for Google
         await until(lambda: client.next_scheduled_fetch == 2 * FETCH_DEVICES_INTERVAL)
-        await client.update_do_not_disturb(kitchen, enable=True)
+        await client.set_do_not_disturb(kitchen, enable=True)
         await update_task
 
     asyncio.run(run())
@@ -281,7 +281,7 @@ def test_update_during_action_fetch() -> None:
     [kitchen] = client.google_devices
 
     async def run() -> None:
-        action = asyncio.create_task(client.update_do_not_disturb(kitchen, enable=True))
+        action = asyncio.create_task(client.set_do_not_disturb(kitchen, enable=True))
         # The action has been rejected and its fetch waits for Google
         await until(lambda: session.request.call_count == 1)
         update_task = asyncio.create_task(client.update_google_devices_information())
@@ -340,7 +340,7 @@ def test_fetch_once_in_update_after_action_rejects_new_token(clock: Mock) -> Non
     clock.return_value = FETCH_DEVICES_INTERVAL
 
     async def run() -> None:
-        action = asyncio.create_task(client.update_do_not_disturb(kitchen, enable=True))
+        action = asyncio.create_task(client.set_do_not_disturb(kitchen, enable=True))
         # The action has sent its request before the update starts
         await until(lambda: session.request.call_count == 1)
         await client.update_google_devices_information()
@@ -379,7 +379,7 @@ def test_log_sign_in_rejected_in_action(caplog: pytest.LogCaptureFixture) -> Non
     glocaltokens.get_google_devices.side_effect = rejected()
 
     with pytest.raises(DeviceRequestFailed) as err:
-        asyncio.run(client.update_do_not_disturb(kitchen, enable=True))
+        asyncio.run(client.set_do_not_disturb(kitchen, enable=True))
 
     assert err.value.reason == "token_rejected"
     assert glocaltokens.get_google_devices.call_count == 1
@@ -506,7 +506,7 @@ def test_action_fetches_once_wait_is_over(clock: Mock) -> None:
         clock.return_value = seconds
         # Google still can't be reached, so the device has no token it accepts
         with pytest.raises(DeviceRequestFailed) as err:
-            asyncio.run(client.update_do_not_disturb(kitchen, enable=True))
+            asyncio.run(client.set_do_not_disturb(kitchen, enable=True))
         assert err.value.reason == "token_rejected"
         return int(glocaltokens.get_google_devices.call_count)
 
@@ -654,13 +654,13 @@ def test_token_fetch_postpones_scheduled_fetch(clock: Mock) -> None:
 # Disturb, alarm volume and alarms
 ACTIONS = [
     pytest.param(
-        lambda client, device: client.update_do_not_disturb(device, enable=True),
+        lambda client, device: client.set_do_not_disturb(device, enable=True),
         {"notifications_enabled": False},
         (True, 70, [ALARM_ID]),
         id="do-not-disturb",
     ),
     pytest.param(
-        lambda client, device: client.update_alarm_volume(device, volume=40),
+        lambda client, device: client.set_alarm_volume(device, volume=40),
         {"volume": 0.4},
         (False, 40, [ALARM_ID]),
         id="alarm-volume",

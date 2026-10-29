@@ -57,7 +57,7 @@ class DoNotDisturbSwitch(GoogleHomeFeatureEntity, SwitchEntity):
             _LOGGER.error("Device %s is not found.", self.device_name)
             raise DeviceRequestFailed(self.device_name, "request_failed")
 
-        await self.client.update_do_not_disturb(device=device, enable=enable)
+        await self.client.set_do_not_disturb(device=device, enable=enable)
         self.async_show_device_changes()
 
     @override
