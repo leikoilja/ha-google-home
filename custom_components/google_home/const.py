@@ -5,13 +5,9 @@ from typing import Final
 from homeassistant.util.dt import DATE_STR_FORMAT
 
 # Base component constants
-NAME: Final = "Google Home community driven integration"
 DOMAIN: Final = "google_home"
-DOMAIN_DATA: Final = f"{DOMAIN}_data"
 MANUFACTURER: Final = "Google Home"
 
-ATTRIBUTION: Final = "json"
-ISSUE_URL: Final = "https://github.com/leikoilja/ha-google-home/issues"
 CONF_UPDATE_INTERVAL: Final = "update_interval"
 # Addresses of devices that mDNS can't find, for example on another network
 CONF_KNOWN_HOSTS: Final = "known_hosts"
@@ -61,7 +57,6 @@ GOOGLE_HOME_ALARM_DEFAULT_VALUE: Final = 0
 
 LABEL_ALARMS: Final = "alarms"
 LABEL_ALARM_VOLUME: Final = "alarm volume"
-LABEL_AVAILABLE: Final = "available"
 LABEL_TIMERS: Final = "timers"
 LABEL_DEVICE: Final = "device"
 LABEL_DO_NOT_DISTURB: Final = "Do Not Disturb"
@@ -133,12 +128,3 @@ JSON_ALARM: Final = "alarm"
 JSON_TIMER: Final = "timer"
 JSON_NOTIFICATIONS_ENABLED: Final = "notifications_enabled"
 JSON_ALARM_VOLUME: Final = "volume"
-
-STARTUP_MESSAGE: Final = f"""
--------------------------------------------------------------------
-{NAME}
-This is a custom integration!
-If you have any issues with this you need to open an issue here:
-{ISSUE_URL}
--------------------------------------------------------------------
-"""

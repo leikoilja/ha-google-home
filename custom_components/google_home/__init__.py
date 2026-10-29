@@ -31,7 +31,6 @@ from .const import (
     MASTER_TOKEN_TITLE,
     PLATFORMS,
     SENSOR,
-    STARTUP_MESSAGE,
     UPDATE_INTERVAL,
 )
 from .mdns import async_browse_cast_devices
@@ -63,10 +62,6 @@ async def async_migrate_entry(
 
 async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -> bool:
     """Set up this integration using UI."""
-    if hass.data.get(DOMAIN) is None:
-        hass.data.setdefault(DOMAIN, {})
-        _LOGGER.info(STARTUP_MESSAGE)
-
     username = cast(str, entry.data.get(CONF_USERNAME))
     password = cast(str, entry.data.get(CONF_PASSWORD))
     android_id = cast(str, entry.data.get(CONF_ANDROID_ID))
