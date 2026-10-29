@@ -108,21 +108,30 @@ def logged(caplog: pytest.LogCaptureFixture) -> list[tuple[str, str]]:
 
 
 def found(
-    device_id: str, ip_address: str | None, token: str = LOCAL_AUTH_TOKEN
+    device_id: str,
+    ip_address: str | None,
+    token: str = LOCAL_AUTH_TOKEN,
+    name: str | None = None,
+    cloud_device_id: str | None = None,
 ) -> Device:
-    """Return a device as glocaltokens returns it, with the address mDNS found."""
+    """Return a device as glocaltokens returns it, with the address mDNS found.
+
+    Its name and Google's other ID for it are its ID unless given.
+    """
+    name = name or device_id
+    cloud_device_id = cloud_device_id or device_id
     network_device = (
-        NetworkDevice(device_id, ip_address, 8009, "Nest Audio", device_id)
+        NetworkDevice(name, ip_address, 8009, "Nest Audio", cloud_device_id)
         if ip_address
         else None
     )
     return Device(
         device_id,
-        device_id,
+        name,
         token,
         network_device,
         hardware="Nest Audio",
-        cloud_device_id=device_id,
+        cloud_device_id=cloud_device_id,
     )
 
 
