@@ -3,7 +3,6 @@
 # Run after `uv run pytest --cov`. In CI, also add the coverage table to the
 # workflow summary and annotate each file below the floor.
 set -euo pipefail
-shopt -s globstar
 
 cd "$(dirname "$0")/.."
 
@@ -20,8 +19,9 @@ if [[ -n "${GITHUB_STEP_SUMMARY:-}" ]]; then
 fi
 
 failed=0
-# Every file found, so new modules need no list here
-for file in custom_components/google_home/**/*.py; do
+# Every file found, so new modules need no list here. find, not globstar,
+# because macOS ships Bash 3.2.
+while IFS= read -r file; do
   # The rounded percentage the report shows, which is what --fail-under compares
   total=$(uv run coverage report --include="$file" --format=total --precision=0) || {
     echo "$file: $total" >&2 # Such as "No data to report."
@@ -31,5 +31,5 @@ for file in custom_components/google_home/**/*.py; do
     echo "${GITHUB_ACTIONS:+::error file=$file::}$file has ${total}% branch coverage, below ${floor}%"
     failed=1
   fi
-done
+done < <(find custom_components/google_home -name '*.py' | sort)
 exit "$failed"
