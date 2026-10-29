@@ -16,8 +16,6 @@ from custom_components.google_home.api import GlocaltokensApiClient
 from custom_components.google_home.const import (
     API_ENDPOINT_ALARM_DELETE,
     API_ENDPOINT_ALARMS,
-    DATA_CLIENT,
-    DATA_COORDINATOR,
     DOMAIN,
     SENSOR,
     SERVICE_DELETE_ALARM,
@@ -40,7 +38,12 @@ from custom_components.google_home.sensor import (
     async_refresh_devices,
     async_setup_entry,
 )
-from custom_components.google_home.types import AlarmJsonDict, JsonDict, TimerJsonDict
+from custom_components.google_home.types import (
+    AlarmJsonDict,
+    GoogleHomeData,
+    JsonDict,
+    TimerJsonDict,
+)
 
 # ruff sorts homeassistant as first-party, pylint as third-party
 # pylint: disable=wrong-import-order
@@ -125,13 +128,11 @@ def confirm_delete(device: GoogleHomeDevice, items_to_delete: list[str]) -> None
 
 def set_up_platform() -> Mock:
     """Set up the sensor platform, returning its batched action registrations."""
-    hass = Mock(
-        data={DOMAIN: {"entry": {DATA_CLIENT: Mock(), DATA_COORDINATOR: Mock(data=[])}}}
-    )
+    entry = Mock(runtime_data=GoogleHomeData(Mock(), Mock(data=[])))
     with patch(
         "homeassistant.helpers.service.async_register_batched_platform_entity_service"
     ) as register_batched:
-        asyncio.run(async_setup_entry(hass, Mock(entry_id="entry"), Mock()))
+        asyncio.run(async_setup_entry(Mock(), entry, Mock()))
     return register_batched
 
 

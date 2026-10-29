@@ -7,38 +7,22 @@ from homeassistant.components.switch import SwitchEntity
 from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from .api import GlocaltokensApiClient
-from .const import (
-    DATA_CLIENT,
-    DATA_COORDINATOR,
-    DOMAIN,
-    ICON_DO_NOT_DISTURB,
-    LABEL_DO_NOT_DISTURB,
-)
+from .const import ICON_DO_NOT_DISTURB, LABEL_DO_NOT_DISTURB
 from .entity import GoogleHomeFeatureEntity, async_add_device_entities
 from .exceptions import DeviceRequestFailed
-from .models import GoogleHomeDevice
 from .types import GoogleHomeConfigEntry
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
 async def async_setup_entry(
-    hass: HomeAssistant,
+    _hass: HomeAssistant,
     entry: GoogleHomeConfigEntry,
     async_add_devices: AddEntitiesCallback,
 ) -> bool:
     """Set up switch platform."""
-    client: GlocaltokensApiClient = hass.data[DOMAIN][entry.entry_id][DATA_CLIENT]
-    coordinator: DataUpdateCoordinator[list[GoogleHomeDevice]] = hass.data[DOMAIN][
-        entry.entry_id
-    ][DATA_COORDINATOR]
-
-    async_add_device_entities(
-        entry, coordinator, client, async_add_devices, DoNotDisturbSwitch
-    )
+    async_add_device_entities(entry, async_add_devices, DoNotDisturbSwitch)
     return True
 
 

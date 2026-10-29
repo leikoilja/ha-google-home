@@ -26,8 +26,6 @@ from custom_components.google_home.api import GlocaltokensApiClient
 from custom_components.google_home.const import (
     CONF_ANDROID_ID,
     CONF_MASTER_TOKEN,
-    DATA_CLIENT,
-    DATA_COORDINATOR,
     DOMAIN,
     FETCH_DEVICES_INTERVAL,
 )
@@ -38,7 +36,7 @@ from custom_components.google_home.sensor import (
     GoogleHomeDeviceSensor,
     GoogleHomeTimersSensor,
 )
-from custom_components.google_home.types import GoogleHomeConfigEntry
+from custom_components.google_home.types import GoogleHomeConfigEntry, GoogleHomeData
 
 # ruff sorts homeassistant as first-party, pylint as third-party
 # pylint: disable=wrong-import-order
@@ -266,16 +264,13 @@ def can_delete(
     client: GlocaltokensApiClient, devices: list[GoogleHomeDevice], device_id: str
 ) -> bool:
     """Ask the integration whether the device with this ID can be deleted."""
-    hass = Mock(
-        data={
-            DOMAIN: {
-                "entry": {DATA_CLIENT: client, DATA_COORDINATOR: Mock(data=devices)}
-            }
-        }
+    entry = Mock(
+        state=ConfigEntryState.LOADED,
+        runtime_data=GoogleHomeData(client, Mock(data=devices)),
     )
     return asyncio.run(
         async_remove_config_entry_device(
-            hass, Mock(entry_id="entry"), Mock(identifiers={(DOMAIN, device_id)})
+            Mock(), entry, Mock(identifiers={(DOMAIN, device_id)})
         )
     )
 
@@ -550,10 +545,8 @@ def test_log_sign_in_rejected_after_setup(
     google = Mock(return_value=[found("device0", None)])
 
     async def run() -> None:
-        async with set_up(tmp_path, google) as (hass, entry):
-            client: GlocaltokensApiClient = hass.data[DOMAIN][entry.entry_id][
-                DATA_CLIENT
-            ]
+        async with set_up(tmp_path, google) as (_, entry):
+            client = entry.runtime_data.client
             google.side_effect = rejected()
             # The scheduled fetch is due
             clock.return_value = FETCH_DEVICES_INTERVAL
@@ -853,9 +846,7 @@ def add_entities(
     """
     async_add_entities = Mock()
     async_add_device_entities(
-        Mock(),
-        coordinator,
-        Mock(),
+        Mock(runtime_data=GoogleHomeData(Mock(), coordinator)),
         async_add_entities,
         *entity_classes,
         needs_answer=needs_answer,

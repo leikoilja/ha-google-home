@@ -16,9 +16,6 @@ CONF_UPDATE_INTERVAL: Final = "update_interval"
 # Addresses of devices that mDNS can't find, for example on another network
 CONF_KNOWN_HOSTS: Final = "known_hosts"
 
-DATA_CLIENT: Final = "client"
-DATA_COORDINATOR: Final = "coordinator"
-
 ALARM_AND_TIMER_ID_LENGTH: Final = 42
 
 # Icons

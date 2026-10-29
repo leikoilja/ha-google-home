@@ -114,8 +114,6 @@ class GoogleHomeFeatureEntity(GoogleHomeBaseEntity):
 
 def async_add_device_entities(
     entry: GoogleHomeConfigEntry,
-    coordinator: DataUpdateCoordinator[list[GoogleHomeDevice]],
-    client: GlocaltokensApiClient,
     async_add_entities: AddEntitiesCallback,
     *entity_classes: type[GoogleHomeBaseEntity],
     needs_answer: bool = True,
@@ -125,6 +123,8 @@ def async_add_device_entities(
     With needs_answer, a device gets them only once it answers: one that is
     offline or doesn't support alarms, timers and settings gets none.
     """
+    coordinator = entry.runtime_data.coordinator
+    client = entry.runtime_data.client
     added: set[str] = set()
 
     @callback

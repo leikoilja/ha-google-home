@@ -15,13 +15,9 @@ from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from homeassistant.helpers import config_validation as cv, service
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from .api import GlocaltokensApiClient
 from .const import (
     ALARM_AND_TIMER_ID_LENGTH,
-    DATA_CLIENT,
-    DATA_COORDINATOR,
     DOMAIN,
     GOOGLE_HOME_ALARM_DEFAULT_VALUE,
     ICON_ALARMS,
@@ -99,25 +95,11 @@ async def async_setup_entry(
     async_add_devices: AddEntitiesCallback,
 ) -> bool:
     """Set up sensor platform."""
-    client: GlocaltokensApiClient = hass.data[DOMAIN][entry.entry_id][DATA_CLIENT]
-    coordinator: DataUpdateCoordinator[list[GoogleHomeDevice]] = hass.data[DOMAIN][
-        entry.entry_id
-    ][DATA_COORDINATOR]
     async_add_device_entities(
-        entry,
-        coordinator,
-        client,
-        async_add_devices,
-        GoogleHomeDeviceSensor,
-        needs_answer=False,
+        entry, async_add_devices, GoogleHomeDeviceSensor, needs_answer=False
     )
     async_add_device_entities(
-        entry,
-        coordinator,
-        client,
-        async_add_devices,
-        GoogleHomeAlarmsSensor,
-        GoogleHomeTimersSensor,
+        entry, async_add_devices, GoogleHomeAlarmsSensor, GoogleHomeTimersSensor
     )
 
     # Services
