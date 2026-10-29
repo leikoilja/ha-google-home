@@ -12,6 +12,11 @@ updates:
     ignore:
       # Bumped by hand, together with hacs.json and the code it needs.
       - dependency-name: "homeassistant"
+      # Pins homeassistant, so it's bumped by hand with it.
+      - dependency-name: "pytest-homeassistant-custom-component"
+      # Pinned by pytest-homeassistant-custom-component, so they move with it.
+      - dependency-name: "pytest"
+      - dependency-name: "PyGithub"
   - package-ecosystem: pre-commit
     directory: "/"
     schedule:
