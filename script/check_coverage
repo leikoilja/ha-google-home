@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# Fail if any file of the integration has less than 90% branch coverage.
+# Run after `uv run pytest --cov`. In CI, also add the coverage table to the
+# workflow summary and annotate each file below the floor.
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+floor=90
+
+if [[ -n "${GITHUB_STEP_SUMMARY:-}" ]]; then
+  {
+    echo "## Test coverage"
+    echo ""
+    echo "Every file in custom_components/google_home needs ${floor}% or more branch coverage."
+    echo ""
+    # Spell out coverage's terse column names
+    uv run coverage report --format=markdown | sed -e '1s/| Name /| File /' \
+      -e '1s/ Stmts |/ Statements |/' -e '1s/ Miss |/ Missed statements |/' \
+      -e '1s/ Branch |/ Branches |/' -e '1s/ BrPart |/ Partial branches |/' \
+      -e '1s/ Cover |/ Coverage |/' -e '1s/ Missing |/ Missed lines and branches |/'
+  } >>"$GITHUB_STEP_SUMMARY"
+fi
+
+checked=0
+failed=0
+# Every file found, so new modules need no list here. find, not globstar,
+# because macOS ships Bash 3.2.
+while IFS= read -r file; do
+  # The rounded percentage the report shows, which is what --fail-under compares
+  total=$(uv run coverage report --include="$file" --format=total --precision=0) || {
+    echo "$file: $total" >&2 # Such as "No data to report."
+    exit 1
+  }
+  checked=$((checked + 1))
+  printf '%4s%%  %s\n' "$total" "$file"
+  if ((total < floor)); then
+    echo "${GITHUB_ACTIONS:+::error file=$file::}$file has ${total}% branch coverage, below ${floor}%"
+    failed=$((failed + 1))
+  fi
+done < <(find custom_components/google_home -name '*.py' | sort)
+
+# Without this, a renamed package would pass with nothing checked
+if ((checked == 0)); then
+  echo "No Python files found in custom_components/google_home" >&2
+  exit 1
+fi
+if ((failed > 0)); then
+  echo "Checked $checked files: $failed below ${floor}% branch coverage"
+  exit 1
+fi
+echo "Checked $checked files: all have ${floor}% or more branch coverage"
