@@ -178,14 +178,14 @@ async def press(entity: GoogleHomeBaseEntity) -> None:
             "Do Not Disturb",
             turn_on,
             DND,
-            GoogleHomeDevice.get_do_not_disturb,
+            lambda device: device.do_not_disturb,
             id="do-not-disturb",
         ),
         pytest.param(
             "alarm volume",
             set_volume,
             VOLUME,
-            lambda device: device.get_alarm_volume() == 40,
+            lambda device: device.alarm_volume == 40,
             id="alarm-volume",
         ),
         pytest.param(

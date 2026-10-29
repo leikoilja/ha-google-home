@@ -141,8 +141,8 @@ def test_update_with_new_token_after_token_rejected() -> None:
     assert kitchen.available
     assert client.google_devices_fetched
     assert [alarm.alarm_id for alarm in kitchen.get_sorted_alarms()] == [ALARM_ID]
-    assert kitchen.get_do_not_disturb()
-    assert kitchen.get_alarm_volume() == 70
+    assert kitchen.do_not_disturb
+    assert kitchen.alarm_volume == 70
 
 
 def test_one_fetch_when_devices_reject_their_tokens_together() -> None:
@@ -196,7 +196,7 @@ def test_no_usable_token_after_token_rejected(
     )
     kitchen, bedroom = client.google_devices
     kitchen.set_alarms([{"id": ALARM_ID, "fire_time": 1700000000000, "status": 1}])
-    kitchen.set_alarm_volume(70)
+    kitchen.alarm_volume = 70
 
     def google_answers(**_: object) -> list[Device]:
         # Google takes 5 minutes to answer
@@ -218,7 +218,7 @@ def test_no_usable_token_after_token_rejected(
     assert glocaltokens.get_google_devices.call_count == 1
     assert (kitchen.available, bedroom.available) == (False, False)
     assert [alarm.alarm_id for alarm in kitchen.get_sorted_alarms()] == [ALARM_ID]
-    assert kitchen.get_alarm_volume() == 70
+    assert kitchen.alarm_volume == 70
     assert not can_delete(client, {"device0": kitchen, "device1": bedroom}, "removed")
 
     # Google gives tokens they accept by the next update
@@ -694,7 +694,7 @@ def test_action_after_token_rejected(
     client, glocaltokens = make_client("10.0.0.2", session=session)
     [kitchen] = client.google_devices
     kitchen.set_alarms([{"id": ALARM_ID, "fire_time": 1700000000000, "status": 1}])
-    kitchen.set_alarm_volume(70)
+    kitchen.alarm_volume = 70
 
     asyncio.run(action(client, kitchen))
 
@@ -704,8 +704,8 @@ def test_action_after_token_rejected(
     assert tokens_sent(session, data=data) == [OLD_TOKEN, LOCAL_AUTH_TOKEN]
     assert kitchen.available
     assert (
-        kitchen.get_do_not_disturb(),
-        kitchen.get_alarm_volume(),
+        kitchen.do_not_disturb,
+        kitchen.alarm_volume,
         [alarm.alarm_id for alarm in kitchen.get_sorted_alarms()],
     ) == shown
 

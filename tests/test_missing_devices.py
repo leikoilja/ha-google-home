@@ -717,8 +717,8 @@ def test_keep_polled_data_after_token_rejected() -> None:
     client, glocaltokens = make_client("10.0.0.2", "10.0.0.3", session=session)
     kitchen, bedroom = client.google_devices
     bedroom.set_alarms([{"id": ALARM_ID, "fire_time": 1700000000000, "status": 1}])
-    bedroom.set_do_not_disturb(True)
-    bedroom.set_alarm_volume(70)
+    bedroom.do_not_disturb = True
+    bedroom.alarm_volume = 70
     # The rejection fetches the list straight away, and the kitchen rejects its
     # new token too, so the next update fetches it again
     asyncio.run(client.update_alarms_and_timers(kitchen))
@@ -733,8 +733,8 @@ def test_keep_polled_data_after_token_rejected() -> None:
     assert glocaltokens.get_google_devices.call_count == 2
     assert bedroom.auth_token == LOCAL_AUTH_TOKEN
     assert [alarm.alarm_id for alarm in bedroom.get_sorted_alarms()] == [ALARM_ID]
-    assert bedroom.get_do_not_disturb()
-    assert bedroom.get_alarm_volume() == 70
+    assert bedroom.do_not_disturb
+    assert bedroom.alarm_volume == 70
 
 
 def test_keep_polled_data_when_list_fetched_again(clock: Mock) -> None:
@@ -761,8 +761,8 @@ def test_keep_polled_data_when_list_fetched_again(clock: Mock) -> None:
             }
         ]
     )
-    kitchen.set_do_not_disturb(True)
-    kitchen.set_alarm_volume(70)
+    kitchen.do_not_disturb = True
+    kitchen.alarm_volume = 70
 
     clock.return_value = FETCH_DEVICES_INTERVAL
     [device] = asyncio.run(client.update_google_devices_information()).values()
@@ -777,8 +777,8 @@ def test_keep_polled_data_when_list_fetched_again(clock: Mock) -> None:
     )
     assert [alarm.alarm_id for alarm in device.get_sorted_alarms()] == [ALARM_ID]
     assert [timer.timer_id for timer in device.get_sorted_timers()] == [TIMER_ID]
-    assert device.get_do_not_disturb()
-    assert device.get_alarm_volume() == 70
+    assert device.do_not_disturb
+    assert device.alarm_volume == 70
 
 
 def test_add_entities_for_device_added_in_google_home_app(clock: Mock) -> None:

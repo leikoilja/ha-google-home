@@ -83,6 +83,12 @@ class GoogleHomeBaseEntity(
         """Return the entity's device, if the last update has it."""
         return self.coordinator.data.get(self.device_id)
 
+    @callback
+    def async_show_device_changes(self) -> None:
+        """Show a change to the device's data now, on every entity."""
+        # Other entities show this device's data too
+        self.coordinator.async_update_listeners()
+
     async def async_reboot_device(self) -> None:
         """Reboot the device."""
         device = self.get_device()

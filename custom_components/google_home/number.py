@@ -56,7 +56,7 @@ class AlarmVolumeNumber(GoogleHomeFeatureEntity, NumberEntity):
         device = self.get_device()
         if device is None:
             return ICON_ALARM_VOLUME_OFF
-        volume = device.get_alarm_volume()
+        volume = device.alarm_volume
         if volume == 0:
             return ICON_ALARM_VOLUME_OFF
         if volume <= 30:
@@ -74,7 +74,7 @@ class AlarmVolumeNumber(GoogleHomeFeatureEntity, NumberEntity):
         if device is None:
             return GOOGLE_HOME_ALARM_DEFAULT_VALUE
 
-        return device.get_alarm_volume()
+        return device.alarm_volume
 
     @override
     async def async_set_native_value(self, value: float) -> None:
@@ -85,5 +85,4 @@ class AlarmVolumeNumber(GoogleHomeFeatureEntity, NumberEntity):
             raise DeviceRequestFailed(self.device_name, "request_failed")
 
         await self.client.update_alarm_volume(device=device, volume=round(value))
-        # Other entities show this device's data too
-        self.coordinator.async_update_listeners()
+        self.async_show_device_changes()

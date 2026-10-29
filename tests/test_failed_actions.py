@@ -200,12 +200,12 @@ def test_setting_succeeds_when_answer_doesnt_show_it(
     """Count a 200 that doesn't show the new setting as done, and show the old one until the next update."""
     client, _, _ = setup({**SUPPORTED, control: (HTTPStatus.OK, body)})
     [device] = client.google_devices
-    device.set_alarm_volume(70)
+    device.alarm_volume = 70
     coordinator = Mock(data={"device0": client.google_devices[0]})
 
     asyncio.run(act(entities(client, coordinator, "device0")[control]))
 
-    assert (device.get_do_not_disturb(), device.get_alarm_volume()) == (False, 70)
+    assert (device.do_not_disturb, device.alarm_volume) == (False, 70)
     coordinator.async_update_listeners.assert_called_once()
 
 
@@ -342,7 +342,7 @@ def test_update_keeps_last_data_when_device_doesnt_answer(
     poll(client, clock, at(3))
 
     assert [alarm.alarm_id for alarm in device.get_sorted_alarms()] == [ALARM_ID]
-    assert (device.get_do_not_disturb(), device.get_alarm_volume()) == (True, 70)
+    assert (device.do_not_disturb, device.alarm_volume) == (True, 70)
     assert [r.levelname for r in caplog.records if r.levelno > logging.DEBUG] == []
 
 

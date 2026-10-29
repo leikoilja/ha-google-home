@@ -13,7 +13,7 @@ def test_set_value_updates_entities() -> None:
     coordinator = Mock(data={"device-id": device})
     client = Mock(
         update_alarm_volume=AsyncMock(
-            side_effect=lambda device, volume: device.set_alarm_volume(volume)
+            side_effect=lambda device, volume: setattr(device, "alarm_volume", volume)
         )
     )
     number = AlarmVolumeNumber(coordinator, client, "device-id", "Kitchen", None)

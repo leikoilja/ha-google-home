@@ -216,9 +216,8 @@ async def async_delete(
         else:
             _LOGGER.debug("Nothing to delete for %s", device.name)
     finally:
-        # Other entities show this device's data too. Show what was just fetched
-        # also when the device doesn't confirm the delete.
-        entity.coordinator.async_update_listeners()
+        # Show what was just fetched also when the device doesn't confirm the delete
+        entity.async_show_device_changes()
     return bool(ids)
 
 
@@ -424,7 +423,7 @@ class GoogleHomeAlarmsSensor(GoogleHomeFeatureEntity):
     def _get_alarm_volume(self) -> float:
         """Update alarm volume status from coordinator."""
         device = self.get_device()
-        alarm_volume = device.get_alarm_volume() if device else None
+        alarm_volume = device.alarm_volume if device else None
         return alarm_volume or GOOGLE_HOME_ALARM_DEFAULT_VALUE
 
     def _get_alarms_data(self) -> list[GoogleHomeAlarmDict]:

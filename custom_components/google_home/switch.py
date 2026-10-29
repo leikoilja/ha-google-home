@@ -48,7 +48,7 @@ class DoNotDisturbSwitch(GoogleHomeFeatureEntity, SwitchEntity):
         if device is None:
             return False
 
-        return device.get_do_not_disturb()
+        return device.do_not_disturb
 
     async def set_do_not_disturb(self, enable: bool) -> None:
         """Set Do Not Disturb mode."""
@@ -58,8 +58,7 @@ class DoNotDisturbSwitch(GoogleHomeFeatureEntity, SwitchEntity):
             raise DeviceRequestFailed(self.device_name, "request_failed")
 
         await self.client.update_do_not_disturb(device=device, enable=enable)
-        # Other entities show this device's data too
-        self.coordinator.async_update_listeners()
+        self.async_show_device_changes()
 
     @override
     async def async_turn_on(self, **kwargs: Any) -> None:  # type: ignore[explicit-any]

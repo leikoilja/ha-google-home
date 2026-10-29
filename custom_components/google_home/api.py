@@ -395,7 +395,7 @@ class GlocaltokensApiClient(GoogleAccountClient):
                     enabled,
                 )
 
-                device.set_do_not_disturb(enabled)
+                device.do_not_disturb = enabled
             else:
                 _LOGGER.debug(
                     (
@@ -462,7 +462,7 @@ class GlocaltokensApiClient(GoogleAccountClient):
                         volume,
                         device.name,
                     )
-                device.set_alarm_volume(volume)
+                device.alarm_volume = volume
             else:
                 _LOGGER.debug(
                     (
