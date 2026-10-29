@@ -25,7 +25,7 @@ from .const import (
 from .types import GoogleHomeConfigEntry
 
 if TYPE_CHECKING:
-    from .api import GlocaltokensApiClient
+    from .account import GoogleAccountClient
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -47,7 +47,7 @@ class FoundDevices:
     it be fetched soon, as it may have just been added in the Google Home app.
     """
 
-    def __init__(self, client: GlocaltokensApiClient) -> None:
+    def __init__(self, client: GoogleAccountClient) -> None:
         """Keep the client whose devices get the addresses."""
         self._client = client
         # By Google's ID. mDNS reports cached devices as soon as setup starts
