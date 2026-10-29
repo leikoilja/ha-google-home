@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# Fail if any file of the integration has less than 90% branch coverage.
+# Run after `uv run pytest --cov`. In CI, also add the coverage table to the
+# workflow summary and annotate each file below the floor.
+set -euo pipefail
+shopt -s globstar
+
+cd "$(dirname "$0")/.."
+
+floor=90
+
+if [[ -n "${GITHUB_STEP_SUMMARY:-}" ]]; then
+  {
+    echo "## Test coverage"
+    echo ""
+    echo "Every file in custom_components/google_home needs ${floor}% or more branch coverage."
+    echo ""
+    uv run coverage report --format=markdown
+  } >>"$GITHUB_STEP_SUMMARY"
+fi
+
+failed=0
+# Every file found, so new modules need no list here
+for file in custom_components/google_home/**/*.py; do
+  # The rounded percentage the report shows, which is what --fail-under compares
+  total=$(uv run coverage report --include="$file" --format=total --precision=0) || {
+    echo "$file: $total" >&2 # Such as "No data to report."
+    exit 1
+  }
+  if ((total < floor)); then
+    echo "${GITHUB_ACTIONS:+::error file=$file::}$file has ${total}% branch coverage, below ${floor}%"
+    failed=1
+  fi
+done
+exit "$failed"
