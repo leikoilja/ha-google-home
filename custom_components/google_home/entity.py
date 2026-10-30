@@ -22,7 +22,7 @@ _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
 class GoogleHomeBaseEntity(
-    CoordinatorEntity[DataUpdateCoordinator[list[GoogleHomeDevice]]], ABC
+    CoordinatorEntity[DataUpdateCoordinator[dict[str, GoogleHomeDevice]]], ABC
 ):
     """Base entity base for Google Home sensors."""
 
@@ -33,7 +33,7 @@ class GoogleHomeBaseEntity(
 
     def __init__(
         self,
-        coordinator: DataUpdateCoordinator[list[GoogleHomeDevice]],
+        coordinator: DataUpdateCoordinator[dict[str, GoogleHomeDevice]],
         client: GlocaltokensApiClient,
         device_id: str,
         device_name: str,
@@ -80,13 +80,14 @@ class GoogleHomeBaseEntity(
         )
 
     def get_device(self) -> GoogleHomeDevice | None:
-        """Return the device matched by device name from the list of google devices in coordinator_data."""
-        matched_devices: list[GoogleHomeDevice] = [
-            device
-            for device in self.coordinator.data
-            if device.device_id == self.device_id
-        ]
-        return matched_devices[0] if matched_devices else None
+        """Return the entity's device, if the last update has it."""
+        return self.coordinator.data.get(self.device_id)
+
+    @callback
+    def async_show_device_changes(self) -> None:
+        """Show a change to the device's data now, on every entity."""
+        # Other entities show this device's data too
+        self.coordinator.async_update_listeners()
 
     async def async_reboot_device(self) -> None:
         """Reboot the device."""
@@ -114,8 +115,6 @@ class GoogleHomeFeatureEntity(GoogleHomeBaseEntity):
 
 def async_add_device_entities(
     entry: GoogleHomeConfigEntry,
-    coordinator: DataUpdateCoordinator[list[GoogleHomeDevice]],
-    client: GlocaltokensApiClient,
     async_add_entities: AddEntitiesCallback,
     *entity_classes: type[GoogleHomeBaseEntity],
     needs_answer: bool = True,
@@ -125,13 +124,15 @@ def async_add_device_entities(
     With needs_answer, a device gets them only once it answers: one that is
     offline or doesn't support alarms, timers and settings gets none.
     """
+    coordinator = entry.runtime_data.coordinator
+    client = entry.runtime_data.client
     added: set[str] = set()
 
     @callback
     def add_entities() -> None:
         devices = [
             device
-            for device in coordinator.data
+            for device in coordinator.data.values()
             if device.device_id not in added
             and (
                 not needs_answer

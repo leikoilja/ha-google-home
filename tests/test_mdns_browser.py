@@ -254,7 +254,7 @@ def test_setup_browses_before_first_fetch() -> None:
         ),
         pytest.raises(ConfigEntryNotReady),
     ):
-        asyncio.run(async_setup_entry(Mock(data={}), entry))
+        asyncio.run(async_setup_entry(Mock(), entry))
     assert events == [
         "on unload: async_stop",
         "browse",

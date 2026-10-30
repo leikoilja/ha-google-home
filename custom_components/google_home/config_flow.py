@@ -3,7 +3,7 @@
 from collections.abc import Mapping
 import ipaddress
 import logging
-from typing import Self, cast, override
+from typing import cast, override
 
 from glocaltokens.exceptions import AuthenticationError
 from glocaltokens.utils.token import is_aas_et
@@ -62,15 +62,6 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
     # 2: app passwords that older versions saved are cleared
     MINOR_VERSION = 2
 
-    def __init__(self) -> None:
-        """Initialize."""
-        self.username: str | None = None
-
-    @override
-    def is_matching(self, other_flow: Self) -> bool:
-        """Return True if other_flow is matching this flow."""
-        return other_flow.username == self.username
-
     @override
     async def async_step_user(
         self,
@@ -126,7 +117,6 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
                 if error is None:
                     username = await client.async_get_email() or ""
                     if not self._is_other_account(username):
-                        self.username = username
                         return await self._create_entry(
                             client, username, username or BROWSER_TITLE
                         )
@@ -160,7 +150,6 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
                 if error is None:
                     username = await client.async_get_email() or ""
                     if not self._is_other_account(username):
-                        self.username = username
                         return await self._create_entry(
                             client, username, username or MASTER_TOKEN_TITLE
                         )

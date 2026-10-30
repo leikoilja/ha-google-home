@@ -16,8 +16,6 @@ from custom_components.google_home.api import GlocaltokensApiClient
 from custom_components.google_home.const import (
     API_ENDPOINT_ALARM_DELETE,
     API_ENDPOINT_ALARMS,
-    DATA_CLIENT,
-    DATA_COORDINATOR,
     DOMAIN,
     SENSOR,
     SERVICE_DELETE_ALARM,
@@ -40,7 +38,12 @@ from custom_components.google_home.sensor import (
     async_refresh_devices,
     async_setup_entry,
 )
-from custom_components.google_home.types import AlarmJsonDict, JsonDict, TimerJsonDict
+from custom_components.google_home.types import (
+    AlarmJsonDict,
+    GoogleHomeData,
+    JsonDict,
+    TimerJsonDict,
+)
 
 # ruff sorts homeassistant as first-party, pylint as third-party
 # pylint: disable=wrong-import-order
@@ -74,7 +77,7 @@ EN_TRANSLATIONS = json.loads(
 def test_device_sensor_available(ip_address: str | None, available: bool) -> None:
     """Show a device that isn't on the network as unavailable, not unknown."""
     device = GoogleHomeDevice("device-id", "Kitchen", "token", ip_address=ip_address)
-    coordinator = Mock(data=[device], last_update_success=True)
+    coordinator = Mock(data={"device-id": device}, last_update_success=True)
     sensor = GoogleHomeDeviceSensor(coordinator, Mock(), "device-id", "Kitchen", None)
 
     assert sensor.available is available
@@ -82,7 +85,7 @@ def test_device_sensor_available(ip_address: str | None, available: bool) -> Non
 
 def test_device_sensor_unavailable_when_missing() -> None:
     """Show a device that Google no longer lists as unavailable."""
-    coordinator = Mock(data=[], last_update_success=True)
+    coordinator = Mock(data={}, last_update_success=True)
     sensor = GoogleHomeDeviceSensor(coordinator, Mock(), "device-id", "Kitchen", None)
 
     assert sensor.available is False
@@ -125,13 +128,11 @@ def confirm_delete(device: GoogleHomeDevice, items_to_delete: list[str]) -> None
 
 def set_up_platform() -> Mock:
     """Set up the sensor platform, returning its batched action registrations."""
-    hass = Mock(
-        data={DOMAIN: {"entry": {DATA_CLIENT: Mock(), DATA_COORDINATOR: Mock(data=[])}}}
-    )
+    entry = Mock(runtime_data=GoogleHomeData(Mock(), Mock(data={})))
     with patch(
         "homeassistant.helpers.service.async_register_batched_platform_entity_service"
     ) as register_batched:
-        asyncio.run(async_setup_entry(hass, Mock(entry_id="entry"), Mock()))
+        asyncio.run(async_setup_entry(Mock(), entry, Mock()))
     return register_batched
 
 
@@ -266,7 +267,7 @@ def run_action(
     )
     delete = AsyncMock(side_effect=confirm_delete)
     client.delete_alarm_or_timer = delete  # type: ignore[method-assign]
-    coordinator = Mock(data=[device], async_request_refresh=AsyncMock())
+    coordinator = Mock(data={"device-id": device}, async_request_refresh=AsyncMock())
     sensors = [
         sensor_class(coordinator, client, "device-id", "Kitchen", None)
         for sensor_class in (
@@ -341,7 +342,7 @@ def test_delete_all_fails_when_fetch_fails(
     client = GlocaltokensApiClient(Mock(), Mock(), master_token=MASTER_TOKEN)
     request = AsyncMock(return_value=response)
     client.request = request  # type: ignore[method-assign]
-    coordinator = Mock(data=[device], async_request_refresh=AsyncMock())
+    coordinator = Mock(data={"device-id": device}, async_request_refresh=AsyncMock())
     sensor = sensor_class(coordinator, client, "device-id", "Kitchen", None)
 
     with pytest.raises(HomeAssistantError) as err:
@@ -393,7 +394,8 @@ def set_up_devices(
     client.request = AsyncMock(side_effect=request)  # type: ignore[method-assign]
     delete = AsyncMock(side_effect=client.delete_alarm_or_timer)
     client.delete_alarm_or_timer = delete  # type: ignore[method-assign]
-    coordinator = Mock(data=devices, async_request_refresh=AsyncMock())
+    by_id = {device.device_id: device for device in devices}
+    coordinator = Mock(data=by_id, async_request_refresh=AsyncMock())
     sensors = [
         sensor_class(coordinator, client, device.device_id, device.name, None)
         for device in devices
@@ -683,7 +685,7 @@ def test_delete_one_shows_it_gone(
         update_alarms_and_timers=AsyncMock(return_value=device),
         delete_alarm_or_timer=AsyncMock(side_effect=confirm_delete),
     )
-    coordinator = Mock(data=[device])
+    coordinator = Mock(data={"device-id": device})
     sensor = sensor_class(coordinator, client, "device-id", "Kitchen", None)
     shown: list[str | None] = []
     coordinator.async_update_listeners.side_effect = lambda: shown.append(sensor.state)
@@ -767,7 +769,7 @@ def test_delete_fails_when_device_is_gone(
     """Report an error, send no request and don't refresh when the last update no longer has the device."""
     func, _ = get_registered_action(action)
     sensors, delete, coordinator = set_up_devices(sensor_class, {"Kitchen": REPLY})
-    coordinator.data = []
+    coordinator.data = {}
 
     with pytest.raises(HomeAssistantError) as err:
         asyncio.run(func(sensors, Mock(data=data)))
@@ -802,7 +804,7 @@ def test_reboot_devices_once_each() -> None:
         GoogleHomeDevice(device_id, device_id, "token", "192.168.1.10")
         for device_id in ("kitchen", "bedroom")
     ]
-    coordinator = Mock(data=devices)
+    coordinator = Mock(data={device.device_id: device for device in devices})
     client = Mock(reboot_google_device=AsyncMock())
     sensors: list[GoogleHomeBaseEntity] = [
         sensor_class(coordinator, client, device.device_id, device.name, None)
@@ -832,7 +834,7 @@ def test_reboot_devices_finishes_all_before_raising() -> None:
         await asyncio.sleep(0.01)
         finished.append(device.device_id)
 
-    coordinator = Mock(data=devices)
+    coordinator = Mock(data={device.device_id: device for device in devices})
     client = Mock(reboot_google_device=AsyncMock(side_effect=reboot))
     sensors: list[GoogleHomeBaseEntity] = [
         GoogleHomeAlarmsSensor(coordinator, client, d.device_id, d.name, None)

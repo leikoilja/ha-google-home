@@ -13,7 +13,10 @@ def test_press_reboots_device() -> None:
     """Pressing the button reboots the device it belongs to."""
     kitchen = GoogleHomeDevice("kitchen-id", "Kitchen", "token")
     coordinator = Mock(
-        data=[GoogleHomeDevice("bedroom-id", "Bedroom", "token"), kitchen]
+        data={
+            "bedroom-id": GoogleHomeDevice("bedroom-id", "Bedroom", "token"),
+            "kitchen-id": kitchen,
+        }
     )
     client = Mock(reboot_google_device=AsyncMock())
     button = RebootButton(coordinator, client, "kitchen-id", "Kitchen", None)
@@ -32,7 +35,9 @@ def test_button_available(
 ) -> None:
     """Grey out the button for a device that isn't found or has no IP address."""
     device = GoogleHomeDevice("device-id", "Kitchen", "token", ip_address=ip_address)
-    coordinator = Mock(data=[device] if listed else [], last_update_success=True)
+    coordinator = Mock(
+        data={"device-id": device} if listed else {}, last_update_success=True
+    )
     button = RebootButton(coordinator, Mock(), "device-id", "Kitchen", None)
 
     assert button.available is available
