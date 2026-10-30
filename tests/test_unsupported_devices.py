@@ -210,7 +210,7 @@ def reload(network: Network, *addresses: str) -> GlocaltokensApiClient:
 
 def poll(
     client: GlocaltokensApiClient, clock: Mock, seconds: int
-) -> list[GoogleHomeDevice]:
+) -> dict[str, GoogleHomeDevice]:
     """Run the scheduled update at this time, and return its devices."""
     clock.return_value = seconds
     return asyncio.run(client.update_google_devices_information())
@@ -628,7 +628,7 @@ def test_dont_ask_again_when_google_lists_device_again(clock: Mock) -> None:
     glocaltokens.get_google_devices.return_value = []
     for seconds in (at(20), at(30)):
         coordinator.data = poll(client, clock, seconds)
-        assert coordinator.data == []
+        assert coordinator.data == {}
         assert network.asked(SPEAKER) == []
     assert available(speaker) == set()
 

@@ -7,29 +7,21 @@ from homeassistant.components.button.const import ButtonDeviceClass
 from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from .api import GlocaltokensApiClient
-from .const import DATA_CLIENT, DATA_COORDINATOR, DOMAIN, LABEL_REBOOT
+from .const import LABEL_REBOOT
 from .entity import GoogleHomeBaseEntity, async_add_device_entities
-from .models import GoogleHomeDevice
 from .types import GoogleHomeConfigEntry
 
 
 async def async_setup_entry(
-    hass: HomeAssistant,
+    _hass: HomeAssistant,
     entry: GoogleHomeConfigEntry,
     async_add_devices: AddEntitiesCallback,
 ) -> bool:
     """Set up button platform."""
-    client: GlocaltokensApiClient = hass.data[DOMAIN][entry.entry_id][DATA_CLIENT]
-    coordinator: DataUpdateCoordinator[list[GoogleHomeDevice]] = hass.data[DOMAIN][
-        entry.entry_id
-    ][DATA_COORDINATOR]
-
     # Rebooting doesn't need alarms, so devices without them get a button too.
     async_add_device_entities(
-        entry, coordinator, client, async_add_devices, RebootButton, needs_answer=False
+        entry, async_add_devices, RebootButton, needs_answer=False
     )
     return True
 

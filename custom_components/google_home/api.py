@@ -1,4 +1,4 @@
-"""Sample API Client."""
+"""The requests to each device that use its token, and the polling built on them."""
 
 import asyncio
 from http import HTTPStatus
@@ -84,8 +84,11 @@ def answer_failure(
 class GlocaltokensApiClient(GoogleAccountClient):
     """API client."""
 
-    async def update_google_devices_information(self) -> list[GoogleHomeDevice]:
-        """Retrieve devices from glocaltokens and fetches alarm/timer data from each of the device."""
+    async def update_google_devices_information(self) -> dict[str, GoogleHomeDevice]:
+        """Ask each device on Google's list for its alarms, timers and settings.
+
+        Return the devices by their ID.
+        """
 
         # From here until the next update, whatever asks for Google's list gets it
         # at most once: on schedule, when it's unknown, or for a rejected token
@@ -117,7 +120,7 @@ class GlocaltokensApiClient(GoogleAccountClient):
             ]
         )
 
-        return devices
+        return {device.device_id: device for device in devices}
 
     async def collect_data_from_endpoints(
         self, device: GoogleHomeDevice
@@ -349,128 +352,132 @@ class GlocaltokensApiClient(GoogleAccountClient):
             device.name,
         )
 
-    async def update_do_not_disturb(
-        self, device: GoogleHomeDevice, enable: bool | None = None
-    ) -> GoogleHomeDevice:
-        """Get or set the do not disturb setting on a Google Home device.
-
-        Raise DeviceRequestFailed if setting it fails.
-        """
-
-        data = None
-        polling = False
-
-        if enable is not None:
-            # Setting is inverted on device
-            data = {JSON_NOTIFICATIONS_ENABLED: not enable}
-            _LOGGER.debug(
-                "Setting Do Not Disturb setting to %s on Google Home device %s",
-                enable,
-                device.name,
-            )
-        else:
-            polling = True
-            _LOGGER.debug(
-                "Getting Do Not Disturb setting from Google Home device %s",
-                device.name,
-            )
-
+    async def update_do_not_disturb(self, device: GoogleHomeDevice) -> GoogleHomeDevice:
+        """Get the Do Not Disturb setting from a Google Home device."""
+        _LOGGER.debug(
+            "Getting Do Not Disturb setting from Google Home device %s",
+            device.name,
+        )
         response = await self.request(
             method="POST",
             endpoint=API_ENDPOINT_DO_NOT_DISTURB,
             device=device,
-            data=data,
-            polling=polling,
+            polling=True,
         )
-        if response is not None:
-            if JSON_NOTIFICATIONS_ENABLED in response:
-                enabled = not bool(response[JSON_NOTIFICATIONS_ENABLED])
-                _LOGGER.debug(
-                    "Received Do Not Disturb setting from Google Home device %s"
-                    " - Enabled: %s",
-                    device.name,
-                    enabled,
-                )
-
-                device.set_do_not_disturb(enabled)
-            else:
-                _LOGGER.debug(
-                    (
-                        "Unexpected response from Google Home device '%s' "
-                        "when fetching DND status - %s"
-                    ),
-                    device.name,
-                    response,
-                )
-
+        self._store_do_not_disturb(device, response)
         return device
 
-    async def update_alarm_volume(
-        self, device: GoogleHomeDevice, volume: int | None = None
-    ) -> GoogleHomeDevice:
-        """Get or set the alarm volume setting on a Google Home device.
+    async def set_do_not_disturb(self, device: GoogleHomeDevice, enable: bool) -> None:
+        """Set the Do Not Disturb setting on a Google Home device.
 
         Raise DeviceRequestFailed if setting it fails.
         """
-
-        data: JsonDict | None = None
-        polling = False
-
-        if volume is not None:
+        _LOGGER.debug(
+            "Setting Do Not Disturb setting to %s on Google Home device %s",
+            enable,
+            device.name,
+        )
+        response = await self.request(
+            method="POST",
+            endpoint=API_ENDPOINT_DO_NOT_DISTURB,
+            device=device,
             # Setting is inverted on device
-            volume_float = volume / 100
-            data = {JSON_ALARM_VOLUME: volume_float}
+            data={JSON_NOTIFICATIONS_ENABLED: not enable},
+        )
+        self._store_do_not_disturb(device, response)
+
+    @staticmethod
+    def _store_do_not_disturb(
+        device: GoogleHomeDevice, response: JsonDict | None
+    ) -> None:
+        """Store the Do Not Disturb setting that the device answered with, if any."""
+        if response is None:
+            return
+        if JSON_NOTIFICATIONS_ENABLED in response:
+            enabled = not bool(response[JSON_NOTIFICATIONS_ENABLED])
             _LOGGER.debug(
-                "Setting alarm volume to %d(float=%f) on Google Home device %s",
-                volume,
-                volume_float,
+                "Received Do Not Disturb setting from Google Home device %s"
+                " - Enabled: %s",
                 device.name,
+                enabled,
             )
+            device.do_not_disturb = enabled
         else:
-            polling = True
             _LOGGER.debug(
-                "Getting alarm volume from Google Home device %s",
+                (
+                    "Unexpected response from Google Home device '%s' "
+                    "when fetching DND status - %s"
+                ),
                 device.name,
+                response,
             )
 
+    async def update_alarm_volume(self, device: GoogleHomeDevice) -> GoogleHomeDevice:
+        """Get the alarm volume setting from a Google Home device."""
+        _LOGGER.debug(
+            "Getting alarm volume from Google Home device %s",
+            device.name,
+        )
         response = await self.request(
             method="POST",
             endpoint=API_ENDPOINT_ALARM_VOLUME,
             device=device,
-            data=data,
-            polling=polling,
+            polling=True,
         )
-        if response:
-            if JSON_ALARM_VOLUME in response:
-                if polling:
-                    volume_raw = str(response[JSON_ALARM_VOLUME])
-                    volume = round(float(volume_raw) * 100)
-                    _LOGGER.debug(
-                        "Received alarm volume from Google Home device %s"
-                        " - Volume: %d(raw=%s)",
-                        device.name,
-                        volume,
-                        volume_raw,
-                    )
-                else:
-                    assert volume is not None
-                    _LOGGER.debug(
-                        "Successfully set alarm volume to %d on Google Home device %s",
-                        volume,
-                        device.name,
-                    )
-                device.set_alarm_volume(volume)
-            else:
-                _LOGGER.debug(
-                    (
-                        "Unexpected response from Google Home device '%s' "
-                        "when fetching alarm volume setting - %s"
-                    ),
-                    device.name,
-                    response,
-                )
-
+        if response and JSON_ALARM_VOLUME in response:
+            volume_raw = str(response[JSON_ALARM_VOLUME])
+            device.alarm_volume = round(float(volume_raw) * 100)
+            _LOGGER.debug(
+                "Received alarm volume from Google Home device %s - Volume: %d(raw=%s)",
+                device.name,
+                device.alarm_volume,
+                volume_raw,
+            )
+        elif response:
+            self._log_unexpected_volume_answer(device, response)
         return device
+
+    async def set_alarm_volume(self, device: GoogleHomeDevice, volume: int) -> None:
+        """Set the alarm volume setting on a Google Home device.
+
+        Raise DeviceRequestFailed if setting it fails.
+        """
+        volume_float = volume / 100
+        _LOGGER.debug(
+            "Setting alarm volume to %d(float=%f) on Google Home device %s",
+            volume,
+            volume_float,
+            device.name,
+        )
+        response = await self.request(
+            method="POST",
+            endpoint=API_ENDPOINT_ALARM_VOLUME,
+            device=device,
+            data={JSON_ALARM_VOLUME: volume_float},
+        )
+        if response and JSON_ALARM_VOLUME in response:
+            _LOGGER.debug(
+                "Successfully set alarm volume to %d on Google Home device %s",
+                volume,
+                device.name,
+            )
+            device.alarm_volume = volume
+        elif response:
+            self._log_unexpected_volume_answer(device, response)
+
+    @staticmethod
+    def _log_unexpected_volume_answer(
+        device: GoogleHomeDevice, response: JsonDict
+    ) -> None:
+        """Log an answer about the alarm volume that doesn't have it."""
+        _LOGGER.debug(
+            (
+                "Unexpected response from Google Home device '%s' "
+                "when fetching alarm volume setting - %s"
+            ),
+            device.name,
+            response,
+        )
 
     async def request(
         self,

@@ -7,13 +7,8 @@ from homeassistant.components.number import NumberEntity
 from homeassistant.const import EntityCategory, UnitOfRatio
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from .api import GlocaltokensApiClient
 from .const import (
-    DATA_CLIENT,
-    DATA_COORDINATOR,
-    DOMAIN,
     GOOGLE_HOME_ALARM_DEFAULT_VALUE,
     ICON_ALARM_VOLUME_HIGH,
     ICON_ALARM_VOLUME_LOW,
@@ -23,26 +18,18 @@ from .const import (
 )
 from .entity import GoogleHomeFeatureEntity, async_add_device_entities
 from .exceptions import DeviceRequestFailed
-from .models import GoogleHomeDevice
 from .types import GoogleHomeConfigEntry
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
 async def async_setup_entry(
-    hass: HomeAssistant,
+    _hass: HomeAssistant,
     entry: GoogleHomeConfigEntry,
     async_add_devices: AddEntitiesCallback,
 ) -> bool:
     """Set up switch platform."""
-    client: GlocaltokensApiClient = hass.data[DOMAIN][entry.entry_id][DATA_CLIENT]
-    coordinator: DataUpdateCoordinator[list[GoogleHomeDevice]] = hass.data[DOMAIN][
-        entry.entry_id
-    ][DATA_COORDINATOR]
-
-    async_add_device_entities(
-        entry, coordinator, client, async_add_devices, AlarmVolumeNumber
-    )
+    async_add_device_entities(entry, async_add_devices, AlarmVolumeNumber)
     return True
 
 
@@ -69,7 +56,7 @@ class AlarmVolumeNumber(GoogleHomeFeatureEntity, NumberEntity):
         device = self.get_device()
         if device is None:
             return ICON_ALARM_VOLUME_OFF
-        volume = device.get_alarm_volume()
+        volume = device.alarm_volume
         if volume == 0:
             return ICON_ALARM_VOLUME_OFF
         if volume <= 30:
@@ -87,7 +74,7 @@ class AlarmVolumeNumber(GoogleHomeFeatureEntity, NumberEntity):
         if device is None:
             return GOOGLE_HOME_ALARM_DEFAULT_VALUE
 
-        return device.get_alarm_volume()
+        return device.alarm_volume
 
     @override
     async def async_set_native_value(self, value: float) -> None:
@@ -97,6 +84,5 @@ class AlarmVolumeNumber(GoogleHomeFeatureEntity, NumberEntity):
             _LOGGER.error("Device %s not found.", self.device_name)
             raise DeviceRequestFailed(self.device_name, "request_failed")
 
-        await self.client.update_alarm_volume(device=device, volume=round(value))
-        # Other entities show this device's data too
-        self.coordinator.async_update_listeners()
+        await self.client.set_alarm_volume(device=device, volume=round(value))
+        self.async_show_device_changes()

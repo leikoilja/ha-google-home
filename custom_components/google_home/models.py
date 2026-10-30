@@ -68,8 +68,8 @@ class GoogleHomeDevice:
         # Updates in a row whose alarms request, or info request if it has no alarms,
         # the device didn't answer
         self.unanswered_updates = 0
-        self._do_not_disturb = False
-        self._alarm_volume = GOOGLE_HOME_ALARM_DEFAULT_VALUE
+        self.do_not_disturb = False
+        self.alarm_volume = GOOGLE_HOME_ALARM_DEFAULT_VALUE
         self._timers: list[GoogleHomeTimer] = []
         self._alarms: list[GoogleHomeAlarm] = []
 
@@ -168,22 +168,6 @@ class GoogleHomeDevice:
         """Return next alarm."""
         timers = self.get_sorted_timers()
         return timers[0] if timers else None
-
-    def set_do_not_disturb(self, status: bool) -> None:
-        """Set Do Not Disturb status."""
-        self._do_not_disturb = status
-
-    def get_do_not_disturb(self) -> bool:
-        """Return Do Not Disturb status."""
-        return self._do_not_disturb
-
-    def set_alarm_volume(self, volume: int) -> None:
-        """Set Alarm Volume status."""
-        self._alarm_volume = volume
-
-    def get_alarm_volume(self) -> int:
-        """Return Alarm Volume status."""
-        return self._alarm_volume
 
 
 class GoogleHomeTimer:
