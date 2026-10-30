@@ -53,7 +53,10 @@ jobs:
           uvx prek run --hook-stage manual python-typing-update --all-files --show-diff-on-failure --color=always
 
       - name: Run tests
-        run: uv run pytest -q
+        run: uv run pytest -q --cov
+
+      - name: Check coverage
+        run: script/check_coverage
 
   translations:
     name: Translations

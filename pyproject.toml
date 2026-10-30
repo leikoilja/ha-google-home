@@ -288,3 +288,10 @@ ignore-words-list = "hass"
 
 [tool.pytest]
 asyncio_mode = "auto"
+
+[tool.coverage.run]
+branch = true
+source = ["custom_components/google_home"]
+
+[tool.coverage.report]
+show_missing = true
