@@ -1,4 +1,4 @@
-"""Tests for signing in and the options.
+"""Tests for signing in, discovering speakers and the options.
 
 Each flow runs through Home Assistant's flow manager. The tests that call the flow's
 steps directly check what the flow manager adds nothing to: how glocaltokens
@@ -10,6 +10,7 @@ import asyncio
 from collections.abc import AsyncIterator, Iterator
 from contextlib import contextmanager
 from http import HTTPStatus
+from ipaddress import ip_address
 import json
 import logging
 from pathlib import Path
@@ -37,10 +38,16 @@ from custom_components.google_home.const import (
 
 # ruff sorts homeassistant as first-party, pylint as third-party
 # pylint: disable=wrong-import-order
-from homeassistant.config_entries import SOURCE_USER, ConfigEntryState, ConfigFlowResult
+from homeassistant.config_entries import (
+    SOURCE_USER,
+    SOURCE_ZEROCONF,
+    ConfigEntryState,
+    ConfigFlowResult,
+)
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.service_info.zeroconf import ZeroconfServiceInfo
 
 # pylint: enable=wrong-import-order
 
@@ -676,11 +683,87 @@ async def test_sign_in_error(
     assert result["type"] is FlowResultType.CREATE_ENTRY
 
 
+def speaker(name: str, address: str) -> ZeroconfServiceInfo:
+    """Return what zeroconf finds of a speaker, which signing in doesn't use."""
+    return ZeroconfServiceInfo(
+        ip_address=ip_address(address),
+        ip_addresses=[ip_address(address)],
+        port=8009,
+        hostname=f"{name}.local.",
+        type="_googlecast._tcp.local.",
+        name=f"{name}._googlecast._tcp.local.",
+        properties={"fn": name},
+    )
+
+
+async def discover(hass: HomeAssistant, name: str, address: str) -> ConfigFlowResult:
+    """Start adding the integration for a speaker that zeroconf found."""
+    return await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": SOURCE_ZEROCONF}, data=speaker(name, address)
+    )
+
+
+# Adding the integration by hand, and for a speaker that zeroconf found
+SOURCES = [
+    pytest.param(SOURCE_USER, None, id="user"),
+    pytest.param(SOURCE_ZEROCONF, speaker("Kitchen", "192.168.1.10"), id="zeroconf"),
+]
+
+
+@pytest.mark.usefixtures("enable_custom_integrations", "mock_setup_entry", "sign_in")
+async def test_discovery(hass: HomeAssistant) -> None:
+    """Offer the same sign-in as adding the integration when a speaker is found."""
+    result = await discover(hass, "Kitchen", "192.168.1.10")
+
+    assert (result["type"], result["step_id"]) == (FlowResultType.MENU, "user")
+    assert result["menu_options"] == ["browser", "master_token"]
+
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"], {"next_step_id": "browser"}
+    )
+    assert (result["type"], result["step_id"]) == (FlowResultType.FORM, "browser")
+    result = await submit(hass, result, SIGN_IN_INPUT["browser"])
+
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    [entry] = hass.config_entries.async_entries(DOMAIN)
+    assert entry.data["master_token"] == NEW_MASTER_TOKEN
+
+
+@pytest.mark.usefixtures("enable_custom_integrations")
+@pytest.mark.parametrize(("source", "data"), SOURCES)
+async def test_discovery_in_progress(
+    hass: HomeAssistant, source: str, data: ZeroconfServiceInfo | None
+) -> None:
+    """Find another speaker without a second flow while the integration is being added.
+
+    One entry has all the account's devices, whether the open flow was found or
+    started by hand.
+    """
+    first = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": source}, data=data
+    )
+
+    result = await discover(hass, "Bedroom", "192.168.1.11")
+
+    assert result["type"] is FlowResultType.ABORT
+    assert result["reason"] == "already_in_progress"
+    assert [
+        flow["flow_id"]
+        for flow in hass.config_entries.flow.async_progress_by_handler(DOMAIN)
+    ] == [first["flow_id"]]
+
+
 @pytest.mark.usefixtures("config_entry")
-async def test_single_entry(hass: HomeAssistant) -> None:
-    """Refuse to add the integration again, as its entry has all the account's devices."""
+@pytest.mark.parametrize(("source", "data"), SOURCES)
+async def test_single_entry(
+    hass: HomeAssistant, source: str, data: ZeroconfServiceInfo | None
+) -> None:
+    """Refuse to add the integration again, also for a speaker found later.
+
+    Its entry has all the account's devices.
+    """
     result = await hass.config_entries.flow.async_init(
-        DOMAIN, context={"source": SOURCE_USER}
+        DOMAIN, context={"source": source}, data=data
     )
 
     assert result["type"] is FlowResultType.ABORT
