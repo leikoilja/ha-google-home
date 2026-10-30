@@ -15,6 +15,7 @@ from zipfile import ZipFile
 
 from github import Auth, Github, InputGitTreeElement
 from github.GitCommit import GitCommit
+from github.GithubException import UnknownObjectException
 from github.GitRelease import GitRelease
 from github.Repository import Repository
 
@@ -44,6 +45,7 @@ def main() -> int:
         return 1
     version = release.name.split()[-1].lstrip("v")
     release_sha = update_manifests(repo, version)
+    check_tag(repo, release.tag_name, release_sha)
     attach_zip(release, fetch(release_sha))
     publish_release(release, release_sha)
     return 0
@@ -120,6 +122,20 @@ def commit_files(
     ]
     tree = repo.create_git_tree(elements, repo.get_git_tree(sha=parent))
     return repo.create_git_commit(message, tree, [repo.get_git_commit(sha=parent)])
+
+
+def check_tag(repo: Repository, tag: str, release_sha: str) -> None:
+    """Stop if the tag exists on another commit, publishing would keep it there."""
+    try:
+        tagged = repo.get_git_ref(f"tags/{tag}").object.sha
+    except UnknownObjectException:
+        return
+    if tagged != release_sha:
+        sys.exit(
+            f"{tag} already points at {tagged}, not the release commit "
+            f"{release_sha}. Delete the tag if it is wrong, then run the "
+            "workflow again."
+        )
 
 
 def fetch(ref: str) -> str:

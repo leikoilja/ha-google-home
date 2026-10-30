@@ -27,7 +27,7 @@ A fix merged into `master` reaches HACS and the Home Assistant Marketplace with 
 
 To go back, run the action again with the latest release as the version, such as `version: v1.17.0`, and restart.
 
-This installs `master` as it is at that moment. It doesn't follow newer commits, so run the action again to get them. Only `master` can be installed this way, not other branches or pull requests.
+This installs `master` as it is at that moment. It doesn't follow newer commits, so run the action again to get them. Only `master` is supported, not other branches or pull requests.
 
 ## Translate the integration
 
@@ -131,9 +131,14 @@ Maintainers publish the draft release that Release Drafter keeps up to date: run
 3. Downloads the attached zip and checks that its `manifest.json` has the release's version.
 4. Publishes the release, with its tag on the release commit.
 
-HACS and the Marketplace install a release from its `google_home.zip`, and GitHub counts its downloads. A release whose zip is missing can't be installed, so the workflow publishes only after the check passes. Don't publish the draft by hand: the release would keep the previous version in `manifest.json` and have no zip. If the workflow stops, fix the cause and run it again. If nothing has been merged since, it reuses the release commit; otherwise it commits the release again, on top of what was merged.
+HACS and the Marketplace install a release from its `google_home.zip`, and GitHub counts its downloads. A release whose zip is missing can't be installed, so the workflow publishes only after the check passes. Don't publish the draft by hand: the release would keep the previous version in `manifest.json` and have no zip.
 
-If a published release's zip is missing or wrong, run the workflow with the release's tag, such as `v1.17.0`. It rebuilds the zip from that tag, replaces the release's `google_home.zip` and changes nothing else.
+If the workflow stops, fix the cause and run it again. If nothing has been merged since, it reuses the release commit; otherwise it commits the release again, on top of what was merged. If the release's tag already exists on another commit, the workflow stops before changing the draft, because GitHub would publish the release on that commit. Delete the tag if it's wrong, then run the workflow again.
+
+If a published release's zip is missing or wrong, run the workflow with the release's tag, such as `v1.17.0`. It rebuilds the zip from that tag, replaces the release's `google_home.zip` and changes nothing else. It deletes the old zip first, so:
+
+- The old zip's download count is lost. If you need it, note it first, for example with `gh release view v1.17.0 --json assets`.
+- The release can't be installed until the new zip is uploaded. If the upload fails, run the workflow with the tag again.
 
 ## License
 

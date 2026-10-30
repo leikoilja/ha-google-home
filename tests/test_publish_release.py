@@ -12,6 +12,7 @@ from typing import cast
 from zipfile import ZipFile
 
 from github.GitCommit import GitCommit
+from github.GithubException import UnknownObjectException
 from github.Repository import Repository
 import pytest
 
@@ -245,11 +246,23 @@ def run_main(
     monkeypatch: pytest.MonkeyPatch,
     release: FakeRelease,
     draft: FakeRelease | None = None,
+    tagged: str | None = None,
 ) -> int:
-    """Run the script against a repository with this release, and this draft."""
+    """Run the script against a repository with this release, and this draft.
+
+    The release's tag points at the commit tagged, or doesn't exist yet.
+    """
+
+    def get_git_ref(ref: str) -> SimpleNamespace:
+        assert ref == f"tags/{release.tag_name}"
+        if tagged is None:
+            raise UnknownObjectException(404)
+        return SimpleNamespace(object=SimpleNamespace(sha=tagged))
+
     repository = SimpleNamespace(
         get_releases=lambda: [draft or release],
         get_release=lambda tag: release if tag == release.tag_name else None,
+        get_git_ref=get_git_ref,
     )
     monkeypatch.setattr(
         publish_release,
@@ -259,13 +272,14 @@ def run_main(
     return publish_release.main()
 
 
+@pytest.mark.parametrize("tagged", [None, "release"], ids=["new tag", "rerun"])
 def test_publishes_after_attaching_zip(
-    monkeypatch: pytest.MonkeyPatch, fetched: list[str]
+    monkeypatch: pytest.MonkeyPatch, fetched: list[str], tagged: str | None
 ) -> None:
     """The draft is published on the release commit, with the zip attached."""
     release = FakeRelease(head_tag())
 
-    assert run_main(monkeypatch, release) == 0
+    assert run_main(monkeypatch, release, tagged=tagged) == 0
 
     assert fetched == ["release"]
     assert [asset.name for asset in release.assets] == ["google_home.zip"]
@@ -317,6 +331,25 @@ def test_does_not_upload_zip_of_another_version(
     with pytest.raises(SystemExit, match="not v0.0.1$"):
         run_main(monkeypatch, release)
 
+    assert release.assets == [old]
+    assert release.published is None
+
+
+def test_does_not_publish_on_tag_of_another_commit(
+    monkeypatch: pytest.MonkeyPatch, fetched: list[str]
+) -> None:
+    """GitHub would keep the tag, so installs would get the other commit's code."""
+    release = FakeRelease(head_tag())
+    old = FakeAsset(release, "google_home.zip", b"old")
+    release.assets.append(old)
+
+    with pytest.raises(
+        SystemExit,
+        match=f"^{re.escape(head_tag())} already points at old, not the release commit",
+    ):
+        run_main(monkeypatch, release, tagged="old")
+
+    assert not fetched
     assert release.assets == [old]
     assert release.published is None
 
