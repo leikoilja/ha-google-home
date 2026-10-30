@@ -12,6 +12,7 @@ from typing import cast
 from glocaltokens.utils.token import is_aas_et
 
 from homeassistant.components import zeroconf
+from homeassistant.config_entries import ConfigEntryState
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed
@@ -26,18 +27,15 @@ from .const import (
     CONF_KNOWN_HOSTS,
     CONF_MASTER_TOKEN,
     CONF_UPDATE_INTERVAL,
-    DATA_CLIENT,
-    DATA_COORDINATOR,
     DOMAIN,
     MASTER_TOKEN_TITLE,
     PLATFORMS,
     SENSOR,
-    STARTUP_MESSAGE,
     UPDATE_INTERVAL,
 )
 from .mdns import async_browse_cast_devices
 from .models import GoogleHomeDevice
-from .types import GoogleHomeConfigEntry
+from .types import GoogleHomeConfigEntry, GoogleHomeData
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -64,10 +62,6 @@ async def async_migrate_entry(
 
 async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -> bool:
     """Set up this integration using UI."""
-    if hass.data.get(DOMAIN) is None:
-        hass.data.setdefault(DOMAIN, {})
-        _LOGGER.info(STARTUP_MESSAGE)
-
     username = cast(str, entry.data.get(CONF_USERNAME))
     password = cast(str, entry.data.get(CONF_PASSWORD))
     android_id = cast(str, entry.data.get(CONF_ANDROID_ID))
@@ -117,10 +111,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -
     finally:
         glocaltokens_client.setting_up = False
 
-    hass.data[DOMAIN][entry.entry_id] = {
-        DATA_CLIENT: glocaltokens_client,
-        DATA_COORDINATOR: coordinator,
-    }
+    entry.runtime_data = GoogleHomeData(glocaltokens_client, coordinator)
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
@@ -137,7 +128,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -
 
 async def async_update_devices(
     hass: HomeAssistant, entry: GoogleHomeConfigEntry, client: GlocaltokensApiClient
-) -> list[GoogleHomeDevice]:
+) -> dict[str, GoogleHomeDevice]:
     """Update the devices, and ask to sign in again while Google rejects the master token.
 
     Without devices, which is always the case at setup, the update fails. Otherwise
@@ -172,14 +163,11 @@ async def async_name_after_account(
 async def async_unload_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -> bool:
     """Handle removal of an entry."""
     _LOGGER.debug("Unloading entry...")
-    unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
-    if unload_ok:
-        hass.data[DOMAIN].pop(entry.entry_id)
-    return unload_ok
+    return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
 
 
 async def async_remove_config_entry_device(
-    hass: HomeAssistant, entry: GoogleHomeConfigEntry, device_entry: DeviceEntry
+    _hass: HomeAssistant, entry: GoogleHomeConfigEntry, device_entry: DeviceEntry
 ) -> bool:
     """Allow deleting a device only when Google no longer returns it.
 
@@ -189,19 +177,20 @@ async def async_remove_config_entry_device(
     fetch has succeeded yet, or a device rejected its token, got no new token
     that it accepts, and the list hasn't been fetched again.
     """
-    entry_data = hass.data.get(DOMAIN, {}).get(entry.entry_id)
-    if entry_data is None or not entry_data[DATA_CLIENT].google_devices_fetched:
+    if (
+        entry.state is not ConfigEntryState.LOADED
+        or not entry.runtime_data.client.google_devices_fetched
+    ):
         return False
-    coordinator: DataUpdateCoordinator[list[GoogleHomeDevice]] = entry_data[
-        DATA_COORDINATOR
-    ]
-    google_ids = {(DOMAIN, device.device_id) for device in coordinator.data}
+    google_ids = {
+        (DOMAIN, device_id) for device_id in entry.runtime_data.coordinator.data
+    }
     return not device_entry.identifiers & google_ids
 
 
 async def async_update_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -> None:
     """Apply changed options."""
-    client: GlocaltokensApiClient = hass.data[DOMAIN][entry.entry_id][DATA_CLIENT]
+    client = entry.runtime_data.client
     # Known hosts are looked up when Google's device list is fetched, at setup
     if entry.options.get(CONF_KNOWN_HOSTS, []) != client.known_hosts:
         _LOGGER.debug("Known hosts changed, reloading...")
@@ -209,10 +198,7 @@ async def async_update_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) 
         return
     _LOGGER.debug("Options updated, updating coordinator interval...")
     update_interval: int = entry.options.get(CONF_UPDATE_INTERVAL, UPDATE_INTERVAL)
-    coordinator: DataUpdateCoordinator[list[GoogleHomeDevice]] = hass.data[DOMAIN][
-        entry.entry_id
-    ][DATA_COORDINATOR]
-    coordinator.update_interval = timedelta(seconds=update_interval)
+    entry.runtime_data.coordinator.update_interval = timedelta(seconds=update_interval)
     _LOGGER.debug(
         "Coordinator update interval is: %s", timedelta(seconds=update_interval)
     )

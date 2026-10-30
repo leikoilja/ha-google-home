@@ -114,10 +114,10 @@ def test_action_fails_when_it_cant_be_sent(
     client, _, network = setup(SUPPORTED)
     [device] = client.google_devices
     if missing == "device":
-        coordinator = Mock(data=[])
+        coordinator = Mock(data={})
     else:
         setattr(device, missing, None)
-        coordinator = Mock(data=[device])
+        coordinator = Mock(data={"device0": device})
 
     with pytest.raises(DeviceRequestFailed) as err:
         asyncio.run(act(entities(client, coordinator, "device0")[control]))
@@ -177,7 +177,7 @@ def test_setting_fails_when_answer_doesnt_arrive(
 ) -> None:
     """Report a setting whose answer stops coming after its 200 as one the device may or may not have changed."""
     client, _, network = setup({**SUPPORTED, control: (HTTPStatus.OK, body)})
-    coordinator = Mock(data=client.google_devices)
+    coordinator = Mock(data={"device0": client.google_devices[0]})
 
     with pytest.raises(DeviceRequestFailed) as err:
         asyncio.run(act(entities(client, coordinator, "device0")[control]))
@@ -200,12 +200,12 @@ def test_setting_succeeds_when_answer_doesnt_show_it(
     """Count a 200 that doesn't show the new setting as done, and show the old one until the next update."""
     client, _, _ = setup({**SUPPORTED, control: (HTTPStatus.OK, body)})
     [device] = client.google_devices
-    device.set_alarm_volume(70)
-    coordinator = Mock(data=client.google_devices)
+    device.alarm_volume = 70
+    coordinator = Mock(data={"device0": client.google_devices[0]})
 
     asyncio.run(act(entities(client, coordinator, "device0")[control]))
 
-    assert (device.get_do_not_disturb(), device.get_alarm_volume()) == (False, 70)
+    assert (device.do_not_disturb, device.alarm_volume) == (False, 70)
     coordinator.async_update_listeners.assert_called_once()
 
 
@@ -299,7 +299,7 @@ def test_reboot_devices_names_every_device_that_failed(
         if device.name in failing:
             raise DeviceRequestFailed(device.name, "offline")
 
-    coordinator = Mock(data=devices)
+    coordinator = Mock(data={device.device_id: device for device in devices})
     client = Mock(reboot_google_device=AsyncMock(side_effect=reboot))
     sensors: list[GoogleHomeBaseEntity] = [
         GoogleHomeAlarmsSensor(coordinator, client, d.device_id, d.name, None)
@@ -335,14 +335,14 @@ def test_update_keeps_last_data_when_device_doesnt_answer(
     The update doesn't fail.
     """
     client, _, network = setup(SUPPORTED)
-    [device] = poll(client, clock, at(0))
+    [device] = poll(client, clock, at(0)).values()
     network.replies[SPEAKER] = dict.fromkeys(SUPPORTED, reply)
     caplog.set_level(logging.DEBUG)
 
     poll(client, clock, at(3))
 
     assert [alarm.alarm_id for alarm in device.get_sorted_alarms()] == [ALARM_ID]
-    assert (device.get_do_not_disturb(), device.get_alarm_volume()) == (True, 70)
+    assert (device.do_not_disturb, device.alarm_volume) == (True, 70)
     assert [r.levelname for r in caplog.records if r.levelno > logging.DEBUG] == []
 
 

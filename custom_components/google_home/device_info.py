@@ -14,10 +14,7 @@ _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
 def create_url(ip_address: str, port: int, api_endpoint: str) -> str:
-    """Create url to endpoint.
-
-    Note: port argument is unused because all request must be done to 8443.
-    """
+    """Create url to endpoint."""
     if isinstance(ipaddress.ip_address(ip_address), ipaddress.IPv6Address):
         ip_address = f"[{ip_address}]"
     return f"https://{ip_address}:{port}/{api_endpoint}"

@@ -14,12 +14,17 @@ from custom_components.google_home import (
 from custom_components.google_home.api import GlocaltokensApiClient
 from custom_components.google_home.const import (
     BROWSER_TITLE,
-    DATA_CLIENT,
-    DATA_COORDINATOR,
     DOMAIN,
     MASTER_TOKEN_TITLE,
 )
 from custom_components.google_home.models import GoogleHomeDevice
+from custom_components.google_home.types import GoogleHomeData
+
+# ruff sorts homeassistant as first-party, pylint as third-party
+# pylint: disable=wrong-import-order
+from homeassistant.config_entries import ConfigEntryState
+
+# pylint: enable=wrong-import-order
 
 # A realistic master token: setup checks its length with is_aas_et()
 MASTER_TOKEN = "aas_et/" + "x" * 216
@@ -108,51 +113,55 @@ def test_name_after_account_without_email() -> None:
     hass.config_entries.async_update_entry.assert_not_called()
 
 
-@pytest.fixture(name="hass")
-def fixture_hass() -> Mock:
-    """Return a fake Home Assistant whose entry Google returned two devices for."""
+def loaded_entry(
+    client: GlocaltokensApiClient, devices: list[GoogleHomeDevice]
+) -> Mock:
+    """Return a loaded config entry whose update returned these devices."""
+    return Mock(
+        state=ConfigEntryState.LOADED,
+        runtime_data=GoogleHomeData(
+            client, Mock(data={device.device_id: device for device in devices})
+        ),
+    )
+
+
+@pytest.fixture(name="entry")
+def fixture_entry() -> Mock:
+    """Return a loaded config entry that Google returned two devices for."""
     online = GoogleHomeDevice(
         device_id="online", name="Kitchen", auth_token="token", ip_address="10.0.0.2"
     )
     offline = GoogleHomeDevice(device_id="offline", name="Bedroom", auth_token="token")
     offline.available = False
-    hass = Mock()
-    hass.data = {
-        DOMAIN: {
-            "entry": {
-                DATA_CLIENT: Mock(google_devices_fetched=True),
-                DATA_COORDINATOR: Mock(data=[online, offline]),
-            }
-        }
-    }
-    return hass
+    return loaded_entry(Mock(google_devices_fetched=True), [online, offline])
 
 
-def can_delete(hass: Mock, device_id: str) -> bool:
+def can_delete(entry: Mock, device_id: str) -> bool:
     """Ask the integration whether the device with this ID can be deleted."""
-    entry = Mock(entry_id="entry")
     device_entry = Mock(identifiers={(DOMAIN, device_id)})
-    return asyncio.run(async_remove_config_entry_device(hass, entry, device_entry))
+    return asyncio.run(async_remove_config_entry_device(Mock(), entry, device_entry))
 
 
-def test_keep_device_google_returns(hass: Mock) -> None:
+def test_keep_device_google_returns(entry: Mock) -> None:
     """Keep a device Google still returns."""
-    assert not can_delete(hass, "online")
+    assert not can_delete(entry, "online")
 
 
-def test_keep_unavailable_device_google_returns(hass: Mock) -> None:
+def test_keep_unavailable_device_google_returns(entry: Mock) -> None:
     """Keep an unavailable device Google still returns: it comes back on reload."""
-    assert not can_delete(hass, "offline")
+    assert not can_delete(entry, "offline")
 
 
-def test_delete_device_google_no_longer_returns(hass: Mock) -> None:
+def test_delete_device_google_no_longer_returns(entry: Mock) -> None:
     """Allow deleting a device Google no longer returns."""
-    assert can_delete(hass, "removed")
+    assert can_delete(entry, "removed")
 
 
 def test_keep_devices_of_unloaded_entry() -> None:
     """Keep devices while the entry isn't loaded, as Google's list is unknown."""
-    assert not can_delete(Mock(data={}), "removed")
+    # Home Assistant removes runtime_data when it unloads an entry
+    unloaded = Mock(spec=["state"], state=ConfigEntryState.NOT_LOADED)
+    assert not can_delete(unloaded, "removed")
 
 
 def test_keep_devices_when_fetch_fails(caplog: pytest.LogCaptureFixture) -> None:
@@ -169,11 +178,8 @@ def test_keep_devices_when_fetch_fails(caplog: pytest.LogCaptureFixture) -> None
     ):
         devices = asyncio.run(client.get_google_devices())
 
-    hass.data = {
-        DOMAIN: {"entry": {DATA_CLIENT: client, DATA_COORDINATOR: Mock(data=devices)}}
-    }
     assert devices == []
-    assert not can_delete(hass, "online")
+    assert not can_delete(loaded_entry(client, devices), "online")
     [record] = [
         record
         for record in caplog.records
