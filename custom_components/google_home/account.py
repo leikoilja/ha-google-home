@@ -1,12 +1,13 @@
 """The Google account's tokens and device list, and addresses from known hosts."""
 
 import asyncio
+from functools import partial
 import ipaddress
 import logging
 from time import monotonic
 
 from aiohttp import ClientError, ClientSession
-from glocaltokens.client import Device, GLocalAuthenticationTokens
+from glocaltokens.client import GLocalAuthenticationTokens
 from glocaltokens.exceptions import AuthenticationError, GLocalTokensError
 from glocaltokens.utils.token import is_aas_et
 from requests.exceptions import HTTPError, RequestException
@@ -69,7 +70,7 @@ class GoogleAccountClient:
         zeroconf_instance: Zeroconf | None = None,
         known_hosts: list[str] | None = None,
     ):
-        """Sample API Client."""
+        """Create the client of a Google account."""
         self.hass = hass
         self._username = username
         self._password = password
@@ -115,12 +116,10 @@ class GoogleAccountClient:
 
     async def async_get_master_token(self) -> str:
         """Get master API token."""
-
-        def _get_master_token() -> str:
-            return self._client.get_master_token()
-
         try:
-            master_token = await self.hass.async_add_executor_job(_get_master_token)
+            master_token = await self.hass.async_add_executor_job(
+                self._client.get_master_token
+            )
         except AuthenticationError as error:
             raise InvalidMasterToken(str(error)) from error
         if not is_aas_et(master_token):
@@ -129,34 +128,22 @@ class GoogleAccountClient:
 
     async def async_get_access_token(self) -> str:
         """Get access token using master token."""
-
-        def _get_access_token() -> str:
-            return self._client.get_access_token()
-
         try:
-            return await self.hass.async_add_executor_job(_get_access_token)
+            return await self.hass.async_add_executor_job(self._client.get_access_token)
         except AuthenticationError as error:
             raise InvalidMasterToken(str(error)) from error
 
     async def async_get_email(self) -> str | None:
         """Return the verified email address of the signed-in account, if Google gives it."""
-
-        def _get_email() -> str | None:
-            return self._client.get_email()
-
         try:
-            return await self.hass.async_add_executor_job(_get_email)
+            return await self.hass.async_add_executor_job(self._client.get_email)
         except RequestException, AuthenticationError:
             _LOGGER.debug("Failed to get the account's email address", exc_info=True)
             return None
 
     async def get_android_id(self) -> str:
         """Generate random android_id."""
-
-        def _get_android_id() -> str:
-            return self._client.get_android_id()
-
-        return await self.hass.async_add_executor_job(_get_android_id)
+        return await self.hass.async_add_executor_job(self._client.get_android_id)
 
     async def get_google_devices(
         self, *, refetch: bool = False
@@ -200,14 +187,14 @@ class GoogleAccountClient:
         self._fetch_backoff.fetch_started(started)
         fetched_for = self.found_devices.fetch_started()
 
-        def _get_google_devices() -> list[Device]:
-            return self._client.get_google_devices(
-                zeroconf_instance=self.zeroconf_instance,
-                force_homegraph_reload=True,
-            )
-
         try:
-            google_devices = await self.hass.async_add_executor_job(_get_google_devices)
+            google_devices = await self.hass.async_add_executor_job(
+                partial(
+                    self._client.get_google_devices,
+                    zeroconf_instance=self.zeroconf_instance,
+                    force_homegraph_reload=True,
+                )
+            )
         # Google rejected the master token, gave no home graph, or answered with
         # a 5xx or 429, which glocaltokens raises as HTTPError
         except (GLocalTokensError, HTTPError) as error:

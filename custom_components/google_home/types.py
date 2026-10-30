@@ -1,9 +1,15 @@
-"""Various types used in type hints."""
+"""Types used in type hints, and the data a loaded entry keeps."""
 
 from collections.abc import Mapping
-from typing import TypedDict
+from dataclasses import dataclass
+from typing import TYPE_CHECKING, TypedDict
 
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+
+if TYPE_CHECKING:
+    from .api import GlocaltokensApiClient
+    from .models import GoogleHomeDevice
 
 
 class AlarmJsonDict(TypedDict, total=False):
@@ -89,4 +95,13 @@ type JsonDict = Mapping[
     bool | float | int | str | list[str] | list[AlarmJsonDict] | list[TimerJsonDict],
 ]
 
-type GoogleHomeConfigEntry = ConfigEntry[None]
+
+@dataclass
+class GoogleHomeData:
+    """What a loaded entry keeps: the client and its coordinator."""
+
+    client: GlocaltokensApiClient
+    coordinator: DataUpdateCoordinator[dict[str, GoogleHomeDevice]]
+
+
+type GoogleHomeConfigEntry = ConfigEntry[GoogleHomeData]
