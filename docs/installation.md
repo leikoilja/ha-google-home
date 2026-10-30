@@ -21,10 +21,9 @@ You need:
 
     The Marketplace replaced HACS in Home Assistant 2026.11. If you installed the integration with HACS, Home Assistant moved it to the Marketplace when you updated Home Assistant, so you don't need to install it again.
 
-    1. [Open Google Home in the Marketplace](https://my.home-assistant.io/redirect/marketplace_repository/?owner=leikoilja&repository=ha-google-home&category=integration), or go to **Settings** > **Marketplace**.
+    1. [Open Google Home in the Marketplace](https://my.home-assistant.io/redirect/marketplace_repository/?owner=leikoilja&repository=ha-google-home&category=integration), or go to **Settings** > **Marketplace**, search for **Google Home** and open it.
     2. The first time you open the Marketplace, it shows a notice about community content. Select **I understand the risks and agree**, then **Continue**.
-    3. If **Google Home** isn't open yet, search for it and open it.
-    4. Select **Install**, then **Install** again in the dialog.
+    3. Select **Install**, then **Install** again in the dialog.
 
     Home Assistant then opens the integration's setup: continue from step 2 of [Add the integration](#add-the-integration). If the Marketplace says that Home Assistant needs a restart instead, select **Restart Home Assistant**, then add the integration.
 
