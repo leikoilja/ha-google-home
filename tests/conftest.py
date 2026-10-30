@@ -74,8 +74,8 @@ async def assert_flow_text(manager: FlowManager, result: FlowResult) -> None:
 
     The frontend fills the placeholders in these texts, and in the step's other
     texts, from the result's description placeholders. It shows an error instead of
-    a text whose placeholder has no value. A menu's title gets no values, so it can't
-    have placeholders.
+    a text whose placeholder has no value. A menu's title and a form's submit button
+    get no values, so they can't have placeholders.
     """
     category = "options" if isinstance(manager, OptionsFlowManager) else "config"
     domain = result.get("translation_domain") or DOMAIN
@@ -94,9 +94,12 @@ async def assert_flow_text(manager: FlowManager, result: FlowResult) -> None:
             for option in cast(list[str], result.get("menu_options", []))
         ]
         keys += [key for key in text if key.startswith(f"{step}.")]
-        if result["type"] is FlowResultType.MENU:
-            title = text.get(f"{step}.title", "")
-            assert not placeholders(title), f"Placeholder in menu title: {title}"
+        valueless = (
+            f"{step}.title"
+            if result["type"] is FlowResultType.MENU
+            else f"{step}.submit"
+        )
+        assert not placeholders(text.get(valueless, "")), f"Placeholder in {valueless}"
     assert [key for key in keys if key not in text] == []
     given = set(result.get("description_placeholders") or {})
     unfilled = {key: placeholders(text[key]) - given for key in keys}
