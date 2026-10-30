@@ -70,10 +70,12 @@ To use a removed device again, factory reset it first; see [Add a device](#add-a
 ## Remove the integration
 
 1. Go to **Settings** > **Devices & services** > **Google Home**, open the **⋮** menu and select **Delete**. Home Assistant deletes the master token it stored.
-2. If you installed with HACS, open HACS, select **Google Home**, open the **⋮** menu and select **Remove**. If you installed manually, delete the `custom_components/google_home` folder.
-3. Restart Home Assistant.
+2. If you installed from the Marketplace or with HACS, Home Assistant then asks "Also uninstall Google Home?". Select **Uninstall**; **Keep** leaves the files installed. If you installed manually, delete the `custom_components/google_home` folder.
+3. Restart Home Assistant. If the Marketplace uninstalled the integration, a repair under **Settings** > **System** > **Repairs** offers the restart.
 
-To use another Google account, delete the integration as in step 1 and add it again.
+You can also start in the Marketplace: open **Google Home** there, open the **⋮** menu and select **Uninstall**. While the integration is still set up, the Marketplace offers **Delete and uninstall**, which deletes the Google Home entry, with its devices, entities and stored master token, then uninstalls the integration. Then restart Home Assistant. Use this too if you selected **Keep** in step 2.
+
+To use another Google account, delete the integration as in step 1, select **Keep** if Home Assistant asks whether to also uninstall it, and add it again.
 
 Deleting the integration doesn't stop the master token from working, and the integration can't revoke it. If the token might have been copied, for example from a Home Assistant backup:
 
