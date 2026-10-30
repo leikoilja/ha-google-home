@@ -434,8 +434,9 @@ def test_master_token_in_unknown_format(flow: GoogleHomeFlowHandler) -> None:
     assert result["errors"] == {"base": "google-rejected"}
 
 
-# Signing in and the options through Home Assistant's flow manager, which checks the
-# input against the form, starts signing in again and saves the entry
+# Signing in, discovering speakers and the options through Home Assistant's flow
+# manager, which checks the input against the form, starts signing in again and saves
+# the entry
 
 EMAIL = "test@example.com"
 # The master token that signing in gets, other than the entry's
@@ -734,10 +735,10 @@ async def test_discovery(hass: HomeAssistant) -> None:
 async def test_discovery_in_progress(
     hass: HomeAssistant, source: str, data: ZeroconfServiceInfo | None
 ) -> None:
-    """Find another speaker without a second flow while the integration is being added.
+    """Abort the flow of another speaker found while the integration is being added.
 
-    One entry has all the account's devices, whether the open flow was found or
-    started by hand.
+    The open flow, whether found or started by hand, adds one entry with all the
+    account's devices.
     """
     first = await hass.config_entries.flow.async_init(
         DOMAIN, context={"source": source}, data=data
