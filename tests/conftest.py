@@ -7,13 +7,11 @@ from unittest.mock import MagicMock, Mock, patch
 
 from glocaltokens.client import Device
 import pytest
-from pytest_homeassistant_custom_component.common import MockConfigEntry
-from pytest_homeassistant_custom_component.syrupy import HomeAssistantSnapshotExtension
-from pytest_homeassistant_custom_component.test_util.aiohttp import (
+from pytest_homeassistant.common import MockConfigEntry
+from pytest_homeassistant.test_util.aiohttp import (
     AiohttpClientMocker,
     AiohttpClientMockResponse,
 )
-from syrupy.assertion import SnapshotAssertion
 from yarl import URL
 
 from custom_components.google_home.const import (
@@ -138,20 +136,8 @@ def fixture_flow_text() -> Iterator[None]:
         yield
 
 
-@pytest.fixture(name="snapshot")
-def fixture_snapshot(snapshot: SnapshotAssertion) -> SnapshotAssertion:
-    """Compare with snapshots as Home Assistant does, leaving out generated IDs and times.
-
-    The plugin's fixture that does this loses to syrupy's own.
-    """
-    return snapshot.use_extension(HomeAssistantSnapshotExtension)
-
-
 @pytest.fixture(name="config_entry")
-def fixture_config_entry(
-    hass: HomeAssistant,
-    enable_custom_integrations: None,  # pylint: disable=unused-argument
-) -> MockConfigEntry:
+def fixture_config_entry(hass: HomeAssistant) -> MockConfigEntry:
     """Return an entry of this integration, as signing in with a master token saves it."""
     entry = MockConfigEntry(
         domain=DOMAIN,

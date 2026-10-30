@@ -9,7 +9,7 @@ license = "MIT"
 requires-python = ">=3.14.2"
 dependencies = [
     "glocaltokens>=1.2.0",
-    "homeassistant==2026.11.0b0",
+    "homeassistant==2026.11.0b1",
 ]
 
 [dependency-groups]
@@ -19,11 +19,13 @@ dev = [
     "mypy>=2.4.0",
     "PyGithub>=2.10.0",
     "pylint>=4.1.3",
-    # Held back by pytest-homeassistant-custom-component, which pins pytest
+    # Held back by pytest-home-assistant, which pins pytest
     "pytest>=9.0.3",
-    # Home Assistant's test fixtures. Each release pins homeassistant: bump it by
-    # hand with homeassistant above, to the release that pins the same version.
-    "pytest-homeassistant-custom-component==0.13.371",
+    "pytest-cov>=7.1.0",
+    "pytest-github-actions-annotate-failures>=0.4.2",
+    # Home Assistant's test fixtures, from the same core tag as homeassistant
+    # above (see tool.uv.sources): bump both together.
+    "pytest-home-assistant",
     "ruff>=0.17.3",
     "types-requests>=2.33.0.20261006",
 ]
@@ -34,6 +36,10 @@ docs = [
 [tool.uv]
 # Not an installable package: Home Assistant loads custom_components/ directly.
 package = false
+
+[tool.uv.sources]
+# Not on PyPI yet, so it comes from core's release archive
+pytest-home-assistant = { url = "https://github.com/home-assistant/core/archive/refs/tags/2026.11.0b1.tar.gz", subdirectory = "packages/pytest-home-assistant" }
 
 # Lint rules follow Home Assistant core's pyproject.toml at the version pinned
 # above, plus a few extra rules marked below. Re-sync when bumping homeassistant.
@@ -277,10 +283,10 @@ enable_error_code = [
 ]
 # Home Assistant's test helpers have type hints but no py.typed marker, and some,
 # such as aioclient_mock's methods, have none
-untyped_calls_exclude = ["pytest_homeassistant_custom_component"]
+untyped_calls_exclude = ["pytest_homeassistant"]
 
 [[tool.mypy.overrides]]
-module = "pytest_homeassistant_custom_component.*"
+module = "pytest_homeassistant.*"
 follow_untyped_imports = true
 
 [tool.codespell]
@@ -290,6 +296,8 @@ ignore-words-list = "hass"
 
 [tool.pytest]
 asyncio_mode = "auto"
+# Let Home Assistant install its httpx alias before respx is imported
+addopts = ["-p", "no:respx"]
 
 [tool.coverage.run]
 branch = true

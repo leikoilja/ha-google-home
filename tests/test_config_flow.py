@@ -18,7 +18,7 @@ from unittest.mock import AsyncMock, Mock, patch
 
 from glocaltokens.exceptions import AuthenticationError
 import pytest
-from pytest_homeassistant_custom_component.common import MockConfigEntry
+from pytest_homeassistant.common import MockConfigEntry
 from requests import Response
 from requests.exceptions import (
     ConnectionError as RequestsConnectionError,
@@ -450,9 +450,9 @@ async def fixture_mock_setup_entry(hass: HomeAssistant) -> AsyncIterator[AsyncMo
     """Set up and unload an entry without asking Google or the speakers."""
     with (
         patch(
-            "custom_components.google_home.async_setup_entry", return_value=True
+            "custom_components.google_home.async_setup_entry", return_value=None
         ) as setup_entry,
-        patch("custom_components.google_home.async_unload_entry", return_value=True),
+        patch("custom_components.google_home.async_unload_entry", return_value=None),
     ):
         yield setup_entry
         # Home Assistant unloads it when it stops, after these patches end
@@ -515,7 +515,7 @@ async def submit(
     return await hass.config_entries.flow.async_configure(result["flow_id"], user_input)
 
 
-@pytest.mark.usefixtures("enable_custom_integrations", "mock_setup_entry")
+@pytest.mark.usefixtures("mock_setup_entry")
 @pytest.mark.parametrize(
     ("method", "pasted", "email", "title"),
     [
@@ -577,7 +577,7 @@ async def test_sign_in(
     assert {sent_id for _, sent_id in sent} == {android_id}
 
 
-@pytest.mark.usefixtures("enable_custom_integrations", "mock_setup_entry")
+@pytest.mark.usefixtures("mock_setup_entry")
 @pytest.mark.parametrize(
     ("method", "pasted", "error"),
     [
@@ -617,7 +617,7 @@ async def test_sign_in_format_error(
     assert result["type"] is FlowResultType.CREATE_ENTRY
 
 
-@pytest.mark.usefixtures("enable_custom_integrations", "mock_setup_entry", "sign_in")
+@pytest.mark.usefixtures("mock_setup_entry", "sign_in")
 @pytest.mark.parametrize(
     ("method", "answer", "error"),
     [

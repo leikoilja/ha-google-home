@@ -10,12 +10,12 @@ from unittest.mock import Mock, patch
 
 from freezegun.api import FrozenDateTimeFactory
 import pytest
-from pytest_homeassistant_custom_component.common import (
+from pytest_homeassistant.common import (
     MockConfigEntry,
     async_fire_time_changed,
     snapshot_platform,
 )
-from pytest_homeassistant_custom_component.test_util.aiohttp import AiohttpClientMocker
+from pytest_homeassistant.test_util.aiohttp import AiohttpClientMocker
 from syrupy.assertion import SnapshotAssertion
 
 from custom_components.google_home.const import (
@@ -167,6 +167,23 @@ async def test_unload(hass: HomeAssistant, config_entry: MockConfigEntry) -> Non
             STATE_UNAVAILABLE,
             True,
         )
+
+
+@pytest.mark.usefixtures("google", "replies")
+async def test_platform_fails_to_unload(
+    hass: HomeAssistant, config_entry: MockConfigEntry
+) -> None:
+    """Show why the entry failed to unload when one of its platforms doesn't unload."""
+    await set_up(hass, config_entry)
+
+    with patch.object(
+        hass.config_entries, "async_unload_platforms", return_value=False
+    ):
+        assert not await hass.config_entries.async_unload(config_entry.entry_id)
+
+    assert config_entry.state is ConfigEntryState.FAILED_UNLOAD
+    # Home Assistant's message, which it shows without the final period
+    assert config_entry.reason == "Failed to unload one or more platforms"
 
 
 async def test_master_token_rejected_at_setup(
