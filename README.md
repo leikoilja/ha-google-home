@@ -1,6 +1,6 @@
 [![GitHub Release][releases-shield]][releases]
 [![Home Assistant quality scale: Platinum][quality-scale-shield]][quality-scale]
-[![hacs][hacsbadge]][hacs]
+[![Marketplace][marketplace-shield]][marketplace]
 [![Installs][installs-shield]][installs]
 
 <p align="center">
@@ -35,7 +35,7 @@ It can't create, change or snooze alarms and timers, or turn alarms on or off; s
 
 You need a Google account that is a member of your home in the Google Home app. Home Assistant finds your speakers and displays on its local network; devices on another network need extra setup.
 
-Install the integration from HACS: search for **Google Home**. Then follow **[Getting Started](https://ha-google-home.pages.dev/installation/)** to add it and sign in. It also lists all the requirements and covers manual installation.
+Install the integration from the Marketplace, which replaced HACS in Home Assistant 2026.11: [open Google Home in the Marketplace][marketplace], or go to **Settings** > **Marketplace**, search for **Google Home** and open it. Then follow **[Getting Started](https://ha-google-home.pages.dev/installation/)** to add it and sign in. It also lists all the requirements and covers manual installation.
 
 ## Documentation
 
@@ -64,9 +64,9 @@ Ask questions, report bugs or suggest features in [issues](https://github.com/le
 - Under the hood the integration uses [glocaltokens](https://github.com/leikoilja/glocaltokens) python package.
 
 [community-discussion]: https://community.home-assistant.io/t/solution-to-track-your-google-home-alarms-and-timers-and-trigger-different-home-assistant-events/61534/74
-[hacs]: https://hacs.xyz
-[hacsbadge]: https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge
 [integration_blueprint]: https://github.com/custom-components/integration_blueprint
+[marketplace-shield]: https://img.shields.io/badge/Marketplace-Install-orange.svg?style=for-the-badge
+[marketplace]: https://my.home-assistant.io/redirect/marketplace_repository/?owner=leikoilja&repository=ha-google-home&category=integration
 [quality-scale-shield]: https://img.shields.io/badge/quality%20scale-%F0%9F%8F%86%20platinum-e5e4e2.svg?style=for-the-badge
 [quality-scale]: https://ha-google-home.pages.dev/#quality-scale
 [releases-shield]: https://img.shields.io/github/release/leikoilja/ha-google-home.svg?style=for-the-badge
