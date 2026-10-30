@@ -8,6 +8,27 @@ For help with setup or usage, search [GitHub Discussions](https://github.com/lei
 
 [Open an issue](https://github.com/leikoilja/ha-google-home/issues/new/choose). For a bug, include the integration version and [debug logs](troubleshooting.md#collect-debug-logs).
 
+## Try a fix before it's released
+
+A fix merged into `master` reaches HACS and the Home Assistant Marketplace with the next release. To try it sooner, install `master` in place of your current version:
+
+1. [Open the **Actions** tool](https://my.home-assistant.io/redirect/tools_perform_action/?service=update.install), or go to **Settings** > **Tools** > **Actions**, and switch to **YAML mode**.
+2. Enter this action. Use the entity ID of the Google Home update entity: usually `update.google_home_update` if you installed from HACS, or `update.google_home` from the Marketplace.
+
+    ```yaml
+    action: update.install
+    target:
+      entity_id: update.google_home_update
+    data:
+      version: master
+    ```
+
+3. Select **Perform action**, then restart Home Assistant.
+
+To go back, run the action again with the latest release as the version, such as `version: v1.17.0`, and restart.
+
+This installs `master` as it is at that moment. It doesn't follow newer commits, so run the action again to get them. Only `master` can be installed this way, not other branches or pull requests.
+
 ## Translate the integration
 
 The integration's setup screens, options and action descriptions follow your Home Assistant language. Text that isn't translated yet is shown in English.
@@ -100,6 +121,19 @@ uv run --only-group docs zensical serve
 ```
 
 A pull request that changes the docs gets a preview link in a comment.
+
+### Publish a release
+
+Maintainers publish the draft release that Release Drafter keeps up to date: run the **Publish new release** workflow on GitHub, leaving the tag empty. The workflow:
+
+1. Commits the release's version in `manifest.json` and the minimum Home Assistant version in `hacs.json` to `master`, as **Release v1.2.3**. This commit also sets `zip_release` and `filename` in `hacs.json`. A second commit removes them again, so installs of `master` keep using the source code.
+2. Builds `google_home.zip` from the release commit, with the integration's files at its root, and attaches it to the draft.
+3. Downloads the attached zip and checks that its `manifest.json` has the release's version.
+4. Publishes the release, with its tag on the release commit.
+
+HACS and the Marketplace install a release from its `google_home.zip`, and GitHub counts its downloads. A release whose zip is missing can't be installed, so the workflow publishes only after the check passes. Don't publish the draft by hand: the release would keep the previous version in `manifest.json` and have no zip. If the workflow stops, fix the cause and run it again. If nothing has been merged since, it reuses the release commit; otherwise it commits the release again, on top of what was merged.
+
+If a published release's zip is missing or wrong, run the workflow with the release's tag, such as `v1.17.0`. It rebuilds the zip from that tag, replaces the release's `google_home.zip` and changes nothing else.
 
 ## License
 
