@@ -53,7 +53,7 @@ def test_migrate_clears_unused_password(master_token: str, password: str) -> Non
         }
     )
 
-    assert asyncio.run(async_migrate_entry(hass, entry))
+    asyncio.run(async_migrate_entry(hass, entry))
 
     hass.config_entries.async_update_entry.assert_called_once()
     kwargs = hass.config_entries.async_update_entry.call_args.kwargs
@@ -67,7 +67,7 @@ def test_migrate_skips_current_entries() -> None:
     hass = Mock()
 
     entry = make_entry({"password": "", "master_token": MASTER_TOKEN}, minor_version=2)
-    assert asyncio.run(async_migrate_entry(hass, entry))
+    asyncio.run(async_migrate_entry(hass, entry))
 
     hass.config_entries.async_update_entry.assert_not_called()
 

@@ -304,7 +304,8 @@ def test_upgrade_keeps_entity_id_and_name_set_by_user(tmp_path: Path) -> None:
             entry_after = registry.async_get(entity_id)
             assert entry_after is not None
             assert entry_after.name == "My reboot"
-            assert friendly_name(hass, entity_id) == "My reboot"
+            # Home Assistant puts the device name before a name the user set
+            assert friendly_name(hass, entity_id) == "Bathroom speaker My reboot"
 
     asyncio.run(run())
 
