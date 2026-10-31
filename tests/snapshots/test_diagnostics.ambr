@@ -1,0 +1,62 @@
+# serializer version: 1
+# name: test_diagnostics
+  dict({
+    'account': dict({
+      'google_devices_fetched': True,
+      'last_exception': None,
+      'last_update_success': True,
+      'sign_in_rejected': False,
+    }),
+    'data': dict({
+      'android_id': '**REDACTED**',
+      'master_token': '**REDACTED**',
+      'password': '**REDACTED**',
+      'username': '**REDACTED**',
+    }),
+    'devices': dict({
+      'kitchen': dict({
+        'alarm_volume': 70,
+        'alarms_reply': dict({
+          'alarm': list([
+            dict({
+              'fire_time': 1700000000000,
+              'id': 'alarm/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51',
+              'label': 'Take the bins out',
+              'status': 1,
+            }),
+          ]),
+          'timer': list([
+            dict({
+              'fire_time': 1700000600000,
+              'id': 'timer/0b0f3c49-2d8e-4b8a-9a43-5f1d6c7e8a90',
+              'label': 'Pasta',
+              'original_duration': 600000,
+              'remaining_duration': 600000,
+              'status': 1,
+            }),
+          ]),
+        }),
+        'alarms_unsupported': False,
+        'auth_token': '**REDACTED**',
+        'available': True,
+        'do_not_disturb': True,
+        'ip_address': '**REDACTED**',
+        'last_exception': None,
+        'last_update_success': True,
+        'model': 'Nest Audio',
+        'name': 'Kitchen speaker',
+        'reachable': True,
+        'statuses': dict({
+          'setup/assistant/alarms (update)': 200,
+          'setup/assistant/alarms/volume (update)': 200,
+          'setup/assistant/notifications (update)': 200,
+        }),
+        'unanswered_updates': 0,
+      }),
+    }),
+    'options': dict({
+      'known_hosts': '**REDACTED**',
+      'update_interval': 30,
+    }),
+  })
+# ---
