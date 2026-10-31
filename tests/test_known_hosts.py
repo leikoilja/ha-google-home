@@ -151,8 +151,10 @@ def test_known_hosts_fill_in_devices_from_glocaltokens() -> None:
         get_google_devices=Mock(return_value=[pair]),
     )
 
-    [den] = asyncio.run(client.get_google_devices())
+    # Its info answered there, which its first update uses
+    assert asyncio.run(client.async_update_device_list()) == {"pair": "10.0.1.5"}
 
+    [den] = client.google_devices
     assert den.name == "Den speakers"
     assert den.cloud_device_id == "dddd"
     assert den.ip_address == "10.0.1.5"
@@ -177,8 +179,11 @@ def test_known_hosts_fill_in_device_fetched_again() -> None:
         get_google_devices=Mock(return_value=[pair]),
     )
 
+    # The scheduled fetch is due
+    client.next_scheduled_fetch = 0
+    assert asyncio.run(client.async_update_device_list()) == {"pair": "10.0.1.5"}
     # The same object, which keeps what the last update got from the device
-    assert asyncio.run(client.get_google_devices(refetch=True)) == [den]
+    assert client.google_devices == [den]
     assert den.cloud_device_id == "dddd"
     assert den.ip_address == "10.0.1.5"
 
@@ -202,7 +207,7 @@ def test_known_hosts_not_asked_when_mdns_found_everything() -> None:
         get_google_devices=Mock(return_value=[found_by_mdns]),
     )
 
-    asyncio.run(client.get_google_devices())
+    assert asyncio.run(client.async_update_device_list()) == {}
 
     session.get.assert_not_called()
 

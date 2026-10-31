@@ -116,7 +116,7 @@ def make_entity(
 ) -> GoogleHomeBaseEntity:
     """Return an entity of a device that answers, named as in the Google Home app."""
     device = GoogleHomeDevice(DEVICE_ID, google_name, "token", "10.0.0.2")
-    coordinator = Mock(data={DEVICE_ID: device}, last_update_success=True)
+    coordinator = Mock(data=device, last_update_success=True)
     return entity_class(coordinator, Mock(), DEVICE_ID, google_name, None)
 
 
@@ -321,11 +321,12 @@ def test_entity_unavailable_when_google_no_longer_lists_device(
     Otherwise the switch would show off and the alarm volume 0.
     """
     device = GoogleHomeDevice("device-id", "Kitchen", "token", "10.0.0.2")
-    coordinator = Mock(data={"device-id": device}, last_update_success=True)
+    coordinator = Mock(data=device, last_update_success=True)
     entity = entity_class(coordinator, Mock(), "device-id", "Kitchen", None)
     assert entity.available
 
-    coordinator.data = {}
+    # As the account's update leaves the device's coordinator
+    coordinator.data = None
 
     assert not entity.available
 

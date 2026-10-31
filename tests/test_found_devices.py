@@ -23,7 +23,14 @@ from custom_components.google_home.api import GlocaltokensApiClient
 from custom_components.google_home.const import HEADER_CAST_LOCAL_AUTH
 from custom_components.google_home.models import GoogleHomeDevice
 
-from .test_missing_devices import LOCAL_AUTH_TOKEN, MASTER_TOKEN, answered, found, until
+from .test_missing_devices import (
+    LOCAL_AUTH_TOKEN,
+    MASTER_TOKEN,
+    answered,
+    found,
+    until,
+    update_round,
+)
 
 
 @dataclass
@@ -121,7 +128,9 @@ class Network:
         self.tasks.append(task)
         return task
 
-    async def _poll(self, device: GoogleHomeDevice) -> GoogleHomeDevice:
+    async def _poll(
+        self, device: GoogleHomeDevice, **_kwargs: object
+    ) -> GoogleHomeDevice:
         await until(lambda: self.devices_answer)
         self.polled.append((device.device_id, device.ip_address))
         if self.real_polling:
@@ -140,12 +149,12 @@ class Network:
         if self._lock is None:
             self._lock = asyncio.Lock()
         async with self._lock:
-            await self.client.update_google_devices_information()
+            await update_round(self.client)
 
     async def setup(self) -> None:
         """Fetch the list as setup does."""
         self.clock.return_value = 0
-        await self.client.get_google_devices()
+        await self.client.async_update_device_list()
 
     def report(self, cloud_device_id: str, address: str, at: float) -> None:
         """Report a device as mDNS finds it."""

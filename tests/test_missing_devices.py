@@ -3,11 +3,13 @@
 import asyncio
 from collections.abc import AsyncIterator, Callable
 import contextlib
+from datetime import timedelta
 from http import HTTPStatus
 import logging
 from pathlib import Path
 from types import MappingProxyType
-from unittest.mock import AsyncMock, MagicMock, Mock, call, patch
+from typing import cast
+from unittest.mock import AsyncMock, MagicMock, Mock, PropertyMock, call, patch
 
 from glocaltokens.client import Device
 from glocaltokens.exceptions import AuthenticationError, HomegraphError
@@ -20,7 +22,6 @@ from requests.exceptions import ConnectionError as RequestsConnectionError, HTTP
 from custom_components.google_home import (
     async_remove_config_entry_device,
     async_setup_entry,
-    async_update_devices,
 )
 from custom_components.google_home.api import GlocaltokensApiClient
 from custom_components.google_home.const import (
@@ -28,6 +29,10 @@ from custom_components.google_home.const import (
     CONF_MASTER_TOKEN,
     DOMAIN,
     FETCH_DEVICES_INTERVAL,
+)
+from custom_components.google_home.coordinator import (
+    GoogleAccountCoordinator,
+    GoogleHomeDeviceCoordinator,
 )
 from custom_components.google_home.entity import async_add_device_entities
 from custom_components.google_home.models import GoogleHomeDevice
@@ -180,6 +185,26 @@ def make_client(
     return client, glocaltokens
 
 
+async def update_round(client: GlocaltokensApiClient) -> dict[str, GoogleHomeDevice]:
+    """Update Google's list, then each device it lists, and return them by ID.
+
+    The coordinators do this when the account's update and the devices' updates are
+    due together, as they are at setup. The account's update starts the round in
+    which the list is fetched at most once. Other orders are tested with the
+    coordinators in test_coordinators.
+    """
+    known_hosts = await client.async_update_device_list()
+    await asyncio.gather(
+        *(
+            client.update_device(
+                device, found_at_known_host=device.device_id in known_hosts
+            )
+            for device in client.google_devices
+        )
+    )
+    return {device.device_id: device for device in client.google_devices}
+
+
 def fetches_in(client: GlocaltokensApiClient, glocaltokens: Mock, updates: int) -> int:
     """Return how often Google's list was fetched again after this many more updates."""
 
@@ -187,7 +212,7 @@ def fetches_in(client: GlocaltokensApiClient, glocaltokens: Mock, updates: int) 
 
     async def run() -> None:
         for _ in range(updates):
-            await client.update_google_devices_information()
+            await update_round(client)
 
     asyncio.run(run())
     return int(glocaltokens.get_google_devices.call_count)
@@ -196,7 +221,7 @@ def fetches_in(client: GlocaltokensApiClient, glocaltokens: Mock, updates: int) 
 def update(client: GlocaltokensApiClient) -> dict[str, GoogleHomeDevice]:
     """Run one update without asking the devices, and return its devices."""
     client.collect_data_from_endpoints = AsyncMock()  # type: ignore[method-assign]
-    return asyncio.run(client.update_google_devices_information())
+    return asyncio.run(update_round(client))
 
 
 @pytest.mark.parametrize(
@@ -266,7 +291,7 @@ def can_delete(
     """Ask the integration whether the device with this ID can be deleted."""
     entry = Mock(
         state=ConfigEntryState.LOADED,
-        runtime_data=GoogleHomeData(client, Mock(data=devices)),
+        runtime_data=GoogleHomeData(client, Mock(data=devices), {}),
     )
     return asyncio.run(
         async_remove_config_entry_device(
@@ -285,7 +310,13 @@ def test_device_google_stops_listing(clock: Mock) -> None:
     listener, added = add_entities(coordinator, GoogleHomeAlarmsSensor)
     assert added() == [("device0", "alarms"), ("device1", "alarms")]
     kitchen, bedroom = (
-        GoogleHomeAlarmsSensor(coordinator, client, device_id, device_id, None)
+        GoogleHomeAlarmsSensor(
+            device_coordinator(coordinator, device_id),
+            client,
+            device_id,
+            device_id,
+            None,
+        )
         for device_id in ("device0", "device1")
     )
 
@@ -350,7 +381,7 @@ def fetch_times(
         clock.return_value = seconds
         fetches = glocaltokens.get_google_devices.call_count
         with contextlib.suppress(RequestsConnectionError):
-            asyncio.run(client.update_google_devices_information())
+            asyncio.run(update_round(client))
         if glocaltokens.get_google_devices.call_count > fetches:
             fetched_at.append(seconds)
     return fetched_at
@@ -426,14 +457,31 @@ HASS = Mock()
 def update_entry(
     client: GlocaltokensApiClient, entry: Mock
 ) -> dict[str, GoogleHomeDevice]:
-    """Run one update as the coordinator does, and return its devices.
+    """Run one update as the coordinators do, the account's and then each device's, and return the account's devices.
 
-    The devices aren't asked, but the update must still reach them.
+    The entry gets the coordinators on its first update. The devices aren't asked,
+    but each device's update must still reach them.
     """
     client.collect_data_from_endpoints = AsyncMock()  # type: ignore[method-assign]
-    devices = asyncio.run(async_update_devices(HASS, entry, client))
+    if not isinstance(entry.runtime_data, GoogleHomeData):
+        account = GoogleAccountCoordinator(HASS, entry, client, timedelta(seconds=15))
+        entry.runtime_data = GoogleHomeData(client, account, {})
+    data: GoogleHomeData = entry.runtime_data
+
+    async def run() -> dict[str, GoogleHomeDevice]:
+        # pylint: disable=protected-access
+        devices = await data.account._async_update_data()  # noqa: SLF001
+        for coordinator in data.devices.values():
+            await coordinator._async_update_data()  # noqa: SLF001
+        return devices
+
+    devices = asyncio.run(run())
     client.collect_data_from_endpoints.assert_has_awaits(
-        [call(device) for device in devices.values() if device.ip_address]
+        [
+            call(device, found_at_known_host=False)
+            for device in devices.values()
+            if device.ip_address
+        ]
     )
     return devices
 
@@ -552,7 +600,7 @@ def test_log_sign_in_rejected_after_setup(
             google.side_effect = rejected()
             # The scheduled fetch is due
             clock.return_value = FETCH_DEVICES_INTERVAL
-            await client.update_google_devices_information()
+            await update_round(client)
 
     asyncio.run(run())
 
@@ -577,7 +625,8 @@ def test_sign_in_rejected_with_devices(
     assert list(update_entry(client, entry).values()) == devices
 
     assert glocaltokens.get_google_devices.call_count == 1
-    entry.async_start_reauth.assert_called_once_with(HASS)
+    # Home Assistant ignores the asking while a sign-in is open
+    entry.async_start_reauth.assert_called_with(HASS)
     assert ("ERROR", REJECTED_LOG) in logged(caplog)
 
 
@@ -704,7 +753,7 @@ def test_ask_to_sign_in_after_failed_update(clock: Mock) -> None:
         HTTPStatus.SERVICE_UNAVAILABLE
     )
     assert list(update_entry(client, entry).values()) == [kitchen]
-    entry.async_start_reauth.assert_called_once_with(HASS)
+    entry.async_start_reauth.assert_called_with(HASS)
 
 
 def test_keep_polled_data_after_token_rejected() -> None:
@@ -725,7 +774,7 @@ def test_keep_polled_data_after_token_rejected() -> None:
 
     # Google lists both devices again, and neither answers this update
     session.request.side_effect = TimeoutError
-    assert list(asyncio.run(client.update_google_devices_information()).values()) == [
+    assert list(asyncio.run(update_round(client)).values()) == [
         kitchen,
         bedroom,
     ]
@@ -765,7 +814,7 @@ def test_keep_polled_data_when_list_fetched_again(clock: Mock) -> None:
     kitchen.alarm_volume = 70
 
     clock.return_value = FETCH_DEVICES_INTERVAL
-    [device] = asyncio.run(client.update_google_devices_information()).values()
+    [device] = asyncio.run(update_round(client)).values()
 
     assert device is kitchen
     assert not device.available
@@ -839,21 +888,57 @@ def test_keep_devices_when_fetch_fails(clock: Mock, error: Exception) -> None:
     assert client.google_devices_fetched
 
 
+def device_coordinator(coordinator: Mock, device_id: str) -> Mock:
+    """Return a device's coordinator as its entities see it, given one whose data has every device by ID.
+
+    Its data is the device while the other's data has it, and None after, as when
+    Google stops listing it. Showing changes goes through the other.
+    """
+    device = Mock(
+        last_update_success=True,
+        async_update_listeners=coordinator.async_update_listeners,
+        async_request_refresh=coordinator.async_request_refresh,
+    )
+    type(device).data = PropertyMock(
+        side_effect=lambda: coordinator.data.get(device_id)
+    )
+    return device
+
+
 def add_entities(
     coordinator: Mock, *entity_classes: type, needs_answer: bool = True
 ) -> tuple[Callable[[], None], Callable[[], list[tuple[str, str]]]]:
-    """Add entities as a platform does, and return the update listener and a reader.
+    """Add entities as a platform does, for the devices of the coordinator's data by ID.
 
-    The reader returns the entities added since it was last called, by device and label.
+    Return a function that runs the listeners after an update, and a reader of the
+    entities added since it was last called, by device and label. Each device gets its
+    coordinator from device_coordinator() when the account's coordinator first lists
+    it; the listeners are the account's, then each device's.
     """
+    account = Mock()
+    devices: dict[str, GoogleHomeDeviceCoordinator] = {}
+
+    def follow() -> None:
+        for device_id in coordinator.data:
+            devices.setdefault(device_id, device_coordinator(coordinator, device_id))
+
+    follow()
     async_add_entities = Mock()
     async_add_device_entities(
-        Mock(runtime_data=GoogleHomeData(Mock(), coordinator)),
+        Mock(runtime_data=GoogleHomeData(Mock(), account, devices)),
         async_add_entities,
         *entity_classes,
         needs_answer=needs_answer,
     )
-    [listener] = coordinator.async_add_listener.call_args.args
+
+    def listener() -> None:
+        follow()
+        [account_listener] = account.async_add_listener.call_args.args
+        account_listener()
+        for device in devices.values():
+            add_listener = cast(Mock, device.async_add_listener)
+            for listener_call in add_listener.call_args_list:
+                listener_call.args[0]()
 
     def added() -> list[tuple[str, str]]:
         entities = [

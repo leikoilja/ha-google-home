@@ -28,11 +28,11 @@ data:
   alarm_id: alarm/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51
 ```
 
-| Field          | Description                                                                                                                                                                                                                                                                                                            |
-| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `entity_id`    | Alarms sensor of the device, such as `sensor.kitchen_alarms`. Leave it out when you [target the device](#targets) instead.                                                                                                                                                                                             |
-| `alarm_id`     | ID of the alarm to delete. Find it in the `alarms` attribute of the [alarms sensor](entities.md#alarms-sensor). It starts with `alarm/`.                                                                                                                                                                               |
-| `skip_refresh` | Optional. The action reads the device's current alarms before deleting, so the sensor shows them straight away, without the deleted alarm once the device confirms. `false`, the default, also asks for an update of all devices after deleting. `true` leaves changes on other devices for the next scheduled update. |
+| Field          | Description                                                                                                                                                                                                                                                                                                                                                                     |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `entity_id`    | Alarms sensor of the device, such as `sensor.kitchen_alarms`. Leave it out when you [target the device](#targets) instead.                                                                                                                                                                                                                                                      |
+| `alarm_id`     | ID of the alarm to delete. Find it in the `alarms` attribute of the [alarms sensor](entities.md#alarms-sensor). It starts with `alarm/`.                                                                                                                                                                                                                                        |
+| `skip_refresh` | Optional. The action reads the device's current alarms before deleting, so the sensor shows them straight away, without the deleted alarm once the device confirms. `false`, the default, also asks for an update of each device it sent a delete to. `true` leaves that to the device's next scheduled update. To update all devices, use [Refresh devices](#refresh-devices). |
 
 To delete the next alarm, use a template:
 
@@ -134,7 +134,7 @@ target:
 
 Target an alarms or timers sensor, or a device that has [alarms and timers sensors](troubleshooting.md#no-alarms-or-timers-sensors). All devices are updated once, however many sensors the target covers. The action needs a target.
 
-If the sensors you target are [unavailable](#unavailable-sensors), Home Assistant doesn't run the action. Run [`homeassistant.update_entity`](https://www.home-assistant.io/actions/homeassistant.update_entity/) on one Google Home sensor instead.
+If the sensors you target are [unavailable](#unavailable-sensors), Home Assistant doesn't run the action. Run [`homeassistant.update_entity`](https://www.home-assistant.io/actions/homeassistant.update_entity/) instead, on a Google Home sensor of each device to update: it updates only that sensor's device.
 
 ## Targets
 

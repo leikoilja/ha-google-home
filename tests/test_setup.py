@@ -48,10 +48,11 @@ from .conftest import (
     SPEAKER_CLOUD_ID,
     SPEAKER_ID,
     SPEAKER_NAME,
+    Replies,
     kitchen_speaker,
 )
 from .test_missing_devices import ALARM_ID, rejected
-from .test_unsupported_devices import DND, INFO, SPEAKER, Reply
+from .test_unsupported_devices import DND, INFO, SPEAKER
 
 # pylint: enable=wrong-import-order
 
@@ -205,7 +206,7 @@ async def test_known_hosts_changed(
     hass: HomeAssistant,
     config_entry: MockConfigEntry,
     google: Mock,
-    replies: dict[str, dict[str, Reply]],
+    replies: Replies,
 ) -> None:
     """Load the entry again when known hosts change, as they're looked up only at setup.
 
@@ -274,7 +275,7 @@ async def test_saved_update_interval(
 async def test_turn_off_do_not_disturb(
     hass: HomeAssistant,
     config_entry: MockConfigEntry,
-    replies: dict[str, dict[str, Reply]],
+    replies: Replies,
     aioclient_mock: AiohttpClientMocker,
 ) -> None:
     """Turn Do Not Disturb off on the speaker, and show it as soon as the speaker answers."""
@@ -298,7 +299,7 @@ async def test_turn_off_do_not_disturb(
 async def test_delete_alarm(
     hass: HomeAssistant,
     config_entry: MockConfigEntry,
-    replies: dict[str, dict[str, Reply]],
+    replies: Replies,
     aioclient_mock: AiohttpClientMocker,
 ) -> None:
     """Delete the alarm that the speaker has now, and show it gone once the speaker confirms."""

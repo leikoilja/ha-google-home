@@ -24,17 +24,15 @@ def test_icon_follows_volume(volume: int, icon: str) -> None:
     """Show the alarm volume as off at 0%, low up to 30%, medium up to 60% and high above."""
     device = GoogleHomeDevice("device-id", "Kitchen", "token")
     device.alarm_volume = volume
-    number = AlarmVolumeNumber(
-        Mock(data={"device-id": device}), Mock(), "device-id", "Kitchen", None
-    )
+    number = AlarmVolumeNumber(Mock(data=device), Mock(), "device-id", "Kitchen", None)
 
     assert number.icon == icon
 
 
 def test_set_value_updates_entities() -> None:
-    """Show the new volume on every entity as soon as the device answers."""
+    """Show the new volume on the device's entities as soon as it answers."""
     device = GoogleHomeDevice("device-id", "Kitchen", "token")
-    coordinator = Mock(data={"device-id": device})
+    coordinator = Mock(data=device)
     client = Mock(
         set_alarm_volume=AsyncMock(
             side_effect=lambda device, volume: setattr(device, "alarm_volume", volume)

@@ -228,7 +228,7 @@ def test_setup_browses_before_first_fetch() -> None:
             side_effect=lambda func: events.append(f"on unload: {func.__name__}")
         ),
     )
-    coordinator = Mock()
+    account = Mock()
 
     async def first_refresh() -> None:
         events.append("first refresh")
@@ -240,13 +240,13 @@ def test_setup_browses_before_first_fetch() -> None:
         events.append("browse")
         browsed.append(found_devices)
 
-    coordinator.async_config_entry_first_refresh = first_refresh
+    account.async_config_entry_first_refresh = first_refresh
     with (
         patch("custom_components.google_home.zeroconf.async_get_instance"),
         patch("custom_components.google_home.async_get_clientsession"),
         patch(
-            "custom_components.google_home.DataUpdateCoordinator",
-            return_value=coordinator,
+            "custom_components.google_home.GoogleAccountCoordinator",
+            return_value=account,
         ),
         patch(
             "custom_components.google_home.async_browse_cast_devices",
@@ -261,4 +261,4 @@ def test_setup_browses_before_first_fetch() -> None:
         "first refresh",
     ]
     assert len(browsed) == 1
-    assert browsed[0].request_update is coordinator.async_refresh
+    assert browsed[0].request_update is account.async_refresh

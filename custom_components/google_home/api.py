@@ -1,6 +1,5 @@
 """The requests to each device that use its token, and the polling built on them."""
 
-import asyncio
 from http import HTTPStatus
 import json
 import logging
@@ -84,22 +83,17 @@ def answer_failure(
 class GlocaltokensApiClient(GoogleAccountClient):
     """API client."""
 
-    async def update_google_devices_information(self) -> dict[str, GoogleHomeDevice]:
-        """Ask each device on Google's list for its alarms, timers and settings.
+    async def update_device(
+        self, device: GoogleHomeDevice, *, found_at_known_host: bool = False
+    ) -> None:
+        """Ask a device on Google's list for its alarms, timers and settings, if it can be.
 
-        Return the devices by their ID.
+        With found_at_known_host, the device was just found at a known host, which
+        answered with its info.
         """
-
-        # From here until the next update, whatever asks for Google's list gets it
-        # at most once: on schedule, when it's unknown, or for a rejected token
-        self._fetches_before_update = self._fetches
-        self._found_at_known_host.clear()
-        await self.async_fetch_devices_when_due()
-        devices = await self.get_google_devices()
-
         # Gives the user a warning if the device is offline
-        for device in devices:
-            if not device.ip_address and device.available:
+        if not device.ip_address:
+            if device.available:
                 device.available = False
                 _LOGGER.debug(
                     (
@@ -110,20 +104,14 @@ class GlocaltokensApiClient(GoogleAccountClient):
                     ),
                     device.name,
                 )
-
-        await asyncio.gather(
-            *[
-                self.collect_data_from_endpoints(device)
-                for device in devices
-                if device.ip_address
-                and (device.auth_token or device.alarms_unsupported)
-            ]
-        )
-
-        return {device.device_id: device for device in devices}
+            return
+        if device.auth_token or device.alarms_unsupported:
+            await self.collect_data_from_endpoints(
+                device, found_at_known_host=found_at_known_host
+            )
 
     async def collect_data_from_endpoints(
-        self, device: GoogleHomeDevice
+        self, device: GoogleHomeDevice, *, found_at_known_host: bool = False
     ) -> GoogleHomeDevice:
         """Collect data from different endpoints.
 
@@ -136,7 +124,6 @@ class GlocaltokensApiClient(GoogleAccountClient):
         the check for alarms asks for its info, or the device was just found at a known
         host, that answer counts, so it isn't asked again.
         """
-        found_at_known_host = device.device_id in self._found_at_known_host
         if device.alarms_unsupported:
             status = (
                 HTTPStatus.OK

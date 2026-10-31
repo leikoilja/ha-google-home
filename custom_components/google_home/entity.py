@@ -1,19 +1,18 @@
 """Defines base entities for Google Home."""
 
 from abc import ABC, abstractmethod
+from functools import partial
 import logging
 from typing import override
 
 from homeassistant.core import callback
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.update_coordinator import (
-    CoordinatorEntity,
-    DataUpdateCoordinator,
-)
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .api import GlocaltokensApiClient
 from .const import DOMAIN, MANUFACTURER, UNANSWERED_UPDATES
+from .coordinator import GoogleHomeDeviceCoordinator
 from .exceptions import DeviceRequestFailed
 from .models import GoogleHomeDevice
 from .types import GoogleHomeConfigEntry
@@ -21,9 +20,7 @@ from .types import GoogleHomeConfigEntry
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
-class GoogleHomeBaseEntity(
-    CoordinatorEntity[DataUpdateCoordinator[dict[str, GoogleHomeDevice]]], ABC
-):
+class GoogleHomeBaseEntity(CoordinatorEntity[GoogleHomeDeviceCoordinator], ABC):
     """Base entity base for Google Home sensors."""
 
     # Subclasses name only themselves, and Home Assistant adds the device's
@@ -33,7 +30,7 @@ class GoogleHomeBaseEntity(
 
     def __init__(
         self,
-        coordinator: DataUpdateCoordinator[dict[str, GoogleHomeDevice]],
+        coordinator: GoogleHomeDeviceCoordinator,
         client: GlocaltokensApiClient,
         device_id: str,
         device_name: str,
@@ -80,13 +77,13 @@ class GoogleHomeBaseEntity(
         )
 
     def get_device(self) -> GoogleHomeDevice | None:
-        """Return the entity's device, if the last update has it."""
-        return self.coordinator.data.get(self.device_id)
+        """Return the entity's device, if Google lists it."""
+        return self.coordinator.data
 
     @callback
     def async_show_device_changes(self) -> None:
-        """Show a change to the device's data now, on every entity."""
-        # Other entities show this device's data too
+        """Show a change to the device's data now, on each of its entities."""
+        # The device's other entities show its data too
         self.coordinator.async_update_listeners()
 
     async def async_reboot_device(self) -> None:
@@ -122,39 +119,51 @@ def async_add_device_entities(
     """Add these entities for each device, at setup or when a later update finds it.
 
     With needs_answer, a device gets them only once it answers: one that is
-    offline or doesn't support alarms, timers and settings gets none.
+    offline or doesn't support alarms, timers and settings gets none. Each device's
+    coordinator is watched from when the account's coordinator adds it, which also
+    keeps it updating before the device has entities.
     """
-    coordinator = entry.runtime_data.coordinator
     client = entry.runtime_data.client
     added: set[str] = set()
+    watched: set[str] = set()
 
     @callback
-    def add_entities() -> None:
-        devices = [
-            device
-            for device in coordinator.data.values()
-            if device.device_id not in added
-            and (
-                not needs_answer
-                or (
+    def add_entities(coordinator: GoogleHomeDeviceCoordinator) -> None:
+        device = coordinator.data
+        if (
+            device is None
+            or device.device_id in added
+            or (
+                needs_answer
+                and not (
                     device.auth_token
                     and device.available
                     and not device.alarms_unsupported
                 )
             )
-        ]
-        if not devices:
+        ):
             return
-        added.update(device.device_id for device in devices)
+        added.add(device.device_id)
         async_add_entities(
             [
                 entity_class(
                     coordinator, client, device.device_id, device.name, device.hardware
                 )
-                for device in devices
                 for entity_class in entity_classes
             ]
         )
 
-    add_entities()
-    entry.async_on_unload(coordinator.async_add_listener(add_entities))
+    @callback
+    def watch_devices() -> None:
+        for device_id, coordinator in entry.runtime_data.devices.items():
+            if device_id in watched:
+                continue
+            watched.add(device_id)
+            # Its first update may have finished already
+            add_entities(coordinator)
+            entry.async_on_unload(
+                coordinator.async_add_listener(partial(add_entities, coordinator))
+            )
+
+    watch_devices()
+    entry.async_on_unload(entry.runtime_data.account.async_add_listener(watch_devices))

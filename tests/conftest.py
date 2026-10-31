@@ -1,6 +1,8 @@
 """Fixtures shared by the tests."""
 
+import asyncio
 from collections.abc import Awaitable, Callable, Iterator
+from dataclasses import dataclass, field
 import re
 from typing import Concatenate, cast
 from unittest.mock import MagicMock, Mock, patch
@@ -48,6 +50,19 @@ def kitchen_speaker(ip_address: str | None = SPEAKER) -> Device:
     return found(
         SPEAKER_ID, ip_address, name=SPEAKER_NAME, cloud_device_id=SPEAKER_CLOUD_ID
     )
+
+
+@dataclass
+class Held:
+    """A reply in the replies table that the speaker sends only once released."""
+
+    reply: Reply
+    asked: asyncio.Event = field(default_factory=asyncio.Event)
+    released: asyncio.Event = field(default_factory=asyncio.Event)
+
+
+# What each speaker answers, by address and endpoint
+type Replies = dict[str, dict[str, Reply | Held]]
 
 
 @pytest.fixture(name="clock")
@@ -176,19 +191,21 @@ def fixture_google(
 
 
 @pytest.fixture(name="replies")
-def fixture_replies(
-    aioclient_mock: AiohttpClientMocker,
-) -> dict[str, dict[str, Reply]]:
+def fixture_replies(aioclient_mock: AiohttpClientMocker) -> Replies:
     """Answer each request to a speaker as this table says when it's sent.
 
-    By address and endpoint, as in test_unsupported_devices. The speaker at SPEAKER
-    is a Google or Nest speaker.
+    By address and endpoint, as in test_unsupported_devices, or Held to answer only
+    once released. The speaker at SPEAKER is a Google or Nest speaker.
     """
-    replies: dict[str, dict[str, Reply]] = {SPEAKER: dict(SUPPORTED)}
+    replies: Replies = {SPEAKER: dict(SUPPORTED)}
     endpoints = {**ENDPOINTS, API_ENDPOINT_ALARM_DELETE: DELETE}
 
     async def answer(method: str, url: URL, _data: object) -> AiohttpClientMockResponse:
         reply = replies[str(url.host)][endpoints[url.path_qs.removeprefix("/")]]
+        if isinstance(reply, Held):
+            reply.asked.set()
+            await reply.released.wait()
+            reply = reply.reply
         if isinstance(reply, Exception):
             return AiohttpClientMockResponse(method, url, exc=reply)
         status, body = reply if isinstance(reply, tuple) else (reply, None)
