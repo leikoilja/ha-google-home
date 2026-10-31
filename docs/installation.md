@@ -103,8 +103,9 @@ The examples use entity IDs such as `sensor.kitchen_timers`. Replace them with y
 
 A fix merged into `master` reaches the Home Assistant Marketplace with the next release. To try it sooner, install `master` in place of your current version:
 
-1. [Open the **Actions** tool](https://my.home-assistant.io/redirect/tools_perform_action/?service=update.install), or go to **Settings** > **Tools** > **Actions**, and switch to **YAML mode**.
-2. Enter this action. Use the entity ID of the Google Home update entity, usually `update.google_home`.
+1. Find the entity ID of the Google Home update entity: [open **Entities**](https://my.home-assistant.io/redirect/entities/), or go to **Settings** > **Devices & services** > **Entities**, and search for `update.google_home`. It's usually `update.google_home` or `update.google_home_update`.
+2. [Open the **Actions** tool](https://my.home-assistant.io/redirect/tools_perform_action/?service=update.install), or go to **Settings** > **Tools** > **Actions**, and switch to **YAML mode**.
+3. Enter this action, with your entity ID in place of `update.google_home`:
 
     ```yaml
     action: update.install
@@ -114,7 +115,7 @@ A fix merged into `master` reaches the Home Assistant Marketplace with the next 
       version: master
     ```
 
-3. Select **Perform action**, then restart Home Assistant.
+4. Select **Perform action**, then restart Home Assistant.
 
 To go back, run the action again with the latest release as the version, such as `version: v1.17.0`, and restart.
 
