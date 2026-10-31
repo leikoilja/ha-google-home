@@ -36,21 +36,15 @@ from custom_components.google_home.sensor import (
     async_delete_from_devices,
     async_reboot_devices,
     async_refresh_devices,
-    async_setup_entry,
+    async_setup_actions,
 )
-from custom_components.google_home.types import (
-    AlarmJsonDict,
-    GoogleHomeData,
-    JsonDict,
-    TimerJsonDict,
-)
+from custom_components.google_home.types import AlarmJsonDict, JsonDict, TimerJsonDict
 
 # ruff sorts homeassistant as first-party, pylint as third-party
 # pylint: disable=wrong-import-order
 from homeassistant.const import STATE_UNAVAILABLE
 from homeassistant.core import ServiceCall
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
-from homeassistant.helpers import config_validation as cv
 
 # pylint: enable=wrong-import-order
 
@@ -126,19 +120,18 @@ def confirm_delete(device: GoogleHomeDevice, items_to_delete: list[str]) -> None
     device.remove_alarms_and_timers(items_to_delete)
 
 
-def set_up_platform() -> Mock:
-    """Set up the sensor platform, returning its batched action registrations."""
-    entry = Mock(runtime_data=GoogleHomeData(Mock(), Mock(data={})))
+def register_actions() -> Mock:
+    """Register the actions, returning their batched registrations."""
     with patch(
         "homeassistant.helpers.service.async_register_batched_platform_entity_service"
     ) as register_batched:
-        asyncio.run(async_setup_entry(Mock(), entry, Mock()))
+        async_setup_actions(Mock())
     return register_batched
 
 
 def test_batched_actions_registered() -> None:
     """Batch every action, so Home Assistant calls each once with every targeted sensor."""
-    register_batched = set_up_platform()
+    register_batched = register_actions()
 
     # The delete tests run each delete action as registered
     delete = (SENSOR, async_delete_from_devices)
@@ -168,16 +161,20 @@ def get_registered_action(
 
     Home Assistant calls it once with all of them.
     """
-    [c] = [c for c in set_up_platform().call_args_list if c.args[2] == action]
+    [c] = [c for c in register_actions().call_args_list if c.args[2] == action]
     return c.kwargs["func"], c.kwargs["required_features"]
 
 
 def validate(action: str, data: dict[str, object]) -> dict[str, object]:
-    """Validate an action's data with its registered schema, as Home Assistant does before running it."""
-    [c] = [c for c in set_up_platform().call_args_list if c.args[2] == action]
-    validated: dict[str, object] = cv.make_entity_service_schema(c.kwargs["schema"])(
-        {"entity_id": "sensor.kitchen_alarms", **data}
-    )
+    """Validate an action's data with its registered schema, as Home Assistant does before running it.
+
+    The entry is loaded, which the schema checks last.
+    """
+    [c] = [c for c in register_actions().call_args_list if c.args[2] == action]
+    with patch("homeassistant.helpers.service.async_get_config_entry"):
+        validated: dict[str, object] = c.kwargs["schema"](
+            {"entity_id": "sensor.kitchen_alarms", **data}
+        )
     return validated
 
 

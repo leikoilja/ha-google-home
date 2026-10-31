@@ -4,15 +4,19 @@ Home Assistant sets up the entry, runs its updates and calls its actions. Only
 glocaltokens, mDNS and the speaker's answers are faked, by the fixtures in conftest.py.
 """
 
+from collections.abc import Awaitable, Callable
 from datetime import timedelta
 from http import HTTPStatus
+from pathlib import Path
 from unittest.mock import Mock, patch
 
 from freezegun.api import FrozenDateTimeFactory
+import probatio
 import pytest
 from pytest_homeassistant.common import (
     MockConfigEntry,
     async_fire_time_changed,
+    async_mock_service,
     snapshot_platform,
 )
 from pytest_homeassistant.test_util.aiohttp import AiohttpClientMocker
@@ -33,7 +37,9 @@ from custom_components.google_home.const import (
 # pylint: disable=wrong-import-order
 from homeassistant.config_entries import SOURCE_REAUTH, ConfigEntryState
 from homeassistant.const import (
+    ATTR_DEVICE_ID,
     ATTR_ENTITY_ID,
+    ENTITY_MATCH_ALL,
     SERVICE_TURN_OFF,
     STATE_OFF,
     STATE_ON,
@@ -41,7 +47,9 @@ from homeassistant.const import (
     STATE_UNKNOWN,
 )
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers import device_registry as dr, entity_registry as er
+from homeassistant.setup import async_setup_component
 
 from .conftest import (
     DELETE,
@@ -50,7 +58,7 @@ from .conftest import (
     SPEAKER_NAME,
     kitchen_speaker,
 )
-from .test_missing_devices import ALARM_ID, rejected
+from .test_missing_devices import ALARM_ID, TIMER_ID, rejected
 from .test_unsupported_devices import DND, INFO, SPEAKER, Reply
 
 # pylint: enable=wrong-import-order
@@ -70,14 +78,28 @@ STATES = {
     "number.kitchen_speaker_alarm_volume": "70",
     "button.kitchen_speaker_reboot": STATE_UNKNOWN,
 }
-ACTIONS = {
-    "reboot_device",
-    "delete_alarm",
-    "delete_timer",
-    "delete_all_alarms",
-    "delete_all_timers",
-    "refresh_devices",
+# The actions, each with data that it accepts
+ACTIONS: dict[str, dict[str, object]] = {
+    "reboot_device": {},
+    "delete_alarm": {"alarm_id": ALARM_ID},
+    "delete_timer": {"timer_id": TIMER_ID},
+    "delete_all_alarms": {},
+    "delete_all_timers": {},
+    "refresh_devices": {},
 }
+# Home Assistant's own errors for an action whose entry isn't loaded, which it
+# translates: "Config entry {entry_title} for integration {domain} is not loaded"
+# and "Could not find config entry for integration {domain}"
+NOT_LOADED = (
+    "homeassistant",
+    "service_config_entry_not_loaded",
+    {"domain": DOMAIN, "entry_title": "test@example.com"},
+)
+NO_ENTRY = (
+    "homeassistant",
+    "service_found_no_config_entry_for_domain",
+    {"domain": DOMAIN},
+)
 
 
 async def set_up(hass: HomeAssistant, entry: MockConfigEntry) -> None:
@@ -110,6 +132,31 @@ async def updated_at(
         if ("GET", API_ENDPOINT_ALARMS, None) in requests(aioclient_mock):
             times.append(seconds)
     return times
+
+
+async def reload(hass: HomeAssistant, entry: MockConfigEntry) -> None:
+    """Set up the entry, then reload it, which unloads it and sets it up again."""
+    await set_up(hass, entry)
+    assert await hass.config_entries.async_reload(entry.entry_id)
+    await hass.async_block_till_done()
+
+
+async def refusals(
+    hass: HomeAssistant, action: str, targets: dict[str, dict[str, str]]
+) -> dict[str, tuple[str | None, str | None, dict[str, str] | None]]:
+    """Call the action with data it accepts on each target, and return why each call failed."""
+    errors = {}
+    for name, target in targets.items():
+        with pytest.raises(ServiceValidationError) as error:
+            await hass.services.async_call(
+                DOMAIN, action, {**target, **ACTIONS[action]}, blocking=True
+            )
+        errors[name] = (
+            error.value.translation_domain,
+            error.value.translation_key,
+            error.value.translation_placeholders,
+        )
+    return errors
 
 
 def state(hass: HomeAssistant, entity_id: str) -> str:
@@ -146,7 +193,7 @@ async def test_setup(
         )
     } == dict.fromkeys(STATES, device.id)
     assert {entity_id: state(hass, entity_id) for entity_id in STATES} == STATES
-    assert hass.services.async_services_for_domain(DOMAIN).keys() == ACTIONS
+    assert hass.services.async_services_for_domain(DOMAIN).keys() == ACTIONS.keys()
 
 
 @pytest.mark.usefixtures("google", "replies")
@@ -295,14 +342,19 @@ async def test_turn_off_do_not_disturb(
 
 
 @pytest.mark.usefixtures("google")
+@pytest.mark.parametrize("load", [set_up, reload])
 async def test_delete_alarm(
     hass: HomeAssistant,
     config_entry: MockConfigEntry,
     replies: dict[str, dict[str, Reply]],
     aioclient_mock: AiohttpClientMocker,
+    load: Callable[[HomeAssistant, MockConfigEntry], Awaitable[None]],
 ) -> None:
-    """Delete the alarm that the speaker has now, and show it gone once the speaker confirms."""
-    await set_up(hass, config_entry)
+    """Delete the alarm that the speaker has now, and show it gone once the speaker confirms.
+
+    Also once the entry is loaded again.
+    """
+    await load(hass, config_entry)
     aioclient_mock.mock_calls.clear()
     replies[SPEAKER][DELETE] = (HTTPStatus.OK, {"success": True})
 
@@ -322,6 +374,143 @@ async def test_delete_alarm(
     alarms = hass.states.get(ALARMS_SENSOR)
     assert alarms is not None
     assert alarms.attributes["alarms"] == []
+
+
+@pytest.mark.parametrize("action", ACTIONS)
+async def test_action_fails_without_entry(hass: HomeAssistant, action: str) -> None:
+    """Fail an action with Home Assistant's error while the integration has no entry.
+
+    The integration registers its actions when it's set up, before any entry.
+    """
+    assert await async_setup_component(hass, DOMAIN, {})
+
+    targets = {
+        "entity": {ATTR_ENTITY_ID: ALARMS_SENSOR},
+        "all": {ATTR_ENTITY_ID: ENTITY_MATCH_ALL},
+    }
+    assert await refusals(hass, action, targets) == dict.fromkeys(targets, NO_ENTRY)
+
+
+@pytest.mark.parametrize("action", ACTIONS)
+@pytest.mark.parametrize(
+    ("error", "entry_state"),
+    [
+        # Google rejected the master token: the user needs to sign in again
+        (rejected(), ConfigEntryState.SETUP_ERROR),
+        # An error the integration doesn't expect: Home Assistant tries again later
+        (RuntimeError("Unexpected"), ConfigEntryState.SETUP_RETRY),
+    ],
+    ids=["setup error", "setup retry"],
+)
+async def test_action_fails_when_setup_fails(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    google: Mock,
+    action: str,
+    error: Exception,
+    entry_state: ConfigEntryState,
+) -> None:
+    """Fail an action with Home Assistant's error while the entry couldn't be set up."""
+    google.side_effect = error
+
+    assert not await hass.config_entries.async_setup(config_entry.entry_id)
+    await hass.async_block_till_done()
+
+    assert config_entry.state is entry_state
+    targets = {
+        "entity": {ATTR_ENTITY_ID: ALARMS_SENSOR},
+        "all": {ATTR_ENTITY_ID: ENTITY_MATCH_ALL},
+    }
+    assert await refusals(hass, action, targets) == dict.fromkeys(targets, NOT_LOADED)
+
+
+@pytest.mark.usefixtures("google", "replies")
+@pytest.mark.parametrize("action", ACTIONS)
+async def test_action_fails_after_unload(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    device_registry: dr.DeviceRegistry,
+    aioclient_mock: AiohttpClientMocker,
+    action: str,
+) -> None:
+    """Fail an action with Home Assistant's error after the entry is unloaded, without asking the speaker.
+
+    Without the error, the action would find no sensor to run on and do nothing.
+    """
+    await set_up(hass, config_entry)
+    device = device_registry.async_get_device_by_identifier(
+        (DOMAIN, SPEAKER_ID), config_entry.entry_id
+    )
+    assert device is not None
+    assert await hass.config_entries.async_unload(config_entry.entry_id)
+    await hass.async_block_till_done()
+    aioclient_mock.mock_calls.clear()
+
+    targets = {
+        "entity": {ATTR_ENTITY_ID: ALARMS_SENSOR},
+        "all": {ATTR_ENTITY_ID: ENTITY_MATCH_ALL},
+        "device": {ATTR_DEVICE_ID: device.id},
+    }
+    assert await refusals(hass, action, targets) == dict.fromkeys(targets, NOT_LOADED)
+    assert requests(aioclient_mock) == []
+
+
+async def test_wrong_data_fails_first_without_entry(hass: HomeAssistant) -> None:
+    """Fail an action with wrong data for that reason, also while there's no entry to run it."""
+    assert await async_setup_component(hass, DOMAIN, {})
+
+    with pytest.raises(ServiceValidationError) as error:
+        await hass.services.async_call(
+            DOMAIN,
+            "delete_alarm",
+            {ATTR_ENTITY_ID: ALARMS_SENSOR, "alarm_id": "alarm/wrong-format"},
+            blocking=True,
+        )
+    assert error.value.translation_key == "invalid_alarm_id"
+    with pytest.raises(probatio.Invalid, match="required key not provided"):
+        await hass.services.async_call(
+            DOMAIN, "delete_alarm", {ATTR_ENTITY_ID: ALARMS_SENSOR}, blocking=True
+        )
+
+
+async def test_script_stops_at_action_when_setup_fails(
+    hass: HomeAssistant, config_entry: MockConfigEntry, google: Mock, tmp_path: Path
+) -> None:
+    """Load a script that uses an action while the entry isn't loaded, and stop it there.
+
+    Unless the step continues on error, which covers Home Assistant's error.
+    """
+    # Where the script integration adds its blueprints
+    hass.config.config_dir = str(tmp_path)
+    google.side_effect = rejected()
+    assert not await hass.config_entries.async_setup(config_entry.entry_id)
+    next_steps = async_mock_service(hass, "test", "next_step")
+    step = {
+        "action": f"{DOMAIN}.delete_all_alarms",
+        "target": {ATTR_ENTITY_ID: ALARMS_SENSOR},
+    }
+    assert await async_setup_component(
+        hass,
+        "script",
+        {
+            "script": {
+                "stops": {"sequence": [step, {"action": "test.next_step"}]},
+                "continues": {
+                    "sequence": [
+                        {**step, "continue_on_error": True},
+                        {"action": "test.next_step"},
+                    ]
+                },
+            }
+        },
+    )
+
+    with pytest.raises(ServiceValidationError) as error:
+        await hass.services.async_call("script", "stops", blocking=True)
+    assert error.value.translation_key == NOT_LOADED[1]
+    assert not next_steps
+    await hass.services.async_call("script", "continues", blocking=True)
+    assert len(next_steps) == 1
 
 
 @pytest.mark.usefixtures("google", "replies")
