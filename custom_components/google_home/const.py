@@ -99,6 +99,10 @@ UPDATE_INTERVAL: Final = 15  # sec
 # app and the address of a device that was offline. It's a request to Google, so not
 # on every update.
 FETCH_DEVICES_INTERVAL: Final = 20 * 60  # sec
+# Remove a device from Home Assistant, with its entities, once this many lists in a
+# row that Google answered with have lacked it. One list may miss a device that
+# Google still has.
+LISTS_BEFORE_REMOVAL: Final = 2
 # While Google's device list is unknown, wait at least this many seconds after the start
 # of a fetch that failed before fetching it again: the first value after one failure,
 # the next after two in a row, and so on, staying at the last. It's never longer than

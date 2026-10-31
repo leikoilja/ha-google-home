@@ -42,11 +42,14 @@ from homeassistant.helpers import entity_registry as er
 from homeassistant.setup import async_setup_component
 
 from .conftest import (
+    BEDROOM,
+    BEDROOM_ID,
     DELETE,
     SPEAKER_CLOUD_ID,
     SPEAKER_ID,
     Held,
     Replies,
+    bedroom_speaker,
     kitchen_speaker,
 )
 from .test_missing_devices import ALARM_ID, found, make_client, rejected, until
@@ -65,9 +68,6 @@ from .test_unsupported_devices import (
 
 # pylint: enable=wrong-import-order
 
-# A second speaker, which the fake Google lists after the kitchen's
-BEDROOM = "10.0.0.3"
-BEDROOM_ID = "bedroom"
 KITCHEN_ALARMS = "sensor.kitchen_speaker_alarms"
 KITCHEN_DEVICE = "sensor.kitchen_speaker_device"
 BEDROOM_ALARMS = "sensor.bedroom_speaker_alarms"
@@ -88,11 +88,6 @@ OTHER_ALARM = (
     {"alarm": [{"id": ALARM_ID, "fire_time": 1800000000000, "status": 1}], "timer": []},
 )
 OTHER_ALARM_SHOWN = "2027-01-15T00:00:00-08:00"
-
-
-def bedroom_speaker(ip_address: str | None = BEDROOM) -> Device:
-    """Return the second speaker as glocaltokens returns it."""
-    return found(BEDROOM_ID, ip_address, name="Bedroom speaker")
 
 
 def asked(aioclient_mock: AiohttpClientMocker) -> list[tuple[str, str]]:
@@ -121,13 +116,6 @@ async def update_account(hass: HomeAssistant, entry: MockConfigEntry) -> None:
     """Run the account's update, and the speaker updates it starts, to the end."""
     await runtime(entry).account.async_refresh()
     await hass.async_block_till_done(wait_background_tasks=True)
-
-
-@pytest.fixture(name="two_speakers")
-def fixture_two_speakers(google: Mock, replies: Replies) -> None:
-    """Make the fake Google list the kitchen and the bedroom speaker, which both answer."""
-    google.return_value = [kitchen_speaker(), bedroom_speaker()]
-    replies[BEDROOM] = dict(SUPPORTED)
 
 
 @pytest.mark.usefixtures("google", "two_speakers")

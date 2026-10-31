@@ -49,7 +49,7 @@ from homeassistant.config_entries import SOURCE_USER, ConfigEntry, ConfigEntrySt
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed
 
-from .test_entity import home_assistant
+from .test_entity import home_assistant, no_registered_devices
 
 # pylint: enable=wrong-import-order
 
@@ -475,7 +475,8 @@ def update_entry(
             await coordinator._async_update_data()  # noqa: SLF001
         return devices
 
-    devices = asyncio.run(run())
+    with no_registered_devices():
+        devices = asyncio.run(run())
     client.collect_data_from_endpoints.assert_has_awaits(
         [
             call(device, found_at_known_host=False)

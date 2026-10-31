@@ -42,6 +42,9 @@ from .test_unsupported_devices import ENDPOINTS, SPEAKER, SUPPORTED, Reply
 SPEAKER_ID = "kitchen"
 SPEAKER_CLOUD_ID = "kitchen-cloud-id"
 SPEAKER_NAME = "Kitchen speaker"
+# A second speaker, which the two_speakers fixture lists after the kitchen's
+BEDROOM = "10.0.0.3"
+BEDROOM_ID = "bedroom"
 DELETE = "delete"
 
 
@@ -50,6 +53,11 @@ def kitchen_speaker(ip_address: str | None = SPEAKER) -> Device:
     return found(
         SPEAKER_ID, ip_address, name=SPEAKER_NAME, cloud_device_id=SPEAKER_CLOUD_ID
     )
+
+
+def bedroom_speaker(ip_address: str | None = BEDROOM) -> Device:
+    """Return the second speaker as glocaltokens returns it."""
+    return found(BEDROOM_ID, ip_address, name="Bedroom speaker")
 
 
 @dataclass
@@ -214,3 +222,10 @@ def fixture_replies(aioclient_mock: AiohttpClientMocker) -> Replies:
     for method in ("get", "post"):
         aioclient_mock.request(method, re.compile(""), side_effect=answer)
     return replies
+
+
+@pytest.fixture(name="two_speakers")
+def fixture_two_speakers(google: Mock, replies: Replies) -> None:
+    """Make the fake Google list the kitchen and the bedroom speaker, which both answer."""
+    google.return_value = [kitchen_speaker(), bedroom_speaker()]
+    replies[BEDROOM] = dict(SUPPORTED)

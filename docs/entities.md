@@ -121,7 +121,7 @@ Not every device supports rebooting. A device can accept the request, so there's
 
 All entities of a device are unavailable:
 
-- Once Google no longer lists the device, for example after you remove it from the Google Home app. See [Remove a device](configuration.md#remove-a-device).
+- Once Google no longer lists the device, for example after you remove it from the Google Home app, until the integration removes the device. See [Remove a device](configuration.md#remove-a-device).
 - Once the device hasn't answered 5 [updates](configuration.md#change-the-update-interval) in a row, for example while it's unplugged. At the default 15-second interval, that's usually after one to two minutes. With a shorter interval, a speaker that restarts can miss 5 updates and become unavailable for a moment; with a longer one, it takes longer to notice. A [device without alarms and timers](troubleshooting.md#devices-without-alarms-and-timers) is asked only for its information at each update, and its device sensor and reboot button follow its answers the same way.
 - After the device's update fails unexpectedly, for example on a reply the integration can't read, until its next update. Once the integration has started, this affects only that device. While the integration is starting, such an error stops it from starting, and Home Assistant tries again later. When the integration can't get your device list from Google, the devices keep updating with the tokens and addresses they have, and their entities stay available.
 

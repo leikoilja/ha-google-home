@@ -108,6 +108,10 @@ class GoogleAccountClient:
         self._fetches_before_update = 0
         # The known hosts that the last fetch that ended gave devices, by device ID
         self._known_hosts_found: Mapping[str, str] = {}
+        # How many fetches Google has answered with its list, and the last of them
+        # that listed each device, by ID
+        self._lists_fetched = 0
+        self._last_listed: dict[str, int] = {}
         # While the list is unknown, a fetch after a failed one waits a while
         self._fetch_backoff = FetchBackoff()
         # Devices found to have no alarms, timers and settings. They aren't asked for
@@ -249,7 +253,9 @@ class GoogleAccountClient:
         """
         known_devices = {device.device_id: device for device in self.google_devices}
         self.google_devices = []
+        self._lists_fetched += 1
         for google_device in google_devices:
+            self._last_listed[google_device.device_id] = self._lists_fetched
             device = GoogleHomeDevice(
                 device_id=google_device.device_id,
                 name=google_device.device_name,
@@ -283,6 +289,14 @@ class GoogleAccountClient:
                 if not device.ip_address and found_device:
                     device.ip_address = found_device.address
             self.google_devices.append(device)
+
+    def lists_without(self, device_id: str) -> int:
+        """Return how many lists in a row Google has answered without the device.
+
+        Counted since the integration loaded, as if a device that no list has had
+        was listed just before.
+        """
+        return self._lists_fetched - self._last_listed.get(device_id, 0)
 
     async def async_fetch_devices_when_due(self) -> Mapping[str, str]:
         """Fetch Google's device list again when it may have changed.

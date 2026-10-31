@@ -29,7 +29,7 @@ from custom_components.google_home.models import GoogleHomeDevice
 from custom_components.google_home.sensor import GoogleHomeAlarmsSensor
 from custom_components.google_home.types import GoogleHomeData, JsonDict
 
-from .test_entity import home_assistant
+from .test_entity import home_assistant, no_registered_devices
 from .test_missing_devices import (
     ALARM_ID,
     FETCH_ERRORS,
@@ -401,7 +401,8 @@ def test_ask_to_sign_in_when_token_fetch_rejected() -> None:
         [coordinator] = entry.runtime_data.devices.values()
         assert await coordinator._async_update_data() is kitchen  # noqa: SLF001
 
-    asyncio.run(run())
+    with no_registered_devices():
+        asyncio.run(run())
 
     assert glocaltokens.get_google_devices.call_count == 1
     entry.async_start_reauth.assert_called_once_with(HASS)
