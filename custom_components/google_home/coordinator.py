@@ -11,7 +11,7 @@ from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .api import GlocaltokensApiClient
-from .const import DOMAIN, LISTS_BEFORE_REMOVAL
+from .const import DOMAIN, HOME_GRAPHS_BEFORE_REMOVAL
 from .models import GoogleHomeDevice
 from .types import GoogleHomeConfigEntry
 
@@ -100,11 +100,12 @@ class GoogleAccountCoordinator(DataUpdateCoordinator[dict[str, GoogleHomeDevice]
     async def _async_remove_unlisted_devices(
         self, listed: dict[str, GoogleHomeDevice]
     ) -> None:
-        """Remove the entry's devices that enough lists in a row have lacked, with their entities.
+        """Remove the entry's devices, with their entities, that home graphs have lacked.
 
-        Also those that no list has had since the integration loaded, as Google may
-        have dropped them before. Nothing is removed while the list is unknown. A
-        device that Google lists again later gets a new coordinator and entities.
+        Once enough home graphs in a row lack a device, also one that no home graph has
+        had since the integration loaded, as Google may have dropped it before. Nothing
+        is removed while the list is unknown. A device that Google lists again later
+        gets a new coordinator and entities.
         """
         if not self.client.google_devices_fetched:
             return
@@ -119,7 +120,7 @@ class GoogleAccountCoordinator(DataUpdateCoordinator[dict[str, GoogleHomeDevice]
         }
         coordinators = self.config_entry.runtime_data.devices
         for device_id in (registered.keys() | coordinators.keys()) - listed.keys():
-            if self.client.lists_without(device_id) < LISTS_BEFORE_REMOVAL:
+            if self.client.home_graphs_without(device_id) < HOME_GRAPHS_BEFORE_REMOVAL:
                 continue
             if (device := registered.get(device_id)) is not None:
                 _LOGGER.info(

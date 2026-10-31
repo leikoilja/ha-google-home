@@ -107,10 +107,10 @@ class GoogleAccountClient:
         self._fetches_before_update = 0
         # The known hosts that the last fetch that ended gave devices, by device ID
         self._known_hosts_found: Mapping[str, str] = {}
-        # How many fetches Google has answered with its list, and the last of them
-        # that listed each device, by ID
-        self._lists_fetched = 0
-        self._last_listed: dict[str, int] = {}
+        # How many home graphs Google has answered with, and for each device ID the
+        # last of them that had it
+        self._home_graphs_fetched = 0
+        self._last_home_graph_with: dict[str, int] = {}
         # While the list is unknown, a fetch after a failed one waits a while
         self._fetch_backoff = FetchBackoff()
         # Devices found to have no alarms, timers and settings. They aren't asked for
@@ -261,16 +261,19 @@ class GoogleAccountClient:
 
         This runs once for each fetch that Google answered with its list, whether the
         update, a device or an action started it, and not for a caller that waited for
-        that fetch, an update that didn't fetch, or a fetch that failed. The IDs of the
-        devices in the home graph that the list came from are counted as listed too.
+        that fetch, an update that didn't fetch, or a fetch that failed. It also counts
+        the home graph that the list came from, with all its devices, even those that
+        glocaltokens left out of the list.
         """
         known_devices = {device.device_id: device for device in self.google_devices}
         self.google_devices = []
-        self._lists_fetched += 1
+        self._home_graphs_fetched += 1
         for device_id in in_home_graph:
-            self._last_listed[device_id] = self._lists_fetched
+            self._last_home_graph_with[device_id] = self._home_graphs_fetched
         for google_device in google_devices:
-            self._last_listed[google_device.device_id] = self._lists_fetched
+            self._last_home_graph_with[google_device.device_id] = (
+                self._home_graphs_fetched
+            )
             device = GoogleHomeDevice(
                 device_id=google_device.device_id,
                 name=google_device.device_name,
@@ -305,14 +308,14 @@ class GoogleAccountClient:
                     device.ip_address = found_device.address
             self.google_devices.append(device)
 
-    def lists_without(self, device_id: str) -> int:
-        """Return how many lists in a row Google has answered without the device.
+    def home_graphs_without(self, device_id: str) -> int:
+        """Return how many home graphs in a row that Google answered with lack the device.
 
-        A device that the home graph has counts as listed, even if glocaltokens left
-        it out of the list. Counted since the integration loaded, as if a device that
-        no list has had was listed just before.
+        A device in a home graph counts even if glocaltokens left it out of the list.
+        Counted since the integration loaded, as if a device that no home graph has
+        had was in one just before.
         """
-        return self._lists_fetched - self._last_listed.get(device_id, 0)
+        return self._home_graphs_fetched - self._last_home_graph_with.get(device_id, 0)
 
     async def async_fetch_devices_when_due(self) -> Mapping[str, str]:
         """Fetch Google's device list again when it may have changed.
