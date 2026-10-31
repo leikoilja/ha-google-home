@@ -59,6 +59,10 @@ from .types import (
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
+# The coordinator does the updates. The integration's own actions, such as
+# reboot_device, get all their sensors in one call, which this limit doesn't cover.
+PARALLEL_UPDATES = 0
+
 
 class GoogleHomeSensorFeature(IntFlag):
     """Actions a sensor supports, so a device target runs each on its own sensor."""

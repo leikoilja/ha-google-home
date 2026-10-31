@@ -6,6 +6,7 @@ glocaltokens, mDNS and the speaker's answers are faked, by the fixtures in conft
 
 from datetime import timedelta
 from http import HTTPStatus
+from importlib import import_module
 from unittest.mock import Mock, patch
 
 from freezegun.api import FrozenDateTimeFactory
@@ -148,6 +149,18 @@ async def test_setup(
     } == dict.fromkeys(STATES, device.id)
     assert {entity_id: state(hass, entity_id) for entity_id in STATES} == STATES
     assert hass.services.async_services_for_domain(DOMAIN).keys() == ACTIONS
+
+
+@pytest.mark.parametrize("platform", PLATFORMS)
+def test_platform_sets_parallel_updates(platform: str) -> None:
+    """Tell Home Assistant how many of the platform's updates and actions may run at once.
+
+    Home Assistant's quality scale asks every platform to set it, and doesn't check
+    a custom integration.
+    """
+    assert isinstance(
+        import_module(f"custom_components.google_home.{platform}").PARALLEL_UPDATES, int
+    )
 
 
 @pytest.mark.usefixtures("google", "replies")
