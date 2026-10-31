@@ -10,15 +10,15 @@ For help with setup or usage, search [GitHub Discussions](https://github.com/lei
 
 ## Try a fix before it's released
 
-A fix merged into `master` reaches HACS and the Home Assistant Marketplace with the next release. To try it sooner, install `master` in place of your current version:
+A fix merged into `master` reaches the Home Assistant Marketplace with the next release. To try it sooner, install `master` in place of your current version:
 
 1. [Open the **Actions** tool](https://my.home-assistant.io/redirect/tools_perform_action/?service=update.install), or go to **Settings** > **Tools** > **Actions**, and switch to **YAML mode**.
-2. Enter this action. Use the entity ID of the Google Home update entity: usually `update.google_home_update` if you installed from HACS, or `update.google_home` from the Marketplace.
+2. Enter this action. Use the entity ID of the Google Home update entity, usually `update.google_home`.
 
     ```yaml
     action: update.install
     target:
-      entity_id: update.google_home_update
+      entity_id: update.google_home
     data:
       version: master
     ```
@@ -131,7 +131,7 @@ Maintainers publish the draft release that Release Drafter keeps up to date: run
 3. Downloads the attached zip and checks that its `manifest.json` has the release's version.
 4. Publishes the release, with its tag on the release commit.
 
-HACS and the Marketplace install a release from its `google_home.zip`, and GitHub counts its downloads. A release whose zip is missing can't be installed, so the workflow publishes only after the check passes. Don't publish the draft by hand: the release would keep the previous version in `manifest.json` and have no zip.
+The Marketplace installs a release from its `google_home.zip`, and GitHub counts its downloads. A release whose zip is missing can't be installed, so the workflow publishes only after the check passes. Don't publish the draft by hand: the release would keep the previous version in `manifest.json` and have no zip.
 
 If the workflow stops, fix the cause and run it again. If nothing has been merged since, it reuses the release commit; otherwise it commits the release again, on top of what was merged. If the release's tag already exists on another commit, the workflow stops before changing the draft, because GitHub would publish the release on that commit. Delete the tag if it's wrong, then run the workflow again.
 
