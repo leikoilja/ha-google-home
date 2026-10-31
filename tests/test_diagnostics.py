@@ -31,11 +31,17 @@ from custom_components.google_home.const import (
 from homeassistant.components.diagnostics import REDACTED
 from homeassistant.core import HomeAssistant
 
-from .conftest import SPEAKER_CLOUD_ID, SPEAKER_ID, SPEAKER_NAME, Replies
-from .test_coordinators import runtime, update_account
+from .conftest import (
+    SPEAKER_CLOUD_ID,
+    SPEAKER_ID,
+    SPEAKER_NAME,
+    Replies,
+    kitchen_speaker,
+)
+from .test_coordinators import BEDROOM, BEDROOM_ID, runtime, update_account
 from .test_missing_devices import ALARM_ID, found
 from .test_setup import set_up
-from .test_unsupported_devices import ALARMS, SPEAKER
+from .test_unsupported_devices import ALARMS, SPEAKER, SUPPORTED
 
 # pylint: enable=wrong-import-order
 
@@ -47,6 +53,7 @@ MASTER_TOKEN = "aas_et/" + "m" * 216
 ANDROID_ID = "a1b2c3d4e5f60718"
 LOCAL_AUTH_TOKEN = "invented-local-token-" + "t" * 87
 KNOWN_HOST = "10.0.0.9"
+BEDROOM_TOKEN = "invented-bedroom-token-" + "b" * 85
 SECRETS = [
     USERNAME,
     PASSWORD,
@@ -202,3 +209,44 @@ async def test_diagnostics_of_speaker_google_stops_listing(
     assert diagnostics["devices"] == {
         SPEAKER_ID: {"last_update_success": True, "last_exception": None}
     }
+
+
+async def test_diagnostics_of_speaker_whose_first_update_fails(
+    hass: HomeAssistant,
+    hass_client: ClientSessionGenerator,
+    config_entry: MockConfigEntry,
+    google: Mock,
+    replies: Replies,
+    clock: Mock,
+) -> None:
+    """Show the reply that makes a newly listed speaker's first update fail.
+
+    Its coordinator has no data until one of its updates works, but Google lists it.
+    """
+    await set_up(hass, config_entry)
+    google.return_value = [
+        kitchen_speaker(),
+        found(BEDROOM_ID, BEDROOM, token=BEDROOM_TOKEN, name="Bedroom speaker"),
+    ]
+    # Without its fire time, the alarm can't be read
+    malformed = {"alarm": [{"id": ALARM_ID, "status": 1}], "timer": []}
+    replies[BEDROOM] = {**SUPPORTED, ALARMS: (HTTPStatus.OK, malformed)}
+    clock.return_value = FETCH_DEVICES_INTERVAL
+    await update_account(hass, config_entry)
+
+    diagnostics = await get_diagnostics_for_config_entry(
+        hass, hass_client, config_entry
+    )
+
+    bedroom = cast(dict[str, dict[str, object]], diagnostics["devices"])[BEDROOM_ID]
+    expected = {
+        "name": "Bedroom speaker",
+        "last_update_success": False,
+        "last_exception": "KeyError",
+        "ip_address": REDACTED,
+        "auth_token": REDACTED,
+        "alarms_reply": malformed,
+    }
+    assert {key: bedroom.get(key) for key in expected} == expected
+    text = json.dumps(diagnostics)
+    assert [secret for secret in (BEDROOM, BEDROOM_TOKEN) if secret in text] == []

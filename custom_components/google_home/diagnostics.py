@@ -47,11 +47,14 @@ async def async_get_config_entry_diagnostics(
     Not the entry's title, which can be the account's email address.
     """
     data = entry.runtime_data
+    # From Google's list, not the device's coordinator, whose data stays None after a
+    # failed first update until one works. A device that Google no longer lists has
+    # only how its last update went.
+    listed = {device.device_id: device for device in data.client.google_devices}
     devices: dict[str, object] = {}
     for device_id, coordinator in data.devices.items():
         info = _last_update(coordinator)
-        # None while Google doesn't list the device, or before its first update
-        if (device := coordinator.data) is not None:
+        if (device := listed.get(device_id)) is not None:
             info |= {
                 "name": device.name,
                 "model": device.hardware,
