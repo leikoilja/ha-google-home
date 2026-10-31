@@ -7,9 +7,11 @@ from typing import override
 from homeassistant.config_entries import ConfigEntryState
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import ConfigEntryAuthFailed
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .api import GlocaltokensApiClient
+from .const import DOMAIN, LISTS_BEFORE_REMOVAL
 from .models import GoogleHomeDevice
 from .types import GoogleHomeConfigEntry
 
@@ -23,7 +25,7 @@ class GoogleAccountCoordinator(DataUpdateCoordinator[dict[str, GoogleHomeDevice]
     the update, a device or an action asks for it. Then the device coordinators follow
     the list: a device Google stops listing has no data, and a device that is new, listed
     again or just found at a known host is asked once straight away. Its coordinator
-    stays, with its entities, until the entry unloads.
+    stays, with its entities, until the entry unloads or the device is removed.
     """
 
     config_entry: GoogleHomeConfigEntry
@@ -66,6 +68,7 @@ class GoogleAccountCoordinator(DataUpdateCoordinator[dict[str, GoogleHomeDevice]
         coordinators = self.config_entry.runtime_data.devices
         for device_id in coordinators.keys() - listed.keys():
             coordinators[device_id].async_unlisted()
+        await self._async_remove_unlisted_devices(listed)
         # Setup asks the devices of its first update itself. A device found while
         # setup still runs, after that, is asked at the next update.
         loaded = self.config_entry.state is ConfigEntryState.LOADED
@@ -93,6 +96,40 @@ class GoogleAccountCoordinator(DataUpdateCoordinator[dict[str, GoogleHomeDevice]
                     self.hass, coordinator.async_refresh(), f"Update {device.name}"
                 )
         return listed
+
+    async def _async_remove_unlisted_devices(
+        self, listed: dict[str, GoogleHomeDevice]
+    ) -> None:
+        """Remove the entry's devices that enough lists in a row have lacked, with their entities.
+
+        Also those that no list has had since the integration loaded, as Google may
+        have dropped them before. Nothing is removed while the list is unknown. A
+        device that Google lists again later gets a new coordinator and entities.
+        """
+        if not self.client.google_devices_fetched:
+            return
+        registry = dr.async_get(self.hass)
+        registered = {
+            device_id: device
+            for device in dr.async_entries_for_config_entry(
+                registry, self.config_entry.entry_id
+            )
+            for domain, device_id in device.identifiers
+            if domain == DOMAIN
+        }
+        coordinators = self.config_entry.runtime_data.devices
+        for device_id in (registered.keys() | coordinators.keys()) - listed.keys():
+            if self.client.lists_without(device_id) < LISTS_BEFORE_REMOVAL:
+                continue
+            if (device := registered.get(device_id)) is not None:
+                _LOGGER.info(
+                    "Removed %s, which Google no longer lists",
+                    device.name_by_user or device.name,
+                )
+                registry.async_remove_device(device.id)
+            self._asked.pop(device_id, None)
+            if (coordinator := coordinators.pop(device_id, None)) is not None:
+                await coordinator.async_shutdown()
 
     @callback
     def async_ask_to_sign_in_if_rejected(self) -> None:
