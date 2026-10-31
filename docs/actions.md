@@ -160,6 +160,8 @@ data:
 
 Home Assistant runs these actions only on available sensors, and skips the others without an error. If all the sensors you target are unavailable, nothing happens and the action doesn't fail. If you name an unavailable sensor directly, the log shows "Referenced entities sensor.kitchen_alarms are missing or not currently available", even if another sensor you named ran the action.
 
+While the integration itself isn't loaded, for example because its setup failed, its sensors are unavailable too, but the actions fail instead of doing nothing. See [An action fails while the integration isn't loaded](troubleshooting.md#an-action-fails-while-the-integration-isnt-loaded).
+
 A device's sensors are unavailable, for example, once the device hasn't answered 5 updates in a row; see [When entities are unavailable](entities.md#when-entities-are-unavailable). An alarms or timers sensor that shows `unavailable` only because nothing is coming up is still available, and the actions run on it: in [**Settings** > **Tools** > **States**](https://my.home-assistant.io/redirect/tools_states/) it still has its `alarms` or `timers` attribute.
 
 ## Continue after an error
@@ -173,4 +175,4 @@ An action that fails stops your automation or script at that step. To run the ne
   continue_on_error: true
 ```
 
-This works the same for a step that turns the [Do Not Disturb switch](entities.md#do-not-disturb-switch) on or off, sets the [alarm volume](entities.md#alarm-volume) or presses the [reboot button](entities.md#reboot-button). It also covers an alarm or timer ID that no device has, or one in the wrong format. It doesn't cover configuration errors, such as a missing `alarm_id`, or one that is a list instead of text. See [Continuing when a step fails](https://www.home-assistant.io/docs/scripts/#continuing-on-error).
+This works the same for a step that turns the [Do Not Disturb switch](entities.md#do-not-disturb-switch) on or off, sets the [alarm volume](entities.md#alarm-volume) or presses the [reboot button](entities.md#reboot-button). It also covers an alarm or timer ID that no device has, or one in the wrong format, and the error while the integration [isn't loaded](troubleshooting.md#an-action-fails-while-the-integration-isnt-loaded). It doesn't cover configuration errors, such as a missing `alarm_id`, or one that is a list instead of text. See [Continuing when a step fails](https://www.home-assistant.io/docs/scripts/#continuing-on-error).
