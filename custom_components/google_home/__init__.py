@@ -15,8 +15,10 @@ from homeassistant.components import zeroconf
 from homeassistant.config_entries import ConfigEntryState
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.device_registry import DeviceEntry
+from homeassistant.helpers.typing import ConfigType
 
 from .api import GlocaltokensApiClient
 from .const import (
@@ -32,12 +34,25 @@ from .const import (
 )
 from .coordinator import GoogleAccountCoordinator
 from .mdns import async_browse_cast_devices
+from .sensor import async_setup_actions
 from .types import GoogleHomeConfigEntry, GoogleHomeData
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
+# The integration is set up from the UI only. Pylint takes the schema, a
+# function, for a variable and wants snake_case, but Home Assistant looks for
+# this name.
+# pylint: disable-next=invalid-name
+CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
+
 # Titles that setup used when Google didn't say which account signed in
 GENERIC_TITLES = {MASTER_TOKEN_TITLE, BROWSER_TITLE}
+
+
+async def async_setup(hass: HomeAssistant, _config: ConfigType) -> bool:
+    """Register the actions, which exist whether or not the entry is loaded."""
+    async_setup_actions(hass)
+    return True
 
 
 async def async_migrate_entry(
