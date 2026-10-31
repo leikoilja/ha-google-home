@@ -98,3 +98,24 @@ The examples use entity IDs such as `sensor.kitchen_timers`. Replace them with y
 - [Remove a device](configuration.md#remove-a-device){#remove-a-device} that you removed from the Google Home app.
 - [Sign in again](troubleshooting.md#sign-in-again){#sign-in-again} if Home Assistant reports that authentication expired.
 - [Remove the integration](configuration.md#remove-the-integration){#remove-the-integration}, and what to do about its master token.
+
+## Try a fix before it's released
+
+A fix merged into `master` reaches the Home Assistant Marketplace with the next release. To try it sooner, install `master` in place of your current version:
+
+1. [Open the **Actions** tool](https://my.home-assistant.io/redirect/tools_perform_action/?service=update.install), or go to **Settings** > **Tools** > **Actions**, and switch to **YAML mode**.
+2. Enter this action. Use the entity ID of the Google Home update entity, usually `update.google_home`.
+
+    ```yaml
+    action: update.install
+    target:
+      entity_id: update.google_home
+    data:
+      version: master
+    ```
+
+3. Select **Perform action**, then restart Home Assistant.
+
+To go back, run the action again with the latest release as the version, such as `version: v1.17.0`, and restart.
+
+This installs `master` as it is at that moment. It doesn't follow newer commits, so run the action again to get them. Only `master` is supported, not other branches or pull requests.

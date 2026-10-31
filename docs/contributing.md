@@ -8,27 +8,6 @@ For help with setup or usage, search [GitHub Discussions](https://github.com/lei
 
 [Open an issue](https://github.com/leikoilja/ha-google-home/issues/new/choose). For a bug, include the integration version and [debug logs](troubleshooting.md#collect-debug-logs).
 
-## Try a fix before it's released
-
-A fix merged into `master` reaches the Home Assistant Marketplace with the next release. To try it sooner, install `master` in place of your current version:
-
-1. [Open the **Actions** tool](https://my.home-assistant.io/redirect/tools_perform_action/?service=update.install), or go to **Settings** > **Tools** > **Actions**, and switch to **YAML mode**.
-2. Enter this action. Use the entity ID of the Google Home update entity, usually `update.google_home`.
-
-    ```yaml
-    action: update.install
-    target:
-      entity_id: update.google_home
-    data:
-      version: master
-    ```
-
-3. Select **Perform action**, then restart Home Assistant.
-
-To go back, run the action again with the latest release as the version, such as `version: v1.17.0`, and restart.
-
-This installs `master` as it is at that moment. It doesn't follow newer commits, so run the action again to get them. Only `master` is supported, not other branches or pull requests.
-
 ## Translate the integration
 
 The integration's setup screens, options and action descriptions follow your Home Assistant language. Text that isn't translated yet is shown in English.
