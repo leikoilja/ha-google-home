@@ -59,8 +59,8 @@ from .types import (
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
-# The coordinator does the updates. Home Assistant gives each action, such as
-# reboot_device, all its sensors in one call, and limits only calls per entity.
+# The coordinator does the updates. The integration's own actions, such as
+# reboot_device, get all their sensors in one call, which this limit doesn't cover.
 PARALLEL_UPDATES = 0
 
 
