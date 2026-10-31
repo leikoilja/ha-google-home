@@ -187,6 +187,12 @@ Turning Do Not Disturb on or off, setting the alarm volume, pressing Reboot and 
 - "Couldn't do this on Living Room. For details, see the Home Assistant log". The device answered with another error, or the request failed for another reason. Open the [log](https://my.home-assistant.io/redirect/logs/) to see what it was.
 - "These devices didn't confirm that they'll reboot: Bedroom, Kitchen. Check that they're online and try again later". Reboot device gives this when more than one device fails. It still reboots every device that answers.
 
+### An action fails while the integration isn't loaded
+
+While the integration isn't loaded, its [actions](actions.md), such as `google_home.delete_alarm`, fail whatever you target, and nothing is sent to your devices: "Config entry you@example.com for integration google_home is not loaded". Instead of you@example.com, it shows the integration's name, usually your Google account. This happens, for example, when Google didn't accept the master token at startup, while Home Assistant waits to try setting up the integration again, or while it's still setting it up after a restart.
+
+Open **Settings** > **Devices & services** > **Google Home** to see why it isn't loaded, and if Home Assistant asks you to, [sign in again](#sign-in-again). Once the integration is loaded, the actions run again.
+
 ## Download diagnostics
 
 The diagnostics file shows the integration's options and, for each device, its model, whether it answers and its last reply about alarms and timers, as the device sent it. Attach the file, as well as [debug logs](#collect-debug-logs), when you [open an issue](https://github.com/leikoilja/ha-google-home/issues/new/choose).
