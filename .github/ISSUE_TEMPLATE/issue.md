@@ -13,6 +13,7 @@ To help us to resolve this issue please include the following information:
 - Describe the issue in detail.
 - Provide steps to reproduce this issue.
 - Add version of the `google_home` integration.
+- Attach the diagnostics file, if the integration is set up.
 - Attach debug logs. The more the better.
 
 -->
@@ -35,6 +36,13 @@ If you are unsure about the version check the [github release here](https://gith
 ```text
 Add version here.
 ```
+
+## Diagnostics
+
+<!-- To download the diagnostics file, follow https://ha-google-home.pages.dev/troubleshooting/#download-diagnostics
+
+The file replaces your credentials, tokens and IP addresses with **REDACTED**, but keeps your device names and the times and labels of your alarms and timers. Check the file before you attach it.
+-->
 
 ## Logs
 

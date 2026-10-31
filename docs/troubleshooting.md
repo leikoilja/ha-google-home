@@ -187,6 +187,19 @@ Turning Do Not Disturb on or off, setting the alarm volume, pressing Reboot and 
 - "Couldn't do this on Living Room. For details, see the Home Assistant log". The device answered with another error, or the request failed for another reason. Open the [log](https://my.home-assistant.io/redirect/logs/) to see what it was.
 - "These devices didn't confirm that they'll reboot: Bedroom, Kitchen. Check that they're online and try again later". Reboot device gives this when more than one device fails. It still reboots every device that answers.
 
+## Download diagnostics
+
+The diagnostics file shows the integration's options and, for each device, its model, whether it answers and its last reply about alarms and timers, as the device sent it. Attach the file, as well as [debug logs](#collect-debug-logs), when you [open an issue](https://github.com/leikoilja/ha-google-home/issues/new/choose).
+
+1. Go to **Settings** > **Devices & services** > **Google Home**.
+2. Open the **⋮** menu and select **Download diagnostics**. Your browser downloads the file.
+
+The menu has **Download diagnostics** only while the integration is set up. If setup fails, [collect debug logs](#collect-debug-logs) instead.
+
+!!! warning "Check the file before sharing it"
+
+    The file replaces your email address, password, master token and Android ID, your devices' local tokens and IP addresses, and your known hosts with `**REDACTED**`. It keeps your device names and the times and labels of your alarms and timers. Home Assistant also adds details about your system, such as its version, your time zone and the custom integrations you use. Open the file and replace anything you don't want to share with `xxx` before you attach it to a public issue.
+
 ## Collect debug logs
 
 Debug logs show what the integration is doing. Attach them when you [open an issue](https://github.com/leikoilja/ha-google-home/issues/new/choose).
@@ -211,4 +224,4 @@ data:
 
 ## Still stuck
 
-Search [GitHub Discussions](https://github.com/leikoilja/ha-google-home/discussions) and the [issues](https://github.com/leikoilja/ha-google-home/issues?q=is%3Aissue) for your problem. If nobody has reported it, ask in [Q&A](https://github.com/leikoilja/ha-google-home/discussions/categories/q-a), or [open an issue](https://github.com/leikoilja/ha-google-home/issues/new/choose) with your [debug logs](#collect-debug-logs).
+Search [GitHub Discussions](https://github.com/leikoilja/ha-google-home/discussions) and the [issues](https://github.com/leikoilja/ha-google-home/issues?q=is%3Aissue) for your problem. If nobody has reported it, ask in [Q&A](https://github.com/leikoilja/ha-google-home/discussions/categories/q-a), or [open an issue](https://github.com/leikoilja/ha-google-home/issues/new/choose) with your [diagnostics](#download-diagnostics) and [debug logs](#collect-debug-logs).
