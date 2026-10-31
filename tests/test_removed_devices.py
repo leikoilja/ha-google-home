@@ -397,6 +397,8 @@ def home_graph_with(*devices: HomeGraph.Device) -> HomeGraph:
 
 
 KITCHEN_IN_HOME_GRAPH = in_home_graph(SPEAKER_ID, SPEAKER_CLOUD_ID, SPEAKER_NAME)
+# Unlike Google's device ID, so a test fails if the two are mixed up
+BEDROOM_CLOUD_ID = "bedroom-cloud-id"
 
 
 @pytest.fixture(name="home_graph")
@@ -416,7 +418,7 @@ def fixture_home_graph(
             autospec=True,
             return_value=home_graph_with(
                 KITCHEN_IN_HOME_GRAPH,
-                in_home_graph(BEDROOM_ID, BEDROOM_ID, "Bedroom speaker"),
+                in_home_graph(BEDROOM_ID, BEDROOM_CLOUD_ID, "Bedroom speaker"),
             ),
         ) as home_graph,
         patch(
@@ -426,7 +428,7 @@ def fixture_home_graph(
                     SPEAKER_NAME, SPEAKER, 8009, "Nest Audio", SPEAKER_CLOUD_ID
                 ),
                 NetworkDevice(
-                    "Bedroom speaker", BEDROOM, 8009, "Nest Audio", BEDROOM_ID
+                    "Bedroom speaker", BEDROOM, 8009, "Nest Audio", BEDROOM_CLOUD_ID
                 ),
             ],
         ),
@@ -462,7 +464,7 @@ async def test_speaker_glocaltokens_leaves_out_stays(
 
     bedroom = {"name": "Bedroom speaker"} | unusable
     home_graph.return_value = home_graph_with(
-        KITCHEN_IN_HOME_GRAPH, in_home_graph(BEDROOM_ID, BEDROOM_ID, **bedroom)
+        KITCHEN_IN_HOME_GRAPH, in_home_graph(BEDROOM_ID, BEDROOM_CLOUD_ID, **bedroom)
     )
     for fetch in (1, 2, 3):
         await fetch_list(hass, config_entry, clock, fetch)
