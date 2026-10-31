@@ -2,7 +2,6 @@
 
 import asyncio
 from collections.abc import Mapping
-from functools import partial
 import ipaddress
 import logging
 from time import monotonic
@@ -210,12 +209,8 @@ class GoogleAccountClient:
         fetched_for = self.found_devices.fetch_started()
 
         try:
-            google_devices = await self.hass.async_add_executor_job(
-                partial(
-                    self._client.get_google_devices,
-                    zeroconf_instance=self.zeroconf_instance,
-                    force_homegraph_reload=True,
-                )
+            google_devices, in_home_graph = await self.hass.async_add_executor_job(
+                self._get_google_devices
             )
         # Google rejected the master token, gave no home graph, or answered with
         # a 5xx or 429, which glocaltokens raises as HTTPError
@@ -234,7 +229,7 @@ class GoogleAccountClient:
         self._fetch_backoff.fetch_worked()
         self.sign_in_error = None
         self.google_devices_fetched = True
-        self._use_google_devices(google_devices, started)
+        self._use_google_devices(google_devices, in_home_graph, started)
         self.found_devices.fetch_worked(fetched_for)
         # Known hosts are only asked when mDNS left a device without an address
         if self.known_hosts and any(
@@ -244,16 +239,36 @@ class GoogleAccountClient:
             return await self.async_use_known_hosts()
         return {}
 
-    def _use_google_devices(self, google_devices: list[Device], started: float) -> None:
+    def _get_google_devices(self) -> tuple[list[Device], set[str]]:
+        """Fetch Google's home graph: its Cast devices, and the IDs of all its devices.
+
+        glocaltokens leaves out devices that it can't use, such as one without a
+        local token, so only the home graph shows that Google no longer has a device.
+        """
+        google_devices = self._client.get_google_devices(
+            zeroconf_instance=self.zeroconf_instance, force_homegraph_reload=True
+        )
+        # The home graph that the list came from, which glocaltokens keeps for a day
+        home_graph = self._client.get_home_graph()
+        return google_devices, {
+            device.id.device_id for home in home_graph.homes for device in home.devices
+        }
+
+    def _use_google_devices(
+        self, google_devices: list[Device], in_home_graph: set[str], started: float
+    ) -> None:
         """Replace the device list with the one Google gave to the fetch that started then.
 
         This runs once for each fetch that Google answered with its list, whether the
         update, a device or an action started it, and not for a caller that waited for
-        that fetch, an update that didn't fetch, or a fetch that failed.
+        that fetch, an update that didn't fetch, or a fetch that failed. The IDs of the
+        devices in the home graph that the list came from are counted as listed too.
         """
         known_devices = {device.device_id: device for device in self.google_devices}
         self.google_devices = []
         self._lists_fetched += 1
+        for device_id in in_home_graph:
+            self._last_listed[device_id] = self._lists_fetched
         for google_device in google_devices:
             self._last_listed[google_device.device_id] = self._lists_fetched
             device = GoogleHomeDevice(
@@ -293,8 +308,9 @@ class GoogleAccountClient:
     def lists_without(self, device_id: str) -> int:
         """Return how many lists in a row Google has answered without the device.
 
-        Counted since the integration loaded, as if a device that no list has had
-        was listed just before.
+        A device that the home graph has counts as listed, even if glocaltokens left
+        it out of the list. Counted since the integration loaded, as if a device that
+        no list has had was listed just before.
         """
         return self._lists_fetched - self._last_listed.get(device_id, 0)
 

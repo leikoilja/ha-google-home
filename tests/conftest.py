@@ -7,6 +7,7 @@ import re
 from typing import Concatenate, cast
 from unittest.mock import MagicMock, Mock, patch
 
+from ghome_foyer_api.api_pb2 import HomeGraph  # pylint: disable=no-name-in-module
 from glocaltokens.client import Device
 import pytest
 from pytest_homeassistant.common import MockConfigEntry
@@ -184,7 +185,8 @@ def fixture_google(
 ) -> Iterator[Mock]:
     """Fake glocaltokens' fetch of Google's device list, which lists one speaker.
 
-    mDNS finds no other device.
+    mDNS finds no other device. The list comes from no home graph, so Google has
+    only the devices it lists.
     """
     with (
         # With autospec, a call that glocaltokens wouldn't accept fails
@@ -193,6 +195,11 @@ def fixture_google(
             autospec=True,
             return_value=[kitchen_speaker()],
         ) as google,
+        patch(
+            "glocaltokens.client.GLocalAuthenticationTokens.get_home_graph",
+            autospec=True,
+            return_value=HomeGraph(),
+        ),
         patch("custom_components.google_home.mdns.AsyncServiceBrowser"),
     ):
         yield google

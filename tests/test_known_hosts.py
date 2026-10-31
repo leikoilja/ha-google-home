@@ -5,6 +5,7 @@ from http import HTTPStatus
 from unittest.mock import AsyncMock, MagicMock, Mock
 
 from aiohttp import ClientError
+from ghome_foyer_api.api_pb2 import HomeGraph  # pylint: disable=no-name-in-module
 from glocaltokens.client import Device
 from glocaltokens.scanner import NetworkDevice
 import pytest
@@ -149,6 +150,7 @@ def test_known_hosts_fill_in_devices_from_glocaltokens() -> None:
     pair = Device("pair", "Den speakers", LOCAL_AUTH_TOKEN, cloud_device_id="DDDD")
     client._client = Mock(  # noqa: SLF001  # pylint: disable=protected-access
         get_google_devices=Mock(return_value=[pair]),
+        get_home_graph=Mock(return_value=HomeGraph()),
     )
 
     # Its info answered there, which its first update uses
@@ -177,6 +179,7 @@ def test_known_hosts_fill_in_device_fetched_again() -> None:
     pair = Device("pair", "Den speakers", LOCAL_AUTH_TOKEN, cloud_device_id="DDDD")
     client._client = Mock(  # noqa: SLF001  # pylint: disable=protected-access
         get_google_devices=Mock(return_value=[pair]),
+        get_home_graph=Mock(return_value=HomeGraph()),
     )
 
     # The scheduled fetch is due
@@ -205,6 +208,7 @@ def test_known_hosts_not_asked_when_mdns_found_everything() -> None:
     )
     client._client = Mock(  # noqa: SLF001  # pylint: disable=protected-access
         get_google_devices=Mock(return_value=[found_by_mdns]),
+        get_home_graph=Mock(return_value=HomeGraph()),
     )
 
     assert asyncio.run(client.async_update_device_list()) == {}
