@@ -116,11 +116,11 @@ def test_name_after_account_without_email() -> None:
 def loaded_entry(
     client: GlocaltokensApiClient, devices: list[GoogleHomeDevice]
 ) -> Mock:
-    """Return a loaded config entry whose update returned these devices."""
+    """Return a loaded config entry whose account's update returned these devices."""
     return Mock(
         state=ConfigEntryState.LOADED,
         runtime_data=GoogleHomeData(
-            client, Mock(data={device.device_id: device for device in devices})
+            client, Mock(data={device.device_id: device for device in devices}), {}
         ),
     )
 
@@ -176,8 +176,9 @@ def test_keep_devices_when_fetch_fails(caplog: pytest.LogCaptureFixture) -> None
             "Google gave no access token", "BadAuthentication"
         ),
     ):
-        devices = asyncio.run(client.get_google_devices())
+        assert asyncio.run(client.async_update_device_list()) == {}
 
+    devices = client.google_devices
     assert devices == []
     assert not can_delete(loaded_entry(client, devices), "online")
     [record] = [

@@ -3,9 +3,7 @@
 import asyncio
 from collections.abc import Awaitable, Callable
 from datetime import timedelta
-from functools import partial
 from http import HTTPStatus
-import logging
 from pathlib import Path
 from unittest.mock import ANY, AsyncMock, MagicMock, Mock
 
@@ -14,7 +12,6 @@ from glocaltokens.client import Device
 import pytest
 from requests.exceptions import ConnectionError as RequestsConnectionError
 
-from custom_components.google_home import async_update_devices
 from custom_components.google_home.api import GlocaltokensApiClient
 from custom_components.google_home.const import (
     API_ENDPOINT_ALARM_VOLUME,
@@ -23,17 +20,14 @@ from custom_components.google_home.const import (
     FETCH_DEVICES_INTERVAL,
     HEADER_CAST_LOCAL_AUTH,
 )
+from custom_components.google_home.coordinator import GoogleAccountCoordinator
 from custom_components.google_home.exceptions import (
     AlarmsAndTimersNotDeleted,
     DeviceRequestFailed,
 )
 from custom_components.google_home.models import GoogleHomeDevice
 from custom_components.google_home.sensor import GoogleHomeAlarmsSensor
-from custom_components.google_home.types import JsonDict
-
-# ruff sorts homeassistant as first-party, pylint as third-party
-# pylint: disable-next=wrong-import-order
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+from custom_components.google_home.types import GoogleHomeData, JsonDict
 
 from .test_entity import home_assistant
 from .test_missing_devices import (
@@ -52,6 +46,7 @@ from .test_missing_devices import (
     make_client,
     rejected,
     until,
+    update_round,
 )
 
 # make_client gives each device this token, and Google then gives LOCAL_AUTH_TOKEN
@@ -133,7 +128,7 @@ def test_update_with_new_token_after_token_rejected() -> None:
     client, glocaltokens = make_client("10.0.0.2", session=session)
     [kitchen] = client.google_devices
 
-    asyncio.run(client.update_google_devices_information())
+    asyncio.run(update_round(client))
 
     assert glocaltokens.get_google_devices.call_count == 1
     # The rejected request is sent again, and the next two use the new token
@@ -160,7 +155,7 @@ def test_one_fetch_when_devices_reject_their_tokens_together() -> None:
         google_answers_when=lambda: session.request.call_count >= 2,
     )
 
-    asyncio.run(client.update_google_devices_information())
+    asyncio.run(update_round(client))
 
     assert glocaltokens.get_google_devices.call_count == 1
     for device in client.google_devices:
@@ -210,7 +205,7 @@ def test_no_usable_token_after_token_rejected(
 
     glocaltokens.get_google_devices.side_effect = google_answers
 
-    assert list(asyncio.run(client.update_google_devices_information()).values()) == [
+    assert list(asyncio.run(update_round(client)).values()) == [
         kitchen,
         bedroom,
     ]
@@ -227,7 +222,7 @@ def test_no_usable_token_after_token_rejected(
         found(device.device_id, device.ip_address, token=NEWER_TOKEN)
         for device in (kitchen, bedroom)
     ]
-    asyncio.run(client.update_google_devices_information())
+    asyncio.run(update_round(client))
 
     assert glocaltokens.get_google_devices.call_count == 2
     assert (kitchen.available, bedroom.available) == (True, True)
@@ -250,7 +245,7 @@ def test_action_during_scheduled_fetch(clock: Mock) -> None:
     clock.return_value = FETCH_DEVICES_INTERVAL
 
     async def run() -> None:
-        update_task = asyncio.create_task(client.update_google_devices_information())
+        update_task = asyncio.create_task(update_round(client))
         # The scheduled fetch has started, and waits for Google
         await until(lambda: client.next_scheduled_fetch == 2 * FETCH_DEVICES_INTERVAL)
         await client.set_do_not_disturb(kitchen, enable=True)
@@ -284,7 +279,7 @@ def test_update_during_action_fetch() -> None:
         action = asyncio.create_task(client.set_do_not_disturb(kitchen, enable=True))
         # The action has been rejected and its fetch waits for Google
         await until(lambda: session.request.call_count == 1)
-        update_task = asyncio.create_task(client.update_google_devices_information())
+        update_task = asyncio.create_task(update_round(client))
         # A new task starts on the next turn of the event loop, and the update
         # runs until it waits for the action's fetch
         await asyncio.sleep(0)
@@ -343,7 +338,7 @@ def test_fetch_once_in_update_after_action_rejects_new_token(clock: Mock) -> Non
         action = asyncio.create_task(client.set_do_not_disturb(kitchen, enable=True))
         # The action has sent its request before the update starts
         await until(lambda: session.request.call_count == 1)
-        await client.update_google_devices_information()
+        await update_round(client)
         with pytest.raises(DeviceRequestFailed) as err:
             await action
         assert err.value.reason == "token_rejected"
@@ -362,7 +357,7 @@ def test_fetch_once_in_update_after_action_rejects_new_token(clock: Mock) -> Non
         found("den", None),
     ]
     clock.return_value = FETCH_DEVICES_INTERVAL + 3 * MINUTE
-    asyncio.run(client.update_google_devices_information())
+    asyncio.run(update_round(client))
 
     assert glocaltokens.get_google_devices.call_count == 2
     assert (kitchen.available, client.google_devices_fetched) == (True, True)
@@ -387,15 +382,26 @@ def test_log_sign_in_rejected_in_action(caplog: pytest.LogCaptureFixture) -> Non
 
 
 def test_ask_to_sign_in_when_token_fetch_rejected() -> None:
-    """Ask to sign in again in the update in which a device's rejected token makes Google reject the master token."""
+    """Ask to sign in again at the end of the device's update in which its rejected token makes Google reject the master token.
+
+    The account's update before it doesn't fetch the list, which is known, so it
+    doesn't ask, and the device's update doesn't wait for the next one.
+    """
     client, glocaltokens = make_client("10.0.0.2", session=accepting(LOCAL_AUTH_TOKEN))
     glocaltokens.get_google_devices.side_effect = rejected()
+    [kitchen] = client.google_devices
     entry = Mock()
+    account = GoogleAccountCoordinator(HASS, entry, client, timedelta(seconds=15))
+    entry.runtime_data = GoogleHomeData(client, account, {})
 
-    assert (
-        list(asyncio.run(async_update_devices(HASS, entry, client)).values())
-        == client.google_devices
-    )
+    async def run() -> None:
+        # pylint: disable=protected-access
+        await account._async_update_data()  # noqa: SLF001
+        entry.async_start_reauth.assert_not_called()
+        [coordinator] = entry.runtime_data.devices.values()
+        assert await coordinator._async_update_data() is kitchen  # noqa: SLF001
+
+    asyncio.run(run())
 
     assert glocaltokens.get_google_devices.call_count == 1
     entry.async_start_reauth.assert_called_once_with(HASS)
@@ -414,7 +420,7 @@ def test_update_with_new_token_soon_after_scheduled_fetch_fails(clock: Mock) -> 
         HTTPStatus.SERVICE_UNAVAILABLE
     )
     clock.return_value = FETCH_DEVICES_INTERVAL
-    asyncio.run(client.update_google_devices_information())
+    asyncio.run(update_round(client))
     assert glocaltokens.get_google_devices.call_count == 1
     assert client.google_devices_fetched
 
@@ -422,7 +428,7 @@ def test_update_with_new_token_soon_after_scheduled_fetch_fails(clock: Mock) -> 
     session.request.side_effect = accepting(LOCAL_AUTH_TOKEN).request.side_effect
     glocaltokens.get_google_devices.side_effect = None
     clock.return_value = FETCH_DEVICES_INTERVAL + 15
-    asyncio.run(client.update_google_devices_information())
+    asyncio.run(update_round(client))
 
     assert glocaltokens.get_google_devices.call_count == 2
     assert tokens_sent(session) == [OLD_TOKEN] * 4 + [LOCAL_AUTH_TOKEN] * 3
@@ -440,13 +446,13 @@ def test_wait_starts_over_once_fetch_works(clock: Mock) -> None:
     client, glocaltokens = make_client("10.0.0.2", session=session)
     [kitchen] = client.google_devices
     # The device rejects its token, and the one Google gives
-    asyncio.run(client.update_google_devices_information())
+    asyncio.run(update_round(client))
     assert glocaltokens.get_google_devices.call_count == 1
     assert not client.google_devices_fetched
 
     def fetches_at(seconds: int) -> int:
         clock.return_value = seconds
-        asyncio.run(client.update_google_devices_information())
+        asyncio.run(update_round(client))
         return int(glocaltokens.get_google_devices.call_count)
 
     glocaltokens.get_google_devices.side_effect = answered(
@@ -490,16 +496,16 @@ def test_action_fetches_once_wait_is_over(clock: Mock) -> None:
     client, glocaltokens = make_client("10.0.0.2", session=session)
     [kitchen] = client.google_devices
     # The device rejects its token, and the one Google gives
-    asyncio.run(client.update_google_devices_information())
+    asyncio.run(update_round(client))
     glocaltokens.get_google_devices.side_effect = answered(
         HTTPStatus.SERVICE_UNAVAILABLE
     )
     clock.return_value = 15
-    asyncio.run(client.update_google_devices_information())
+    asyncio.run(update_round(client))
     assert glocaltokens.get_google_devices.call_count == 2
     # An update that waits
     clock.return_value = 30
-    asyncio.run(client.update_google_devices_information())
+    asyncio.run(update_round(client))
     assert glocaltokens.get_google_devices.call_count == 2
 
     def turn_on_do_not_disturb_at(seconds: int) -> int:
@@ -543,16 +549,13 @@ def asked(session: Mock, since: int, address: str) -> list[str]:
     ]
 
 
-def test_update_devices_between_fetches_while_google_unreachable(
-    clock: Mock, tmp_path: Path
-) -> None:
-    """Keep updating the devices between fetches of Google's list while Google can't be reached.
+def test_update_devices_while_google_unreachable(clock: Mock, tmp_path: Path) -> None:
+    """Keep updating the devices, and their entities available, while Google's list can't be fetched.
 
-    An update that fetches the list fails, so every entity is unavailable until the
-    next update. The updates in between work: a device that answers shows its new
-    alarms, and one that rejects its token is still asked for its alarms and
-    settings, keeps what it showed and doesn't make the integration fetch the list.
-    Its entities stay available: rejecting its token is an answer.
+    Only the account's update fails, when it tries to fetch the list. A device that
+    answers shows its new alarms, and one that rejects its token is still asked for
+    its alarms and settings, keeps what it showed and doesn't make the integration
+    fetch the list. Its entities stay available: rejecting its token is an answer.
     """
     kitchen_reply = dict(REPLY)
     session = two_devices_one_rejecting(kitchen_reply)
@@ -562,54 +565,55 @@ def test_update_devices_between_fetches_while_google_unreachable(
 
     async def run() -> None:
         async with home_assistant(tmp_path) as (hass, entry):
-            coordinator: DataUpdateCoordinator[dict[str, GoogleHomeDevice]] = (
-                DataUpdateCoordinator(
-                    hass,
-                    logging.getLogger(__name__),
-                    name="Google Home",
-                    update_method=partial(async_update_devices, hass, entry, client),
-                    update_interval=timedelta(seconds=15),
-                    config_entry=entry,
-                )
+            account = GoogleAccountCoordinator(
+                hass, entry, client, timedelta(seconds=15)
             )
-            sensors = [
-                GoogleHomeAlarmsSensor(
-                    coordinator, client, device.device_id, device.name, None
-                )
-                for device in (kitchen, bedroom)
-            ]
+            entry.runtime_data = GoogleHomeData(client, account, {})
 
-            async def update(seconds: int) -> int:
-                """Update at this time, and return how many requests the devices got."""
+            async def update(seconds: int) -> None:
+                """Update the account's list, then each device, at this time."""
                 clock.return_value = seconds
-                requests = session.request.call_count
-                await coordinator.async_refresh()
-                return int(session.request.call_count - requests)
-
-            def shown() -> tuple[bool, list[bool]]:
-                """Return whether the update worked, and whether each alarms sensor is available."""
-                return coordinator.last_update_success, [
-                    sensor.available for sensor in sensors
-                ]
+                await account.async_refresh()
+                for coordinator in entry.runtime_data.devices.values():
+                    await coordinator.async_refresh()
 
             # Google gives the device at 10.0.0.3 a token that it rejects too, so
             # the list becomes unknown
             await update(0)
+            sensors = [
+                GoogleHomeAlarmsSensor(
+                    entry.runtime_data.devices[device.device_id],
+                    client,
+                    device.device_id,
+                    device.name,
+                    None,
+                )
+                for device in (kitchen, bedroom)
+            ]
+
+            def shown() -> tuple[bool, list[bool]]:
+                """Return whether the account's update worked, and whether each alarms sensor is available."""
+                return account.last_update_success, [
+                    sensor.available for sensor in sensors
+                ]
+
             assert shown() == (True, [True, True])
             assert glocaltokens.get_google_devices.call_count == 1
             assert not client.google_devices_fetched
 
             glocaltokens.get_google_devices.side_effect = RequestsConnectionError
-            assert await update(15) == 0
-            assert glocaltokens.get_google_devices.call_count == 2
-            assert shown() == (False, [False, False])
-
             # The alarm on the device that answers is dismissed
             kitchen_reply["alarm"] = []
-            for seconds in (30, 45, 60):
+            # The fetch at 15 seconds fails, and is tried again 1 minute later
+            for seconds, fetches, account_works in (
+                (15, 2, False),
+                (30, 2, True),
+                (60, 2, True),
+                (75, 3, False),
+            ):
                 requests = session.request.call_count
                 await update(seconds)
-                assert glocaltokens.get_google_devices.call_count == 2
+                assert glocaltokens.get_google_devices.call_count == fetches
                 for address in ("10.0.0.2", "10.0.0.3"):
                     assert asked(session, requests, address) == [
                         API_ENDPOINT_ALARMS,
@@ -621,12 +625,7 @@ def test_update_devices_between_fetches_while_google_unreachable(
                     ALARM_ID
                 ]
                 assert (kitchen.available, bedroom.available) == (True, False)
-                assert shown() == (True, [True, True])
-
-            # 1 minute after the failed fetch started
-            assert await update(75) == 0
-            assert glocaltokens.get_google_devices.call_count == 3
-            assert shown() == (False, [False, False])
+                assert shown() == (account_works, [True, True])
 
     asyncio.run(run())
 
@@ -638,7 +637,7 @@ def test_token_fetch_postpones_scheduled_fetch(clock: Mock) -> None:
     """
     client, glocaltokens = make_client("10.0.0.2", session=accepting(LOCAL_AUTH_TOKEN))
     clock.return_value = 10 * MINUTE
-    asyncio.run(client.update_google_devices_information())
+    asyncio.run(update_round(client))
     assert glocaltokens.get_google_devices.call_count == 1
 
     # When the fetch at setup would have been due
@@ -748,7 +747,7 @@ def test_delete_all_after_token_rejected() -> None:
     client, glocaltokens = make_client("10.0.0.2", session=session)
     [kitchen] = client.google_devices
     sensor = GoogleHomeAlarmsSensor(
-        Mock(data={"device0": kitchen}), client, "device0", "device0", None
+        Mock(data=kitchen), client, "device0", "device0", None
     )
 
     assert asyncio.run(sensor.async_delete_all(Mock()))

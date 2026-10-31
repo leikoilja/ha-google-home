@@ -299,10 +299,9 @@ def test_reboot_devices_names_every_device_that_failed(
         if device.name in failing:
             raise DeviceRequestFailed(device.name, "offline")
 
-    coordinator = Mock(data={device.device_id: device for device in devices})
     client = Mock(reboot_google_device=AsyncMock(side_effect=reboot))
     sensors: list[GoogleHomeBaseEntity] = [
-        GoogleHomeAlarmsSensor(coordinator, client, d.device_id, d.name, None)
+        GoogleHomeAlarmsSensor(Mock(data=d), client, d.device_id, d.name, None)
         for d in devices
     ]
 
