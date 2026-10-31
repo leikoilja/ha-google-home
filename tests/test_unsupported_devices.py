@@ -34,8 +34,10 @@ from .test_missing_devices import (
     HOUR,
     MINUTE,
     add_entities,
+    device_coordinator,
     found,
     make_client,
+    update_round,
 )
 
 ALARMS = "alarms"
@@ -213,17 +215,21 @@ def poll(
 ) -> dict[str, GoogleHomeDevice]:
     """Run the scheduled update at this time, and return its devices."""
     clock.return_value = seconds
-    return asyncio.run(client.update_google_devices_information())
+    return asyncio.run(update_round(client))
 
 
 def entities(
     client: GlocaltokensApiClient, coordinator: Mock, device_id: str
 ) -> dict[str, GoogleHomeBaseEntity]:
-    """Return the six entities of the device with this ID, by label."""
+    """Return the six entities of the device with this ID, by label.
+
+    The coordinator's data has every listed device by ID, as an update returns them.
+    """
+    device = device_coordinator(coordinator, device_id)
     return {
         entity.label: entity
         for entity in (
-            entity_class(coordinator, client, device_id, device_id, None)
+            entity_class(device, client, device_id, device_id, None)
             for entity_class in FEATURES + ALWAYS
         )
     }

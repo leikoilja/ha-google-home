@@ -1,13 +1,14 @@
 """The Google account's tokens and device list, and addresses from known hosts."""
 
 import asyncio
+from collections.abc import Mapping
 from functools import partial
 import ipaddress
 import logging
 from time import monotonic
 
 from aiohttp import ClientError, ClientSession
-from glocaltokens.client import GLocalAuthenticationTokens
+from glocaltokens.client import Device, GLocalAuthenticationTokens
 from glocaltokens.exceptions import AuthenticationError, GLocalTokensError
 from glocaltokens.utils.token import is_aas_et
 from requests.exceptions import HTTPError, RequestException
@@ -99,14 +100,14 @@ class GoogleAccountClient:
         self.next_scheduled_fetch = monotonic() + FETCH_DEVICES_INTERVAL
         # The Cast devices that mDNS finds between fetches
         self.found_devices = FoundDevices(self)
-        # Google's list is fetched one at a time, and at most once per update:
-        # fetches that ended, and how many had ended when the current update started
+        # Google's list is fetched one at a time, and at most once per update of the
+        # list: fetches that ended, and how many had ended when the current update
+        # started
         self._fetch_lock = asyncio.Lock()
         self._fetches = 0
         self._fetches_before_update = 0
-        # Devices found at a known host in the current update. Their info answered 200
-        # then, so they aren't asked for it again in that update.
-        self._found_at_known_host: set[str] = set()
+        # The known hosts that the last fetch that ended gave devices, by device ID
+        self._known_hosts_found: Mapping[str, str] = {}
         # While the list is unknown, a fetch after a failed one waits a while
         self._fetch_backoff = FetchBackoff()
         # Devices found to have no alarms, timers and settings. They aren't asked for
@@ -145,19 +146,24 @@ class GoogleAccountClient:
         """Generate random android_id."""
         return await self.hass.async_add_executor_job(self._client.get_android_id)
 
-    async def get_google_devices(
-        self, *, refetch: bool = False
-    ) -> list[GoogleHomeDevice]:
-        """Get google device authentication tokens.
+    async def async_update_device_list(self) -> Mapping[str, str]:
+        """Start an update of Google's device list: fetch it when due, or while it's unknown.
 
-        Note this method will fetch necessary access tokens if missing.
+        From here until the next update, whatever asks for Google's list gets it at
+        most once: on schedule, when it's unknown, or for a rejected token. Return the
+        known hosts, by device ID, that the fetch this update ran or waited for gave
+        devices: their info answered then, so their next update needn't ask for it.
+
+        Raise RequestException if Google's sign-in can't be reached while the list is
+        unknown.
         """
+        self._fetches_before_update = self._fetches
+        known_hosts = await self.async_fetch_devices_when_due()
+        if not self.google_devices_fetched:
+            known_hosts = await self._async_fetch_devices(self._fetches_before_update)
+        return known_hosts
 
-        if not self.google_devices_fetched or refetch:
-            await self._async_fetch_devices(self._fetches_before_update)
-        return self.google_devices
-
-    async def _async_fetch_devices(self, fetches: int) -> None:
+    async def _async_fetch_devices(self, fetches: int) -> Mapping[str, str]:
         """Fetch Google's device list, unless a fetch has ended since there were `fetches`.
 
         A caller that waits while another fetch runs uses that fetch's devices and
@@ -165,22 +171,34 @@ class GoogleAccountClient:
         fetches it until the backoff after a failed fetch has passed: neither the
         update nor a device that rejects its token. With a known list, a rejected
         token still gets a fetch straight away.
+
+        Return the known hosts that this fetch, or the one that ended since there were
+        `fetches`, gave devices, by device ID. Only one fetch ends per update, so that's
+        the fetch the caller waited for or the one of its update. A later update starts
+        from a count that includes it, so it never gets that fetch's hosts.
         """
         async with self._fetch_lock:
             if self._fetches != fetches:
-                return
+                return self._known_hosts_found
             if not self.google_devices_fetched and self._fetch_backoff.waiting(
                 monotonic()
             ):
                 _LOGGER.debug("Waiting to fetch Google's device list after it failed")
-                return
+                return {}
+            known_hosts: Mapping[str, str] = {}
             try:
-                await self._async_get_devices_from_google()
+                known_hosts = await self._async_get_devices_from_google()
             finally:
                 self._fetches += 1
+                # A fetch that failed found none
+                self._known_hosts_found = known_hosts
+            return known_hosts
 
-    async def _async_get_devices_from_google(self) -> None:
-        """Ask Google for the device list, and update the devices from it."""
+    async def _async_get_devices_from_google(self) -> Mapping[str, str]:
+        """Ask Google for the device list, and update the devices from it.
+
+        Return the known hosts that this fetch gave devices, by device ID.
+        """
         started = monotonic()
         # Whether this works or not, the next scheduled fetch waits a full interval
         self.next_scheduled_fetch = started + FETCH_DEVICES_INTERVAL
@@ -208,10 +226,27 @@ class GoogleAccountClient:
                     log = _LOGGER.debug
             log("Failed to fetch Google's device list: %s", error)
             # Keep the devices of an earlier fetch rather than drop them
-            return
+            return {}
         self._fetch_backoff.fetch_worked()
         self.sign_in_error = None
         self.google_devices_fetched = True
+        self._use_google_devices(google_devices, started)
+        self.found_devices.fetch_worked(fetched_for)
+        # Known hosts are only asked when mDNS left a device without an address
+        if self.known_hosts and any(
+            not device.ip_address and device.cloud_device_id
+            for device in self.google_devices
+        ):
+            return await self.async_use_known_hosts()
+        return {}
+
+    def _use_google_devices(self, google_devices: list[Device], started: float) -> None:
+        """Replace the device list with the one Google gave to the fetch that started then.
+
+        This runs once for each fetch that Google answered with its list, whether the
+        update, a device or an action started it, and not for a caller that waited for
+        that fetch, an update that didn't fetch, or a fetch that failed.
+        """
         known_devices = {device.device_id: device for device in self.google_devices}
         self.google_devices = []
         for google_device in google_devices:
@@ -248,26 +283,20 @@ class GoogleAccountClient:
                 if not device.ip_address and found_device:
                     device.ip_address = found_device.address
             self.google_devices.append(device)
-        self.found_devices.fetch_worked(fetched_for)
-        # Known hosts are only asked when mDNS left a device without an address
-        if self.known_hosts and any(
-            not device.ip_address and device.cloud_device_id
-            for device in self.google_devices
-        ):
-            await self.async_use_known_hosts()
 
-    async def async_fetch_devices_when_due(self) -> None:
+    async def async_fetch_devices_when_due(self) -> Mapping[str, str]:
         """Fetch Google's device list again when it may have changed.
 
         Every 20 minutes, however often the devices are updated, to find devices
         added in or removed from the Google Home app, and the address of a device
         that was offline at setup. Also soon after mDNS finds a Cast device that the
-        list doesn't have.
+        list doesn't have. Return the known hosts that the fetch gave devices, by
+        device ID.
         """
         # Until the list is known, updates fetch it anyway, as often as the backoff
         # after failed fetches allows
         if not self.google_devices_fetched:
-            return
+            return {}
         now = monotonic()
         if now >= self.next_scheduled_fetch:
             _LOGGER.debug("Fetching Google's device list again")
@@ -275,18 +304,20 @@ class GoogleAccountClient:
             _LOGGER.debug("Fetching Google's device list for devices that mDNS found")
             self.found_devices.last_fetch = now
         else:
-            return
+            return {}
         try:
-            await self.get_google_devices(refetch=True)
+            return await self._async_fetch_devices(self._fetches_before_update)
         except RequestException:
             _LOGGER.debug("Failed to fetch Google's device list", exc_info=True)
+            return {}
 
-    async def async_use_known_hosts(self) -> None:
+    async def async_use_known_hosts(self) -> dict[str, str]:
         """Give devices that mDNS didn't find the address of the known host they're at.
 
         Hosts are matched by the ID that Google and the device itself report. In a
         speaker pair, only the leading speaker reports the pair's ID; the other
-        reports its own, which Google doesn't list, so it's never used.
+        reports its own, which Google doesn't list, so it's never used. Return the
+        hosts given, by device ID: their info answered 200 just now.
         """
         # A host that mDNS already gave to a device can't fill in another one
         found = {
@@ -305,13 +336,15 @@ class GoogleAccountClient:
             if cloud_device_id is not None:
                 # As with mDNS, the first host that reports a device is used
                 hosts_by_id.setdefault(cloud_device_id, host)
+        given: dict[str, str] = {}
         for device in self.google_devices:
             if device.ip_address or not device.cloud_device_id:
                 continue
             if known_host := hosts_by_id.get(device.cloud_device_id):
                 _LOGGER.debug("Found %s at known host %s", device.name, known_host)
                 device.ip_address = known_host
-                self._found_at_known_host.add(device.device_id)
+                given[device.device_id] = known_host
+        return given
 
     async def _async_get_cloud_device_id(self, host: str) -> str | None:
         """Return Google's ID of the device at a known host."""

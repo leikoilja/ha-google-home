@@ -7,6 +7,7 @@ glocaltokens, mDNS and the speaker's answers are faked, by the fixtures in conft
 from collections.abc import Awaitable, Callable
 from datetime import timedelta
 from http import HTTPStatus
+from importlib import import_module
 from pathlib import Path
 from unittest.mock import Mock, patch
 
@@ -56,10 +57,11 @@ from .conftest import (
     SPEAKER_CLOUD_ID,
     SPEAKER_ID,
     SPEAKER_NAME,
+    Replies,
     kitchen_speaker,
 )
 from .test_missing_devices import ALARM_ID, TIMER_ID, rejected
-from .test_unsupported_devices import DND, INFO, SPEAKER, Reply
+from .test_unsupported_devices import DND, INFO, SPEAKER
 
 # pylint: enable=wrong-import-order
 
@@ -196,6 +198,18 @@ async def test_setup(
     assert hass.services.async_services_for_domain(DOMAIN).keys() == ACTIONS.keys()
 
 
+@pytest.mark.parametrize("platform", PLATFORMS)
+def test_platform_sets_parallel_updates(platform: str) -> None:
+    """Tell Home Assistant how many of the platform's updates and actions may run at once.
+
+    Home Assistant's quality scale asks every platform to set it, and doesn't check
+    a custom integration.
+    """
+    assert isinstance(
+        import_module(f"custom_components.google_home.{platform}").PARALLEL_UPDATES, int
+    )
+
+
 @pytest.mark.usefixtures("google", "replies")
 async def test_unload(hass: HomeAssistant, config_entry: MockConfigEntry) -> None:
     """Stop the speaker's entities when the entry is unloaded."""
@@ -252,7 +266,7 @@ async def test_known_hosts_changed(
     hass: HomeAssistant,
     config_entry: MockConfigEntry,
     google: Mock,
-    replies: dict[str, dict[str, Reply]],
+    replies: Replies,
 ) -> None:
     """Load the entry again when known hosts change, as they're looked up only at setup.
 
@@ -321,7 +335,7 @@ async def test_saved_update_interval(
 async def test_turn_off_do_not_disturb(
     hass: HomeAssistant,
     config_entry: MockConfigEntry,
-    replies: dict[str, dict[str, Reply]],
+    replies: Replies,
     aioclient_mock: AiohttpClientMocker,
 ) -> None:
     """Turn Do Not Disturb off on the speaker, and show it as soon as the speaker answers."""
@@ -346,7 +360,7 @@ async def test_turn_off_do_not_disturb(
 async def test_delete_alarm(
     hass: HomeAssistant,
     config_entry: MockConfigEntry,
-    replies: dict[str, dict[str, Reply]],
+    replies: Replies,
     aioclient_mock: AiohttpClientMocker,
     load: Callable[[HomeAssistant, MockConfigEntry], Awaitable[None]],
 ) -> None:

@@ -5,11 +5,10 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, TypedDict
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 if TYPE_CHECKING:
     from .api import GlocaltokensApiClient
-    from .models import GoogleHomeDevice
+    from .coordinator import GoogleAccountCoordinator, GoogleHomeDeviceCoordinator
 
 
 class AlarmJsonDict(TypedDict, total=False):
@@ -98,10 +97,12 @@ type JsonDict = Mapping[
 
 @dataclass
 class GoogleHomeData:
-    """What a loaded entry keeps: the client and its coordinator."""
+    """What a loaded entry keeps: the client, and the coordinators of the account and devices."""
 
     client: GlocaltokensApiClient
-    coordinator: DataUpdateCoordinator[dict[str, GoogleHomeDevice]]
+    account: GoogleAccountCoordinator
+    # By device ID, every device that Google has listed since setup
+    devices: dict[str, GoogleHomeDeviceCoordinator]
 
 
 type GoogleHomeConfigEntry = ConfigEntry[GoogleHomeData]

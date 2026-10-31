@@ -60,6 +60,10 @@ from .types import (
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
+# The coordinator does the updates. The integration's own actions, such as
+# reboot_device, get all their sensors in one call, which this limit doesn't cover.
+PARALLEL_UPDATES = 0
+
 
 class GoogleHomeSensorFeature(IntFlag):
     """Actions a sensor supports, so a device target runs each on its own sensor."""
@@ -216,8 +220,11 @@ async def async_refresh_devices(
     entities: list[GoogleHomeBaseEntity], _call: ServiceCall
 ) -> None:
     """Refresh all devices once, however many sensors are targeted."""
-    # The integration allows one config entry, so all sensors share its coordinator
-    await entities[0].coordinator.async_request_refresh()
+    # The integration allows one config entry, so all sensors share its devices
+    devices = entities[0].coordinator.config_entry.runtime_data.devices
+    await asyncio.gather(
+        *(coordinator.async_request_refresh() for coordinator in devices.values())
+    )
 
 
 async def async_fetch_current(entity: GoogleHomeBaseEntity) -> GoogleHomeDevice:
@@ -256,7 +263,7 @@ async def async_delete_from_devices[_SensorT: GoogleHomeBaseEntity](
 ) -> None:
     """Delete from each device, then name every device that failed.
 
-    Request a refresh of all devices once if a delete request was sent, unless
+    Request a refresh of each device that a delete request was sent to, unless
     skip_refresh is set. With kind, the action deletes one alarm or timer, and
     fails if every device answered and none has it.
     """
@@ -270,15 +277,16 @@ async def async_delete_from_devices[_SensorT: GoogleHomeBaseEntity](
     results = await asyncio.gather(
         *(delete_from(entity) for entity in entities), return_exceptions=True
     )
-    # One refresh updates every device. Another request while it runs or in the
-    # debouncer's cooldown after it would poll them all again when that ends. A
-    # delete that the device didn't confirm may still have happened.
-    sent = any(
-        result is True or isinstance(result, AlarmsAndTimersNotDeleted)
-        for result in results
-    )
-    if sent and not call.data.get(SERVICE_ATTR_SKIP_REFRESH, False):
-        await entities[0].coordinator.async_request_refresh()
+    # A delete that the device didn't confirm may still have happened
+    sent_to = [
+        entity
+        for entity, result in zip(entities, results, strict=True)
+        if result is True or isinstance(result, AlarmsAndTimersNotDeleted)
+    ]
+    if not call.data.get(SERVICE_ATTR_SKIP_REFRESH, False):
+        await asyncio.gather(
+            *(entity.coordinator.async_request_refresh() for entity in sent_to)
+        )
     failed: list[AlarmsAndTimersNotFetched | AlarmsAndTimersNotDeleted] = []
     for result in results:
         if isinstance(result, AlarmsAndTimersNotFetched | AlarmsAndTimersNotDeleted):
@@ -301,7 +309,7 @@ async def async_delete_from_devices[_SensorT: GoogleHomeBaseEntity](
     if failed:
         raise failed[0]
     # Every device answered. A device that failed could have had the alarm or timer.
-    if kind is not None and not sent:
+    if kind is not None and not sent_to:
         raise ServiceValidationError(
             translation_domain=DOMAIN,
             # alarm_not_found or timer_not_found

@@ -12,6 +12,10 @@ from .const import LABEL_REBOOT
 from .entity import GoogleHomeBaseEntity, async_add_device_entities
 from .types import GoogleHomeConfigEntry
 
+# The coordinator does the updates. A limit on presses would count every
+# speaker's reboot button together, so it would make speakers wait for each other.
+PARALLEL_UPDATES = 0
+
 
 async def async_setup_entry(
     _hass: HomeAssistant,

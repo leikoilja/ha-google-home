@@ -69,7 +69,7 @@ class FoundDevices:
         self._update: asyncio.Task[None] | None = None
         # Set once the entry unloads, so nothing starts a fetch for found devices again
         self._stopped = False
-        # Runs an update of the devices; setup sets it
+        # Runs an update of Google's device list; setup sets it
         self.request_update: Callable[[], Awaitable[None]] | None = None
 
     def get(self, cloud_device_id: str | None) -> FoundDevice | None:
@@ -218,7 +218,7 @@ class FoundDevices:
 
     @callback
     def _async_fetch_due(self, _now: datetime) -> None:
-        """Update the devices, which fetches the list for the devices that mDNS found.
+        """Update Google's device list, which fetches it for the devices that mDNS found.
 
         Home Assistant's requested refresh can be dropped while an update runs, so
         the update waits for it instead.
@@ -231,7 +231,7 @@ class FoundDevices:
         self._update_requested = True
         self._update = self._client.hass.async_create_background_task(
             self._async_update(),
-            "Update Google Home devices for devices that mDNS found",
+            "Update Google's device list for devices that mDNS found",
             eager_start=False,
         )
 
