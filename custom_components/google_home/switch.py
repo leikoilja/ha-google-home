@@ -15,6 +15,10 @@ from .types import GoogleHomeConfigEntry
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
+# The coordinator does the updates. A limit on actions would count every
+# speaker's switch together, so it would make speakers wait for each other.
+PARALLEL_UPDATES = 0
+
 
 async def async_setup_entry(
     _hass: HomeAssistant,

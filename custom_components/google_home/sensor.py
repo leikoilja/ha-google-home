@@ -59,6 +59,10 @@ from .types import (
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
+# The coordinator does the updates. Home Assistant gives each action, such as
+# reboot_device, all its sensors in one call, and limits only calls per entity.
+PARALLEL_UPDATES = 0
+
 
 class GoogleHomeSensorFeature(IntFlag):
     """Actions a sensor supports, so a device target runs each on its own sensor."""
