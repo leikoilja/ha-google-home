@@ -1,6 +1,6 @@
 # Entities
 
-Each Google Home device gets the entities below. The examples use a device named _Living Room_ that isn't in an area. If your entity IDs repeat the room, see [Room name twice in entity IDs](#room-name-twice-in-entity-ids).
+Each Google Home device gets the entities below. The examples use a device named _Living Room_ that isn't in an area, with Home Assistant in English. If your entity IDs repeat the room, see [Room name twice in entity IDs](#room-name-twice-in-entity-ids). In other languages, see [Entity names in other languages](#entity-names-in-other-languages).
 
 | Entity                | Example                             | What it does                                              |
 | --------------------- | ----------------------------------- | --------------------------------------------------------- |
@@ -154,9 +154,17 @@ To avoid this for entities added later, do one of the following:
 Entities you already have keep their entity IDs. Changing them is optional. Go to **Settings** > **Devices & services** > **Google Home** and select the device, such as _Kitchen display_. Open the **⋮** menu and select **Recreate entity IDs**. This:
 
 - Builds the entity IDs from the current device name and entity ID format. Do one of the steps above first. Otherwise a device whose name contains its room gets the room twice in all its entity IDs.
-- Uses each entity's current name and doesn't change it.
+- Uses each entity's name and doesn't change it: the name you gave it, otherwise its default name in the language Home Assistant uses for entity IDs. See [Entity names in other languages](#entity-names-in-other-languages).
 - Changes each entity ID of the device that differs from the one Home Assistant would create now, including any you changed yourself. Entity IDs that already match stay the same.
 
 Home Assistant lists the old and new entity IDs before it changes them. If a new entity ID still contains an earlier device name, cancel. Open that entity's settings, select the restore icon (**Restore default name**) next to its name, select **Update**, then recreate the entity IDs again.
 
 After you confirm, update the automations, scripts and manually configured dashboard cards that use the entity IDs that changed. See [Customizing entities](https://www.home-assistant.io/docs/configuration/customizing-entities/#changing-the-attributes-of-an-entity).
+
+## Entity names in other languages
+
+Home Assistant shows these entities' names in its language, such as _Wecker_ for the alarms sensor in German, or in English where a translation is missing. To correct a translation, see [Translate the integration](contributing.md#translate-the-integration).
+
+In Catalan, Czech, Danish, Dutch, Finnish, French, German, Hungarian, Indonesian, Italian, Norwegian, Polish, Portuguese, Romanian, Slovak, Spanish and Swedish, Home Assistant also builds new entity IDs from the translated names. In German, the alarms sensor of a new device named _Living Room_ gets `sensor.living_room_wecker`. In other languages, such as Russian or Japanese, entity IDs use the English names, as in the table at the top of this page. What counts is the language set for Home Assistant itself, not the language in your user profile.
+
+Entities you already have keep their entity IDs, so a new device's entity IDs can differ from those of your other devices. [Recreate entity IDs](#room-name-twice-in-entity-ids) changes them to the translated names too, unless you gave an entity a name of your own. Check the list of changes before you confirm.

@@ -77,6 +77,34 @@
       "other-account": "你登入的是其他 Google 帳號，因此未進行任何變更。請使用此整合所用的帳號登入。如要改用剛才登入的帳號，請刪除整合後再重新新增。"
     }
   },
+  "entity": {
+    "button": {
+      "reboot": {
+        "name": "重新啟動"
+      }
+    },
+    "number": {
+      "alarm_volume": {
+        "name": "鬧鐘音量"
+      }
+    },
+    "sensor": {
+      "alarms": {
+        "name": "鬧鐘"
+      },
+      "device": {
+        "name": "裝置"
+      },
+      "timers": {
+        "name": "計時器"
+      }
+    },
+    "switch": {
+      "do_not_disturb": {
+        "name": "勿擾"
+      }
+    }
+  },
   "exceptions": {
     "alarms_and_timers_not_fetched": {
       "message": "無法從 {device} 取得目前的鬧鐘和計時器，因此未從該裝置刪除任何項目。請確認裝置已連線，並稍後再試。"

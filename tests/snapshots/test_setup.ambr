@@ -31,7 +31,7 @@
     'previous_unique_id': None,
     'suggested_object_id': None,
     'supported_features': 0,
-    'translation_key': None,
+    'translation_key': 'reboot',
     'unique_id': 'kitchen/reboot',
     'unit_of_measurement': None,
   })
@@ -87,7 +87,7 @@
     'previous_unique_id': None,
     'suggested_object_id': None,
     'supported_features': 0,
-    'translation_key': None,
+    'translation_key': 'alarm_volume',
     'unique_id': 'kitchen/alarm volume',
     'unit_of_measurement': <UnitOfRatio.PERCENTAGE: '%'>,
   })
@@ -143,7 +143,7 @@
     'previous_unique_id': None,
     'suggested_object_id': None,
     'supported_features': <GoogleHomeSensorFeature: 1>,
-    'translation_key': None,
+    'translation_key': 'alarms',
     'unique_id': 'kitchen/alarms',
     'unit_of_measurement': None,
   })
@@ -209,7 +209,7 @@
     'previous_unique_id': None,
     'suggested_object_id': None,
     'supported_features': 0,
-    'translation_key': None,
+    'translation_key': 'device',
     'unique_id': 'kitchen/device',
     'unit_of_measurement': None,
   })
@@ -265,7 +265,7 @@
     'previous_unique_id': None,
     'suggested_object_id': None,
     'supported_features': <GoogleHomeSensorFeature: 2>,
-    'translation_key': None,
+    'translation_key': 'timers',
     'unique_id': 'kitchen/timers',
     'unit_of_measurement': None,
   })
@@ -321,7 +321,7 @@
     'previous_unique_id': None,
     'suggested_object_id': None,
     'supported_features': 0,
-    'translation_key': None,
+    'translation_key': 'do_not_disturb',
     'unique_id': 'kitchen/Do Not Disturb',
     'unit_of_measurement': None,
   })

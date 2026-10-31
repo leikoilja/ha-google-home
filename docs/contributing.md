@@ -10,7 +10,7 @@ For help with setup or usage, search [GitHub Discussions](https://github.com/lei
 
 ## Translate the integration
 
-The integration's setup screens, options and action descriptions follow your Home Assistant language. Text that isn't translated yet is shown in English.
+The integration's setup screens, options, entity names and action descriptions follow your Home Assistant language. Text that isn't translated yet is shown in English.
 
 Translations are files in [`custom_components/google_home/translations`](https://github.com/leikoilja/ha-google-home/tree/master/custom_components/google_home/translations). You can edit them on GitHub in your browser:
 

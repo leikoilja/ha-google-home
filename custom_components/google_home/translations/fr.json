@@ -77,6 +77,34 @@
       "other-account": "Vous avez utilisé un autre compte Google pour vous connecter, rien n'a donc été modifié. Connectez-vous avec le compte qu'utilise cette intégration. Pour utiliser plutôt cet autre compte, supprimez l'intégration et ajoutez-la à nouveau."
     }
   },
+  "entity": {
+    "button": {
+      "reboot": {
+        "name": "Redémarrer"
+      }
+    },
+    "number": {
+      "alarm_volume": {
+        "name": "Volume de l'alarme"
+      }
+    },
+    "sensor": {
+      "alarms": {
+        "name": "Alarmes"
+      },
+      "device": {
+        "name": "Appareil"
+      },
+      "timers": {
+        "name": "Minuteurs"
+      }
+    },
+    "switch": {
+      "do_not_disturb": {
+        "name": "Ne pas déranger"
+      }
+    }
+  },
   "exceptions": {
     "alarms_and_timers_not_fetched": {
       "message": "Impossible de récupérer les alarmes et les minuteurs actuels de l'appareil {device}. Rien n'a donc été supprimé de cet appareil. Vérifiez qu'il est en ligne et réessayez plus tard."

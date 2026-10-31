@@ -77,6 +77,34 @@
       "other-account": "Has iniciat la sessió en un altre compte de Google, de manera que no s'ha canviat res. Inicia la sessió amb el compte que fa servir aquesta integració. Per fer servir aquest altre compte, elimina la integració i torna-la a afegir."
     }
   },
+  "entity": {
+    "button": {
+      "reboot": {
+        "name": "Reinicia"
+      }
+    },
+    "number": {
+      "alarm_volume": {
+        "name": "Volum de l'alarma"
+      }
+    },
+    "sensor": {
+      "alarms": {
+        "name": "Alarmes"
+      },
+      "device": {
+        "name": "Dispositiu"
+      },
+      "timers": {
+        "name": "Temporitzadors"
+      }
+    },
+    "switch": {
+      "do_not_disturb": {
+        "name": "No molestis"
+      }
+    }
+  },
   "exceptions": {
     "alarms_and_timers_not_fetched": {
       "message": "No s'han pogut obtenir les alarmes i els temporitzadors actuals de {device}, de manera que no s'ha eliminat res d'aquest dispositiu. Comprova que estigui en línia i torna-ho a provar més tard."

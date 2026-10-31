@@ -77,6 +77,34 @@
       "other-account": "Você fez login em outra conta do Google, então nada foi alterado. Faça login com a conta que esta integração usa. Para usar essa outra conta, exclua a integração e adicione-a novamente."
     }
   },
+  "entity": {
+    "button": {
+      "reboot": {
+        "name": "Reiniciar"
+      }
+    },
+    "number": {
+      "alarm_volume": {
+        "name": "Volume do alarme"
+      }
+    },
+    "sensor": {
+      "alarms": {
+        "name": "Alarmes"
+      },
+      "device": {
+        "name": "Dispositivo"
+      },
+      "timers": {
+        "name": "Temporizadores"
+      }
+    },
+    "switch": {
+      "do_not_disturb": {
+        "name": "Não perturbe"
+      }
+    }
+  },
   "exceptions": {
     "alarms_and_timers_not_fetched": {
       "message": "Não foi possível obter os alarmes e temporizadores atuais do dispositivo {device}, por isso nada foi excluído dele. Verifique se o dispositivo está online e tente novamente mais tarde."
