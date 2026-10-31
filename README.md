@@ -1,6 +1,6 @@
 [![GitHub Workflow Status][workflow-shield]][workflow]
 [![GitHub Release][releases-shield]][releases]
-[![hacs][hacsbadge]][hacs]
+[![Marketplace][marketplace-shield]][marketplace]
 [![GitHub Activity][commits-shield]][commits]
 [![Installs][installs-shield]][installs]
 
@@ -36,7 +36,7 @@ It can't create, change or snooze alarms and timers, or turn alarms on or off; s
 
 You need a Google account that is a member of your home in the Google Home app. Home Assistant finds your speakers and displays on its local network; devices on another network need extra setup.
 
-Install the integration from HACS: search for **Google Home**. Then follow **[Getting Started](https://ha-google-home.pages.dev/installation/)** to add it and sign in. It also lists all the requirements and covers manual installation.
+Install the integration from the Marketplace, which replaced HACS in Home Assistant 2026.11: [open Google Home in the Marketplace][marketplace], or go to **Settings** > **Marketplace**, search for **Google Home** and open it. Then follow **[Getting Started](https://ha-google-home.pages.dev/installation/)** to add it and sign in. It also lists all the requirements and covers manual installation.
 
 ## Documentation
 
@@ -66,9 +66,9 @@ Ask questions in [GitHub Discussions](https://github.com/leikoilja/ha-google-hom
 [commits-shield]: https://img.shields.io/github/commit-activity/y/leikoilja/ha-google-home.svg?style=for-the-badge
 [commits]: https://github.com/leikoilja/ha-google-home/commits/master
 [community-discussion]: https://community.home-assistant.io/t/solution-to-track-your-google-home-alarms-and-timers-and-trigger-different-home-assistant-events/61534/74
-[hacs]: https://hacs.xyz
-[hacsbadge]: https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge
 [integration_blueprint]: https://github.com/custom-components/integration_blueprint
+[marketplace-shield]: https://img.shields.io/badge/Marketplace-Install-orange.svg?style=for-the-badge
+[marketplace]: https://my.home-assistant.io/redirect/marketplace_repository/?owner=leikoilja&repository=ha-google-home&category=integration
 [releases-shield]: https://img.shields.io/github/release/leikoilja/ha-google-home.svg?style=for-the-badge
 [releases]: https://github.com/leikoilja/ha-google-home/releases
 [workflow-shield]: https://img.shields.io/github/actions/workflow/status/leikoilja/ha-google-home/linting.yaml?branch=master&style=for-the-badge
