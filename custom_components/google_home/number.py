@@ -8,14 +8,7 @@ from homeassistant.const import EntityCategory, UnitOfRatio
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import (
-    GOOGLE_HOME_ALARM_DEFAULT_VALUE,
-    ICON_ALARM_VOLUME_HIGH,
-    ICON_ALARM_VOLUME_LOW,
-    ICON_ALARM_VOLUME_MID,
-    ICON_ALARM_VOLUME_OFF,
-    LABEL_ALARM_VOLUME,
-)
+from .const import GOOGLE_HOME_ALARM_DEFAULT_VALUE, LABEL_ALARM_VOLUME
 from .entity import GoogleHomeFeatureEntity, async_add_device_entities
 from .exceptions import DeviceRequestFailed
 from .types import GoogleHomeConfigEntry
@@ -32,7 +25,7 @@ async def async_setup_entry(
     entry: GoogleHomeConfigEntry,
     async_add_devices: AddEntitiesCallback,
 ) -> bool:
-    """Set up switch platform."""
+    """Set up number platform."""
     async_add_device_entities(entry, async_add_devices, AlarmVolumeNumber)
     return True
 
@@ -52,22 +45,6 @@ class AlarmVolumeNumber(GoogleHomeFeatureEntity, NumberEntity):
     def label(self) -> str:
         """Label to use for unique id."""
         return LABEL_ALARM_VOLUME
-
-    @property
-    @override
-    def icon(self) -> str:
-        """Return the icon of the sensor."""
-        device = self.get_device()
-        if device is None:
-            return ICON_ALARM_VOLUME_OFF
-        volume = device.alarm_volume
-        if volume == 0:
-            return ICON_ALARM_VOLUME_OFF
-        if volume <= 30:
-            return ICON_ALARM_VOLUME_LOW
-        if volume <= 60:
-            return ICON_ALARM_VOLUME_MID
-        return ICON_ALARM_VOLUME_HIGH
 
     @property
     @override
