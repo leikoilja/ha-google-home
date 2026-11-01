@@ -81,7 +81,7 @@
     'options': dict({
     }),
     'original_device_class': None,
-    'original_icon': 'mdi:volume-high',
+    'original_icon': None,
     'original_name': 'Alarm volume',
     'platform': 'google_home',
     'previous_unique_id': None,
@@ -96,7 +96,6 @@
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Kitchen speaker Alarm volume',
-      <EntityStateAttribute.ICON: 'icon'>: 'mdi:volume-high',
       <NumberEntityCapabilityAttribute.MAX: 'max'>: 100,
       <NumberEntityCapabilityAttribute.MIN: 'min'>: 0,
       <NumberEntityCapabilityAttribute.MODE: 'mode'>: <NumberMode.AUTO: 'auto'>,
@@ -137,7 +136,7 @@
     'options': dict({
     }),
     'original_device_class': <SensorDeviceClass.TIMESTAMP: 'timestamp'>,
-    'original_icon': 'mdi:alarm-multiple',
+    'original_icon': None,
     'original_name': 'Alarms',
     'platform': 'google_home',
     'previous_unique_id': None,
@@ -165,7 +164,6 @@
       ]),
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'timestamp',
       <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Kitchen speaker Alarms',
-      <EntityStateAttribute.ICON: 'icon'>: 'mdi:alarm-multiple',
       'next_alarm_status': 'set',
       <EntityStateAttribute.SUPPORTED_FEATURES: 'supported_features'>: <GoogleHomeSensorFeature: 1>,
     }),
@@ -203,7 +201,7 @@
     'options': dict({
     }),
     'original_device_class': None,
-    'original_icon': 'mdi:form-textbox-password',
+    'original_icon': None,
     'original_name': 'Device',
     'platform': 'google_home',
     'previous_unique_id': None,
@@ -222,7 +220,6 @@
       'device_id': 'kitchen',
       'device_name': 'Kitchen speaker',
       <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Kitchen speaker Device',
-      <EntityStateAttribute.ICON: 'icon'>: 'mdi:form-textbox-password',
       'ip_address': '10.0.0.2',
     }),
     'context': <ANY>,
@@ -259,7 +256,7 @@
     'options': dict({
     }),
     'original_device_class': <SensorDeviceClass.TIMESTAMP: 'timestamp'>,
-    'original_icon': 'mdi:timer-sand',
+    'original_icon': None,
     'original_name': 'Timers',
     'platform': 'google_home',
     'previous_unique_id': None,
@@ -275,7 +272,6 @@
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.DEVICE_CLASS: 'device_class'>: 'timestamp',
       <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Kitchen speaker Timers',
-      <EntityStateAttribute.ICON: 'icon'>: 'mdi:timer-sand',
       'next_timer_status': 'none',
       <EntityStateAttribute.SUPPORTED_FEATURES: 'supported_features'>: <GoogleHomeSensorFeature: 2>,
       'timers': list([
@@ -315,7 +311,7 @@
     'options': dict({
     }),
     'original_device_class': None,
-    'original_icon': 'mdi:minus-circle',
+    'original_icon': None,
     'original_name': 'Do Not Disturb',
     'platform': 'google_home',
     'previous_unique_id': None,
@@ -330,7 +326,6 @@
   StateSnapshot({
     'attributes': ReadOnlyDict({
       <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Kitchen speaker Do Not Disturb',
-      <EntityStateAttribute.ICON: 'icon'>: 'mdi:minus-circle',
     }),
     'context': <ANY>,
     'entity_id': 'switch.kitchen_speaker_do_not_disturb',

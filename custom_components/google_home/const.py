@@ -14,16 +14,6 @@ CONF_KNOWN_HOSTS: Final = "known_hosts"
 
 ALARM_AND_TIMER_ID_LENGTH: Final = 42
 
-# Icons
-ICON_TOKEN: Final = "mdi:form-textbox-password"
-ICON_ALARMS: Final = "mdi:alarm-multiple"
-ICON_TIMERS: Final = "mdi:timer-sand"
-ICON_DO_NOT_DISTURB: Final = "mdi:minus-circle"
-ICON_ALARM_VOLUME_LOW: Final = "mdi:volume-low"
-ICON_ALARM_VOLUME_MID: Final = "mdi:volume-medium"
-ICON_ALARM_VOLUME_HIGH: Final = "mdi:volume-high"
-ICON_ALARM_VOLUME_OFF: Final = "mdi:volume-off"
-
 # Platforms
 SENSOR: Final = "sensor"
 SWITCH: Final = "switch"
