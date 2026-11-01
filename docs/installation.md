@@ -43,7 +43,7 @@ You need:
     - **Master token:** if you already have one, for example from another tool.
 3. If your Google account is a member of several homes, choose the homes whose speakers and displays to add, and select **Submit**. All homes are selected at first. You can change this later; see [Choose homes](configuration.md#choose-homes).
 
-Home Assistant then adds a device for each Google Cast device in your homes, with the [entities](entities.md) for it. Devices that have no alarms or timers, such as an NVIDIA Shield, get only a device sensor and a reboot button.
+Home Assistant then adds a device for each Google Cast device in the homes you chose, which is every home unless you deselected some, with the [entities](entities.md) for it. Devices that have no alarms or timers, such as an NVIDIA Shield, get only a device sensor and a reboot button.
 
 !!! warning "Keep your sign-in details secret"
 

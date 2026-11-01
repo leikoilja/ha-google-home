@@ -7,6 +7,7 @@ graph, and the options flow and the reload it causes run through Home Assistant.
 
 from collections.abc import Iterator
 from http import HTTPStatus
+import logging
 from unittest.mock import MagicMock, Mock, patch
 
 from ghome_foyer_api.api_pb2 import HomeGraph  # pylint: disable=no-name-in-module
@@ -15,7 +16,9 @@ from glocaltokens.scanner import NetworkDevice
 import grpc  # type: ignore[import-untyped]
 import pytest
 from pytest_homeassistant.common import MockConfigEntry
+from pytest_homeassistant.components.diagnostics import get_diagnostics_for_config_entry
 from pytest_homeassistant.test_util.aiohttp import AiohttpClientMocker
+from pytest_homeassistant.typing import ClientSessionGenerator
 
 from custom_components.google_home.const import DOMAIN
 
@@ -43,8 +46,10 @@ from .test_coordinators import (
     KITCHEN_ALARMS,
     asked,
     asked_by,
+    runtime,
     update_account,
 )
+from .test_diagnostics import TV, TV_CLOUD_ID, TV_NAME
 from .test_missing_devices import MASTER_TOKEN, logged
 from .test_removed_devices import (
     BEDROOM_CLOUD_ID,
@@ -364,18 +369,55 @@ async def test_home_joined_later_added(
     hass.config_entries.async_update_entry(
         config_entry, options={"excluded_homes": [HOLIDAY_HOUSE]}
     )
-    home_graph.return_value = graph(at_home(), holiday_house())
+    home_graph.return_value = graph(at_home(), home(HOLIDAY_HOUSE, "Holiday house"))
     await set_up(hass, config_entry)
     assert hass.states.get(BEDROOM_ALARMS) is None
 
     home_graph.return_value = graph(
         at_home(),
-        holiday_house(),
+        home(HOLIDAY_HOUSE, "Holiday house"),
         home(NEW_HOME, "New home", BEDROOM_IN_HOME_GRAPH),
     )
     await fetch_list(hass, config_entry, clock, 1)
 
     assert state(hass, BEDROOM_ALARMS) == ALARM_SHOWN
+
+
+@pytest.mark.usefixtures("home_graph")
+async def test_excluded_home_speaker_not_reported_missing(
+    hass: HomeAssistant,
+    hass_client: ClientSessionGenerator,
+    config_entry: MockConfigEntry,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Don't count or log an excluded home's speaker that mDNS finds as missing from Google's list.
+
+    Google lists it; the user left its home out. A Cast device that no home has, such
+    as a TV, still counts as missing in diagnostics and the log.
+    """
+    caplog.set_level(logging.DEBUG, logger="custom_components.google_home")
+    hass.config_entries.async_update_entry(
+        config_entry, options={"excluded_homes": [HOLIDAY_HOUSE]}
+    )
+    await set_up(hass, config_entry)
+    found_devices = runtime(config_entry).client.found_devices
+
+    found_devices.async_device_found(BEDROOM_CLOUD_ID, "Bedroom speaker", BEDROOM)
+    found_devices.async_device_found(TV_CLOUD_ID, TV_NAME, TV)
+
+    diagnostics = await get_diagnostics_for_config_entry(
+        hass, hass_client, config_entry
+    )
+    assert diagnostics["mdns_reported_not_listed"] == 1
+    assert [
+        message for _, message in logged(caplog) if message.startswith("mDNS found")
+    ] == [
+        (
+            f"mDNS found Bedroom speaker at {BEDROOM}, which is in a home whose"
+            " devices aren't added"
+        ),
+        f"mDNS found {TV_NAME} at {TV}, which isn't in Google's device list",
+    ]
 
 
 async def test_known_host_of_excluded_home_not_added(

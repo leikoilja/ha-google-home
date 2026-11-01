@@ -104,8 +104,14 @@ class FoundDevices:
         # A listed device needs no fetch. If a fetch that is running drops it, Google
         # removed it, and the fetch forgets this report.
         if not listed and earlier is None:
+            if cloud_device_id in self._client.excluded_cloud_device_ids:
+                _LOGGER.debug(
+                    "mDNS found %s at %s, which is in a home whose devices aren't added",
+                    name,
+                    address,
+                )
             # Until a fetch has worked, the list may just not be known yet
-            if self._client.google_devices_fetched:
+            elif self._client.google_devices_fetched:
                 _LOGGER.debug(
                     "mDNS found %s at %s, which isn't in Google's device list",
                     name,

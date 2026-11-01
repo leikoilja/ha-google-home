@@ -199,7 +199,7 @@ The diagnostics file shows:
 
 - The integration's options.
 - For each device: its model, whether it answers, whether Home Assistant has received its mDNS announcements since the integration loaded, and its last reply about alarms and timers, as the device sent it.
-- How many other Cast devices on your network have announced themselves since the integration loaded but aren't in Google's device list, such as TVs with Chromecast built in, or speakers in another Google account. Only the number, not their names or addresses.
+- How many other Cast devices on your network have announced themselves since the integration loaded but aren't in Google's device list, such as TVs with Chromecast built in, or speakers in another Google account. Only the number, not their names or addresses. Speakers in homes that you [deselected](configuration.md#choose-homes) don't count.
 - When you downloaded it.
 
 Both mDNS values go by the announcements that the integration has kept since it loaded. When Google drops a device from its list, the integration forgets that device's earlier announcements: until the device announces itself again, it isn't counted, and if Google lists it again, it shows as not announced.
