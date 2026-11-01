@@ -202,6 +202,8 @@ The diagnostics file shows:
 - How many other Cast devices on your network have announced themselves since the integration loaded but aren't in Google's device list, such as TVs with Chromecast built in, or speakers in another Google account. Only the number, not their names or addresses.
 - When you downloaded it.
 
+Both mDNS values go by the announcements that the integration has kept since it loaded. When Google drops a device from its list, the integration forgets that device's earlier announcements: until the device announces itself again, it isn't counted, and if Google lists it again, it shows as not announced.
+
 Attach the file, as well as [debug logs](#collect-debug-logs), when you [open an issue](https://github.com/leikoilja/ha-google-home/issues/new/choose).
 
 1. Go to **Settings** > **Devices & services** > **Google Home**.

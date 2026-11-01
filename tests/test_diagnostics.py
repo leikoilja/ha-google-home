@@ -325,6 +325,45 @@ async def test_diagnostics_mdns_reports_by_speaker(
     )
 
 
+async def test_diagnostics_after_google_drops_last_speaker(
+    hass: HomeAssistant,
+    hass_client: ClientSessionGenerator,
+    config_entry: MockConfigEntry,
+    google: Mock,
+    replies: Replies,
+) -> None:
+    """Keep the count known when the fetch for the last speaker's token finds no devices.
+
+    Google already lists none, which the fetch for a new token finds out. It worked,
+    though the rejected token marks the list to fetch again.
+    """
+    await set_up(hass, config_entry)
+    runtime(config_entry).client.found_devices.async_device_found(
+        TV_CLOUD_ID, TV_NAME, TV
+    )
+    # A new round, in which the speaker's rejected token fetches Google's list
+    await update_account(hass, config_entry)
+    google.return_value = []
+    replies[SPEAKER][ALARMS] = HTTPStatus.UNAUTHORIZED
+    await runtime(config_entry).devices[SPEAKER_ID].async_refresh()
+
+    diagnostics = await get_diagnostics_for_config_entry(
+        hass, hass_client, config_entry
+    )
+
+    account = cast(dict[str, object], diagnostics["account"])
+    assert diagnostics["devices"] == {
+        SPEAKER_ID: {"last_update_success": True, "last_exception": None}
+    }
+    assert (
+        account["google_devices_fetched"],
+        diagnostics["mdns_reported_not_listed"],
+    ) == (
+        False,
+        1,
+    )
+
+
 @pytest.mark.usefixtures("replies")
 async def test_diagnostics_before_google_list_is_known(
     hass: HomeAssistant,
