@@ -18,8 +18,10 @@ from pytest_homeassistant.common import MockConfigEntry, async_fire_time_changed
 from pytest_homeassistant.test_util.aiohttp import AiohttpClientMocker
 from pytest_homeassistant.typing import WebSocketGenerator
 
+from custom_components.google_home.account import KNOWN_HOSTS_INTERVAL
 from custom_components.google_home.const import (
     API_ENDPOINT_ALARMS,
+    CONF_KNOWN_HOSTS,
     DOMAIN,
     FETCH_DEVICES_INTERVAL,
     FOUND_DEVICE_FETCH_DELAY,
@@ -46,12 +48,21 @@ from .conftest import (
     SPEAKER_NAME,
     ForToken,
     Replies,
+    kitchen_speaker,
 )
 from .test_coordinators import BEDROOM_ALARMS
 from .test_diagnostics import TV, TV_CLOUD_ID, TV_NAME
 from .test_missing_devices import found
-from .test_setup import ALARMS_SENSOR, STATES, requests, set_up, state, updated_at
-from .test_unsupported_devices import ALARMS, SPEAKER, SUPPORTED
+from .test_setup import (
+    ALARMS_SENSOR,
+    DEVICE_SENSOR,
+    STATES,
+    requests,
+    set_up,
+    state,
+    updated_at,
+)
+from .test_unsupported_devices import ALARMS, INFO, SPEAKER, SUPPORTED
 
 # pylint: enable=wrong-import-order
 
@@ -450,3 +461,52 @@ async def test_refresh_fetches_list_for_found_device_while_polling_off(
     await refresh_devices(hass)
 
     assert google.call_count == 2
+
+
+async def test_known_host_asked_only_at_refresh_while_polling_off(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    google: Mock,
+    replies: Replies,
+    clock: Mock,
+    aioclient_mock: AiohttpClientMocker,
+    freezer: FrozenDateTimeFactory,
+) -> None:
+    """Look for a speaker without an address at its known host only at a refresh.
+
+    Its known host didn't answer at setup. Nothing asks it again 5 minutes later, when
+    an update would with polling on; a refresh then does, and updates the speaker,
+    without fetching Google's list.
+    """
+    google.return_value = [kitchen_speaker(None)]
+    replies[SPEAKER][INFO] = TimeoutError()
+    hass.config_entries.async_update_entry(
+        config_entry, options={CONF_KNOWN_HOSTS: [SPEAKER]}
+    )
+    await set_up_without_polling(hass, config_entry)
+    replies[SPEAKER][INFO] = (
+        HTTPStatus.OK,
+        {"device_info": {"cloud_device_id": SPEAKER_CLOUD_ID}},
+    )
+    aioclient_mock.mock_calls.clear()
+
+    clock.return_value = KNOWN_HOSTS_INTERVAL
+    freezer.tick(timedelta(seconds=KNOWN_HOSTS_INTERVAL))
+    async_fire_time_changed(hass)
+    await hass.async_block_till_done(wait_background_tasks=True)
+    assert requests(aioclient_mock) == []
+
+    # Its sensors are unavailable, which the integration's action refuses, and its
+    # alarms sensor isn't added until it answers
+    assert await async_setup_component(hass, "homeassistant", {})
+    await hass.services.async_call(
+        "homeassistant",
+        "update_entity",
+        {ATTR_ENTITY_ID: DEVICE_SENSOR},
+        blocking=True,
+    )
+    await hass.async_block_till_done(wait_background_tasks=True)
+
+    assert state(hass, DEVICE_SENSOR) == SPEAKER
+    assert state(hass, ALARMS_SENSOR) == STATES[ALARMS_SENSOR]
+    assert google.call_count == 1
