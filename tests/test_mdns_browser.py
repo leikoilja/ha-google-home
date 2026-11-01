@@ -321,8 +321,8 @@ def test_browse_again_replaces_browser(browsing: Browsing) -> None:
         [_, second] = browsing.browsers
         second.async_cancel.assert_not_awaited()
         await browsing.unload()
-        second.async_cancel.assert_awaited_once()
         await browsing.browse_again()
+        second.async_cancel.assert_awaited_once()
 
     asyncio.run(run())
     assert len(browsing.browsers) == 2

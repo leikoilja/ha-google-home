@@ -193,7 +193,7 @@ class FoundDevices:
         self._schedule()
 
     async def async_browse_again(self) -> None:
-        """Browse for Cast devices again, as glocaltokens' scan did at each fetch.
+        """Browse for Cast devices again after a fetch of Google's list.
 
         The new browser replays the cache and asks the network, which finds a device
         that came back, perhaps at another address, without an announcement that Home
@@ -375,9 +375,14 @@ def async_browse_cast_devices(
             found_devices.async_device_found(*found, replayed=replayed)
 
     async def async_look_up(info: AsyncServiceInfo, replayed: bool) -> None:
-        # It reports the records as they are when the lookup ends
+        # The lookup can change the name's case to the one its records have
+        service_type, name = info.type, info.name
         await info.async_request(zeroconf_instance, CAST_LOOKUP_TIMEOUT)
-        report(info, replayed)
+        # The lookup keeps an address that expired while it waited, which may be
+        # one that a newer report replaced, so report what the cache has now
+        current = AsyncServiceInfo(service_type, name)
+        current.load_from_cache(zeroconf_instance)
+        report(current, replayed)
 
     @callback
     def on_change(

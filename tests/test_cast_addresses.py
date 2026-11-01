@@ -12,10 +12,11 @@ from unittest.mock import MagicMock, Mock, patch
 
 from glocaltokens.client import Device
 import pytest
-from zeroconf import ServiceStateChange
+from zeroconf import ServiceStateChange, current_time_millis
 
-# A compiled module, which pylint can't read
+# Compiled modules, which pylint can't read
 from zeroconf._cache import DNSCache  # pylint: disable=no-name-in-module
+from zeroconf._dns import DNSAddress  # pylint: disable=no-name-in-module
 from zeroconf.asyncio import AsyncServiceInfo
 
 from custom_components.google_home.api import GlocaltokensApiClient
@@ -152,6 +153,68 @@ def test_removed_cached_device_replayed_without_fetch(
     with browsing.patched():
         asyncio.run(run())
     assert network.fetches == [0, 1200, 2400, 3600]
+
+
+def test_late_lookup_keeps_newer_address(clock: Mock, timers: list[Timer]) -> None:
+    """Keep the address that a newer report gave, when a replayed lookup ends late.
+
+    Browsing again after a fetch replays the speaker, whose TXT record isn't cached,
+    so it's looked up. Meanwhile its IPv4 address expires, though its record stays
+    cached until zeroconf cleans up, and it announces an IPv6 one. zeroconf's lookup
+    ignores records that expire, so it ends with both addresses, and IPv4 comes
+    first. The speaker keeps the one that the cache still has unexpired.
+    """
+    network = Network(clock, timers, [found("kitchen", None)])
+    browsing = Browsing(found_devices=network.client.found_devices)
+    kitchen = cast_service("kitchen", "10.0.0.2")
+    both = cast_service("kitchen", "10.0.0.2", "2001:db8::2")
+
+    async def with_both(info: AsyncServiceInfo, _zc: Mock, _timeout: float) -> bool:
+        return info.load_from_cache(Mock(cache=cache_of(both)))
+
+    async def run() -> None:
+        browsing.cache_service(kitchen)
+        browsing.start()
+        await network.setup()
+        browsing.cache = browsing.zeroconf.cache = DNSCache()
+        browsing.cache.async_add_records(
+            [kitchen.dns_service(), *kitchen.dns_addresses()]
+        )
+        await network.update(1200)
+        [lookup] = browsing.lookups
+        [ipv4] = kitchen.dns_addresses()
+        expired = current_time_millis() - (ipv4.ttl + 1) * 1000
+        browsing.cache.async_add_records(
+            [
+                DNSAddress(
+                    ipv4.name,
+                    ipv4.type,
+                    ipv4.class_,
+                    ipv4.ttl,
+                    ipv4.address,
+                    created=expired,
+                )
+            ]
+        )
+        browsing.cache_service(cast_service("kitchen", "2001:db8::2"))
+        browsing.change(service_name("kitchen"), ServiceStateChange.Updated)
+        with patch.object(AsyncServiceInfo, "async_request", with_both):
+            await lookup
+        await network.update(1215)
+
+    with browsing.patched():
+        asyncio.run(run())
+    assert network.fetches == [0, 1200]
+    assert network.polled[-1] == ("kitchen", "2001:db8::2")
+
+
+def cache_of(info: AsyncServiceInfo) -> DNSCache:
+    """Return a cache with a service's records."""
+    cache = DNSCache()
+    cache.async_add_records(
+        [info.dns_service(), info.dns_text(), *info.dns_addresses()]
+    )
+    return cache
 
 
 def test_device_updated_before_announced_fetched_for(
