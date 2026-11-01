@@ -12,7 +12,7 @@ import json
 from unittest.mock import Mock, patch
 
 import pytest
-from pytest_homeassistant.common import MockConfigEntry
+from pytest_homeassistant.common import MockConfigEntry, async_capture_events
 from pytest_homeassistant.components.diagnostics import get_diagnostics_for_config_entry
 from pytest_homeassistant.typing import ClientSessionGenerator, WebSocketGenerator
 
@@ -23,6 +23,7 @@ from custom_components.google_home.types import BluetoothJsonDict
 # pylint: disable=wrong-import-order
 from homeassistant.config_entries import ConfigEntryState
 from homeassistant.const import (
+    EVENT_STATE_CHANGED,
     STATE_HOME,
     STATE_NOT_HOME,
     STATE_UNKNOWN,
@@ -156,11 +157,18 @@ async def test_track_phone(
     scans.heard[SPEAKER] = [heard(rpa(IRK))]
     assert await scan(hass, config_entry, scans, 30) == STATE_HOME
     scans.heard[SPEAKER] = []
+    changes = async_capture_events(hass, EVENT_STATE_CHANGED)
     # The scan that started at 0 was the last to hear it
     assert [await scan(hass, config_entry, scans, now) for now in (60, 90)] == [
         STATE_HOME,
         STATE_NOT_HOME,
     ]
+    # Only the change to away, so history gets no row from the update that kept it home
+    assert [
+        state.state
+        for event in changes
+        if event.data["entity_id"] == TRACKER and (state := event.data["new_state"])
+    ] == [STATE_NOT_HOME]
 
     hass.config_entries.async_remove_subentry(config_entry, subentry_id)
     await hass.async_block_till_done(wait_background_tasks=True)

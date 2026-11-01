@@ -491,24 +491,12 @@ def test_tracker_unknown_before_first_update() -> None:
     assert tracker(None).is_connected is None
 
 
-def test_tracker_writes_only_changes() -> None:
-    """Write the state only when it or the availability changes, so history gets no row every update."""
-    data = {PHONE: HOME}
-    entity = tracker(data)
+def test_tracker_unavailable_when_update_fails() -> None:
+    """Show unavailable after an update that failed unexpectedly, whatever the last state."""
+    entity = tracker({PHONE: HOME})
+    entity.coordinator.last_update_success = False
 
-    with patch.object(entity, "async_write_ha_state") as write:
-        entity._handle_coordinator_update()  # noqa: SLF001  # pylint: disable=protected-access
-        write.assert_not_called()
-
-        data[PHONE] = NOT_HOME
-        entity._handle_coordinator_update()  # noqa: SLF001  # pylint: disable=protected-access
-        assert write.call_count == 1
-
-        # An update that failed unexpectedly, with the last states still there
-        entity.coordinator.last_update_success = False
-        entity._handle_coordinator_update()  # noqa: SLF001  # pylint: disable=protected-access
-        assert write.call_count == 2
-        assert not entity.available
+    assert not entity.available
 
 
 def make_entry(

@@ -5,7 +5,7 @@ from typing import override
 from homeassistant.components.device_tracker.const import SourceType
 from homeassistant.components.device_tracker.entity import BaseScannerEntity
 from homeassistant.config_entries import ConfigSubentry
-from homeassistant.core import HomeAssistant, callback
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.update_coordinator import (
@@ -56,9 +56,6 @@ class GoogleHomeBluetoothTracker(
         self._subentry_id = subentry.subentry_id
         self._subentry_title = subentry.title
         self._attr_unique_id = subentry.subentry_id
-        self._tracker_state = self._state_from_coordinator()
-        # The state and availability last written
-        self._written = (self._tracker_state, self.available)
 
     @property
     @override
@@ -84,20 +81,12 @@ class GoogleHomeBluetoothTracker(
             return False
         return None
 
-    def _state_from_coordinator(self) -> TrackerState:
-        """Return the state of the latest update."""
+    @property
+    def _tracker_state(self) -> TrackerState:
+        """Return the state of the latest update.
+
+        Each update writes it, and Home Assistant adds no history row while the
+        state and attributes stay the same.
+        """
         data = self.coordinator.data or {}
         return data.get(self._subentry_id, TrackerState.UNKNOWN)
-
-    @callback
-    @override
-    def _handle_coordinator_update(self) -> None:
-        """Write the state only when it or the availability changes.
-
-        So history gets no row every update.
-        """
-        self._tracker_state = self._state_from_coordinator()
-        written = (self._tracker_state, self.available)
-        if written != self._written:
-            self._written = written
-            self.async_write_ha_state()
