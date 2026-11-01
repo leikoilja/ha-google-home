@@ -120,6 +120,10 @@ The button is unavailable until Home Assistant finds the device on your network,
 
 Not every device supports rebooting. A device can accept the request, so there's no error and the log shows "Successfully asked Living Room to reboot.", even when it doesn't restart. If that happens, [reboot it from the Google Home app or unplug it for a minute](https://support.google.com/googlehome/answer/7072490).
 
+The button's state is the time it was last pressed in Home Assistant, not when the device last restarted. It's `unknown` until the first press. Each press sets it, even one that fails or doesn't restart the device. Rebooting the device with the [Reboot device](actions.md#reboot-device) action or from the Google Home app doesn't set it, and neither does unplugging the device or a power cut.
+
+Home Assistant keeps this time when it restarts. If the button is unavailable when Home Assistant stops, for example while the device is unplugged, the time is lost: once the button is available again, its state is `unknown` until the next press.
+
 ## Update sensor
 
 The sensor is on, shown as **Update available**, when the device says that a firmware update is waiting to be installed, and off, shown as **Up-to-date**, when it says there's none. It's unknown until the device has said, and becomes unknown if the device answers with its information but without saying. If the request fails, for example because the device doesn't answer it, the sensor keeps its last state. It appears under **Diagnostic** on the device page. Like the device sensor, it's unavailable while Home Assistant doesn't know the device's IP address.
