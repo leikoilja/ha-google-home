@@ -195,15 +195,24 @@
         "data": {
           "update_interval": "Zmeniť interval aktualizácie. Zvýšte túto hodnotu, ak zariadeniam často vyprší časový limit. Predvolená hodnota: {default_interval} (sekúnd)",
           "known_hosts": "Známi hostitelia",
-          "homes": "Domácnosti",
-          "bluetooth_tracking": "Sledovanie cez Bluetooth",
-          "bluetooth_excluded_speakers": "Reproduktory nepoužívané na sledovanie cez Bluetooth"
+          "homes": "Domácnosti"
         },
         "data_description": {
           "known_hosts": "IP adresy reproduktorov a displejov, ktoré integrácia nedokáže nájsť sama, napríklad preto, že sú v inej sieti alebo VLAN.",
-          "homes": "Reproduktory a displeje z domácností, ktoré odznačíte, sa nepridajú. Ak domácnosť odznačíte, jej zariadenia a ich entity sa odstránia z Home Assistant, takže automatizácie, skripty a panely, ktoré ich používajú, prestanú fungovať. Ak domácnosť znova označíte, zariadenia sa vrátia s názvami a oblasťami, ktoré ste im dali.",
-          "bluetooth_tracking": "Pomocou reproduktorov zistíte, či je váš telefón alebo iné zariadenia Bluetooth doma. Po zapnutí pridajte sledované zariadenia pomocou „Pridať zariadenie Bluetooth“ na stránke integrácie. Kým je sledovanie vypnuté, integrácia neposiela reproduktorom žiadne požiadavky Bluetooth.",
-          "bluetooth_excluded_speakers": "Reproduktory, ktoré nevyhľadávajú zariadenia Bluetooth. Pridajte reproduktor, ktorý je odpojený alebo mimo prevádzky: kým reproduktor neodpovedá, sledovače nemôžu zobraziť „Neprítomnosť“."
+          "homes": "Reproduktory a displeje z domácností, ktoré odznačíte, sa nepridajú. Ak domácnosť odznačíte, jej zariadenia a ich entity sa odstránia z Home Assistant, takže automatizácie, skripty a panely, ktoré ich používajú, prestanú fungovať. Ak domácnosť znova označíte, zariadenia sa vrátia s názvami a oblasťami, ktoré ste im dali."
+        },
+        "sections": {
+          "bluetooth": {
+            "name": "Bluetooth",
+            "data": {
+              "bluetooth_tracking": "Sledovanie cez Bluetooth",
+              "bluetooth_excluded_speakers": "Reproduktory nepoužívané na sledovanie cez Bluetooth"
+            },
+            "data_description": {
+              "bluetooth_tracking": "Pomocou reproduktorov zistíte, či je váš telefón alebo iné zariadenia Bluetooth doma. Po zapnutí pridajte sledované zariadenia pomocou „Pridať zariadenie Bluetooth“ na stránke integrácie. Kým je sledovanie vypnuté, integrácia neposiela reproduktorom žiadne požiadavky Bluetooth.",
+              "bluetooth_excluded_speakers": "Reproduktory, ktoré nevyhľadávajú zariadenia Bluetooth. Pridajte reproduktor, ktorý je odpojený alebo mimo prevádzky: kým reproduktor neodpovedá, sledovače nemôžu zobraziť „Neprítomnosť“."
+            }
+          }
         }
       }
     },

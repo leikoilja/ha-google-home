@@ -195,15 +195,24 @@
         "data": {
           "update_interval": "Aktualisierungsintervall ändern. Erhöhe diesen Wert, wenn bei deinen Geräten Zeitüberschreitungen auftreten. Standard: {default_interval} (Sekunden)",
           "known_hosts": "Bekannte Hosts",
-          "homes": "Zuhause",
-          "bluetooth_tracking": "Bluetooth-Tracking",
-          "bluetooth_excluded_speakers": "Lautsprecher, die nicht für Bluetooth-Tracking verwendet werden"
+          "homes": "Zuhause"
         },
         "data_description": {
           "known_hosts": "IP-Adressen von Lautsprechern und Displays, die die Integration nicht selbst findet, etwa weil sie in einem anderen Netzwerk oder VLAN sind.",
-          "homes": "Lautsprecher und Displays in abgewählten Zuhause werden nicht hinzugefügt. Wenn du ein Zuhause abwählst, werden seine Geräte und deren Entitäten aus Home Assistant entfernt, sodass Automationen, Skripte und Dashboards, die sie verwenden, nicht mehr funktionieren. Wähle das Zuhause erneut aus, um sie mit den Namen und Bereichen wieder hinzuzufügen, die du ihnen gegeben hast.",
-          "bluetooth_tracking": "Erkenne mit deinen Lautsprechern, ob dein Smartphone oder andere Bluetooth-Geräte zu Hause sind. Füge nach dem Einschalten die zu verfolgenden Geräte auf der Seite der Integration mit „Bluetooth-Gerät hinzufügen“ hinzu. Solange es ausgeschaltet ist, sendet die Integration keine Bluetooth-Anfragen an deine Lautsprecher.",
-          "bluetooth_excluded_speakers": "Lautsprecher, die nicht nach Bluetooth-Geräten suchen. Füge einen Lautsprecher hinzu, der vom Strom getrennt oder außer Betrieb ist: Solange ein Lautsprecher nicht antwortet, können Tracker nicht „Abwesend“ anzeigen."
+          "homes": "Lautsprecher und Displays in abgewählten Zuhause werden nicht hinzugefügt. Wenn du ein Zuhause abwählst, werden seine Geräte und deren Entitäten aus Home Assistant entfernt, sodass Automationen, Skripte und Dashboards, die sie verwenden, nicht mehr funktionieren. Wähle das Zuhause erneut aus, um sie mit den Namen und Bereichen wieder hinzuzufügen, die du ihnen gegeben hast."
+        },
+        "sections": {
+          "bluetooth": {
+            "name": "Bluetooth",
+            "data": {
+              "bluetooth_tracking": "Bluetooth-Tracking",
+              "bluetooth_excluded_speakers": "Lautsprecher, die nicht für Bluetooth-Tracking verwendet werden"
+            },
+            "data_description": {
+              "bluetooth_tracking": "Erkenne mit deinen Lautsprechern, ob dein Smartphone oder andere Bluetooth-Geräte zu Hause sind. Füge nach dem Einschalten die zu verfolgenden Geräte auf der Seite der Integration mit „Bluetooth-Gerät hinzufügen“ hinzu. Solange es ausgeschaltet ist, sendet die Integration keine Bluetooth-Anfragen an deine Lautsprecher.",
+              "bluetooth_excluded_speakers": "Lautsprecher, die nicht nach Bluetooth-Geräten suchen. Füge einen Lautsprecher hinzu, der vom Strom getrennt oder außer Betrieb ist: Solange ein Lautsprecher nicht antwortet, können Tracker nicht „Abwesend“ anzeigen."
+            }
+          }
         }
       }
     },

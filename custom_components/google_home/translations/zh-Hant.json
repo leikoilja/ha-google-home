@@ -195,15 +195,24 @@
         "data": {
           "update_interval": "變更更新間隔。如果裝置無法及時回應，請增加此值。預設為 {default_interval} 秒。",
           "known_hosts": "已知主機",
-          "homes": "住家",
-          "bluetooth_tracking": "藍牙追蹤",
-          "bluetooth_excluded_speakers": "不用於藍牙追蹤的音箱"
+          "homes": "住家"
         },
         "data_description": {
           "known_hosts": "此整合無法自動找到的音箱和螢幕的 IP 位址，例如位於其他網路或 VLAN 的裝置。",
-          "homes": "不會加入你取消選取的住家中的音箱和螢幕。取消選取住家會從 Home Assistant 移除該住家的裝置及其實體，因此使用這些裝置的自動化、腳本和儀表板將無法運作。重新選取該住家，即可依你先前設定的名稱和分區重新加入這些裝置。",
-          "bluetooth_tracking": "使用音箱判斷你的手機或其他藍牙裝置是否在家。開啟後，請在此整合的頁面上使用「新增藍牙裝置」加入要追蹤的裝置。關閉期間，此整合不會向音箱傳送任何藍牙要求。",
-          "bluetooth_excluded_speakers": "不掃描藍牙裝置的音箱。請加入已拔除電源或停止使用的音箱：只要有音箱沒有回應，追蹤器就無法顯示「離家」。"
+          "homes": "不會加入你取消選取的住家中的音箱和螢幕。取消選取住家會從 Home Assistant 移除該住家的裝置及其實體，因此使用這些裝置的自動化、腳本和儀表板將無法運作。重新選取該住家，即可依你先前設定的名稱和分區重新加入這些裝置。"
+        },
+        "sections": {
+          "bluetooth": {
+            "name": "藍牙",
+            "data": {
+              "bluetooth_tracking": "藍牙追蹤",
+              "bluetooth_excluded_speakers": "不用於藍牙追蹤的音箱"
+            },
+            "data_description": {
+              "bluetooth_tracking": "使用音箱判斷你的手機或其他藍牙裝置是否在家。開啟後，請在此整合的頁面上使用「新增藍牙裝置」加入要追蹤的裝置。關閉期間，此整合不會向音箱傳送任何藍牙要求。",
+              "bluetooth_excluded_speakers": "不掃描藍牙裝置的音箱。請加入已拔除電源或停止使用的音箱：只要有音箱沒有回應，追蹤器就無法顯示「離家」。"
+            }
+          }
         }
       }
     },

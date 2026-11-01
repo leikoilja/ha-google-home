@@ -195,15 +195,24 @@
         "data": {
           "update_interval": "Módosítsa a frissítési időközt. Növelje ezt az értéket, ha az eszközök nem válaszolnak időben. Alapértelmezett: {default_interval} másodperc.",
           "known_hosts": "Ismert hosztok",
-          "homes": "Otthonok",
-          "bluetooth_tracking": "Bluetooth-követés",
-          "bluetooth_excluded_speakers": "Bluetooth-követéshez nem használt hangszórók"
+          "homes": "Otthonok"
         },
         "data_description": {
           "known_hosts": "Azon hangszórók és kijelzők IP-címei, amelyeket az integráció nem talál meg automatikusan, például mert másik hálózaton vagy VLAN-on vannak.",
-          "homes": "Azoknak az otthonoknak a hangszóróit és kijelzőit, amelyek kijelölését megszünteti, az integráció nem adja hozzá. Ha megszünteti egy otthon kijelölését, az otthon eszközei és azok entitásai törlődnek a Home Assistantból, így az ezeket használó automatizmusok, szkriptek és irányítópultok nem működnek tovább. Jelölje ki újra az otthont, és az eszközök visszakerülnek az Ön által adott nevekkel és területekkel.",
-          "bluetooth_tracking": "A hangszórók segítségével megtudhatja, hogy a telefonja vagy más Bluetooth-eszközök otthon vannak-e. Bekapcsolás után adja hozzá a követendő eszközöket az integráció oldalán a „Bluetooth-eszköz hozzáadása” lehetőséggel. Amíg ki van kapcsolva, az integráció nem küld Bluetooth-kéréseket a hangszóróknak.",
-          "bluetooth_excluded_speakers": "Hangszórók, amelyek nem keresnek Bluetooth-eszközöket. Adjon hozzá egy áramtalanított vagy üzemen kívüli hangszórót: amíg egy hangszóró nem válaszol, a követők nem tudják a „Távol” állapotot mutatni."
+          "homes": "Azoknak az otthonoknak a hangszóróit és kijelzőit, amelyek kijelölését megszünteti, az integráció nem adja hozzá. Ha megszünteti egy otthon kijelölését, az otthon eszközei és azok entitásai törlődnek a Home Assistantból, így az ezeket használó automatizmusok, szkriptek és irányítópultok nem működnek tovább. Jelölje ki újra az otthont, és az eszközök visszakerülnek az Ön által adott nevekkel és területekkel."
+        },
+        "sections": {
+          "bluetooth": {
+            "name": "Bluetooth",
+            "data": {
+              "bluetooth_tracking": "Bluetooth-követés",
+              "bluetooth_excluded_speakers": "Bluetooth-követéshez nem használt hangszórók"
+            },
+            "data_description": {
+              "bluetooth_tracking": "A hangszórók segítségével megtudhatja, hogy a telefonja vagy más Bluetooth-eszközök otthon vannak-e. Bekapcsolás után adja hozzá a követendő eszközöket az integráció oldalán a „Bluetooth-eszköz hozzáadása” lehetőséggel. Amíg ki van kapcsolva, az integráció nem küld Bluetooth-kéréseket a hangszóróknak.",
+              "bluetooth_excluded_speakers": "Hangszórók, amelyek nem keresnek Bluetooth-eszközöket. Adjon hozzá egy áramtalanított vagy üzemen kívüli hangszórót: amíg egy hangszóró nem válaszol, a követők nem tudják a „Távol” állapotot mutatni."
+            }
+          }
         }
       }
     },

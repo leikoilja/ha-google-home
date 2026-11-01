@@ -195,15 +195,24 @@
         "data": {
           "update_interval": "Modifier l'intervalle de mise à jour. Augmentez cette valeur si vos appareils dépassent souvent le délai d'attente. Par défaut : {default_interval} (secondes)",
           "known_hosts": "Hôtes connus",
-          "homes": "Maisons",
-          "bluetooth_tracking": "Suivi Bluetooth",
-          "bluetooth_excluded_speakers": "Enceintes non utilisées pour le suivi Bluetooth"
+          "homes": "Maisons"
         },
         "data_description": {
           "known_hosts": "Adresses IP des enceintes et écrans que l'intégration ne trouve pas d'elle-même, par exemple parce qu'ils sont sur un autre réseau ou VLAN.",
-          "homes": "Les enceintes et écrans des maisons que vous désélectionnez ne sont pas ajoutés. Désélectionner une maison supprime ses appareils et leurs entités de Home Assistant : les automatisations, scripts et tableaux de bord qui les utilisent cessent alors de fonctionner. Sélectionnez à nouveau la maison pour les rajouter avec les noms et pièces que vous leur aviez donnés.",
-          "bluetooth_tracking": "Utilisez vos enceintes pour savoir si votre téléphone ou d'autres appareils Bluetooth sont à la maison. Après l'avoir activé, ajoutez les appareils à suivre avec « Ajouter un appareil Bluetooth » sur la page de l'intégration. Tant qu'il est désactivé, l'intégration n'envoie aucune requête Bluetooth à vos enceintes.",
-          "bluetooth_excluded_speakers": "Enceintes qui ne recherchent pas d'appareils Bluetooth. Ajoutez une enceinte débranchée ou hors service : tant qu'une enceinte ne répond pas, les traceurs ne peuvent pas afficher « Absent »."
+          "homes": "Les enceintes et écrans des maisons que vous désélectionnez ne sont pas ajoutés. Désélectionner une maison supprime ses appareils et leurs entités de Home Assistant : les automatisations, scripts et tableaux de bord qui les utilisent cessent alors de fonctionner. Sélectionnez à nouveau la maison pour les rajouter avec les noms et pièces que vous leur aviez donnés."
+        },
+        "sections": {
+          "bluetooth": {
+            "name": "Bluetooth",
+            "data": {
+              "bluetooth_tracking": "Suivi Bluetooth",
+              "bluetooth_excluded_speakers": "Enceintes non utilisées pour le suivi Bluetooth"
+            },
+            "data_description": {
+              "bluetooth_tracking": "Utilisez vos enceintes pour savoir si votre téléphone ou d'autres appareils Bluetooth sont à la maison. Après l'avoir activé, ajoutez les appareils à suivre avec « Ajouter un appareil Bluetooth » sur la page de l'intégration. Tant qu'il est désactivé, l'intégration n'envoie aucune requête Bluetooth à vos enceintes.",
+              "bluetooth_excluded_speakers": "Enceintes qui ne recherchent pas d'appareils Bluetooth. Ajoutez une enceinte débranchée ou hors service : tant qu'une enceinte ne répond pas, les traceurs ne peuvent pas afficher « Absent »."
+            }
+          }
         }
       }
     },

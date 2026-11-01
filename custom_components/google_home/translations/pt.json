@@ -195,15 +195,24 @@
         "data": {
           "update_interval": "Altere o intervalo de atualização. Aumente este valor se os dispositivos excederem frequentemente o tempo limite. Predefinição: {default_interval} (segundos)",
           "known_hosts": "Anfitriões conhecidos",
-          "homes": "Casas",
-          "bluetooth_tracking": "Localização por Bluetooth",
-          "bluetooth_excluded_speakers": "Altifalantes não utilizados para a localização por Bluetooth"
+          "homes": "Casas"
         },
         "data_description": {
           "known_hosts": "Endereços IP de altifalantes e ecrãs que a integração não consegue encontrar sozinha, por exemplo porque estão noutra rede ou VLAN.",
-          "homes": "Os altifalantes e ecrãs das casas que desmarcar não são adicionados. Desmarcar uma casa remove do Home Assistant os respetivos dispositivos e as entidades destes, pelo que as automatizações, scripts e painéis que os utilizam deixam de funcionar. Volte a marcar a casa para os adicionar novamente com os nomes e as áreas que lhes atribuiu.",
-          "bluetooth_tracking": "Utilize os seus altifalantes para saber se o seu telemóvel ou outros dispositivos Bluetooth estão em casa. Depois de a ativar, adicione os dispositivos a localizar com «Adicionar dispositivo Bluetooth» na página da integração. Enquanto estiver desativada, a integração não envia pedidos Bluetooth aos seus altifalantes.",
-          "bluetooth_excluded_speakers": "Altifalantes que não procuram dispositivos Bluetooth. Adicione um altifalante desligado da corrente ou fora de serviço: enquanto um altifalante não responder, os localizadores não conseguem mostrar «Ausente»."
+          "homes": "Os altifalantes e ecrãs das casas que desmarcar não são adicionados. Desmarcar uma casa remove do Home Assistant os respetivos dispositivos e as entidades destes, pelo que as automatizações, scripts e painéis que os utilizam deixam de funcionar. Volte a marcar a casa para os adicionar novamente com os nomes e as áreas que lhes atribuiu."
+        },
+        "sections": {
+          "bluetooth": {
+            "name": "Bluetooth",
+            "data": {
+              "bluetooth_tracking": "Localização por Bluetooth",
+              "bluetooth_excluded_speakers": "Altifalantes não utilizados para a localização por Bluetooth"
+            },
+            "data_description": {
+              "bluetooth_tracking": "Utilize os seus altifalantes para saber se o seu telemóvel ou outros dispositivos Bluetooth estão em casa. Depois de a ativar, adicione os dispositivos a localizar com «Adicionar dispositivo Bluetooth» na página da integração. Enquanto estiver desativada, a integração não envia pedidos Bluetooth aos seus altifalantes.",
+              "bluetooth_excluded_speakers": "Altifalantes que não procuram dispositivos Bluetooth. Adicione um altifalante desligado da corrente ou fora de serviço: enquanto um altifalante não responder, os localizadores não conseguem mostrar «Ausente»."
+            }
+          }
         }
       }
     },

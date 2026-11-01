@@ -195,15 +195,24 @@
         "data": {
           "update_interval": "Modifică intervalul de actualizare. Mărește această valoare dacă dispozitivele nu răspund la timp. Valoare implicită: {default_interval} (secunde).",
           "known_hosts": "Gazde cunoscute",
-          "homes": "Case",
-          "bluetooth_tracking": "Urmărire prin Bluetooth",
-          "bluetooth_excluded_speakers": "Difuzoare nefolosite pentru urmărirea prin Bluetooth"
+          "homes": "Case"
         },
         "data_description": {
           "known_hosts": "Adresele IP ale difuzoarelor și ecranelor pe care integrarea nu le poate găsi automat, de exemplu pentru că se află în altă rețea sau în alt VLAN.",
-          "homes": "Difuzoarele și ecranele din casele pe care le debifezi nu sunt adăugate. Dacă debifezi o casă, dispozitivele ei și entitățile acestora sunt eliminate din Home Assistant, astfel că automatizările, scripturile și tablourile de bord care le folosesc nu mai funcționează. Bifează din nou casa pentru a le adăuga înapoi cu numele și spațiile pe care li le-ai dat.",
-          "bluetooth_tracking": "Folosește difuzoarele ca să afli dacă telefonul tău sau alte dispozitive Bluetooth sunt acasă. După ce o activezi, adaugă dispozitivele de urmărit cu „Adaugă dispozitiv Bluetooth” pe pagina integrării. Cât timp este dezactivată, integrarea nu trimite nicio solicitare Bluetooth difuzoarelor tale.",
-          "bluetooth_excluded_speakers": "Difuzoare care nu caută dispozitive Bluetooth. Adaugă un difuzor scos din priză sau nefuncțional: cât timp un difuzor nu răspunde, dispozitivele de urmărire nu pot afișa „Plecat”."
+          "homes": "Difuzoarele și ecranele din casele pe care le debifezi nu sunt adăugate. Dacă debifezi o casă, dispozitivele ei și entitățile acestora sunt eliminate din Home Assistant, astfel că automatizările, scripturile și tablourile de bord care le folosesc nu mai funcționează. Bifează din nou casa pentru a le adăuga înapoi cu numele și spațiile pe care li le-ai dat."
+        },
+        "sections": {
+          "bluetooth": {
+            "name": "Bluetooth",
+            "data": {
+              "bluetooth_tracking": "Urmărire prin Bluetooth",
+              "bluetooth_excluded_speakers": "Difuzoare nefolosite pentru urmărirea prin Bluetooth"
+            },
+            "data_description": {
+              "bluetooth_tracking": "Folosește difuzoarele ca să afli dacă telefonul tău sau alte dispozitive Bluetooth sunt acasă. După ce o activezi, adaugă dispozitivele de urmărit cu „Adaugă dispozitiv Bluetooth” pe pagina integrării. Cât timp este dezactivată, integrarea nu trimite nicio solicitare Bluetooth difuzoarelor tale.",
+              "bluetooth_excluded_speakers": "Difuzoare care nu caută dispozitive Bluetooth. Adaugă un difuzor scos din priză sau nefuncțional: cât timp un difuzor nu răspunde, dispozitivele de urmărire nu pot afișa „Plecat”."
+            }
+          }
         }
       }
     },

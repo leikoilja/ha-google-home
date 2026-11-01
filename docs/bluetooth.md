@@ -9,7 +9,7 @@ It tells home from away, not which room you're in. Bluetooth signal strength cha
 ## Turn on Bluetooth tracking
 
 1. Go to **Settings** > **Devices & services** > **Google Home** and select **Configure**.
-2. Turn on **Bluetooth tracking** and select **Submit**.
+2. Under **Bluetooth**, turn on **Bluetooth tracking** and select **Submit**.
 3. On the same page, select **Add Bluetooth device** for each device you want to track. See [Add a device to track](#add-a-device-to-track).
 
 The speakers start scanning once you've added the first device, and stop when you remove the last one.
@@ -24,6 +24,8 @@ Give the device a name, such as _Alex's phone_, and enter its IRK or its MAC add
 - **MAC address**: use this for devices whose address never changes, such as some watches, tags and headphones, in the form `AA:BB:CC:DD:EE:FF` or `AA-BB-CC-DD-EE-FF`. A phone's MAC address stops matching within minutes.
 
 The tracker is named after the device, such as `device_tracker.alexs_phone`. Home Assistant lists it under **Diagnostic** on the device's page, as it does for its own Bluetooth trackers.
+
+Once you track a device, the **Google Home** page lists each tracked device on its own, and your speakers and displays under **Devices that don't belong to a sub-entry**. That's how Home Assistant shows every integration with sub-entries: your speakers and displays are still there.
 
 To stop tracking a device, delete it: open it on the **Google Home** page, open the **⋮** menu and select **Delete**. Deleting it from its device page does the same. To change its name, IRK or MAC address, delete it and add it again.
 

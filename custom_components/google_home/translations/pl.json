@@ -195,15 +195,24 @@
         "data": {
           "update_interval": "Zmień interwał aktualizacji. Zwiększ go, jeśli urządzenia często przekraczają limit czasu odpowiedzi. Domyślnie: {default_interval} (sekund)",
           "known_hosts": "Znane hosty",
-          "homes": "Domy",
-          "bluetooth_tracking": "Śledzenie Bluetooth",
-          "bluetooth_excluded_speakers": "Głośniki nieużywane do śledzenia Bluetooth"
+          "homes": "Domy"
         },
         "data_description": {
           "known_hosts": "Adresy IP głośników i wyświetlaczy, których integracja nie może sama znaleźć, na przykład dlatego, że są w innej sieci lub sieci VLAN.",
-          "homes": "Głośniki i wyświetlacze z odznaczonych domów nie są dodawane. Odznaczenie domu usuwa jego urządzenia i ich encje z Home Assistanta, więc korzystające z nich automatyzacje, skrypty i panele przestają działać. Zaznacz dom ponownie, aby przywrócić urządzenia z nadanymi im nazwami i obszarami.",
-          "bluetooth_tracking": "Używaj głośników, aby sprawdzać, czy telefon lub inne urządzenia Bluetooth są w domu. Po włączeniu dodaj urządzenia do śledzenia za pomocą opcji „Dodaj urządzenie Bluetooth” na stronie integracji. Gdy śledzenie jest wyłączone, integracja nie wysyła do głośników żadnych żądań Bluetooth.",
-          "bluetooth_excluded_speakers": "Głośniki, które nie wyszukują urządzeń Bluetooth. Dodaj głośnik odłączony od zasilania lub niedziałający: dopóki głośnik nie odpowiada, trackery nie mogą pokazać stanu „poza domem”."
+          "homes": "Głośniki i wyświetlacze z odznaczonych domów nie są dodawane. Odznaczenie domu usuwa jego urządzenia i ich encje z Home Assistanta, więc korzystające z nich automatyzacje, skrypty i panele przestają działać. Zaznacz dom ponownie, aby przywrócić urządzenia z nadanymi im nazwami i obszarami."
+        },
+        "sections": {
+          "bluetooth": {
+            "name": "Bluetooth",
+            "data": {
+              "bluetooth_tracking": "Śledzenie Bluetooth",
+              "bluetooth_excluded_speakers": "Głośniki nieużywane do śledzenia Bluetooth"
+            },
+            "data_description": {
+              "bluetooth_tracking": "Używaj głośników, aby sprawdzać, czy telefon lub inne urządzenia Bluetooth są w domu. Po włączeniu dodaj urządzenia do śledzenia za pomocą opcji „Dodaj urządzenie Bluetooth” na stronie integracji. Gdy śledzenie jest wyłączone, integracja nie wysyła do głośników żadnych żądań Bluetooth.",
+              "bluetooth_excluded_speakers": "Głośniki, które nie wyszukują urządzeń Bluetooth. Dodaj głośnik odłączony od zasilania lub niedziałający: dopóki głośnik nie odpowiada, trackery nie mogą pokazać stanu „poza domem”."
+            }
+          }
         }
       }
     },

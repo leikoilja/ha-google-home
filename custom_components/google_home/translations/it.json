@@ -195,15 +195,24 @@
         "data": {
           "update_interval": "Modifica l'intervallo di aggiornamento. Aumentalo se i dispositivi vanno spesso in timeout. Predefinito: {default_interval} (secondi)",
           "known_hosts": "Host noti",
-          "homes": "Case",
-          "bluetooth_tracking": "Tracciamento Bluetooth",
-          "bluetooth_excluded_speakers": "Altoparlanti non usati per il tracciamento Bluetooth"
+          "homes": "Case"
         },
         "data_description": {
           "known_hosts": "Indirizzi IP di altoparlanti e display che l'integrazione non riesce a trovare da sola, ad esempio perché si trovano su un'altra rete o VLAN.",
-          "homes": "Gli altoparlanti e i display delle case che deselezioni non vengono aggiunti. Se deselezioni una casa, i suoi dispositivi e le relative entità vengono rimossi da Home Assistant, quindi le automazioni, gli script e le plance che li usano smettono di funzionare. Seleziona di nuovo la casa per riaggiungerli con i nomi e le aree che avevi assegnato loro.",
-          "bluetooth_tracking": "Usa i tuoi altoparlanti per sapere se il tuo telefono o altri dispositivi Bluetooth sono in casa. Dopo averlo attivato, aggiungi i dispositivi da monitorare con «Aggiungi dispositivo Bluetooth» nella pagina dell'integrazione. Finché è disattivato, l'integrazione non invia alcuna richiesta Bluetooth ai tuoi altoparlanti.",
-          "bluetooth_excluded_speakers": "Altoparlanti che non cercano dispositivi Bluetooth. Aggiungi un altoparlante scollegato o fuori servizio: finché un altoparlante non risponde, i tracker non possono mostrare «Fuori casa»."
+          "homes": "Gli altoparlanti e i display delle case che deselezioni non vengono aggiunti. Se deselezioni una casa, i suoi dispositivi e le relative entità vengono rimossi da Home Assistant, quindi le automazioni, gli script e le plance che li usano smettono di funzionare. Seleziona di nuovo la casa per riaggiungerli con i nomi e le aree che avevi assegnato loro."
+        },
+        "sections": {
+          "bluetooth": {
+            "name": "Bluetooth",
+            "data": {
+              "bluetooth_tracking": "Tracciamento Bluetooth",
+              "bluetooth_excluded_speakers": "Altoparlanti non usati per il tracciamento Bluetooth"
+            },
+            "data_description": {
+              "bluetooth_tracking": "Usa i tuoi altoparlanti per sapere se il tuo telefono o altri dispositivi Bluetooth sono in casa. Dopo averlo attivato, aggiungi i dispositivi da monitorare con «Aggiungi dispositivo Bluetooth» nella pagina dell'integrazione. Finché è disattivato, l'integrazione non invia alcuna richiesta Bluetooth ai tuoi altoparlanti.",
+              "bluetooth_excluded_speakers": "Altoparlanti che non cercano dispositivi Bluetooth. Aggiungi un altoparlante scollegato o fuori servizio: finché un altoparlante non risponde, i tracker non possono mostrare «Fuori casa»."
+            }
+          }
         }
       }
     },

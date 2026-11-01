@@ -195,15 +195,24 @@
         "data": {
           "update_interval": "Wijzig het update-interval. Verhoog dit als je apparaten vaak een time-out geven. Standaard: {default_interval} (seconden)",
           "known_hosts": "Bekende hosts",
-          "homes": "Huizen",
-          "bluetooth_tracking": "Bluetooth-tracking",
-          "bluetooth_excluded_speakers": "Speakers die niet worden gebruikt voor Bluetooth-tracking"
+          "homes": "Huizen"
         },
         "data_description": {
           "known_hosts": "IP-adressen van speakers en schermen die de integratie zelf niet kan vinden, bijvoorbeeld omdat ze op een ander netwerk of VLAN staan.",
-          "homes": "Speakers en schermen in huizen die je deselecteert, worden niet toegevoegd. Als je een huis deselecteert, worden de apparaten ervan en hun entiteiten uit Home Assistant verwijderd, waardoor automatiseringen, scripts en dashboards die ze gebruiken niet meer werken. Selecteer het huis opnieuw om ze terug te zetten met de namen en ruimtes die je ze had gegeven.",
-          "bluetooth_tracking": "Gebruik je speakers om te zien of je telefoon of andere Bluetooth-apparaten thuis zijn. Voeg na het inschakelen de apparaten die je wilt volgen toe met ‘Bluetooth-apparaat toevoegen’ op de pagina van de integratie. Zolang het is uitgeschakeld, stuurt de integratie geen Bluetooth-verzoeken naar je speakers.",
-          "bluetooth_excluded_speakers": "Speakers die niet naar Bluetooth-apparaten zoeken. Voeg een speaker toe die is losgekoppeld of buiten gebruik is: zolang een speaker niet antwoordt, kunnen trackers niet ‘Afwezig’ tonen."
+          "homes": "Speakers en schermen in huizen die je deselecteert, worden niet toegevoegd. Als je een huis deselecteert, worden de apparaten ervan en hun entiteiten uit Home Assistant verwijderd, waardoor automatiseringen, scripts en dashboards die ze gebruiken niet meer werken. Selecteer het huis opnieuw om ze terug te zetten met de namen en ruimtes die je ze had gegeven."
+        },
+        "sections": {
+          "bluetooth": {
+            "name": "Bluetooth",
+            "data": {
+              "bluetooth_tracking": "Bluetooth-tracking",
+              "bluetooth_excluded_speakers": "Speakers die niet worden gebruikt voor Bluetooth-tracking"
+            },
+            "data_description": {
+              "bluetooth_tracking": "Gebruik je speakers om te zien of je telefoon of andere Bluetooth-apparaten thuis zijn. Voeg na het inschakelen de apparaten die je wilt volgen toe met ‘Bluetooth-apparaat toevoegen’ op de pagina van de integratie. Zolang het is uitgeschakeld, stuurt de integratie geen Bluetooth-verzoeken naar je speakers.",
+              "bluetooth_excluded_speakers": "Speakers die niet naar Bluetooth-apparaten zoeken. Voeg een speaker toe die is losgekoppeld of buiten gebruik is: zolang een speaker niet antwoordt, kunnen trackers niet ‘Afwezig’ tonen."
+            }
+          }
         }
       }
     },

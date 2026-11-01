@@ -388,18 +388,28 @@ async def test_add_device_logs_no_irk_or_mac(
 async def test_options_save_bluetooth(
     hass: HomeAssistant, config_entry: MockConfigEntry
 ) -> None:
-    """Save Bluetooth tracking and the excluded speakers."""
+    """Save Bluetooth tracking and the excluded speakers from their section, with the other options."""
     await set_up(hass, config_entry)
     result = await hass.config_entries.options.async_init(config_entry.entry_id)
     result = await hass.config_entries.options.async_configure(
         result["flow_id"],
-        {"bluetooth_tracking": True, "bluetooth_excluded_speakers": [SPEAKER_ID]},
+        {
+            "update_interval": 30,
+            "bluetooth": {
+                "bluetooth_tracking": True,
+                "bluetooth_excluded_speakers": [SPEAKER_ID],
+            },
+        },
     )
     await hass.async_block_till_done()
 
     assert result["type"] is FlowResultType.CREATE_ENTRY
-    assert config_entry.options["bluetooth_tracking"] is True
-    assert config_entry.options["bluetooth_excluded_speakers"] == [SPEAKER_ID]
+    assert config_entry.options == {
+        "update_interval": 30,
+        "known_hosts": [],
+        "bluetooth_tracking": True,
+        "bluetooth_excluded_speakers": [SPEAKER_ID],
+    }
 
 
 @pytest.mark.usefixtures("google", "replies")
@@ -434,7 +444,7 @@ async def test_options_offer_speakers_by_name(
 
     schema = result["data_schema"]
     assert schema is not None
-    selector = schema.schema["bluetooth_excluded_speakers"]
+    selector = schema.schema["bluetooth"].schema.schema["bluetooth_excluded_speakers"]
     assert selector.config["options"] == offered
 
 

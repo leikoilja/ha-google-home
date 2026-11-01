@@ -195,15 +195,24 @@
         "data": {
           "update_interval": "Cambia el intervalo de actualización. Auméntalo si los dispositivos suelen agotar el tiempo de espera. Valor por defecto: {default_interval} (segundos)",
           "known_hosts": "Hosts conocidos",
-          "homes": "Casas",
-          "bluetooth_tracking": "Seguimiento por Bluetooth",
-          "bluetooth_excluded_speakers": "Altavoces no usados para el seguimiento por Bluetooth"
+          "homes": "Casas"
         },
         "data_description": {
           "known_hosts": "Direcciones IP de altavoces y pantallas que la integración no puede encontrar por sí misma, por ejemplo porque están en otra red o VLAN.",
-          "homes": "Los altavoces y pantallas de las casas que desmarques no se añaden. Al desmarcar una casa, sus dispositivos y las entidades de estos se eliminan de Home Assistant, por lo que las automatizaciones, los scripts y los paneles de control que los usan dejan de funcionar. Vuelve a marcar la casa para añadirlos de nuevo con los nombres y las áreas que les diste.",
-          "bluetooth_tracking": "Usa tus altavoces para saber si tu teléfono u otros dispositivos Bluetooth están en casa. Después de activarlo, añade los dispositivos que quieras rastrear con «Añadir dispositivo Bluetooth» en la página de la integración. Mientras esté desactivado, la integración no envía ninguna solicitud Bluetooth a tus altavoces.",
-          "bluetooth_excluded_speakers": "Altavoces que no buscan dispositivos Bluetooth. Añade un altavoz que esté desenchufado o fuera de servicio: mientras un altavoz no responda, los rastreadores no pueden mostrar «Fuera»."
+          "homes": "Los altavoces y pantallas de las casas que desmarques no se añaden. Al desmarcar una casa, sus dispositivos y las entidades de estos se eliminan de Home Assistant, por lo que las automatizaciones, los scripts y los paneles de control que los usan dejan de funcionar. Vuelve a marcar la casa para añadirlos de nuevo con los nombres y las áreas que les diste."
+        },
+        "sections": {
+          "bluetooth": {
+            "name": "Bluetooth",
+            "data": {
+              "bluetooth_tracking": "Seguimiento por Bluetooth",
+              "bluetooth_excluded_speakers": "Altavoces no usados para el seguimiento por Bluetooth"
+            },
+            "data_description": {
+              "bluetooth_tracking": "Usa tus altavoces para saber si tu teléfono u otros dispositivos Bluetooth están en casa. Después de activarlo, añade los dispositivos que quieras rastrear con «Añadir dispositivo Bluetooth» en la página de la integración. Mientras esté desactivado, la integración no envía ninguna solicitud Bluetooth a tus altavoces.",
+              "bluetooth_excluded_speakers": "Altavoces que no buscan dispositivos Bluetooth. Añade un altavoz que esté desenchufado o fuera de servicio: mientras un altavoz no responda, los rastreadores no pueden mostrar «Fuera»."
+            }
+          }
         }
       }
     },

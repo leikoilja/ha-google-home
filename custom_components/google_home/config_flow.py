@@ -22,6 +22,7 @@ from homeassistant.config_entries import (
 )
 from homeassistant.const import CONF_MAC, CONF_NAME
 from homeassistant.core import callback
+from homeassistant.data_entry_flow import section
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.selector import (
     SelectOptionDict,
@@ -59,6 +60,8 @@ _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 STEP_BROWSER = "browser"
 STEP_HOMES = "homes"
+# The section of the options form with the Bluetooth options
+SECTION_BLUETOOTH = "bluetooth"
 STEP_MASTER_TOKEN = "master_token"
 STEP_REAUTH = "reauth"
 
@@ -347,6 +350,9 @@ class GoogleHomeOptionsFlowHandler(OptionsFlow):
         saved = set(cast(list[str], options.get(CONF_EXCLUDED_HOMES, [])))
         excluded = saved
         if user_input is not None:
+            submitted: dict[str, object] = dict(user_input)
+            # The Bluetooth options are saved with the others, not in their section
+            submitted |= cast(dict[str, object], submitted.pop(SECTION_BLUETOOTH, {}))
             # Keep the order, which decides between hosts that report the same device
             known_hosts = list(
                 dict.fromkeys(
@@ -367,14 +373,14 @@ class GoogleHomeOptionsFlowHandler(OptionsFlow):
                 errors[CONF_HOMES] = "no-home-selected"
             if not errors:
                 data: dict[str, object] = {
-                    **user_input,
+                    **submitted,
                     CONF_KNOWN_HOSTS: known_hosts,
                 }
                 data.pop(CONF_HOMES, None)
                 if excluded:
                     data[CONF_EXCLUDED_HOMES] = sorted(excluded)
                 return self.async_create_entry(data=data)
-            options = {**options, **user_input}
+            options = {**options, **submitted}
 
         entry = self.config_entry
         homes = (
@@ -403,21 +409,26 @@ class GoogleHomeOptionsFlowHandler(OptionsFlow):
                     default=[home for home in self._homes if home not in excluded],
                 )
             ] = _homes_selector(self._homes)
-        schema[
-            probatio.Optional(
-                CONF_BLUETOOTH_TRACKING,
-                default=options.get(CONF_BLUETOOTH_TRACKING, False),
-            )
-        ] = bool
-        schema[
-            probatio.Optional(
-                CONF_BLUETOOTH_EXCLUDED,
-                default=options.get(CONF_BLUETOOTH_EXCLUDED, []),
-            )
-        ] = SelectSelector(
-            SelectSelectorConfig(
-                options=self._speaker_options(options.get(CONF_BLUETOOTH_EXCLUDED, [])),
-                multiple=True,
+        # Under a heading of their own, so they don't run on from the homes
+        schema[probatio.Optional(SECTION_BLUETOOTH, default={})] = section(
+            probatio.Schema(
+                {
+                    probatio.Optional(
+                        CONF_BLUETOOTH_TRACKING,
+                        default=options.get(CONF_BLUETOOTH_TRACKING, False),
+                    ): bool,
+                    probatio.Optional(
+                        CONF_BLUETOOTH_EXCLUDED,
+                        default=options.get(CONF_BLUETOOTH_EXCLUDED, []),
+                    ): SelectSelector(
+                        SelectSelectorConfig(
+                            options=self._speaker_options(
+                                options.get(CONF_BLUETOOTH_EXCLUDED, [])
+                            ),
+                            multiple=True,
+                        )
+                    ),
+                }
             )
         )
         return self.async_show_form(

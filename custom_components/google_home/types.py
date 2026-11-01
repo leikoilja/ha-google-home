@@ -93,6 +93,13 @@ class TimersAttributes(TypedDict):
     timers: list[GoogleHomeTimerDict]
 
 
+class BluetoothOptionsDict(TypedDict, total=False):
+    """Typed dict for the Bluetooth section of the options form."""
+
+    bluetooth_tracking: bool
+    bluetooth_excluded_speakers: list[str]
+
+
 class OptionsFlowDict(TypedDict, total=False):
     """Typed dict for options flow handler."""
 
@@ -100,8 +107,8 @@ class OptionsFlowDict(TypedDict, total=False):
     known_hosts: list[str]
     # The homes whose devices are added, of those the form offers
     homes: list[str]
-    bluetooth_tracking: bool
-    bluetooth_excluded_speakers: list[str]
+    # Saved with the other options, outside the section
+    bluetooth: BluetoothOptionsDict
 
 
 type JsonDict = Mapping[

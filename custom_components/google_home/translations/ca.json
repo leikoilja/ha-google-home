@@ -195,15 +195,24 @@
         "data": {
           "update_interval": "Canvia l'interval d'actualització. Augmenta'l si els dispositius sovint no responen a temps. Valor per defecte: {default_interval} (segons)",
           "known_hosts": "Amfitrions coneguts",
-          "homes": "Llars",
-          "bluetooth_tracking": "Seguiment per Bluetooth",
-          "bluetooth_excluded_speakers": "Altaveus no utilitzats per al seguiment per Bluetooth"
+          "homes": "Llars"
         },
         "data_description": {
           "known_hosts": "Adreces IP d'altaveus i pantalles que la integració no pot trobar per si mateixa, per exemple perquè són en una altra xarxa o VLAN.",
-          "homes": "No s'afegeixen els altaveus ni les pantalles de les llars que desmarquis. Si desmarques una llar, els seus dispositius i les entitats d'aquests s'eliminen de Home Assistant, de manera que les automatitzacions, els scripts i els panells que els utilitzen deixen de funcionar. Torna a marcar la llar per tornar-los a afegir amb els noms i les àrees que els vas donar.",
-          "bluetooth_tracking": "Utilitza els altaveus per saber si el teu telèfon o altres dispositius Bluetooth són a casa. Després d'activar-lo, afegeix els dispositius que vulguis seguir amb «Afegeix un dispositiu Bluetooth» a la pàgina de la integració. Mentre estigui desactivat, la integració no envia cap sol·licitud Bluetooth als altaveus.",
-          "bluetooth_excluded_speakers": "Altaveus que no cerquen dispositius Bluetooth. Afegeix-hi un altaveu desendollat o fora de servei: mentre un altaveu no respon, els rastrejadors no poden mostrar «Fora»."
+          "homes": "No s'afegeixen els altaveus ni les pantalles de les llars que desmarquis. Si desmarques una llar, els seus dispositius i les entitats d'aquests s'eliminen de Home Assistant, de manera que les automatitzacions, els scripts i els panells que els utilitzen deixen de funcionar. Torna a marcar la llar per tornar-los a afegir amb els noms i les àrees que els vas donar."
+        },
+        "sections": {
+          "bluetooth": {
+            "name": "Bluetooth",
+            "data": {
+              "bluetooth_tracking": "Seguiment per Bluetooth",
+              "bluetooth_excluded_speakers": "Altaveus no utilitzats per al seguiment per Bluetooth"
+            },
+            "data_description": {
+              "bluetooth_tracking": "Utilitza els altaveus per saber si el teu telèfon o altres dispositius Bluetooth són a casa. Després d'activar-lo, afegeix els dispositius que vulguis seguir amb «Afegeix un dispositiu Bluetooth» a la pàgina de la integració. Mentre estigui desactivat, la integració no envia cap sol·licitud Bluetooth als altaveus.",
+              "bluetooth_excluded_speakers": "Altaveus que no cerquen dispositius Bluetooth. Afegeix-hi un altaveu desendollat o fora de servei: mentre un altaveu no respon, els rastrejadors no poden mostrar «Fora»."
+            }
+          }
         }
       }
     },
