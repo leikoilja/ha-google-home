@@ -18,6 +18,7 @@ from .types import (
     AlarmJsonDict,
     GoogleHomeAlarmDict,
     GoogleHomeTimerDict,
+    JsonDict,
     TimerJsonDict,
 )
 
@@ -72,6 +73,9 @@ class GoogleHomeDevice:
         self.alarm_volume = GOOGLE_HOME_ALARM_DEFAULT_VALUE
         self._timers: list[GoogleHomeTimer] = []
         self._alarms: list[GoogleHomeAlarm] = []
+        # The last answer to a request for its alarms and timers, as it came, for
+        # diagnostics
+        self.alarms_reply: JsonDict | None = None
 
     def count_answer(self, status: int | None) -> bool:
         """Count the answer to this update's request, and return whether there was one.
