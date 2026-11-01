@@ -87,6 +87,8 @@ class OptionsFlowDict(TypedDict, total=False):
 
     update_interval: int
     known_hosts: list[str]
+    # The homes whose devices are added, of those the form offers
+    homes: list[str]
 
 
 type JsonDict = Mapping[

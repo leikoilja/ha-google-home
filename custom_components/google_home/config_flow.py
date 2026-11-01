@@ -12,18 +12,26 @@ from requests.exceptions import HTTPError, RequestException
 
 from homeassistant.config_entries import (
     SOURCE_REAUTH,
+    ConfigEntryState,
     ConfigFlow,
     ConfigFlowResult,
     OptionsFlow,
 )
 from homeassistant.core import callback
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
-from homeassistant.helpers.selector import SelectSelector, SelectSelectorConfig
+from homeassistant.helpers.selector import (
+    SelectOptionDict,
+    SelectSelector,
+    SelectSelectorConfig,
+    SelectSelectorMode,
+)
 
 from .api import GlocaltokensApiClient
 from .const import (
     BROWSER_TITLE,
     CONF_ANDROID_ID,
+    CONF_EXCLUDED_HOMES,
+    CONF_HOMES,
     CONF_KNOWN_HOSTS,
     CONF_MASTER_TOKEN,
     CONF_OAUTH_TOKEN,
@@ -40,6 +48,7 @@ from .types import GoogleHomeConfigEntry, OptionsFlowDict
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 STEP_BROWSER = "browser"
+STEP_HOMES = "homes"
 STEP_MASTER_TOKEN = "master_token"
 STEP_REAUTH = "reauth"
 
@@ -61,6 +70,14 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
     VERSION = 1
     # 2: app passwords that older versions saved are cleared
     MINOR_VERSION = 2
+
+    def __init__(self) -> None:
+        """Start without an entry to create."""
+        # The entry that the homes step creates, and the account's homes by ID, with
+        # their names
+        self._title = ""
+        self._data: dict[str, str] = {}
+        self._homes: dict[str, str] = {}
 
     @override
     async def async_step_user(
@@ -179,6 +196,11 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
             CONF_ANDROID_ID: await client.get_android_id(),
         }
         if self.source != SOURCE_REAUTH:
+            homes = await client.async_get_homes()
+            # Without a choice, or the homes, every home's devices are added
+            if len(homes) > 1:
+                self._title, self._data, self._homes = title, data, homes
+                return await self.async_step_homes()
             return self.async_create_entry(title=title, data=data)
         entry = self._get_reauth_entry()
         # Keep the saved address when Google doesn't give one
@@ -186,9 +208,38 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
         result = self.async_update_and_abort(entry, data_updates=data)
         # Not async_update_reload_and_abort(), which Home Assistant refuses from
         # 2026.12 for an entry with an update listener. This entry's listener reloads
-        # it only when known hosts change, and an entry that failed setup has none.
+        # it only when known hosts or homes change, and an entry that failed setup has
+        # none.
         self.hass.config_entries.async_schedule_reload(entry.entry_id)
         return result
+
+    async def async_step_homes(
+        self, user_input: dict[str, list[str]] | None = None
+    ) -> ConfigFlowResult:
+        """Choose the homes whose devices are added, when the account has several."""
+        errors: dict[str, str] = {}
+        selected = list(self._homes)
+        if user_input is not None:
+            selected = user_input[CONF_HOMES]
+            if selected:
+                excluded = sorted(self._homes.keys() - set(selected))
+                return self.async_create_entry(
+                    title=self._title,
+                    data=self._data,
+                    options={CONF_EXCLUDED_HOMES: excluded} if excluded else None,
+                )
+            errors[CONF_HOMES] = "no-home-selected"
+        return self.async_show_form(
+            step_id=STEP_HOMES,
+            data_schema=probatio.Schema(
+                {
+                    probatio.Required(CONF_HOMES, default=selected): _homes_selector(
+                        self._homes
+                    )
+                }
+            ),
+            errors=errors,
+        )
 
     def _saved_android_id(self) -> str | None:
         """Return the entry's Android ID when signing in again, to save it unchanged.
@@ -257,12 +308,20 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
 class GoogleHomeOptionsFlowHandler(OptionsFlow):
     """Config flow options handler for GoogleHome."""
 
+    def __init__(self) -> None:
+        """Start without offering homes."""
+        # The homes that the form offers, by ID, with their names. A home that the
+        # integration finds while the form is open is neither offered nor excluded.
+        self._homes: dict[str, str] = {}
+
     async def async_step_init(
         self, user_input: OptionsFlowDict | None = None
     ) -> ConfigFlowResult:
         """Manage the options."""
         errors: dict[str, str] = {}
         options: dict[str, object] = dict(self.config_entry.options)
+        saved = set(cast(list[str], options.get(CONF_EXCLUDED_HOMES, [])))
+        excluded = saved
         if user_input is not None:
             # Keep the order, which decides between hosts that report the same device
             known_hosts = list(
@@ -272,34 +331,74 @@ class GoogleHomeOptionsFlowHandler(OptionsFlow):
                     if host.strip()
                 )
             )
-            if all(_is_ip_address(host) for host in known_hosts):
-                return self.async_create_entry(
-                    data={**user_input, CONF_KNOWN_HOSTS: known_hosts}
-                )
-            errors[CONF_KNOWN_HOSTS] = "known-host-not-ip"
+            if not all(_is_ip_address(host) for host in known_hosts):
+                errors[CONF_KNOWN_HOSTS] = "known-host-not-ip"
+            # A home that the form didn't offer keeps its choice
+            offered = self._homes.keys()
+            excluded = (saved - offered) | (
+                offered - set(user_input.get(CONF_HOMES, []))
+            )
+            # Choosing no home is refused, unless none of them was added before
+            if offered and offered <= excluded and not offered <= saved:
+                errors[CONF_HOMES] = "no-home-selected"
+            if not errors:
+                data: dict[str, object] = {
+                    **user_input,
+                    CONF_KNOWN_HOSTS: known_hosts,
+                }
+                data.pop(CONF_HOMES, None)
+                if excluded:
+                    data[CONF_EXCLUDED_HOMES] = sorted(excluded)
+                return self.async_create_entry(data=data)
             options = {**options, **user_input}
 
+        entry = self.config_entry
+        homes = (
+            entry.runtime_data.client.homes
+            if entry.state is ConfigEntryState.LOADED
+            else {}
+        )
+        # Offer the homes when there's a choice, or a home to add again
+        self._homes = dict(homes) if len(homes) > 1 or homes.keys() & excluded else {}
+        schema: dict[probatio.Marker, object] = {
+            probatio.Optional(
+                CONF_UPDATE_INTERVAL,
+                default=options.get(CONF_UPDATE_INTERVAL, UPDATE_INTERVAL),
+            ): int,
+            probatio.Optional(
+                CONF_KNOWN_HOSTS,
+                default=options.get(CONF_KNOWN_HOSTS, []),
+            ): SelectSelector(
+                SelectSelectorConfig(custom_value=True, options=[], multiple=True)
+            ),
+        }
+        if self._homes:
+            schema[
+                probatio.Required(
+                    CONF_HOMES,
+                    default=[home for home in self._homes if home not in excluded],
+                )
+            ] = _homes_selector(self._homes)
         return self.async_show_form(
             step_id="init",
-            data_schema=probatio.Schema(
-                {
-                    probatio.Optional(
-                        CONF_UPDATE_INTERVAL,
-                        default=options.get(CONF_UPDATE_INTERVAL, UPDATE_INTERVAL),
-                    ): int,
-                    probatio.Optional(
-                        CONF_KNOWN_HOSTS,
-                        default=options.get(CONF_KNOWN_HOSTS, []),
-                    ): SelectSelector(
-                        SelectSelectorConfig(
-                            custom_value=True, options=[], multiple=True
-                        )
-                    ),
-                }
-            ),
+            data_schema=probatio.Schema(schema),
             errors=errors,
             description_placeholders={"default_interval": str(UPDATE_INTERVAL)},
         )
+
+
+def _homes_selector(homes: Mapping[str, str]) -> SelectSelector:
+    """Return a checkbox for each home, by name."""
+    return SelectSelector(
+        SelectSelectorConfig(
+            options=[
+                SelectOptionDict(value=home_id, label=name or home_id)
+                for home_id, name in sorted(homes.items(), key=lambda home: home[1])
+            ],
+            multiple=True,
+            mode=SelectSelectorMode.LIST,
+        )
+    )
 
 
 def _sign_in_error(error: InvalidMasterToken | RequestException, rejected: str) -> str:

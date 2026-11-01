@@ -33,6 +33,13 @@
           "master_token": "Začína sa aas_et/"
         }
       },
+      "homes": {
+        "title": "Výber domácností",
+        "description": "Váš účet Google je členom viacerých domácností. Vyberte domácnosti, ktorých reproduktory a displeje chcete pridať. Neskôr to môžete zmeniť v možnostiach integrácie.",
+        "data": {
+          "homes": "Domácnosti"
+        }
+      },
       "reauth": {
         "title": "Opätovné prihlásenie",
         "description": "Google už neprijíma prihlasovacie údaje uložené pre {name}. Znova sa prihláste do toho istého účtu Google: vaše zariadenia, entity a automatizácie zostanú bez zmeny. Kým to neurobíte, entity vašich zariadení môžu zobrazovať neaktuálne hodnoty alebo byť nedostupné.",
@@ -74,7 +81,8 @@
       "google-busy": "Google je preťažený alebo obmedzuje prihlasovanie. Počkajte niekoľko minút a potom sa znova prihláste.",
       "oauth-token-format": "Toto nie je súbor cookie oauth_token. Jeho hodnota sa začína oauth2_4/.",
       "master-token-format": "Hlavný token sa začína aas_et/ a má 223 znakov. Skopírujte celý token.",
-      "other-account": "Prihlásili ste sa do iného účtu Google, preto sa nič nezmenilo. Prihláste sa do účtu, ktorý táto integrácia používa. Ak chcete namiesto toho používať ten druhý účet, integráciu odstráňte a pridajte ju znova."
+      "other-account": "Prihlásili ste sa do iného účtu Google, preto sa nič nezmenilo. Prihláste sa do účtu, ktorý táto integrácia používa. Ak chcete namiesto toho používať ten druhý účet, integráciu odstráňte a pridajte ju znova.",
+      "no-home-selected": "Vyberte aspoň jednu domácnosť."
     }
   },
   "entity": {
@@ -154,15 +162,18 @@
       "init": {
         "data": {
           "update_interval": "Zmeniť interval aktualizácie. Zvýšte túto hodnotu, ak zariadeniam často vyprší časový limit. Predvolená hodnota: {default_interval} (sekúnd)",
-          "known_hosts": "Známi hostitelia"
+          "known_hosts": "Známi hostitelia",
+          "homes": "Domácnosti"
         },
         "data_description": {
-          "known_hosts": "IP adresy reproduktorov a displejov, ktoré integrácia nedokáže nájsť sama, napríklad preto, že sú v inej sieti alebo VLAN."
+          "known_hosts": "IP adresy reproduktorov a displejov, ktoré integrácia nedokáže nájsť sama, napríklad preto, že sú v inej sieti alebo VLAN.",
+          "homes": "Reproduktory a displeje z domácností, ktoré odznačíte, sa nepridajú. Ak domácnosť odznačíte, jej zariadenia a ich entity sa odstránia z Home Assistant, takže automatizácie, skripty a panely, ktoré ich používajú, prestanú fungovať. Ak domácnosť znova označíte, zariadenia sa vrátia s názvami a oblasťami, ktoré ste im dali."
         }
       }
     },
     "error": {
-      "known-host-not-ip": "Zadajte iba IP adresy, napríklad 192.168.1.20."
+      "known-host-not-ip": "Zadajte iba IP adresy, napríklad 192.168.1.20.",
+      "no-home-selected": "Vyberte aspoň jednu domácnosť."
     }
   },
   "services": {

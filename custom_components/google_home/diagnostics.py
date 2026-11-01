@@ -86,12 +86,17 @@ async def async_get_config_entry_diagnostics(
             }
         devices[device_id] = info
     # How many Cast devices that mDNS reported since the integration loaded aren't in
-    # Google's list, also those offline since. A fetch that drops a device from the
-    # list forgets its reports. None until a fetch of the list has worked, even one
-    # that listed no devices. A rejected token that marks the list to fetch again
-    # doesn't make it unknown.
+    # Google's list, also those offline since. Those of excluded homes are in Google's
+    # list, just not added. A fetch that drops a device from the list forgets its
+    # reports. None until a fetch of the list has worked, even one that listed no
+    # devices. A rejected token that marks the list to fetch again doesn't make it
+    # unknown.
     not_listed = (
-        len(found.cloud_device_ids - {d.cloud_device_id for d in listed.values()})
+        len(
+            found.cloud_device_ids
+            - {d.cloud_device_id for d in listed.values()}
+            - data.client.excluded_cloud_device_ids
+        )
         if data.client.google_devices_fetched_once
         else None
     )

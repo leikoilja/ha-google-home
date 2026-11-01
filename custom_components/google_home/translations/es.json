@@ -33,6 +33,13 @@
           "master_token": "Empieza por aas_et/"
         }
       },
+      "homes": {
+        "title": "Elegir casas",
+        "description": "Tu cuenta de Google es miembro de varias casas. Elige las casas cuyos altavoces y pantallas quieres añadir. Puedes cambiarlo más adelante en las opciones de la integración.",
+        "data": {
+          "homes": "Casas"
+        }
+      },
       "reauth": {
         "title": "Volver a iniciar sesión",
         "description": "Google ya no acepta los datos de inicio de sesión guardados para {name}. Vuelve a iniciar sesión en la misma cuenta de Google: tus dispositivos, entidades y automatizaciones se mantienen como están. Hasta que lo hagas, las entidades de tus dispositivos pueden mostrar valores desactualizados o no estar disponibles.",
@@ -74,7 +81,8 @@
       "google-busy": "Google está ocupado o está limitando los inicios de sesión. Espera unos minutos y vuelve a iniciar sesión.",
       "oauth-token-format": "Esta no es la cookie oauth_token. Su valor empieza por oauth2_4/.",
       "master-token-format": "Un token maestro empieza por aas_et/ y tiene 223 caracteres. Copia el token completo.",
-      "other-account": "Has iniciado sesión en otra cuenta de Google, por lo que no se ha cambiado nada. Inicia sesión con la cuenta que usa esta integración. Para usar esa otra cuenta, elimina la integración y vuelve a añadirla."
+      "other-account": "Has iniciado sesión en otra cuenta de Google, por lo que no se ha cambiado nada. Inicia sesión con la cuenta que usa esta integración. Para usar esa otra cuenta, elimina la integración y vuelve a añadirla.",
+      "no-home-selected": "Elige al menos una casa."
     }
   },
   "entity": {
@@ -154,15 +162,18 @@
       "init": {
         "data": {
           "update_interval": "Cambia el intervalo de actualización. Auméntalo si los dispositivos suelen agotar el tiempo de espera. Valor por defecto: {default_interval} (segundos)",
-          "known_hosts": "Hosts conocidos"
+          "known_hosts": "Hosts conocidos",
+          "homes": "Casas"
         },
         "data_description": {
-          "known_hosts": "Direcciones IP de altavoces y pantallas que la integración no puede encontrar por sí misma, por ejemplo porque están en otra red o VLAN."
+          "known_hosts": "Direcciones IP de altavoces y pantallas que la integración no puede encontrar por sí misma, por ejemplo porque están en otra red o VLAN.",
+          "homes": "Los altavoces y pantallas de las casas que desmarques no se añaden. Al desmarcar una casa, sus dispositivos y las entidades de estos se eliminan de Home Assistant, por lo que las automatizaciones, los scripts y los paneles de control que los usan dejan de funcionar. Vuelve a marcar la casa para añadirlos de nuevo con los nombres y las áreas que les diste."
         }
       }
     },
     "error": {
-      "known-host-not-ip": "Introduce solo direcciones IP, como 192.168.1.20."
+      "known-host-not-ip": "Introduce solo direcciones IP, como 192.168.1.20.",
+      "no-home-selected": "Elige al menos una casa."
     }
   },
   "services": {

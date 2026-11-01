@@ -33,6 +33,13 @@
           "master_token": "Commence par aas_et/"
         }
       },
+      "homes": {
+        "title": "Choisir les maisons",
+        "description": "Votre compte Google est membre de plusieurs maisons. Choisissez les maisons dont les enceintes et écrans doivent être ajoutés. Vous pourrez modifier ce choix plus tard dans les options de l'intégration.",
+        "data": {
+          "homes": "Maisons"
+        }
+      },
       "reauth": {
         "title": "Se reconnecter",
         "description": "Google n'accepte plus les identifiants de connexion enregistrés pour {name}. Reconnectez-vous au même compte Google : vos appareils, entités et automatisations restent tels quels. D'ici là, les entités de vos appareils peuvent afficher des valeurs obsolètes ou être indisponibles.",
@@ -74,7 +81,8 @@
       "google-busy": "Google est occupé ou limite les connexions. Patientez quelques minutes, puis reconnectez-vous.",
       "oauth-token-format": "Ce n'est pas le cookie oauth_token. Sa valeur commence par oauth2_4/.",
       "master-token-format": "Un jeton maître commence par aas_et/ et comporte 223 caractères. Copiez le jeton complet.",
-      "other-account": "Vous avez utilisé un autre compte Google pour vous connecter, rien n'a donc été modifié. Connectez-vous avec le compte qu'utilise cette intégration. Pour utiliser plutôt cet autre compte, supprimez l'intégration et ajoutez-la à nouveau."
+      "other-account": "Vous avez utilisé un autre compte Google pour vous connecter, rien n'a donc été modifié. Connectez-vous avec le compte qu'utilise cette intégration. Pour utiliser plutôt cet autre compte, supprimez l'intégration et ajoutez-la à nouveau.",
+      "no-home-selected": "Choisissez au moins une maison."
     }
   },
   "entity": {
@@ -154,15 +162,18 @@
       "init": {
         "data": {
           "update_interval": "Modifier l'intervalle de mise à jour. Augmentez cette valeur si vos appareils dépassent souvent le délai d'attente. Par défaut : {default_interval} (secondes)",
-          "known_hosts": "Hôtes connus"
+          "known_hosts": "Hôtes connus",
+          "homes": "Maisons"
         },
         "data_description": {
-          "known_hosts": "Adresses IP des enceintes et écrans que l'intégration ne trouve pas d'elle-même, par exemple parce qu'ils sont sur un autre réseau ou VLAN."
+          "known_hosts": "Adresses IP des enceintes et écrans que l'intégration ne trouve pas d'elle-même, par exemple parce qu'ils sont sur un autre réseau ou VLAN.",
+          "homes": "Les enceintes et écrans des maisons que vous désélectionnez ne sont pas ajoutés. Désélectionner une maison supprime ses appareils et leurs entités de Home Assistant : les automatisations, scripts et tableaux de bord qui les utilisent cessent alors de fonctionner. Sélectionnez à nouveau la maison pour les rajouter avec les noms et pièces que vous leur aviez donnés."
         }
       }
     },
     "error": {
-      "known-host-not-ip": "Saisissez uniquement des adresses IP, comme 192.168.1.20."
+      "known-host-not-ip": "Saisissez uniquement des adresses IP, comme 192.168.1.20.",
+      "no-home-selected": "Choisissez au moins une maison."
     }
   },
   "services": {

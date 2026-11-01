@@ -24,6 +24,7 @@ from .api import GlocaltokensApiClient
 from .const import (
     BROWSER_TITLE,
     CONF_ANDROID_ID,
+    CONF_EXCLUDED_HOMES,
     CONF_KNOWN_HOSTS,
     CONF_MASTER_TOKEN,
     CONF_UPDATE_INTERVAL,
@@ -99,6 +100,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -
         android_id=android_id,
         zeroconf_instance=zeroconf_instance,
         known_hosts=entry.options.get(CONF_KNOWN_HOSTS, []),
+        excluded_homes=entry.options.get(CONF_EXCLUDED_HOMES, []),
     )
 
     account = GoogleAccountCoordinator(
@@ -185,9 +187,13 @@ async def async_remove_config_entry_device(
 async def async_update_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -> None:
     """Apply changed options."""
     client = entry.runtime_data.client
-    # Known hosts are looked up when Google's device list is fetched, at setup
-    if entry.options.get(CONF_KNOWN_HOSTS, []) != client.known_hosts:
-        _LOGGER.debug("Known hosts changed, reloading...")
+    # Known hosts are looked up when Google's device list is fetched, at setup. The
+    # devices of excluded homes are removed when it's fetched after the reload.
+    if (
+        entry.options.get(CONF_KNOWN_HOSTS, []) != client.known_hosts
+        or set(entry.options.get(CONF_EXCLUDED_HOMES, [])) != client.excluded_homes
+    ):
+        _LOGGER.debug("Known hosts or homes changed, reloading...")
         hass.config_entries.async_schedule_reload(entry.entry_id)
         return
     _LOGGER.debug("Options updated, updating coordinator interval...")

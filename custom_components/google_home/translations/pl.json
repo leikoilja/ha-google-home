@@ -33,6 +33,13 @@
           "master_token": "Zaczyna się od aas_et/"
         }
       },
+      "homes": {
+        "title": "Wybierz domy",
+        "description": "Twoje konto Google jest członkiem kilku domów. Wybierz domy, których głośniki i wyświetlacze mają zostać dodane. Możesz to później zmienić w opcjach integracji.",
+        "data": {
+          "homes": "Domy"
+        }
+      },
       "reauth": {
         "title": "Zaloguj się ponownie",
         "description": "Google nie akceptuje już danych logowania zapisanych dla {name}. Zaloguj się ponownie na to samo konto Google: Twoje urządzenia, encje i automatyzacje pozostaną bez zmian. Dopóki tego nie zrobisz, encje Twoich urządzeń mogą pokazywać nieaktualne wartości lub być niedostępne.",
@@ -74,7 +81,8 @@
       "google-busy": "Google jest przeciążone lub ogranicza liczbę logowań. Odczekaj kilka minut, a następnie zaloguj się ponownie.",
       "oauth-token-format": "To nie jest plik cookie oauth_token. Jego wartość zaczyna się od oauth2_4/.",
       "master-token-format": "Token główny zaczyna się od aas_et/ i ma 223 znaki. Skopiuj cały token.",
-      "other-account": "Zalogowano się na inne konto Google, więc nic nie zostało zmienione. Zaloguj się na konto używane przez tę integrację. Aby zamiast tego używać tamtego konta, usuń integrację i dodaj ją ponownie."
+      "other-account": "Zalogowano się na inne konto Google, więc nic nie zostało zmienione. Zaloguj się na konto używane przez tę integrację. Aby zamiast tego używać tamtego konta, usuń integrację i dodaj ją ponownie.",
+      "no-home-selected": "Wybierz co najmniej jeden dom."
     }
   },
   "entity": {
@@ -154,15 +162,18 @@
       "init": {
         "data": {
           "update_interval": "Zmień interwał aktualizacji. Zwiększ go, jeśli urządzenia często przekraczają limit czasu odpowiedzi. Domyślnie: {default_interval} (sekund)",
-          "known_hosts": "Znane hosty"
+          "known_hosts": "Znane hosty",
+          "homes": "Domy"
         },
         "data_description": {
-          "known_hosts": "Adresy IP głośników i wyświetlaczy, których integracja nie może sama znaleźć, na przykład dlatego, że są w innej sieci lub sieci VLAN."
+          "known_hosts": "Adresy IP głośników i wyświetlaczy, których integracja nie może sama znaleźć, na przykład dlatego, że są w innej sieci lub sieci VLAN.",
+          "homes": "Głośniki i wyświetlacze z odznaczonych domów nie są dodawane. Odznaczenie domu usuwa jego urządzenia i ich encje z Home Assistanta, więc korzystające z nich automatyzacje, skrypty i panele przestają działać. Zaznacz dom ponownie, aby przywrócić urządzenia z nadanymi im nazwami i obszarami."
         }
       }
     },
     "error": {
-      "known-host-not-ip": "Wprowadź tylko adresy IP, na przykład 192.168.1.20."
+      "known-host-not-ip": "Wprowadź tylko adresy IP, na przykład 192.168.1.20.",
+      "no-home-selected": "Wybierz co najmniej jeden dom."
     }
   },
   "services": {

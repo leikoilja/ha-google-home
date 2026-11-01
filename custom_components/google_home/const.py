@@ -11,6 +11,11 @@ MANUFACTURER: Final = "Google Home"
 CONF_UPDATE_INTERVAL: Final = "update_interval"
 # Addresses of devices that mDNS can't find, for example on another network
 CONF_KNOWN_HOSTS: Final = "known_hosts"
+# IDs of the Google homes whose devices aren't added. Saved only when some are, so
+# an entry without it, and a home the account joins later, has its devices added.
+CONF_EXCLUDED_HOMES: Final = "excluded_homes"
+# The form field that chooses the homes whose devices are added
+CONF_HOMES: Final = "homes"
 
 ALARM_AND_TIMER_ID_LENGTH: Final = 42
 
