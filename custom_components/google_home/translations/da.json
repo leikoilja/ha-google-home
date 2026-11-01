@@ -184,11 +184,12 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Skift opdateringsinterval. Øg værdien, hvis dine enheder ofte får timeout. Standard: {default_interval} (sekunder)",
+          "update_interval": "Opdateringsinterval (sekunder)",
           "known_hosts": "Kendte værter",
           "homes": "Hjem"
         },
         "data_description": {
+          "update_interval": "Øg værdien, hvis dine enheder ofte ikke svarer i tide. Standard: {default_interval} sekunder.",
           "known_hosts": "IP-adresser på højttalere og skærme, som integrationen ikke selv kan finde, f.eks. fordi de er på et andet netværk eller VLAN.",
           "homes": "Højttalere og skærme i hjem, du fravælger, tilføjes ikke. Hvis du fravælger et hjem, fjernes dets enheder og deres entiteter fra Home Assistant, så automatiseringer, scripts og betjeningspaneler, der bruger dem, holder op med at virke. Vælg hjemmet igen for at få dem tilbage med de navne og områder, du gav dem."
         }

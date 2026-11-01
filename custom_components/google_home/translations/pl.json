@@ -184,11 +184,12 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Zmień interwał aktualizacji. Zwiększ go, jeśli urządzenia często przekraczają limit czasu odpowiedzi. Domyślnie: {default_interval} (sekund)",
+          "update_interval": "Interwał aktualizacji (w sekundach)",
           "known_hosts": "Znane hosty",
           "homes": "Domy"
         },
         "data_description": {
+          "update_interval": "Zwiększ tę wartość, jeśli Twoje urządzenia często nie odpowiadają na czas. Domyślnie: {default_interval} sekund.",
           "known_hosts": "Adresy IP głośników i wyświetlaczy, których integracja nie może sama znaleźć, na przykład dlatego, że są w innej sieci lub sieci VLAN.",
           "homes": "Głośniki i wyświetlacze z odznaczonych domów nie są dodawane. Odznaczenie domu usuwa jego urządzenia i ich encje z Home Assistanta, więc korzystające z nich automatyzacje, skrypty i panele przestają działać. Zaznacz dom ponownie, aby przywrócić urządzenia z nadanymi im nazwami i obszarami."
         }

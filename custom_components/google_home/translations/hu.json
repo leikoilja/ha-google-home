@@ -184,11 +184,12 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Módosítsa a frissítési időközt. Növelje ezt az értéket, ha az eszközök nem válaszolnak időben. Alapértelmezett: {default_interval} másodperc.",
+          "update_interval": "Frissítési időköz (másodperc)",
           "known_hosts": "Ismert hosztok",
           "homes": "Otthonok"
         },
         "data_description": {
+          "update_interval": "Növelje ezt az értéket, ha az eszközei gyakran nem válaszolnak időben. Alapértelmezett: {default_interval} másodperc.",
           "known_hosts": "Azon hangszórók és kijelzők IP-címei, amelyeket az integráció nem talál meg automatikusan, például mert másik hálózaton vagy VLAN-on vannak.",
           "homes": "Azoknak az otthonoknak a hangszóróit és kijelzőit, amelyek kijelölését megszünteti, az integráció nem adja hozzá. Ha megszünteti egy otthon kijelölését, az otthon eszközei és azok entitásai törlődnek a Home Assistantból, így az ezeket használó automatizmusok, szkriptek és irányítópultok nem működnek tovább. Jelölje ki újra az otthont, és az eszközök visszakerülnek az Ön által adott nevekkel és területekkel."
         }

@@ -184,11 +184,12 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Altere o intervalo de atualização. Aumente este valor se os dispositivos excederem frequentemente o tempo limite. Predefinição: {default_interval} (segundos)",
+          "update_interval": "Intervalo de atualização (segundos)",
           "known_hosts": "Anfitriões conhecidos",
           "homes": "Casas"
         },
         "data_description": {
+          "update_interval": "Aumente este valor se os seus dispositivos não responderem a tempo com frequência. Predefinição: {default_interval} segundos.",
           "known_hosts": "Endereços IP de altifalantes e ecrãs que a integração não consegue encontrar sozinha, por exemplo porque estão noutra rede ou VLAN.",
           "homes": "Os altifalantes e ecrãs das casas que desmarcar não são adicionados. Desmarcar uma casa remove do Home Assistant os respetivos dispositivos e as entidades destes, pelo que as automatizações, scripts e painéis que os utilizam deixam de funcionar. Volte a marcar a casa para os adicionar novamente com os nomes e as áreas que lhes atribuiu."
         }

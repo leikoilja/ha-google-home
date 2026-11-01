@@ -184,11 +184,12 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Aktualisierungsintervall ändern. Erhöhe diesen Wert, wenn bei deinen Geräten Zeitüberschreitungen auftreten. Standard: {default_interval} (Sekunden)",
+          "update_interval": "Aktualisierungsintervall (Sekunden)",
           "known_hosts": "Bekannte Hosts",
           "homes": "Zuhause"
         },
         "data_description": {
+          "update_interval": "Erhöhe diesen Wert, wenn deine Geräte oft nicht rechtzeitig antworten. Standard: {default_interval} Sekunden.",
           "known_hosts": "IP-Adressen von Lautsprechern und Displays, die die Integration nicht selbst findet, etwa weil sie in einem anderen Netzwerk oder VLAN sind.",
           "homes": "Lautsprecher und Displays in abgewählten Zuhause werden nicht hinzugefügt. Wenn du ein Zuhause abwählst, werden seine Geräte und deren Entitäten aus Home Assistant entfernt, sodass Automationen, Skripte und Dashboards, die sie verwenden, nicht mehr funktionieren. Wähle das Zuhause erneut aus, um sie mit den Namen und Bereichen wieder hinzuzufügen, die du ihnen gegeben hast."
         }

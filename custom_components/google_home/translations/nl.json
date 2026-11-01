@@ -184,11 +184,12 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Wijzig het update-interval. Verhoog dit als je apparaten vaak een time-out geven. Standaard: {default_interval} (seconden)",
+          "update_interval": "Update-interval (seconden)",
           "known_hosts": "Bekende hosts",
           "homes": "Huizen"
         },
         "data_description": {
+          "update_interval": "Verhoog dit als je apparaten vaak niet op tijd reageren. Standaard: {default_interval} seconden.",
           "known_hosts": "IP-adressen van speakers en schermen die de integratie zelf niet kan vinden, bijvoorbeeld omdat ze op een ander netwerk of VLAN staan.",
           "homes": "Speakers en schermen in huizen die je deselecteert, worden niet toegevoegd. Als je een huis deselecteert, worden de apparaten ervan en hun entiteiten uit Home Assistant verwijderd, waardoor automatiseringen, scripts en dashboards die ze gebruiken niet meer werken. Selecteer het huis opnieuw om ze terug te zetten met de namen en ruimtes die je ze had gegeven."
         }
