@@ -11,10 +11,11 @@ import probatio
 
 from homeassistant.components.sensor import SensorDeviceClass
 from homeassistant.const import STATE_UNAVAILABLE, EntityCategory
-from homeassistant.core import HomeAssistant, ServiceCall
+from homeassistant.core import HomeAssistant, ServiceCall, callback
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from homeassistant.helpers import config_validation as cv, service
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.typing import VolDictType, VolSchemaType
 
 from .const import (
     ALARM_AND_TIMER_ID_LENGTH,
@@ -94,7 +95,7 @@ def valid_id(kind: Literal["alarm", "timer"]) -> Callable[[str], str]:
 
 
 async def async_setup_entry(
-    hass: HomeAssistant,
+    _hass: HomeAssistant,
     entry: GoogleHomeConfigEntry,
     async_add_devices: AddEntitiesCallback,
 ) -> bool:
@@ -105,19 +106,44 @@ async def async_setup_entry(
     async_add_device_entities(
         entry, async_add_devices, GoogleHomeAlarmsSensor, GoogleHomeTimersSensor
     )
+    return True
 
-    # Services
+
+@callback
+def async_setup_actions(hass: HomeAssistant) -> None:
+    """Register the actions when the integration is set up, before its entry.
+
+    They then exist, so automations and scripts that use them stay valid, also
+    while the entry isn't loaded. A call then fails instead of doing nothing.
+    """
+
+    def entry_loaded(data: dict[str, object]) -> dict[str, object]:
+        # Unless the entry is loaded, raises Home Assistant's own translated
+        # error, which continue_on_error covers
+        service.async_get_config_entry(hass, DOMAIN, None)
+        return data
+
+    def when_loaded(fields: VolDictType) -> VolSchemaType:
+        """Check an action's data, then that the entry is loaded.
+
+        Home Assistant checks the data before it looks for the targeted sensors,
+        and finds none while the entry isn't loaded.
+        """
+        return probatio.All(cv.make_entity_service_schema(fields), entry_loaded)
+
     service.async_register_batched_platform_entity_service(
         hass,
         DOMAIN,
         SERVICE_DELETE_ALARM,
         entity_domain=SENSOR,
-        schema={
-            probatio.Required(SERVICE_ATTR_ALARM_ID): probatio.All(
-                cv.string, valid_id("alarm")
-            ),
-            probatio.Optional(SERVICE_ATTR_SKIP_REFRESH): cv.boolean,
-        },
+        schema=when_loaded(
+            {
+                probatio.Required(SERVICE_ATTR_ALARM_ID): probatio.All(
+                    cv.string, valid_id("alarm")
+                ),
+                probatio.Optional(SERVICE_ATTR_SKIP_REFRESH): cv.boolean,
+            }
+        ),
         func=partial(
             async_delete_from_devices,
             GoogleHomeAlarmsSensor.async_delete_alarm,
@@ -131,12 +157,14 @@ async def async_setup_entry(
         DOMAIN,
         SERVICE_DELETE_TIMER,
         entity_domain=SENSOR,
-        schema={
-            probatio.Required(SERVICE_ATTR_TIMER_ID): probatio.All(
-                cv.string, valid_id("timer")
-            ),
-            probatio.Optional(SERVICE_ATTR_SKIP_REFRESH): cv.boolean,
-        },
+        schema=when_loaded(
+            {
+                probatio.Required(SERVICE_ATTR_TIMER_ID): probatio.All(
+                    cv.string, valid_id("timer")
+                ),
+                probatio.Optional(SERVICE_ATTR_SKIP_REFRESH): cv.boolean,
+            }
+        ),
         func=partial(
             async_delete_from_devices,
             GoogleHomeTimersSensor.async_delete_timer,
@@ -150,7 +178,7 @@ async def async_setup_entry(
         DOMAIN,
         SERVICE_DELETE_ALL_ALARMS,
         entity_domain=SENSOR,
-        schema={probatio.Optional(SERVICE_ATTR_SKIP_REFRESH): cv.boolean},
+        schema=when_loaded({probatio.Optional(SERVICE_ATTR_SKIP_REFRESH): cv.boolean}),
         func=partial(
             async_delete_from_devices, GoogleHomeAlarmsSensor.async_delete_all
         ),
@@ -162,7 +190,7 @@ async def async_setup_entry(
         DOMAIN,
         SERVICE_DELETE_ALL_TIMERS,
         entity_domain=SENSOR,
-        schema={probatio.Optional(SERVICE_ATTR_SKIP_REFRESH): cv.boolean},
+        schema=when_loaded({probatio.Optional(SERVICE_ATTR_SKIP_REFRESH): cv.boolean}),
         func=partial(
             async_delete_from_devices, GoogleHomeTimersSensor.async_delete_all
         ),
@@ -174,7 +202,7 @@ async def async_setup_entry(
         DOMAIN,
         SERVICE_REBOOT,
         entity_domain=SENSOR,
-        schema={},
+        schema=when_loaded({}),
         func=async_reboot_devices,
     )
 
@@ -183,11 +211,9 @@ async def async_setup_entry(
         DOMAIN,
         SERVICE_REFRESH,
         entity_domain=SENSOR,
-        schema={},
+        schema=when_loaded({}),
         func=async_refresh_devices,
     )
-
-    return True
 
 
 async def async_refresh_devices(
