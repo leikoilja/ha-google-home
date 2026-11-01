@@ -25,13 +25,18 @@ To add the device straight away, reload the integration: **Settings** > **Device
 
 If the integration finds your devices only through [known hosts](#add-devices-on-another-network), add the new device's IP address there instead. Saving it reloads the integration, which then reaches the device at that address.
 
-To add back a speaker or display that you removed from the Google Home app:
+To add back a speaker or display that you removed from the Google Home app, or to replace one with another device:
 
-1. Wait until the integration has removed the old device from Home Assistant, usually 20 to 40 minutes after you removed it from the app, or delete it yourself; see [Remove a device](#remove-a-device). If the old device is still there when the new one appears, the new device's entities get IDs such as `sensor.kitchen_alarms_2` instead of `sensor.kitchen_alarms`.
-2. [Factory reset the device](https://support.google.com/googlenest/answer/7073477). Restarting it isn't enough.
-3. Set it up again in the Google Home app. Give it the same name to keep its entity IDs.
+1. If you're replacing a device, remove the old one from the Google Home app, even if it no longer works. Until you do, the integration keeps it and you can't delete it.
+2. Delete the old device in Home Assistant. First reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. Then open the old device's page, open the **⋮** menu and select **Delete**. You can also wait until the integration removes it, usually 20 to 40 minutes after you removed it from the app; see [Remove a device](#remove-a-device). If the old device is still there when the new one appears, the new device's entities get IDs such as `sensor.kitchen_alarms_2` instead of `sensor.kitchen_alarms`, and keep them after the old device is removed.
+3. If you're adding back the same device, [factory reset it](https://support.google.com/googlenest/answer/7073477). Restarting it isn't enough.
+4. Set up the device in the Google Home app. To get entity IDs like the old device's, give it the same name.
 
-Google gives the device a new ID, so the integration adds it as a new device, as described at the start of this section.
+Google gives the device a new ID, so the integration adds it as a new device with new entities, as described at the start of this section. Home Assistant doesn't carry over the old device's settings, such as its area, its name in Home Assistant and the entity IDs you changed.
+
+Home Assistant builds the new entity IDs from the device's name in the Google Home app, as for any new device. With the same name, they're usually the old device's original entity IDs, such as `sensor.kitchen_alarms`. In the languages where Home Assistant builds entity IDs from translated names, though, the new entities get translated IDs, such as `sensor.kitchen_wecker` in German, even if the old ones are in English. See [Entity names in other languages](entities.md#entity-names-in-other-languages).
+
+If an automation, script or manually configured dashboard card uses an old entity ID that the new device doesn't have, update it. You can also give the new entity the old ID once the old device is gone: on the device page, select the entity, then the settings (gear) icon, change **Entity ID** and select **Update**.
 
 If you deleted a device in Home Assistant yourself and it doesn't come back when the Google Home app lists it again, reload the integration.
 
