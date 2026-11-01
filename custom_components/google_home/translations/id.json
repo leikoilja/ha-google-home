@@ -216,11 +216,12 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Ubah interval pembaruan. Tingkatkan nilai ini jika perangkat Anda tidak merespons tepat waktu. Nilai default: {default_interval} detik.",
+          "update_interval": "Interval pembaruan (detik)",
           "known_hosts": "Host yang dikenal",
           "homes": "Rumah"
         },
         "data_description": {
+          "update_interval": "Tingkatkan nilai ini jika perangkat Anda sering tidak merespons tepat waktu. Nilai default: {default_interval} detik.",
           "known_hosts": "Alamat IP speaker dan layar yang tidak dapat ditemukan secara otomatis oleh integrasi, misalnya karena berada di jaringan atau VLAN lain.",
           "homes": "Speaker dan layar di rumah yang pilihannya Anda batalkan tidak ditambahkan. Membatalkan pilihan rumah akan menghapus perangkat rumah tersebut beserta entitasnya dari Home Assistant, sehingga otomasi, skrip, dan dasbor yang menggunakannya berhenti berfungsi. Pilih kembali rumah tersebut untuk menambahkan perangkatnya lagi dengan nama dan area yang telah Anda berikan."
         },

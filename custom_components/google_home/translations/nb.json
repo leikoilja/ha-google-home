@@ -216,11 +216,12 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Endre oppdateringsintervall. Øk dette hvis enhetene ofte får tidsavbrudd. Standard: {default_interval} (sekunder)",
+          "update_interval": "Oppdateringsintervall (sekunder)",
           "known_hosts": "Kjente verter",
           "homes": "Hjem"
         },
         "data_description": {
+          "update_interval": "Øk dette hvis enhetene dine ofte ikke svarer i tide. Standard: {default_interval} sekunder.",
           "known_hosts": "IP-adresser til høyttalere og skjermer som integrasjonen ikke finner selv, for eksempel fordi de er på et annet nettverk eller VLAN.",
           "homes": "Høyttalere og skjermer i hjem du velger bort, legges ikke til. Når du velger bort et hjem, fjernes enhetene i hjemmet og entitetene deres fra Home Assistant, slik at automatiseringer, skript og dashbord som bruker dem, slutter å fungere. Velg hjemmet igjen for å legge dem til på nytt med navnene og områdene du ga dem."
         },

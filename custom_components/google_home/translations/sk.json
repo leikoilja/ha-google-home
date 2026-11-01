@@ -216,11 +216,12 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Zmeniť interval aktualizácie. Zvýšte túto hodnotu, ak zariadeniam často vyprší časový limit. Predvolená hodnota: {default_interval} (sekúnd)",
+          "update_interval": "Interval aktualizácie (v sekundách)",
           "known_hosts": "Známi hostitelia",
           "homes": "Domácnosti"
         },
         "data_description": {
+          "update_interval": "Zvýšte túto hodnotu, ak vaše zariadenia často neodpovedajú včas. Predvolená hodnota: {default_interval} sekúnd.",
           "known_hosts": "IP adresy reproduktorov a displejov, ktoré integrácia nedokáže nájsť sama, napríklad preto, že sú v inej sieti alebo VLAN.",
           "homes": "Reproduktory a displeje z domácností, ktoré odznačíte, sa nepridajú. Ak domácnosť odznačíte, jej zariadenia a ich entity sa odstránia z Home Assistant, takže automatizácie, skripty a panely, ktoré ich používajú, prestanú fungovať. Ak domácnosť znova označíte, zariadenia sa vrátia s názvami a oblasťami, ktoré ste im dali."
         },

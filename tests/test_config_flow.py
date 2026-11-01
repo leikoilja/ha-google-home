@@ -939,8 +939,9 @@ async def test_options_show_default_interval(
 ) -> None:
     """Fill in 15 seconds for an entry without a saved interval, and show it as the default.
 
-    An entry that saved another interval keeps it, and still sees the default in
-    the label. Home Assistant can't show the label without its placeholder's value.
+    An entry that saved another interval keeps it, and still sees the default below
+    the field, not in the label. Home Assistant can't show the text below the field
+    without its placeholder's value.
     """
     hass.config_entries.async_update_entry(config_entry, options=options)
 
@@ -954,7 +955,9 @@ async def test_options_show_default_interval(
     text = ENGLISH["options"]["step"]["init"]
     placeholders = result["description_placeholders"] or {}
     label = text["data"]["update_interval"].format_map(placeholders)
-    assert "Default: 15 (seconds)" in label
+    below = text["data_description"]["update_interval"].format_map(placeholders)
+    assert "Default: 15 seconds" in below
+    assert "15" not in label
 
 
 async def test_options(hass: HomeAssistant, config_entry: MockConfigEntry) -> None:

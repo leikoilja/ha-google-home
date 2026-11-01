@@ -216,11 +216,12 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "업데이트 간격을 변경합니다. 기기가 제때 응답하지 않으면 이 값을 늘리세요. 기본값: {default_interval}초.",
+          "update_interval": "업데이트 간격(초)",
           "known_hosts": "알려진 호스트",
           "homes": "홈"
         },
         "data_description": {
+          "update_interval": "기기가 제때 응답하지 않는 경우가 많으면 이 값을 늘리세요. 기본값: {default_interval}초.",
           "known_hosts": "다른 네트워크나 VLAN에 있는 경우처럼 통합 구성 요소가 자동으로 찾을 수 없는 스피커 및 디스플레이의 IP 주소입니다.",
           "homes": "선택 해제한 홈의 스피커와 디스플레이는 추가되지 않습니다. 홈을 선택 해제하면 해당 홈의 기기와 엔티티가 Home Assistant에서 삭제되므로 이를 사용하는 자동화, 스크립트, 대시보드가 작동하지 않게 됩니다. 홈을 다시 선택하면 지정했던 이름과 영역 그대로 기기가 다시 추가됩니다."
         },

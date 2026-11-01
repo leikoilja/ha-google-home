@@ -216,11 +216,12 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Modifică intervalul de actualizare. Mărește această valoare dacă dispozitivele nu răspund la timp. Valoare implicită: {default_interval} (secunde).",
+          "update_interval": "Interval de actualizare (secunde)",
           "known_hosts": "Gazde cunoscute",
           "homes": "Case"
         },
         "data_description": {
+          "update_interval": "Mărește această valoare dacă dispozitivele tale nu răspund adesea la timp. Valoare implicită: {default_interval} secunde.",
           "known_hosts": "Adresele IP ale difuzoarelor și ecranelor pe care integrarea nu le poate găsi automat, de exemplu pentru că se află în altă rețea sau în alt VLAN.",
           "homes": "Difuzoarele și ecranele din casele pe care le debifezi nu sunt adăugate. Dacă debifezi o casă, dispozitivele ei și entitățile acestora sunt eliminate din Home Assistant, astfel că automatizările, scripturile și tablourile de bord care le folosesc nu mai funcționează. Bifează din nou casa pentru a le adăuga înapoi cu numele și spațiile pe care li le-ai dat."
         },

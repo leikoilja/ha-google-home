@@ -216,11 +216,12 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Change the update interval. Increase this if your devices do not respond in time. Default: {default_interval} (seconds)",
+          "update_interval": "Update interval (seconds)",
           "known_hosts": "Known hosts",
           "homes": "Homes"
         },
         "data_description": {
+          "update_interval": "Increase this if your devices often don't answer in time. Default: {default_interval} seconds.",
           "known_hosts": "IP addresses of speakers and displays that the integration can't find on its own, for example because they're on another network or VLAN.",
           "homes": "Speakers and displays in homes you deselect aren't added. Deselecting a home removes its devices and their entities from Home Assistant, so automations, scripts and dashboards that use them stop working. Select the home again to add them back with the names and areas you gave them."
         },

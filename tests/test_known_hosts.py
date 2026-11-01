@@ -232,6 +232,33 @@ def test_known_hosts_skip_addresses_mdns_found() -> None:
     assert office.ip_address == "fd00::2"
 
 
+def test_known_host_that_stopped_answering_asked_between_fetches() -> None:
+    """Ask a known host between fetches again once it didn't answer a fetch.
+
+    It said before that it's another device, such as the other speaker of a pair,
+    which isn't asked between fetches, but its address may be the kitchen speaker's now.
+    """
+    kitchen = device("Kitchen", "AAAA")
+    answers: dict[str, tuple[str, str] | Exception] = {
+        "10.0.1.5": ("Den speaker right", "eeee")
+    }
+    client = GlocaltokensApiClient(
+        Mock(),
+        fake_session(answers),
+        master_token=MASTER_TOKEN,
+        known_hosts=["10.0.1.5"],
+    )
+    client.google_devices = [kitchen]
+    asyncio.run(client.async_use_known_hosts())
+    answers["10.0.1.5"] = TimeoutError()
+    asyncio.run(client.async_use_known_hosts())
+
+    answers["10.0.1.5"] = ("Kitchen", "aaaa")
+    asyncio.run(client.async_use_known_hosts(between_fetches=True))
+
+    assert kitchen.ip_address == "10.0.1.5"
+
+
 @pytest.mark.parametrize(
     ("no_alarms", "replies", "asked"),
     [

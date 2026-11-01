@@ -216,11 +216,12 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "變更更新間隔。如果裝置無法及時回應，請增加此值。預設為 {default_interval} 秒。",
+          "update_interval": "更新間隔（秒）",
           "known_hosts": "已知主機",
           "homes": "住家"
         },
         "data_description": {
+          "update_interval": "如果你的裝置經常無法及時回應，請增加此值。預設為 {default_interval} 秒。",
           "known_hosts": "此整合無法自動找到的音箱和螢幕的 IP 位址，例如位於其他網路或 VLAN 的裝置。",
           "homes": "不會加入你取消選取的住家中的音箱和螢幕。取消選取住家會從 Home Assistant 移除該住家的裝置及其實體，因此使用這些裝置的自動化、腳本和儀表板將無法運作。重新選取該住家，即可依你先前設定的名稱和分區重新加入這些裝置。"
         },

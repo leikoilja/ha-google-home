@@ -216,11 +216,12 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Modifier l'intervalle de mise à jour. Augmentez cette valeur si vos appareils dépassent souvent le délai d'attente. Par défaut : {default_interval} (secondes)",
+          "update_interval": "Intervalle de mise à jour (secondes)",
           "known_hosts": "Hôtes connus",
           "homes": "Maisons"
         },
         "data_description": {
+          "update_interval": "Augmentez cette valeur si vos appareils tardent souvent à répondre. Par défaut : {default_interval} secondes.",
           "known_hosts": "Adresses IP des enceintes et écrans que l'intégration ne trouve pas d'elle-même, par exemple parce qu'ils sont sur un autre réseau ou VLAN.",
           "homes": "Les enceintes et écrans des maisons que vous désélectionnez ne sont pas ajoutés. Désélectionner une maison supprime ses appareils et leurs entités de Home Assistant : les automatisations, scripts et tableaux de bord qui les utilisent cessent alors de fonctionner. Sélectionnez à nouveau la maison pour les rajouter avec les noms et pièces que vous leur aviez donnés."
         },

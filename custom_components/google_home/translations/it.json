@@ -216,11 +216,12 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Modifica l'intervallo di aggiornamento. Aumentalo se i dispositivi vanno spesso in timeout. Predefinito: {default_interval} (secondi)",
+          "update_interval": "Intervallo di aggiornamento (secondi)",
           "known_hosts": "Host noti",
           "homes": "Case"
         },
         "data_description": {
+          "update_interval": "Aumentalo se i tuoi dispositivi spesso non rispondono in tempo. Predefinito: {default_interval} secondi.",
           "known_hosts": "Indirizzi IP di altoparlanti e display che l'integrazione non riesce a trovare da sola, ad esempio perché si trovano su un'altra rete o VLAN.",
           "homes": "Gli altoparlanti e i display delle case che deselezioni non vengono aggiunti. Se deselezioni una casa, i suoi dispositivi e le relative entità vengono rimossi da Home Assistant, quindi le automazioni, gli script e le plance che li usano smettono di funzionare. Seleziona di nuovo la casa per riaggiungerli con i nomi e le aree che avevi assegnato loro."
         },
