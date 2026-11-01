@@ -160,6 +160,26 @@
       "message": "Estos dispositivos no han confirmado que se vayan a reiniciar: {devices}. Comprueba que estén en línea y vuelve a intentarlo más tarde."
     }
   },
+  "issues": {
+    "polling_disabled": {
+      "title": "El sondeo de cambios está deshabilitado",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "El sondeo de cambios está deshabilitado",
+            "description": "La opción **Habilitar el sondeo de cambios** está deshabilitada en las opciones de sistema de la integración, así que la integración no consulta tus dispositivos por sí misma. Las alarmas, los temporizadores y las demás entidades solo se actualizan cuando lo pides, por ejemplo con la acción **Actualizar dispositivos**. Para saber qué sigue funcionando, consulta {docs_url} (en inglés).\n\nSi vuelves a habilitar el sondeo, la integración se recarga y después consulta tus dispositivos según su intervalo de actualización. Si lo mantienes deshabilitado, esta reparación se oculta hasta que habilites el sondeo y lo vuelvas a deshabilitar.",
+            "menu_options": {
+              "turn_on": "Volver a habilitar el sondeo",
+              "keep_off": "Mantener el sondeo deshabilitado y ocultar esta reparación"
+            }
+          }
+        },
+        "abort": {
+          "polling_kept_off": "El sondeo sigue deshabilitado y esta reparación se ha ocultado."
+        }
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {

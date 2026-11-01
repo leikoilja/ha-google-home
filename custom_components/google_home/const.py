@@ -38,6 +38,14 @@ SERVICE_ATTR_ALARM_ID: Final = "alarm_id"
 SERVICE_ATTR_SKIP_REFRESH: Final = "skip_refresh"
 SERVICE_ATTR_TIMER_ID: Final = "timer_id"
 
+# The repair shown while polling is turned off in the entry's system options, and
+# the docs that its text links to. Home Assistant shows a fixable repair's fix
+# straight away, without a learn_more_url.
+ISSUE_POLLING_DISABLED: Final = "polling_disabled"
+POLLING_DOCS_URL: Final = (
+    "https://ha-google-home.pages.dev/configuration/#turn-off-polling"
+)
+
 # Configuration and options
 CONF_ANDROID_ID: Final = "android_id"
 CONF_USERNAME: Final = "username"

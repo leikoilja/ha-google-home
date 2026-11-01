@@ -1,6 +1,6 @@
 # Configuration and management
 
-After you [set up the integration](installation.md), you can change how often it checks your devices, add and remove devices, reach devices on another network, choose the homes whose devices it adds, and remove the integration. If Home Assistant asks you to sign in again, see [Sign in again](troubleshooting.md#sign-in-again).
+After you [set up the integration](installation.md), you can change how often it checks your devices or turn that off, add and remove devices, reach devices on another network, choose the homes whose devices it adds, and remove the integration. If Home Assistant asks you to sign in again, see [Sign in again](troubleshooting.md#sign-in-again).
 
 ## Change the update interval
 
@@ -23,6 +23,42 @@ If a speaker or display with alarms and timers often shows `false` in the `avail
 **Configure** shows the interval in use. If you saved these options in version 1.15 or older, for example to add known hosts, it's the interval you saved, which was 180 seconds unless you changed it. To use the new default, enter 15 and select **Submit**.
 
 To update immediately, use the [Refresh devices](actions.md#refresh-devices) action.
+
+## Turn off polling
+
+You can stop the integration from checking your devices on its own: go to **Settings** > **Devices & services** > **Google Home** > **⋮** > **System options** and turn off **Enable polling for changes**. Most of what the integration shows then changes only when you ask for an update, so turn polling off only if you update your devices yourself, for example from an automation.
+
+While polling is off:
+
+- When Home Assistant starts or the integration reloads, the integration gets your devices from Google and asks each device once, so its entities show current values.
+- Alarms, timers and the other entities update only when you run [Refresh devices](actions.md#refresh-devices) or [`homeassistant.update_entity`](https://www.home-assistant.io/actions/homeassistant.update_entity/), or after an action that deletes alarms or timers. The other actions still work.
+- A device that goes offline keeps its entities available until it misses 5 of these updates in a row.
+- At an update, the integration also gets your devices from Google when it's due: if it last did at least 20 minutes before, or if mDNS found a Cast device that Google's list doesn't have at least 30 seconds before. Devices and homes that you add in or remove from the Google Home app change in Home Assistant only at these updates, as described in [Add a device](#add-a-device) and [Remove a device](#remove-a-device). A device that you removed goes once Google's list has lacked it at two of these updates in a row. To see a change straight away, reload the integration.
+- When a device's access token changes, usually within a day, the integration gets the new token from Google at the device's next update. If an action fails because the device rejected its token, run Refresh devices, then try the action again.
+
+This automation updates your devices every 5 minutes. List the [device sensor](entities.md#device-sensor) of each device to update:
+
+```yaml
+alias: Update Google Home devices
+triggers:
+  - trigger: time_pattern
+    minutes: "/5"
+actions:
+  - action: homeassistant.update_entity
+    target:
+      entity_id:
+        - sensor.kitchen_device
+        - sensor.living_room_device
+```
+
+It uses `homeassistant.update_entity` rather than Refresh devices, which Home Assistant doesn't run while the sensors it targets are unavailable. When a device misses 5 updates in a row, for example while it's unplugged, its sensors become unavailable. A Refresh devices automation that targets them then updates no device at all, and with polling off nothing else makes them available again. `homeassistant.update_entity` updates the device of each entity you list, even one that's unavailable.
+
+While polling is off, **Settings** > **System** > **Repairs** shows **Polling for changes is turned off**. Select it, then choose:
+
+- **Turn polling back on**: the integration reloads, checks your devices at the [update interval](#change-the-update-interval) again, and the repair goes away. Turning **Enable polling for changes** back on in **System options** does the same once the integration reloads.
+- **Keep polling off and hide this repair**: Home Assistant hides the repair, also after a restart. It shows again if you turn polling on and later off again. To find it while it's hidden, open the **⋮** menu in **Repairs** and select **Show ignored repairs**.
+
+Closing the repair without choosing changes nothing.
 
 ## Add a device
 

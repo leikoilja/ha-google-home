@@ -160,6 +160,26 @@
       "message": "Disse enhetene bekreftet ikke at de vil starte på nytt: {devices}. Kontroller at enhetene er på nett, og prøv igjen senere."
     }
   },
+  "issues": {
+    "polling_disabled": {
+      "title": "Polling av oppdateringer er slått av",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Polling av oppdateringer er slått av",
+            "description": "**Aktiver polling av oppdateringer** er slått av i systemalternativene for integrasjonen, så integrasjonen sjekker ikke enhetene dine på egen hånd. Alarmer, timere og andre entiteter oppdateres bare når du ber om det, for eksempel med handlingen **Oppdater enheter**. Se hva som fortsatt fungerer, her: {docs_url}.\n\nHvis du slår polling på igjen, lastes integrasjonen inn på nytt, og deretter sjekker den enhetene dine med oppdateringsintervallet. Hvis du lar polling være slått av, skjules denne reparasjonen til du slår polling på og deretter av igjen.",
+            "menu_options": {
+              "turn_on": "Slå polling på igjen",
+              "keep_off": "La polling være av og skjul denne reparasjonen"
+            }
+          }
+        },
+        "abort": {
+          "polling_kept_off": "Polling forblir av, og denne reparasjonen er skjult."
+        }
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {

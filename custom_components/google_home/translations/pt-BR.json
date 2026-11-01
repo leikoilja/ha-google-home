@@ -160,6 +160,26 @@
       "message": "Os seguintes dispositivos não confirmaram que vão reiniciar: {devices}. Verifique se os dispositivos estão online e tente novamente mais tarde."
     }
   },
+  "issues": {
+    "polling_disabled": {
+      "title": "A sondagem de alterações está desabilitada",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "A sondagem de alterações está desabilitada",
+            "description": "A opção **Habilitar sondagem de alterações** está desabilitada nas opções do sistema da integração, então a integração não verifica seus dispositivos por conta própria. Alarmes, temporizadores e outras entidades só são atualizados quando você pede, por exemplo com a ação **Atualizar dispositivos**. Para saber o que continua funcionando, consulte {docs_url}.\n\nSe você habilitar a sondagem de novo, a integração é recarregada e depois verifica seus dispositivos no intervalo de atualização. Se você a mantiver desabilitada, este reparo fica oculto até você habilitar a sondagem e depois desabilitá-la de novo.",
+            "menu_options": {
+              "turn_on": "Habilitar a sondagem de novo",
+              "keep_off": "Manter a sondagem desabilitada e ocultar este reparo"
+            }
+          }
+        },
+        "abort": {
+          "polling_kept_off": "A sondagem continua desabilitada e este reparo foi ocultado."
+        }
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {

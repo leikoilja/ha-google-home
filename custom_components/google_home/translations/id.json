@@ -160,6 +160,26 @@
       "message": "Perangkat berikut tidak mengonfirmasi bahwa perangkat tersebut akan dimulai ulang: {devices}. Pastikan semuanya online dan coba lagi nanti."
     }
   },
+  "issues": {
+    "polling_disabled": {
+      "title": "Polling untuk perubahan dinonaktifkan",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Polling untuk perubahan dinonaktifkan",
+            "description": "Opsi **Aktifkan polling untuk perubahan** dinonaktifkan di opsi sistem integrasi, sehingga integrasi tidak memeriksa perangkat Anda secara mandiri. Alarm, timer, dan entitas lainnya hanya diperbarui saat Anda memintanya, misalnya dengan aksi **Perbarui status perangkat**. Untuk mengetahui apa saja yang masih berfungsi, lihat {docs_url}.\n\nJika Anda mengaktifkan polling kembali, integrasi akan dimuat ulang, lalu memeriksa perangkat Anda sesuai interval pembaruannya. Jika Anda membiarkannya nonaktif, perbaikan ini disembunyikan hingga Anda mengaktifkan polling lalu menonaktifkannya lagi.",
+            "menu_options": {
+              "turn_on": "Aktifkan kembali polling",
+              "keep_off": "Biarkan polling nonaktif dan sembunyikan perbaikan ini"
+            }
+          }
+        },
+        "abort": {
+          "polling_kept_off": "Polling tetap nonaktif, dan perbaikan ini disembunyikan."
+        }
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {

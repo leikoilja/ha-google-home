@@ -769,7 +769,7 @@ async def test_listener_after_setup_waits(
     """Time the first update from when setup ends, when another speaker holds it up 10 s."""
     google.return_value = [kitchen_speaker(), bedroom_speaker()]
     held = Held(SUPPORTED[ALARMS])
-    replies[BEDROOM] = dict(SUPPORTED) | {ALARMS: held}
+    replies[BEDROOM] = {**SUPPORTED, ALARMS: held}
     freezer.move_to(datetime.fromtimestamp(FIRE, UTC))
     hass.config_entries.async_update_entry(
         config_entry, options={CONF_UPDATE_INTERVAL: INTERVAL}

@@ -284,6 +284,20 @@ class GoogleHomeDeviceCoordinator(DataUpdateCoordinator[GoogleHomeDevice | None]
         self._sampled_at = started
         self.update_interval = self._next_interval(device)
 
+    @override
+    async def async_request_refresh(self) -> None:
+        """Ask for an update, as an action or a refresh of the entity does.
+
+        While polling is off, ask for an update of the account first, as nothing else
+        updates it. It fetches Google's list when due or unknown, and starts a round in
+        which a device that rejects its token can get a new one. Home Assistant runs
+        one such update at a time: a request while it runs, such as for another device
+        of the same refresh, doesn't wait for it.
+        """
+        if self.config_entry.pref_disable_polling:
+            await self.config_entry.runtime_data.account.async_request_refresh()
+        await super().async_request_refresh()
+
     def _listed(self) -> GoogleHomeDevice | None:
         """Return the device as Google's list has it now, if it does."""
         return next(

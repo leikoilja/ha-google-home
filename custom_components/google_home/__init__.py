@@ -14,8 +14,8 @@ from glocaltokens.utils.token import is_aas_et
 from homeassistant.components import zeroconf
 from homeassistant.config_entries import ConfigEntryState
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
-from homeassistant.core import HomeAssistant
-from homeassistant.helpers import config_validation as cv
+from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers import config_validation as cv, issue_registry as ir
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.device_registry import DeviceEntry
 from homeassistant.helpers.typing import ConfigType
@@ -29,6 +29,7 @@ from .const import (
     CONF_MASTER_TOKEN,
     CONF_UPDATE_INTERVAL,
     DOMAIN,
+    ISSUE_POLLING_DISABLED,
     MASTER_TOKEN_TITLE,
     PLATFORMS,
     UPDATE_INTERVAL,
@@ -113,6 +114,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -
     # started too early to fetch for found devices runs longer than its cooldown
     found_devices.request_update = account.async_refresh
     entry.async_on_unload(found_devices.async_stop)
+    # Before the first refresh, so it also shows while setup is retried
+    async_show_polling_disabled(hass, entry)
+    if entry.pref_disable_polling:
+        # The fetches for devices that mDNS finds are scheduled too, so they stop
+        found_devices.async_stop()
     # Before the first refresh, so the devices that mDNS already knows are found
     # before setup fetches Google's list, which then covers them
     async_browse_cast_devices(hass, entry, zeroconf_instance, found_devices)
@@ -140,6 +146,31 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -
         )
 
     entry.async_on_unload(entry.add_update_listener(async_update_entry))
+
+
+@callback
+def async_show_polling_disabled(
+    hass: HomeAssistant, entry: GoogleHomeConfigEntry
+) -> None:
+    """Show a repair while polling is turned off, which can turn it back on.
+
+    Home Assistant reloads the entry when the setting changes, so setup shows or
+    removes it. Removing it also forgets that the user hid it. It isn't kept over a
+    restart, except whether it's hidden, and goes with the entry.
+    """
+    if not entry.pref_disable_polling:
+        ir.async_delete_issue(hass, DOMAIN, ISSUE_POLLING_DISABLED)
+        return
+    ir.async_create_issue(
+        hass,
+        DOMAIN,
+        ISSUE_POLLING_DISABLED,
+        config_entry_id=entry.entry_id,
+        data={"entry_id": entry.entry_id},
+        is_fixable=True,
+        severity=ir.IssueSeverity.WARNING,
+        translation_key=ISSUE_POLLING_DISABLED,
+    )
 
 
 async def async_name_after_account(

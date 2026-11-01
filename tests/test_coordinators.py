@@ -680,7 +680,7 @@ async def test_nothing_asked_after_unload(
     """
     await set_up(hass, config_entry)
     held = Held(SUPPORTED[ALARMS])
-    replies[BEDROOM] = dict(SUPPORTED) | {ALARMS: held}
+    replies[BEDROOM] = {**SUPPORTED, ALARMS: held}
     google.return_value = [kitchen_speaker(), bedroom_speaker()]
     clock.return_value = FETCH_DEVICES_INTERVAL
     await runtime(config_entry).account.async_refresh()

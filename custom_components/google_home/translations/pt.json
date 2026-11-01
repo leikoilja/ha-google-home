@@ -160,6 +160,26 @@
       "message": "Os seguintes dispositivos não confirmaram que vão reiniciar: {devices}. Verifique se estão online e tente novamente mais tarde."
     }
   },
+  "issues": {
+    "polling_disabled": {
+      "title": "A procura por alterações está desativada",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "A procura por alterações está desativada",
+            "description": "A opção **Ativar procura por alterações** está desativada nas opções do sistema da integração, pelo que a integração não verifica os seus dispositivos por iniciativa própria. Os alarmes, temporizadores e outras entidades só são atualizados quando o pedir, por exemplo com a ação **Atualizar dispositivos**. Para saber o que continua a funcionar, consulte {docs_url}.\n\nSe voltar a ativar a procura, a integração é recarregada e depois passa a verificar os seus dispositivos de acordo com o intervalo de atualização. Se a mantiver desativada, esta correção fica oculta até ativar a procura e voltar a desativá-la.",
+            "menu_options": {
+              "turn_on": "Voltar a ativar a procura",
+              "keep_off": "Manter a procura desativada e ocultar esta correção"
+            }
+          }
+        },
+        "abort": {
+          "polling_kept_off": "A procura continua desativada e esta correção foi ocultada."
+        }
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {

@@ -160,6 +160,26 @@
       "message": "Disse enheder bekræftede ikke, at de genstarter: {devices}. Kontrollér, at de er online, og prøv igen senere."
     }
   },
+  "issues": {
+    "polling_disabled": {
+      "title": "Automatisk hentning af opdateringer er slået fra",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Automatisk hentning af opdateringer er slået fra",
+            "description": "**Aktivér automatisk hentning af opdateringer** er slået fra i integrationens systemindstillinger, så integrationen tjekker ikke selv dine enheder. Alarmer, timere og andre entiteter opdateres kun, når du beder om det, f.eks. med handlingen **Opdater enheder**. Se, hvad der stadig virker, her: {docs_url}.\n\nHvis du slår automatisk hentning til igen, genindlæses integrationen, og derefter tjekker den dine enheder med det indstillede opdateringsinterval. Hvis du lader den være slået fra, skjules denne reparation, indtil du slår automatisk hentning til og derefter fra igen.",
+            "menu_options": {
+              "turn_on": "Slå automatisk hentning til igen",
+              "keep_off": "Lad automatisk hentning være slået fra og skjul denne reparation"
+            }
+          }
+        },
+        "abort": {
+          "polling_kept_off": "Automatisk hentning forbliver slået fra, og denne reparation er skjult."
+        }
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {

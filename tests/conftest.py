@@ -3,6 +3,7 @@
 import asyncio
 from collections.abc import Awaitable, Callable, Iterator
 from dataclasses import dataclass, field
+from http import HTTPStatus
 import re
 from typing import Concatenate, cast
 from unittest.mock import MagicMock, Mock, patch
@@ -24,13 +25,16 @@ from custom_components.google_home.const import (
     CONF_PASSWORD,
     CONF_USERNAME,
     DOMAIN,
+    HEADER_CAST_LOCAL_AUTH,
 )
 
 # ruff sorts homeassistant as first-party, pylint as third-party
 # pylint: disable=wrong-import-order
+from homeassistant.components.repairs import RepairsFlowContext, RepairsFlowManager
 from homeassistant.config_entries import ConfigEntriesFlowManager, OptionsFlowManager
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowManager, FlowResult, FlowResultType
+from homeassistant.helpers import issue_registry as ir
 from homeassistant.helpers.translation import async_get_translations
 from script.check_translations import placeholders
 
@@ -70,8 +74,19 @@ class Held:
     released: asyncio.Event = field(default_factory=asyncio.Event)
 
 
+@dataclass
+class ForToken:
+    """A reply in the replies table to requests with this token.
+
+    Requests with another token are rejected, as by a speaker whose token changed.
+    """
+
+    token: str
+    reply: Reply
+
+
 # What each speaker answers, by address and endpoint
-type Replies = dict[str, dict[str, Reply | Held]]
+type Replies = dict[str, dict[str, Reply | Held | ForToken]]
 
 
 @pytest.fixture(name="clock")
@@ -87,7 +102,9 @@ def fixture_clock() -> Iterator[Mock]:
         yield monotonic
 
 
-async def assert_flow_text(manager: FlowManager, result: FlowResult) -> None:
+async def assert_flow_text(
+    manager: FlowManager, result: FlowResult, issue_id: str | None = None
+) -> None:
     """Check that the flow's step, menu options, errors and abort reason have English text.
 
     Home Assistant looks the text up under the result's translation domain, which it
@@ -98,10 +115,20 @@ async def assert_flow_text(manager: FlowManager, result: FlowResult) -> None:
     texts, from the result's description placeholders. It shows an error instead of
     a text whose placeholder has no value. A menu's title and a form's submit button
     get no values, so they can't have placeholders.
+
+    The fix of a repair has its texts under the repair's issue ID, or translation key
+    while it has one.
     """
-    category = "options" if isinstance(manager, OptionsFlowManager) else "config"
     domain = result.get("translation_domain") or DOMAIN
-    prefix = f"component.{domain}.{category}"
+    if isinstance(manager, RepairsFlowManager):
+        # A finished fix removes the repair
+        issue = ir.async_get(manager.hass).async_get_issue(domain, cast(str, issue_id))
+        key = issue.translation_key if issue and issue.translation_key else issue_id
+        category = "issues"
+        prefix = f"component.{domain}.issues.{key}.fix_flow"
+    else:
+        category = "options" if isinstance(manager, OptionsFlowManager) else "config"
+        prefix = f"component.{domain}.{category}"
     text = await async_get_translations(manager.hass, "en", category, [domain])
     keys = [
         f"{prefix}.error.{error}" for error in (result.get("errors") or {}).values()
@@ -128,6 +155,20 @@ async def assert_flow_text(manager: FlowManager, result: FlowResult) -> None:
     assert {key: missing for key, missing in unfilled.items() if missing} == {}
 
 
+def repair_issue_id(
+    manager: object, args: tuple[object, ...], kwargs: dict[str, object]
+) -> str | None:
+    """Return the repair whose fix a call starts or continues, if it's a repair's fix.
+
+    Before the call: a fix that it finishes or aborts no longer says.
+    """
+    if not isinstance(manager, RepairsFlowManager):
+        return None
+    if "context" in kwargs:
+        return cast(RepairsFlowContext, kwargs["context"])["issue_id"]
+    return manager.async_get(cast(str, args[0]))["context"]["issue_id"]
+
+
 @pytest.fixture(name="flow_text", autouse=True)
 def fixture_flow_text() -> Iterator[None]:
     """Fail a flow that shows a step, menu option, error or abort reason without English text.
@@ -139,8 +180,11 @@ def fixture_flow_text() -> Iterator[None]:
         method: Callable[Concatenate[M, P], Awaitable[R]],
     ) -> Callable[Concatenate[M, P], Awaitable[R]]:
         async def check(manager: M, /, *args: P.args, **kwargs: P.kwargs) -> R:
+            issue_id = repair_issue_id(manager, args, kwargs)
             result = await method(manager, *args, **kwargs)
-            await assert_flow_text(cast(FlowManager, manager), cast(FlowResult, result))
+            await assert_flow_text(
+                cast(FlowManager, manager), cast(FlowResult, result), issue_id
+            )
             return result
 
         return check
@@ -209,14 +253,20 @@ def fixture_google(
 def fixture_replies(aioclient_mock: AiohttpClientMocker) -> Replies:
     """Answer each request to a speaker as this table says when it's sent.
 
-    By address and endpoint, as in test_unsupported_devices, or Held to answer only
-    once released. The speaker at SPEAKER is a Google or Nest speaker.
+    By address and endpoint, as in test_unsupported_devices, Held to answer only once
+    released, or ForToken to answer only requests with that token. The speaker at
+    SPEAKER is a Google or Nest speaker.
     """
     replies: Replies = {SPEAKER: dict(SUPPORTED)}
     endpoints = {**ENDPOINTS, API_ENDPOINT_ALARM_DELETE: DELETE}
 
     async def answer(method: str, url: URL, _data: object) -> AiohttpClientMockResponse:
+        # The mock records the request, with its headers, just before asking this
+        _, _, _, headers = aioclient_mock.mock_calls[-1]
         reply = replies[str(url.host)][endpoints[url.path_qs.removeprefix("/")]]
+        if isinstance(reply, ForToken):
+            token = (headers or {}).get(HEADER_CAST_LOCAL_AUTH)
+            reply = reply.reply if token == reply.token else HTTPStatus.UNAUTHORIZED
         if isinstance(reply, Held):
             reply.asked.set()
             await reply.released.wait()
