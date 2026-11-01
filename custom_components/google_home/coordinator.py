@@ -100,12 +100,12 @@ class GoogleAccountCoordinator(DataUpdateCoordinator[dict[str, GoogleHomeDevice]
     async def _async_remove_unlisted_devices(
         self, listed: dict[str, GoogleHomeDevice]
     ) -> None:
-        """Remove the entry's devices, with their entities, that home graphs have lacked.
+        """Remove the entry's devices that enough home graphs in a row lack, with their entities.
 
-        Once enough home graphs in a row lack a device, also one that no home graph has
-        had since the integration loaded, as Google may have dropped it before. Nothing
-        is removed while the list is unknown. A device that Google lists again later
-        gets a new coordinator and entities.
+        That includes a device that no home graph has had since the integration loaded,
+        as Google may have dropped it before. Nothing is removed while the list is
+        unknown. A device that Google lists again later gets a new coordinator and
+        entities.
         """
         if not self.client.google_devices_fetched:
             return
