@@ -12,6 +12,7 @@ import json
 import logging
 from unittest.mock import Mock, patch
 
+import probatio
 import pytest
 from pytest_homeassistant.common import MockConfigEntry, async_capture_events
 from pytest_homeassistant.components.diagnostics import get_diagnostics_for_config_entry
@@ -32,7 +33,11 @@ from homeassistant.const import (
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
-from homeassistant.helpers import device_registry as dr, entity_registry as er
+from homeassistant.helpers import (
+    config_validation as cv,
+    device_registry as dr,
+    entity_registry as er,
+)
 from homeassistant.setup import async_setup_component
 
 from .conftest import SPEAKER_ID, SPEAKER_NAME
@@ -410,6 +415,27 @@ async def test_options_save_bluetooth(
         "bluetooth_tracking": True,
         "bluetooth_excluded_speakers": [SPEAKER_ID],
     }
+
+
+async def test_options_show_saved_bluetooth_options(
+    hass: HomeAssistant, config_entry: MockConfigEntry
+) -> None:
+    """Show the saved Bluetooth options in their section when the options open.
+
+    The frontend fills a section from the section's default, not from the defaults
+    of the fields in it, so that default must hold the saved options.
+    """
+    saved = {"bluetooth_tracking": True, "bluetooth_excluded_speakers": ["gone"]}
+    hass.config_entries.async_update_entry(config_entry, options=saved)
+
+    result = await hass.config_entries.options.async_init(config_entry.entry_id)
+
+    # As Home Assistant sends the form to the frontend
+    fields = probatio.to_field_list(
+        result["data_schema"], custom_serializer=cv.custom_serializer
+    )
+    (bluetooth,) = [field for field in fields if field["name"] == "bluetooth"]
+    assert (bluetooth["type"], bluetooth["default"]) == ("expandable", saved)
 
 
 @pytest.mark.usefixtures("google", "replies")

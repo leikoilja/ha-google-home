@@ -409,21 +409,26 @@ class GoogleHomeOptionsFlowHandler(OptionsFlow):
                     default=[home for home in self._homes if home not in excluded],
                 )
             ] = _homes_selector(self._homes)
-        # Under a heading of their own, so they don't run on from the homes
-        schema[probatio.Optional(SECTION_BLUETOOTH, default={})] = section(
+        bluetooth: dict[str, object] = {
+            CONF_BLUETOOTH_TRACKING: options.get(CONF_BLUETOOTH_TRACKING, False),
+            CONF_BLUETOOTH_EXCLUDED: options.get(CONF_BLUETOOTH_EXCLUDED, []),
+        }
+        # Under a heading of their own, so they don't run on from the homes. The
+        # frontend shows a section's default, not the defaults of its fields.
+        schema[probatio.Optional(SECTION_BLUETOOTH, default=bluetooth)] = section(
             probatio.Schema(
                 {
                     probatio.Optional(
                         CONF_BLUETOOTH_TRACKING,
-                        default=options.get(CONF_BLUETOOTH_TRACKING, False),
+                        default=bluetooth[CONF_BLUETOOTH_TRACKING],
                     ): bool,
                     probatio.Optional(
                         CONF_BLUETOOTH_EXCLUDED,
-                        default=options.get(CONF_BLUETOOTH_EXCLUDED, []),
+                        default=bluetooth[CONF_BLUETOOTH_EXCLUDED],
                     ): SelectSelector(
                         SelectSelectorConfig(
                             options=self._speaker_options(
-                                options.get(CONF_BLUETOOTH_EXCLUDED, [])
+                                bluetooth[CONF_BLUETOOTH_EXCLUDED]
                             ),
                             multiple=True,
                         )

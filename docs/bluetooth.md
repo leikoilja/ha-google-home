@@ -53,7 +53,7 @@ While it can't tell, the tracker keeps its last state for 5 minutes, so a speake
 If that speaker is unplugged or out of service, tell the integration not to use it:
 
 1. Go to **Settings** > **Devices & services** > **Google Home** and select **Configure**.
-2. Under **Speakers not used for Bluetooth tracking**, select the speaker, then select **Submit**.
+2. Under **Bluetooth**, select the speaker in **Speakers not used for Bluetooth tracking**, then select **Submit**.
 
 You can't delete a speaker that Google still lists in your home, even when it's offline, so excluding it is the way to stop it from blocking `not_home`.
 
