@@ -44,7 +44,7 @@ So a phone shows `home` within 60 seconds of arriving, and `not_home` 60 to 90 s
 
 Starting as `unknown` after a restart keeps automations from seeing you leave and come back each time Home Assistant restarts.
 
-While [polling is turned off](configuration.md#turn-off-polling) in the integration's system options, the speakers don't scan on their own, and [Refresh devices](actions.md#refresh-devices) doesn't make them scan, so trackers usually stay `unknown`. Running [`homeassistant.update_entity`](https://www.home-assistant.io/actions/homeassistant.update_entity/) on a tracker runs one round of scans, and it shows `home` or `not_home` only after enough rounds, as described above.
+While [polling is turned off](configuration.md#turn-off-polling) in the integration's system options, the speakers don't scan on their own, and [Refresh devices](actions.md#refresh-devices) doesn't make them scan, so trackers usually stay `unknown`.
 
 ## Tracker is unavailable
 
