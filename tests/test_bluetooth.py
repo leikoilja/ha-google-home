@@ -25,6 +25,7 @@ from custom_components.google_home.bluetooth import (
     BluetoothScanUnsupported,
     TrackedDevice,
     TrackerState,
+    TrackerUpdate,
     async_get_bluetooth_scan_results,
     async_start_bluetooth_scan,
     normalize_mac,
@@ -126,8 +127,8 @@ def make_scanner(
     )
 
 
-def update(scanner: BluetoothScanner, speakers: Speakers, now: float) -> TrackerState:
-    """Run an update at a time and return the phone's state."""
+def run(scanner: BluetoothScanner, speakers: Speakers, now: float) -> TrackerUpdate:
+    """Run an update at a time and return the phone's update."""
     with (
         patch(f"{BLUETOOTH}.monotonic", return_value=now),
         patch(
@@ -140,6 +141,11 @@ def update(scanner: BluetoothScanner, speakers: Speakers, now: float) -> Tracker
         ),
     ):
         return asyncio.run(scanner.async_update())[PHONE]
+
+
+def update(scanner: BluetoothScanner, speakers: Speakers, now: float) -> TrackerState:
+    """Run an update at a time and return the phone's state."""
+    return run(scanner, speakers, now).state
 
 
 def states(
@@ -461,7 +467,170 @@ def test_warn_about_speaker_that_blocks_away(caplog: pytest.LogCaptureFixture) -
     assert warning.startswith("Garage hasn't answered Bluetooth scans for 5 minutes")
 
 
-def tracker(data: dict[str, TrackerState] | None) -> GoogleHomeBluetoothTracker:
+def test_speakers_show_median_rssi_over_window() -> None:
+    """Show each speaker's median RSSI, strongest first, once the window completes.
+
+    A speaker needs two readings of -80 dBm or stronger in the window.
+    """
+    speakers = Speakers("Kitchen", "Bedroom", "Garage", "Office")
+    scanner = make_scanner(speakers)
+    phone = rpa(IRK)
+    others = {
+        60: {"bedroom": -40},
+        90: {"garage": -80},
+        120: {"office": -81},
+        240: {"bedroom": -46},
+        270: {"garage": -78},
+        300: {"office": -60},
+    }
+
+    assert run(scanner, speakers, 0) == TrackerUpdate(UNKNOWN, {})
+    # Home from 30, so the window runs to 330
+    # A strong reflection first, and a reading too weak to count last
+    kitchen = [-30, -52, -54, -56, -58, -60, -62, -64, -66, -68, -90]
+    shown = []
+    for now, value in zip(range(30, 331, 30), kitchen, strict=True):
+        rssi = {"kitchen": value, **others.get(now, {})}
+        speakers.results = {
+            speaker: [heard(phone, strength)] for speaker, strength in rssi.items()
+        }
+        shown.append(run(scanner, speakers, now))
+
+    assert shown[:-1] == [TrackerUpdate(HOME, {})] * 10
+    # Kitchen: the middle two of its ten readings that count, -58 and -60, which the
+    # reflection doesn't move. Office has only one reading strong enough.
+    assert list(shown[-1].speakers.items()) == [
+        ("Bedroom", -43),
+        ("Kitchen", -59),
+        ("Garage", -79),
+    ]
+    # The next window has only just started
+    speakers.results = {"kitchen": [heard(phone, -70)]}
+    assert run(scanner, speakers, 360).speakers == shown[-1].speakers
+
+
+def test_speakers_empty_after_window_without_two_readings() -> None:
+    """Show no speakers after a window in which none heard the phone twice, even if it stays home."""
+    speakers = Speakers("Kitchen", "Bedroom")
+    scanner = make_scanner(speakers)
+    speakers.results = {"kitchen": [heard(rpa(IRK))], "bedroom": [heard(rpa(IRK))]}
+    assert states(scanner, speakers, range(0, 330, 30))[-1] == HOME
+    assert run(scanner, speakers, 330).speakers == {"Bedroom": -50, "Kitchen": -50}
+
+    # Kitchen stops answering, so the phone stays home, and Bedroom hears it once more
+    speakers.failing.add("kitchen")
+    run(scanner, speakers, 360)
+    speakers.results = {}
+    shown = [run(scanner, speakers, now) for now in range(390, 631, 30)]
+
+    assert shown[-2] == TrackerUpdate(HOME, {"Bedroom": -50, "Kitchen": -50})
+    assert shown[-1] == TrackerUpdate(HOME, {})
+
+
+def test_speakers_restart_when_state_changes() -> None:
+    """Show no speakers as soon as the phone leaves, and until a full window after it returns.
+
+    Readings from before it left never count after it returns.
+    """
+    speakers = Speakers("Kitchen", "Bedroom")
+    scanner = make_scanner(speakers)
+    phone = rpa(IRK)
+    speakers.results = {"kitchen": [heard(phone, -60)]}
+    assert states(scanner, speakers, range(0, 330, 30))[-1] == HOME
+    assert run(scanner, speakers, 330).speakers == {"Kitchen": -60}
+
+    # Bedroom hears it twice before it leaves
+    speakers.results["bedroom"] = [heard(phone, -40)]
+    states(scanner, speakers, range(360, 420, 30))
+    speakers.results = {}
+    # The scan that started at 360 was the last to hear it
+    assert run(scanner, speakers, 420) == TrackerUpdate(HOME, {"Kitchen": -60})
+    assert run(scanner, speakers, 450) == TrackerUpdate(NOT_HOME, {})
+
+    # Home again at 480, so the window runs to 780
+    speakers.results = {"kitchen": [heard(phone, -70)]}
+    shown = [run(scanner, speakers, now) for now in range(480, 781, 30)]
+
+    assert shown[:-1] == [TrackerUpdate(HOME, {})] * 10
+    assert shown[-1] == TrackerUpdate(HOME, {"Kitchen": -70})
+
+
+def test_speakers_count_one_reading_per_scan() -> None:
+    """Count the phone's old and new address heard in one scan as one reading, at the stronger RSSI."""
+    speakers = Speakers("Kitchen", "Bedroom")
+    scanner = make_scanner(speakers)
+    both = [heard(rpa(IRK, b"\x43\x74\x2b"), -50), heard(rpa(IRK), -70)]
+    speakers.results = {"kitchen": both, "bedroom": both}
+    assert states(scanner, speakers, range(0, 60, 30)) == [UNKNOWN, HOME]
+
+    # Bedroom heard it in only one scan of the window that started at 30
+    speakers.results = {"kitchen": both}
+    states(scanner, speakers, range(60, 330, 30))
+
+    assert run(scanner, speakers, 330).speakers == {"Kitchen": -50}
+
+
+def test_speakers_count_only_fresh_scans() -> None:
+    """Leave out readings from a scan read too late to count for presence."""
+    speakers = Speakers("Kitchen", "Bedroom")
+    scanner = make_scanner(speakers)
+    speakers.results = {"kitchen": [heard(rpa(IRK), -60)]}
+    assert states(scanner, speakers, range(0, 60, 30)) == [UNKNOWN, HOME]
+
+    # Bedroom hears it in two scans, but the update after 120 is delayed until
+    # 180, so the second scan's results are discarded
+    states(scanner, speakers, range(60, 120, 30))
+    speakers.results["bedroom"] = [heard(rpa(IRK), -40)]
+    run(scanner, speakers, 120)
+    assert run(scanner, speakers, 180).state == HOME
+    del speakers.results["bedroom"]
+    states(scanner, speakers, range(210, 330, 30))
+
+    assert run(scanner, speakers, 330) == TrackerUpdate(HOME, {"Kitchen": -60})
+
+
+def test_speakers_with_same_name_count_separately() -> None:
+    """Count each speaker's own readings, even when two speakers share a name.
+
+    Speakers that share a name share an entry, with the stronger median.
+    """
+    speakers = Speakers("Kitchen", "Bedroom", "Office")
+    speakers.devices[1].name = "Kitchen"
+    scanner = make_scanner(speakers)
+    phone = rpa(IRK)
+    speakers.results = {"office": [heard(phone, -60)]}
+    assert states(scanner, speakers, range(0, 60, 30)) == [UNKNOWN, HOME]
+
+    # In the window that started at 30, each speaker named Kitchen hears the
+    # phone once, while Office keeps it home
+    speakers.results["kitchen"] = [heard(phone, -40)]
+    run(scanner, speakers, 60)
+    speakers.results = {"office": [heard(phone, -60)], "bedroom": [heard(phone, -44)]}
+    run(scanner, speakers, 90)
+    speakers.results = {"office": [heard(phone, -60)]}
+    states(scanner, speakers, range(120, 330, 30))
+    assert run(scanner, speakers, 330).speakers == {"Office": -60}
+
+    # In the next window, both hear it in every scan
+    speakers.results.update(kitchen=[heard(phone, -50)], bedroom=[heard(phone, -70)])
+    states(scanner, speakers, range(360, 630, 30))
+    assert run(scanner, speakers, 630).speakers == {"Kitchen": -50, "Office": -60}
+
+
+def test_speakers_named_as_google_lists_them() -> None:
+    """Show a speaker renamed partway through a window by its new name only."""
+    speakers = Speakers("Kitchen")
+    scanner = make_scanner(speakers)
+    speakers.results = {"kitchen": [heard(rpa(IRK))]}
+    assert states(scanner, speakers, range(0, 180, 30))[-1] == HOME
+
+    speakers.devices[0].name = "Lounge"
+    states(scanner, speakers, range(180, 330, 30))
+
+    assert run(scanner, speakers, 330).speakers == {"Lounge": -50}
+
+
+def tracker(data: dict[str, TrackerUpdate] | None) -> GoogleHomeBluetoothTracker:
     """Return the phone's tracker, with the coordinator's latest states."""
     coordinator = Mock(data=data, last_update_success=True)
     return GoogleHomeBluetoothTracker(coordinator, subentry({"irk": IRK.hex()}))
@@ -480,7 +649,7 @@ def test_tracker_state(
     state: TrackerState, is_connected: bool | None, available: bool
 ) -> None:
     """Show home, away, unknown or unavailable."""
-    entity = tracker({PHONE: state})
+    entity = tracker({PHONE: TrackerUpdate(state, {})})
 
     assert entity.is_connected is is_connected
     assert entity.available is available
@@ -493,7 +662,7 @@ def test_tracker_unknown_before_first_update() -> None:
 
 def test_tracker_unavailable_when_update_fails() -> None:
     """Show unavailable after an update that failed unexpectedly, whatever the last state."""
-    entity = tracker({PHONE: HOME})
+    entity = tracker({PHONE: TrackerUpdate(HOME, {})})
     entity.coordinator.last_update_success = False
 
     assert not entity.available

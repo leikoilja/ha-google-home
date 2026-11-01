@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
     from .api import GlocaltokensApiClient
-    from .bluetooth import TrackerState
+    from .bluetooth import TrackerUpdate
     from .coordinator import GoogleAccountCoordinator, GoogleHomeDeviceCoordinator
 
 
@@ -126,7 +126,7 @@ class GoogleHomeData:
     # By device ID, every device that Google has listed since setup, until removed
     devices: dict[str, GoogleHomeDeviceCoordinator]
     # Bluetooth tracking, while it's on and has devices to track
-    bluetooth: DataUpdateCoordinator[dict[str, TrackerState]] | None = None
+    bluetooth: DataUpdateCoordinator[dict[str, TrackerUpdate]] | None = None
     # The Bluetooth settings the entry was set up with, to reload when they change
     bluetooth_config: tuple[bool, frozenset[str], frozenset[str]] | None = None
 
