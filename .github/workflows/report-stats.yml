@@ -1,0 +1,97 @@
+name: Report stats
+
+# Runs after "Linting" in the context of this repository, so it can set
+# statuses even for PRs from forks. It never checks out or runs the PR's
+# code: it only reads the numbers that the PR's jobs saved.
+on:
+  workflow_run: # zizmor: ignore[dangerous-triggers]
+    workflows:
+      - Linting
+    types:
+      - completed
+
+env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GH_REPO: ${{ github.repository }}
+  HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+  RUN_ID: ${{ github.event.workflow_run.id }}
+  RUN_URL: ${{ github.event.workflow_run.html_url }}
+
+jobs:
+  report:
+    name: Set statuses
+    # A run from a fork that awaits approval has no jobs yet
+    if: >-
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion != 'action_required'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      actions: read
+      statuses: write
+    steps:
+      # A job that fails uploads nothing, and its status says so instead
+      - name: Download coverage stats
+        continue-on-error: true
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: coverage-stats
+          path: stats
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download translation stats
+        continue-on-error: true
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: translation-stats
+          path: stats
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      # The PR controls the stats, including through its own copy of the
+      # Linting workflow, so only the expected numbers are accepted. Each
+      # job's result comes from its latest attempt, so a failed re-run
+      # replaces an earlier number instead of leaving it on the commit.
+      - name: Set statuses
+        run: |
+          JOBS=$(gh api "repos/${GH_REPO}/actions/runs/${RUN_ID}/jobs" --jq '[.jobs[] | {name, id, conclusion, started_at}]')
+
+          # Show the stats if the job succeeded, or why there are none
+          post() {
+            local context=$1 job=$2 artifact=$3 description=$4 state=success id conclusion started saved
+            id=$(jq -r --arg job "${job}" 'map(select(.name == $job))[0].id // empty' <<<"${JOBS}")
+            conclusion=$(jq -r --arg job "${job}" 'map(select(.name == $job))[0].conclusion // "not found"' <<<"${JOBS}")
+            started=$(jq -r --arg job "${job}" 'map(select(.name == $job))[0].started_at // empty' <<<"${JOBS}")
+            # The download took the artifact of this name with the highest ID.
+            # If the job was re-run and its upload failed, that one is from an
+            # earlier attempt, created before the job's latest start. A job
+            # that wasn't re-run keeps its start time, so its upload counts.
+            saved=$(gh api "repos/${GH_REPO}/actions/runs/${RUN_ID}/artifacts?name=${artifact}" \
+              --jq '.artifacts | max_by(.id) | .created_at // empty')
+            if [ "${conclusion}" = failure ]; then
+              state=failure description="${job}: failure"
+            elif [ "${conclusion}" != success ]; then
+              state=error description="${job}: ${conclusion}"
+            elif [ -z "${description}" ] || [[ ${saved} < ${started} ]]; then
+              state=error description="${job} saved no valid stats"
+            fi
+            gh api --method POST "repos/${GH_REPO}/statuses/${HEAD_SHA}" \
+              -f state="${state}" -f context="${context}" -f description="${description}" \
+              -f target_url="${RUN_URL}#summary-${id}" >/dev/null
+          }
+
+          COVERAGE=$(head -c 16 stats/coverage.txt 2>/dev/null) || true
+          if [[ ! ${COVERAGE} =~ ^(100\.00|[0-9]{1,2}\.[0-9]{2})$ ]]; then
+            COVERAGE=""
+          fi
+          TRANSLATIONS=$(head -c 1024 stats/translations.json 2>/dev/null | jq -rn '
+            input
+            | select(type == "object" and .complete <= .translations and
+                ([.translations, .complete, .missing] | all(type == "number" and . >= 0 and . <= 100000 and . == floor)))
+            | if .complete == .translations then "All \(.translations) translations complete"
+              else "\(.complete) of \(.translations) translations complete, \(.missing) string\(if .missing == 1 then "" else "s" end) missing"
+              end' 2>/dev/null) || true
+
+          post Coverage Pre-commit coverage-stats "${COVERAGE:+${COVERAGE}%}"
+          post "Translation coverage" Translations translation-stats "${TRANSLATIONS}"

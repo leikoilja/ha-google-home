@@ -326,6 +326,44 @@ def test_cli_allows_english_only_changes_and_writes_summary(
     assert translations.main([]) == 1
 
 
+def test_cli_writes_stats(git_repo: Path) -> None:
+    """Count complete translations and the strings shown in English instead."""
+    directory = git_repo / translations.TRANSLATIONS
+    (directory / "en.json").write_text(
+        '{"help": "See {docs_url}", "new": "New feature"}', encoding="utf-8"
+    )
+    (directory / "de.json").write_text(
+        '{"help": "See {url}", "new": "Neu"}', encoding="utf-8"
+    )
+    (directory / "fr.json").write_text(
+        '{"help": "Voir {docs_url}", "new": "Nouveauté"}', encoding="utf-8"
+    )
+    (directory / "nl.json").write_text('{"help": "Zie {docs_url}"}', encoding="utf-8")
+    stats = git_repo / "stats.json"
+
+    assert translations.main(["--base-ref", "HEAD", "--stats", str(stats)]) == 0
+    # French is complete. German's unchanged "help" has the old placeholder,
+    # and Dutch lacks "new": one string each that is shown in English.
+    assert json.loads(stats.read_text(encoding="utf-8")) == {
+        "translations": 3,
+        "complete": 1,
+        "missing": 2,
+    }
+
+
+def test_cli_keeps_result_when_stats_cannot_be_written(
+    git_repo: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """Informational stats never change the check's result or its summary."""
+    stats = git_repo / "missing" / "stats.json"
+
+    assert translations.main(["--base-ref", "HEAD", "--stats", str(stats)]) == 0
+    assert "| de.json | 1/1 | 0 | 0 | 0 |" in (git_repo / "summary.md").read_text(
+        encoding="utf-8"
+    )
+    assert "Cannot write --stats" in capsys.readouterr().err
+
+
 @pytest.mark.parametrize("content", [b'{"help":', b"\xef\xbb\xbf{}", b"\xff"])
 def test_broken_base_can_be_repaired(git_repo: Path, content: bytes) -> None:
     """An unreadable base file is treated as empty when checking its replacement."""
