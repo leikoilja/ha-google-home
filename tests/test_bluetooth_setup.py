@@ -7,7 +7,7 @@ which the replies table doesn't have.
 """
 
 import base64
-from collections.abc import Iterator
+from collections.abc import Iterator, Mapping
 import json
 import logging
 from typing import cast
@@ -418,20 +418,12 @@ async def test_options_save_bluetooth(
     }
 
 
-async def test_options_show_saved_bluetooth_options(
-    hass: HomeAssistant, config_entry: MockConfigEntry
-) -> None:
-    """Show the saved Bluetooth options in their section when the options open.
+def bluetooth_section(result: Mapping[str, object]) -> tuple[object, object]:
+    """Return the type and default of the form's Bluetooth section, as the frontend gets them.
 
     The frontend fills a section from the section's default, not from the defaults
-    of the fields in it, so that default must hold the saved options.
+    of the fields in it.
     """
-    saved = {"bluetooth_tracking": True, "bluetooth_excluded_speakers": ["gone"]}
-    hass.config_entries.async_update_entry(config_entry, options=saved)
-
-    result = await hass.config_entries.options.async_init(config_entry.entry_id)
-
-    # As Home Assistant sends the form to the frontend
     fields = cast(
         list[dict[str, object]],
         probatio.to_field_list(
@@ -439,7 +431,44 @@ async def test_options_show_saved_bluetooth_options(
         ),
     )
     (bluetooth,) = (field for field in fields if field["name"] == "bluetooth")
-    assert (bluetooth["type"], bluetooth["default"]) == ("expandable", saved)
+    return bluetooth["type"], bluetooth["default"]
+
+
+async def test_options_show_saved_bluetooth_options(
+    hass: HomeAssistant, config_entry: MockConfigEntry
+) -> None:
+    """Show the saved Bluetooth options in their section when the options open."""
+    saved = {"bluetooth_tracking": True, "bluetooth_excluded_speakers": ["gone"]}
+    hass.config_entries.async_update_entry(config_entry, options=saved)
+
+    result = await hass.config_entries.options.async_init(config_entry.entry_id)
+
+    assert bluetooth_section(result) == ("expandable", saved)
+
+
+async def test_options_error_keeps_submitted_bluetooth_options(
+    hass: HomeAssistant, config_entry: MockConfigEntry
+) -> None:
+    """Show the Bluetooth options just submitted when the form comes back with an error.
+
+    Otherwise the section would show the saved options again, and the next Submit
+    would save them, undoing the change.
+    """
+    hass.config_entries.async_update_entry(
+        config_entry,
+        options={"bluetooth_tracking": False, "bluetooth_excluded_speakers": ["gone"]},
+    )
+    submitted = {"bluetooth_tracking": True, "bluetooth_excluded_speakers": []}
+    result = await hass.config_entries.options.async_init(config_entry.entry_id)
+
+    # An error in another option
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"], {"known_hosts": ["not-an-ip"], "bluetooth": submitted}
+    )
+
+    assert result["type"] is FlowResultType.FORM
+    assert result["errors"] == {"known_hosts": "known-host-not-ip"}
+    assert bluetooth_section(result) == ("expandable", submitted)
 
 
 @pytest.mark.usefixtures("google", "replies")
