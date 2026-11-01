@@ -9,6 +9,7 @@ from datetime import timedelta
 from http import HTTPStatus
 from importlib import import_module
 from pathlib import Path
+from typing import TypedDict
 from unittest.mock import Mock, patch
 
 from freezegun.api import FrozenDateTimeFactory
@@ -40,6 +41,7 @@ from homeassistant.config_entries import SOURCE_REAUTH, ConfigEntryState
 from homeassistant.const import (
     ATTR_DEVICE_ID,
     ATTR_ENTITY_ID,
+    ATTR_ICON,
     ENTITY_MATCH_ALL,
     SERVICE_TURN_OFF,
     STATE_OFF,
@@ -50,6 +52,7 @@ from homeassistant.const import (
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers import device_registry as dr, entity_registry as er
+from homeassistant.helpers.icon import async_get_icons
 from homeassistant.setup import async_setup_component
 
 from .conftest import (
@@ -61,13 +64,14 @@ from .conftest import (
     kitchen_speaker,
 )
 from .test_missing_devices import ALARM_ID, TIMER_ID, rejected
-from .test_unsupported_devices import DND, INFO, SPEAKER
+from .test_unsupported_devices import DND, INFO, SPEAKER, VOLUME
 
 # pylint: enable=wrong-import-order
 
 DEVICE_SENSOR = "sensor.kitchen_speaker_device"
 ALARMS_SENSOR = "sensor.kitchen_speaker_alarms"
 DND_SWITCH = "switch.kitchen_speaker_do_not_disturb"
+VOLUME_NUMBER = "number.kitchen_speaker_alarm_volume"
 # The speaker's entities and their states, as it answers in SUPPORTED: an alarm at
 # 1700000000 s, 22:13:20 UTC, shown in the tests' time zone US/Pacific, no timer,
 # which the timers sensor shows as unavailable, alarm volume 0.7, and notifications
@@ -77,8 +81,18 @@ STATES = {
     ALARMS_SENSOR: "2023-11-14T14:13:20-08:00",
     "sensor.kitchen_speaker_timers": STATE_UNAVAILABLE,
     DND_SWITCH: STATE_ON,
-    "number.kitchen_speaker_alarm_volume": "70",
+    VOLUME_NUMBER: "70",
     "button.kitchen_speaker_reboot": STATE_UNKNOWN,
+}
+# The icon that each entity has shown since before icons.json, in the states above.
+# The reboot button has none of its own: the frontend shows its icon for restart.
+ICONS = {
+    DEVICE_SENSOR: "mdi:form-textbox-password",
+    ALARMS_SENSOR: "mdi:alarm-multiple",
+    "sensor.kitchen_speaker_timers": "mdi:timer-sand",
+    DND_SWITCH: "mdi:minus-circle",
+    VOLUME_NUMBER: "mdi:volume-high",
+    "button.kitchen_speaker_reboot": None,
 }
 # The actions, each with data that it accepts
 ACTIONS: dict[str, dict[str, object]] = {
@@ -166,6 +180,65 @@ def state(hass: HomeAssistant, entity_id: str) -> str:
     entity_state = hass.states.get(entity_id)
     assert entity_state is not None
     return entity_state.state
+
+
+class EntityIcons(TypedDict, total=False):
+    """An entity's icons in icons.json."""
+
+    default: str
+    state: dict[str, str]
+    range: dict[str, str]
+
+
+async def shown_icons(
+    hass: HomeAssistant, entity_registry: er.EntityRegistry
+) -> dict[str, str | None]:
+    """Return the icon that Home Assistant's frontend shows for each entity in STATES.
+
+    An icon in the entity's state comes first. Otherwise the frontend looks up the
+    icons that Home Assistant loaded, by platform and translation key, and picks as its
+    getIconFromTranslations does: the icon for the state, else for a number the icon
+    of the highest range at or below it, else the default. None means it has none
+    there, so the frontend shows its own icon for the domain or device class.
+    """
+    loaded: dict[str, dict[str, EntityIcons]] = (
+        await async_get_icons(hass, "entity", [DOMAIN])
+    ).get(DOMAIN, {})
+    shown: dict[str, str | None] = {}
+    for entity_id in STATES:
+        entry = entity_registry.async_get(entity_id)
+        entity_state = hass.states.get(entity_id)
+        assert entry is not None and entry.translation_key is not None
+        assert entity_state is not None
+        icons = loaded.get(entry.domain, {}).get(entry.translation_key, EntityIcons())
+        value = entity_state.state
+        try:
+            number: float | None = float(value)
+        except ValueError:
+            number = None
+        highest = max(
+            (
+                float(key)
+                for key in icons.get("range", {})
+                if number is not None and float(key) <= number
+            ),
+            default=None,
+        )
+        # The frontend finds that range's icon by the number as JavaScript writes it
+        in_range = (
+            None
+            if highest is None
+            else icons["range"].get(
+                str(int(highest)) if highest.is_integer() else str(highest)
+            )
+        )
+        shown[entity_id] = (
+            entity_state.attributes.get(ATTR_ICON)
+            or icons.get("state", {}).get(value)
+            or in_range
+            or icons.get("default")
+        )
+    return shown
 
 
 @pytest.mark.usefixtures("google", "replies")
@@ -540,3 +613,53 @@ async def test_entities(
     with patch("custom_components.google_home.PLATFORMS", [platform]):
         await set_up(hass, config_entry)
         await snapshot_platform(hass, entity_registry, snapshot, config_entry.entry_id)
+
+
+@pytest.mark.usefixtures("google")
+@pytest.mark.parametrize("notifications_enabled", [False, True])
+async def test_icons(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    entity_registry: er.EntityRegistry,
+    replies: Replies,
+    notifications_enabled: bool,
+) -> None:
+    """Show each entity's icon from icons.json, with Do Not Disturb on and off."""
+    replies[SPEAKER][DND] = (
+        HTTPStatus.OK,
+        {"notifications_enabled": notifications_enabled},
+    )
+    await set_up(hass, config_entry)
+
+    assert state(hass, DND_SWITCH) == (STATE_OFF if notifications_enabled else STATE_ON)
+    assert await shown_icons(hass, entity_registry) == ICONS
+
+
+@pytest.mark.usefixtures("google")
+@pytest.mark.parametrize(
+    ("volume", "icon"),
+    [
+        (0, "mdi:volume-off"),
+        (1, "mdi:volume-low"),
+        (30, "mdi:volume-low"),
+        (31, "mdi:volume-medium"),
+        (60, "mdi:volume-medium"),
+        (61, "mdi:volume-high"),
+        (100, "mdi:volume-high"),
+    ],
+)
+async def test_alarm_volume_icon(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    entity_registry: er.EntityRegistry,
+    replies: Replies,
+    volume: int,
+    icon: str,
+) -> None:
+    """Show the alarm volume as off at 0%, low up to 30%, medium up to 60% and high above."""
+    # The speaker answers with the volume from 0 to 1
+    replies[SPEAKER][VOLUME] = (HTTPStatus.OK, {"volume": volume / 100})
+    await set_up(hass, config_entry)
+
+    assert state(hass, VOLUME_NUMBER) == str(volume)
+    assert (await shown_icons(hass, entity_registry))[VOLUME_NUMBER] == icon

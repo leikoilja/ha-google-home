@@ -21,9 +21,6 @@ from .const import (
     ALARM_AND_TIMER_ID_LENGTH,
     DOMAIN,
     GOOGLE_HOME_ALARM_DEFAULT_VALUE,
-    ICON_ALARMS,
-    ICON_TIMERS,
-    ICON_TOKEN,
     LABEL_ALARMS,
     LABEL_DEVICE,
     LABEL_TIMERS,
@@ -353,7 +350,6 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
     """Google Home Device sensor."""
 
     _attr_translation_key = "device"
-    _attr_icon = ICON_TOKEN
     _attr_entity_category = EntityCategory.DIAGNOSTIC
 
     @property
@@ -408,7 +404,6 @@ class GoogleHomeAlarmsSensor(GoogleHomeFeatureEntity):
     """Google Home Alarms sensor."""
 
     _attr_translation_key = "alarms"
-    _attr_icon = ICON_ALARMS
     _attr_device_class = SensorDeviceClass.TIMESTAMP
     _attr_supported_features = GoogleHomeSensorFeature.ALARMS
 
@@ -485,7 +480,6 @@ class GoogleHomeTimersSensor(GoogleHomeFeatureEntity):
     """Google Home Timers sensor."""
 
     _attr_translation_key = "timers"
-    _attr_icon = ICON_TIMERS
     _attr_device_class = SensorDeviceClass.TIMESTAMP
     _attr_supported_features = GoogleHomeSensorFeature.TIMERS
 

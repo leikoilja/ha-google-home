@@ -235,6 +235,8 @@ class GlocaltokensApiClient(GoogleAccountClient):
         except DeviceRequestFailed as error:
             raise AlarmsAndTimersNotFetched(device.name) from error
 
+        if response is not None:
+            device.alarms_reply = response
         if response is not None and JSON_TIMER in response and JSON_ALARM in response:
             device.set_timers(cast(list[TimerJsonDict], response[JSON_TIMER]))
             device.set_alarms(cast(list[AlarmJsonDict], response[JSON_ALARM]))

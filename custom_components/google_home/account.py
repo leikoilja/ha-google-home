@@ -351,6 +351,15 @@ class GoogleAccountClient:
                     device.ip_address = found_device.address
             self.google_devices.append(device)
 
+    @property
+    def google_devices_fetched_once(self) -> bool:
+        """Return whether a fetch of Google's list has worked since the integration loaded.
+
+        Even one that listed no devices. Unlike google_devices_fetched, a rejected token
+        doesn't undo it.
+        """
+        return self._home_graphs_fetched > 0
+
     def home_graphs_without(self, device_id: str) -> int:
         """Return how many home graphs in a row that Google answered with lack the device.
 

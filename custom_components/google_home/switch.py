@@ -8,7 +8,7 @@ from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import ICON_DO_NOT_DISTURB, LABEL_DO_NOT_DISTURB
+from .const import LABEL_DO_NOT_DISTURB
 from .entity import GoogleHomeFeatureEntity, async_add_device_entities
 from .exceptions import DeviceRequestFailed
 from .types import GoogleHomeConfigEntry
@@ -34,7 +34,6 @@ class DoNotDisturbSwitch(GoogleHomeFeatureEntity, SwitchEntity):
     """Google Home Do Not Disturb switch."""
 
     _attr_translation_key = "do_not_disturb"
-    _attr_icon = ICON_DO_NOT_DISTURB
     _attr_entity_category = EntityCategory.CONFIG
 
     @property

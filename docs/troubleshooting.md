@@ -193,6 +193,28 @@ While the integration isn't loaded, its [actions](actions.md), such as `google_h
 
 Open **Settings** > **Devices & services** > **Google Home** to see why it isn't loaded, and if Home Assistant asks you to, [sign in again](#sign-in-again). Once the integration is loaded, the actions run again.
 
+## Download diagnostics
+
+The diagnostics file shows:
+
+- The integration's options.
+- For each device: its model, whether it answers, whether Home Assistant has received its mDNS announcements since the integration loaded, and its last reply about alarms and timers, as the device sent it.
+- How many other Cast devices on your network have announced themselves since the integration loaded but aren't in Google's device list, such as TVs with Chromecast built in, or speakers in another Google account. Only the number, not their names or addresses.
+- When you downloaded it.
+
+Both mDNS values go by the announcements that the integration has kept since it loaded. When Google drops a device from its list, the integration forgets that device's earlier announcements: until the device announces itself again, it isn't counted, and if Google lists it again, it shows as not announced.
+
+Attach the file, as well as [debug logs](#collect-debug-logs), when you [open an issue](https://github.com/leikoilja/ha-google-home/issues/new/choose).
+
+1. Go to **Settings** > **Devices & services** > **Google Home**.
+2. Open the **⋮** menu and select **Download diagnostics**. Your browser downloads the file.
+
+The menu has **Download diagnostics** only while the integration is set up. If setup fails, [collect debug logs](#collect-debug-logs) instead.
+
+!!! warning "Check the file before sharing it"
+
+    The file replaces your email address, password, master token and Android ID, your devices' local tokens and IP addresses, and your known hosts with `**REDACTED**`. It keeps your device names and the times and labels of your alarms and timers. Home Assistant also adds details about your system, such as its version, your time zone and the custom integrations you use. Open the file and replace anything you don't want to share with `xxx` before you attach it to a public issue.
+
 ## Collect debug logs
 
 Debug logs show what the integration is doing. Attach them when you [open an issue](https://github.com/leikoilja/ha-google-home/issues/new/choose).
@@ -217,4 +239,4 @@ data:
 
 ## Still stuck
 
-Search [GitHub Discussions](https://github.com/leikoilja/ha-google-home/discussions) and the [issues](https://github.com/leikoilja/ha-google-home/issues?q=is%3Aissue) for your problem. If nobody has reported it, ask in [Q&A](https://github.com/leikoilja/ha-google-home/discussions/categories/q-a), or [open an issue](https://github.com/leikoilja/ha-google-home/issues/new/choose) with your [debug logs](#collect-debug-logs).
+Search [GitHub Discussions](https://github.com/leikoilja/ha-google-home/discussions) and the [issues](https://github.com/leikoilja/ha-google-home/issues?q=is%3Aissue) for your problem. If nobody has reported it, ask in [Q&A](https://github.com/leikoilja/ha-google-home/discussions/categories/q-a), or [open an issue](https://github.com/leikoilja/ha-google-home/issues/new/choose) with your [diagnostics](#download-diagnostics) and [debug logs](#collect-debug-logs).
