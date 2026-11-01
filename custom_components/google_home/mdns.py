@@ -364,7 +364,8 @@ def async_browse_cast_devices(
     # it as removed when it expires. A browser that starts reports the PTR records
     # already in the cache as added, so a service added again while it's here is
     # replayed from the cache. Its other records can come first, as an update, so an
-    # update doesn't add it.
+    # update doesn't add it. In lower case: zeroconf takes names that differ only in
+    # case for the same record, and keeps the spelling of its latest copy.
     cached: set[str] = set()
     browser: AsyncServiceBrowser | None = None
     unloaded = False
@@ -394,7 +395,7 @@ def async_browse_cast_devices(
         state_change: ServiceStateChange,
     ) -> None:
         if state_change is ServiceStateChange.Removed:
-            cached.discard(name)
+            cached.discard(name.lower())
             return
         try:
             info = AsyncServiceInfo(service_type, name)
@@ -404,8 +405,8 @@ def async_browse_cast_devices(
             return
         replayed = False
         if state_change is ServiceStateChange.Added:
-            replayed = name in cached
-            cached.add(name)
+            replayed = name.lower() in cached
+            cached.add(name.lower())
         if info.load_from_cache(zeroconf):
             report(info, replayed)
         else:

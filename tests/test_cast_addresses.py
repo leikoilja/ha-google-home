@@ -155,6 +155,44 @@ def test_removed_cached_device_replayed_without_fetch(
     assert network.fetches == [0, 1200, 2400, 3600]
 
 
+def test_cached_name_in_other_case_is_the_same(
+    clock: Mock, timers: list[Timer]
+) -> None:
+    """Take a service's name in any case for the one whose PTR record is cached.
+
+    Google removed the office speaker, which stays cached. Its PTR record comes again
+    with its name in another case, which zeroconf keeps without reporting it as
+    added, so the next browser replays that spelling: no fetch. When the record
+    expires under it and the speaker comes back under its first spelling, that's
+    news, so the list is fetched 30 seconds later.
+    """
+    network = Network(clock, timers, [found("kitchen", None), found("office", None)])
+    browsing = Browsing(found_devices=network.client.found_devices)
+    office = service_name("office")
+    renamed = office.replace("office", "Office", 1)
+
+    async def run() -> None:
+        browsing.cache_service(cast_service("kitchen", "10.0.0.2"))
+        browsing.cache_service(cast_service("office", "10.0.0.3"))
+        browsing.start()
+        await network.setup()
+        network.listed = [found("kitchen", None)]
+        await network.update(1200)
+        browsing.ptrs[browsing.ptrs.index(office)] = renamed
+        await network.update(2400)
+        assert network.live() == []
+        browsing.ptrs.remove(renamed)
+        browsing.change(renamed, ServiceStateChange.Removed)
+        clock.return_value = 2500
+        browsing.ptrs.append(office)
+        browsing.change(office, ServiceStateChange.Added)
+        assert network.live() == [2530]
+
+    with browsing.patched():
+        asyncio.run(run())
+    assert network.fetches == [0, 1200, 2400]
+
+
 def test_late_lookup_keeps_newer_address(clock: Mock, timers: list[Timer]) -> None:
     """Keep the address that a newer report gave, when a replayed lookup ends late.
 
