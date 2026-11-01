@@ -53,7 +53,7 @@ uv run pytest
 
 Some tests run the integration inside Home Assistant, with fixtures from Home Assistant's [pytest-home-assistant](https://github.com/home-assistant/core/tree/dev/packages/pytest-home-assistant). It isn't on PyPI yet, so `pyproject.toml` installs it from a Home Assistant release archive, under `[tool.uv.sources]`. When you change `homeassistant` in `pyproject.toml`, change that archive to the same version. Nothing checks that they match.
 
-If you change an entity's name, icon, state, attributes or registry entry on purpose, update the snapshots with `uv run pytest --snapshot-update`, and review the changes under `tests/snapshots/` before you commit.
+If you change an entity's name, state, attributes or registry entry on purpose, update the snapshots with `uv run pytest --snapshot-update`, and review the changes under `tests/snapshots/` before you commit. Entity icons are in `icons.json`, which the snapshots don't cover: if you change one, update the expected icons in `tests/test_setup.py`.
 
 Every file in `custom_components/google_home` needs 90% or more branch coverage, which counts the lines the tests run and whether they take each way through every `if` statement and loop. To check, run the tests with coverage, then the same check CI runs:
 
