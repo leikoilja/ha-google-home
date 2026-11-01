@@ -41,6 +41,7 @@ class GoogleHomeDevice:
         ip_address: str | None = None,
         hardware: str | None = None,
         cloud_device_id: str | None = None,
+        home_name: str | None = None,
     ):
         """Create Google Home device object."""
         self.device_id = device_id
@@ -50,6 +51,8 @@ class GoogleHomeDevice:
         self.hardware = hardware
         # Google's ID for the device, which it also reports locally
         self.cloud_device_id = cloud_device_id.lower() if cloud_device_id else None
+        # The name of its home in the Google Home app, if Google gives one
+        self.home_name = home_name
         # Whether the last request for alarms, settings or a reboot succeeded. Its
         # alarms, timers and settings entities are added only then.
         self.available = True

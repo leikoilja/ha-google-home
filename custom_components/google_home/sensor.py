@@ -382,6 +382,7 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
         attributes: DeviceAttributes = {
             "device_id": None,
             "device_name": self.device_name,
+            "home": None,
             "auth_token": None,
             "ip_address": None,
             "available": False,
@@ -394,6 +395,7 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
         return {
             "device_id": device.device_id,
             "device_name": device.name,
+            "home": device.home_name,
             "auth_token": device.auth_token,
             "ip_address": device.ip_address,
             "available": device.reachable,

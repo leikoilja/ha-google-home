@@ -324,6 +324,7 @@ class GoogleAccountClient:
                 ip_address=google_device.ip_address,
                 hardware=google_device.hardware,
                 cloud_device_id=google_device.cloud_device_id,
+                home_name=google_device.home_name,
             )
             # Prefer an address that mDNS reported while this fetch ran over the fetch's
             # scan, and the scan over an earlier report.
@@ -341,6 +342,7 @@ class GoogleAccountClient:
                 known_device.ip_address = device.ip_address or known_device.ip_address
                 known_device.hardware = device.hardware
                 known_device.cloud_device_id = device.cloud_device_id
+                known_device.home_name = device.home_name
                 device = known_device
             else:
                 device.alarms_unsupported = (
