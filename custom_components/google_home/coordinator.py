@@ -19,8 +19,8 @@ from .const import (
     HOME_GRAPHS_BEFORE_REMOVAL,
     ONSET_INTERVAL,
     ONSET_WINDOW,
+    RINGING_INTERVAL,
     RINGING_WINDOW,
-    UPDATE_INTERVAL,
 )
 from .models import GoogleHomeAlarmStatus, GoogleHomeDevice, GoogleHomeTimerStatus
 from .types import GoogleHomeConfigEntry
@@ -185,7 +185,7 @@ class GoogleHomeDeviceCoordinator(DataUpdateCoordinator[GoogleHomeDevice | None]
     It updates at the update interval, and sooner around an alarm's or timer's fire time
     while the device's updates get its alarms and timers: FIRE_TIME_DELAY seconds after
     it, then while it still isn't ringing every ONSET_INTERVAL seconds, and while it
-    rings every UPDATE_INTERVAL seconds. Each comes to an end with the first update that
+    rings every RINGING_INTERVAL seconds. Each comes to an end with the first update that
     starts at least ONSET_WINDOW or RINGING_WINDOW seconds after the fire time, so a
     change before then is seen. An alarm or timer that is due again, after an update
     found it neither due nor ringing, such as when snoozed, starts again.
@@ -252,7 +252,7 @@ class GoogleHomeDeviceCoordinator(DataUpdateCoordinator[GoogleHomeDevice | None]
             due_since = self._due_start(item_id, fire_time, now, loop_now)
             if status in RINGING:
                 if self._sampled_at < due_since + RINGING_WINDOW:
-                    delays.append(UPDATE_INTERVAL)
+                    delays.append(RINGING_INTERVAL)
             elif self._sampled_at < due_since + ONSET_WINDOW:
                 delays.append(ONSET_INTERVAL)
         if interval is None or not delays:

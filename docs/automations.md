@@ -78,15 +78,15 @@ The trigger follows the time that the integration last saw. The integration [che
 
 Around an alarm's or timer's time, the integration checks that speaker more often than the [update interval](configuration.md#change-the-update-interval):
 
-- About 3 seconds after its time, or at a regular check that comes sooner.
+- About 1 second after its time, or at a regular check that comes sooner. This also applies when a snoozed alarm is due again.
 - While it isn't ringing yet, every 5 seconds, until about 30 seconds after its time.
-- While it rings, every 15 seconds, until about 65 minutes after its time. With an update interval of 15 seconds or less, the regular checks already come this often.
+- While it rings, every 10 seconds, until about 65 minutes after its time. With an update interval of 10 seconds or less, the regular checks already come this often.
 
-A change shows once the check that sees it has finished, which takes longer if the speaker is slow to answer. So `ringing` usually shows within a few seconds of the alarm's or timer's time, and its end within about 15 seconds of when you stop or snooze it.
+A change shows once the check that sees it has finished, which takes longer if the speaker is slow to answer. So `ringing` usually shows within a few seconds of the alarm's or timer's time, and its end within about 10 seconds of when you stop or snooze it. A speaker can report the ring a few seconds after its time; the first check then finds it still set, and one of the checks every 5 seconds after it shows the ring.
 
 This works only for an alarm or timer that the integration saw before its time, on a speaker that keeps answering:
 
-- An alarm or timer that goes off before the integration has seen it, such as one that you set after the last regular check, shows at the next regular check. So does a ring that the speaker reports more than about 30 seconds late. If it still rings then, the checks every 15 seconds start, until 65 minutes after its time.
+- An alarm or timer that goes off before the integration has seen it, such as one that you set after the last regular check, shows at the next regular check. So does a ring that the speaker reports more than about 30 seconds late. If it still rings then, the checks every 10 seconds start, until 65 minutes after its time.
 - A ring that starts and stops between two checks doesn't show, for example if you stop the alarm within a few seconds.
 - If the speaker doesn't answer a check, or answers without its alarms and timers, the integration checks it at the update interval until it answers again. An extra check that the speaker doesn't answer counts toward the [5 unanswered updates](entities.md#when-entities-are-unavailable) after which its entities become unavailable.
 - If a ring lasts more than 65 minutes, its end shows at the update interval. On one speaker that was tested, an alarm that nobody stopped rang for about an hour, and a timer for about 10 minutes. Other speakers may ring longer.

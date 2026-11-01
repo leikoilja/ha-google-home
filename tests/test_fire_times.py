@@ -23,8 +23,10 @@ from pytest_homeassistant.test_util.aiohttp import AiohttpClientMocker
 
 from custom_components.google_home.const import (
     API_ENDPOINT_ALARMS,
+    API_ENDPOINT_BUILD_INFO,
     CONF_UPDATE_INTERVAL,
     DOMAIN,
+    FIRMWARE_CHECK_INTERVAL,
 )
 
 # ruff sorts homeassistant as first-party, pylint as third-party
@@ -145,12 +147,17 @@ async def start(
     await set_up(hass, entry)
 
 
-def alarms_asked(aioclient_mock: AiohttpClientMocker) -> bool:
-    """Return whether the speaker was asked for its alarms since the last call."""
+def alarms_asked(
+    aioclient_mock: AiohttpClientMocker, endpoint: str = API_ENDPOINT_ALARMS
+) -> bool:
+    """Return whether the speaker was asked for its alarms since the last call.
+
+    Or for what the given endpoint has.
+    """
     asked = any(
         method.upper() == "GET"
         and url.host == SPEAKER
-        and url.path_qs.removeprefix("/") == API_ENDPOINT_ALARMS
+        and url.path_qs.removeprefix("/") == endpoint
         for method, url, _, _ in aioclient_mock.mock_calls
     )
     aioclient_mock.mock_calls.clear()
@@ -164,15 +171,17 @@ async def run(
     replies: Replies,
     until: float,
     changes: Mapping[int, Reply] | None = None,
+    endpoint: str = API_ENDPOINT_ALARMS,
 ) -> list[float]:
     """Move the clock a second at a time, to this many seconds after FIRE.
 
     At each change's time, before the updates due then, the speaker starts answering
-    the alarms request with its reply. Return when the speaker was asked for its alarms.
+    the alarms request with its reply. Return when the speaker was asked for its alarms,
+    or for what the given endpoint has.
     """
     changes = changes or {}
     asked: list[float] = []
-    alarms_asked(aioclient_mock)
+    alarms_asked(aioclient_mock, endpoint)
     while seconds() < until:
         freezer.tick(timedelta(seconds=1))
         reply = changes.get(int(now)) if (now := seconds()).is_integer() else None
@@ -180,7 +189,7 @@ async def run(
             replies[SPEAKER][ALARMS] = reply
         async_fire_time_changed(hass)
         await hass.async_block_till_done(wait_background_tasks=True)
-        if alarms_asked(aioclient_mock):
+        if alarms_asked(aioclient_mock, endpoint):
             asked.append(seconds())
     return asked
 
@@ -189,21 +198,19 @@ async def run(
 @pytest.mark.parametrize(
     ("at", "asked"),
     [
-        # 63 s before the next update at the interval
-        pytest.param(-60, [3, 8, 13, 18, 23, 28, 33, 213], id="due-before-next-update"),
+        # 61 s before the next update at the interval
+        pytest.param(-60, [1, 6, 11, 16, 21, 26, 31, 211], id="due-before-next-update"),
         # The next update, at -120, comes first
         pytest.param(
-            -300, [-120, 3, 8, 13, 18, 23, 28, 33, 213], id="due-after-next-update"
+            -300, [-120, 1, 6, 11, 16, 21, 26, 31, 211], id="due-after-next-update"
         ),
-        # The update at the interval comes 1 s after the fire time, so it's the first
-        pytest.param(
-            -179, [1, 6, 11, 16, 21, 26, 31, 211], id="update-after-fire-time"
-        ),
-        # The update for 3 s after the fire time comes 0.4 s early, as it can when it's
+        # The update at the interval comes at the fire time, so it's the first after it
+        pytest.param(-180, [0, 5, 10, 15, 20, 25, 30, 210], id="update-at-fire-time"),
+        # The update for 1 s after the fire time comes 0.4 s early, as it can when it's
         # timed from a fraction of a second, and finds the alarm still set
         pytest.param(
             -59.4,
-            [2.6, 7.6, 12.6, 17.6, 22.6, 27.6, 32.6, 212.6],
+            [0.6, 5.6, 10.6, 15.6, 20.6, 25.6, 30.6, 210.6],
             id="update-early",
         ),
     ],
@@ -217,10 +224,10 @@ async def test_asked_after_fire_time_until_ringing(
     at: float,
     asked: list[float],
 ) -> None:
-    """Ask a speaker 3 s after its alarm's fire time, then every 5 s while it isn't ringing.
+    """Ask a speaker 1 s after its alarm's fire time, then every 5 s while it isn't ringing.
 
     Until an update at least 30 s after the fire time, then at the interval again. An
-    update that comes before the one for 3 s after doesn't replace it, and the first
+    update that comes before the one for 1 s after doesn't replace it, and the first
     one after the fire time starts the 5-second updates.
     """
     await start(hass, config_entry, replies, freezer, at, SET)
@@ -236,17 +243,21 @@ async def test_ringing_alarm_until_dismissed(
     aioclient_mock: AiohttpClientMocker,
     freezer: FrozenDateTimeFactory,
 ) -> None:
-    """Ask every 15 s while the alarm rings, and show its dismissal at the next update."""
+    """Ask every 10 s while the alarm rings, and show its dismissal at the next update."""
     await start(hass, config_entry, replies, freezer, -60, SET)
     changes = {0: RINGING, 40: NONE_LEFT}
 
-    assert await run(hass, aioclient_mock, freezer, replies, 3, changes) == [3]
+    assert await run(hass, aioclient_mock, freezer, replies, 1, changes) == [1]
     assert next_alarm_status(hass) == "ringing"
-    assert await run(hass, aioclient_mock, freezer, replies, 47, changes) == [18, 33]
+    assert await run(hass, aioclient_mock, freezer, replies, 40, changes) == [
+        11,
+        21,
+        31,
+    ]
     assert next_alarm_status(hass) == "ringing"
-    assert await run(hass, aioclient_mock, freezer, replies, 48 + INTERVAL) == [
-        48,
-        48 + INTERVAL,
+    assert await run(hass, aioclient_mock, freezer, replies, 41 + INTERVAL) == [
+        41,
+        41 + INTERVAL,
     ]
     assert next_alarm_status(hass) == "none"
 
@@ -255,25 +266,25 @@ async def test_ringing_alarm_until_dismissed(
 @pytest.mark.parametrize(
     ("changes", "asked", "status"),
     [
-        # Dismissed after the last update every 15 s before the end of the window, and
+        # Dismissed after the last update every 10 s before the end of the window, and
         # shown by the update after the end
         pytest.param(
             {0: RINGING, 115: NONE_LEFT},
-            [3, 18, 33, 48, 63, 78, 93, 108, 123, 303, 483],
+            [1, 11, 21, 31, 41, 51, 61, 71, 81, 91, 101, 111, 121, 301, 481],
             "none",
             id="dismissed-before-end",
         ),
         pytest.param(
             {0: RINGING},
-            [3, 18, 33, 48, 63, 78, 93, 108, 123, 303, 483],
+            [1, 11, 21, 31, 41, 51, 61, 71, 81, 91, 101, 111, 121, 301, 481],
             "ringing",
             id="rings-on",
         ),
         # The speaker reports a later fire time at every update while it rings, which
         # doesn't move the end of the window
         pytest.param(
-            {at: answer(alarm(ALARM_RINGING, at)) for at in range(484)},
-            [3, 18, 33, 48, 63, 78, 93, 108, 123, 303, 483],
+            {at: answer(alarm(ALARM_RINGING, at)) for at in range(482)},
+            [1, 11, 21, 31, 41, 51, 61, 71, 81, 91, 101, 111, 121, 301, 481],
             "ringing",
             id="fire-time-moves",
         ),
@@ -289,13 +300,13 @@ async def test_ringing_window(
     asked: list[float],
     status: str,
 ) -> None:
-    """Ask every 15 s while the alarm rings, until an update after the end of its window.
+    """Ask every 10 s while the alarm rings, until an update after the end of its window.
 
     Then at the interval while it still rings.
     """
     await start(hass, config_entry, replies, freezer, -60, SET)
 
-    assert await run(hass, aioclient_mock, freezer, replies, 483, changes) == asked
+    assert await run(hass, aioclient_mock, freezer, replies, 481, changes) == asked
     assert next_alarm_status(hass) == status
 
 
@@ -343,32 +354,35 @@ async def test_ringing_window_ends_after_slow_update(
     """Ask again after an update that asked for the alarms before the end of the window.
 
     Also when that update finishes after it. The alarm starts ringing 28 s after its
-    fire time, and is dismissed 1 s after the last update every 15 s asked for it. If
+    fire time, and is dismissed 1 s after the last update every 10 s asked for it. If
     the next update gets no answer, it shows nothing, and the next one is at the interval.
     """
     await start(hass, config_entry, replies, freezer, -60, SET)
     changes = {28: RINGING}
 
-    assert await run(hass, aioclient_mock, freezer, replies, 117, changes) == [
-        3,
-        8,
-        13,
-        18,
-        23,
-        28,
-        43,
-        58,
-        73,
-        88,
-        103,
+    assert await run(hass, aioclient_mock, freezer, replies, 110, changes) == [
+        1,
+        6,
+        11,
+        16,
+        21,
+        26,
+        31,
+        41,
+        51,
+        61,
+        71,
+        81,
+        91,
+        101,
     ]
-    # Asked at 118 s, while it still rang
-    await hold_dnd(hass, replies, freezer, 4, then)
+    # Asked at 111 s, while it still rang
+    await hold_dnd(hass, replies, freezer, 10, then)
     assert alarms_asked(aioclient_mock)
-    assert seconds() == 122
-    assert await run(hass, aioclient_mock, freezer, replies, 137 + INTERVAL) == [
-        137,
-        137 + INTERVAL,
+    assert seconds() == 121
+    assert await run(hass, aioclient_mock, freezer, replies, 131 + INTERVAL) == [
+        131,
+        131 + INTERVAL,
     ]
     assert next_alarm_status(hass) == status
 
@@ -387,11 +401,11 @@ async def test_ringing_shown_after_slow_update_before_onset_end(
     """
     await start(hass, config_entry, replies, freezer, -60, SET)
 
-    assert await run(hass, aioclient_mock, freezer, replies, 27) == [3, 8, 13, 18, 23]
-    # Asked at 28 s, while it was still set
-    await hold_dnd(hass, replies, freezer, 4, RINGING)
-    assert seconds() == 32
-    assert await run(hass, aioclient_mock, freezer, replies, 52) == [37, 52]
+    assert await run(hass, aioclient_mock, freezer, replies, 25) == [1, 6, 11, 16, 21]
+    # Asked at 26 s, while it was still set
+    await hold_dnd(hass, replies, freezer, 5, RINGING)
+    assert seconds() == 31
+    assert await run(hass, aioclient_mock, freezer, replies, 46) == [36, 46]
     assert next_alarm_status(hass) == "ringing"
 
 
@@ -405,7 +419,7 @@ async def test_ringing_shown_once_update_finishes(
 ) -> None:
     """Show the ringing that an update got only once its other requests are answered."""
     await start(hass, config_entry, replies, freezer, -60, SET)
-    assert await run(hass, aioclient_mock, freezer, replies, 2, {0: RINGING}) == []
+    assert await run(hass, aioclient_mock, freezer, replies, 0, {0: RINGING}) == []
     held = Held(SUPPORTED[DND])
     replies[SPEAKER][DND] = held
 
@@ -434,7 +448,7 @@ async def test_ringing_shown_once_update_finishes(
                 20: answer(alarm(ALARM_SNOOZED, 600)),
                 606: answer(alarm(ALARM_RINGING, 600)),
             },
-            [3, 18, 33, 213, 393, 573, 603, 608, 623, 638],
+            [1, 11, 21, 201, 381, 561, 601, 606, 616, 626],
             id="snoozed",
         ),
         # A recurring alarm, set again for its next time once it stops, here 600 s
@@ -445,7 +459,7 @@ async def test_ringing_shown_once_update_finishes(
                 20: answer(alarm(ALARM_SET, 600)),
                 600: answer(alarm(ALARM_RINGING, 600)),
             },
-            [3, 18, 33, 213, 393, 573, 603, 618, 633],
+            [1, 11, 21, 201, 381, 561, 601, 611, 621],
             id="recurring",
         ),
     ],
@@ -478,7 +492,9 @@ async def test_after_ringing(
         pytest.param(40, SET, [40 + INTERVAL], id="set"),
         pytest.param(40, answer(alarm(ALARM_SNOOZED)), [40 + INTERVAL], id="snoozed"),
         # Ringing 40 s after its fire time: within the 2-minute window
-        pytest.param(40, RINGING, [55, 70, 85, 100, 115, 130, 310], id="ringing"),
+        pytest.param(
+            40, RINGING, [50, 60, 70, 80, 90, 100, 110, 120, 300], id="ringing"
+        ),
         pytest.param(130, RINGING, [130 + INTERVAL], id="ringing-after-window"),
     ],
 )
@@ -522,16 +538,16 @@ async def test_interval_without_alarms_and_timers(
     """Ask at the interval after an update that didn't get the alarms and timers.
 
     The alarm still rings, as the last update that got them showed. Once an update
-    gets them again, ask every 15 s again.
+    gets them again, ask every 10 s again.
     """
     await start(hass, config_entry, replies, freezer, -60, SET)
     changes = {0: RINGING, 10: failure, 100: RINGING}
 
-    assert await run(hass, aioclient_mock, freezer, replies, 213, changes) == [
-        3,
-        18,
-        18 + INTERVAL,
-        33 + INTERVAL,
+    assert await run(hass, aioclient_mock, freezer, replies, 201, changes) == [
+        1,
+        11,
+        11 + INTERVAL,
+        21 + INTERVAL,
     ]
 
 
@@ -548,7 +564,7 @@ async def test_interval_after_update_without_token(
     The speaker lost its token while its alarm rang, and got it back later.
     """
     await start(hass, config_entry, replies, freezer, -60, SET)
-    assert await run(hass, aioclient_mock, freezer, replies, 10, {0: RINGING}) == [3]
+    assert await run(hass, aioclient_mock, freezer, replies, 5, {0: RINGING}) == [1]
     device = runtime(config_entry).devices[SPEAKER_ID].data
     assert device is not None
     token, device.auth_token = device.auth_token, None
@@ -556,9 +572,9 @@ async def test_interval_after_update_without_token(
 
     device.auth_token = token
 
-    assert await run(hass, aioclient_mock, freezer, replies, 213) == [
-        18 + INTERVAL,
-        33 + INTERVAL,
+    assert await run(hass, aioclient_mock, freezer, replies, 201) == [
+        11 + INTERVAL,
+        21 + INTERVAL,
     ]
 
 
@@ -575,7 +591,7 @@ async def test_action_answer_during_unanswered_update(
     The action's request doesn't count as an answer to the update either.
     """
     await start(hass, config_entry, replies, freezer, -60, SET)
-    assert await run(hass, aioclient_mock, freezer, replies, 17, {0: RINGING}) == [3]
+    assert await run(hass, aioclient_mock, freezer, replies, 10, {0: RINGING}) == [1]
     held = Held(TimeoutError())
     replies[SPEAKER][ALARMS] = held
     replies[SPEAKER][DELETE] = (HTTPStatus.OK, {"success": True})
@@ -603,8 +619,8 @@ async def test_action_answer_during_unanswered_update(
     await hass.async_block_till_done(wait_background_tasks=True)
     assert device.unanswered_updates == 1
 
-    assert await run(hass, aioclient_mock, freezer, replies, 18 + INTERVAL) == [
-        18 + INTERVAL
+    assert await run(hass, aioclient_mock, freezer, replies, 11 + INTERVAL) == [
+        11 + INTERVAL
     ]
 
 
@@ -613,12 +629,12 @@ async def test_action_answer_during_unanswered_update(
     ("endpoint", "failure", "asked"),
     [
         # Not answered, which the update handles: it still got the alarms
-        pytest.param(DND, TimeoutError(), [3, 18, 33, 48], id="handled"),
+        pytest.param(DND, TimeoutError(), [1, 11, 21, 31], id="handled"),
         # An answer the update can't read, which fails it
         pytest.param(
             VOLUME,
             (HTTPStatus.OK, {"volume": "loud"}),
-            [3, 18, 18 + INTERVAL],
+            [1, 11, 11 + INTERVAL],
             id="failed",
         ),
     ],
@@ -633,9 +649,9 @@ async def test_later_request_fails(
     failure: Reply,
     asked: list[float],
 ) -> None:
-    """Keep asking every 15 s after a later request fails, unless that fails the update."""
+    """Keep asking every 10 s after a later request fails, unless that fails the update."""
     await start(hass, config_entry, replies, freezer, -60, SET)
-    assert await run(hass, aioclient_mock, freezer, replies, 10, {0: RINGING}) == [3]
+    assert await run(hass, aioclient_mock, freezer, replies, 5, {0: RINGING}) == [1]
     replies[SPEAKER][endpoint] = failure
 
     assert await run(hass, aioclient_mock, freezer, replies, asked[-1]) == asked[1:]
@@ -672,7 +688,7 @@ async def test_listener_added_during_update_without_alarms(
     that got them showed.
     """
     await start(hass, config_entry, replies, freezer, -60, SET)
-    assert await run(hass, aioclient_mock, freezer, replies, 17, {0: RINGING}) == [3]
+    assert await run(hass, aioclient_mock, freezer, replies, 10, {0: RINGING}) == [1]
     coordinator = runtime(config_entry).devices[SPEAKER_ID]
     held = Held(reply)
     replies[SPEAKER][endpoint] = held
@@ -685,9 +701,9 @@ async def test_listener_added_during_update_without_alarms(
     held.released.set()
     await hass.async_block_till_done(wait_background_tasks=True)
 
-    assert await run(hass, aioclient_mock, freezer, replies, 33 + INTERVAL) == [
-        18 + INTERVAL,
-        33 + INTERVAL,
+    assert await run(hass, aioclient_mock, freezer, replies, 21 + INTERVAL) == [
+        11 + INTERVAL,
+        21 + INTERVAL,
     ]
 
 
@@ -699,35 +715,36 @@ async def test_unavailable_and_back_within_window(
     aioclient_mock: AiohttpClientMocker,
     freezer: FrozenDateTimeFactory,
 ) -> None:
-    """Make the entities unavailable after 5 unanswered updates, the first one 15 s after the last.
+    """Make the entities unavailable after 5 unanswered updates, the first one 10 s after the last.
 
     After the first, the updates are at the interval of 16 s. "Not found" doesn't bring
-    them back; an answer with the alarms does, and the updates every 15 s resume.
+    them back; an answer with the alarms does, and the updates every 10 s resume.
     """
     await start(hass, config_entry, replies, freezer, -60, SET, interval=16)
     changes = {0: RINGING, 10: TimeoutError(), 90: HTTPStatus.NOT_FOUND, 100: RINGING}
-    # At the interval until 3 s after the fire time is sooner
+    # At the interval until 1 s after the fire time is sooner
     assert await run(hass, aioclient_mock, freezer, replies, 0, changes) == [
         -44,
         -28,
         -12,
     ]
 
-    assert await run(hass, aioclient_mock, freezer, replies, 82, changes) == [
-        3,
-        18,
-        34,
-        50,
-        66,
-        82,
+    assert await run(hass, aioclient_mock, freezer, replies, 75, changes) == [
+        1,
+        11,
+        27,
+        43,
+        59,
+        75,
     ]
     assert state(hass, ALARMS_SENSOR) == STATE_UNAVAILABLE
-    assert await run(hass, aioclient_mock, freezer, replies, 98, changes) == [98]
+    assert await run(hass, aioclient_mock, freezer, replies, 91, changes) == [91]
     assert state(hass, ALARMS_SENSOR) == STATE_UNAVAILABLE
-    assert await run(hass, aioclient_mock, freezer, replies, 145, changes) == [
-        114,
-        129,
-        145,
+    assert await run(hass, aioclient_mock, freezer, replies, 143, changes) == [
+        107,
+        117,
+        127,
+        143,
     ]
     assert next_alarm_status(hass) == "ringing"
 
@@ -735,9 +752,9 @@ async def test_unavailable_and_back_within_window(
 @pytest.mark.usefixtures("google")
 @pytest.mark.parametrize(
     ("at", "asked"),
-    # Due 60 s after setup started: asked 3 s after
+    # Due 60 s after setup started: asked 1 s after
     # Due 5 s after: past due when setup ends, so asked 5 s after that
-    [(60, 63), (5, 15)],
+    [(60, 61), (5, 15)],
 )
 async def test_listener_after_setup_waits(
     hass: HomeAssistant,
@@ -777,7 +794,7 @@ async def test_interval_changed_while_due(
     aioclient_mock: AiohttpClientMocker,
     freezer: FrozenDateTimeFactory,
 ) -> None:
-    """Keep the update due 3 s after the fire time, and use the new interval after.
+    """Keep the update due 1 s after the fire time, and use the new interval after.
 
     The interval changes once before that update, and once while it waits for an answer.
     """
@@ -788,7 +805,7 @@ async def test_interval_changed_while_due(
     )
     held = Held(NONE_LEFT)
     replies[SPEAKER][ALARMS] = held
-    assert await run(hass, aioclient_mock, freezer, replies, 2) == []
+    assert await run(hass, aioclient_mock, freezer, replies, 0) == []
 
     freezer.tick(timedelta(seconds=1))
     async_fire_time_changed(hass)
@@ -800,15 +817,19 @@ async def test_interval_changed_while_due(
     held.released.set()
     await hass.async_block_till_done(wait_background_tasks=True)
 
-    assert await run(hass, aioclient_mock, freezer, replies, 83) == [43, 83]
+    assert await run(hass, aioclient_mock, freezer, replies, 81) == [41, 81]
 
 
 @pytest.mark.usefixtures("google")
 @pytest.mark.parametrize(
     ("interval", "asked"),
     [
-        (15, [-46, -31, -16, -1, 3, 18, 33, 48]),
-        (10, [-51, -41, -31, -21, -11, -1, 3, 13, 23, 33, 43]),
+        # More often than the interval while it rings
+        (15, [-46, -31, -16, -1, 1, 11, 21, 31, 41]),
+        # As often as the interval
+        (10, [-51, -41, -31, -21, -11, -1, 1, 11, 21, 31, 41]),
+        # At the interval, which is shorter
+        (8, [-53, -45, -37, -29, -21, -13, -5, 1, 9, 17, 25, 33, 41]),
     ],
 )
 async def test_short_interval(
@@ -820,7 +841,7 @@ async def test_short_interval(
     interval: int,
     asked: list[float],
 ) -> None:
-    """Ask 3 s after the fire time, and while it rings no more often than the interval."""
+    """Ask 1 s after the fire time, and while it rings every 10 s, or at a shorter interval."""
     await start(hass, config_entry, replies, freezer, -61, SET, interval)
 
     assert (
@@ -841,14 +862,14 @@ async def test_ringing_timer_without_fire_time(
     reply = answer(alarm(ALARM_SET), timers=(timer(TIMER_RINGING, None),))
     await start(hass, config_entry, replies, freezer, -60, reply)
 
-    assert await run(hass, aioclient_mock, freezer, replies, 33 + INTERVAL - 1) == [
-        3,
-        8,
-        13,
-        18,
-        23,
-        28,
-        33,
+    assert await run(hass, aioclient_mock, freezer, replies, 31 + INTERVAL - 1) == [
+        1,
+        6,
+        11,
+        16,
+        21,
+        26,
+        31,
     ]
     timers = hass.states.get(TIMERS_SENSOR)
     assert timers is not None
@@ -888,11 +909,43 @@ async def test_nearest_fire_time(
         10: answer(alarm(ALARM_SET, 100), *others, timers=(paused,)),
     }
 
-    assert await run(hass, aioclient_mock, freezer, replies, 103, changes) == [
-        3,
-        18,
-        103,
+    assert await run(hass, aioclient_mock, freezer, replies, 101, changes) == [
+        1,
+        11,
+        101,
     ]
+
+
+@pytest.mark.usefixtures("google")
+async def test_firmware_checked_every_20_minutes_while_ringing(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    replies: Replies,
+    aioclient_mock: AiohttpClientMocker,
+    freezer: FrozenDateTimeFactory,
+) -> None:
+    """Ask for the firmware only once a check is due, also while asking every 10 s.
+
+    Setup checked it 20 minutes less 50 s before the fire time, so the next check is
+    due 50 s after it: at the update every 10 s at 51 s. The one after is due 20 minutes
+    after that check started, again at an update every 10 s.
+    """
+    # The client times the checks with monotonic, which freezegun replaces only in some
+    # orders of the tests that ran before: use the event loop's time, which it moves
+    with patch("custom_components.google_home.api.monotonic", hass.loop.time):
+        await start(
+            hass, config_entry, replies, freezer, 50 - FIRMWARE_CHECK_INTERVAL, SET
+        )
+
+        assert await run(
+            hass,
+            aioclient_mock,
+            freezer,
+            replies,
+            51 + FIRMWARE_CHECK_INTERVAL,
+            {0: RINGING},
+            API_ENDPOINT_BUILD_INFO,
+        ) == [51, 51 + FIRMWARE_CHECK_INTERVAL]
 
 
 @pytest.mark.usefixtures("google")
