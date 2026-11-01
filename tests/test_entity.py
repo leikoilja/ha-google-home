@@ -1,13 +1,13 @@
 """Tests for how Google Home entities are named and when they are available."""
 
 import asyncio
-from collections.abc import AsyncIterator
-from contextlib import asynccontextmanager
+from collections.abc import AsyncIterator, Iterator
+from contextlib import asynccontextmanager, contextmanager
 from datetime import timedelta
 import logging
 from pathlib import Path
 from types import MappingProxyType
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 import pytest
 
@@ -26,6 +26,7 @@ from custom_components.google_home.types import GoogleHomeConfigEntry
 
 # ruff sorts homeassistant as first-party, pylint as third-party
 # pylint: disable=wrong-import-order
+from homeassistant import loader
 from homeassistant.config_entries import SOURCE_USER, ConfigEntries, ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import (
@@ -39,7 +40,8 @@ from homeassistant.helpers.entity_platform import EntityPlatform
 
 DEVICE_ID = "device-id"
 
-# Each entity's ID ending and name, as Home Assistant shows them after the device name
+# Each entity's ID ending and name, as Home Assistant in English shows them after
+# the device name
 ENTITIES = [
     (GoogleHomeAlarmsSensor, "sensor", "alarms", "Alarms"),
     (GoogleHomeTimersSensor, "sensor", "timers", "Timers"),
@@ -49,6 +51,15 @@ ENTITIES = [
     (RebootButton, "button", "reboot", "Reboot"),
 ]
 ENTITY_SUFFIXES = [suffix for _, _, suffix, _ in ENTITIES]
+# The same in German, whose entity IDs use the German names
+GERMAN_ENTITIES = [
+    (GoogleHomeAlarmsSensor, "sensor", "wecker", "Wecker"),
+    (GoogleHomeTimersSensor, "sensor", "timer", "Timer"),
+    (GoogleHomeDeviceSensor, "sensor", "gerat", "Gerät"),  # codespell:ignore
+    (DoNotDisturbSwitch, "switch", "bitte_nicht_storen", "Bitte nicht stören"),
+    (AlarmVolumeNumber, "number", "weckerlautstarke", "Weckerlautstärke"),
+    (RebootButton, "button", "neu_starten", "Neu starten"),
+]
 # Earlier versions named entities "<Google name> <label>", with unique IDs
 # "<device ID>/<label>"
 OLD_LABELS: dict[type[GoogleHomeBaseEntity], str] = {
@@ -61,13 +72,28 @@ OLD_LABELS: dict[type[GoogleHomeBaseEntity], str] = {
 }
 
 
+@contextmanager
+def no_registered_devices() -> Iterator[None]:
+    """Give code run with a mocked Home Assistant a device registry without devices."""
+    with (
+        patch.object(dr, "async_get"),
+        patch.object(dr, "async_entries_for_config_entry", return_value=[]),
+    ):
+        yield
+
+
 @asynccontextmanager
 async def home_assistant(
-    config_dir: Path,
+    config_dir: Path, language: str = "en"
 ) -> AsyncIterator[tuple[HomeAssistant, GoogleHomeConfigEntry]]:
-    """Start Home Assistant's registries with a config entry of this integration."""
+    """Start Home Assistant in this language with a config entry of this integration.
+
+    It starts the registries, and the loader that finds this integration's translations.
+    """
     hass = HomeAssistant(str(config_dir))
+    hass.config.language = language
     try:
+        loader.async_setup(hass)
         dr.async_setup(hass)
         hass.config_entries = ConfigEntries(hass, {})
         await hass.config_entries.async_initialize()
@@ -137,6 +163,8 @@ async def add_entity(
         entity_namespace=None,
     )
     platform.config_entry = entry
+    # Setting up a platform loads the entity names in Home Assistant's language
+    await platform.platform_data.async_load_translations()
     await platform.async_add_entities([new])
     assert new.entity_id in platform.entities
     return new.entity_id
@@ -271,6 +299,99 @@ def test_upgrade_keeps_entity_id_and_name(
             # The registry entry now uses the new naming
             assert entry_after.has_entity_name
             assert friendly_name(hass, entity_id) == f"Bathroom speaker {name}"
+
+    asyncio.run(run())
+
+
+@pytest.mark.parametrize(
+    ("entity_class", "domain", "suffix", "name"), GERMAN_ENTITIES, ids=ENTITY_SUFFIXES
+)
+def test_new_entity_named_in_german(
+    tmp_path: Path,
+    entity_class: type[GoogleHomeBaseEntity],
+    domain: str,
+    suffix: str,
+    name: str,
+) -> None:
+    """Name new entities in German, and build their IDs from the German names.
+
+    The IDs start with the area and the device name, as in English.
+    """
+
+    async def run() -> None:
+        async with home_assistant(tmp_path, "de") as (hass, entry):
+            add_device(hass, entry, "Lautsprecher", "Küche")
+
+            entity_id = await add_entity(
+                hass, entry, domain, make_entity(entity_class, "Lautsprecher")
+            )
+
+            assert entity_id == f"{domain}.kuche_lautsprecher_{suffix}"
+            assert friendly_name(hass, entity_id) == f"Lautsprecher {name}"
+
+    asyncio.run(run())
+
+
+def test_new_entity_named_in_russian_keeps_english_id(tmp_path: Path) -> None:
+    """Name new entities in Russian, with entity IDs from the English names."""
+
+    async def run() -> None:
+        async with home_assistant(tmp_path, "ru") as (hass, entry):
+            add_device(hass, entry, "Lautsprecher", "Küche")
+
+            entity_id = await add_entity(
+                hass,
+                entry,
+                "sensor",
+                make_entity(GoogleHomeAlarmsSensor, "Lautsprecher"),
+            )
+
+            assert entity_id == "sensor.kuche_lautsprecher_alarms"
+            assert friendly_name(hass, entity_id) == "Lautsprecher Будильники"
+
+    asyncio.run(run())
+
+
+def test_language_keeps_entity_id_until_recreated(tmp_path: Path) -> None:
+    """Keep an English entity ID in German; recreating entity IDs suggests the German one.
+
+    In German, Home Assistant builds entity IDs from the German names. It doesn't
+    change an existing entity ID, but Recreate entity IDs uses the new name.
+    """
+
+    async def run() -> None:
+        async with home_assistant(tmp_path, "de") as (hass, entry):
+            device_id = add_device(hass, entry, "Kitchen speaker", None)
+            registry = er.async_get(hass)
+            # As the previous version, with English names, added it
+            old = registry.async_get_or_create(
+                "sensor",
+                DOMAIN,
+                f"{DEVICE_ID}/alarms",
+                config_entry=entry,
+                device_id=device_id,
+                has_entity_name=True,
+                object_id_base="Alarms",
+                original_name="Alarms",
+            )
+            assert old.entity_id == "sensor.kitchen_speaker_alarms"
+
+            entity_id = await add_entity(
+                hass,
+                entry,
+                "sensor",
+                make_entity(GoogleHomeAlarmsSensor, "Kitchen speaker"),
+            )
+
+            assert entity_id == old.entity_id
+            assert friendly_name(hass, entity_id) == "Kitchen speaker Wecker"
+            entry_after = registry.async_get(entity_id)
+            assert entry_after is not None
+            # What Recreate entity IDs offers
+            assert (
+                registry.async_regenerate_entity_id(entry_after)
+                == "sensor.kitchen_speaker_wecker"
+            )
 
     asyncio.run(run())
 

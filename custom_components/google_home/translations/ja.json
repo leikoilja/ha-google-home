@@ -77,6 +77,34 @@
       "other-account": "別の Google アカウントでログインしたため、何も変更されていません。この統合で使用しているアカウントでログインしてください。代わりに今回ログインしたアカウントを使用するには、統合を削除して追加し直してください。"
     }
   },
+  "entity": {
+    "button": {
+      "reboot": {
+        "name": "再起動"
+      }
+    },
+    "number": {
+      "alarm_volume": {
+        "name": "アラーム音量"
+      }
+    },
+    "sensor": {
+      "alarms": {
+        "name": "アラーム"
+      },
+      "device": {
+        "name": "デバイス"
+      },
+      "timers": {
+        "name": "タイマー"
+      }
+    },
+    "switch": {
+      "do_not_disturb": {
+        "name": "サイレント モード"
+      }
+    }
+  },
   "exceptions": {
     "alarms_and_timers_not_fetched": {
       "message": "{device} から現在のアラームとタイマーを取得できなかったため、このデバイスからは何も削除されませんでした。デバイスがオンラインであることを確認し、しばらくしてからもう一度お試しください。"

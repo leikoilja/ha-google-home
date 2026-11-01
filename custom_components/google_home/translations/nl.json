@@ -77,6 +77,34 @@
       "other-account": "Je bent ingelogd met een ander Google-account, dus er is niets gewijzigd. Log in met het account dat deze integratie gebruikt. Om in plaats daarvan dat andere account te gebruiken, verwijder je de integratie en voeg je deze opnieuw toe."
     }
   },
+  "entity": {
+    "button": {
+      "reboot": {
+        "name": "Herstarten"
+      }
+    },
+    "number": {
+      "alarm_volume": {
+        "name": "Alarmvolume"
+      }
+    },
+    "sensor": {
+      "alarms": {
+        "name": "Alarmen"
+      },
+      "device": {
+        "name": "Apparaat"
+      },
+      "timers": {
+        "name": "Timers"
+      }
+    },
+    "switch": {
+      "do_not_disturb": {
+        "name": "Niet storen"
+      }
+    }
+  },
   "exceptions": {
     "alarms_and_timers_not_fetched": {
       "message": "De huidige alarmen en timers konden niet worden opgehaald van {device}. Er is daarom niets van dit apparaat verwijderd. Controleer of het apparaat online is en probeer het later opnieuw."

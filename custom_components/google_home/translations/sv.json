@@ -77,6 +77,34 @@
       "other-account": "Du loggade in på ett annat Google-konto, så inget ändrades. Logga in med kontot som den här integrationen använder. Om du i stället vill använda det andra kontot raderar du integrationen och lägger till den igen."
     }
   },
+  "entity": {
+    "button": {
+      "reboot": {
+        "name": "Starta om"
+      }
+    },
+    "number": {
+      "alarm_volume": {
+        "name": "Alarmvolym"
+      }
+    },
+    "sensor": {
+      "alarms": {
+        "name": "Alarm"
+      },
+      "device": {
+        "name": "Enhet"
+      },
+      "timers": {
+        "name": "Timers"
+      }
+    },
+    "switch": {
+      "do_not_disturb": {
+        "name": "Stör ej"
+      }
+    }
+  },
   "exceptions": {
     "alarms_and_timers_not_fetched": {
       "message": "Det gick inte att hämta aktuella alarm och timers från {device}, så inget raderades från den enheten. Kontrollera att enheten är online och försök igen senare."

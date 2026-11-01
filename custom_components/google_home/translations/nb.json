@@ -77,6 +77,34 @@
       "other-account": "Du logget på en annen Google-konto, så ingenting ble endret. Logg på med kontoen som denne integrasjonen bruker. For å bruke den andre kontoen i stedet, slett integrasjonen og legg den til på nytt."
     }
   },
+  "entity": {
+    "button": {
+      "reboot": {
+        "name": "Start på nytt"
+      }
+    },
+    "number": {
+      "alarm_volume": {
+        "name": "Alarmvolum"
+      }
+    },
+    "sensor": {
+      "alarms": {
+        "name": "Alarmer"
+      },
+      "device": {
+        "name": "Enhet"
+      },
+      "timers": {
+        "name": "Timere"
+      }
+    },
+    "switch": {
+      "do_not_disturb": {
+        "name": "Ikke forstyrr"
+      }
+    }
+  },
   "exceptions": {
     "alarms_and_timers_not_fetched": {
       "message": "Kunne ikke hente gjeldende alarmer og timere fra {device}, så ingenting ble slettet fra denne enheten. Kontroller at enheten er på nett, og prøv igjen senere."

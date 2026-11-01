@@ -77,6 +77,34 @@
       "other-account": "Has iniciado sesión en otra cuenta de Google, por lo que no se ha cambiado nada. Inicia sesión con la cuenta que usa esta integración. Para usar esa otra cuenta, elimina la integración y vuelve a añadirla."
     }
   },
+  "entity": {
+    "button": {
+      "reboot": {
+        "name": "Reiniciar"
+      }
+    },
+    "number": {
+      "alarm_volume": {
+        "name": "Volumen de alarma"
+      }
+    },
+    "sensor": {
+      "alarms": {
+        "name": "Alarmas"
+      },
+      "device": {
+        "name": "Dispositivo"
+      },
+      "timers": {
+        "name": "Temporizadores"
+      }
+    },
+    "switch": {
+      "do_not_disturb": {
+        "name": "No molestar"
+      }
+    }
+  },
   "exceptions": {
     "alarms_and_timers_not_fetched": {
       "message": "No se han podido obtener las alarmas y los temporizadores actuales de {device}, por lo que no se ha eliminado nada de ese dispositivo. Comprueba que esté en línea y vuelve a intentarlo más tarde."

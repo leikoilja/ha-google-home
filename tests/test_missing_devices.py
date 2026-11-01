@@ -11,6 +11,7 @@ from types import MappingProxyType
 from typing import cast
 from unittest.mock import AsyncMock, MagicMock, Mock, PropertyMock, call, patch
 
+from ghome_foyer_api.api_pb2 import HomeGraph  # pylint: disable=no-name-in-module
 from glocaltokens.client import Device
 from glocaltokens.exceptions import AuthenticationError, HomegraphError
 from glocaltokens.scanner import NetworkDevice
@@ -49,7 +50,7 @@ from homeassistant.config_entries import SOURCE_USER, ConfigEntry, ConfigEntrySt
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed
 
-from .test_entity import home_assistant
+from .test_entity import home_assistant, no_registered_devices
 
 # pylint: enable=wrong-import-order
 
@@ -172,8 +173,10 @@ def make_client(
         for index, ip_address in enumerate(ip_addresses)
     ]
     client.google_devices_fetched = True
-    # Unless a test says otherwise, Google and mDNS return the same devices again
+    # Unless a test says otherwise, Google and mDNS return the same devices again,
+    # from no home graph
     glocaltokens = Mock(
+        get_home_graph=Mock(return_value=HomeGraph()),
         get_google_devices=Mock(
             return_value=[
                 found(device.device_id, device.ip_address)
@@ -475,7 +478,8 @@ def update_entry(
             await coordinator._async_update_data()  # noqa: SLF001
         return devices
 
-    devices = asyncio.run(run())
+    with no_registered_devices():
+        devices = asyncio.run(run())
     client.collect_data_from_endpoints.assert_has_awaits(
         [
             call(device, found_at_known_host=False)
@@ -532,9 +536,10 @@ async def set_up(
             patch("custom_components.google_home.async_browse_cast_devices"),
             patch("custom_components.google_home.async_get_clientsession"),
             patch.object(hass.config_entries, "async_forward_entry_setups"),
-            patch(
-                "glocaltokens.client.GLocalAuthenticationTokens.get_google_devices",
-                google,
+            patch.multiple(
+                "glocaltokens.client.GLocalAuthenticationTokens",
+                get_google_devices=google,
+                get_home_graph=Mock(return_value=HomeGraph()),
             ),
         ):
             await async_setup_entry(hass, entry)

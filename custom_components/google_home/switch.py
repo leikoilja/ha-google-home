@@ -33,7 +33,7 @@ async def async_setup_entry(
 class DoNotDisturbSwitch(GoogleHomeFeatureEntity, SwitchEntity):
     """Google Home Do Not Disturb switch."""
 
-    _attr_name = "Do Not Disturb"
+    _attr_translation_key = "do_not_disturb"
     _attr_icon = ICON_DO_NOT_DISTURB
     _attr_entity_category = EntityCategory.CONFIG
 

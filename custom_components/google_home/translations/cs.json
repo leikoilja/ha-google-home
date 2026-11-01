@@ -77,6 +77,34 @@
       "other-account": "Přihlásili jste se k jinému účtu Google, proto se nic nezměnilo. Přihlaste se k účtu, který tato integrace používá. Pokud chcete místo toho používat ten druhý účet, integraci smažte a přidejte ji znovu."
     }
   },
+  "entity": {
+    "button": {
+      "reboot": {
+        "name": "Restartovat"
+      }
+    },
+    "number": {
+      "alarm_volume": {
+        "name": "Hlasitost budíku"
+      }
+    },
+    "sensor": {
+      "alarms": {
+        "name": "Budíky"
+      },
+      "device": {
+        "name": "Zařízení"
+      },
+      "timers": {
+        "name": "Časovače"
+      }
+    },
+    "switch": {
+      "do_not_disturb": {
+        "name": "Nerušit"
+      }
+    }
+  },
   "exceptions": {
     "alarms_and_timers_not_fetched": {
       "message": "Nepodařilo se načíst aktuální budíky a časovače ze zařízení {device}, proto z něj nebylo nic smazáno. Zkontrolujte, zda je zařízení online, a zkuste to znovu později."

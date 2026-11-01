@@ -77,6 +77,34 @@
       "other-account": "Te-ai conectat la un alt cont Google, așa că nu s-a modificat nimic. Conectează-te cu contul pe care îl folosește această integrare. Pentru a folosi în schimb celălalt cont, șterge integrarea și adaug-o din nou."
     }
   },
+  "entity": {
+    "button": {
+      "reboot": {
+        "name": "Repornește"
+      }
+    },
+    "number": {
+      "alarm_volume": {
+        "name": "Volumul alarmei"
+      }
+    },
+    "sensor": {
+      "alarms": {
+        "name": "Alarme"
+      },
+      "device": {
+        "name": "Dispozitiv"
+      },
+      "timers": {
+        "name": "Temporizatoare"
+      }
+    },
+    "switch": {
+      "do_not_disturb": {
+        "name": "Nu deranja"
+      }
+    }
+  },
   "exceptions": {
     "alarms_and_timers_not_fetched": {
       "message": "Nu s-au putut prelua alarmele și cronometrele curente de pe dispozitivul {device}, așa că nu s-a șters nimic de pe acesta. Verifică dacă dispozitivul este online și încearcă din nou mai târziu."

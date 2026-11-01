@@ -7,6 +7,7 @@ import re
 from typing import Concatenate, cast
 from unittest.mock import MagicMock, Mock, patch
 
+from ghome_foyer_api.api_pb2 import HomeGraph  # pylint: disable=no-name-in-module
 from glocaltokens.client import Device
 import pytest
 from pytest_homeassistant.common import MockConfigEntry
@@ -42,6 +43,9 @@ from .test_unsupported_devices import ENDPOINTS, SPEAKER, SUPPORTED, Reply
 SPEAKER_ID = "kitchen"
 SPEAKER_CLOUD_ID = "kitchen-cloud-id"
 SPEAKER_NAME = "Kitchen speaker"
+# A second speaker, which the two_speakers fixture lists after the kitchen's
+BEDROOM = "10.0.0.3"
+BEDROOM_ID = "bedroom"
 DELETE = "delete"
 
 
@@ -50,6 +54,11 @@ def kitchen_speaker(ip_address: str | None = SPEAKER) -> Device:
     return found(
         SPEAKER_ID, ip_address, name=SPEAKER_NAME, cloud_device_id=SPEAKER_CLOUD_ID
     )
+
+
+def bedroom_speaker(ip_address: str | None = BEDROOM) -> Device:
+    """Return the second speaker as glocaltokens returns it."""
+    return found(BEDROOM_ID, ip_address, name="Bedroom speaker")
 
 
 @dataclass
@@ -176,7 +185,8 @@ def fixture_google(
 ) -> Iterator[Mock]:
     """Fake glocaltokens' fetch of Google's device list, which lists one speaker.
 
-    mDNS finds no other device.
+    mDNS finds no other device. The list comes from no home graph, so Google has
+    only the devices it lists.
     """
     with (
         # With autospec, a call that glocaltokens wouldn't accept fails
@@ -185,6 +195,11 @@ def fixture_google(
             autospec=True,
             return_value=[kitchen_speaker()],
         ) as google,
+        patch(
+            "glocaltokens.client.GLocalAuthenticationTokens.get_home_graph",
+            autospec=True,
+            return_value=HomeGraph(),
+        ),
         patch("custom_components.google_home.mdns.AsyncServiceBrowser"),
     ):
         yield google
@@ -214,3 +229,10 @@ def fixture_replies(aioclient_mock: AiohttpClientMocker) -> Replies:
     for method in ("get", "post"):
         aioclient_mock.request(method, re.compile(""), side_effect=answer)
     return replies
+
+
+@pytest.fixture(name="two_speakers")
+def fixture_two_speakers(google: Mock, replies: Replies) -> None:
+    """Make the fake Google list the kitchen and the bedroom speaker, which both answer."""
+    google.return_value = [kitchen_speaker(), bedroom_speaker()]
+    replies[BEDROOM] = dict(SUPPORTED)

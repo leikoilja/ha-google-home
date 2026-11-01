@@ -77,6 +77,34 @@
       "other-account": "Du hast dich bei einem anderen Google-Konto angemeldet, daher wurde nichts geändert. Melde dich mit dem Konto an, das diese Integration verwendet. Um stattdessen das andere Konto zu verwenden, lösche die Integration und füge sie erneut hinzu."
     }
   },
+  "entity": {
+    "button": {
+      "reboot": {
+        "name": "Neu starten"
+      }
+    },
+    "number": {
+      "alarm_volume": {
+        "name": "Weckerlautstärke"
+      }
+    },
+    "sensor": {
+      "alarms": {
+        "name": "Wecker"
+      },
+      "device": {
+        "name": "Gerät"
+      },
+      "timers": {
+        "name": "Timer"
+      }
+    },
+    "switch": {
+      "do_not_disturb": {
+        "name": "Bitte nicht stören"
+      }
+    }
+  },
   "exceptions": {
     "alarms_and_timers_not_fetched": {
       "message": "Die aktuellen Wecker und Timer konnten nicht von {device} abgerufen werden. Daher wurde auf diesem Gerät nichts gelöscht. Prüfe, ob es online ist, und versuche es später erneut."
