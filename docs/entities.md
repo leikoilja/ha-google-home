@@ -152,16 +152,16 @@ The integration checks it together with the [update sensor](#update-sensor), and
 
 The Wi-Fi network sensor shows the name (SSID) of the Wi-Fi network the device is connected to. The signal strength sensor shows how strong the device's Wi-Fi signal is, in dBm, such as `-55`: the closer to 0, the stronger. Use them to check a device that often becomes [unavailable](#when-entities-are-unavailable), for example whether it uses the network you expect and how weak its signal is. Both appear under **Diagnostic** on the device page.
 
-As a guide to what the signal strength means:
+As a rough guide to what the signal strength means:
 
-| Signal strength   | What it means                                                                         |
-| ----------------- | ------------------------------------------------------------------------------------- |
-| -67 dBm or higher | Very good: enough for streaming music and video                                       |
-| -68 to -70 dBm    | Okay: reliable for most use, with less margin for streaming                           |
-| -71 to -80 dBm    | Weak: the connection may be unreliable, and the device may drop out                   |
-| Below -80 dBm     | Very weak: expect dropouts. Move the device or your router, or add a mesh Wi-Fi point |
+| Signal strength   | What it suggests                                            |
+| ----------------- | ----------------------------------------------------------- |
+| -67 dBm or higher | Strong: the suggested minimum for streaming music and video |
+| -68 to -70 dBm    | Okay: the suggested minimum for everyday use                |
+| -71 to -80 dBm    | Weak: the connection may be unreliable                      |
+| Below -80 dBm     | Very weak: the device may have trouble staying connected    |
 
-These are general Wi-Fi guidelines from [Understanding RSSI](https://www.oscium.com/training/understanding-rssi/), not figures from Google, and what a device needs depends on your network.
+These ranges are approximate, from general Wi-Fi guidance in [Understanding RSSI](https://www.oscium.com/training/understanding-rssi/), not figures from Google. A strong signal alone doesn't guarantee good performance: interference can still cause problems. If a device's signal is weak, you could try moving it or your router, or adding a mesh Wi-Fi point.
 
 Every device gets both sensors, including a device without alarms and timers, but they're disabled by default. To enable one, go to **Settings** > **Devices & services** > **Google Home** and select the device. In the **Diagnostic** card, select the disabled entities, such as **+2 disabled entities**, then the sensor. In its settings, turn on **Enabled** and select **Update**. Home Assistant adds it about 30 seconds later.
 
