@@ -187,21 +187,45 @@ class GoogleHomeDeviceCoordinator(DataUpdateCoordinator[GoogleHomeDevice | None]
 
     @override
     async def _async_update_data(self) -> GoogleHomeDevice | None:
-        """Ask the device for its alarms, timers and settings, if Google lists it.
+        """Ask the device for its alarms, timers and settings, and firmware when due.
 
-        A fetch of Google's list while the device is asked may drop it, or replace it
-        with a new object, so the old one isn't shown again.
+        Only if Google lists it. A fetch of Google's list while the device is asked
+        may drop it, or replace it with a new object, so the old one isn't shown
+        again.
         """
         answered, self.info_answered = self.info_answered, None
         if (device := self._listed()) is None:
             return None
-        await self.client.update_device(
+        asked = await self.client.update_device(
             device, found_at_known_host=answered == (device, device.ip_address)
         )
         # Its token may have made Google's list be fetched, and Google reject the
         # master token
         self.config_entry.runtime_data.account.async_ask_to_sign_in_if_rejected()
-        return device if device is self._listed() else None
+        # Not for a device object that Google's list no longer has
+        if asked and device is self._listed():
+            await self.client.update_firmware(device)
+        if device is not self._listed():
+            return None
+        self._async_show_firmware(device)
+        return device
+
+    @callback
+    def _async_show_firmware(self, device: GoogleHomeDevice) -> None:
+        """Show a change to the device's firmware version on its page in Home Assistant.
+
+        Home Assistant reads an entity's device info, which has the version, only when
+        it adds the entity, so a version that changes later is set here. An unknown
+        version leaves the last one shown.
+        """
+        if (version := device.sw_version) is None:
+            return
+        registry = dr.async_get(self.hass)
+        entry = registry.async_get_device_by_identifier(
+            (DOMAIN, self.device_id), self.config_entry.entry_id
+        )
+        if entry is not None and entry.sw_version != version:
+            registry.async_update_device(entry.id, sw_version=version)
 
     @callback
     def async_unlisted(self) -> None:

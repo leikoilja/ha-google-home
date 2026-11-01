@@ -56,11 +56,13 @@ from .test_missing_devices import ALARM_ID, found, make_client, rejected, until
 from .test_setup import set_up, state
 from .test_unsupported_devices import (
     ALARMS,
+    BUILD,
     DND,
     ENDPOINTS,
     INFO,
     SPEAKER,
     SUPPORTED,
+    UPDATE,
     VOLUME,
     Network,
     Reply,
@@ -74,13 +76,19 @@ BEDROOM_ALARMS = "sensor.bedroom_speaker_alarms"
 BEDROOM_DEVICE = "sensor.bedroom_speaker_device"
 BEDROOM_DND = "switch.bedroom_speaker_do_not_disturb"
 EVERYTHING = [ALARMS, VOLUME, DND]
+# What a speaker is asked after them when its firmware check is due, as at the first
+# update of each new device object that it answers
+FIRMWARE = [BUILD, UPDATE]
 # What a speaker answers while it starts: "not found" for everything that needs
 # its token
 STARTING: dict[str, Reply] = dict.fromkeys(SUPPORTED, HTTPStatus.NOT_FOUND)
 # What a speaker answers that rejects every token Google gives
 REJECTING: dict[str, Reply] = {
     **dict.fromkeys(SUPPORTED, HTTPStatus.UNAUTHORIZED),
+    # Its info needs no token
     INFO: SUPPORTED[INFO],
+    BUILD: SUPPORTED[BUILD],
+    UPDATE: SUPPORTED[UPDATE],
 }
 # An alarm at 1800000000 s, which a sensor shows in the tests' time zone US/Pacific
 OTHER_ALARM = (
@@ -268,7 +276,7 @@ async def test_speaker_google_stops_listing(
     clock.return_value = 2 * FETCH_DEVICES_INTERVAL
     await update_account(hass, config_entry)
 
-    assert asked_by(asked(aioclient_mock), BEDROOM) == EVERYTHING
+    assert asked_by(asked(aioclient_mock), BEDROOM) == [*EVERYTHING, *FIRMWARE]
     assert state(hass, BEDROOM_ALARMS) == OTHER_ALARM_SHOWN
     assert {
         entry.entity_id
@@ -306,7 +314,7 @@ async def test_speaker_added_in_google_home_app(
     await update_account(hass, config_entry)
 
     requests = asked(aioclient_mock)
-    assert asked_by(requests, BEDROOM) == EVERYTHING
+    assert asked_by(requests, BEDROOM) == [*EVERYTHING, *FIRMWARE]
     assert asked_by(requests, office) == [ALARMS, INFO]
     assert state(hass, BEDROOM_ALARMS) == "2023-11-14T14:13:20-08:00"
     added = {
@@ -342,7 +350,7 @@ async def test_known_host_answer_at_setup(
 
     await set_up(hass, config_entry)
 
-    assert asked_by(asked(aioclient_mock), SPEAKER) == [INFO, *EVERYTHING]
+    assert asked_by(asked(aioclient_mock), SPEAKER) == [INFO, *EVERYTHING, *FIRMWARE]
     device = hass.states.get("sensor.kitchen_speaker_device")
     assert device is not None
     assert device.attributes["available"] is True
@@ -378,7 +386,7 @@ async def test_known_host_answer_after_setup(
     clock.return_value = FETCH_DEVICES_INTERVAL
     await update_account(hass, config_entry)
 
-    assert asked_by(asked(aioclient_mock), SPEAKER) == [INFO, *EVERYTHING]
+    assert asked_by(asked(aioclient_mock), SPEAKER) == [INFO, *EVERYTHING, *FIRMWARE]
     device = hass.states.get("sensor.kitchen_speaker_device")
     assert device is not None
     assert device.attributes["available"] is True
@@ -438,7 +446,7 @@ async def test_speaker_found_later_asked_once_while_first_update_runs(
 
     held.released.set()
     await hass.async_block_till_done(wait_background_tasks=True)
-    assert asked_by(asked(aioclient_mock), BEDROOM) == EVERYTHING
+    assert asked_by(asked(aioclient_mock), BEDROOM) == [*EVERYTHING, *FIRMWARE]
 
     freezer.tick(timedelta(seconds=15))
     async_fire_time_changed(hass)
@@ -467,7 +475,7 @@ async def test_speaker_listed_again_while_old_update_runs(
     replies[BEDROOM] = dict(SUPPORTED)
     clock.return_value = FETCH_DEVICES_INTERVAL
     await update_account(hass, config_entry)
-    assert asked_by(asked(aioclient_mock), BEDROOM) == EVERYTHING
+    assert asked_by(asked(aioclient_mock), BEDROOM) == [*EVERYTHING, *FIRMWARE]
     held = Held(SUPPORTED[ALARMS])
     replies[BEDROOM][ALARMS] = held
     # Not a task that Home Assistant waits for
@@ -487,8 +495,15 @@ async def test_speaker_listed_again_while_old_update_runs(
     await poll
     await hass.async_block_till_done(wait_background_tasks=True)
 
-    # The rest of the earlier update, then one update of the speaker listed again
-    assert asked_by(asked(aioclient_mock), BEDROOM) == [VOLUME, DND, *EVERYTHING]
+    # The rest of the earlier update, without a firmware check, as Google's list has
+    # replaced its device object, then one update of the speaker listed again, with
+    # its first check
+    assert asked_by(asked(aioclient_mock), BEDROOM) == [
+        VOLUME,
+        DND,
+        *EVERYTHING,
+        *FIRMWARE,
+    ]
     assert state(hass, BEDROOM_ALARMS) == OTHER_ALARM_SHOWN
 
 
@@ -729,7 +744,7 @@ async def test_update_joining_action_fetch_uses_its_known_host(
     assert network.asked(BEDROOM) == [INFO]
     bedroom = data.devices["device1"]
     await bedroom.async_refresh()
-    assert network.asked(BEDROOM) == EVERYTHING
+    assert network.asked(BEDROOM) == [*EVERYTHING, *FIRMWARE]
     assert bedroom.data is not None
     assert bedroom.data.reachable
     await bedroom.async_refresh()
@@ -765,7 +780,7 @@ async def test_update_joining_failed_fetch_uses_no_known_host(
     await data.account.async_refresh()
     bedroom = data.devices["device1"]
     await bedroom.async_refresh()
-    assert network.asked(BEDROOM) == [INFO, *EVERYTHING]
+    assert network.asked(BEDROOM) == [INFO, *EVERYTHING, *FIRMWARE]
     # A round without a fetch, so the action may fetch
     await data.account.async_refresh()
 
@@ -816,7 +831,8 @@ async def test_known_host_answer_only_for_its_device(
 
     await coordinator.async_refresh()
     assert network.asked(address) == (
-        EVERYTHING if change is None else [ALARMS, INFO, VOLUME, DND]
+        # Only the known host's answer makes the starting speaker reachable
+        [*EVERYTHING, *FIRMWARE] if change is None else [ALARMS, INFO, VOLUME, DND]
     )
     await coordinator.async_refresh()
     assert network.asked(address) == [ALARMS, INFO, VOLUME, DND]

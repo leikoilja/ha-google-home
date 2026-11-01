@@ -21,15 +21,19 @@ def create_url(ip_address: str, port: int, api_endpoint: str) -> str:
 
 
 async def async_get_device_info(
-    session: ClientSession, host: str, device: GoogleHomeDevice | None = None
+    session: ClientSession,
+    host: str,
+    device: GoogleHomeDevice | None = None,
+    *,
+    endpoint: str = API_ENDPOINT_EUREKA_INFO,
 ) -> dict[str, object] | None:
-    """Return what the device at this host reports about itself.
+    """Return what the device at this host reports about itself, at this endpoint.
 
     Return None if it answers with something else, such as an error page.
     Raise TimeoutError or ClientError if it doesn't answer. With a device, set
     whether it's reachable: whether a 200 came, with its whole body.
     """
-    url = create_url(host, PORT, API_ENDPOINT_EUREKA_INFO)
+    url = create_url(host, PORT, endpoint)
     reachable = False
     try:
         async with session.get(url, timeout=ClientTimeout(total=TIMEOUT)) as response:

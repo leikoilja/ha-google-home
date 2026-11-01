@@ -95,7 +95,9 @@ def accepting(
     def get(_url: str, **_: object) -> MagicMock:
         response = MagicMock()
         response.__aenter__.return_value = MagicMock(
-            status=HTTPStatus.OK, read=AsyncMock(return_value=b"{}")
+            status=HTTPStatus.OK,
+            read=AsyncMock(return_value=b"{}"),
+            json=AsyncMock(return_value={}),
         )
         return response
 
