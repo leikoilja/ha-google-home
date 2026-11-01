@@ -37,12 +37,14 @@ Every 30 seconds, each speaker reports what it heard since the last check and st
 | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
 | `home`        | A speaker heard the device in the last 90 seconds.                                                                                          |
 | `not_home`    | Every speaker has scanned without a break for the last 90 seconds, and none heard the device.                                               |
-| `unknown`     | Right after Home Assistant starts or the integration reloads, until the speakers have scanned long enough to tell. This takes 30-90 seconds. |
+| `unknown`     | Right after Home Assistant starts or the integration reloads, until the speakers have scanned long enough to tell. This takes 30-90 seconds. While polling is off, trackers usually stay `unknown`; see below. |
 | `unavailable` | A speaker has stopped answering for 5 minutes, so the integration can't tell whether the device is gone. See [Tracker is unavailable](#tracker-is-unavailable). Also while Bluetooth tracking is off. |
 
 So a phone shows `home` within 60 seconds of arriving, and `not_home` 60 to 90 seconds after it leaves.
 
 Starting as `unknown` after a restart keeps automations from seeing you leave and come back each time Home Assistant restarts.
+
+While [polling is turned off](configuration.md#turn-off-polling) in the integration's system options, the speakers don't scan on their own, and [Refresh devices](actions.md#refresh-devices) doesn't make them scan, so trackers usually stay `unknown`. Running [`homeassistant.update_entity`](https://www.home-assistant.io/actions/homeassistant.update_entity/) on a tracker runs one round of scans, and it shows `home` or `not_home` only after enough rounds, as described above.
 
 ## Tracker is unavailable
 
