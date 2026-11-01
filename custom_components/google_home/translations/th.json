@@ -105,6 +105,9 @@
       },
       "timers": {
         "name": "ตัวจับเวลา"
+      },
+      "wifi_network": {
+        "name": "เครือข่าย Wi-Fi"
       }
     },
     "switch": {

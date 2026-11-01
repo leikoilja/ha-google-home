@@ -105,6 +105,9 @@
       },
       "timers": {
         "name": "計時器"
+      },
+      "wifi_network": {
+        "name": "Wi-Fi 網路"
       }
     },
     "switch": {

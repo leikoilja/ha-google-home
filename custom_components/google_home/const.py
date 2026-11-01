@@ -58,6 +58,8 @@ LABEL_DEVICE: Final = "device"
 LABEL_DO_NOT_DISTURB: Final = "Do Not Disturb"
 LABEL_REBOOT: Final = "reboot"
 LABEL_FIRMWARE_UPDATE: Final = "firmware update"
+LABEL_WIFI_NETWORK: Final = "Wi-Fi network"
+LABEL_WIFI_SIGNAL: Final = "Wi-Fi signal"
 
 # DEVICE PORT
 PORT: Final = 8443
@@ -75,7 +77,8 @@ API_ENDPOINT_EUREKA_INFO: Final = "setup/eureka_info?params=name,device_info"
 # system version is only here.
 API_ENDPOINT_BUILD_INFO: Final = "setup/eureka_info?params=build_info"
 # Without params, the info has whether the device has a firmware update waiting, which
-# no params give. It also has the device's network and location, which aren't kept.
+# no params give. It also has the device's Wi-Fi network and signal strength, which are
+# kept, and its location and IDs, which aren't.
 API_ENDPOINT_UPDATE_INFO: Final = "setup/eureka_info"
 
 # HEADERS

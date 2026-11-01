@@ -44,7 +44,7 @@ from .conftest import (
 from .test_coordinators import REJECTING, runtime, update_account
 from .test_missing_devices import ALARM_ID, answered, found
 from .test_setup import set_up
-from .test_unsupported_devices import ALARMS, SPEAKER, SUPPORTED
+from .test_unsupported_devices import ALARMS, SPEAKER, SUPPORTED, UPDATE
 
 # pylint: enable=wrong-import-order
 
@@ -161,6 +161,75 @@ async def test_diagnostics(
     assert speaker["mdns_reported"] is True
     assert diagnostics["mdns_reported_not_listed"] == 1
     assert diagnostics["now"] == "2026-10-15T05:00:00-07:00"
+
+
+# Invented values of the Wi-Fi network and access point, location, key and IDs that a
+# device can report, by key, each its own so a leak shows which one it is
+INFO_SECRETS = {
+    "ssid": "Invented home Wi-Fi",
+    "bssid": "02:00:5e:10:20:30",
+    "public_key": "invented-public-key",
+    "opencast_pin_code": "invented-pin-4821",
+    "uma_client_id": "invented-uma-client-id",
+    "ssdp_udn": "invented-ssdp-udn",
+}
+LATITUDE = 51.123456
+LONGITUDE = -0.654321
+NESTED_SSID = "Invented upstairs Wi-Fi"
+NESTED_BSSID = "02:00:5e:40:50:60"
+
+
+@pytest.mark.usefixtures("google")
+async def test_diagnostics_redact_wifi_network_and_device_ids(
+    hass: HomeAssistant,
+    hass_client: ClientSessionGenerator,
+    config_entry: MockConfigEntry,
+    replies: Replies,
+) -> None:
+    """Show the speaker's Wi-Fi signal, but not its network, location, key or IDs, wherever they are.
+
+    The network shows as redacted, which tells that the speaker gave one. The alarms
+    reply is kept as it came, so these keys are redacted in it too, also nested, as
+    in the location and Wi-Fi parts of a device's info.
+    """
+    replies[SPEAKER][UPDATE] = (
+        HTTPStatus.OK,
+        {"has_update": False, "ssid": INFO_SECRETS["ssid"], "signal_level": -52},
+    )
+    alarms_reply = {
+        **ALARMS_REPLY,
+        **INFO_SECRETS,
+        "location": {
+            "country_code": "GB",
+            "latitude": LATITUDE,
+            "longitude": LONGITUDE,
+        },
+        "wifi": {"ssid": NESTED_SSID, "bssid": NESTED_BSSID, "signal_level": -52},
+    }
+    replies[SPEAKER][ALARMS] = (HTTPStatus.OK, alarms_reply)
+    await set_up(hass, config_entry)
+
+    diagnostics = await get_diagnostics_for_config_entry(
+        hass, hass_client, config_entry
+    )
+
+    speaker = cast(dict[str, dict[str, object]], diagnostics["devices"])[SPEAKER_ID]
+    assert (speaker["ssid"], speaker["signal_level"]) == (REDACTED, -52)
+    assert speaker["alarms_reply"] == {
+        **ALARMS_REPLY,
+        **dict.fromkeys(INFO_SECRETS, REDACTED),
+        "location": {"country_code": "GB", "latitude": REDACTED, "longitude": REDACTED},
+        "wifi": {"ssid": REDACTED, "bssid": REDACTED, "signal_level": -52},
+    }
+    text = json.dumps(diagnostics)
+    secrets = [
+        *INFO_SECRETS.values(),
+        str(LATITUDE),
+        str(LONGITUDE),
+        NESTED_SSID,
+        NESTED_BSSID,
+    ]
+    assert [secret for secret in secrets if secret in text] == []
 
 
 @pytest.mark.usefixtures("google")

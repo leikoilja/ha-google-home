@@ -4,7 +4,7 @@ Home Assistant sets up the entry, runs its updates and calls its actions. Only
 glocaltokens, mDNS and the speaker's answers are faked, by the fixtures in conftest.py.
 """
 
-from collections.abc import Awaitable, Callable
+from collections.abc import Awaitable, Callable, Iterable
 from datetime import timedelta
 from http import HTTPStatus
 from importlib import import_module
@@ -73,6 +73,10 @@ ALARMS_SENSOR = "sensor.kitchen_speaker_alarms"
 DND_SWITCH = "switch.kitchen_speaker_do_not_disturb"
 VOLUME_NUMBER = "number.kitchen_speaker_alarm_volume"
 UPDATE_SENSOR = "binary_sensor.kitchen_speaker_update"
+WIFI_NETWORK_SENSOR = "sensor.kitchen_speaker_wi_fi_network"
+WIFI_SIGNAL_SENSOR = "sensor.kitchen_speaker_signal_strength"
+# The speaker's entities that are disabled by default, so they have no state
+DISABLED = [WIFI_NETWORK_SENSOR, WIFI_SIGNAL_SENSOR]
 # The speaker's entities and their states, as it answers in SUPPORTED: an alarm at
 # 1700000000 s, 22:13:20 UTC, shown in the tests' time zone US/Pacific, no timer,
 # which the timers sensor shows as unavailable, alarm volume 0.7, and notifications
@@ -196,9 +200,11 @@ class EntityIcons(TypedDict, total=False):
 
 
 async def shown_icons(
-    hass: HomeAssistant, entity_registry: er.EntityRegistry
+    hass: HomeAssistant,
+    entity_registry: er.EntityRegistry,
+    entity_ids: Iterable[str] = tuple(STATES),
 ) -> dict[str, str | None]:
-    """Return the icon that Home Assistant's frontend shows for each entity in STATES.
+    """Return the icon that Home Assistant's frontend shows for each of these entities.
 
     An icon in the entity's state comes first. Otherwise the frontend looks up the
     icons that Home Assistant loaded, by platform and translation key, and picks as its
@@ -210,7 +216,7 @@ async def shown_icons(
         await async_get_icons(hass, "entity", [DOMAIN])
     ).get(DOMAIN, {})
     shown: dict[str, str | None] = {}
-    for entity_id in STATES:
+    for entity_id in entity_ids:
         entry = entity_registry.async_get(entity_id)
         entity_state = hass.states.get(entity_id)
         assert entry is not None and entity_state is not None
@@ -257,7 +263,10 @@ async def test_setup(
     device_registry: dr.DeviceRegistry,
     entity_registry: er.EntityRegistry,
 ) -> None:
-    """Add the speaker, its entities on every platform, and the actions."""
+    """Add the speaker, its entities on every platform, and the actions.
+
+    Its Wi-Fi sensors are disabled until the user enables them.
+    """
     await set_up(hass, config_entry)
 
     assert config_entry.state is ConfigEntryState.LOADED
@@ -272,11 +281,15 @@ async def test_setup(
         "3.77.512345",
     )
     assert {
-        entity.entity_id: entity.device_id
+        entity.entity_id: (entity.device_id, entity.disabled_by)
         for entity in er.async_entries_for_config_entry(
             entity_registry, config_entry.entry_id
         )
-    } == dict.fromkeys(STATES, device.id)
+    } == {
+        **dict.fromkeys(STATES, (device.id, None)),
+        **dict.fromkeys(DISABLED, (device.id, er.RegistryEntryDisabler.INTEGRATION)),
+    }
+    assert [hass.states.get(entity_id) for entity_id in DISABLED] == [None, None]
     assert {entity_id: state(hass, entity_id) for entity_id in STATES} == STATES
     assert hass.services.async_services_for_domain(DOMAIN).keys() == ACTIONS.keys()
 
@@ -610,7 +623,8 @@ async def test_script_stops_at_action_when_setup_fails(
     assert len(next_steps) == 1
 
 
-@pytest.mark.usefixtures("google", "replies")
+# Home Assistant's snapshot of a platform needs every entity enabled
+@pytest.mark.usefixtures("google", "replies", "entity_registry_enabled_by_default")
 @pytest.mark.parametrize("platform", PLATFORMS)
 async def test_entities(
     hass: HomeAssistant,

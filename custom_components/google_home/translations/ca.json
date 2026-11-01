@@ -105,6 +105,9 @@
       },
       "timers": {
         "name": "Temporitzadors"
+      },
+      "wifi_network": {
+        "name": "Xarxa Wi-Fi"
       }
     },
     "switch": {

@@ -96,7 +96,7 @@ If you don't want to wait, make sure the device is online, then reload the integ
 
 #### Devices without alarms and timers
 
-Some Cast devices, such as Chromecast Audio, have no alarms, timers, Do Not Disturb or alarm volume. Such a device keeps only its device sensor, reboot button and update sensor. If it had the other entities, they become unavailable.
+Some Cast devices, such as Chromecast Audio, have no alarms, timers, Do Not Disturb or alarm volume. Such a device keeps only its device sensor, reboot button, update sensor and [Wi-Fi sensors](entities.md#wi-fi-sensors). If it had the other entities, they become unavailable.
 
 If this happens to a device that has alarms and timers, or a device gains these features, make sure the device is online, then reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. The integration adds the entities once the device answers for them. The integration checks the device again only when it starts, after you reload it or restart Home Assistant, so restarting the device or running `google_home.refresh_devices` doesn't bring them back.
 
@@ -198,7 +198,7 @@ Open **Settings** > **Devices & services** > **Google Home** to see why it isn't
 The diagnostics file shows:
 
 - The integration's options.
-- For each device: its model, whether it answers, whether Home Assistant has received its mDNS announcements since the integration loaded, its last reply about alarms and timers, as the device sent it, its firmware versions and release channel, and whether it says a firmware update is waiting.
+- For each device: its model, whether it answers, whether Home Assistant has received its mDNS announcements since the integration loaded, its last reply about alarms and timers, as the device sent it, its firmware versions and release channel, whether it says a firmware update is waiting, and its Wi-Fi signal strength.
 - How many other Cast devices on your network have announced themselves since the integration loaded but aren't in Google's device list, such as TVs with Chromecast built in, or speakers in another Google account. Only the number, not their names or addresses. Devices in homes that you [deselected](configuration.md#choose-homes) don't count.
 - When you downloaded it.
 
@@ -213,7 +213,7 @@ The menu has **Download diagnostics** only while the integration is set up. If s
 
 !!! warning "Check the file before sharing it"
 
-    The file replaces your email address, password, master token and Android ID, your devices' local tokens and IP addresses, and your known hosts with `**REDACTED**`. It keeps your device names and the times and labels of your alarms and timers. Home Assistant also adds details about your system, such as its version, your time zone and the custom integrations you use. Open the file and replace anything you don't want to share with `xxx` before you attach it to a public issue.
+    The file replaces your email address, password, master token and Android ID, your devices' local tokens, IP addresses and Wi-Fi network names, and your known hosts with `**REDACTED**`. It keeps your device names and the times and labels of your alarms and timers. Home Assistant also adds details about your system, such as its version, your time zone and the custom integrations you use. Open the file and replace anything you don't want to share with `xxx` before you attach it to a public issue.
 
 ## Collect debug logs
 
