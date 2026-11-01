@@ -41,8 +41,9 @@ You need:
 2. Choose how to sign in, and follow its steps below:
     - **Browser sign-in (recommended):** you sign in to Google in a desktop browser and copy a cookie from it.
     - **Master token:** if you already have one, for example from another tool.
+3. If your Google account is a member of several homes, choose the homes whose speakers and displays to add, and select **Submit**. All homes are selected at first. You can change this later; see [Choose homes](configuration.md#choose-homes).
 
-Home Assistant then adds a device for each Google Cast device in your home, with the [entities](entities.md) for it. Devices that have no alarms or timers, such as an NVIDIA Shield, get only a device sensor and a reboot button.
+Home Assistant then adds a device for each Google Cast device in your homes, with the [entities](entities.md) for it. Devices that have no alarms or timers, such as an NVIDIA Shield, get only a device sensor and a reboot button.
 
 !!! warning "Keep your sign-in details secret"
 
@@ -95,6 +96,7 @@ The examples use entity IDs such as `sensor.kitchen_timers`. Replace them with y
 - [Change the update interval](configuration.md#change-the-update-interval){#change-the-update-interval}, for example if a speaker often misses updates.
 - [Add a device](configuration.md#add-a-device){#add-a-device} that you set up in the Google Home app later.
 - [Add devices on another network](configuration.md#add-devices-on-another-network){#add-devices-on-another-network}, such as a separate VLAN.
+- [Choose homes](configuration.md#choose-homes){#choose-homes} whose devices to add, if your account is a member of several.
 - [Remove a device](configuration.md#remove-a-device){#remove-a-device}, and what happens when you remove one from the Google Home app.
 - [Sign in again](troubleshooting.md#sign-in-again){#sign-in-again} if Home Assistant reports that authentication expired.
 - [Remove the integration](configuration.md#remove-the-integration){#remove-the-integration}, and what to do about its master token.

@@ -1,6 +1,6 @@
 # Configuration and management
 
-After you [set up the integration](installation.md), you can change how often it checks your devices, add and remove devices, reach devices on another network, and remove the integration. If Home Assistant asks you to sign in again, see [Sign in again](troubleshooting.md#sign-in-again).
+After you [set up the integration](installation.md), you can change how often it checks your devices, add and remove devices, reach devices on another network, choose the homes whose devices it adds, and remove the integration. If Home Assistant asks you to sign in again, see [Sign in again](troubleshooting.md#sign-in-again).
 
 ## Change the update interval
 
@@ -57,6 +57,28 @@ To add devices as known hosts:
 After that, the integration asks your known hosts only when it asks Google for your devices, and only for devices that still have no address. For example, a device that was offline when the integration loaded is looked up at your known hosts at the first update 20 minutes after the integration last asked Google. With a network interface on the devices' network or an mDNS reflector, the integration gets a device's address as soon as the device announces itself, as on the same network.
 
 Give these devices fixed IP addresses in your router, so the addresses don't change. For a speaker pair, add the addresses of both speakers. Only the speaker that leads the pair reports it, so the integration uses that one and ignores the other.
+
+## Choose homes
+
+If your Google account is a member of several homes, you can choose the homes whose speakers and displays the integration adds. It adds every home's devices unless you deselect some. Google still sends the integration the devices of every home. The integration doesn't add the devices of homes you deselect, even if it finds them on your network or at a known host, and doesn't check them for alarms and timers.
+
+When you add the integration, it asks which homes to add if your account has more than one. If Google doesn't give the integration your homes at that point, it adds every home's devices, and you can choose later.
+
+To change the homes:
+
+1. Go to **Settings** > **Devices & services** > **Google Home** and select **Configure**.
+2. Under **Homes**, select the homes whose devices to add.
+3. Select **Submit**. If you changed the homes, the integration reloads.
+
+Homes are listed by the names they have in the Google Home app. If two of your homes have the same name, rename one of them in the app first, so that you can tell them apart.
+
+**Homes** appears when your account has more than one home, or when the only home left is one that you deselected, so that you can select it again. The integration needs to have got your homes from Google since it last loaded: if **Homes** is missing although your account has several homes, reload the integration and open **Configure** again.
+
+When you deselect a home, the integration removes its devices from Home Assistant, with their entities, as it reloads. Automations, scripts and dashboards that use them stop working. If Google doesn't give the integration your device list as it reloads, the devices stay, unavailable, until the integration next gets the list.
+
+When you select a home again, its devices come back with the names, areas and other settings you gave them. A device that was factory reset and set up again meanwhile has a new ID from Google, so it's added as a new device, without them. As with a [removed device](#remove-a-device), an entity gets its old ID back only if no other entity has taken that ID meanwhile.
+
+Homes that your account joins later are added. To leave one out, deselect it.
 
 ## Remove a device
 

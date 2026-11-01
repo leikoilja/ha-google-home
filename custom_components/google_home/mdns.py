@@ -145,7 +145,9 @@ class FoundDevices:
             for device in self._client.google_devices
             if device.cloud_device_id
         }
-        for cloud_device_id in fetched_for - listed:
+        for cloud_device_id in (
+            fetched_for - listed - self._client.excluded_cloud_device_ids
+        ):
             _LOGGER.debug(
                 "Google's device list doesn't have %s, which mDNS found",
                 self._devices[cloud_device_id].name,
@@ -161,9 +163,17 @@ class FoundDevices:
         self._schedule()
 
     def _ids_to_fetch(self) -> set[str]:
-        """Return the IDs of found devices that need a fetch: not listed, not covered."""
+        """Return the IDs of found devices that need a fetch: not listed, not covered.
+
+        Nor in a home whose devices aren't added, which the list never has.
+        """
         listed = {device.cloud_device_id for device in self._client.google_devices}
-        return self._devices.keys() - self._covered_ids - listed
+        return (
+            self._devices.keys()
+            - self._covered_ids
+            - listed
+            - self._client.excluded_cloud_device_ids
+        )
 
     def fetch_due(self) -> float | None:
         """Return when to fetch Google's list for devices that mDNS found, if at all.

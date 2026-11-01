@@ -32,6 +32,7 @@ from .test_missing_devices import (
     until,
     update_round,
 )
+from .test_removed_devices import in_home_graph
 
 
 @dataclass
@@ -75,6 +76,9 @@ class Network:
     listed: list[Device]
     session: Mock = field(default_factory=Mock)
     known_hosts: list[str] = field(default_factory=list)
+    excluded_homes: list[str] = field(default_factory=list)
+    # The home graph that each fetch gets with the list
+    home_graph: HomeGraph = field(default_factory=HomeGraph)
     # What Google raises instead of answering
     error: Exception | None = None
     # When each fetch of Google's list started
@@ -102,10 +106,11 @@ class Network:
             self.session,
             master_token=MASTER_TOKEN,
             known_hosts=self.known_hosts,
+            excluded_homes=self.excluded_homes,
         )
         self.client._client = Mock(  # noqa: SLF001  # pylint: disable=protected-access
             get_google_devices=Mock(side_effect=self._get_google_devices),
-            get_home_graph=Mock(return_value=HomeGraph()),
+            get_home_graph=Mock(side_effect=lambda: self.home_graph),
         )
         self.client.collect_data_from_endpoints = AsyncMock(  # type: ignore[method-assign]
             side_effect=self._poll
@@ -356,6 +361,54 @@ def test_unlisted_device_fetched_for_once(clock: Mock, timers: list[Timer]) -> N
 
     asyncio.run(run())
     assert network.fetches == [0, 130, 1330]
+
+
+def homes(*other: HomeGraph.Device) -> HomeGraph:
+    """Return a home graph with the kitchen at home, and the office and these in the other home."""
+    return HomeGraph(
+        homes=[
+            HomeGraph.Home(
+                id="home", devices=[in_home_graph("kitchen", "Kitchen", "k")]
+            ),
+            HomeGraph.Home(
+                id="other", devices=[in_home_graph("office", "Office", "o"), *other]
+            ),
+        ]
+    )
+
+
+def test_device_of_excluded_home_not_fetched_for(
+    clock: Mock, timers: list[Timer]
+) -> None:
+    """Don't fetch for a device of an excluded home that mDNS finds, after or during a fetch.
+
+    The home graph says which home it's in, also for a device without a token, which
+    glocaltokens leaves out of the list. A device that no home has still gets a fetch.
+    """
+    kitchen = found("kitchen", "10.0.0.2", cloud_device_id="Kitchen")
+    office = found("office", None, cloud_device_id="Office")
+    kitchen.home_id, office.home_id = "home", "other"
+    network = Network(
+        clock, timers, [kitchen, office], excluded_homes=["other"], home_graph=homes()
+    )
+
+    async def run() -> None:
+        await network.setup()
+        network.report("office", "10.0.0.7", at=100)
+        assert network.live() == []
+        task = await held_fetch(network, 1200)
+        # Set up in the excluded home while Google is asked, so that fetch first has it
+        network.home_graph = homes(in_home_graph("garage", "Garage", "g", token=""))
+        network.report("garage", "10.0.0.8", at=1201)
+        network.google_answers = True
+        await task
+        assert network.live() == []
+        network.report("tv", "10.0.0.9", at=1300)
+        assert network.live() == [1330]
+
+    asyncio.run(run())
+    assert [device.device_id for device in network.client.google_devices] == ["kitchen"]
+    assert network.fetches == [0, 1200]
 
 
 def test_devices_found_together_share_a_fetch(clock: Mock, timers: list[Timer]) -> None:
