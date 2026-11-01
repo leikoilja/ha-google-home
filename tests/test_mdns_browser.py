@@ -439,6 +439,39 @@ def test_replayed_lookup_stays_replayed(browsing: Browsing) -> None:
     assert reports(browsing) == [("10.0.0.2", False), ("10.0.0.2", True)]
 
 
+def test_lookup_by_name_that_browser_reported(browsing: Browsing) -> None:
+    """Look a service up by the name that the browser reported, in its case.
+
+    zeroconf matches records in any case. Loading the cached SRV record, spelled in
+    upper case, gives the service's info that name, but not its TXT record, which
+    the lookup then gets. It's still reported, and as replayed.
+    """
+    upper = AsyncServiceInfo(
+        CAST_SERVICE_TYPE.upper(),
+        SERVICE_NAME.upper(),
+        port=8009,
+        server="nest-audio-0123.local.",
+        parsed_addresses=["10.0.0.2"],
+    )
+
+    async def answer(info: AsyncServiceInfo, zc: Mock, _timeout: float) -> bool:
+        browsing.cache.async_add_records([KITCHEN.dns_text()])
+        return info.load_from_cache(zc)
+
+    async def run() -> None:
+        browsing.cache_service(KITCHEN)
+        browsing.start()
+        browsing.cache = browsing.zeroconf.cache = DNSCache()
+        browsing.cache.async_add_records([upper.dns_service(), *upper.dns_addresses()])
+        await browsing.browse_again()
+        [lookup] = browsing.lookups
+        with patch.object(AsyncServiceInfo, "async_request", answer):
+            await lookup
+
+    asyncio.run(run())
+    assert reports(browsing) == [("10.0.0.2", False), ("10.0.0.2", True)]
+
+
 def test_setup_browses_before_first_fetch() -> None:
     """Start browsing before setup fetches the list, and stop it even if setup fails.
 

@@ -374,12 +374,14 @@ def async_browse_cast_devices(
         if found := cast_device_found(info):
             found_devices.async_device_found(*found, replayed=replayed)
 
-    async def async_look_up(info: AsyncServiceInfo, replayed: bool) -> None:
-        # The lookup can change the name's case to the one its records have
-        service_type, name = info.type, info.name
+    async def async_look_up(
+        info: AsyncServiceInfo, service_type: str, name: str, replayed: bool
+    ) -> None:
         await info.async_request(zeroconf_instance, CAST_LOOKUP_TIMEOUT)
         # The lookup keeps an address that expired while it waited, which may be
-        # one that a newer report replaced, so report what the cache has now
+        # one that a newer report replaced, so report what the cache has now. By
+        # the name that the browser reported: loading records can change the case
+        # of the info's name to theirs, which then doesn't match the type.
         current = AsyncServiceInfo(service_type, name)
         current.load_from_cache(zeroconf_instance)
         report(current, replayed)
@@ -408,7 +410,9 @@ def async_browse_cast_devices(
             report(info, replayed)
         else:
             entry.async_create_background_task(
-                hass, async_look_up(info, replayed), f"Look up {name} with mDNS"
+                hass,
+                async_look_up(info, service_type, name, replayed),
+                f"Look up {name} with mDNS",
             )
 
     @callback
