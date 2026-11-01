@@ -33,6 +33,13 @@
           "master_token": "Comença per aas_et/"
         }
       },
+      "homes": {
+        "title": "Tria les llars",
+        "description": "El teu compte de Google és membre de diverses llars. Tria les llars de les quals vols afegir els altaveus i les pantalles. Pots canviar-ho més endavant a les opcions de la integració.",
+        "data": {
+          "homes": "Llars"
+        }
+      },
       "reauth": {
         "title": "Torna a iniciar la sessió",
         "description": "Google ja no accepta les dades d'inici de sessió desades per a {name}. Torna a iniciar la sessió al mateix compte de Google: els teus dispositius, entitats i automatitzacions es mantenen tal com estan. Fins que no ho facis, les entitats dels teus dispositius poden mostrar valors desactualitzats o no estar disponibles.",
@@ -74,7 +81,8 @@
       "google-busy": "Google està ocupat o està limitant els inicis de sessió. Espera uns minuts i torna a iniciar la sessió.",
       "oauth-token-format": "Aquesta no és la galeta oauth_token. El seu valor comença per oauth2_4/.",
       "master-token-format": "Un testimoni mestre comença per aas_et/ i té 223 caràcters. Copia el testimoni sencer.",
-      "other-account": "Has iniciat la sessió en un altre compte de Google, de manera que no s'ha canviat res. Inicia la sessió amb el compte que fa servir aquesta integració. Per fer servir aquest altre compte, elimina la integració i torna-la a afegir."
+      "other-account": "Has iniciat la sessió en un altre compte de Google, de manera que no s'ha canviat res. Inicia la sessió amb el compte que fa servir aquesta integració. Per fer servir aquest altre compte, elimina la integració i torna-la a afegir.",
+      "no-home-selected": "Tria almenys una llar."
     }
   },
   "entity": {
@@ -154,15 +162,18 @@
       "init": {
         "data": {
           "update_interval": "Canvia l'interval d'actualització. Augmenta'l si els dispositius sovint no responen a temps. Valor per defecte: {default_interval} (segons)",
-          "known_hosts": "Amfitrions coneguts"
+          "known_hosts": "Amfitrions coneguts",
+          "homes": "Llars"
         },
         "data_description": {
-          "known_hosts": "Adreces IP d'altaveus i pantalles que la integració no pot trobar per si mateixa, per exemple perquè són en una altra xarxa o VLAN."
+          "known_hosts": "Adreces IP d'altaveus i pantalles que la integració no pot trobar per si mateixa, per exemple perquè són en una altra xarxa o VLAN.",
+          "homes": "No s'afegeixen els altaveus ni les pantalles de les llars que desmarquis. Si desmarques una llar, els seus dispositius i les entitats d'aquests s'eliminen de Home Assistant, de manera que les automatitzacions, els scripts i els panells que els utilitzen deixen de funcionar. Torna a marcar la llar per tornar-los a afegir amb els noms i les àrees que els vas donar."
         }
       }
     },
     "error": {
-      "known-host-not-ip": "Introdueix només adreces IP, com ara 192.168.1.20."
+      "known-host-not-ip": "Introdueix només adreces IP, com ara 192.168.1.20.",
+      "no-home-selected": "Tria almenys una llar."
     }
   },
   "services": {

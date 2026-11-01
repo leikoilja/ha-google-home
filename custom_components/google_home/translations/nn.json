@@ -33,6 +33,13 @@
           "master_token": "Byrjar med aas_et/"
         }
       },
+      "homes": {
+        "title": "Vel heimar",
+        "description": "Google-kontoen din er medlem av fleire heimar. Vel heimane du vil leggje til høgtalarar og skjermar frå. Du kan endre dette seinare i innstillingane for integrasjonen.",
+        "data": {
+          "homes": "Heimar"
+        }
+      },
       "reauth": {
         "title": "Logg på igjen",
         "description": "Google godtek ikkje lenger den lagra pålogginga for {name}. Logg på den same Google-kontoen igjen: einingane, entitetane og automatiseringane dine blir verande som dei er. Fram til du gjer det, kan entitetane til einingane dine vise utdaterte verdiar eller vere utilgjengelege.",
@@ -74,7 +81,8 @@
       "google-busy": "Google har stor pågang eller avgrensar påloggingar. Vent nokre minutt, og logg deretter på igjen.",
       "oauth-token-format": "Dette er ikkje informasjonskapselen oauth_token. Verdien byrjar med oauth2_4/.",
       "master-token-format": "Eit master token byrjar med aas_et/ og er 223 teikn langt. Kopier heile tokenet.",
-      "other-account": "Du logga på ein annan Google-konto, så ingenting vart endra. Logg på med kontoen som denne integrasjonen brukar. For å bruke den andre kontoen i staden, slett integrasjonen og legg han til på nytt."
+      "other-account": "Du logga på ein annan Google-konto, så ingenting vart endra. Logg på med kontoen som denne integrasjonen brukar. For å bruke den andre kontoen i staden, slett integrasjonen og legg han til på nytt.",
+      "no-home-selected": "Vel minst éin heim."
     }
   },
   "entity": {
@@ -154,15 +162,18 @@
       "init": {
         "data": {
           "update_interval": "Endre oppdateringsintervall. Du kan auke dette om einingane ofte får tidsavbrot. Standard: {default_interval} (sekund)",
-          "known_hosts": "Kjende vertar"
+          "known_hosts": "Kjende vertar",
+          "homes": "Heimar"
         },
         "data_description": {
-          "known_hosts": "IP-adresser til høgtalarar og skjermar som integrasjonen ikkje finn sjølv, til dømes fordi dei er på eit anna nettverk eller VLAN."
+          "known_hosts": "IP-adresser til høgtalarar og skjermar som integrasjonen ikkje finn sjølv, til dømes fordi dei er på eit anna nettverk eller VLAN.",
+          "homes": "Høgtalarar og skjermar i heimar du vel bort, blir ikkje lagde til. Når du vel bort ein heim, blir einingane i heimen og entitetane deira fjerna frå Home Assistant, slik at automatiseringar, skript og dashbord som brukar dei, sluttar å fungere. Vel heimen igjen for å leggje dei til på nytt med namna og områda du gav dei."
         }
       }
     },
     "error": {
-      "known-host-not-ip": "Skriv berre inn IP-adresser, til dømes 192.168.1.20."
+      "known-host-not-ip": "Skriv berre inn IP-adresser, til dømes 192.168.1.20.",
+      "no-home-selected": "Vel minst éin heim."
     }
   },
   "services": {

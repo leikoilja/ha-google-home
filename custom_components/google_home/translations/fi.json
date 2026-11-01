@@ -33,6 +33,13 @@
           "master_token": "Alkaa merkkijonolla aas_et/"
         }
       },
+      "homes": {
+        "title": "Valitse kodit",
+        "description": "Google-tilisi on usean kodin jäsen. Valitse kodit, joiden kaiuttimet ja näytöt lisätään. Voit muuttaa tätä myöhemmin integraation asetuksissa.",
+        "data": {
+          "homes": "Kodit"
+        }
+      },
       "reauth": {
         "title": "Kirjaudu uudelleen",
         "description": "Google ei enää hyväksy tallennettuja kirjautumistietoja ({name}). Kirjaudu uudelleen samalle Google-tilille: laitteesi, entiteettisi ja automaatiosi säilyvät ennallaan. Siihen asti laitteidesi entiteetit voivat näyttää vanhentuneita arvoja, tai ne eivät välttämättä ole käytettävissä.",
@@ -74,7 +81,8 @@
       "google-busy": "Google on ruuhkautunut tai rajoittaa kirjautumisia. Odota muutama minuutti ja kirjaudu sitten uudelleen.",
       "oauth-token-format": "Tämä ei ole oauth_token-eväste. Sen arvo alkaa merkkijonolla oauth2_4/.",
       "master-token-format": "Päätunniste alkaa merkkijonolla aas_et/ ja on 223 merkkiä pitkä. Kopioi koko tunniste.",
-      "other-account": "Kirjauduit eri Google-tilille, joten mitään ei muutettu. Kirjaudu tilille, jota tämä integraatio käyttää. Jos haluat käyttää sen sijaan toista tiliä, poista integraatio ja lisää se uudelleen."
+      "other-account": "Kirjauduit eri Google-tilille, joten mitään ei muutettu. Kirjaudu tilille, jota tämä integraatio käyttää. Jos haluat käyttää sen sijaan toista tiliä, poista integraatio ja lisää se uudelleen.",
+      "no-home-selected": "Valitse vähintään yksi koti."
     }
   },
   "entity": {
@@ -154,15 +162,18 @@
       "init": {
         "data": {
           "update_interval": "Muuta päivitysväliä. Suurenna arvoa, jos laitteet eivät vastaa ajoissa. Oletus: {default_interval} sekuntia.",
-          "known_hosts": "Tunnetut isännät"
+          "known_hosts": "Tunnetut isännät",
+          "homes": "Kodit"
         },
         "data_description": {
-          "known_hosts": "Niiden kaiuttimien ja näyttöjen IP-osoitteet, joita integraatio ei löydä automaattisesti esimerkiksi siksi, että ne ovat toisessa verkossa tai VLAN-verkossa."
+          "known_hosts": "Niiden kaiuttimien ja näyttöjen IP-osoitteet, joita integraatio ei löydä automaattisesti esimerkiksi siksi, että ne ovat toisessa verkossa tai VLAN-verkossa.",
+          "homes": "Kodeista, joiden valinnan poistat, ei lisätä kaiuttimia eikä näyttöjä. Kun poistat kodin valinnan, sen laitteet ja niiden entiteetit poistetaan Home Assistantista, joten niitä käyttävät automaatiot, skriptit ja kojelaudat lakkaavat toimimasta. Valitse koti uudelleen, niin laitteet lisätään takaisin antamillasi nimillä ja huoneilla."
         }
       }
     },
     "error": {
-      "known-host-not-ip": "Anna vain IP-osoitteita, kuten 192.168.1.20."
+      "known-host-not-ip": "Anna vain IP-osoitteita, kuten 192.168.1.20.",
+      "no-home-selected": "Valitse vähintään yksi koti."
     }
   },
   "services": {

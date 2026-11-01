@@ -33,6 +33,13 @@
           "master_token": "aas_et/ kezdetű"
         }
       },
+      "homes": {
+        "title": "Otthonok kiválasztása",
+        "description": "Google-fiókja több otthon tagja. Válassza ki azokat az otthonokat, amelyek hangszóróit és kijelzőit hozzá szeretné adni. Ezt később az integráció opcióiban módosíthatja.",
+        "data": {
+          "homes": "Otthonok"
+        }
+      },
       "reauth": {
         "title": "Újbóli bejelentkezés",
         "description": "A Google már nem fogadja el a mentett bejelentkezési adatokat ({name}). Jelentkezzen be újra ugyanabba a Google-fiókba: az eszközei, entitásai és automatizmusai változatlanok maradnak. Amíg ezt meg nem teszi, az eszközei entitásai elavult értékeket mutathatnak, vagy nem érhetők el.",
@@ -74,7 +81,8 @@
       "google-busy": "A Google túlterhelt, vagy korlátozza a bejelentkezéseket. Várjon néhány percet, majd jelentkezzen be újra.",
       "oauth-token-format": "Ez nem az oauth_token cookie. Annak értéke oauth2_4/ kezdetű.",
       "master-token-format": "A mestertoken aas_et/ kezdetű és 223 karakter hosszú. Másolja ki a teljes tokent.",
-      "other-account": "Egy másik Google-fiókba jelentkezett be, ezért semmi sem változott. Jelentkezzen be az integráció által használt fiókkal. Ha inkább azt a másik fiókot szeretné használni, törölje az integrációt, és adja hozzá újra."
+      "other-account": "Egy másik Google-fiókba jelentkezett be, ezért semmi sem változott. Jelentkezzen be az integráció által használt fiókkal. Ha inkább azt a másik fiókot szeretné használni, törölje az integrációt, és adja hozzá újra.",
+      "no-home-selected": "Válasszon ki legalább egy otthont."
     }
   },
   "entity": {
@@ -154,15 +162,18 @@
       "init": {
         "data": {
           "update_interval": "Módosítsa a frissítési időközt. Növelje ezt az értéket, ha az eszközök nem válaszolnak időben. Alapértelmezett: {default_interval} másodperc.",
-          "known_hosts": "Ismert hosztok"
+          "known_hosts": "Ismert hosztok",
+          "homes": "Otthonok"
         },
         "data_description": {
-          "known_hosts": "Azon hangszórók és kijelzők IP-címei, amelyeket az integráció nem talál meg automatikusan, például mert másik hálózaton vagy VLAN-on vannak."
+          "known_hosts": "Azon hangszórók és kijelzők IP-címei, amelyeket az integráció nem talál meg automatikusan, például mert másik hálózaton vagy VLAN-on vannak.",
+          "homes": "Azoknak az otthonoknak a hangszóróit és kijelzőit, amelyek kijelölését megszünteti, az integráció nem adja hozzá. Ha megszünteti egy otthon kijelölését, az otthon eszközei és azok entitásai törlődnek a Home Assistantból, így az ezeket használó automatizmusok, szkriptek és irányítópultok nem működnek tovább. Jelölje ki újra az otthont, és az eszközök visszakerülnek az Ön által adott nevekkel és területekkel."
         }
       }
     },
     "error": {
-      "known-host-not-ip": "Csak IP-címeket adjon meg, például: 192.168.1.20."
+      "known-host-not-ip": "Csak IP-címeket adjon meg, például: 192.168.1.20.",
+      "no-home-selected": "Válasszon ki legalább egy otthont."
     }
   },
   "services": {

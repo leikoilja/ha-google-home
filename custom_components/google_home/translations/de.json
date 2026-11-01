@@ -33,6 +33,13 @@
           "master_token": "Beginnt mit aas_et/"
         }
       },
+      "homes": {
+        "title": "Zuhause auswählen",
+        "description": "Dein Google-Konto ist Mitglied mehrerer Zuhause. Wähle die Zuhause aus, deren Lautsprecher und Displays hinzugefügt werden sollen. Du kannst das später in den Optionen der Integration ändern.",
+        "data": {
+          "homes": "Zuhause"
+        }
+      },
       "reauth": {
         "title": "Erneut anmelden",
         "description": "Google akzeptiert die für {name} gespeicherte Anmeldung nicht mehr. Melde dich erneut beim selben Google-Konto an: Deine Geräte, Entitäten und Automationen bleiben unverändert. Bis dahin können die Entitäten deiner Geräte veraltete Werte anzeigen oder nicht verfügbar sein.",
@@ -74,7 +81,8 @@
       "google-busy": "Google ist ausgelastet oder begrenzt Anmeldungen. Warte ein paar Minuten und melde dich dann erneut an.",
       "oauth-token-format": "Das ist nicht das Cookie oauth_token. Sein Wert beginnt mit oauth2_4/.",
       "master-token-format": "Ein Master-Token beginnt mit aas_et/ und ist 223 Zeichen lang. Kopiere das vollständige Token.",
-      "other-account": "Du hast dich bei einem anderen Google-Konto angemeldet, daher wurde nichts geändert. Melde dich mit dem Konto an, das diese Integration verwendet. Um stattdessen das andere Konto zu verwenden, lösche die Integration und füge sie erneut hinzu."
+      "other-account": "Du hast dich bei einem anderen Google-Konto angemeldet, daher wurde nichts geändert. Melde dich mit dem Konto an, das diese Integration verwendet. Um stattdessen das andere Konto zu verwenden, lösche die Integration und füge sie erneut hinzu.",
+      "no-home-selected": "Wähle mindestens ein Zuhause aus."
     }
   },
   "entity": {
@@ -154,15 +162,18 @@
       "init": {
         "data": {
           "update_interval": "Aktualisierungsintervall ändern. Erhöhe diesen Wert, wenn bei deinen Geräten Zeitüberschreitungen auftreten. Standard: {default_interval} (Sekunden)",
-          "known_hosts": "Bekannte Hosts"
+          "known_hosts": "Bekannte Hosts",
+          "homes": "Zuhause"
         },
         "data_description": {
-          "known_hosts": "IP-Adressen von Lautsprechern und Displays, die die Integration nicht selbst findet, etwa weil sie in einem anderen Netzwerk oder VLAN sind."
+          "known_hosts": "IP-Adressen von Lautsprechern und Displays, die die Integration nicht selbst findet, etwa weil sie in einem anderen Netzwerk oder VLAN sind.",
+          "homes": "Lautsprecher und Displays in abgewählten Zuhause werden nicht hinzugefügt. Wenn du ein Zuhause abwählst, werden seine Geräte und deren Entitäten aus Home Assistant entfernt, sodass Automationen, Skripte und Dashboards, die sie verwenden, nicht mehr funktionieren. Wähle das Zuhause erneut aus, um sie mit den Namen und Bereichen wieder hinzuzufügen, die du ihnen gegeben hast."
         }
       }
     },
     "error": {
-      "known-host-not-ip": "Gib nur IP-Adressen ein, etwa 192.168.1.20."
+      "known-host-not-ip": "Gib nur IP-Adressen ein, etwa 192.168.1.20.",
+      "no-home-selected": "Wähle mindestens ein Zuhause aus."
     }
   },
   "services": {

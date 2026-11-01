@@ -33,6 +33,13 @@
           "master_token": "Starter med aas_et/"
         }
       },
+      "homes": {
+        "title": "Vælg hjem",
+        "description": "Din Google-konto er medlem af flere hjem. Vælg de hjem, hvis højttalere og skærme skal tilføjes. Du kan ændre det senere i integrationens indstillinger.",
+        "data": {
+          "homes": "Hjem"
+        }
+      },
       "reauth": {
         "title": "Log ind igen",
         "description": "Google accepterer ikke længere det gemte login for {name}. Log ind på den samme Google-konto igen: dine enheder, entiteter og automatiseringer forbliver, som de er. Indtil du gør det, kan dine enheders entiteter vise forældede værdier eller være utilgængelige.",
@@ -74,7 +81,8 @@
       "google-busy": "Google er overbelastet eller begrænser loginforsøg. Vent et par minutter, og log derefter ind igen.",
       "oauth-token-format": "Dette er ikke cookien oauth_token. Dens værdi starter med oauth2_4/.",
       "master-token-format": "Et master token starter med aas_et/ og er 223 tegn langt. Kopiér hele tokenet.",
-      "other-account": "Du loggede ind på en anden Google-konto, så der blev ikke ændret noget. Log ind med den konto, som denne integration bruger. Hvis du i stedet vil bruge den anden konto, skal du slette integrationen og tilføje den igen."
+      "other-account": "Du loggede ind på en anden Google-konto, så der blev ikke ændret noget. Log ind med den konto, som denne integration bruger. Hvis du i stedet vil bruge den anden konto, skal du slette integrationen og tilføje den igen.",
+      "no-home-selected": "Vælg mindst ét hjem."
     }
   },
   "entity": {
@@ -154,15 +162,18 @@
       "init": {
         "data": {
           "update_interval": "Skift opdateringsinterval. Øg værdien, hvis dine enheder ofte får timeout. Standard: {default_interval} (sekunder)",
-          "known_hosts": "Kendte værter"
+          "known_hosts": "Kendte værter",
+          "homes": "Hjem"
         },
         "data_description": {
-          "known_hosts": "IP-adresser på højttalere og skærme, som integrationen ikke selv kan finde, f.eks. fordi de er på et andet netværk eller VLAN."
+          "known_hosts": "IP-adresser på højttalere og skærme, som integrationen ikke selv kan finde, f.eks. fordi de er på et andet netværk eller VLAN.",
+          "homes": "Højttalere og skærme i hjem, du fravælger, tilføjes ikke. Hvis du fravælger et hjem, fjernes dets enheder og deres entiteter fra Home Assistant, så automatiseringer, scripts og betjeningspaneler, der bruger dem, holder op med at virke. Vælg hjemmet igen for at få dem tilbage med de navne og områder, du gav dem."
         }
       }
     },
     "error": {
-      "known-host-not-ip": "Indtast kun IP-adresser, f.eks. 192.168.1.20."
+      "known-host-not-ip": "Indtast kun IP-adresser, f.eks. 192.168.1.20.",
+      "no-home-selected": "Vælg mindst ét hjem."
     }
   },
   "services": {
