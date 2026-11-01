@@ -6,7 +6,7 @@ For help with setup or usage, search [GitHub Discussions](https://github.com/lei
 
 ## Report a bug or suggest a feature
 
-[Open an issue](https://github.com/leikoilja/ha-google-home/issues/new/choose). For a bug, include the integration version and [debug logs](troubleshooting.md#collect-debug-logs).
+[Open an issue](https://github.com/leikoilja/ha-google-home/issues/new/choose). For a bug, include the integration version, the [diagnostics file](troubleshooting.md#download-diagnostics) and [debug logs](troubleshooting.md#collect-debug-logs).
 
 ## Translate the integration
 
