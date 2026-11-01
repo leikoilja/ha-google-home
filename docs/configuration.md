@@ -78,7 +78,7 @@ When you deselect a home, the integration removes its devices from Home Assistan
 
 When you select a home again, its devices come back with the names, areas and other settings you gave them. A device that was factory reset and set up again meanwhile has a new ID from Google, so it's added as a new device, without them. As with a [removed device](#remove-a-device), an entity gets its old ID back only if no other entity has taken that ID meanwhile.
 
-Homes that your account joins later are added. To leave one out, deselect it.
+Homes that your account joins later are added. A new home appears under **Homes** once the integration next gets your device list from Google, usually within about 20 minutes. To see it sooner, reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. If the options were already open, close them and select **Configure** again. To leave the new home out, deselect it.
 
 ## Remove a device
 
