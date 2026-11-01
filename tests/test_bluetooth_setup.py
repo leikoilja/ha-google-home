@@ -10,6 +10,7 @@ import base64
 from collections.abc import Iterator
 import json
 import logging
+from typing import cast
 from unittest.mock import Mock, patch
 
 import probatio
@@ -431,8 +432,11 @@ async def test_options_show_saved_bluetooth_options(
     result = await hass.config_entries.options.async_init(config_entry.entry_id)
 
     # As Home Assistant sends the form to the frontend
-    fields = probatio.to_field_list(
-        result["data_schema"], custom_serializer=cv.custom_serializer
+    fields = cast(
+        list[dict[str, object]],
+        probatio.to_field_list(
+            result["data_schema"], custom_serializer=cv.custom_serializer
+        ),
     )
     (bluetooth,) = [field for field in fields if field["name"] == "bluetooth"]
     assert (bluetooth["type"], bluetooth["default"]) == ("expandable", saved)
