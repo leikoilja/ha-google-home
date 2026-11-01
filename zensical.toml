@@ -11,6 +11,7 @@ nav = [
     { "Configuration and management" = "configuration.md" },
     { "Automation examples" = "automations.md" },
     { "Entities" = "entities.md" },
+    { "Bluetooth tracking" = "bluetooth.md" },
     { "Actions" = "actions.md" },
     { "Other integrations" = "other-integrations.md" },
     { "Troubleshooting" = "troubleshooting.md" },

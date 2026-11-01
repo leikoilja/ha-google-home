@@ -180,6 +180,38 @@
       }
     }
   },
+  "config_subentries": {
+    "bluetooth_device": {
+      "entry_type": "Bluetooth device",
+      "initiate_flow": {
+        "user": "Track a Bluetooth device"
+      },
+      "step": {
+        "user": {
+          "title": "Track a Bluetooth device",
+          "description": "Enter the IRK of a phone, or the MAC address of a device whose address never changes, such as some watches and tags. Phones change their address every few minutes, so track them by IRK. For how to find the IRK, see {docs_url}.",
+          "data": {
+            "name": "Name",
+            "irk_or_mac": "IRK or MAC address"
+          },
+          "data_description": {
+            "name": "Name of the tracker, such as Alex's phone.",
+            "irk_or_mac": "A phone's Identity Resolving Key, as 32 hex digits or in base64, or a MAC address such as AA:BB:CC:DD:EE:FF. The integration tells which one you entered."
+          }
+        }
+      },
+      "error": {
+        "name-empty": "Enter a name.",
+        "irk-or-mac": "Enter an IRK or a MAC address.",
+        "irk-invalid": "This isn't an IRK. An IRK is 16 bytes: 32 hex digits, or 24 base64 characters ending in ==.",
+        "mac-invalid": "This isn't a MAC address. Enter six pairs of hex digits separated by colons or hyphens, such as AA:BB:CC:DD:EE:FF.",
+        "already-tracked": "This device is already tracked."
+      },
+      "abort": {
+        "bluetooth-tracking-off": "Bluetooth tracking is off. Turn it on in the integration's options first: select Configure on the integration's page."
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {
@@ -192,6 +224,19 @@
           "update_interval": "Increase this if your devices often don't answer in time. Default: {default_interval} seconds.",
           "known_hosts": "IP addresses of speakers and displays that the integration can't find on its own, for example because they're on another network or VLAN.",
           "homes": "Speakers and displays in homes you deselect aren't added. Deselecting a home removes its devices and their entities from Home Assistant, so automations, scripts and dashboards that use them stop working. Select the home again to add them back with the names and areas you gave them."
+        },
+        "sections": {
+          "bluetooth": {
+            "name": "Bluetooth",
+            "data": {
+              "bluetooth_tracking": "Bluetooth tracking",
+              "bluetooth_excluded_speakers": "Speakers not used for Bluetooth tracking"
+            },
+            "data_description": {
+              "bluetooth_tracking": "Use your speakers to tell whether your phone or other Bluetooth devices are home. After turning it on, select Track a Bluetooth device on the integration's page for each device to track. While it's off, the integration sends no Bluetooth requests to your speakers.",
+              "bluetooth_excluded_speakers": "Speakers that don't scan for Bluetooth devices. Add a speaker that's unplugged or out of service: while a speaker doesn't answer, trackers can't show away."
+            }
+          }
         }
       }
     },

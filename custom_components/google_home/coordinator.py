@@ -145,6 +145,8 @@ class GoogleAccountCoordinator(DataUpdateCoordinator[dict[str, GoogleHomeDevice]
             for device in dr.async_entries_for_config_entry(
                 registry, self.config_entry.entry_id
             )
+            # Not a tracked Bluetooth device, which Google never lists
+            if device.config_subentry_id is None
             for domain, device_id in device.identifiers
             if domain == DOMAIN
         }

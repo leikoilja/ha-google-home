@@ -12,12 +12,17 @@ from requests.exceptions import HTTPError, RequestException
 
 from homeassistant.config_entries import (
     SOURCE_REAUTH,
+    ConfigEntry,
     ConfigEntryState,
     ConfigFlow,
     ConfigFlowResult,
+    ConfigSubentryFlow,
     OptionsFlow,
+    SubentryFlowResult,
 )
+from homeassistant.const import CONF_MAC, CONF_NAME
 from homeassistant.core import callback
+from homeassistant.data_entry_flow import section
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.selector import (
     SelectOptionDict,
@@ -27,11 +32,16 @@ from homeassistant.helpers.selector import (
 )
 
 from .api import GlocaltokensApiClient
+from .bluetooth import parse_irk, parse_mac
 from .const import (
     BROWSER_TITLE,
     CONF_ANDROID_ID,
+    CONF_BLUETOOTH_EXCLUDED,
+    CONF_BLUETOOTH_TRACKING,
     CONF_EXCLUDED_HOMES,
     CONF_HOMES,
+    CONF_IRK,
+    CONF_IRK_OR_MAC,
     CONF_KNOWN_HOSTS,
     CONF_MASTER_TOKEN,
     CONF_OAUTH_TOKEN,
@@ -40,6 +50,7 @@ from .const import (
     CONF_USERNAME,
     DOMAIN,
     MASTER_TOKEN_TITLE,
+    SUBENTRY_BLUETOOTH_DEVICE,
     UPDATE_INTERVAL,
 )
 from .exceptions import InvalidMasterToken
@@ -49,6 +60,8 @@ _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 STEP_BROWSER = "browser"
 STEP_HOMES = "homes"
+# The section of the options form with the Bluetooth options
+SECTION_BLUETOOTH = "bluetooth"
 STEP_MASTER_TOKEN = "master_token"
 STEP_REAUTH = "reauth"
 
@@ -62,6 +75,7 @@ DESCRIPTION_PLACEHOLDERS = {
     "browser_docs_url": "https://ha-google-home.pages.dev/installation/#browser-sign-in",
     "embedded_setup_url": "https://accounts.google.com/EmbeddedSetup",
 }
+BLUETOOTH_DOCS_URL = "https://ha-google-home.pages.dev/bluetooth/"
 
 
 class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
@@ -288,6 +302,19 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
         """Handle options flow."""
         return GoogleHomeOptionsFlowHandler()
 
+    @classmethod
+    @callback
+    @override
+    def async_get_supported_subentry_types(  # type: ignore[explicit-any]
+        cls, config_entry: ConfigEntry
+    ) -> dict[str, type[ConfigSubentryFlow]]:
+        """Return the subentries this integration supports.
+
+        Always offered: Home Assistant keeps this until it restarts, so it
+        wouldn't follow the Bluetooth tracking option.
+        """
+        return {SUBENTRY_BLUETOOTH_DEVICE: BluetoothDeviceSubentryFlow}
+
     @staticmethod
     async def _sign_in(client: GlocaltokensApiClient, rejected: str) -> str | None:
         """Return the form error saying why Google gives no master or access token.
@@ -323,6 +350,9 @@ class GoogleHomeOptionsFlowHandler(OptionsFlow):
         saved = set(cast(list[str], options.get(CONF_EXCLUDED_HOMES, [])))
         excluded = saved
         if user_input is not None:
+            submitted: dict[str, object] = dict(user_input)
+            # The Bluetooth options are saved with the others, not in their section
+            submitted |= cast(dict[str, object], submitted.pop(SECTION_BLUETOOTH, {}))
             # Keep the order, which decides between hosts that report the same device
             known_hosts = list(
                 dict.fromkeys(
@@ -343,14 +373,14 @@ class GoogleHomeOptionsFlowHandler(OptionsFlow):
                 errors[CONF_HOMES] = "no-home-selected"
             if not errors:
                 data: dict[str, object] = {
-                    **user_input,
+                    **submitted,
                     CONF_KNOWN_HOSTS: known_hosts,
                 }
                 data.pop(CONF_HOMES, None)
                 if excluded:
                     data[CONF_EXCLUDED_HOMES] = sorted(excluded)
                 return self.async_create_entry(data=data)
-            options = {**options, **user_input}
+            options = {**options, **submitted}
 
         entry = self.config_entry
         homes = (
@@ -379,11 +409,117 @@ class GoogleHomeOptionsFlowHandler(OptionsFlow):
                     default=[home for home in self._homes if home not in excluded],
                 )
             ] = _homes_selector(self._homes)
+        bluetooth: dict[str, object] = {
+            CONF_BLUETOOTH_TRACKING: options.get(CONF_BLUETOOTH_TRACKING, False),
+            CONF_BLUETOOTH_EXCLUDED: options.get(CONF_BLUETOOTH_EXCLUDED, []),
+        }
+        # Under a heading of their own, so they don't run on from the homes. The
+        # frontend shows a section's default, not the defaults of its fields.
+        schema[probatio.Optional(SECTION_BLUETOOTH, default=bluetooth)] = section(
+            probatio.Schema(
+                {
+                    probatio.Optional(
+                        CONF_BLUETOOTH_TRACKING,
+                        default=bluetooth[CONF_BLUETOOTH_TRACKING],
+                    ): bool,
+                    probatio.Optional(
+                        CONF_BLUETOOTH_EXCLUDED,
+                        default=bluetooth[CONF_BLUETOOTH_EXCLUDED],
+                    ): SelectSelector(
+                        SelectSelectorConfig(
+                            options=self._speaker_options(
+                                bluetooth[CONF_BLUETOOTH_EXCLUDED]
+                            ),
+                            multiple=True,
+                        )
+                    ),
+                }
+            )
+        )
         return self.async_show_form(
             step_id="init",
             data_schema=probatio.Schema(schema),
             errors=errors,
             description_placeholders={"default_interval": str(UPDATE_INTERVAL)},
+        )
+
+    def _speaker_options(self, excluded: object) -> list[SelectOptionDict]:
+        """Return the entry's speakers to choose from, by name.
+
+        Excluded speakers that Google no longer lists stay, so saving the form
+        doesn't silently drop them.
+        """
+        entry = self.config_entry
+        devices = (
+            entry.runtime_data.account.data or {}
+            if entry.state is ConfigEntryState.LOADED
+            else {}
+        )
+        names = {device_id: device.name for device_id, device in devices.items()}
+        for device_id in excluded if isinstance(excluded, list) else []:
+            names.setdefault(str(device_id), str(device_id))
+        return [
+            SelectOptionDict(value=device_id, label=name)
+            for device_id, name in sorted(
+                names.items(), key=lambda item: item[1].casefold()
+            )
+        ]
+
+
+class BluetoothDeviceSubentryFlow(ConfigSubentryFlow):
+    """Add a Bluetooth device for the speakers to track."""
+
+    async def async_step_user(
+        self, user_input: dict[str, str] | None = None
+    ) -> SubentryFlowResult:
+        """Ask for the device's name, and its IRK or MAC address in one field.
+
+        They're told apart by their format: a MAC address is six hex pairs, an IRK
+        16 bytes. An IRK is saved as {"irk": hex}, a MAC address as
+        {"mac": "AA:BB:CC:DD:EE:FF"}.
+        """
+        entry = self._get_entry()
+        if not entry.options.get(CONF_BLUETOOTH_TRACKING):
+            return self.async_abort(reason="bluetooth-tracking-off")
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            name = user_input[CONF_NAME].strip()
+            value = user_input[CONF_IRK_OR_MAC].strip()
+            data: dict[str, str] = {}
+            if not name:
+                errors[CONF_NAME] = "name-empty"
+            elif not value:
+                errors[CONF_IRK_OR_MAC] = "irk-or-mac"
+            elif (address := parse_mac(value)) is not None:
+                data = {CONF_MAC: address}
+            elif (irk := parse_irk(value)) is not None:
+                data = {CONF_IRK: irk.hex()}
+            else:
+                # Up to 17 characters, the length of a MAC address with separators,
+                # was probably meant as one
+                errors[CONF_IRK_OR_MAC] = (
+                    "mac-invalid" if len(value) <= 17 else "irk-invalid"
+                )
+            if data and any(
+                subentry.data == data
+                for subentry in entry.get_subentries_of_type(SUBENTRY_BLUETOOTH_DEVICE)
+            ):
+                errors["base"] = "already-tracked"
+            elif data:
+                return self.async_create_entry(title=name, data=data)
+        return self.async_show_form(
+            step_id="user",
+            data_schema=self.add_suggested_values_to_schema(
+                probatio.Schema(
+                    {
+                        probatio.Required(CONF_NAME): str,
+                        probatio.Required(CONF_IRK_OR_MAC): str,
+                    }
+                ),
+                user_input,
+            ),
+            errors=errors,
+            description_placeholders={"docs_url": BLUETOOTH_DOCS_URL},
         )
 
 

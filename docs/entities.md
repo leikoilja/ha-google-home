@@ -16,6 +16,8 @@ Each Google Home device gets the entities below. The examples use a device named
 
 The device page also shows the device's [firmware version](#firmware-version).
 
+If you turn on [Bluetooth tracking](bluetooth.md), each phone or other Bluetooth device you track also gets a tracker entity.
+
 The alarms sensor, timers sensor, switch and alarm volume are added once the device answers successfully. If a device has only a device sensor, a reboot button and an update sensor, see [No alarms or timers sensors](troubleshooting.md#no-alarms-or-timers-sensors). A device without alarms and timers, such as a Chromecast Audio, doesn't get these four entities.
 
 Entities become unavailable, for example, while a device is unplugged or after you remove it from the Google Home app. See [When entities are unavailable](#when-entities-are-unavailable).

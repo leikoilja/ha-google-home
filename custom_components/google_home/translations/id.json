@@ -180,6 +180,38 @@
       }
     }
   },
+  "config_subentries": {
+    "bluetooth_device": {
+      "entry_type": "Perangkat Bluetooth",
+      "initiate_flow": {
+        "user": "Lacak perangkat Bluetooth"
+      },
+      "step": {
+        "user": {
+          "title": "Lacak perangkat Bluetooth",
+          "description": "Masukkan IRK ponsel, atau alamat MAC perangkat yang alamatnya tidak pernah berubah, seperti beberapa jam tangan dan tag pelacak. Ponsel mengganti alamatnya setiap beberapa menit, jadi lacak ponsel dengan IRK. Untuk cara menemukan IRK, lihat {docs_url}.",
+          "data": {
+            "name": "Nama",
+            "irk_or_mac": "IRK atau alamat MAC"
+          },
+          "data_description": {
+            "name": "Nama pelacak, misalnya Ponsel Alex.",
+            "irk_or_mac": "Identity Resolving Key ponsel, sebagai 32 digit heksadesimal atau dalam base64, atau alamat MAC seperti AA:BB:CC:DD:EE:FF. Integrasi akan mengenali mana yang Anda masukkan."
+          }
+        }
+      },
+      "error": {
+        "name-empty": "Masukkan nama.",
+        "irk-or-mac": "Masukkan IRK atau alamat MAC.",
+        "irk-invalid": "Ini bukan IRK. IRK berukuran 16 byte: 32 digit heksadesimal, atau 24 karakter base64 yang diakhiri dengan ==.",
+        "mac-invalid": "Ini bukan alamat MAC. Masukkan enam pasang digit heksadesimal yang dipisahkan titik dua atau tanda hubung, misalnya AA:BB:CC:DD:EE:FF.",
+        "already-tracked": "Perangkat ini sudah dilacak."
+      },
+      "abort": {
+        "bluetooth-tracking-off": "Pelacakan Bluetooth nonaktif. Aktifkan terlebih dahulu di opsi integrasi: pilih “Konfigurasikan” di halaman integrasi."
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {
@@ -192,6 +224,19 @@
           "update_interval": "Tingkatkan nilai ini jika perangkat Anda sering tidak merespons tepat waktu. Nilai default: {default_interval} detik.",
           "known_hosts": "Alamat IP speaker dan layar yang tidak dapat ditemukan secara otomatis oleh integrasi, misalnya karena berada di jaringan atau VLAN lain.",
           "homes": "Speaker dan layar di rumah yang pilihannya Anda batalkan tidak ditambahkan. Membatalkan pilihan rumah akan menghapus perangkat rumah tersebut beserta entitasnya dari Home Assistant, sehingga otomasi, skrip, dan dasbor yang menggunakannya berhenti berfungsi. Pilih kembali rumah tersebut untuk menambahkan perangkatnya lagi dengan nama dan area yang telah Anda berikan."
+        },
+        "sections": {
+          "bluetooth": {
+            "name": "Bluetooth",
+            "data": {
+              "bluetooth_tracking": "Pelacakan Bluetooth",
+              "bluetooth_excluded_speakers": "Speaker yang tidak digunakan untuk pelacakan Bluetooth"
+            },
+            "data_description": {
+              "bluetooth_tracking": "Gunakan speaker Anda untuk mengetahui apakah ponsel Anda atau perangkat Bluetooth lain ada di rumah. Setelah mengaktifkannya, pilih “Lacak perangkat Bluetooth” di halaman integrasi untuk setiap perangkat yang ingin dilacak. Selama nonaktif, integrasi tidak mengirim permintaan Bluetooth apa pun ke speaker Anda.",
+              "bluetooth_excluded_speakers": "Speaker yang tidak memindai perangkat Bluetooth. Tambahkan speaker yang dicabut atau tidak berfungsi: selama speaker tidak merespons, pelacak tidak dapat menampilkan “Keluar”."
+            }
+          }
         }
       }
     },

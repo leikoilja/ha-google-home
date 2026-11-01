@@ -180,6 +180,38 @@
       }
     }
   },
+  "config_subentries": {
+    "bluetooth_device": {
+      "entry_type": "Dispositivo Bluetooth",
+      "initiate_flow": {
+        "user": "Monitora un dispositivo Bluetooth"
+      },
+      "step": {
+        "user": {
+          "title": "Monitora un dispositivo Bluetooth",
+          "description": "Inserisci l'IRK di un telefono oppure l'indirizzo MAC di un dispositivo il cui indirizzo non cambia mai, come alcuni orologi e tag. I telefoni cambiano indirizzo ogni pochi minuti, quindi monitorali tramite IRK. Per sapere come trovare l'IRK, consulta {docs_url}.",
+          "data": {
+            "name": "Nome",
+            "irk_or_mac": "IRK o indirizzo MAC"
+          },
+          "data_description": {
+            "name": "Nome del tracker, ad esempio Telefono di Alex.",
+            "irk_or_mac": "L'Identity Resolving Key di un telefono, come 32 cifre esadecimali o in base64, oppure un indirizzo MAC come AA:BB:CC:DD:EE:FF. L'integrazione riconosce quale dei due hai inserito."
+          }
+        }
+      },
+      "error": {
+        "name-empty": "Inserisci un nome.",
+        "irk-or-mac": "Inserisci un IRK o un indirizzo MAC.",
+        "irk-invalid": "Questo non è un IRK. Un IRK è di 16 byte: 32 cifre esadecimali oppure 24 caratteri base64 che terminano con ==.",
+        "mac-invalid": "Questo non è un indirizzo MAC. Inserisci sei coppie di cifre esadecimali separate da due punti o trattini, ad esempio AA:BB:CC:DD:EE:FF.",
+        "already-tracked": "Questo dispositivo è già monitorato."
+      },
+      "abort": {
+        "bluetooth-tracking-off": "Il tracciamento Bluetooth è disattivato. Attivalo prima nelle opzioni dell'integrazione: seleziona «Configura» nella pagina dell'integrazione."
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {
@@ -192,6 +224,19 @@
           "update_interval": "Aumentalo se i tuoi dispositivi spesso non rispondono in tempo. Predefinito: {default_interval} secondi.",
           "known_hosts": "Indirizzi IP di altoparlanti e display che l'integrazione non riesce a trovare da sola, ad esempio perché si trovano su un'altra rete o VLAN.",
           "homes": "Gli altoparlanti e i display delle case che deselezioni non vengono aggiunti. Se deselezioni una casa, i suoi dispositivi e le relative entità vengono rimossi da Home Assistant, quindi le automazioni, gli script e le plance che li usano smettono di funzionare. Seleziona di nuovo la casa per riaggiungerli con i nomi e le aree che avevi assegnato loro."
+        },
+        "sections": {
+          "bluetooth": {
+            "name": "Bluetooth",
+            "data": {
+              "bluetooth_tracking": "Tracciamento Bluetooth",
+              "bluetooth_excluded_speakers": "Altoparlanti non usati per il tracciamento Bluetooth"
+            },
+            "data_description": {
+              "bluetooth_tracking": "Usa i tuoi altoparlanti per sapere se il tuo telefono o altri dispositivi Bluetooth sono in casa. Dopo averlo attivato, seleziona «Monitora un dispositivo Bluetooth» nella pagina dell'integrazione per ogni dispositivo da monitorare. Finché è disattivato, l'integrazione non invia alcuna richiesta Bluetooth ai tuoi altoparlanti.",
+              "bluetooth_excluded_speakers": "Altoparlanti che non cercano dispositivi Bluetooth. Aggiungi un altoparlante scollegato o fuori servizio: finché un altoparlante non risponde, i tracker non possono mostrare «Fuori casa»."
+            }
+          }
         }
       }
     },

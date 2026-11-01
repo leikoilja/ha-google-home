@@ -180,6 +180,38 @@
       }
     }
   },
+  "config_subentries": {
+    "bluetooth_device": {
+      "entry_type": "Dispositiu Bluetooth",
+      "initiate_flow": {
+        "user": "Segueix un dispositiu Bluetooth"
+      },
+      "step": {
+        "user": {
+          "title": "Segueix un dispositiu Bluetooth",
+          "description": "Introdueix la IRK d'un telèfon o l'adreça MAC d'un dispositiu amb una adreça que no canvia mai, com alguns rellotges i etiquetes localitzadores. Els telèfons canvien d'adreça cada pocs minuts, així que segueix-los per la IRK. Per saber com trobar la IRK, consulta {docs_url}.",
+          "data": {
+            "name": "Nom",
+            "irk_or_mac": "IRK o adreça MAC"
+          },
+          "data_description": {
+            "name": "Nom del rastrejador, per exemple Telèfon de l'Alex.",
+            "irk_or_mac": "La Identity Resolving Key d'un telèfon, com a 32 dígits hexadecimals o en base64, o una adreça MAC com AA:BB:CC:DD:EE:FF. La integració detecta quina de les dues has introduït."
+          }
+        }
+      },
+      "error": {
+        "name-empty": "Introdueix un nom.",
+        "irk-or-mac": "Introdueix una IRK o una adreça MAC.",
+        "irk-invalid": "Això no és una IRK. Una IRK té 16 bytes: 32 dígits hexadecimals o 24 caràcters base64 que acaben en ==.",
+        "mac-invalid": "Això no és una adreça MAC. Introdueix sis parells de dígits hexadecimals separats per dos punts o guions, per exemple AA:BB:CC:DD:EE:FF.",
+        "already-tracked": "Ja es fa el seguiment d'aquest dispositiu."
+      },
+      "abort": {
+        "bluetooth-tracking-off": "El seguiment per Bluetooth està desactivat. Activa'l primer a les opcions de la integració: selecciona «Configura» a la pàgina de la integració."
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {
@@ -192,6 +224,19 @@
           "update_interval": "Augmenta'l si els teus dispositius sovint no responen a temps. Valor per defecte: {default_interval} segons.",
           "known_hosts": "Adreces IP d'altaveus i pantalles que la integració no pot trobar per si mateixa, per exemple perquè són en una altra xarxa o VLAN.",
           "homes": "No s'afegeixen els altaveus ni les pantalles de les llars que desmarquis. Si desmarques una llar, els seus dispositius i les entitats d'aquests s'eliminen de Home Assistant, de manera que les automatitzacions, els scripts i els panells que els utilitzen deixen de funcionar. Torna a marcar la llar per tornar-los a afegir amb els noms i les àrees que els vas donar."
+        },
+        "sections": {
+          "bluetooth": {
+            "name": "Bluetooth",
+            "data": {
+              "bluetooth_tracking": "Seguiment per Bluetooth",
+              "bluetooth_excluded_speakers": "Altaveus no utilitzats per al seguiment per Bluetooth"
+            },
+            "data_description": {
+              "bluetooth_tracking": "Utilitza els altaveus per saber si el teu telèfon o altres dispositius Bluetooth són a casa. Després d'activar-lo, selecciona «Segueix un dispositiu Bluetooth» a la pàgina de la integració per a cada dispositiu que vulguis seguir. Mentre estigui desactivat, la integració no envia cap sol·licitud Bluetooth als altaveus.",
+              "bluetooth_excluded_speakers": "Altaveus que no cerquen dispositius Bluetooth. Afegeix-hi un altaveu desendollat o fora de servei: mentre un altaveu no respon, els rastrejadors no poden mostrar «Fora»."
+            }
+          }
         }
       }
     },

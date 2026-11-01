@@ -30,6 +30,7 @@ from custom_components.google_home.const import (
     API_ENDPOINT_DO_NOT_DISTURB,
     CONF_KNOWN_HOSTS,
     CONF_UPDATE_INTERVAL,
+    DEVICE_TRACKER,
     DOMAIN,
     MANUFACTURER,
     PLATFORMS,
@@ -625,7 +626,8 @@ async def test_script_stops_at_action_when_setup_fails(
 
 # Home Assistant's snapshot of a platform needs every entity enabled
 @pytest.mark.usefixtures("google", "replies", "entity_registry_enabled_by_default")
-@pytest.mark.parametrize("platform", PLATFORMS)
+# Bluetooth trackers need Bluetooth tracking on: see test_bluetooth_setup.py
+@pytest.mark.parametrize("platform", [p for p in PLATFORMS if p != DEVICE_TRACKER])
 async def test_entities(
     hass: HomeAssistant,
     config_entry: MockConfigEntry,

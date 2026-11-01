@@ -296,11 +296,8 @@ def can_delete(
         state=ConfigEntryState.LOADED,
         runtime_data=GoogleHomeData(client, Mock(data=devices), {}),
     )
-    return asyncio.run(
-        async_remove_config_entry_device(
-            Mock(), entry, Mock(identifiers={(DOMAIN, device_id)})
-        )
-    )
+    device = Mock(identifiers={(DOMAIN, device_id)}, config_subentry_id=None)
+    return asyncio.run(async_remove_config_entry_device(Mock(), entry, device))
 
 
 def test_device_google_stops_listing(clock: Mock) -> None:

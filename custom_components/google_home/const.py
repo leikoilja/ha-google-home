@@ -16,6 +16,14 @@ CONF_KNOWN_HOSTS: Final = "known_hosts"
 CONF_EXCLUDED_HOMES: Final = "excluded_homes"
 # The form field that chooses the homes whose devices are added
 CONF_HOMES: Final = "homes"
+CONF_BLUETOOTH_TRACKING: Final = "bluetooth_tracking"
+# Device IDs of speakers that don't scan for Bluetooth trackers
+CONF_BLUETOOTH_EXCLUDED: Final = "bluetooth_excluded_speakers"
+CONF_IRK: Final = "irk"
+# The field that takes a tracked device's IRK or MAC address. It's saved as one of
+# them.
+CONF_IRK_OR_MAC: Final = "irk_or_mac"
+SUBENTRY_BLUETOOTH_DEVICE: Final = "bluetooth_device"
 
 ALARM_AND_TIMER_ID_LENGTH: Final = 42
 
@@ -25,7 +33,8 @@ SWITCH: Final = "switch"
 NUMBER: Final = "number"
 BUTTON: Final = "button"
 BINARY_SENSOR: Final = "binary_sensor"
-PLATFORMS: Final = [SENSOR, SWITCH, NUMBER, BUTTON, BINARY_SENSOR]
+DEVICE_TRACKER: Final = "device_tracker"
+PLATFORMS: Final = [SENSOR, SWITCH, NUMBER, BUTTON, BINARY_SENSOR, DEVICE_TRACKER]
 
 # Services
 SERVICE_REBOOT: Final = "reboot_device"
@@ -159,6 +168,27 @@ SUPPORT_CHECK_DELAY: Final = 10 * 60  # sec
 # Ask a device for its firmware version and whether it has an update at most this
 # often, counted from the start of the last check. Firmware changes rarely.
 FIRMWARE_CHECK_INTERVAL: Final = 20 * 60  # sec
+
+# Bluetooth scans of the speakers, for Bluetooth tracking
+API_ENDPOINT_BLUETOOTH_SCAN: Final = "setup/bluetooth/scan"
+API_ENDPOINT_BLUETOOTH_RESULTS: Final = "setup/bluetooth/scan_results"
+# Bluetooth tracking, in seconds unless noted. Each update asks every speaker for
+# a scan of up to this long, and the next update reads its results and starts the
+# next scan.
+BLUETOOTH_SCAN_INTERVAL: Final = 30
+# Results read later than this after their scan started are discarded
+BLUETOOTH_MAX_RESULT_AGE: Final = 45
+# A longer gap between scans breaks a speaker's unbroken coverage
+BLUETOOTH_MAX_SCAN_GAP: Final = 15
+# A tracked device is home this long after the start of a scan that heard it,
+# and away once every speaker has scanned this long without hearing it
+BLUETOOTH_PRESENCE_WINDOW: Final = 90
+# Weaker sightings are ignored: a phone away from home was once heard at -83
+BLUETOOTH_MIN_RSSI: Final = -80  # dBm
+# While the speakers can't tell whether a tracked device is home, its tracker
+# keeps its last state this long, then shows unavailable. A speaker that has
+# kept trackers from showing away this long is named in a warning.
+BLUETOOTH_UNCERTAIN_LIMIT: Final = 300
 
 # JSON parameter values when retrieving information from devices
 JSON_ALARM: Final = "alarm"

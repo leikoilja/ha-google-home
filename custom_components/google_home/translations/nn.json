@@ -180,6 +180,38 @@
       }
     }
   },
+  "config_subentries": {
+    "bluetooth_device": {
+      "entry_type": "Bluetooth-eining",
+      "initiate_flow": {
+        "user": "Spor ei Bluetooth-eining"
+      },
+      "step": {
+        "user": {
+          "title": "Spor ei Bluetooth-eining",
+          "description": "Skriv inn IRK-en til ein telefon, eller MAC-adressa til ei eining med ei adresse som aldri blir endra, til dømes somme klokker og sporingsbrikker. Telefonar byter adresse med nokre minutts mellomrom, så spor dei med IRK. Sjå {docs_url} for korleis du finn IRK-en.",
+          "data": {
+            "name": "Namn",
+            "irk_or_mac": "IRK eller MAC-adresse"
+          },
+          "data_description": {
+            "name": "Namnet på sporaren, til dømes Telefonen til Alex.",
+            "irk_or_mac": "Identity Resolving Key til ein telefon, som 32 heksadesimale siffer eller i base64, eller ei MAC-adresse, til dømes AA:BB:CC:DD:EE:FF. Integrasjonen ser sjølv kva for ein av dei du skreiv inn."
+          }
+        }
+      },
+      "error": {
+        "name-empty": "Skriv inn eit namn.",
+        "irk-or-mac": "Skriv inn ein IRK eller ei MAC-adresse.",
+        "irk-invalid": "Dette er ikkje ein IRK. Ein IRK er 16 byte: 32 heksadesimale siffer eller 24 base64-teikn som sluttar på ==.",
+        "mac-invalid": "Dette er ikkje ei MAC-adresse. Skriv inn seks par heksadesimale siffer skilde med kolon eller bindestrek, til dømes AA:BB:CC:DD:EE:FF.",
+        "already-tracked": "Denne eininga blir allereie spora."
+      },
+      "abort": {
+        "bluetooth-tracking-off": "Bluetooth-sporing er slått av. Slå på sporinga i alternativa for integrasjonen først: Vel «Konfigurer» på sida til integrasjonen."
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {
@@ -192,6 +224,19 @@
           "update_interval": "Auk dette om einingane dine ofte ikkje svarar i tide. Standard: {default_interval} sekund.",
           "known_hosts": "IP-adresser til høgtalarar og skjermar som integrasjonen ikkje finn sjølv, til dømes fordi dei er på eit anna nettverk eller VLAN.",
           "homes": "Høgtalarar og skjermar i heimar du vel bort, blir ikkje lagde til. Når du vel bort ein heim, blir einingane i heimen og entitetane deira fjerna frå Home Assistant, slik at automatiseringar, skript og dashbord som brukar dei, sluttar å fungere. Vel heimen igjen for å leggje dei til på nytt med namna og områda du gav dei."
+        },
+        "sections": {
+          "bluetooth": {
+            "name": "Bluetooth",
+            "data": {
+              "bluetooth_tracking": "Bluetooth-sporing",
+              "bluetooth_excluded_speakers": "Høgtalarar som ikkje blir brukte til Bluetooth-sporing"
+            },
+            "data_description": {
+              "bluetooth_tracking": "Bruk høgtalarane til å sjå om telefonen din eller andre Bluetooth-einingar er heime. Når sporinga er slått på, vel du «Spor ei Bluetooth-eining» på sida til integrasjonen for kvar eining som skal sporast. Når sporinga er slått av, sender ikkje integrasjonen nokon Bluetooth-førespurnader til høgtalarane.",
+              "bluetooth_excluded_speakers": "Høgtalarar som ikkje søkjer etter Bluetooth-einingar. Legg til ein høgtalar som er kopla frå straumen eller ute av drift: Så lenge ein høgtalar ikkje svarar, kan ikkje sporarar vise «Borte»."
+            }
+          }
         }
       }
     },

@@ -180,6 +180,38 @@
       }
     }
   },
+  "config_subentries": {
+    "bluetooth_device": {
+      "entry_type": "Dispositivo Bluetooth",
+      "initiate_flow": {
+        "user": "Rastrear um dispositivo Bluetooth"
+      },
+      "step": {
+        "user": {
+          "title": "Rastrear um dispositivo Bluetooth",
+          "description": "Insira a IRK de um celular ou o endereço MAC de um dispositivo cujo endereço nunca muda, como alguns relógios e tags. Os celulares mudam de endereço a cada poucos minutos, então rastreie-os pela IRK. Para saber como encontrar a IRK, consulte {docs_url}.",
+          "data": {
+            "name": "Nome",
+            "irk_or_mac": "IRK ou endereço MAC"
+          },
+          "data_description": {
+            "name": "Nome do rastreador, por exemplo Celular do Alex.",
+            "irk_or_mac": "A Identity Resolving Key de um celular, como 32 dígitos hexadecimais ou em base64, ou um endereço MAC como AA:BB:CC:DD:EE:FF. A integração identifica qual dos dois você inseriu."
+          }
+        }
+      },
+      "error": {
+        "name-empty": "Insira um nome.",
+        "irk-or-mac": "Insira uma IRK ou um endereço MAC.",
+        "irk-invalid": "Isto não é uma IRK. Uma IRK tem 16 bytes: 32 dígitos hexadecimais ou 24 caracteres base64 terminando em ==.",
+        "mac-invalid": "Isto não é um endereço MAC. Insira seis pares de dígitos hexadecimais separados por dois-pontos ou hifens, por exemplo AA:BB:CC:DD:EE:FF.",
+        "already-tracked": "Este dispositivo já está sendo rastreado."
+      },
+      "abort": {
+        "bluetooth-tracking-off": "O rastreamento por Bluetooth está desativado. Ative-o primeiro nas opções da integração: selecione “Configurar” na página da integração."
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {
@@ -192,6 +224,19 @@
           "update_interval": "Aumente este valor se seus dispositivos frequentemente não responderem a tempo. Padrão: {default_interval} segundos.",
           "known_hosts": "Endereços IP de alto-falantes e telas que a integração não consegue encontrar sozinha, por exemplo porque estão em outra rede ou VLAN.",
           "homes": "Alto-falantes e telas das casas que você desmarcar não são adicionados. Desmarcar uma casa remove do Home Assistant os dispositivos dela e as entidades deles, então automações, scripts e dashboards que os usam param de funcionar. Marque a casa novamente para adicioná-los de volta com os nomes e as áreas que você deu a eles."
+        },
+        "sections": {
+          "bluetooth": {
+            "name": "Bluetooth",
+            "data": {
+              "bluetooth_tracking": "Rastreamento por Bluetooth",
+              "bluetooth_excluded_speakers": "Alto-falantes não usados para rastreamento por Bluetooth"
+            },
+            "data_description": {
+              "bluetooth_tracking": "Use seus alto-falantes para saber se o seu celular ou outros dispositivos Bluetooth estão em casa. Depois de ativá-lo, selecione “Rastrear um dispositivo Bluetooth” na página da integração para cada dispositivo a rastrear. Enquanto estiver desativado, a integração não envia nenhuma solicitação Bluetooth aos seus alto-falantes.",
+              "bluetooth_excluded_speakers": "Alto-falantes que não procuram dispositivos Bluetooth. Adicione um alto-falante desconectado da tomada ou fora de serviço: enquanto um alto-falante não responder, os rastreadores não conseguem mostrar “Ausente”."
+            }
+          }
         }
       }
     },

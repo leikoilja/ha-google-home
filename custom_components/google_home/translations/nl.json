@@ -180,6 +180,38 @@
       }
     }
   },
+  "config_subentries": {
+    "bluetooth_device": {
+      "entry_type": "Bluetooth-apparaat",
+      "initiate_flow": {
+        "user": "Een Bluetooth-apparaat volgen"
+      },
+      "step": {
+        "user": {
+          "title": "Een Bluetooth-apparaat volgen",
+          "description": "Voer de IRK van een telefoon in, of het MAC-adres van een apparaat waarvan het adres nooit verandert, zoals sommige horloges en tags. Telefoons wijzigen hun adres om de paar minuten, dus volg ze via de IRK. Zie {docs_url} voor hoe je de IRK vindt.",
+          "data": {
+            "name": "Naam",
+            "irk_or_mac": "IRK of MAC-adres"
+          },
+          "data_description": {
+            "name": "Naam van de tracker, bijvoorbeeld Telefoon van Alex.",
+            "irk_or_mac": "De Identity Resolving Key van een telefoon, als 32 hexadecimale cijfers of in base64, of een MAC-adres zoals AA:BB:CC:DD:EE:FF. De integratie herkent zelf welke van de twee je hebt ingevoerd."
+          }
+        }
+      },
+      "error": {
+        "name-empty": "Voer een naam in.",
+        "irk-or-mac": "Voer een IRK of een MAC-adres in.",
+        "irk-invalid": "Dit is geen IRK. Een IRK is 16 bytes: 32 hexadecimale cijfers, of 24 base64-tekens die eindigen op ==.",
+        "mac-invalid": "Dit is geen MAC-adres. Voer zes paren hexadecimale cijfers in, gescheiden door dubbele punten of koppeltekens, bijvoorbeeld AA:BB:CC:DD:EE:FF.",
+        "already-tracked": "Dit apparaat wordt al gevolgd."
+      },
+      "abort": {
+        "bluetooth-tracking-off": "Bluetooth-tracking is uitgeschakeld. Schakel het eerst in bij de opties van de integratie: selecteer ‘Configureer’ op de pagina van de integratie."
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {
@@ -192,6 +224,19 @@
           "update_interval": "Verhoog dit als je apparaten vaak niet op tijd reageren. Standaard: {default_interval} seconden.",
           "known_hosts": "IP-adressen van speakers en schermen die de integratie zelf niet kan vinden, bijvoorbeeld omdat ze op een ander netwerk of VLAN staan.",
           "homes": "Speakers en schermen in huizen die je deselecteert, worden niet toegevoegd. Als je een huis deselecteert, worden de apparaten ervan en hun entiteiten uit Home Assistant verwijderd, waardoor automatiseringen, scripts en dashboards die ze gebruiken niet meer werken. Selecteer het huis opnieuw om ze terug te zetten met de namen en ruimtes die je ze had gegeven."
+        },
+        "sections": {
+          "bluetooth": {
+            "name": "Bluetooth",
+            "data": {
+              "bluetooth_tracking": "Bluetooth-tracking",
+              "bluetooth_excluded_speakers": "Speakers die niet worden gebruikt voor Bluetooth-tracking"
+            },
+            "data_description": {
+              "bluetooth_tracking": "Gebruik je speakers om te zien of je telefoon of andere Bluetooth-apparaten thuis zijn. Selecteer na het inschakelen ‘Een Bluetooth-apparaat volgen’ op de pagina van de integratie voor elk apparaat dat je wilt volgen. Zolang het is uitgeschakeld, stuurt de integratie geen Bluetooth-verzoeken naar je speakers.",
+              "bluetooth_excluded_speakers": "Speakers die niet naar Bluetooth-apparaten zoeken. Voeg een speaker toe die is losgekoppeld of buiten gebruik is: zolang een speaker niet antwoordt, kunnen trackers niet ‘Afwezig’ tonen."
+            }
+          }
         }
       }
     },

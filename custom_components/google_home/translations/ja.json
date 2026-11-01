@@ -180,6 +180,38 @@
       }
     }
   },
+  "config_subentries": {
+    "bluetooth_device": {
+      "entry_type": "Bluetooth デバイス",
+      "initiate_flow": {
+        "user": "Bluetooth デバイスを追跡"
+      },
+      "step": {
+        "user": {
+          "title": "Bluetooth デバイスを追跡",
+          "description": "スマートフォンの IRK、またはアドレスが変わらないデバイス (一部の腕時計やタグなど) の MAC アドレスを入力してください。スマートフォンは数分ごとにアドレスを変えるため、IRK で追跡してください。IRK の確認方法は {docs_url} を参照してください。",
+          "data": {
+            "name": "名前",
+            "irk_or_mac": "IRK または MAC アドレス"
+          },
+          "data_description": {
+            "name": "トラッカーの名前。例: アレックスのスマートフォン",
+            "irk_or_mac": "スマートフォンの Identity Resolving Key (16 進数 32 桁または base64)、または AA:BB:CC:DD:EE:FF のような MAC アドレス。どちらを入力したかは統合が自動で判別します。"
+          }
+        }
+      },
+      "error": {
+        "name-empty": "名前を入力してください。",
+        "irk-or-mac": "IRK または MAC アドレスを入力してください。",
+        "irk-invalid": "IRK ではありません。IRK は 16 バイトで、16 進数 32 桁、または == で終わる base64 の 24 文字です。",
+        "mac-invalid": "MAC アドレスではありません。AA:BB:CC:DD:EE:FF のように、16 進数 2 桁の組 6 つをコロンまたはハイフンで区切って入力してください。",
+        "already-tracked": "このデバイスはすでに追跡されています。"
+      },
+      "abort": {
+        "bluetooth-tracking-off": "Bluetooth トラッキングがオフです。まず統合のオプションでオンにしてください。統合のページで「設定」を選択します。"
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {
@@ -192,6 +224,19 @@
           "update_interval": "デバイスの応答が間に合わないことが多い場合は、この値を増やしてください。既定値: {default_interval} 秒。",
           "known_hosts": "別のネットワークや VLAN にあるなどの理由で、この統合が自動検出できないスピーカーやディスプレイの IP アドレス。",
           "homes": "選択を解除した家のスピーカーとディスプレイは追加されません。家の選択を解除すると、その家のデバイスとそのエンティティが Home Assistant から削除されるため、それらを使用しているオートメーション、スクリプト、ダッシュボードは動作しなくなります。その家をもう一度選択すると、設定した名前とエリアのままデバイスが再び追加されます。"
+        },
+        "sections": {
+          "bluetooth": {
+            "name": "Bluetooth",
+            "data": {
+              "bluetooth_tracking": "Bluetooth トラッキング",
+              "bluetooth_excluded_speakers": "Bluetooth トラッキングに使用しないスピーカー"
+            },
+            "data_description": {
+              "bluetooth_tracking": "スピーカーを使って、スマートフォンやその他の Bluetooth デバイスが在宅かどうかを判定します。オンにしたら、追跡するデバイスごとに統合のページで「Bluetooth デバイスを追跡」を選択してください。オフの間、この統合はスピーカーに Bluetooth のリクエストを送信しません。",
+              "bluetooth_excluded_speakers": "Bluetooth デバイスをスキャンしないスピーカー。電源が抜かれているスピーカーや使用していないスピーカーを追加してください。応答しないスピーカーがある間は、トラッカーを「不在」にできません。"
+            }
+          }
         }
       }
     },

@@ -180,6 +180,38 @@
       }
     }
   },
+  "config_subentries": {
+    "bluetooth_device": {
+      "entry_type": "Urządzenie Bluetooth",
+      "initiate_flow": {
+        "user": "Śledź urządzenie Bluetooth"
+      },
+      "step": {
+        "user": {
+          "title": "Śledź urządzenie Bluetooth",
+          "description": "Wpisz IRK telefonu albo adres MAC urządzenia, którego adres nigdy się nie zmienia, np. niektórych zegarków i lokalizatorów. Telefony zmieniają adres co kilka minut, więc śledź je za pomocą IRK. Jak znaleźć IRK, opisano w {docs_url}.",
+          "data": {
+            "name": "Nazwa",
+            "irk_or_mac": "IRK lub adres MAC"
+          },
+          "data_description": {
+            "name": "Nazwa trackera, np. Telefon Alexa.",
+            "irk_or_mac": "Identity Resolving Key telefonu jako 32 cyfry szesnastkowe lub w base64 albo adres MAC, np. AA:BB:CC:DD:EE:FF. Integracja sama rozpozna, co zostało wpisane."
+          }
+        }
+      },
+      "error": {
+        "name-empty": "Wpisz nazwę.",
+        "irk-or-mac": "Wpisz IRK lub adres MAC.",
+        "irk-invalid": "To nie jest IRK. IRK ma 16 bajtów: 32 cyfry szesnastkowe albo 24 znaki base64 zakończone ==.",
+        "mac-invalid": "To nie jest adres MAC. Wpisz sześć par cyfr szesnastkowych rozdzielonych dwukropkami lub łącznikami, np. AA:BB:CC:DD:EE:FF.",
+        "already-tracked": "To urządzenie jest już śledzone."
+      },
+      "abort": {
+        "bluetooth-tracking-off": "Śledzenie Bluetooth jest wyłączone. Najpierw włącz je w opcjach integracji: wybierz „Konfiguruj” na stronie integracji."
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {
@@ -192,6 +224,19 @@
           "update_interval": "Zwiększ tę wartość, jeśli Twoje urządzenia często nie odpowiadają na czas. Domyślnie: {default_interval} sekund.",
           "known_hosts": "Adresy IP głośników i wyświetlaczy, których integracja nie może sama znaleźć, na przykład dlatego, że są w innej sieci lub sieci VLAN.",
           "homes": "Głośniki i wyświetlacze z odznaczonych domów nie są dodawane. Odznaczenie domu usuwa jego urządzenia i ich encje z Home Assistanta, więc korzystające z nich automatyzacje, skrypty i panele przestają działać. Zaznacz dom ponownie, aby przywrócić urządzenia z nadanymi im nazwami i obszarami."
+        },
+        "sections": {
+          "bluetooth": {
+            "name": "Bluetooth",
+            "data": {
+              "bluetooth_tracking": "Śledzenie Bluetooth",
+              "bluetooth_excluded_speakers": "Głośniki nieużywane do śledzenia Bluetooth"
+            },
+            "data_description": {
+              "bluetooth_tracking": "Używaj głośników, aby sprawdzać, czy telefon lub inne urządzenia Bluetooth są w domu. Po włączeniu wybierz „Śledź urządzenie Bluetooth” na stronie integracji dla każdego urządzenia, które chcesz śledzić. Gdy śledzenie jest wyłączone, integracja nie wysyła do głośników żadnych żądań Bluetooth.",
+              "bluetooth_excluded_speakers": "Głośniki, które nie wyszukują urządzeń Bluetooth. Dodaj głośnik odłączony od zasilania lub niedziałający: dopóki głośnik nie odpowiada, trackery nie mogą pokazać stanu „poza domem”."
+            }
+          }
         }
       }
     },

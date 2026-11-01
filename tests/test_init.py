@@ -138,7 +138,7 @@ def fixture_entry() -> Mock:
 
 def can_delete(entry: Mock, device_id: str) -> bool:
     """Ask the integration whether the device with this ID can be deleted."""
-    device_entry = Mock(identifiers={(DOMAIN, device_id)})
+    device_entry = Mock(identifiers={(DOMAIN, device_id)}, config_subentry_id=None)
     return asyncio.run(async_remove_config_entry_device(Mock(), entry, device_entry))
 
 

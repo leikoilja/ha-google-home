@@ -180,6 +180,38 @@
       }
     }
   },
+  "config_subentries": {
+    "bluetooth_device": {
+      "entry_type": "Bluetooth-Gerät",
+      "initiate_flow": {
+        "user": "Bluetooth-Gerät verfolgen"
+      },
+      "step": {
+        "user": {
+          "title": "Bluetooth-Gerät verfolgen",
+          "description": "Gib den IRK eines Smartphones ein oder die MAC-Adresse eines Geräts, dessen Adresse sich nie ändert, etwa mancher Uhren und Bluetooth-Tags. Smartphones ändern ihre Adresse alle paar Minuten, verfolge sie daher per IRK. Wie du den IRK findest, steht unter {docs_url}.",
+          "data": {
+            "name": "Name",
+            "irk_or_mac": "IRK oder MAC-Adresse"
+          },
+          "data_description": {
+            "name": "Name des Trackers, etwa Smartphone von Alex.",
+            "irk_or_mac": "Der Identity Resolving Key eines Smartphones als 32 Hexadezimalziffern oder in Base64, oder eine MAC-Adresse wie AA:BB:CC:DD:EE:FF. Die Integration erkennt selbst, was du eingegeben hast."
+          }
+        }
+      },
+      "error": {
+        "name-empty": "Gib einen Namen ein.",
+        "irk-or-mac": "Gib einen IRK oder eine MAC-Adresse ein.",
+        "irk-invalid": "Das ist kein IRK. Ein IRK hat 16 Bytes: 32 Hexadezimalziffern oder 24 Base64-Zeichen, die auf == enden.",
+        "mac-invalid": "Das ist keine MAC-Adresse. Gib sechs Paare von Hexadezimalziffern ein, getrennt durch Doppelpunkte oder Bindestriche, etwa AA:BB:CC:DD:EE:FF.",
+        "already-tracked": "Dieses Gerät wird bereits verfolgt."
+      },
+      "abort": {
+        "bluetooth-tracking-off": "Bluetooth-Tracking ist ausgeschaltet. Schalte es zuerst in den Optionen der Integration ein: Wähle „Konfigurieren“ auf der Seite der Integration."
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {
@@ -192,6 +224,19 @@
           "update_interval": "Erhöhe diesen Wert, wenn deine Geräte oft nicht rechtzeitig antworten. Standard: {default_interval} Sekunden.",
           "known_hosts": "IP-Adressen von Lautsprechern und Displays, die die Integration nicht selbst findet, etwa weil sie in einem anderen Netzwerk oder VLAN sind.",
           "homes": "Lautsprecher und Displays in abgewählten Zuhause werden nicht hinzugefügt. Wenn du ein Zuhause abwählst, werden seine Geräte und deren Entitäten aus Home Assistant entfernt, sodass Automationen, Skripte und Dashboards, die sie verwenden, nicht mehr funktionieren. Wähle das Zuhause erneut aus, um sie mit den Namen und Bereichen wieder hinzuzufügen, die du ihnen gegeben hast."
+        },
+        "sections": {
+          "bluetooth": {
+            "name": "Bluetooth",
+            "data": {
+              "bluetooth_tracking": "Bluetooth-Tracking",
+              "bluetooth_excluded_speakers": "Lautsprecher, die nicht für Bluetooth-Tracking verwendet werden"
+            },
+            "data_description": {
+              "bluetooth_tracking": "Erkenne mit deinen Lautsprechern, ob dein Smartphone oder andere Bluetooth-Geräte zu Hause sind. Wähle nach dem Einschalten auf der Seite der Integration „Bluetooth-Gerät verfolgen“ für jedes Gerät, das du verfolgen möchtest. Solange es ausgeschaltet ist, sendet die Integration keine Bluetooth-Anfragen an deine Lautsprecher.",
+              "bluetooth_excluded_speakers": "Lautsprecher, die nicht nach Bluetooth-Geräten suchen. Füge einen Lautsprecher hinzu, der vom Strom getrennt oder außer Betrieb ist: Solange ein Lautsprecher nicht antwortet, können Tracker nicht „Abwesend“ anzeigen."
+            }
+          }
         }
       }
     },

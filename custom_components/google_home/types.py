@@ -7,7 +7,10 @@ from typing import TYPE_CHECKING, TypedDict
 from homeassistant.config_entries import ConfigEntry
 
 if TYPE_CHECKING:
+    from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+
     from .api import GlocaltokensApiClient
+    from .bluetooth import TrackerState
     from .coordinator import GoogleAccountCoordinator, GoogleHomeDeviceCoordinator
 
 
@@ -30,6 +33,13 @@ class TimerJsonDict(TypedDict, total=False):
     remaining_duration: int
     status: int
     label: str | None
+
+
+class BluetoothJsonDict(TypedDict):
+    """Typed dict for a Bluetooth device in a Google Home device's scan results."""
+
+    mac_address: str
+    rssi: int
 
 
 class GoogleHomeAlarmDict(TypedDict):
@@ -83,6 +93,13 @@ class TimersAttributes(TypedDict):
     timers: list[GoogleHomeTimerDict]
 
 
+class BluetoothOptionsDict(TypedDict, total=False):
+    """Typed dict for the Bluetooth section of the options form."""
+
+    bluetooth_tracking: bool
+    bluetooth_excluded_speakers: list[str]
+
+
 class OptionsFlowDict(TypedDict, total=False):
     """Typed dict for options flow handler."""
 
@@ -90,6 +107,8 @@ class OptionsFlowDict(TypedDict, total=False):
     known_hosts: list[str]
     # The homes whose devices are added, of those the form offers
     homes: list[str]
+    # Saved with the other options, outside the section
+    bluetooth: BluetoothOptionsDict
 
 
 type JsonDict = Mapping[
@@ -106,6 +125,10 @@ class GoogleHomeData:
     account: GoogleAccountCoordinator
     # By device ID, every device that Google has listed since setup, until removed
     devices: dict[str, GoogleHomeDeviceCoordinator]
+    # Bluetooth tracking, while it's on and has devices to track
+    bluetooth: DataUpdateCoordinator[dict[str, TrackerState]] | None = None
+    # The Bluetooth settings the entry was set up with, to reload when they change
+    bluetooth_config: tuple[bool, frozenset[str], frozenset[str]] | None = None
 
 
 type GoogleHomeConfigEntry = ConfigEntry[GoogleHomeData]

@@ -31,7 +31,11 @@ from custom_components.google_home.const import (
 # ruff sorts homeassistant as first-party, pylint as third-party
 # pylint: disable=wrong-import-order
 from homeassistant.components.repairs import RepairsFlowContext, RepairsFlowManager
-from homeassistant.config_entries import ConfigEntriesFlowManager, OptionsFlowManager
+from homeassistant.config_entries import (
+    ConfigEntriesFlowManager,
+    ConfigSubentryFlowManager,
+    OptionsFlowManager,
+)
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowManager, FlowResult, FlowResultType
 from homeassistant.helpers import issue_registry as ir
@@ -126,6 +130,11 @@ async def assert_flow_text(
         key = issue.translation_key if issue and issue.translation_key else issue_id
         category = "issues"
         prefix = f"component.{domain}.issues.{key}.fix_flow"
+    # The manager's type parameters differ, so check it as an object
+    elif isinstance(cast(object, manager), ConfigSubentryFlowManager):
+        # The handler is the entry's ID and the subentry type
+        category = "config_subentries"
+        prefix = f"component.{domain}.{category}.{result['handler'][1]}"
     else:
         category = "options" if isinstance(manager, OptionsFlowManager) else "config"
         prefix = f"component.{domain}.{category}"

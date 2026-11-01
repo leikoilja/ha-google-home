@@ -180,6 +180,38 @@
       }
     }
   },
+  "config_subentries": {
+    "bluetooth_device": {
+      "entry_type": "Bluetooth-eszköz",
+      "initiate_flow": {
+        "user": "Bluetooth-eszköz követése"
+      },
+      "step": {
+        "user": {
+          "title": "Bluetooth-eszköz követése",
+          "description": "Adja meg egy telefon IRK-ját, vagy egy olyan eszköz MAC-címét, amelynek címe soha nem változik, például egyes órákét és nyomkövető címkékét. A telefonok néhány percenként megváltoztatják a címüket, ezért IRK alapján kövesse őket. Az IRK megkeresésének módját lásd itt: {docs_url}.",
+          "data": {
+            "name": "Név",
+            "irk_or_mac": "IRK vagy MAC-cím"
+          },
+          "data_description": {
+            "name": "A követő neve, például Alex telefonja.",
+            "irk_or_mac": "Egy telefon Identity Resolving Key-e (identitásfeloldó kulcsa) 32 hexadecimális számjegyként vagy base64 formátumban, vagy egy MAC-cím, például AA:BB:CC:DD:EE:FF. Az integráció felismeri, melyiket adta meg."
+          }
+        }
+      },
+      "error": {
+        "name-empty": "Adjon meg egy nevet.",
+        "irk-or-mac": "Adjon meg egy IRK-t vagy egy MAC-címet.",
+        "irk-invalid": "Ez nem IRK. Az IRK 16 bájt: 32 hexadecimális számjegy vagy 24 base64-karakter, amely ==-re végződik.",
+        "mac-invalid": "Ez nem MAC-cím. Adjon meg hat hexadecimális számjegypárt kettősponttal vagy kötőjellel elválasztva, például AA:BB:CC:DD:EE:FF.",
+        "already-tracked": "Ezt az eszközt már követi az integráció."
+      },
+      "abort": {
+        "bluetooth-tracking-off": "A Bluetooth-követés ki van kapcsolva. Először kapcsolja be az integráció beállításaiban: válassza a „Konfigurálás” lehetőséget az integráció oldalán."
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {
@@ -192,6 +224,19 @@
           "update_interval": "Növelje ezt az értéket, ha az eszközei gyakran nem válaszolnak időben. Alapértelmezett: {default_interval} másodperc.",
           "known_hosts": "Azon hangszórók és kijelzők IP-címei, amelyeket az integráció nem talál meg automatikusan, például mert másik hálózaton vagy VLAN-on vannak.",
           "homes": "Azoknak az otthonoknak a hangszóróit és kijelzőit, amelyek kijelölését megszünteti, az integráció nem adja hozzá. Ha megszünteti egy otthon kijelölését, az otthon eszközei és azok entitásai törlődnek a Home Assistantból, így az ezeket használó automatizmusok, szkriptek és irányítópultok nem működnek tovább. Jelölje ki újra az otthont, és az eszközök visszakerülnek az Ön által adott nevekkel és területekkel."
+        },
+        "sections": {
+          "bluetooth": {
+            "name": "Bluetooth",
+            "data": {
+              "bluetooth_tracking": "Bluetooth-követés",
+              "bluetooth_excluded_speakers": "Bluetooth-követéshez nem használt hangszórók"
+            },
+            "data_description": {
+              "bluetooth_tracking": "A hangszórók segítségével megtudhatja, hogy a telefonja vagy más Bluetooth-eszközök otthon vannak-e. Bekapcsolás után minden követendő eszközhöz válassza az integráció oldalán a „Bluetooth-eszköz követése” lehetőséget. Amíg ki van kapcsolva, az integráció nem küld Bluetooth-kéréseket a hangszóróknak.",
+              "bluetooth_excluded_speakers": "Hangszórók, amelyek nem keresnek Bluetooth-eszközöket. Adjon hozzá egy áramtalanított vagy üzemen kívüli hangszórót: amíg egy hangszóró nem válaszol, a követők nem tudják a „Távol” állapotot mutatni."
+            }
+          }
         }
       }
     },

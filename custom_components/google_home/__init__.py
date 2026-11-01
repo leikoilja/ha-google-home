@@ -9,6 +9,7 @@ from datetime import timedelta
 import logging
 from typing import cast
 
+from aiohttp import ClientSession
 from glocaltokens.utils.token import is_aas_et
 
 from homeassistant.components import zeroconf
@@ -19,11 +20,16 @@ from homeassistant.helpers import config_validation as cv, issue_registry as ir
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.device_registry import DeviceEntry
 from homeassistant.helpers.typing import ConfigType
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .api import GlocaltokensApiClient
+from .bluetooth import BluetoothScanner, TrackerState
 from .const import (
+    BLUETOOTH_SCAN_INTERVAL,
     BROWSER_TITLE,
     CONF_ANDROID_ID,
+    CONF_BLUETOOTH_EXCLUDED,
+    CONF_BLUETOOTH_TRACKING,
     CONF_EXCLUDED_HOMES,
     CONF_KNOWN_HOSTS,
     CONF_MASTER_TOKEN,
@@ -32,6 +38,7 @@ from .const import (
     ISSUE_POLLING_DISABLED,
     MASTER_TOKEN_TITLE,
     PLATFORMS,
+    SUBENTRY_BLUETOOTH_DEVICE,
     UPDATE_INTERVAL,
 )
 from .coordinator import GoogleAccountCoordinator
@@ -136,7 +143,20 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -
     finally:
         glocaltokens_client.setting_up = False
 
+    entry.runtime_data.bluetooth_config = bluetooth_config(entry)
+    bluetooth = entry.runtime_data.bluetooth = async_create_bluetooth_coordinator(
+        hass, entry, session
+    )
+
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+
+    if bluetooth is not None:
+        # Not a first refresh: Bluetooth must never fail or delay setup
+        entry.async_create_background_task(
+            hass,
+            bluetooth.async_refresh(),
+            "Start Bluetooth scans",
+        )
 
     if entry.title in GENERIC_TITLES:
         entry.async_create_background_task(
@@ -146,6 +166,47 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -
         )
 
     entry.async_on_unload(entry.add_update_listener(async_update_entry))
+
+
+def bluetooth_config(
+    entry: GoogleHomeConfigEntry,
+) -> tuple[bool, frozenset[str], frozenset[str]]:
+    """Return the settings that Bluetooth tracking is set up with.
+
+    Adding or removing a tracked device only calls the entry's update listener,
+    so it compares these to reload when they change.
+    """
+    return (
+        bool(entry.options.get(CONF_BLUETOOTH_TRACKING, False)),
+        frozenset(entry.options.get(CONF_BLUETOOTH_EXCLUDED, [])),
+        frozenset(
+            subentry.subentry_id
+            for subentry in entry.get_subentries_of_type(SUBENTRY_BLUETOOTH_DEVICE)
+        ),
+    )
+
+
+def async_create_bluetooth_coordinator(
+    hass: HomeAssistant, entry: GoogleHomeConfigEntry, session: ClientSession
+) -> DataUpdateCoordinator[dict[str, TrackerState]] | None:
+    """Create the Bluetooth coordinator, if tracking is on and has devices to track."""
+    tracking, excluded, subentry_ids = bluetooth_config(entry)
+    if not tracking or not subentry_ids:
+        return None
+    scanner = BluetoothScanner(
+        session,
+        entry.runtime_data.account,
+        entry.get_subentries_of_type(SUBENTRY_BLUETOOTH_DEVICE),
+        excluded,
+    )
+    return DataUpdateCoordinator(
+        hass,
+        _LOGGER,
+        name=f"{DOMAIN}_bluetooth",
+        update_method=scanner.async_update,
+        update_interval=timedelta(seconds=BLUETOOTH_SCAN_INTERVAL),
+        config_entry=entry,
+    )
 
 
 @callback
@@ -196,7 +257,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) 
 
 
 async def async_remove_config_entry_device(
-    _hass: HomeAssistant, entry: GoogleHomeConfigEntry, device_entry: DeviceEntry
+    hass: HomeAssistant, entry: GoogleHomeConfigEntry, device_entry: DeviceEntry
 ) -> bool:
     """Allow deleting a device only when Google no longer returns it.
 
@@ -205,7 +266,13 @@ async def async_remove_config_entry_device(
     deleted while Google's device list is unknown: the entry isn't loaded, no
     fetch has succeeded yet, or a device rejected its token, got no new token
     that it accepts, and the list hasn't been fetched again.
+
+    Deleting a tracked Bluetooth device stops tracking it, as deleting it from the
+    integration's page does: its subentry goes, with the device and its tracker.
     """
+    if (subentry_id := device_entry.config_subentry_id) is not None:
+        hass.config_entries.async_remove_subentry(entry, subentry_id)
+        return True
     if (
         entry.state is not ConfigEntryState.LOADED
         or not entry.runtime_data.client.google_devices_fetched
@@ -225,6 +292,10 @@ async def async_update_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) 
         or set(entry.options.get(CONF_EXCLUDED_HOMES, [])) != client.excluded_homes
     ):
         _LOGGER.debug("Known hosts or homes changed, reloading...")
+        hass.config_entries.async_schedule_reload(entry.entry_id)
+        return
+    if bluetooth_config(entry) != entry.runtime_data.bluetooth_config:
+        _LOGGER.debug("Bluetooth tracking changed, reloading...")
         hass.config_entries.async_schedule_reload(entry.entry_id)
         return
     _LOGGER.debug("Options updated, updating coordinator interval...")

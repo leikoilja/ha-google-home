@@ -73,6 +73,8 @@ HOLIDAY_HOUSE = "holiday-house-id"
 NEW_HOME = "new-home-id"
 BEDROOM_IN_HOME_GRAPH = in_home_graph(BEDROOM_ID, BEDROOM_CLOUD_ID, "Bedroom speaker")
 ALARM_SHOWN = "2023-11-14T14:13:20-08:00"
+# What saving the options form stores while Bluetooth tracking stays off
+BLUETOOTH_OFF = {"bluetooth_tracking": False, "bluetooth_excluded_speakers": []}
 
 
 def home(home_id: str, name: str, *devices: HomeGraph.Device) -> HomeGraph.Home:
@@ -253,6 +255,7 @@ async def test_deselected_home_removed_and_added_back(
         "update_interval": 15,
         "known_hosts": [],
         "excluded_homes": [HOLIDAY_HOUSE],
+        **BLUETOOTH_OFF,
     }
     assert bedroom_device(device_registry, config_entry) is None
     assert BEDROOM_ALARMS not in entity_ids(entity_registry, config_entry)
@@ -265,7 +268,11 @@ async def test_deselected_home_removed_and_added_back(
 
     await choose_homes(hass, config_entry, [HOME, HOLIDAY_HOUSE])
 
-    assert config_entry.options == {"update_interval": 15, "known_hosts": []}
+    assert config_entry.options == {
+        "update_interval": 15,
+        "known_hosts": [],
+        **BLUETOOTH_OFF,
+    }
     restored = bedroom_device(device_registry, config_entry)
     assert restored is not None
     assert (restored.id, restored.area_id, restored.name_by_user) == (
@@ -534,11 +541,16 @@ async def test_options_offer_excluded_home_alone(
         "update_interval": 30,
         "known_hosts": [],
         "excluded_homes": [HOLIDAY_HOUSE],
+        **BLUETOOTH_OFF,
     }
 
     await choose_homes(hass, config_entry, [HOLIDAY_HOUSE])
 
-    assert config_entry.options == {"update_interval": 30, "known_hosts": []}
+    assert config_entry.options == {
+        "update_interval": 30,
+        "known_hosts": [],
+        **BLUETOOTH_OFF,
+    }
     assert state(hass, BEDROOM_ALARMS) == ALARM_SHOWN
 
 
@@ -580,6 +592,7 @@ async def test_options_keep_excluded_home_google_leaves_out(
         "update_interval": 30,
         "known_hosts": [],
         "excluded_homes": [HOLIDAY_HOUSE],
+        **BLUETOOTH_OFF,
     }
 
 
@@ -599,7 +612,11 @@ async def test_options_home_joined_while_form_open_added(
 
     await save_options(hass, result, {"homes": [HOME, HOLIDAY_HOUSE]})
 
-    assert config_entry.options == {"update_interval": 15, "known_hosts": []}
+    assert config_entry.options == {
+        "update_interval": 15,
+        "known_hosts": [],
+        **BLUETOOTH_OFF,
+    }
 
 
 @pytest.mark.usefixtures("home_graph")

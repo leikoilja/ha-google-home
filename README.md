@@ -18,7 +18,7 @@
 
 ## About
 
-This integration brings your Google Home and Nest speakers and displays into Home Assistant. You can see and delete their alarms and timers, turn Do Not Disturb on or off, change the alarm volume, reboot them, and see their firmware version, whether an update is waiting, and their Wi-Fi network and signal strength.
+This integration brings your Google Home and Nest speakers and displays into Home Assistant. You can see and delete their alarms and timers, turn Do Not Disturb on or off, change the alarm volume, reboot them, and see their firmware version, whether an update is waiting, and their Wi-Fi network and signal strength. With Bluetooth tracking turned on, they can also tell whether your phone or another Bluetooth device is home.
 
 Use the alarms and timers in automations, for example to:
 
@@ -46,6 +46,7 @@ Read the full documentation at **[ha-google-home.pages.dev](https://ha-google-ho
 - [Configuration and management](https://ha-google-home.pages.dev/configuration/): update interval, adding and removing devices, devices on another network and removing the integration
 - [Automation examples](https://ha-google-home.pages.dev/automations/): lights before an alarm, blinds when it goes off and timer notifications
 - [Entities](https://ha-google-home.pages.dev/entities/): alarms, timers, Do Not Disturb, alarm volume, reboot, firmware updates, firmware version and Wi-Fi
+- [Bluetooth tracking](https://ha-google-home.pages.dev/bluetooth/): whether your phone and other Bluetooth devices are home, using your speakers
 - [Actions](https://ha-google-home.pages.dev/actions/): delete alarms and timers, reboot and refresh devices
 - [Other integrations](https://ha-google-home.pages.dev/other-integrations/): media, media volume, spoken messages, Assistant commands and other Google Home devices
 - [Troubleshooting](https://ha-google-home.pages.dev/troubleshooting/)

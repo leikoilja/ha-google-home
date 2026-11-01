@@ -1,6 +1,6 @@
 # Configuration and management
 
-After you [set up the integration](installation.md), you can change how often it checks your devices or turn that off, add and remove devices, reach devices on another network, choose the homes whose devices it adds, and remove the integration. If Home Assistant asks you to sign in again, see [Sign in again](troubleshooting.md#sign-in-again).
+After you [set up the integration](installation.md), you can change how often it checks your devices or turn that off, add and remove devices, reach devices on another network, choose the homes whose devices it adds, track phones with Bluetooth, and remove the integration. If Home Assistant asks you to sign in again, see [Sign in again](troubleshooting.md#sign-in-again).
 
 ## Change the update interval
 
@@ -33,6 +33,7 @@ While polling is off:
 - When Home Assistant starts or the integration reloads, the integration gets your devices from Google and asks each device once, so its entities show current values.
 - Alarms, timers and the other entities update only when you run [Refresh devices](actions.md#refresh-devices) or [`homeassistant.update_entity`](https://www.home-assistant.io/actions/homeassistant.update_entity/), or after an action that deletes alarms or timers. The other actions still work.
 - A device that goes offline keeps its entities available until it misses 5 of these updates in a row.
+- The speakers don't scan for Bluetooth devices on their own, so [Bluetooth trackers](bluetooth.md) show `unknown`.
 - At an update, the integration also gets your devices from Google when it's due: if it last did at least 20 minutes before, or if mDNS found a Cast device that Google's list doesn't have at least 30 seconds before. Devices and homes that you add in or remove from the Google Home app change in Home Assistant only at these updates, as described in [Add a device](#add-a-device) and [Remove a device](#remove-a-device). A device that you removed goes once Google's list has lacked it at two of these updates in a row. To see a change straight away, reload the integration.
 - When a device's access token changes, usually within a day, the integration gets the new token from Google at the device's next update. If an action fails because the device rejected its token, run Refresh devices, then try the action again.
 
@@ -133,6 +134,10 @@ When you select a home again, its devices come back with the names, areas and ot
 
 Homes that your account joins later are added. A new home appears under **Homes** once the integration next gets your device list from Google, usually within about 20 minutes. To see it sooner, reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. If the options were already open, close them and select **Configure** again. To leave the new home out, deselect it.
 
+## Track phones and other Bluetooth devices
+
+Your speakers can tell whether your phone or another Bluetooth device is home. This is off until you turn it on. See **[Bluetooth tracking](bluetooth.md)**.
+
 ## Remove a device
 
 When you remove a device from the Google Home app, or Google drops it from your home after a factory reset, the integration removes it from Home Assistant, with its entities, once Google's device list has lacked it twice in a row. The integration asks Google for your devices every 20 minutes, so this usually takes 20 to 40 minutes. It doesn't remove a device while Google still has it in one of your homes, even if the integration can't use the device, unless you [deselect that home](#choose-homes).
@@ -143,7 +148,7 @@ When the integration can't get your device list from Google, for example while G
 
 To remove a device sooner, delete it yourself. First reload the integration so that it notices straight away: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. Then open the device's page in Home Assistant, open the **⋮** menu and select **Delete**.
 
-Home Assistant offers **Delete** for every device of the integration, but you can't delete one that Google still lists in your home, even if it shows as unavailable: it would come back the next time the integration loads. Until the integration has noticed that Google no longer lists a device, you can't delete that one either. Home Assistant then shows "Failed to remove device entry, rejected by integration".
+Home Assistant offers **Delete** for every device of the integration, but you can't delete one that Google still lists in your home, even if it shows as unavailable: it would come back the next time the integration loads. Until the integration has noticed that Google no longer lists a device, you can't delete that one either. Home Assistant then shows "Failed to remove device entry, rejected by integration". A [tracked Bluetooth device](bluetooth.md#add-a-device-to-track) isn't in Google's list: the integration never removes it, and deleting it stops tracking it.
 
 If Google briefly leaves a working device out of your home in two lists in a row, the integration removes it and adds it back the next time Google lists it. Home Assistant then restores the settings you changed, such as the device's area and name and its entities' names, IDs and disabled state, as long as no other entity has taken those entity IDs meanwhile.
 
