@@ -35,7 +35,7 @@
       },
       "homes": {
         "title": "Choisir les maisons",
-        "description": "Votre compte Google est membre de plusieurs maisons. Choisissez les maisons dont les enceintes et écrans doivent être ajoutés. Vous pourrez modifier ce choix plus tard dans les options de l'intégration.",
+        "description": "Votre compte Google est membre de plusieurs maisons. Choisissez les maisons dont les enceintes et écrans doivent être ajoutés. Vous pourrez modifier ce choix plus tard dans les options de l'intégration : sélectionnez **Configurer** sur la page de l'intégration.",
         "data": {
           "homes": "Maisons"
         }

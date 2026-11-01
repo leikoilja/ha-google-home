@@ -35,7 +35,7 @@
       },
       "homes": {
         "title": "Escolher casas",
-        "description": "Sua conta do Google é membro de várias casas. Escolha as casas cujos alto-falantes e telas você quer adicionar. Você pode mudar isso depois nas opções da integração.",
+        "description": "Sua conta do Google é membro de várias casas. Escolha as casas cujos alto-falantes e telas você quer adicionar. Você pode mudar isso depois nas opções da integração: selecione **Configurar** na página da integração.",
         "data": {
           "homes": "Casas"
         }

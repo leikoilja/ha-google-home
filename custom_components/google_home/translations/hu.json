@@ -35,7 +35,7 @@
       },
       "homes": {
         "title": "Otthonok kiválasztása",
-        "description": "Google-fiókja több otthon tagja. Válassza ki azokat az otthonokat, amelyek hangszóróit és kijelzőit hozzá szeretné adni. Ezt később az integráció opcióiban módosíthatja.",
+        "description": "Google-fiókja több otthon tagja. Válassza ki azokat az otthonokat, amelyek hangszóróit és kijelzőit hozzá szeretné adni. Ezt később az integráció opcióiban módosíthatja: válassza a **Konfigurálás** lehetőséget az integráció oldalán.",
         "data": {
           "homes": "Otthonok"
         }

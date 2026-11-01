@@ -35,7 +35,7 @@
       },
       "homes": {
         "title": "Výběr domácností",
-        "description": "Váš účet Google je členem několika domácností. Vyberte domácnosti, jejichž reproduktory a displeje chcete přidat. Později to můžete změnit ve volbách integrace.",
+        "description": "Váš účet Google je členem několika domácností. Vyberte domácnosti, jejichž reproduktory a displeje chcete přidat. Později to můžete změnit ve volbách integrace: na stránce integrace vyberte **Nastavit**.",
         "data": {
           "homes": "Domácnosti"
         }

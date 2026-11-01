@@ -35,7 +35,7 @@
       },
       "homes": {
         "title": "Pilih rumah",
-        "description": "Akun Google Anda adalah anggota beberapa rumah. Pilih rumah yang speaker dan layarnya ingin ditambahkan. Anda dapat mengubahnya nanti di opsi integrasi.",
+        "description": "Akun Google Anda adalah anggota beberapa rumah. Pilih rumah yang speaker dan layarnya ingin ditambahkan. Anda dapat mengubahnya nanti di opsi integrasi: pilih **Konfigurasikan** di halaman integrasi.",
         "data": {
           "homes": "Rumah"
         }

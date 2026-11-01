@@ -35,7 +35,7 @@
       },
       "homes": {
         "title": "Vel heimar",
-        "description": "Google-kontoen din er medlem av fleire heimar. Vel heimane du vil leggje til høgtalarar og skjermar frå. Du kan endre dette seinare i vala for integrasjonen.",
+        "description": "Google-kontoen din er medlem av fleire heimar. Vel heimane du vil leggje til høgtalarar og skjermar frå. Du kan endre dette seinare i vala for integrasjonen: Vel **Konfigurer** på sida til integrasjonen.",
         "data": {
           "homes": "Heimar"
         }
