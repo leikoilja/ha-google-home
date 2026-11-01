@@ -149,8 +149,14 @@ HOME_GRAPHS_BEFORE_REMOVAL: Final = 2
 FETCH_RETRY_DELAYS: Final = (1 * 60, 2 * 60, 5 * 60, 10 * 60, FETCH_DEVICES_INTERVAL)
 # The mDNS service that Google Cast devices announce themselves with
 CAST_SERVICE_TYPE: Final = "_googlecast._tcp.local."
+# The model that a speaker group announces, which isn't a device of its own
+CAST_GROUP_MODEL: Final = "Google Cast Group"
 # How long to wait for an mDNS lookup of a Cast device that isn't cached
 CAST_LOOKUP_TIMEOUT: Final = 3000  # ms
+# At setup, wait at most this long after Google's list arrives for mDNS to give its
+# devices addresses, before asking them and the known hosts. As long as glocaltokens'
+# scan took, which the integration used to wait for at every fetch.
+CAST_SETUP_WAIT: Final = 2  # sec
 # Fetch Google's device list this long after mDNS first finds a Cast device that the
 # list doesn't have, as the device may have just been added in the Google Home app.
 # Devices found meanwhile share the fetch, and a new device gets time to appear in the

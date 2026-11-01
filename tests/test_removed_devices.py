@@ -11,7 +11,6 @@ from unittest.mock import MagicMock, Mock, patch
 
 from freezegun.api import FrozenDateTimeFactory
 from ghome_foyer_api.api_pb2 import HomeGraph  # pylint: disable=no-name-in-module
-from glocaltokens.scanner import NetworkDevice
 import pytest
 from pytest_homeassistant.common import MockConfigEntry, async_fire_time_changed
 from pytest_homeassistant.test_util.aiohttp import AiohttpClientMocker
@@ -37,6 +36,7 @@ from .conftest import (
     Replies,
     bedroom_speaker,
     kitchen_speaker,
+    no_browser,
 )
 from .test_coordinators import (
     BEDROOM_ALARMS,
@@ -405,6 +405,7 @@ BEDROOM_CLOUD_ID = "bedroom-cloud-id"
 def fixture_home_graph(
     mock_async_zeroconf: MagicMock,  # pylint: disable=unused-argument
     replies: Replies,
+    mdns_cache: dict[str, tuple[str, str]],
 ) -> Iterator[Mock]:
     """Fake Google's home graph, with the kitchen and the bedroom speaker, and mDNS, which finds both.
 
@@ -412,6 +413,8 @@ def fixture_home_graph(
     the home graph, and leaves out the devices that it can't use.
     """
     replies[BEDROOM] = dict(SUPPORTED)
+    mdns_cache[SPEAKER_CLOUD_ID] = (SPEAKER_NAME, SPEAKER)
+    mdns_cache[BEDROOM_CLOUD_ID] = ("Bedroom speaker", BEDROOM)
     with (
         patch(
             "glocaltokens.client.GLocalAuthenticationTokens.get_home_graph",
@@ -421,18 +424,7 @@ def fixture_home_graph(
                 in_home_graph(BEDROOM_ID, BEDROOM_CLOUD_ID, "Bedroom speaker"),
             ),
         ) as home_graph,
-        patch(
-            "glocaltokens.client.discover_devices",
-            return_value=[
-                NetworkDevice(
-                    SPEAKER_NAME, SPEAKER, 8009, "Nest Audio", SPEAKER_CLOUD_ID
-                ),
-                NetworkDevice(
-                    "Bedroom speaker", BEDROOM, 8009, "Nest Audio", BEDROOM_CLOUD_ID
-                ),
-            ],
-        ),
-        patch("custom_components.google_home.mdns.AsyncServiceBrowser"),
+        no_browser(),
     ):
         yield home_graph
 

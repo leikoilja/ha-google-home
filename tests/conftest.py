@@ -2,11 +2,15 @@
 
 import asyncio
 from collections.abc import Awaitable, Callable, Iterator
+from contextlib import AbstractContextManager
+import copy
 from dataclasses import dataclass, field
+from datetime import datetime
 from http import HTTPStatus
 import re
 from typing import Concatenate, cast
-from unittest.mock import MagicMock, Mock, patch
+from unittest.mock import AsyncMock, MagicMock, Mock, patch
+from weakref import WeakKeyDictionary
 
 from ghome_foyer_api.api_pb2 import HomeGraph  # pylint: disable=no-name-in-module
 from glocaltokens.client import Device
@@ -18,6 +22,7 @@ from pytest_homeassistant.test_util.aiohttp import (
 )
 from yarl import URL
 
+from custom_components.google_home.account import GoogleAccountClient
 from custom_components.google_home.const import (
     API_ENDPOINT_ALARM_DELETE,
     CONF_ANDROID_ID,
@@ -27,6 +32,7 @@ from custom_components.google_home.const import (
     DOMAIN,
     HEADER_CAST_LOCAL_AUTH,
 )
+from custom_components.google_home.mdns import FoundDevices
 
 # ruff sorts homeassistant as first-party, pylint as third-party
 # pylint: disable=wrong-import-order
@@ -104,6 +110,101 @@ def fixture_clock() -> Iterator[Mock]:
         patch("custom_components.google_home.mdns.monotonic", monotonic),
     ):
         yield monotonic
+
+
+@pytest.fixture(name="mdns_cache", autouse=True)
+def fixture_mdns_cache() -> Iterator[dict[str, tuple[str, str]]]:
+    """Fake the Cast devices in mDNS's cache, by Google's other ID, with name and address.
+
+    After each fetch that works, the browser starts again and replays the cache.
+    Tests also list a device with the address that mDNS has cached for it, as
+    glocaltokens returned it while it scanned at each fetch. With discovery off it
+    doesn't, so Google's list comes without addresses: this strips them and replays
+    them with the cache. Tests of the browser itself list devices without addresses.
+    """
+    cache: dict[str, tuple[str, str]] = {}
+    listed: WeakKeyDictionary[FoundDevices, list[tuple[str, str, str]]] = (
+        WeakKeyDictionary()
+    )
+    use_google_devices = GoogleAccountClient._use_google_devices  # noqa: SLF001  # pylint: disable=protected-access
+    browse_again = FoundDevices.async_browse_again
+
+    def use(
+        client: GoogleAccountClient, devices: list[Device], home_graph: HomeGraph
+    ) -> None:
+        # mDNS reports Google's other ID in lower case
+        listed[client.found_devices] = [
+            (device.cloud_device_id.lower(), device.device_name, device.ip_address)
+            for device in devices
+            if device.cloud_device_id and device.ip_address
+        ]
+        unaddressed = []
+        for device in devices:
+            device = copy.copy(device)
+            device.network_device = device.ip_address = device.port = None
+            unaddressed.append(device)
+        use_google_devices(client, unaddressed, home_graph)
+
+    async def replay(found_devices: FoundDevices) -> None:
+        await browse_again(found_devices)
+        cached = [(key, *value) for key, value in cache.items()]
+        for cloud_device_id, name, address in cached + listed.get(found_devices, []):
+            found_devices.async_device_found(
+                cloud_device_id, name, address, replayed=True
+            )
+
+    with (
+        patch.object(GoogleAccountClient, "_use_google_devices", use),
+        patch.object(FoundDevices, "async_browse_again", replay),
+    ):
+        yield cache
+
+
+def no_browser() -> AbstractContextManager[Mock]:
+    """Replace mDNS's browser with one that reports nothing and can be cancelled."""
+    return patch(
+        "custom_components.google_home.mdns.AsyncServiceBrowser",
+        side_effect=lambda *_args, **_kwargs: Mock(async_cancel=AsyncMock()),
+    )
+
+
+@pytest.fixture(name="no_setup_wait", autouse=True)
+def fixture_no_setup_wait() -> Iterator[None]:
+    """Don't make setup wait for mDNS in real time; tests of the wait set their own."""
+    with patch("custom_components.google_home.mdns.CAST_SETUP_WAIT", 0):
+        yield
+
+
+@dataclass
+class Timer:
+    """A timer that the client set, as Home Assistant's async_call_later would."""
+
+    at: float
+    action: Callable[[datetime], None]
+    cancelled: bool = False
+    fired: bool = False
+
+    def cancel(self) -> None:
+        """Cancel the timer."""
+        self.cancelled = True
+
+
+@pytest.fixture(name="timers")
+def fixture_timers(clock: Mock) -> Iterator[list[Timer]]:
+    """Record the timers the client sets, at the client's clock."""
+    timers: list[Timer] = []
+
+    def call_later(
+        _hass: object, delay: float, action: Callable[[datetime], None]
+    ) -> Callable[[], None]:
+        timer = Timer(float(clock.return_value) + delay, action)
+        timers.append(timer)
+        return timer.cancel
+
+    with patch(
+        "custom_components.google_home.mdns.async_call_later", side_effect=call_later
+    ):
+        yield timers
 
 
 async def assert_flow_text(
@@ -253,7 +354,7 @@ def fixture_google(
             autospec=True,
             return_value=HomeGraph(),
         ),
-        patch("custom_components.google_home.mdns.AsyncServiceBrowser"),
+        no_browser(),
     ):
         yield google
 

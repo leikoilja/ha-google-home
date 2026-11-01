@@ -106,7 +106,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -
         password=password,
         master_token=master_token,
         android_id=android_id,
-        zeroconf_instance=zeroconf_instance,
         known_hosts=entry.options.get(CONF_KNOWN_HOSTS, []),
         excluded_homes=entry.options.get(CONF_EXCLUDED_HOMES, []),
     )

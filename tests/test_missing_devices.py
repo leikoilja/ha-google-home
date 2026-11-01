@@ -14,7 +14,6 @@ from unittest.mock import AsyncMock, MagicMock, Mock, PropertyMock, call, patch
 from ghome_foyer_api.api_pb2 import HomeGraph  # pylint: disable=no-name-in-module
 from glocaltokens.client import Device
 from glocaltokens.exceptions import AuthenticationError, HomegraphError
-from glocaltokens.scanner import NetworkDevice
 import grpc  # type: ignore[import-untyped]
 import pytest
 from requests import Response
@@ -118,25 +117,21 @@ def found(
     name: str | None = None,
     cloud_device_id: str | None = None,
 ) -> Device:
-    """Return a device as glocaltokens returns it, with the address mDNS found.
+    """Return a device as glocaltokens returns it, with the address mDNS has cached.
 
-    Its name and Google's other ID for it are its ID unless given.
+    glocaltokens gives no address with discovery off; the mdns_cache fixture strips
+    it and gives it to the device with mDNS. Its name and Google's other ID for it are
+    its ID unless given.
     """
-    name = name or device_id
-    cloud_device_id = cloud_device_id or device_id
-    network_device = (
-        NetworkDevice(name, ip_address, 8009, "Nest Audio", cloud_device_id)
-        if ip_address
-        else None
-    )
-    return Device(
+    device = Device(
         device_id,
-        name,
+        name or device_id,
         token,
-        network_device,
         hardware="Nest Audio",
-        cloud_device_id=cloud_device_id,
+        cloud_device_id=cloud_device_id or device_id,
     )
+    device.ip_address = ip_address
+    return device
 
 
 async def until(condition: Callable[[], bool]) -> None:
