@@ -7,10 +7,9 @@ from http import HTTPStatus
 from pathlib import Path
 from unittest.mock import ANY, AsyncMock, MagicMock, Mock
 
-from aiohttp import ClientConnectorError
+from aiohttp import ClientConnectionError, ClientConnectorError
 from glocaltokens.client import Device
 import pytest
-from requests.exceptions import ConnectionError as RequestsConnectionError
 
 from custom_components.google_home.api import GlocaltokensApiClient
 from custom_components.google_home.const import (
@@ -37,6 +36,7 @@ from .test_missing_devices import (
     LOCAL_AUTH_TOKEN,
     MINUTE,
     REJECTED_LOG,
+    TIMED_OUT,
     UNREACHABLE,
     answered,
     can_delete,
@@ -174,6 +174,7 @@ def test_one_fetch_when_devices_reject_their_tokens_together() -> None:
         pytest.param(LOCAL_AUTH_TOKEN, id="new-token-rejected"),
         *FETCH_ERRORS,
         UNREACHABLE,
+        TIMED_OUT,
     ],
 )
 def test_no_usable_token_after_token_rejected(
@@ -604,7 +605,7 @@ def test_update_devices_while_google_unreachable(clock: Mock, tmp_path: Path) ->
             assert glocaltokens.get_google_devices.call_count == 1
             assert not client.google_devices_fetched
 
-            glocaltokens.get_google_devices.side_effect = RequestsConnectionError
+            glocaltokens.get_google_devices.side_effect = ClientConnectionError
             # The alarm on the device that answers is dismissed
             kitchen_reply["alarm"] = []
             # The fetch at 15 seconds fails, and is tried again 1 minute later

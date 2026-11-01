@@ -417,7 +417,7 @@ def fixture_home_graph(
     mdns_cache[BEDROOM_CLOUD_ID] = ("Bedroom speaker", BEDROOM)
     with (
         patch(
-            "glocaltokens.client.GLocalAuthenticationTokens.get_home_graph",
+            "glocaltokens.client.GLocalAuthenticationTokens.async_get_home_graph",
             autospec=True,
             return_value=home_graph_with(
                 KITCHEN_IN_HOME_GRAPH,

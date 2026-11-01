@@ -26,7 +26,7 @@
   ],
   "requirements": [
     "bluetooth-data-tools>=1.29.24",
-    "glocaltokens==1.2.0"
+    "glocaltokens@https://github.com/leikoilja/glocaltokens/archive/d8972fd58ca96fe52d2df7a9b21fa47a991aba2c.zip"
   ],
   "single_config_entry": true,
   "version": "1.16.0",

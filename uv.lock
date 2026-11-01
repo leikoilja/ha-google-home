@@ -1051,19 +1051,27 @@ wheels = [
 
 [[package]]
 name = "glocaltokens"
-version = "1.2.0"
-source = { registry = "https://pypi.org/simple" }
+version = "0.0.0"
+source = { url = "https://github.com/leikoilja/glocaltokens/archive/d8972fd58ca96fe52d2df7a9b21fa47a991aba2c.zip" }
 dependencies = [
+    { name = "aiohttp" },
     { name = "ghome-foyer-api" },
     { name = "gpsoauth" },
     { name = "grpcio" },
     { name = "requests" },
-    { name = "zeroconf" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ce/6f/19c08f48772d45e4c5f89c85645360b845f10e69bdea542ce7984d04ee59/glocaltokens-1.2.0.tar.gz", hash = "sha256:577d33d16eb67b3dc3ae04f3d617d8b770005451740a3aabfd1a6214f801ba8f", size = 97824, upload-time = "2026-10-26T11:25:04.339Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/00/00/88f29707ceab2e75736e79a1d96babe9dabb2c3fb462edef59407b8eca53/glocaltokens-1.2.0-py3-none-any.whl", hash = "sha256:4af2e2f45523e43887557ff404435266f5af9c58dfbe8c3ba40232ab56377e6b", size = 20736, upload-time = "2026-10-26T11:25:03.129Z" },
+sdist = { hash = "sha256:bb559977ca102d6ddfdcc01af94ceeeafb38197f36586f23963277c279fc7a2a" }
+
+[package.metadata]
+requires-dist = [
+    { name = "aiohttp", specifier = ">=3.14.4" },
+    { name = "ghome-foyer-api", specifier = ">=3.1.0,<4" },
+    { name = "gpsoauth", specifier = ">=2.0.0" },
+    { name = "grpcio", specifier = ">=1.83.1" },
+    { name = "requests", specifier = ">=2.34.2" },
+    { name = "zeroconf", marker = "extra == 'discovery'", specifier = ">=0.151.5" },
 ]
+provides-extras = ["discovery"]
 
 [[package]]
 name = "google-home"
@@ -1096,7 +1104,7 @@ docs = [
 [package.metadata]
 requires-dist = [
     { name = "bluetooth-data-tools", specifier = ">=1.29.24" },
-    { name = "glocaltokens", specifier = ">=1.2.0" },
+    { name = "glocaltokens", url = "https://github.com/leikoilja/glocaltokens/archive/d8972fd58ca96fe52d2df7a9b21fa47a991aba2c.zip" },
     { name = "homeassistant", specifier = "==2026.11.0b1" },
 ]
 

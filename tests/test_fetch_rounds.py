@@ -8,10 +8,10 @@ for their timers. The speakers reject every token unless a test says otherwise.
 import asyncio
 from unittest.mock import Mock
 
+from aiohttp import ClientConnectionError
 from glocaltokens.client import Device
 import pytest
 from pytest_homeassistant.common import MockConfigEntry
-from requests.exceptions import ConnectionError as RequestsConnectionError
 
 # ruff sorts homeassistant as first-party, pylint as third-party
 # pylint: disable-next=wrong-import-order
@@ -162,7 +162,7 @@ async def test_backoff_after_speaker_fetch_fails(
 
     def unreachable(**_kwargs: object) -> list[Device]:
         times.append(float(clock.return_value))
-        raise RequestsConnectionError
+        raise ClientConnectionError
 
     glocaltokens.get_google_devices.side_effect = unreachable
     data = coordinators(hass, config_entry, client)
