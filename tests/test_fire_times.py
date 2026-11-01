@@ -342,9 +342,9 @@ async def test_ringing_window_ends_after_slow_update(
 ) -> None:
     """Ask again after an update that asked for the alarms before the end of the window.
 
-    Also when that update finishes after it. The alarm rang until 28 s after its fire
-    time, and is dismissed 1 s after the last update every 15 s asked for it. If the
-    next update gets no answer, it shows nothing, and the next one is at the interval.
+    Also when that update finishes after it. The alarm starts ringing 28 s after its
+    fire time, and is dismissed 1 s after the last update every 15 s asked for it. If
+    the next update gets no answer, it shows nothing, and the next one is at the interval.
     """
     await start(hass, config_entry, replies, freezer, -60, SET)
     changes = {28: RINGING}
@@ -642,30 +642,48 @@ async def test_later_request_fails(
 
 
 @pytest.mark.usefixtures("google")
-async def test_listener_added_during_failing_update(
+@pytest.mark.parametrize(
+    ("endpoint", "reply", "then"),
+    [
+        # The update gets no answer for the alarms, which it handles
+        pytest.param(ALARMS, TimeoutError(), RINGING, id="not-answered"),
+        # The update gets the ringing alarm, then fails on the alarm volume's answer
+        pytest.param(
+            VOLUME,
+            (HTTPStatus.OK, {"volume": "loud"}),
+            SUPPORTED[VOLUME],
+            id="failed",
+        ),
+    ],
+)
+async def test_listener_added_during_update_without_alarms(
     hass: HomeAssistant,
     config_entry: MockConfigEntry,
     replies: Replies,
     aioclient_mock: AiohttpClientMocker,
     freezer: FrozenDateTimeFactory,
+    endpoint: str,
+    reply: Reply,
+    then: Reply,
 ) -> None:
-    """Update at the interval after a failed update, also when a listener came during it.
+    """Update at the interval after an update that didn't get the alarms and timers.
 
-    The update got the ringing alarm, then failed on the alarm volume's answer.
+    Also when a listener came during it, while the alarm still rang as the last update
+    that got them showed.
     """
     await start(hass, config_entry, replies, freezer, -60, SET)
     assert await run(hass, aioclient_mock, freezer, replies, 17, {0: RINGING}) == [3]
     coordinator = runtime(config_entry).devices[SPEAKER_ID]
-    held = Held((HTTPStatus.OK, {"volume": "loud"}))
-    replies[SPEAKER][VOLUME] = held
+    held = Held(reply)
+    replies[SPEAKER][endpoint] = held
 
     freezer.tick(timedelta(seconds=1))
     async_fire_time_changed(hass)
     await held.asked.wait()
     coordinator.async_add_listener(lambda: None)
+    replies[SPEAKER][endpoint] = then
     held.released.set()
     await hass.async_block_till_done(wait_background_tasks=True)
-    replies[SPEAKER][VOLUME] = SUPPORTED[VOLUME]
 
     assert await run(hass, aioclient_mock, freezer, replies, 33 + INTERVAL) == [
         18 + INTERVAL,

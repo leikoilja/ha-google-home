@@ -86,9 +86,8 @@ A change shows once the check that sees it has finished, which takes longer if t
 
 This works only for an alarm or timer that the integration saw before its time, on a speaker that keeps answering:
 
-- An alarm or timer that you set and that goes off between two regular checks shows at the next regular check. If it still rings then, the checks every 15 seconds start, until 65 minutes after its time.
+- An alarm or timer that goes off before the integration has seen it, such as one that you set after the last regular check, shows at the next regular check. So does a ring that the speaker reports more than about 30 seconds late. If it still rings then, the checks every 15 seconds start, until 65 minutes after its time.
 - A ring that starts and stops between two checks doesn't show, for example if you stop the alarm within a few seconds.
-- If the speaker reports the ring more than about 30 seconds late, it shows at the next regular check.
 - If the speaker doesn't answer a check, or answers without its alarms and timers, the integration checks it at the update interval until it answers again. An extra check that the speaker doesn't answer counts toward the [5 unanswered updates](entities.md#when-entities-are-unavailable) after which its entities become unavailable.
 - If a ring lasts more than 65 minutes, its end shows at the update interval. On one speaker that was tested, an alarm that nobody stopped rang for about an hour, and a timer for about 10 minutes. Other speakers may ring longer.
 - If you turned off polling for the integration in its system options, it makes no extra checks either.

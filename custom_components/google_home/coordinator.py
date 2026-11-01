@@ -305,26 +305,23 @@ class GoogleHomeDeviceCoordinator(DataUpdateCoordinator[GoogleHomeDevice | None]
         # Until this update finishes, a listener can't time the next one from the last
         self._timed = False
         self.update_interval = self._configured_interval()
-        try:
-            answered, self.info_answered = self.info_answered, None
-            if (device := self._listed()) is None:
-                return None
-            snapshots = device.polled_snapshots
-            await self.client.update_device(
-                device, found_at_known_host=answered == (device, device.ip_address)
-            )
-            # Its token may have made Google's list be fetched, and Google reject the
-            # master token
-            self.config_entry.runtime_data.account.async_ask_to_sign_in_if_rejected()
-            if device is not self._listed():
-                return None
-            # Never for a device without alarms, which isn't asked for them
-            if device.polled_snapshots != snapshots:
-                self._follow_due(device, started)
-        except BaseException:
-            # The options may have changed while the device was asked
-            self.update_interval = self._configured_interval()
-            raise
+        answered, self.info_answered = self.info_answered, None
+        if (device := self._listed()) is None:
+            return None
+        snapshots = device.polled_snapshots
+        await self.client.update_device(
+            device, found_at_known_host=answered == (device, device.ip_address)
+        )
+        # Its token may have made Google's list be fetched, and Google reject the
+        # master token
+        self.config_entry.runtime_data.account.async_ask_to_sign_in_if_rejected()
+        if device is not self._listed():
+            return None
+        # Never for a device without alarms, which isn't asked for them. Only this
+        # times the next update sooner, so an update that fails before it uses the
+        # update interval, as it was set above or since by the options.
+        if device.polled_snapshots != snapshots:
+            self._follow_due(device, started)
         return device
 
     @callback

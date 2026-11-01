@@ -8,7 +8,7 @@ The integration checks your devices for changes every 15 seconds by default.
 
 To change the interval, go to **Settings** > **Devices & services** > **Google Home** and select **Configure**. Shorter intervals update alarms and timers sooner but send more requests to your devices.
 
-Around an alarm's or timer's time, and while it rings, the integration checks that speaker more often than a longer interval, so that ringing shows within seconds and its end within about 15 seconds; see [How quickly ringing shows](automations.md#how-quickly-ringing-shows). Each check sends the speaker 3 requests. With an interval of 180 seconds:
+Around an alarm's or timer's time, and while it rings, the integration checks that speaker more often than a longer interval, so that ringing shows within seconds and its end within about 15 seconds; see [How quickly ringing shows](automations.md#how-quickly-ringing-shows). A check that the speaker answers normally sends it 3 requests. The figures below are estimates for these extra checks alone, on a speaker that answers each one promptly. Not included: refreshes that you or the integration start, actions, and the extra requests of a check that gets an error or a rejected token. With an interval of 180 seconds:
 
 - An alarm that you stop after a minute costs about 5 checks more than the interval alone.
 - An alarm that rings for an hour until it stops by itself costs about 220 more checks, about 660 requests, in that hour.
