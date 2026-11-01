@@ -169,21 +169,19 @@
           "description": "Anna puhelimen IRK tai sellaisen laitteen MAC-osoite, jonka osoite ei koskaan muutu, kuten jotkin kellot ja paikannustagit. Puhelimet vaihtavat osoitettaan muutaman minuutin välein, joten seuraa niitä IRK:n avulla. Ohjeet IRK:n löytämiseen: {docs_url}.",
           "data": {
             "name": "Nimi",
-            "irk": "IRK",
-            "mac": "MAC-osoite"
+            "irk_or_mac": "IRK tai MAC-osoite"
           },
           "data_description": {
             "name": "Seurannan nimi, esimerkiksi Alexin puhelin.",
-            "irk": "Identity Resolving Key heksadesimaalina tai base64-muodossa. Jätä tyhjäksi, jos seuraat laitetta MAC-osoitteen avulla.",
-            "mac": "Esimerkiksi AA:BB:CC:DD:EE:FF. Jätä tyhjäksi, jos seuraat laitetta IRK:n avulla."
+            "irk_or_mac": "Puhelimen Identity Resolving Key 32 heksadesimaalinumerona tai base64-muodossa tai MAC-osoite, kuten AA:BB:CC:DD:EE:FF. Integraatio tunnistaa, kumman annoit."
           }
         }
       },
       "error": {
         "name-empty": "Anna nimi.",
-        "irk-or-mac": "Anna joko IRK tai MAC-osoite, ei molempia.",
+        "irk-or-mac": "Anna IRK tai MAC-osoite.",
         "irk-invalid": "Tämä ei ole IRK. IRK on 16 tavua: 32 heksadesimaalinumeroa tai 24 base64-merkkiä, joiden lopussa on ==.",
-        "mac-invalid": "Tämä ei ole MAC-osoite. Anna 12 heksadesimaalinumeroa, esimerkiksi AA:BB:CC:DD:EE:FF.",
+        "mac-invalid": "Tämä ei ole MAC-osoite. Anna kuusi heksadesimaalinumeroparia kaksoispisteillä tai yhdysmerkeillä erotettuina, esimerkiksi AA:BB:CC:DD:EE:FF.",
         "already-tracked": "Tätä laitetta seurataan jo."
       },
       "abort": {

@@ -169,21 +169,19 @@
           "description": "Introdueix la IRK d'un telèfon o l'adreça MAC d'un dispositiu amb una adreça que no canvia mai, com alguns rellotges i etiquetes localitzadores. Els telèfons canvien d'adreça cada pocs minuts, així que segueix-los per la IRK. Per saber com trobar la IRK, consulta {docs_url}.",
           "data": {
             "name": "Nom",
-            "irk": "IRK",
-            "mac": "Adreça MAC"
+            "irk_or_mac": "IRK o adreça MAC"
           },
           "data_description": {
             "name": "Nom del rastrejador, per exemple Telèfon de l'Alex.",
-            "irk": "Identity Resolving Key, en hexadecimal o base64. Deixa-ho buit per fer el seguiment per l'adreça MAC.",
-            "mac": "Per exemple, AA:BB:CC:DD:EE:FF. Deixa-ho buit per fer el seguiment per la IRK."
+            "irk_or_mac": "La Identity Resolving Key d'un telèfon, com a 32 dígits hexadecimals o en base64, o una adreça MAC com AA:BB:CC:DD:EE:FF. La integració detecta quina de les dues has introduït."
           }
         }
       },
       "error": {
         "name-empty": "Introdueix un nom.",
-        "irk-or-mac": "Introdueix una IRK o una adreça MAC, però no totes dues.",
+        "irk-or-mac": "Introdueix una IRK o una adreça MAC.",
         "irk-invalid": "Això no és una IRK. Una IRK té 16 bytes: 32 dígits hexadecimals o 24 caràcters base64 que acaben en ==.",
-        "mac-invalid": "Això no és una adreça MAC. Introdueix 12 dígits hexadecimals, per exemple AA:BB:CC:DD:EE:FF.",
+        "mac-invalid": "Això no és una adreça MAC. Introdueix sis parells de dígits hexadecimals separats per dos punts o guions, per exemple AA:BB:CC:DD:EE:FF.",
         "already-tracked": "Ja es fa el seguiment d'aquest dispositiu."
       },
       "abort": {

@@ -169,21 +169,19 @@
           "description": "Saisissez l'IRK d'un téléphone, ou l'adresse MAC d'un appareil dont l'adresse ne change jamais, comme certaines montres et balises. Les téléphones changent d'adresse toutes les quelques minutes : suivez-les donc par leur IRK. Pour savoir comment trouver l'IRK, consultez {docs_url}.",
           "data": {
             "name": "Nom",
-            "irk": "IRK",
-            "mac": "Adresse MAC"
+            "irk_or_mac": "IRK ou adresse MAC"
           },
           "data_description": {
             "name": "Nom du traceur, par exemple Téléphone d'Alex.",
-            "irk": "Identity Resolving Key, en hexadécimal ou en base64. Laissez vide pour suivre par adresse MAC.",
-            "mac": "Par exemple AA:BB:CC:DD:EE:FF. Laissez vide pour suivre par IRK."
+            "irk_or_mac": "L'Identity Resolving Key d'un téléphone, sous forme de 32 chiffres hexadécimaux ou en base64, ou une adresse MAC comme AA:BB:CC:DD:EE:FF. L'intégration reconnaît lequel des deux vous avez saisi."
           }
         }
       },
       "error": {
         "name-empty": "Saisissez un nom.",
-        "irk-or-mac": "Saisissez soit un IRK, soit une adresse MAC, mais pas les deux.",
+        "irk-or-mac": "Saisissez un IRK ou une adresse MAC.",
         "irk-invalid": "Ce n'est pas un IRK. Un IRK fait 16 octets : 32 chiffres hexadécimaux, ou 24 caractères base64 se terminant par ==.",
-        "mac-invalid": "Ce n'est pas une adresse MAC. Saisissez 12 chiffres hexadécimaux, par exemple AA:BB:CC:DD:EE:FF.",
+        "mac-invalid": "Ce n'est pas une adresse MAC. Saisissez six paires de chiffres hexadécimaux séparées par des deux-points ou des tirets, par exemple AA:BB:CC:DD:EE:FF.",
         "already-tracked": "Cet appareil est déjà suivi."
       },
       "abort": {

@@ -169,21 +169,19 @@
           "description": "휴대폰의 IRK 또는 일부 시계나 태그처럼 주소가 바뀌지 않는 기기의 MAC 주소를 입력하세요. 휴대폰은 몇 분마다 주소를 바꾸므로 IRK로 추적하세요. IRK를 찾는 방법은 {docs_url}을(를) 참조하세요.",
           "data": {
             "name": "이름",
-            "irk": "IRK",
-            "mac": "MAC 주소"
+            "irk_or_mac": "IRK 또는 MAC 주소"
           },
           "data_description": {
             "name": "추적기 이름입니다. 예: 알렉스의 휴대폰",
-            "irk": "Identity Resolving Key(신원 확인 키)이며 16진수 또는 base64 형식입니다. MAC 주소로 추적하려면 비워 두세요.",
-            "mac": "예: AA:BB:CC:DD:EE:FF. IRK로 추적하려면 비워 두세요."
+            "irk_or_mac": "휴대폰의 Identity Resolving Key(신원 확인 키)를 16진수 32자리 또는 base64로 입력하거나, AA:BB:CC:DD:EE:FF 같은 MAC 주소를 입력하세요. 어느 쪽인지는 통합 구성 요소가 판별합니다."
           }
         }
       },
       "error": {
         "name-empty": "이름을 입력하세요.",
-        "irk-or-mac": "IRK와 MAC 주소 중 하나만 입력하세요.",
+        "irk-or-mac": "IRK 또는 MAC 주소를 입력하세요.",
         "irk-invalid": "IRK가 아닙니다. IRK는 16바이트로, 16진수 32자리 또는 ==로 끝나는 base64 24자입니다.",
-        "mac-invalid": "MAC 주소가 아닙니다. AA:BB:CC:DD:EE:FF처럼 16진수 12자리를 입력하세요.",
+        "mac-invalid": "MAC 주소가 아닙니다. AA:BB:CC:DD:EE:FF처럼 16진수 두 자리씩 여섯 쌍을 콜론이나 하이픈으로 구분해 입력하세요.",
         "already-tracked": "이 기기는 이미 추적 중입니다."
       },
       "abort": {

@@ -169,21 +169,19 @@
           "description": "Inserisci l'IRK di un telefono oppure l'indirizzo MAC di un dispositivo il cui indirizzo non cambia mai, come alcuni orologi e tag. I telefoni cambiano indirizzo ogni pochi minuti, quindi monitorali tramite IRK. Per sapere come trovare l'IRK, consulta {docs_url}.",
           "data": {
             "name": "Nome",
-            "irk": "IRK",
-            "mac": "Indirizzo MAC"
+            "irk_or_mac": "IRK o indirizzo MAC"
           },
           "data_description": {
             "name": "Nome del tracker, ad esempio Telefono di Alex.",
-            "irk": "Identity Resolving Key, in esadecimale o base64. Lascia vuoto per monitorare tramite indirizzo MAC.",
-            "mac": "Ad esempio AA:BB:CC:DD:EE:FF. Lascia vuoto per monitorare tramite IRK."
+            "irk_or_mac": "L'Identity Resolving Key di un telefono, come 32 cifre esadecimali o in base64, oppure un indirizzo MAC come AA:BB:CC:DD:EE:FF. L'integrazione riconosce quale dei due hai inserito."
           }
         }
       },
       "error": {
         "name-empty": "Inserisci un nome.",
-        "irk-or-mac": "Inserisci un IRK oppure un indirizzo MAC, non entrambi.",
+        "irk-or-mac": "Inserisci un IRK o un indirizzo MAC.",
         "irk-invalid": "Questo non è un IRK. Un IRK è di 16 byte: 32 cifre esadecimali oppure 24 caratteri base64 che terminano con ==.",
-        "mac-invalid": "Questo non è un indirizzo MAC. Inserisci 12 cifre esadecimali, ad esempio AA:BB:CC:DD:EE:FF.",
+        "mac-invalid": "Questo non è un indirizzo MAC. Inserisci sei coppie di cifre esadecimali separate da due punti o trattini, ad esempio AA:BB:CC:DD:EE:FF.",
         "already-tracked": "Questo dispositivo è già monitorato."
       },
       "abort": {

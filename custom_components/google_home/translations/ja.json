@@ -169,21 +169,19 @@
           "description": "スマートフォンの IRK、またはアドレスが変わらないデバイス (一部の腕時計やタグなど) の MAC アドレスを入力してください。スマートフォンは数分ごとにアドレスを変えるため、IRK で追跡してください。IRK の確認方法は {docs_url} を参照してください。",
           "data": {
             "name": "名前",
-            "irk": "IRK",
-            "mac": "MAC アドレス"
+            "irk_or_mac": "IRK または MAC アドレス"
           },
           "data_description": {
             "name": "トラッカーの名前。例: アレックスのスマートフォン",
-            "irk": "Identity Resolving Key (16 進数または base64)。MAC アドレスで追跡する場合は空欄にしてください。",
-            "mac": "例: AA:BB:CC:DD:EE:FF。IRK で追跡する場合は空欄にしてください。"
+            "irk_or_mac": "スマートフォンの Identity Resolving Key (16 進数 32 桁または base64)、または AA:BB:CC:DD:EE:FF のような MAC アドレス。どちらを入力したかは統合が自動で判別します。"
           }
         }
       },
       "error": {
         "name-empty": "名前を入力してください。",
-        "irk-or-mac": "IRK と MAC アドレスのどちらか一方だけを入力してください。",
+        "irk-or-mac": "IRK または MAC アドレスを入力してください。",
         "irk-invalid": "IRK ではありません。IRK は 16 バイトで、16 進数 32 桁、または == で終わる base64 の 24 文字です。",
-        "mac-invalid": "MAC アドレスではありません。AA:BB:CC:DD:EE:FF のように 16 進数 12 桁を入力してください。",
+        "mac-invalid": "MAC アドレスではありません。AA:BB:CC:DD:EE:FF のように、16 進数 2 桁の組 6 つをコロンまたはハイフンで区切って入力してください。",
         "already-tracked": "このデバイスはすでに追跡されています。"
       },
       "abort": {

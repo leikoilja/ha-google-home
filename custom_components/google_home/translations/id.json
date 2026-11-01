@@ -169,21 +169,19 @@
           "description": "Masukkan IRK ponsel, atau alamat MAC perangkat yang alamatnya tidak pernah berubah, seperti beberapa jam tangan dan tag pelacak. Ponsel mengganti alamatnya setiap beberapa menit, jadi lacak ponsel dengan IRK. Untuk cara menemukan IRK, lihat {docs_url}.",
           "data": {
             "name": "Nama",
-            "irk": "IRK",
-            "mac": "Alamat MAC"
+            "irk_or_mac": "IRK atau alamat MAC"
           },
           "data_description": {
             "name": "Nama pelacak, misalnya Ponsel Alex.",
-            "irk": "Identity Resolving Key, dalam format heksadesimal atau base64. Biarkan kosong untuk melacak dengan alamat MAC.",
-            "mac": "Misalnya AA:BB:CC:DD:EE:FF. Biarkan kosong untuk melacak dengan IRK."
+            "irk_or_mac": "Identity Resolving Key ponsel, sebagai 32 digit heksadesimal atau dalam base64, atau alamat MAC seperti AA:BB:CC:DD:EE:FF. Integrasi akan mengenali mana yang Anda masukkan."
           }
         }
       },
       "error": {
         "name-empty": "Masukkan nama.",
-        "irk-or-mac": "Masukkan IRK atau alamat MAC, jangan keduanya.",
+        "irk-or-mac": "Masukkan IRK atau alamat MAC.",
         "irk-invalid": "Ini bukan IRK. IRK berukuran 16 byte: 32 digit heksadesimal, atau 24 karakter base64 yang diakhiri dengan ==.",
-        "mac-invalid": "Ini bukan alamat MAC. Masukkan 12 digit heksadesimal, misalnya AA:BB:CC:DD:EE:FF.",
+        "mac-invalid": "Ini bukan alamat MAC. Masukkan enam pasang digit heksadesimal yang dipisahkan titik dua atau tanda hubung, misalnya AA:BB:CC:DD:EE:FF.",
         "already-tracked": "Perangkat ini sudah dilacak."
       },
       "abort": {

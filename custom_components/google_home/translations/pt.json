@@ -169,21 +169,19 @@
           "description": "Introduza a IRK de um telemóvel ou o endereço MAC de um dispositivo cujo endereço nunca muda, como alguns relógios e etiquetas. Os telemóveis mudam de endereço a cada poucos minutos, por isso localize-os pela IRK. Para saber como encontrar a IRK, consulte {docs_url}.",
           "data": {
             "name": "Nome",
-            "irk": "IRK",
-            "mac": "Endereço MAC"
+            "irk_or_mac": "IRK ou endereço MAC"
           },
           "data_description": {
             "name": "Nome do localizador, por exemplo Telemóvel do Alex.",
-            "irk": "Identity Resolving Key, em hexadecimal ou base64. Deixe em branco para localizar pelo endereço MAC.",
-            "mac": "Por exemplo, AA:BB:CC:DD:EE:FF. Deixe em branco para localizar pela IRK."
+            "irk_or_mac": "A Identity Resolving Key de um telemóvel, como 32 dígitos hexadecimais ou em base64, ou um endereço MAC como AA:BB:CC:DD:EE:FF. A integração identifica qual dos dois introduziu."
           }
         }
       },
       "error": {
         "name-empty": "Introduza um nome.",
-        "irk-or-mac": "Introduza uma IRK ou um endereço MAC, mas não ambos.",
+        "irk-or-mac": "Introduza uma IRK ou um endereço MAC.",
         "irk-invalid": "Isto não é uma IRK. Uma IRK tem 16 bytes: 32 dígitos hexadecimais ou 24 caracteres base64 terminados em ==.",
-        "mac-invalid": "Isto não é um endereço MAC. Introduza 12 dígitos hexadecimais, por exemplo AA:BB:CC:DD:EE:FF.",
+        "mac-invalid": "Isto não é um endereço MAC. Introduza seis pares de dígitos hexadecimais separados por dois pontos ou hífenes, por exemplo AA:BB:CC:DD:EE:FF.",
         "already-tracked": "Este dispositivo já está a ser localizado."
       },
       "abort": {

@@ -169,21 +169,19 @@
           "description": "Wpisz IRK telefonu albo adres MAC urządzenia, którego adres nigdy się nie zmienia, np. niektórych zegarków i lokalizatorów. Telefony zmieniają adres co kilka minut, więc śledź je za pomocą IRK. Jak znaleźć IRK, opisano w {docs_url}.",
           "data": {
             "name": "Nazwa",
-            "irk": "IRK",
-            "mac": "Adres MAC"
+            "irk_or_mac": "IRK lub adres MAC"
           },
           "data_description": {
             "name": "Nazwa trackera, np. Telefon Alexa.",
-            "irk": "Identity Resolving Key w formacie szesnastkowym lub base64. Zostaw puste, aby śledzić po adresie MAC.",
-            "mac": "Np. AA:BB:CC:DD:EE:FF. Zostaw puste, aby śledzić po IRK."
+            "irk_or_mac": "Identity Resolving Key telefonu jako 32 cyfry szesnastkowe lub w base64 albo adres MAC, np. AA:BB:CC:DD:EE:FF. Integracja sama rozpozna, co zostało wpisane."
           }
         }
       },
       "error": {
         "name-empty": "Wpisz nazwę.",
-        "irk-or-mac": "Wpisz IRK albo adres MAC, ale nie oba.",
+        "irk-or-mac": "Wpisz IRK lub adres MAC.",
         "irk-invalid": "To nie jest IRK. IRK ma 16 bajtów: 32 cyfry szesnastkowe albo 24 znaki base64 zakończone ==.",
-        "mac-invalid": "To nie jest adres MAC. Wpisz 12 cyfr szesnastkowych, np. AA:BB:CC:DD:EE:FF.",
+        "mac-invalid": "To nie jest adres MAC. Wpisz sześć par cyfr szesnastkowych rozdzielonych dwukropkami lub łącznikami, np. AA:BB:CC:DD:EE:FF.",
         "already-tracked": "To urządzenie jest już śledzone."
       },
       "abort": {

@@ -169,21 +169,19 @@
           "description": "Ange IRK för en telefon, eller MAC-adressen för en enhet vars adress aldrig ändras, till exempel vissa klockor och taggar. Telefoner byter adress med några minuters mellanrum, så spåra dem med IRK. Se {docs_url} för hur du hittar IRK.",
           "data": {
             "name": "Namn",
-            "irk": "IRK",
-            "mac": "MAC-adress"
+            "irk_or_mac": "IRK eller MAC-adress"
           },
           "data_description": {
             "name": "Namnet på spåraren, till exempel Alex telefon.",
-            "irk": "Identity Resolving Key, hexadecimalt eller i base64. Lämna tomt för att spåra med MAC-adress.",
-            "mac": "Till exempel AA:BB:CC:DD:EE:FF. Lämna tomt för att spåra med IRK."
+            "irk_or_mac": "En telefons Identity Resolving Key, som 32 hexadecimala siffror eller i base64, eller en MAC-adress, till exempel AA:BB:CC:DD:EE:FF. Integrationen känner själv igen vilken du har angett."
           }
         }
       },
       "error": {
         "name-empty": "Ange ett namn.",
-        "irk-or-mac": "Ange antingen en IRK eller en MAC-adress, inte båda.",
+        "irk-or-mac": "Ange en IRK eller en MAC-adress.",
         "irk-invalid": "Det här är ingen IRK. En IRK är 16 byte: 32 hexadecimala siffror eller 24 base64-tecken som slutar med ==.",
-        "mac-invalid": "Det här är ingen MAC-adress. Ange 12 hexadecimala siffror, till exempel AA:BB:CC:DD:EE:FF.",
+        "mac-invalid": "Det här är ingen MAC-adress. Ange sex par hexadecimala siffror åtskilda med kolon eller bindestreck, till exempel AA:BB:CC:DD:EE:FF.",
         "already-tracked": "Den här enheten spåras redan."
       },
       "abort": {

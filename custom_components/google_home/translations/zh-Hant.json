@@ -169,21 +169,19 @@
           "description": "輸入手機的 IRK，或位址永不變更之裝置（例如部分手錶和防丟標籤）的 MAC 位址。手機每隔幾分鐘就會變更位址，因此請以 IRK 追蹤手機。如何找到 IRK，請參閱 {docs_url}。",
           "data": {
             "name": "名稱",
-            "irk": "IRK",
-            "mac": "MAC 位址"
+            "irk_or_mac": "IRK 或 MAC 位址"
           },
           "data_description": {
             "name": "追蹤器名稱，例如「Alex 的手機」。",
-            "irk": "Identity Resolving Key，格式為十六進位或 base64。若要以 MAC 位址追蹤，請留空。",
-            "mac": "例如 AA:BB:CC:DD:EE:FF。若要以 IRK 追蹤，請留空。"
+            "irk_or_mac": "手機的 Identity Resolving Key（32 個十六進位數字或 base64），或 MAC 位址，例如 AA:BB:CC:DD:EE:FF。此整合會自動判斷你輸入的是哪一種。"
           }
         }
       },
       "error": {
         "name-empty": "請輸入名稱。",
-        "irk-or-mac": "請輸入 IRK 或 MAC 位址其中之一，不要同時輸入兩者。",
+        "irk-or-mac": "請輸入 IRK 或 MAC 位址。",
         "irk-invalid": "這不是 IRK。IRK 為 16 位元組：32 個十六進位數字，或以 == 結尾的 24 個 base64 字元。",
-        "mac-invalid": "這不是 MAC 位址。請輸入 12 個十六進位數字，例如 AA:BB:CC:DD:EE:FF。",
+        "mac-invalid": "這不是 MAC 位址。請輸入以冒號或連字號分隔的 6 組兩位十六進位數字，例如 AA:BB:CC:DD:EE:FF。",
         "already-tracked": "此裝置已在追蹤中。"
       },
       "abort": {

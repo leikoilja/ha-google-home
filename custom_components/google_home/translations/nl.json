@@ -169,21 +169,19 @@
           "description": "Voer de IRK van een telefoon in, of het MAC-adres van een apparaat waarvan het adres nooit verandert, zoals sommige horloges en tags. Telefoons wijzigen hun adres om de paar minuten, dus volg ze via de IRK. Zie {docs_url} voor hoe je de IRK vindt.",
           "data": {
             "name": "Naam",
-            "irk": "IRK",
-            "mac": "MAC-adres"
+            "irk_or_mac": "IRK of MAC-adres"
           },
           "data_description": {
             "name": "Naam van de tracker, bijvoorbeeld Telefoon van Alex.",
-            "irk": "Identity Resolving Key, hexadecimaal of in base64. Laat leeg om via het MAC-adres te volgen.",
-            "mac": "Bijvoorbeeld AA:BB:CC:DD:EE:FF. Laat leeg om via de IRK te volgen."
+            "irk_or_mac": "De Identity Resolving Key van een telefoon, als 32 hexadecimale cijfers of in base64, of een MAC-adres zoals AA:BB:CC:DD:EE:FF. De integratie herkent zelf welke van de twee je hebt ingevoerd."
           }
         }
       },
       "error": {
         "name-empty": "Voer een naam in.",
-        "irk-or-mac": "Voer een IRK of een MAC-adres in, niet allebei.",
+        "irk-or-mac": "Voer een IRK of een MAC-adres in.",
         "irk-invalid": "Dit is geen IRK. Een IRK is 16 bytes: 32 hexadecimale cijfers, of 24 base64-tekens die eindigen op ==.",
-        "mac-invalid": "Dit is geen MAC-adres. Voer 12 hexadecimale cijfers in, bijvoorbeeld AA:BB:CC:DD:EE:FF.",
+        "mac-invalid": "Dit is geen MAC-adres. Voer zes paren hexadecimale cijfers in, gescheiden door dubbele punten of koppeltekens, bijvoorbeeld AA:BB:CC:DD:EE:FF.",
         "already-tracked": "Dit apparaat wordt al gevolgd."
       },
       "abort": {

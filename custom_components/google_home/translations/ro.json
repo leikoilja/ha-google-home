@@ -169,21 +169,19 @@
           "description": "Introdu IRK-ul unui telefon sau adresa MAC a unui dispozitiv a cărui adresă nu se schimbă niciodată, cum ar fi unele ceasuri și etichete de localizare. Telefoanele își schimbă adresa la fiecare câteva minute, așa că urmărește-le după IRK. Pentru a afla cum găsești IRK-ul, consultă {docs_url}.",
           "data": {
             "name": "Nume",
-            "irk": "IRK",
-            "mac": "Adresă MAC"
+            "irk_or_mac": "IRK sau adresă MAC"
           },
           "data_description": {
             "name": "Numele dispozitivului de urmărire, de exemplu Telefonul lui Alex.",
-            "irk": "Identity Resolving Key, în format hexazecimal sau base64. Lasă gol pentru a urmări după adresa MAC.",
-            "mac": "De exemplu, AA:BB:CC:DD:EE:FF. Lasă gol pentru a urmări după IRK."
+            "irk_or_mac": "Identity Resolving Key al unui telefon, ca 32 de cifre hexazecimale sau în base64, ori o adresă MAC, de exemplu AA:BB:CC:DD:EE:FF. Integrarea recunoaște ce ai introdus."
           }
         }
       },
       "error": {
         "name-empty": "Introdu un nume.",
-        "irk-or-mac": "Introdu fie un IRK, fie o adresă MAC, nu pe amândouă.",
+        "irk-or-mac": "Introdu un IRK sau o adresă MAC.",
         "irk-invalid": "Acesta nu este un IRK. Un IRK are 16 octeți: 32 de cifre hexazecimale sau 24 de caractere base64 care se termină cu ==.",
-        "mac-invalid": "Aceasta nu este o adresă MAC. Introdu 12 cifre hexazecimale, de exemplu AA:BB:CC:DD:EE:FF.",
+        "mac-invalid": "Aceasta nu este o adresă MAC. Introdu șase perechi de cifre hexazecimale separate prin două puncte sau cratime, de exemplu AA:BB:CC:DD:EE:FF.",
         "already-tracked": "Acest dispozitiv este deja urmărit."
       },
       "abort": {

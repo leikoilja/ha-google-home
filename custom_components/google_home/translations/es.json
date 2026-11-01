@@ -169,21 +169,19 @@
           "description": "Introduce la IRK de un teléfono o la dirección MAC de un dispositivo cuya dirección nunca cambia, como algunos relojes y etiquetas localizadoras. Los teléfonos cambian de dirección cada pocos minutos, así que rastréalos por su IRK. Para saber cómo encontrar la IRK, consulta {docs_url}.",
           "data": {
             "name": "Nombre",
-            "irk": "IRK",
-            "mac": "Dirección MAC"
+            "irk_or_mac": "IRK o dirección MAC"
           },
           "data_description": {
             "name": "Nombre del rastreador, por ejemplo Teléfono de Alex.",
-            "irk": "Identity Resolving Key (clave de resolución de identidad), en hexadecimal o base64. Déjalo vacío para rastrear por dirección MAC.",
-            "mac": "Por ejemplo, AA:BB:CC:DD:EE:FF. Déjalo vacío para rastrear por IRK."
+            "irk_or_mac": "La Identity Resolving Key (clave de resolución de identidad) de un teléfono, como 32 dígitos hexadecimales o en base64, o una dirección MAC como AA:BB:CC:DD:EE:FF. La integración detecta cuál de las dos has introducido."
           }
         }
       },
       "error": {
         "name-empty": "Introduce un nombre.",
-        "irk-or-mac": "Introduce una IRK o una dirección MAC, pero no ambas.",
+        "irk-or-mac": "Introduce una IRK o una dirección MAC.",
         "irk-invalid": "Esto no es una IRK. Una IRK tiene 16 bytes: 32 dígitos hexadecimales o 24 caracteres base64 que terminan en ==.",
-        "mac-invalid": "Esto no es una dirección MAC. Introduce 12 dígitos hexadecimales, por ejemplo AA:BB:CC:DD:EE:FF.",
+        "mac-invalid": "Esto no es una dirección MAC. Introduce seis pares de dígitos hexadecimales separados por dos puntos o guiones, por ejemplo AA:BB:CC:DD:EE:FF.",
         "already-tracked": "Este dispositivo ya se está rastreando."
       },
       "abort": {

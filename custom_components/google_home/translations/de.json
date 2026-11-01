@@ -169,21 +169,19 @@
           "description": "Gib den IRK eines Smartphones ein oder die MAC-Adresse eines Geräts, dessen Adresse sich nie ändert, etwa mancher Uhren und Bluetooth-Tags. Smartphones ändern ihre Adresse alle paar Minuten, verfolge sie daher per IRK. Wie du den IRK findest, steht unter {docs_url}.",
           "data": {
             "name": "Name",
-            "irk": "IRK",
-            "mac": "MAC-Adresse"
+            "irk_or_mac": "IRK oder MAC-Adresse"
           },
           "data_description": {
             "name": "Name des Trackers, etwa Smartphone von Alex.",
-            "irk": "Identity Resolving Key, hexadezimal oder in Base64. Lass das Feld leer, um per MAC-Adresse zu verfolgen.",
-            "mac": "Etwa AA:BB:CC:DD:EE:FF. Lass das Feld leer, um per IRK zu verfolgen."
+            "irk_or_mac": "Der Identity Resolving Key eines Smartphones als 32 Hexadezimalziffern oder in Base64, oder eine MAC-Adresse wie AA:BB:CC:DD:EE:FF. Die Integration erkennt selbst, was du eingegeben hast."
           }
         }
       },
       "error": {
         "name-empty": "Gib einen Namen ein.",
-        "irk-or-mac": "Gib entweder einen IRK oder eine MAC-Adresse ein, nicht beides.",
+        "irk-or-mac": "Gib einen IRK oder eine MAC-Adresse ein.",
         "irk-invalid": "Das ist kein IRK. Ein IRK hat 16 Bytes: 32 Hexadezimalziffern oder 24 Base64-Zeichen, die auf == enden.",
-        "mac-invalid": "Das ist keine MAC-Adresse. Gib 12 Hexadezimalziffern ein, etwa AA:BB:CC:DD:EE:FF.",
+        "mac-invalid": "Das ist keine MAC-Adresse. Gib sechs Paare von Hexadezimalziffern ein, getrennt durch Doppelpunkte oder Bindestriche, etwa AA:BB:CC:DD:EE:FF.",
         "already-tracked": "Dieses Gerät wird bereits verfolgt."
       },
       "abort": {

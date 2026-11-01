@@ -169,21 +169,19 @@
           "description": "Angiv en telefons IRK eller MAC-adressen på en enhed, hvis adresse aldrig ændres, f.eks. visse ure og tags. Telefoner skifter adresse med få minutters mellemrum, så spor dem via IRK. Se {docs_url} for at finde ud af, hvordan du finder IRK'en.",
           "data": {
             "name": "Navn",
-            "irk": "IRK",
-            "mac": "MAC-adresse"
+            "irk_or_mac": "IRK eller MAC-adresse"
           },
           "data_description": {
             "name": "Navnet på trackeren, f.eks. Alex' telefon.",
-            "irk": "Identity Resolving Key i hex eller base64. Lad feltet være tomt for at spore via MAC-adresse.",
-            "mac": "F.eks. AA:BB:CC:DD:EE:FF. Lad feltet være tomt for at spore via IRK."
+            "irk_or_mac": "En telefons Identity Resolving Key som 32 hexcifre eller i base64, eller en MAC-adresse som f.eks. AA:BB:CC:DD:EE:FF. Integrationen kan selv se, hvilken af dem du har angivet."
           }
         }
       },
       "error": {
         "name-empty": "Angiv et navn.",
-        "irk-or-mac": "Angiv enten en IRK eller en MAC-adresse, ikke begge.",
+        "irk-or-mac": "Angiv en IRK eller en MAC-adresse.",
         "irk-invalid": "Dette er ikke en IRK. En IRK er 16 bytes: 32 hexcifre eller 24 base64-tegn, der ender på ==.",
-        "mac-invalid": "Dette er ikke en MAC-adresse. Angiv 12 hexcifre, f.eks. AA:BB:CC:DD:EE:FF.",
+        "mac-invalid": "Dette er ikke en MAC-adresse. Angiv seks par hexcifre adskilt af koloner eller bindestreger, f.eks. AA:BB:CC:DD:EE:FF.",
         "already-tracked": "Denne enhed spores allerede."
       },
       "abort": {

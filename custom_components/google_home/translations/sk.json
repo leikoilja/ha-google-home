@@ -169,21 +169,19 @@
           "description": "Zadajte IRK telefónu alebo MAC adresu zariadenia, ktorého adresa sa nikdy nemení, napríklad niektorých hodiniek a lokalizačných štítkov. Telefóny menia adresu každých niekoľko minút, preto ich sledujte podľa IRK. Ako nájsť IRK, sa dozviete na {docs_url}.",
           "data": {
             "name": "Názov",
-            "irk": "IRK",
-            "mac": "MAC adresa"
+            "irk_or_mac": "IRK alebo MAC adresa"
           },
           "data_description": {
             "name": "Názov sledovača, napríklad Alexov telefón.",
-            "irk": "Identity Resolving Key v šestnástkovom formáte alebo v base64. Na sledovanie podľa MAC adresy nechajte prázdne.",
-            "mac": "Napríklad AA:BB:CC:DD:EE:FF. Na sledovanie podľa IRK nechajte prázdne."
+            "irk_or_mac": "Identity Resolving Key telefónu ako 32 šestnástkových číslic alebo v base64, alebo MAC adresa, napríklad AA:BB:CC:DD:EE:FF. Integrácia sama rozpozná, ktorú z nich ste zadali."
           }
         }
       },
       "error": {
         "name-empty": "Zadajte názov.",
-        "irk-or-mac": "Zadajte buď IRK, alebo MAC adresu, nie oboje.",
+        "irk-or-mac": "Zadajte IRK alebo MAC adresu.",
         "irk-invalid": "Toto nie je IRK. IRK má 16 bajtov: 32 šestnástkových číslic alebo 24 znakov base64 končiacich ==.",
-        "mac-invalid": "Toto nie je MAC adresa. Zadajte 12 šestnástkových číslic, napríklad AA:BB:CC:DD:EE:FF.",
+        "mac-invalid": "Toto nie je MAC adresa. Zadajte šesť dvojíc šestnástkových číslic oddelených dvojbodkami alebo spojovníkmi, napríklad AA:BB:CC:DD:EE:FF.",
         "already-tracked": "Toto zariadenie sa už sleduje."
       },
       "abort": {

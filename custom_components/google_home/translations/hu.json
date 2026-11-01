@@ -169,21 +169,19 @@
           "description": "Adja meg egy telefon IRK-ját, vagy egy olyan eszköz MAC-címét, amelynek címe soha nem változik, például egyes órákét és nyomkövető címkékét. A telefonok néhány percenként megváltoztatják a címüket, ezért IRK alapján kövesse őket. Az IRK megkeresésének módját lásd itt: {docs_url}.",
           "data": {
             "name": "Név",
-            "irk": "IRK",
-            "mac": "MAC-cím"
+            "irk_or_mac": "IRK vagy MAC-cím"
           },
           "data_description": {
             "name": "A követő neve, például Alex telefonja.",
-            "irk": "Identity Resolving Key (identitásfeloldó kulcs) hexadecimális vagy base64 formátumban. Hagyja üresen, ha MAC-cím alapján követi az eszközt.",
-            "mac": "Például AA:BB:CC:DD:EE:FF. Hagyja üresen, ha IRK alapján követi az eszközt."
+            "irk_or_mac": "Egy telefon Identity Resolving Key-e (identitásfeloldó kulcsa) 32 hexadecimális számjegyként vagy base64 formátumban, vagy egy MAC-cím, például AA:BB:CC:DD:EE:FF. Az integráció felismeri, melyiket adta meg."
           }
         }
       },
       "error": {
         "name-empty": "Adjon meg egy nevet.",
-        "irk-or-mac": "IRK-t vagy MAC-címet adjon meg, ne mindkettőt.",
+        "irk-or-mac": "Adjon meg egy IRK-t vagy egy MAC-címet.",
         "irk-invalid": "Ez nem IRK. Az IRK 16 bájt: 32 hexadecimális számjegy vagy 24 base64-karakter, amely ==-re végződik.",
-        "mac-invalid": "Ez nem MAC-cím. Adjon meg 12 hexadecimális számjegyet, például AA:BB:CC:DD:EE:FF.",
+        "mac-invalid": "Ez nem MAC-cím. Adjon meg hat hexadecimális számjegypárt kettősponttal vagy kötőjellel elválasztva, például AA:BB:CC:DD:EE:FF.",
         "already-tracked": "Ezt az eszközt már követi az integráció."
       },
       "abort": {
