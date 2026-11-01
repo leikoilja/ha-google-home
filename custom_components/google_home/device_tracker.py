@@ -13,12 +13,14 @@ from homeassistant.helpers.update_coordinator import (
     DataUpdateCoordinator,
 )
 
-from .bluetooth import TrackerState
+from .bluetooth import TrackerState, TrackerUpdate
 from .const import DOMAIN, SUBENTRY_BLUETOOTH_DEVICE
 from .types import GoogleHomeConfigEntry
 
 # The Bluetooth coordinator does the updates, and trackers have no actions
 PARALLEL_UPDATES = 0
+
+ATTR_SPEAKERS = "speakers"
 
 
 async def async_setup_entry(
@@ -37,7 +39,7 @@ async def async_setup_entry(
 
 
 class GoogleHomeBluetoothTracker(
-    CoordinatorEntity[DataUpdateCoordinator[dict[str, TrackerState]]],
+    CoordinatorEntity[DataUpdateCoordinator[dict[str, TrackerUpdate]]],
     BaseScannerEntity,
 ):
     """Whether a tracked Bluetooth device is home, by what the speakers hear."""
@@ -45,10 +47,13 @@ class GoogleHomeBluetoothTracker(
     _attr_has_entity_name = True
     _attr_name = None
     _attr_source_type = SourceType.BLUETOOTH_LE
+    # Left out of history: it changes every few minutes, and only its current
+    # value is useful
+    _unrecorded_attributes = frozenset({ATTR_SPEAKERS})
 
     def __init__(
         self,
-        coordinator: DataUpdateCoordinator[dict[str, TrackerState]],
+        coordinator: DataUpdateCoordinator[dict[str, TrackerUpdate]],
         subentry: ConfigSubentry,
     ) -> None:
         """Create the tracker of a tracked device."""
@@ -69,24 +74,33 @@ class GoogleHomeBluetoothTracker(
     @override
     def available(self) -> bool:
         """Return whether the speakers can tell if the device is home."""
-        return super().available and self._tracker_state != TrackerState.UNAVAILABLE
+        return (
+            super().available and self._tracker_update.state != TrackerState.UNAVAILABLE
+        )
 
     @property
     @override
     def is_connected(self) -> bool | None:
         """Return whether the device is home, or None while it's unknown."""
-        if self._tracker_state == TrackerState.HOME:
+        state = self._tracker_update.state
+        if state == TrackerState.HOME:
             return True
-        if self._tracker_state == TrackerState.NOT_HOME:
+        if state == TrackerState.NOT_HOME:
             return False
         return None
 
     @property
-    def _tracker_state(self) -> TrackerState:
-        """Return the state of the latest update.
+    @override
+    def extra_state_attributes(self) -> dict[str, dict[str, int]]:
+        """Return each speaker's median RSSI over the latest completed window."""
+        return {ATTR_SPEAKERS: self._tracker_update.speakers}
+
+    @property
+    def _tracker_update(self) -> TrackerUpdate:
+        """Return the latest update.
 
         Each update writes it, and Home Assistant adds no history row while the
         state and attributes stay the same.
         """
         data = self.coordinator.data or {}
-        return data.get(self._subentry_id, TrackerState.UNKNOWN)
+        return data.get(self._subentry_id, TrackerUpdate(TrackerState.UNKNOWN, {}))

@@ -23,7 +23,7 @@ from homeassistant.helpers.typing import ConfigType
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .api import GlocaltokensApiClient
-from .bluetooth import BluetoothScanner, TrackerState
+from .bluetooth import BluetoothScanner, TrackerUpdate
 from .const import (
     BLUETOOTH_SCAN_INTERVAL,
     BROWSER_TITLE,
@@ -186,9 +186,24 @@ def bluetooth_config(
     )
 
 
+def bluetooth_changes(entry: GoogleHomeConfigEntry) -> list[str]:
+    """Return each change since Bluetooth tracking was set up, to log why it reloads."""
+    assert entry.runtime_data.bluetooth_config is not None
+    old_tracking, old_excluded, old_subentry_ids = entry.runtime_data.bluetooth_config
+    tracking, excluded, subentry_ids = bluetooth_config(entry)
+    changes = []
+    if subentry_ids - old_subentry_ids:
+        changes.append("Bluetooth device added to tracking")
+    if old_subentry_ids - subentry_ids:
+        changes.append("Bluetooth device removed from tracking")
+    if (tracking, excluded) != (old_tracking, old_excluded):
+        changes.append("Bluetooth options changed")
+    return changes
+
+
 def async_create_bluetooth_coordinator(
     hass: HomeAssistant, entry: GoogleHomeConfigEntry, session: ClientSession
-) -> DataUpdateCoordinator[dict[str, TrackerState]] | None:
+) -> DataUpdateCoordinator[dict[str, TrackerUpdate]] | None:
     """Create the Bluetooth coordinator, if tracking is on and has devices to track."""
     tracking, excluded, subentry_ids = bluetooth_config(entry)
     if not tracking or not subentry_ids:
@@ -294,8 +309,8 @@ async def async_update_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) 
         _LOGGER.debug("Known hosts or homes changed, reloading...")
         hass.config_entries.async_schedule_reload(entry.entry_id)
         return
-    if bluetooth_config(entry) != entry.runtime_data.bluetooth_config:
-        _LOGGER.debug("Bluetooth tracking changed, reloading...")
+    if changes := bluetooth_changes(entry):
+        _LOGGER.debug("%s, reloading...", " and ".join(changes))
         hass.config_entries.async_schedule_reload(entry.entry_id)
         return
     _LOGGER.debug("Options updated, updating coordinator interval...")
