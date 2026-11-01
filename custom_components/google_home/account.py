@@ -188,8 +188,9 @@ class GoogleAccountClient:
 
         From here until the next update, whatever asks for Google's list gets it at
         most once: on schedule, when it's unknown, or for a rejected token. Between
-        fetches, a device without an address is looked for at the known hosts every
-        KNOWN_HOSTS_INTERVAL seconds, without asking Google.
+        fetches, a device without an address is looked for at the known hosts once
+        KNOWN_HOSTS_INTERVAL seconds have passed since they were last asked, without
+        asking Google.
 
         Return the known hosts, by device ID, that the fetch this update ran or waited
         for, or the update's own lookup, gave devices: their info answered then, so
