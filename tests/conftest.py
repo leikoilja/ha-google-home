@@ -106,7 +106,8 @@ async def assert_flow_text(manager: FlowManager, result: FlowResult) -> None:
     category = "options" if isinstance(manager, OptionsFlowManager) else "config"
     domain = result.get("translation_domain") or DOMAIN
     prefix = f"component.{domain}.{category}"
-    if isinstance(manager, ConfigSubentryFlowManager):
+    # The manager's type parameters differ, so check it as an object
+    if isinstance(cast(object, manager), ConfigSubentryFlowManager):
         # The handler is the entry's ID and the subentry type
         category = "config_subentries"
         prefix = f"component.{domain}.{category}.{result['handler'][1]}"

@@ -226,7 +226,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) 
 
 
 async def async_remove_config_entry_device(
-    _hass: HomeAssistant, entry: GoogleHomeConfigEntry, device_entry: DeviceEntry
+    hass: HomeAssistant, entry: GoogleHomeConfigEntry, device_entry: DeviceEntry
 ) -> bool:
     """Allow deleting a device only when Google no longer returns it.
 
@@ -235,7 +235,13 @@ async def async_remove_config_entry_device(
     deleted while Google's device list is unknown: the entry isn't loaded, no
     fetch has succeeded yet, or a device rejected its token, got no new token
     that it accepts, and the list hasn't been fetched again.
+
+    Deleting a tracked Bluetooth device stops tracking it, as deleting it from the
+    integration's page does: its subentry goes, with the device and its tracker.
     """
+    if (subentry_id := device_entry.config_subentry_id) is not None:
+        hass.config_entries.async_remove_subentry(entry, subentry_id)
+        return True
     if (
         entry.state is not ConfigEntryState.LOADED
         or not entry.runtime_data.client.google_devices_fetched

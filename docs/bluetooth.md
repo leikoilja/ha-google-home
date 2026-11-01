@@ -23,7 +23,7 @@ Give the device a name, such as _Alex's phone_, and enter either its IRK or its 
 
 The tracker is named after the device, such as `device_tracker.alexs_phone`. Home Assistant lists it under **Diagnostic** on the device's page, as it does for its own Bluetooth trackers.
 
-To stop tracking a device, open it on the **Google Home** page, open the **⋮** menu and select **Delete**. To change its name, IRK or MAC address, delete it and add it again.
+To stop tracking a device, delete it: open it on the **Google Home** page, open the **⋮** menu and select **Delete**. Deleting it from its device page does the same. To change its name, IRK or MAC address, delete it and add it again.
 
 ## How the tracker works
 

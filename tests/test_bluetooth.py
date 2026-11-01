@@ -18,7 +18,7 @@ from bluetooth_data_tools import get_cipher_for_irk
 import pytest
 from pytest_homeassistant.common import MockConfigEntry
 from pytest_homeassistant.components.diagnostics import get_diagnostics_for_config_entry
-from pytest_homeassistant.typing import ClientSessionGenerator
+from pytest_homeassistant.typing import ClientSessionGenerator, WebSocketGenerator
 
 from custom_components.google_home import (
     async_create_bluetooth_coordinator,
@@ -52,9 +52,11 @@ from homeassistant.const import (
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
 from homeassistant.helpers import device_registry as dr, entity_registry as er
+from homeassistant.setup import async_setup_component
 
 from .conftest import SPEAKER_ID, SPEAKER_NAME
 from .test_coordinators import runtime
+from .test_removed_devices import fetch_list
 from .test_setup import set_up
 from .test_unsupported_devices import SPEAKER
 
@@ -716,6 +718,57 @@ async def test_track_phone(
     assert runtime(config_entry).bluetooth is None
     assert entity_registry.async_get(TRACKER) is None
     assert hass.states.get(TRACKER) is None
+
+
+@pytest.mark.usefixtures("google", "replies", "scans")
+async def test_tracker_kept_as_google_lists_devices(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    clock: Mock,
+    entity_registry: er.EntityRegistry,
+    device_registry: dr.DeviceRegistry,
+) -> None:
+    """Keep a tracked device, which Google never lists, however often Google's list is fetched.
+
+    A speaker's device is removed once two home graphs in a row lack it.
+    """
+    await track_phone(hass, config_entry)
+    registered = entity_registry.async_get(TRACKER)
+    assert registered is not None
+
+    for fetches in (1, 2, 3):
+        await fetch_list(hass, config_entry, clock, fetches)
+
+    assert device_registry.async_get(str(registered.device_id)) is not None
+    assert entity_registry.async_get(TRACKER) is not None
+
+
+@pytest.mark.usefixtures("google", "replies", "scans")
+async def test_deleting_tracked_device_stops_tracking(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    hass_ws_client: WebSocketGenerator,
+    entity_registry: er.EntityRegistry,
+) -> None:
+    """Stop tracking a device deleted from its device page, as deleting it from the integration's page does."""
+    await track_phone(hass, config_entry)
+    assert await async_setup_component(hass, "config", {})
+    registered = entity_registry.async_get(TRACKER)
+    assert registered is not None
+    client = await hass_ws_client(hass)
+
+    await client.send_json_auto_id(
+        {"type": "config/device_registry/remove", "device_id": registered.device_id}
+    )
+    response = await client.receive_json()
+    await hass.async_block_till_done(wait_background_tasks=True)
+
+    assert response["success"]
+    assert PHONE not in config_entry.subentries
+    assert entity_registry.async_get(TRACKER) is None
+    # Reloaded with nothing to track, so no more scans
+    assert config_entry.state is ConfigEntryState.LOADED
+    assert runtime(config_entry).bluetooth is None
 
 
 async def test_add_device_needs_tracking_on(
