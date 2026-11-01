@@ -184,11 +184,12 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Altere o intervalo de atualização. Aumente-o se os dispositivos excederem o tempo limite com frequência. Padrão: {default_interval} (segundos)",
+          "update_interval": "Intervalo de atualização (segundos)",
           "known_hosts": "Hosts conhecidos",
           "homes": "Casas"
         },
         "data_description": {
+          "update_interval": "Aumente este valor se seus dispositivos frequentemente não responderem a tempo. Padrão: {default_interval} segundos.",
           "known_hosts": "Endereços IP de alto-falantes e telas que a integração não consegue encontrar sozinha, por exemplo porque estão em outra rede ou VLAN.",
           "homes": "Alto-falantes e telas das casas que você desmarcar não são adicionados. Desmarcar uma casa remove do Home Assistant os dispositivos dela e as entidades deles, então automações, scripts e dashboards que os usam param de funcionar. Marque a casa novamente para adicioná-los de volta com os nomes e as áreas que você deu a eles."
         }

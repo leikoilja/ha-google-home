@@ -184,11 +184,12 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Muuta päivitysväliä. Suurenna arvoa, jos laitteet eivät vastaa ajoissa. Oletus: {default_interval} sekuntia.",
+          "update_interval": "Päivitysväli (sekunteina)",
           "known_hosts": "Tunnetut isännät",
           "homes": "Kodit"
         },
         "data_description": {
+          "update_interval": "Suurenna arvoa, jos laitteesi jättävät usein vastaamatta ajoissa. Oletus: {default_interval} sekuntia.",
           "known_hosts": "Niiden kaiuttimien ja näyttöjen IP-osoitteet, joita integraatio ei löydä automaattisesti esimerkiksi siksi, että ne ovat toisessa verkossa tai VLAN-verkossa.",
           "homes": "Kodeista, joiden valinnan poistat, ei lisätä kaiuttimia eikä näyttöjä. Kun poistat kodin valinnan, sen laitteet ja niiden entiteetit poistetaan Home Assistantista, joten niitä käyttävät automaatiot, skriptit ja kojelaudat lakkaavat toimimasta. Valitse koti uudelleen, niin laitteet lisätään takaisin antamillasi nimillä ja huoneilla."
         }

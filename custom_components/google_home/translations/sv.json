@@ -184,11 +184,12 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Ändra uppdateringsintervallet. Öka det om enheterna inte svarar i tid. Standard: {default_interval} sekunder.",
+          "update_interval": "Uppdateringsintervall (sekunder)",
           "known_hosts": "Kända värdar",
           "homes": "Hem"
         },
         "data_description": {
+          "update_interval": "Öka det om dina enheter ofta inte svarar i tid. Standard: {default_interval} sekunder.",
           "known_hosts": "IP-adresser till högtalare och skärmar som integrationen inte kan hitta på egen hand, till exempel för att de finns i ett annat nätverk eller VLAN.",
           "homes": "Högtalare och skärmar i hem som du avmarkerar läggs inte till. Om du avmarkerar ett hem tas dess enheter och deras entiteter bort från Home Assistant, så automatiseringar, skript och kontrollpaneler som använder dem slutar fungera. Markera hemmet igen för att lägga tillbaka dem med de namn och områden du gav dem."
         }

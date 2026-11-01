@@ -184,11 +184,12 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Endre oppdateringsintervall. Du kan auke dette om einingane ofte får tidsavbrot. Standard: {default_interval} (sekund)",
+          "update_interval": "Oppdateringsintervall (sekund)",
           "known_hosts": "Kjende vertar",
           "homes": "Heimar"
         },
         "data_description": {
+          "update_interval": "Auk dette om einingane dine ofte ikkje svarar i tide. Standard: {default_interval} sekund.",
           "known_hosts": "IP-adresser til høgtalarar og skjermar som integrasjonen ikkje finn sjølv, til dømes fordi dei er på eit anna nettverk eller VLAN.",
           "homes": "Høgtalarar og skjermar i heimar du vel bort, blir ikkje lagde til. Når du vel bort ein heim, blir einingane i heimen og entitetane deira fjerna frå Home Assistant, slik at automatiseringar, skript og dashbord som brukar dei, sluttar å fungere. Vel heimen igjen for å leggje dei til på nytt med namna og områda du gav dei."
         }
