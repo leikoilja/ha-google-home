@@ -469,8 +469,9 @@ class BluetoothDeviceSubentryFlow(ConfigSubentryFlow):
     ) -> SubentryFlowResult:
         """Ask for the device's name, and its IRK or MAC address in one field.
 
-        Which one it is shows from its form: a MAC address is six hex pairs, an IRK
-        16 bytes. Either is saved as before, as an IRK or a MAC address.
+        They're told apart by their format: a MAC address is six hex pairs, an IRK
+        16 bytes. An IRK is saved as {"irk": hex}, a MAC address as
+        {"mac": "AA:BB:CC:DD:EE:FF"}.
         """
         entry = self._get_entry()
         if not entry.options.get(CONF_BLUETOOTH_TRACKING):

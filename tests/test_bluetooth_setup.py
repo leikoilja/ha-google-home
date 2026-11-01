@@ -280,7 +280,7 @@ async def test_add_device(
     value: str,
     data: dict[str, str],
 ) -> None:
-    """Tell an IRK from a MAC address in the one field, and save either as before.
+    """Tell an IRK from a MAC address in the one field, and save each in its own key.
 
     The IRK is saved as hex in the order the cipher takes, the MAC address as
     AA:BB:CC:DD:EE:FF, which is what tracking reads.
@@ -327,9 +327,9 @@ async def test_add_device(
             {"name": "Phone", "irk_or_mac": IRK.hex()[:-1]},
             {"irk_or_mac": "irk-invalid"},
         ),
-        # Base64 of 15 bytes, not 16
+        # Base64 of 17 bytes, not 16
         (
-            {"name": "Phone", "irk_or_mac": base64.b64encode(bytes(15)).decode()},
+            {"name": "Phone", "irk_or_mac": base64.b64encode(bytes(17)).decode()},
             {"irk_or_mac": "irk-invalid"},
         ),
         # The same IRK as the tracked phone's, written differently

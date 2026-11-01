@@ -18,7 +18,7 @@ If you turn Bluetooth tracking off again, the devices you added stay, and their 
 
 ## Add a device to track
 
-Give the device a name, such as _Alex's phone_, and enter its IRK or its MAC address under **IRK or MAC address**. The integration tells which one you entered from its form:
+Give the device a name, such as _Alex's phone_, and under **IRK or MAC address** enter one of these. The integration tells them apart by their format:
 
 - **IRK** (Identity Resolving Key): use this for phones. Phones change their Bluetooth address every few minutes, and the IRK lets the integration recognize every address the phone uses. To find the IRK of your phone, follow [Getting your Identity Resolving Key](https://www.home-assistant.io/integrations/private_ble_device/#getting-your-identity-resolving-key-irk) in the Private BLE Device documentation. You can paste it as 32 hex digits or in base64, as you find it there.
 - **MAC address**: use this for devices whose address never changes, such as some watches, tags and headphones, in the form `AA:BB:CC:DD:EE:FF` or `AA-BB-CC-DD-EE-FF`. A phone's MAC address stops matching within minutes.
