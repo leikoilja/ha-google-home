@@ -8,7 +8,13 @@ The integration checks your devices for changes every 15 seconds by default.
 
 To change the interval, go to **Settings** > **Devices & services** > **Google Home** and select **Configure**. Shorter intervals update alarms and timers sooner but send more requests to your devices.
 
-If a speaker or display with alarms and timers often shows `false` in the `available` attribute of its [device sensor](entities.md#device-sensor) while it's on, or its entities become unavailable for a moment while it restarts, increase the interval, for example to 180 seconds, the default before version 1.16.
+Around an alarm's or timer's time, and while it rings, the integration checks that speaker more often than a longer interval, so that ringing shows within seconds and its end within about 15 seconds; see [How quickly ringing shows](automations.md#how-quickly-ringing-shows). Each check sends the speaker 3 requests. With an interval of 180 seconds:
+
+- An alarm that you stop after a minute costs about 5 checks more than the interval alone.
+- An alarm that rings for an hour until it stops by itself costs about 220 more checks, about 660 requests, in that hour.
+- Each time an alarm or timer goes off, including again after a snooze, it costs at most about 245 more checks, about 735 requests, until 65 minutes after its time.
+
+If a speaker or display with alarms and timers often shows `false` in the `available` attribute of its [device sensor](entities.md#device-sensor) while it's on, or its entities become unavailable for a moment while it restarts, increase the interval, for example to 180 seconds, the default before version 1.16. The extra checks around an alarm's or timer's time still come at their own pace, but stop as soon as the speaker doesn't answer one, until it answers again.
 
 **Configure** shows the interval in use. If you saved these options in version 1.15 or older, for example to add known hosts, it's the interval you saved, which was 180 seconds unless you changed it. To use the new default, enter 15 and select **Submit**.
 

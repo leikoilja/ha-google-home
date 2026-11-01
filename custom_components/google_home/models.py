@@ -76,6 +76,9 @@ class GoogleHomeDevice:
         # The last answer to a request for its alarms and timers, as it came, for
         # diagnostics
         self.alarms_reply: JsonDict | None = None
+        # Updates whose request for alarms and timers got both lists. Actions' requests
+        # don't count, so an update can tell whether it got the lists itself.
+        self.polled_snapshots = 0
 
     def count_answer(self, status: int | None) -> bool:
         """Count the answer to this update's request, and return whether there was one.

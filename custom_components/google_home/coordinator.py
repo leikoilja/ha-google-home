@@ -1,21 +1,50 @@
 """The coordinators: one for the Google account's device list, and one for each device."""
 
+from collections.abc import Callable, Iterator
 from datetime import timedelta
 import logging
+from time import time
 from typing import override
 
 from homeassistant.config_entries import ConfigEntryState
-from homeassistant.core import HomeAssistant, callback
+from homeassistant.core import CALLBACK_TYPE, HomeAssistant, callback
 from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .api import GlocaltokensApiClient
-from .const import DOMAIN, HOME_GRAPHS_BEFORE_REMOVAL
-from .models import GoogleHomeDevice
+from .const import (
+    DOMAIN,
+    FIRE_TIME_DELAY,
+    HOME_GRAPHS_BEFORE_REMOVAL,
+    ONSET_INTERVAL,
+    ONSET_WINDOW,
+    RINGING_WINDOW,
+    UPDATE_INTERVAL,
+)
+from .models import GoogleHomeAlarmStatus, GoogleHomeDevice, GoogleHomeTimerStatus
 from .types import GoogleHomeConfigEntry
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
+
+type Status = GoogleHomeAlarmStatus | GoogleHomeTimerStatus
+
+# The statuses of an alarm or timer that is to ring at its fire time, and that rings
+WAITING: set[Status] = {
+    GoogleHomeAlarmStatus.SET,
+    GoogleHomeAlarmStatus.SNOOZED,
+    GoogleHomeTimerStatus.SET,
+}
+RINGING: set[Status] = {GoogleHomeAlarmStatus.RINGING, GoogleHomeTimerStatus.RINGING}
+
+
+def fire_times(device: GoogleHomeDevice) -> Iterator[tuple[str, int, Status]]:
+    """Yield the ID, fire time and status of each alarm and timer that has a fire time."""
+    for alarm in device.get_sorted_alarms():
+        yield alarm.alarm_id, alarm.fire_time, alarm.status
+    for timer in device.get_sorted_timers():
+        if timer.fire_time is not None:
+            yield timer.timer_id, timer.fire_time, timer.status
 
 
 class GoogleAccountCoordinator(DataUpdateCoordinator[dict[str, GoogleHomeDevice]]):
@@ -151,7 +180,16 @@ class GoogleAccountCoordinator(DataUpdateCoordinator[dict[str, GoogleHomeDevice]
 
 
 class GoogleHomeDeviceCoordinator(DataUpdateCoordinator[GoogleHomeDevice | None]):
-    """One device's alarms, timers and settings, or None while Google doesn't list it."""
+    """One device's alarms, timers and settings, or None while Google doesn't list it.
+
+    It updates at the update interval, and sooner around an alarm's or timer's fire time
+    while the device's updates get its alarms and timers: FIRE_TIME_DELAY seconds after
+    it, then while it still isn't ringing every ONSET_INTERVAL seconds, and while it
+    rings every UPDATE_INTERVAL seconds. Each comes to an end with the first update that
+    starts at least ONSET_WINDOW or RINGING_WINDOW seconds after the fire time, so a
+    change before then is seen. An alarm or timer that is due again, after an update
+    found it neither due nor ringing, such as when snoozed, starts again.
+    """
 
     config_entry: GoogleHomeConfigEntry
 
@@ -177,6 +215,74 @@ class GoogleHomeDeviceCoordinator(DataUpdateCoordinator[GoogleHomeDevice | None]
         # just answered 200. Only its next poll uses it, and only for that device object
         # at that address.
         self.info_answered: tuple[GoogleHomeDevice, str] | None = None
+        # By ID, the loop time of the fire time of each alarm and timer that is due or
+        # rings, as the update that first found it so saw it. The windows are counted
+        # from it, so a fire time that moves meanwhile doesn't extend them.
+        self._due_since: dict[str, float] = {}
+        # Whether the last update that finished got the alarms and timers itself, and
+        # the loop time at which it started, before it asked for them
+        self._timed = False
+        self._sampled_at = 0.0
+
+    def _configured_interval(self) -> timedelta | None:
+        """Return the update interval in the options, as the account's coordinator has it."""
+        return self.config_entry.runtime_data.account.update_interval
+
+    def _due_start(
+        self, item_id: str, fire_time: int, now: float, loop_now: float
+    ) -> float:
+        """Return the loop time from which an alarm or timer that is due counts as due.
+
+        Without one yet, it's the loop time of its fire time, or now if that's still to
+        come, as for a ringing alarm whose fire time is a little ahead of the clock.
+        """
+        return self._due_since.get(item_id, loop_now - max(0, now - fire_time))
+
+    def _next_interval(self, device: GoogleHomeDevice) -> timedelta | None:
+        """Return how long after now to update next, from the alarms and timers it has."""
+        interval = self._configured_interval()
+        now, loop_now = time(), self.hass.loop.time()
+        delays: list[float] = []
+        for item_id, fire_time, status in fire_times(device):
+            if status in WAITING and fire_time > now:
+                delays.append(fire_time + FIRE_TIME_DELAY - now)
+                continue
+            if status not in WAITING | RINGING:
+                continue
+            due_since = self._due_start(item_id, fire_time, now, loop_now)
+            if status in RINGING:
+                if self._sampled_at < due_since + RINGING_WINDOW:
+                    delays.append(UPDATE_INTERVAL)
+            elif self._sampled_at < due_since + ONSET_WINDOW:
+                delays.append(ONSET_INTERVAL)
+        if interval is None or not delays:
+            return interval
+        return min(interval, timedelta(seconds=min(delays)))
+
+    def _follow_due(self, device: GoogleHomeDevice, started: float) -> None:
+        """Follow the alarms and timers that are due or ring, and time the next update.
+
+        For an update that started then and got them itself. A timer without a fire
+        time is left as it was.
+        """
+        now, loop_now = time(), self.hass.loop.time()
+        untimed = {
+            timer.timer_id
+            for timer in device.get_sorted_timers()
+            if timer.fire_time is None
+        }
+        due_since = {
+            item_id: since
+            for item_id, since in self._due_since.items()
+            if item_id in untimed
+        }
+        for item_id, fire_time, status in fire_times(device):
+            if status in RINGING or (status in WAITING and fire_time <= now):
+                due_since[item_id] = self._due_start(item_id, fire_time, now, loop_now)
+        self._due_since = due_since
+        self._timed = True
+        self._sampled_at = started
+        self.update_interval = self._next_interval(device)
 
     def _listed(self) -> GoogleHomeDevice | None:
         """Return the device as Google's list has it now, if it does."""
@@ -190,22 +296,59 @@ class GoogleHomeDeviceCoordinator(DataUpdateCoordinator[GoogleHomeDevice | None]
         """Ask the device for its alarms, timers and settings, if Google lists it.
 
         A fetch of Google's list while the device is asked may drop it, or replace it
-        with a new object, so the old one isn't shown again.
+        with a new object, so the old one isn't shown again. The next update is at the
+        update interval, or sooner around a fire time if this one got the alarms and
+        timers itself.
         """
-        answered, self.info_answered = self.info_answered, None
-        if (device := self._listed()) is None:
-            return None
-        await self.client.update_device(
-            device, found_at_known_host=answered == (device, device.ip_address)
+        # Before the alarms are asked, so no later than they answer
+        started = self.hass.loop.time()
+        # Until this update finishes, a listener can't time the next one from the last
+        self._timed = False
+        self.update_interval = self._configured_interval()
+        try:
+            answered, self.info_answered = self.info_answered, None
+            if (device := self._listed()) is None:
+                return None
+            snapshots = device.polled_snapshots
+            await self.client.update_device(
+                device, found_at_known_host=answered == (device, device.ip_address)
+            )
+            # Its token may have made Google's list be fetched, and Google reject the
+            # master token
+            self.config_entry.runtime_data.account.async_ask_to_sign_in_if_rejected()
+            if device is not self._listed():
+                return None
+            # Never for a device without alarms, which isn't asked for them
+            if device.polled_snapshots != snapshots:
+                self._follow_due(device, started)
+        except BaseException:
+            # The options may have changed while the device was asked
+            self.update_interval = self._configured_interval()
+            raise
+        return device
+
+    @callback
+    @override
+    def async_add_listener(
+        self, update_callback: CALLBACK_TYPE, context: object = None
+    ) -> Callable[[], None]:
+        """Listen for updates, timing the next one from now.
+
+        The first listener schedules the next update, which can be a while after the
+        last one finished, such as at setup while other devices are still asked.
+        """
+        self.update_interval = (
+            self._next_interval(self.data)
+            if self._timed and self.data is not None
+            else self._configured_interval()
         )
-        # Its token may have made Google's list be fetched, and Google reject the
-        # master token
-        self.config_entry.runtime_data.account.async_ask_to_sign_in_if_rejected()
-        return device if device is self._listed() else None
+        return super().async_add_listener(update_callback, context)
 
     @callback
     def async_unlisted(self) -> None:
         """Show that Google no longer lists the device."""
         self.info_answered = None
+        self._timed = False
         if self.data is not None:
+            self.update_interval = self._configured_interval()
             self.async_set_updated_data(None)
