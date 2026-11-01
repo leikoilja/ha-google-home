@@ -208,7 +208,7 @@
         "already-tracked": "Ezt az eszközt már követi az integráció."
       },
       "abort": {
-        "bluetooth-tracking-off": "A Bluetooth-követés ki van kapcsolva. Először kapcsolja be az integráció beállításaiban: válassza a „Konfigurálás” lehetőséget az integráció oldalán."
+        "bluetooth-tracking-off": "A Bluetooth-követés ki van kapcsolva. Először kapcsolja be az integráció opcióiban: válassza a „Konfigurálás” lehetőséget az integráció oldalán."
       }
     }
   },

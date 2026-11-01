@@ -208,7 +208,7 @@
         "already-tracked": "Toto zařízení se už sleduje."
       },
       "abort": {
-        "bluetooth-tracking-off": "Sledování přes Bluetooth je vypnuté. Nejprve ho zapněte v možnostech integrace: na stránce integrace vyberte „Nastavit“."
+        "bluetooth-tracking-off": "Sledování přes Bluetooth je vypnuté. Nejprve ho zapněte ve volbách integrace: na stránce integrace vyberte „Nastavit“."
       }
     }
   },
