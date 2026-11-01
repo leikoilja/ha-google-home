@@ -157,6 +157,26 @@
       "message": "Desse einingane stadfesta ikkje at dei vil starte på nytt: {devices}. Kontroller at einingane er på nett, og prøv igjen seinare."
     }
   },
+  "issues": {
+    "polling_disabled": {
+      "title": "Polling av oppdateringar er slått av",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Polling av oppdateringar er slått av",
+            "description": "**Enable polling for changes** er slått av i systemvala for integrasjonen, så integrasjonen sjekkar ikkje einingane dine på eiga hand. Alarmar, tidtakarar og andre entitetar blir berre oppdaterte når du ber om det, til dømes med handlinga **Oppdater einingar**. Sjå kva som framleis fungerer, her: {docs_url}.\n\nOm du slår polling på igjen, blir integrasjonen lasta inn på nytt, og deretter sjekkar integrasjonen einingane dine med oppdateringsintervallet. Om du lèt polling vere slått av, blir denne reparasjonen gøymd til du slår polling på og deretter av igjen.",
+            "menu_options": {
+              "turn_on": "Slå polling på igjen",
+              "keep_off": "La polling vere av og gøym denne reparasjonen"
+            }
+          }
+        },
+        "abort": {
+          "polling_kept_off": "Polling blir verande av, og denne reparasjonen er gøymd."
+        }
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {

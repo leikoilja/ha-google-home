@@ -157,6 +157,26 @@
       "message": "Aquests dispositius no han confirmat que es reiniciaran: {devices}. Comprova que estiguin en línia i torna-ho a provar més tard."
     }
   },
+  "issues": {
+    "polling_disabled": {
+      "title": "El sondeig per obtenir canvis està desactivat",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "El sondeig per obtenir canvis està desactivat",
+            "description": "L'opció **Activa el sondeig per obtenir canvis** està desactivada a les opcions de sistema de la integració, de manera que la integració no consulta els teus dispositius per si mateixa. Les alarmes, els temporitzadors i les altres entitats només s'actualitzen quan ho demanes, per exemple amb l'acció **Actualitza dispositius**. Per saber què continua funcionant, consulta {docs_url} (en anglès).\n\nSi tornes a activar el sondeig, la integració es torna a carregar i després consulta els teus dispositius segons el seu interval d'actualització. Si el mantens desactivat, aquesta reparació s'amaga fins que activis el sondeig i el tornis a desactivar.",
+            "menu_options": {
+              "turn_on": "Torna a activar el sondeig",
+              "keep_off": "Mantén el sondeig desactivat i amaga aquesta reparació"
+            }
+          }
+        },
+        "abort": {
+          "polling_kept_off": "El sondeig continua desactivat i aquesta reparació s'ha amagat."
+        }
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {

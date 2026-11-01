@@ -157,6 +157,26 @@
       "message": "De volgende apparaten hebben niet bevestigd dat ze herstarten: {devices}. Controleer of de apparaten online zijn en probeer het later opnieuw."
     }
   },
+  "issues": {
+    "polling_disabled": {
+      "title": "Polling voor wijzigingen is uitgeschakeld",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Polling voor wijzigingen is uitgeschakeld",
+            "description": "De optie **Schakel polling voor wijzigingen in** staat uit in de systeeminstellingen van de integratie, dus de integratie controleert je apparaten niet uit zichzelf. Alarmen, timers en andere entiteiten worden alleen bijgewerkt als je erom vraagt, bijvoorbeeld met de actie **Apparaten verversen**. Raadpleeg {docs_url} om te zien wat nog werkt.\n\nAls je polling weer inschakelt, wordt de integratie opnieuw geladen en controleert ze daarna je apparaten volgens het update-interval. Als je polling uitgeschakeld laat, wordt deze reparatie verborgen totdat je polling in- en daarna weer uitschakelt.",
+            "menu_options": {
+              "turn_on": "Polling weer inschakelen",
+              "keep_off": "Polling uitgeschakeld laten en deze reparatie verbergen"
+            }
+          }
+        },
+        "abort": {
+          "polling_kept_off": "Polling blijft uitgeschakeld en deze reparatie is verborgen."
+        }
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {

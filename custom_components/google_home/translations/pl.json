@@ -157,6 +157,26 @@
       "message": "Te urządzenia nie potwierdziły, że uruchomią się ponownie: {devices}. Sprawdź, czy urządzenia są online, i spróbuj ponownie później."
     }
   },
+  "issues": {
+    "polling_disabled": {
+      "title": "Cykliczne odpytywanie jest wyłączone",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Cykliczne odpytywanie jest wyłączone",
+            "description": "Opcja **Włącz cykliczne odpytywanie** jest wyłączona w opcjach systemowych integracji, więc integracja nie sprawdza Twoich urządzeń samodzielnie. Alarmy, timery i inne encje aktualizują się tylko na Twoje żądanie, na przykład za pomocą akcji **Odśwież urządzenia**. Informacje o tym, co nadal działa, znajdziesz tutaj: {docs_url}.\n\nJeśli ponownie włączysz odpytywanie, integracja zostanie wczytana ponownie, a potem będzie sprawdzać Twoje urządzenia zgodnie z interwałem aktualizacji. Jeśli pozostawisz je wyłączone, ten problem będzie ukryty, dopóki nie włączysz odpytywania i nie wyłączysz go ponownie.",
+            "menu_options": {
+              "turn_on": "Włącz ponownie odpytywanie",
+              "keep_off": "Pozostaw odpytywanie wyłączone i ukryj ten problem"
+            }
+          }
+        },
+        "abort": {
+          "polling_kept_off": "Odpytywanie pozostaje wyłączone, a ten problem został ukryty."
+        }
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {

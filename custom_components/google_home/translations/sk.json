@@ -157,6 +157,26 @@
       "message": "Nasledujúce zariadenia nepotvrdili, že sa reštartujú: {devices}. Skontrolujte, či sú zariadenia online, a skúste to znova neskôr."
     }
   },
+  "issues": {
+    "polling_disabled": {
+      "title": "Dotazovanie na zmeny je vypnuté",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Dotazovanie na zmeny je vypnuté",
+            "description": "Možnosť **Povolenie dotazovania na zmeny** je v možnostiach systému integrácie vypnutá, takže integrácia vaše zariadenia sama nekontroluje. Budíky, časovače a ďalšie entity sa aktualizujú, len keď o to požiadate, napríklad akciou **Obnoviť zariadenia**. Čo naďalej funguje, nájdete tu: {docs_url}.\n\nAk dotazovanie znova zapnete, integrácia sa znova načíta a potom bude zariadenia kontrolovať v nastavenom intervale aktualizácie. Ak ho necháte vypnuté, táto oprava zostane skrytá, kým dotazovanie nezapnete a znova nevypnete.",
+            "menu_options": {
+              "turn_on": "Znova zapnúť dotazovanie",
+              "keep_off": "Nechať dotazovanie vypnuté a skryť túto opravu"
+            }
+          }
+        },
+        "abort": {
+          "polling_kept_off": "Dotazovanie zostáva vypnuté a táto oprava je skrytá."
+        }
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {

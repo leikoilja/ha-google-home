@@ -157,6 +157,26 @@
       "message": "Die folgenden Geräte haben nicht bestätigt, dass sie neu starten: {devices}. Prüfe, ob sie online sind, und versuche es später erneut."
     }
   },
+  "issues": {
+    "polling_disabled": {
+      "title": "Abfrage von Änderungen ist deaktiviert",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Abfrage von Änderungen ist deaktiviert",
+            "description": "**Abfrage von Änderungen aktivieren** ist in den Systemoptionen der Integration deaktiviert, daher fragt die Integration deine Geräte nicht selbstständig ab. Wecker, Timer und andere Entitäten werden nur aktualisiert, wenn du es anforderst, zum Beispiel mit der Aktion **Geräte aktualisieren**. Was weiterhin funktioniert, erfährst du unter {docs_url}.\n\nWenn du die Abfrage wieder aktivierst, wird die Integration neu geladen und fragt deine Geräte danach im eingestellten Aktualisierungsintervall ab. Wenn du sie deaktiviert lässt, wird diese Reparatur ausgeblendet, bis du die Abfrage aktivierst und dann wieder deaktivierst.",
+            "menu_options": {
+              "turn_on": "Abfrage wieder aktivieren",
+              "keep_off": "Abfrage deaktiviert lassen und diese Reparatur ausblenden"
+            }
+          }
+        },
+        "abort": {
+          "polling_kept_off": "Die Abfrage bleibt deaktiviert und diese Reparatur ist ausgeblendet."
+        }
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {

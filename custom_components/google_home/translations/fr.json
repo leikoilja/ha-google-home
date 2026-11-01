@@ -157,6 +157,26 @@
       "message": "Les appareils suivants n'ont pas confirmé qu'ils vont redémarrer : {devices}. Vérifiez qu'ils sont en ligne et réessayez plus tard."
     }
   },
+  "issues": {
+    "polling_disabled": {
+      "title": "L'interrogation périodique des changements est désactivée",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "L'interrogation périodique des changements est désactivée",
+            "description": "L'option **Activer l'interrogation périodique des changements** est désactivée dans les options système de l'intégration : l'intégration n'interroge donc pas vos appareils d'elle-même. Les alarmes, les minuteurs et les autres entités ne sont mis à jour que lorsque vous le demandez, par exemple avec l'action **Actualiser les appareils**. Pour savoir ce qui fonctionne toujours, consultez {docs_url}.\n\nSi vous réactivez l'interrogation périodique, l'intégration est rechargée, puis interroge vos appareils selon son intervalle de mise à jour. Si vous la laissez désactivée, cette correction est masquée jusqu'à ce que vous réactiviez l'interrogation périodique puis la désactiviez de nouveau.",
+            "menu_options": {
+              "turn_on": "Réactiver l'interrogation périodique",
+              "keep_off": "Laisser l'interrogation désactivée et masquer cette correction"
+            }
+          }
+        },
+        "abort": {
+          "polling_kept_off": "L'interrogation périodique reste désactivée et cette correction est masquée."
+        }
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {
