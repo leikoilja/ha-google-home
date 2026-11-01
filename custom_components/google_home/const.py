@@ -131,8 +131,9 @@ SUPPORT_CHECK_DELAY: Final = 10 * 60  # sec
 # Bluetooth scans of the speakers, for Bluetooth tracking
 API_ENDPOINT_BLUETOOTH_SCAN: Final = "setup/bluetooth/scan"
 API_ENDPOINT_BLUETOOTH_RESULTS: Final = "setup/bluetooth/scan_results"
-# Bluetooth tracking, in seconds unless noted. Each scan lasts until the next
-# update, which reads its results and starts the next scan.
+# Bluetooth tracking, in seconds unless noted. Each update asks every speaker for
+# a scan of up to this long, and the next update reads its results and starts the
+# next scan.
 BLUETOOTH_SCAN_INTERVAL: Final = 30
 # Results read later than this after their scan started are discarded
 BLUETOOTH_MAX_RESULT_AGE: Final = 45

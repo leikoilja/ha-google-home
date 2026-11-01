@@ -14,6 +14,8 @@ It tells home from away, not which room you're in. Bluetooth signal strength cha
 
 The speakers start scanning once you've added the first device, and stop when you remove the last one.
 
+If you turn Bluetooth tracking off again, the devices you added stay, and their trackers show `unavailable` until you turn it back on. To stop tracking a device for good, delete it as described in [Add a device to track](#add-a-device-to-track).
+
 ## Add a device to track
 
 Give the device a name, such as _Alex's phone_, and enter either its IRK or its MAC address:
@@ -34,7 +36,7 @@ Every 30 seconds, each speaker reports what it heard since the last check and st
 | `home`        | A speaker heard the device in the last 90 seconds.                                                                                          |
 | `not_home`    | Every speaker has scanned without a break for the last 90 seconds, and none heard the device.                                               |
 | `unknown`     | Right after Home Assistant starts or the integration reloads, until the speakers have scanned long enough to tell. This takes 30-90 seconds. |
-| `unavailable` | A speaker has stopped answering for 5 minutes, so the integration can't tell whether the device is gone. See [Tracker is unavailable](#tracker-is-unavailable). |
+| `unavailable` | A speaker has stopped answering for 5 minutes, so the integration can't tell whether the device is gone. See [Tracker is unavailable](#tracker-is-unavailable). Also while Bluetooth tracking is off. |
 
 So a phone shows `home` within 60 seconds of arriving, and `not_home` 60 to 90 seconds after it leaves.
 
@@ -42,7 +44,7 @@ Starting as `unknown` after a restart keeps automations from seeing you leave an
 
 ## Tracker is unavailable
 
-A tracker shows `not_home` only when every speaker has answered for the last 90 seconds. Once a speaker has returned scan results, it counts until the integration reloads, for example when you change its options, or Home Assistant restarts. If it then stops answering, it might be the one that hears you, so the integration can't tell whether you left.
+A tracker shows `not_home` only when every speaker has answered for the last 90 seconds. That includes every speaker that has returned scan results since the integration last loaded, as long as Google lists it. If one of them stops answering, it might be the one that hears you, so the integration can't tell whether you left.
 
 While it can't tell, the tracker keeps its last state for 5 minutes, so a speaker that misses a scan or comes online doesn't make it flap. If you arrive in that time and only the silent speaker can hear you, `home` waits until another speaker hears you. After 5 minutes the tracker shows `unavailable`, and the integration logs a warning that names the speaker.
 
@@ -53,13 +55,15 @@ If that speaker is unplugged or out of service, tell the integration not to use 
 
 You can't delete a speaker that Google still lists in your home, even when it's offline, so excluding it is the way to stop it from blocking `not_home`.
 
+A silent speaker also stops blocking `not_home` once Google no longer lists it, for example after you remove it from the Google Home app. Reloading the integration (**Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**) or restarting Home Assistant has the same effect until the speaker answers again.
+
 Devices that don't support Bluetooth scans, such as a Chromecast Audio or an Android TV, are left out automatically. So is any device that hasn't returned scan results since the integration last loaded, for example because it was offline.
 
 ## Privacy
 
 - The IRKs and MAC addresses you enter are stored in Home Assistant's configuration, like the master token. The integration doesn't log them or show them in entity attributes.
 - The speakers hear every Bluetooth device nearby, including your neighbors'. The integration keeps only whether your tracked devices were heard. It doesn't store or log other addresses.
-- The scans run on your speakers and the results stay on your network. Nothing is sent to Google.
+- The integration gets the scan results from your speakers over your local network and doesn't send them anywhere.
 
 ## Known limitations
 

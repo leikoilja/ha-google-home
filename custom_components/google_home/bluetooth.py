@@ -2,10 +2,10 @@
 
 Each update reads the results of the scan that every speaker started in the
 previous update, then starts the next scan. A tracked device is home while a
-speaker heard it recently. It's away only when every speaker that has returned
-scan results since setup has scanned without a break for the whole presence
-window and none heard it: a speaker that stops answering can't confirm that a
-device is gone. Meanwhile the tracker keeps its last state for a few minutes,
+speaker heard it recently. It's away only when every speaker that Google lists
+and that has returned scan results since setup has scanned without a break for
+the whole presence window and none heard it: a speaker that stops answering
+can't confirm that a device is gone. Meanwhile the tracker keeps its last state for a few minutes,
 so a missed scan doesn't make it flap. A device that never returned results,
 such as a TV that refuses the connection instead of answering 404, can't keep
 trackers from showing away.
@@ -67,7 +67,8 @@ async def async_start_bluetooth_scan(
 ) -> None:
     """Start a Bluetooth scan that clears the results of the previous one.
 
-    The scan lasts until the next Bluetooth update reads its results.
+    The speaker scans for up to one update interval, then stops on its own, also
+    after the integration unloads. The next Bluetooth update reads the results.
     """
     await _async_bluetooth_request(
         session,

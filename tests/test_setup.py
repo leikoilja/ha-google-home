@@ -602,7 +602,7 @@ async def test_script_stops_at_action_when_setup_fails(
 
 
 @pytest.mark.usefixtures("google", "replies")
-# Bluetooth trackers need Bluetooth tracking on: see test_bluetooth.py
+# Bluetooth trackers need Bluetooth tracking on: see test_bluetooth_setup.py
 @pytest.mark.parametrize("platform", [p for p in PLATFORMS if p != DEVICE_TRACKER])
 async def test_entities(
     hass: HomeAssistant,
