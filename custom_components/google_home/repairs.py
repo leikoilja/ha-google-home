@@ -42,11 +42,12 @@ class PollingDisabledFlow(RepairsFlow):
 
         Not a finished fix, which Home Assistant would remove the repair for, so setup
         would show it again. Home Assistant keeps it hidden over restarts until setup
-        removes it, once polling is on, which may also have happened while the menu
-        was open.
+        removes it, once polling is on. If that happened while the menu was open, the
+        fix just finishes, as there's nothing left to hide.
         """
-        if ir.async_get(self.hass).async_get_issue(DOMAIN, ISSUE_POLLING_DISABLED):
-            ir.async_ignore_issue(self.hass, DOMAIN, ISSUE_POLLING_DISABLED, True)
+        if not ir.async_get(self.hass).async_get_issue(DOMAIN, ISSUE_POLLING_DISABLED):
+            return self.async_create_entry(data={})
+        ir.async_ignore_issue(self.hass, DOMAIN, ISSUE_POLLING_DISABLED, True)
         return self.async_abort(reason="polling_kept_off")
 
 

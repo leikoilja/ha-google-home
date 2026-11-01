@@ -26,7 +26,7 @@ While polling is off:
 - At an update, the integration also gets your devices from Google when it's due: if it last did at least 20 minutes before, or if mDNS found a Cast device that Google's list doesn't have at least 30 seconds before. Devices and homes that you add in or remove from the Google Home app change in Home Assistant only at these updates, as described in [Add a device](#add-a-device) and [Remove a device](#remove-a-device). A device that you removed goes once Google's list has lacked it at two of these updates in a row. To see a change straight away, reload the integration.
 - When a device's access token changes, usually within a day, the integration gets the new token from Google at the device's next update. If an action fails because the device rejected its token, run Refresh devices, then try the action again.
 
-This automation updates all your devices every 5 minutes. Replace the entity ID with one of your alarms or timers sensors:
+This automation updates your devices every 5 minutes. List the [device sensor](entities.md#device-sensor) of each device to update:
 
 ```yaml
 alias: Update Google Home devices
@@ -34,10 +34,14 @@ triggers:
   - trigger: time_pattern
     minutes: "/5"
 actions:
-  - action: google_home.refresh_devices
+  - action: homeassistant.update_entity
     target:
-      entity_id: sensor.kitchen_alarms
+      entity_id:
+        - sensor.kitchen_device
+        - sensor.living_room_device
 ```
+
+It uses `homeassistant.update_entity` rather than Refresh devices, which Home Assistant doesn't run while the sensors it targets are unavailable. When a device misses 5 updates in a row, for example while it's unplugged, its sensors become unavailable. A Refresh devices automation that targets them then updates no device at all, and with polling off nothing else makes them available again. `homeassistant.update_entity` updates the device of each entity you list, even one that's unavailable.
 
 While polling is off, **Settings** > **System** > **Repairs** shows **Polling for changes is turned off**. Select it, then choose:
 

@@ -313,7 +313,7 @@ async def test_keep_polling_off_once_turned_on(
     hass_ws_client: WebSocketGenerator,
     issue_registry: ir.IssueRegistry,
 ) -> None:
-    """Close the fix without an error when polling was turned on while it was open."""
+    """Finish the fix without saying polling stays off, if it was turned on meanwhile."""
     await set_up_without_polling(hass, config_entry)
     assert await async_setup_component(hass, "repairs", {})
     manager = repairs_flow_manager(hass)
@@ -327,10 +327,8 @@ async def test_keep_polling_off_once_turned_on(
         result["flow_id"], {"next_step_id": "keep_off"}
     )
 
-    assert (result["type"], result.get("reason")) == (
-        FlowResultType.ABORT,
-        "polling_kept_off",
-    )
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert not config_entry.pref_disable_polling
     assert issue_registry.async_get_issue(DOMAIN, ISSUE_ID) is None
 
 
