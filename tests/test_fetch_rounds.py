@@ -17,7 +17,8 @@ from requests.exceptions import ConnectionError as RequestsConnectionError
 # pylint: disable-next=wrong-import-order
 from homeassistant.core import HomeAssistant
 
-from .test_coordinators import BEDROOM, BEDROOM_ID, coordinators
+from .conftest import BEDROOM, BEDROOM_ID
+from .test_coordinators import coordinators
 from .test_missing_devices import LOCAL_AUTH_TOKEN, make_client, until
 from .test_token_rejected import accepting
 from .test_unsupported_devices import SPEAKER

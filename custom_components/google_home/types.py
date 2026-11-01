@@ -101,7 +101,7 @@ class GoogleHomeData:
 
     client: GlocaltokensApiClient
     account: GoogleAccountCoordinator
-    # By device ID, every device that Google has listed since setup
+    # By device ID, every device that Google has listed since setup, until removed
     devices: dict[str, GoogleHomeDeviceCoordinator]
 
 
