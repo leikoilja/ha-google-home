@@ -21,8 +21,11 @@ from .const import (
     API_ENDPOINT_ALARM_DELETE,
     API_ENDPOINT_ALARM_VOLUME,
     API_ENDPOINT_ALARMS,
+    API_ENDPOINT_BUILD_INFO,
     API_ENDPOINT_DO_NOT_DISTURB,
     API_ENDPOINT_REBOOT,
+    API_ENDPOINT_UPDATE_INFO,
+    FIRMWARE_CHECK_INTERVAL,
     HEADER_CAST_LOCAL_AUTH,
     HEADER_CONTENT_TYPE,
     JSON_ALARM,
@@ -49,6 +52,14 @@ from .models import GoogleHomeDevice
 from .types import AlarmJsonDict, JsonDict, TimerJsonDict
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
+
+# The fields of a device's build info that are kept: its versions and release channel
+BUILD_INFO_FIELDS = (
+    "cast_build_revision",
+    "system_build_number",
+    "release_track",
+    "preview_channel_state",
+)
 
 
 def answer_failure(
@@ -85,11 +96,12 @@ class GlocaltokensApiClient(GoogleAccountClient):
 
     async def update_device(
         self, device: GoogleHomeDevice, *, found_at_known_host: bool = False
-    ) -> None:
+    ) -> bool:
         """Ask a device on Google's list for its alarms, timers and settings, if it can be.
 
         With found_at_known_host, the device was just found at a known host, which
-        answered with its info.
+        answered with its info. Return whether the device was asked, which sets
+        whether it's reachable.
         """
         # Gives the user a warning if the device is offline
         if not device.ip_address:
@@ -104,11 +116,13 @@ class GlocaltokensApiClient(GoogleAccountClient):
                     ),
                     device.name,
                 )
-            return
-        if device.auth_token or device.alarms_unsupported:
-            await self.collect_data_from_endpoints(
-                device, found_at_known_host=found_at_known_host
-            )
+            return False
+        if not device.auth_token and not device.alarms_unsupported:
+            return False
+        await self.collect_data_from_endpoints(
+            device, found_at_known_host=found_at_known_host
+        )
+        return True
 
     async def collect_data_from_endpoints(
         self, device: GoogleHomeDevice, *, found_at_known_host: bool = False
@@ -216,6 +230,65 @@ class GlocaltokensApiClient(GoogleAccountClient):
         device.support_check_at = None
         self.unsupported_device_ids.add(device.device_id)
         return True
+
+    async def update_firmware(self, device: GoogleHomeDevice) -> None:
+        """Ask a device for its firmware when due, after update_device has asked it.
+
+        Only a device that update_device found reachable, so one that didn't answer
+        at this update gets no more requests. A check is due at most every
+        FIRMWARE_CHECK_INTERVAL, counted from the start of the last one, so a device
+        that fails isn't asked again until then. Its build info has its versions,
+        and its info without params whether an update is waiting; neither needs a
+        token. A device that doesn't answer the first isn't asked the second. Only
+        the version and release channel fields and the flag are kept: a field that
+        its info leaves out is unknown, and an answer other than its info keeps what
+        it said before.
+        """
+        now = monotonic()
+        if not device.reachable or (
+            device.firmware_checked_at is not None
+            and now < device.firmware_checked_at + FIRMWARE_CHECK_INTERVAL
+        ):
+            return
+        device.firmware_checked_at = now
+        assert device.ip_address is not None
+        try:
+            info = await async_get_device_info(
+                self._session, device.ip_address, endpoint=API_ENDPOINT_BUILD_INFO
+            )
+            if info is not None:
+                build_info = info.get("build_info")
+                device.build_info = (
+                    {
+                        field: build_info[field]
+                        for field in BUILD_INFO_FIELDS
+                        if field in build_info
+                    }
+                    if isinstance(build_info, dict)
+                    else None
+                )
+            info = await async_get_device_info(
+                self._session, device.ip_address, endpoint=API_ENDPOINT_UPDATE_INFO
+            )
+        except ClientError, TimeoutError:
+            _LOGGER.debug(
+                "%s didn't answer when asked for its firmware. Will check again in %d "
+                "minutes.",
+                device.name,
+                FIRMWARE_CHECK_INTERVAL // 60,
+                exc_info=True,
+            )
+            return
+        if info is not None:
+            has_update = info.get("has_update")
+            # Only the JSON true or false
+            device.has_update = has_update if isinstance(has_update, bool) else None
+        _LOGGER.debug(
+            "%s has firmware %s, update waiting: %s",
+            device.name,
+            device.sw_version,
+            device.has_update,
+        )
 
     async def update_alarms_and_timers(
         self, device: GoogleHomeDevice, *, polling: bool = True

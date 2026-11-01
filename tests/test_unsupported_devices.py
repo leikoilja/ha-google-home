@@ -10,13 +10,16 @@ from aiohttp import ContentTypeError
 import pytest
 
 from custom_components.google_home.api import GlocaltokensApiClient
+from custom_components.google_home.binary_sensor import FirmwareUpdateBinarySensor
 from custom_components.google_home.button import RebootButton
 from custom_components.google_home.const import (
     API_ENDPOINT_ALARM_VOLUME,
     API_ENDPOINT_ALARMS,
+    API_ENDPOINT_BUILD_INFO,
     API_ENDPOINT_DO_NOT_DISTURB,
     API_ENDPOINT_EUREKA_INFO,
     API_ENDPOINT_REBOOT,
+    API_ENDPOINT_UPDATE_INFO,
 )
 from custom_components.google_home.entity import GoogleHomeBaseEntity
 from custom_components.google_home.exceptions import AlarmsAndTimersNotFetched
@@ -45,12 +48,16 @@ VOLUME = "alarm volume"
 DND = "Do Not Disturb"
 INFO = "info"
 REBOOT = "reboot"
+BUILD = "build info"
+UPDATE = "update info"
 ENDPOINTS = {
     API_ENDPOINT_ALARMS: ALARMS,
     API_ENDPOINT_ALARM_VOLUME: VOLUME,
     API_ENDPOINT_DO_NOT_DISTURB: DND,
     API_ENDPOINT_EUREKA_INFO: INFO,
     API_ENDPOINT_REBOOT: REBOOT,
+    API_ENDPOINT_BUILD_INFO: BUILD,
+    API_ENDPOINT_UPDATE_INFO: UPDATE,
 }
 # What every update asks a device
 EVERYTHING = [ALARMS, VOLUME, DND]
@@ -73,9 +80,13 @@ FEATURES: list[type[GoogleHomeBaseEntity]] = [
     DoNotDisturbSwitch,
     AlarmVolumeNumber,
 ]
-ALWAYS: list[type[GoogleHomeBaseEntity]] = [GoogleHomeDeviceSensor, RebootButton]
+ALWAYS: list[type[GoogleHomeBaseEntity]] = [
+    GoogleHomeDeviceSensor,
+    RebootButton,
+    FirmwareUpdateBinarySensor,
+]
 FEATURE_LABELS = {"alarms", "timers", "Do Not Disturb", "alarm volume"}
-ALWAYS_LABELS = {"device", "reboot"}
+ALWAYS_LABELS = {"device", "reboot", "firmware update"}
 
 
 def info(**capabilities: object) -> tuple[HTTPStatus, object]:
@@ -92,6 +103,34 @@ def info(**capabilities: object) -> tuple[HTTPStatus, object]:
     }
 
 
+def build_info(cast: str, system: str) -> tuple[HTTPStatus, object]:
+    """Return a device's build info with these Cast and system versions, as it sends it."""
+    return HTTPStatus.OK, {
+        "build_info": {
+            "build_type": 2,
+            "cast_build_revision": cast,
+            "cast_control_version": 1,
+            "preview_channel_state": 0,
+            "release_track": "stable-channel",
+            "system_build_number": system,
+        }
+    }
+
+
+def update_info(has_update: object) -> tuple[HTTPStatus, object]:
+    """Return a device's info without params, with a few invented fields and this flag."""
+    return HTTPStatus.OK, {
+        "name": "Speaker",
+        "cast_build_revision": "3.77.512345",
+        "has_update": has_update,
+        "uptime": 1234.5,
+    }
+
+
+# A speaker's invented firmware: its system build number is the last part of its
+# Cast version
+SPEAKER_BUILD = build_info("3.77.512345", "512345")
+
 # A Google or Nest speaker
 SUPPORTED: dict[str, Reply] = {
     ALARMS: (
@@ -105,6 +144,8 @@ SUPPORTED: dict[str, Reply] = {
     DND: (HTTPStatus.OK, {"notifications_enabled": False}),
     INFO: info(assistant_supported=True),
     REBOOT: (HTTPStatus.OK, {}),
+    BUILD: SPEAKER_BUILD,
+    UPDATE: update_info(False),
 }
 # As a Chromecast Audio answers: "not found" for alarms and their settings, and
 # info that leaves out assistant_supported
@@ -114,6 +155,8 @@ NO_ALARMS: dict[str, Reply] = {
     DND: HTTPStatus.NOT_FOUND,
     INFO: info(),
     REBOOT: (HTTPStatus.OK, {}),
+    BUILD: build_info("1.55.123456", "123456"),
+    UPDATE: update_info(False),
 }
 
 
@@ -256,12 +299,11 @@ def test_stop_asking_device_without_alarms(clock: Mock) -> None:
     add_features, features_added = add_entities(coordinator, *FEATURES)
     _, always_added = add_entities(coordinator, *ALWAYS, needs_answer=False)
     assert {device_id for device_id, _ in features_added()} == {"device1"}
-    assert sorted(always_added()) == [
-        ("device0", "device"),
-        ("device0", "reboot"),
-        ("device1", "device"),
-        ("device1", "reboot"),
-    ]
+    assert sorted(always_added()) == sorted(
+        (device_id, label)
+        for device_id in ("device0", "device1")
+        for label in ALWAYS_LABELS
+    )
 
     # Before 10 minutes, it may be starting
     for seconds in (at(3), at(9, 59)):
@@ -653,7 +695,9 @@ def test_dont_ask_again_when_google_lists_device_again(clock: Mock) -> None:
     assert sorted(features_added()) == sorted(
         ("device1", label) for label in FEATURE_LABELS
     )
-    assert sorted(always_added()) == [("device1", "device"), ("device1", "reboot")]
+    assert sorted(always_added()) == sorted(
+        ("device1", label) for label in ALWAYS_LABELS
+    )
 
     # Reloading checks it again, after the 10 minutes
     client = reload(network, SPEAKER, OTHER)

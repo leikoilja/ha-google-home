@@ -10,8 +10,11 @@ Each Google Home device gets the entities below. The examples use a device named
 | Do Not Disturb switch | `switch.living_room_do_not_disturb` | Turns Do Not Disturb on or off                            |
 | Alarm volume          | `number.living_room_alarm_volume`   | Sets the alarm volume, from 0 to 100%                     |
 | Reboot button         | `button.living_room_reboot`         | Reboots the device                                        |
+| Update sensor         | `binary_sensor.living_room_update`  | Whether the device says a firmware update is waiting      |
 
-The alarms sensor, timers sensor, switch and alarm volume are added once the device answers successfully. If a device has only a device sensor and a reboot button, see [No alarms or timers sensors](troubleshooting.md#no-alarms-or-timers-sensors). A device without alarms and timers, such as a Chromecast Audio, doesn't get these four entities.
+The device page also shows the device's [firmware version](#firmware-version).
+
+The alarms sensor, timers sensor, switch and alarm volume are added once the device answers successfully. If a device has only a device sensor, a reboot button and an update sensor, see [No alarms or timers sensors](troubleshooting.md#no-alarms-or-timers-sensors). A device without alarms and timers, such as a Chromecast Audio, doesn't get these four entities.
 
 Entities become unavailable, for example, while a device is unplugged or after you remove it from the Google Home app. See [When entities are unavailable](#when-entities-are-unavailable).
 
@@ -87,6 +90,7 @@ The state is the device's IP address on your network. If no IP address is availa
 | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `device_id`   | Google's ID for the device                                                                                                                                                                                           |
 | `device_name` | Name of the device in the Google Home app                                                                                                                                                                            |
+| `home`        | Name of the device's home in the Google Home app. `None` if the home has no name. A renamed home's new name shows once the integration next gets your device list from Google, usually within about 20 minutes.      |
 | `ip_address`  | IP address of the device                                                                                                                                                                                             |
 | `available`   | `true` if, at the last update, the device answered successfully when asked for its alarms, or else when asked for its information, which needs no token. `false` otherwise, for example while the device is offline. |
 | `auth_token`  | Token Home Assistant uses to talk to the device                                                                                                                                                                      |
@@ -121,18 +125,39 @@ The button's state is the time it was last pressed in Home Assistant, not when t
 
 Home Assistant keeps this time when it restarts. If the button is unavailable when Home Assistant stops, for example while the device is unplugged, the time is lost: once the button is available again, its state is `unknown` until the next press.
 
+## Update sensor
+
+The sensor is on, shown as **Update available**, when the device says that a firmware update is waiting to be installed, and off, shown as **Up-to-date**, when it says there's none. It's unknown until the device has said, and becomes unknown if the device answers with its information but without saying. If the request fails, for example because the device doesn't answer it, the sensor keeps its last state. It appears under **Diagnostic** on the device page. Like the device sensor, it's unavailable while Home Assistant doesn't know the device's IP address.
+
+The sensor shows only what the device itself reports. The integration doesn't compare the device's [firmware version](#firmware-version) with the versions Google publishes; to check, compare them yourself. It can't install updates either: Google installs them on its devices by itself. Before you rely on the sensor, for example in an automation, be aware that:
+
+- Google doesn't document what the device's report means. Google releases each update in stages, so a device may report no update while other devices already run a newer version; Google's page lists a version only once every device can get it. A device in Google's preview program may also not report preview updates.
+- So far, no device has been seen reporting an update, so it isn't known how long before installing an update a device reports it.
+
+The integration checks each device at its first [update](configuration.md#change-the-update-interval) after Home Assistant starts or the integration reloads, then at the first update at least 20 minutes after the previous check started. A device that doesn't answer at an update isn't checked at that update. Each successful check shows what the device says then. A check that fails keeps the last values and waits 20 minutes, so new values can take longer to appear, as they do with a longer update interval. Running [Refresh devices](actions.md#refresh-devices) doesn't check sooner.
+
+## Firmware version
+
+The device page shows the device's firmware version next to **Firmware**, in the form Google lists it:
+
+- For a speaker, its Cast firmware version, such as `3.77.512345`, as on [Google's Nest firmware versions page](https://support.google.com/googlenest/answer/7365257).
+- For a display, such as a Nest Hub, its system firmware version, such as `31.20260101.103.1234567`, as on the same page.
+- For a Chromecast Audio, its Cast firmware version, such as `1.56.123456`, as on [Google's Chromecast firmware versions page](https://support.google.com/chromecast/answer/7124014).
+
+The integration checks it together with the [update sensor](#update-sensor), and the page shows a new version after the next successful check. While the integration doesn't know the version, for example while the device is offline after Home Assistant starts, the page shows the last version it knew.
+
 ## When entities are unavailable
 
 All entities of a device are unavailable:
 
 - Once Google no longer lists the device, for example after you remove it from the Google Home app, until the integration removes the device. See [Remove a device](configuration.md#remove-a-device).
-- Once the device hasn't answered 5 [updates](configuration.md#change-the-update-interval) in a row, for example while it's unplugged. At the default 15-second interval, that's usually after one to two minutes. With a shorter interval, a speaker that restarts can miss 5 updates and become unavailable for a moment; with a longer one, it takes longer to notice. A [device without alarms and timers](troubleshooting.md#devices-without-alarms-and-timers) is asked only for its information at each update, and its device sensor and reboot button follow its answers the same way.
+- Once the device hasn't answered 5 [updates](configuration.md#change-the-update-interval) in a row, for example while it's unplugged. At the default 15-second interval, that's usually after one to two minutes. With a shorter interval, a speaker that restarts can miss 5 updates and become unavailable for a moment; with a longer one, it takes longer to notice. A [device without alarms and timers](troubleshooting.md#devices-without-alarms-and-timers) is asked only for its information at each update, and its device sensor, reboot button and update sensor follow its answers the same way.
 - After the device's update fails unexpectedly, for example on a reply the integration can't read, until its next update. Once the integration has started, this affects only that device. While the integration is starting, such an error stops it from starting, and Home Assistant tries again later. When the integration can't get your device list from Google, the devices keep updating with the tokens and addresses they have, and their entities stay available.
 
 Some entities are also unavailable on their own:
 
 - On a [device without alarms and timers](troubleshooting.md#devices-without-alarms-and-timers), such as a Chromecast Audio, the alarms sensor, timers sensor, switch and alarm volume, if it had them. Reloading the integration or restarting Home Assistant brings them back only if the device then answers for these features.
-- The device sensor and reboot button, while Home Assistant doesn't know the device's IP address.
+- The device sensor, reboot button and update sensor, while Home Assistant doesn't know the device's IP address.
 
 Entities that became unavailable because the device didn't answer are available again at the next update the device answers with anything other than "not found". A speaker that is starting answers "not found" for a while, so they stay unavailable until then. Being available again doesn't always mean new values: if the device rejects its token and Google gives no new one, or answers with another error, they show the values they had. See [Alarms, timers or settings stop changing](troubleshooting.md#alarms-timers-or-settings-stop-changing).
 
@@ -167,8 +192,8 @@ After you confirm, update the automations, scripts and manually configured dashb
 
 ## Entity names in other languages
 
-Home Assistant shows these entities' names in its language, such as _Wecker_ for the alarms sensor in German, or in English where a translation is missing. To correct a translation, see [Translate the integration](contributing.md#translate-the-integration).
+Home Assistant shows these entities' names in its language, such as _Wecker_ for the alarms sensor in German, or in English where a translation is missing. To correct a translation, see [Translate the integration](contributing.md#translate-the-integration). The update sensor's name is Home Assistant's own name for update sensors, which Home Assistant translates itself.
 
-In Catalan, Czech, Danish, Dutch, Finnish, French, German, Hungarian, Indonesian, Italian, Norwegian, Polish, Portuguese, Romanian, Slovak, Spanish and Swedish, Home Assistant also builds new entity IDs from the translated names. In German, the alarms sensor of a new device named _Living Room_ gets `sensor.living_room_wecker`. In other languages, such as Russian or Japanese, entity IDs use the English names, as in the table at the top of this page. What counts is the language set for Home Assistant itself, not the language in your user profile.
+In Catalan, Czech, Danish, Dutch, Finnish, French, German, Hungarian, Indonesian, Italian, Norwegian, Polish, Portuguese, Romanian, Slovak, Spanish and Swedish, Home Assistant also builds new entity IDs from the translated names. In German, the alarms sensor of a new device named _Living Room_ gets `sensor.living_room_wecker`. In other languages, such as Russian or Japanese, entity IDs use the English names, as in the table at the top of this page. The update sensor follows Home Assistant's own translation instead, so in some other languages, such as Lithuanian, its entity ID is translated while the others are in English. What counts is the language set for Home Assistant itself, not the language in your user profile.
 
 Entities you already have keep their entity IDs in every language. In the languages listed above, a new device's entity IDs can then differ from those of your other devices, and [Recreate entity IDs](#room-name-twice-in-entity-ids) changes the existing ones to the translated names too, unless you gave an entity a name of your own. Check the list of changes before you confirm.

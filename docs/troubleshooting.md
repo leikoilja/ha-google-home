@@ -5,7 +5,7 @@ Find what you see, then start with the first check in its section:
 - [Adding the integration shows an error](#setup-fails)
 - [Home Assistant says that authentication expired](#sign-in-again), or [signing in again fails](#signing-in-again-fails)
 - [The integration shows no devices](#no-devices-appear)
-- [A device has only a device sensor and a reboot button](#no-alarms-or-timers-sensors)
+- [A device has only a device sensor, a reboot button and an update sensor](#no-alarms-or-timers-sensors)
 - [All entities of a device are unavailable](#all-entities-of-a-device-are-unavailable)
 - [A device's alarms, timers or settings stop changing](#alarms-timers-or-settings-stop-changing)
 - [Deleting an alarm or timer, rebooting or changing a setting shows an error](#an-action-or-setting-fails)
@@ -86,7 +86,7 @@ Once the cause is fixed, you can reload the integration to ask Google straight a
 
 ### No alarms or timers sensors
 
-The integration adds the alarms sensor, timers sensor, Do Not Disturb switch and alarm volume for a device once the device answers successfully. Until then, a device that is offline, or that doesn't support these features, has only a device sensor and a reboot button. Check the device sensor:
+The integration adds the alarms sensor, timers sensor, Do Not Disturb switch and alarm volume for a device once the device answers successfully. Until then, a device that is offline, or that doesn't support these features, has only a device sensor, a reboot button and an update sensor. Check the device sensor:
 
 - **It shows an IP address:** the entities appear at the next update the device answers successfully. If they don't, the device may have [no alarms and timers](#devices-without-alarms-and-timers).
 - **It's unavailable on all your devices:** first check that Home Assistant can reach them on your network; see [Home Assistant can't reach your devices](#device-offline-or-not-compatible). For other causes, see [When entities are unavailable](entities.md#when-entities-are-unavailable).
@@ -96,7 +96,7 @@ If you don't want to wait, make sure the device is online, then reload the integ
 
 #### Devices without alarms and timers
 
-Some Cast devices, such as Chromecast Audio, have no alarms, timers, Do Not Disturb or alarm volume. Such a device keeps only its device sensor and reboot button. If it had the other entities, they become unavailable.
+Some Cast devices, such as Chromecast Audio, have no alarms, timers, Do Not Disturb or alarm volume. Such a device keeps only its device sensor, reboot button and update sensor. If it had the other entities, they become unavailable.
 
 If this happens to a device that has alarms and timers, or a device gains these features, make sure the device is online, then reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. The integration adds the entities once the device answers for them. The integration checks the device again only when it starts, after you reload it or restart Home Assistant, so restarting the device or running `google_home.refresh_devices` doesn't bring them back.
 
@@ -104,7 +104,7 @@ If this happens to a device that has alarms and timers, or a device gains these 
 
     The integration finds that a device has none of these features from how it answers, not from a list of models: the device still answers "not found" when asked for its alarms at least 10 minutes after it first did, and its information lists its features without Google Assistant. A device that is starting answers "not found" for a while too, so until both are true, the integration keeps asking the device for alarms at every update, even while it doesn't answer. After a reload, a device that still answers this way is recognized again at least 10 minutes later.
 
-    Once it has recognized such a device, it asks the device only for its information at each update, to see whether it answers; see [When entities are unavailable](entities.md#when-entities-are-unavailable). A firmware update that adds these features doesn't make it check again; reload the integration.
+    Once it has recognized such a device, it asks the device only for its information at each update, to see whether it answers, and every 20 minutes for its firmware; see [When entities are unavailable](entities.md#when-entities-are-unavailable). A firmware update that adds these features doesn't make it check again; reload the integration.
 
     When the integration stops asking a device, the [debug log](#collect-debug-logs) shows a line like this, with your device's name and model:
 
@@ -114,7 +114,7 @@ If this happens to a device that has alarms and timers, or a device gains these 
 
 ### Home Assistant can't reach your devices {#device-offline-or-not-compatible}
 
-If all your devices have only a device sensor and a reboot button, and both are unavailable, or all their entities became unavailable after they worked, first check that Home Assistant can find and reach the devices on your network. Entities can also be unavailable for other reasons, for example once Google no longer lists a device; see [When entities are unavailable](entities.md#when-entities-are-unavailable).
+If all your devices have only a device sensor, a reboot button and an update sensor, and all three are unavailable, or all their entities became unavailable after they worked, first check that Home Assistant can find and reach the devices on your network. Entities can also be unavailable for other reasons, for example once Google no longer lists a device; see [When entities are unavailable](entities.md#when-entities-are-unavailable).
 
 The integration finds your devices with multicast DNS (mDNS) and then talks to them directly. Only signing in and getting device tokens go through Google. Check that:
 
@@ -198,7 +198,7 @@ Open **Settings** > **Devices & services** > **Google Home** to see why it isn't
 The diagnostics file shows:
 
 - The integration's options.
-- For each device: its model, whether it answers, whether Home Assistant has received its mDNS announcements since the integration loaded, and its last reply about alarms and timers, as the device sent it.
+- For each device: its model, whether it answers, whether Home Assistant has received its mDNS announcements since the integration loaded, its last reply about alarms and timers, as the device sent it, its firmware versions and release channel, and whether it says a firmware update is waiting.
 - How many other Cast devices on your network have announced themselves since the integration loaded but aren't in Google's device list, such as TVs with Chromecast built in, or speakers in another Google account. Only the number, not their names or addresses. Devices in homes that you [deselected](configuration.md#choose-homes) don't count.
 - When you downloaded it.
 
