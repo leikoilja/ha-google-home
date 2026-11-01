@@ -221,7 +221,9 @@ class GoogleHomeDeviceCoordinator(DataUpdateCoordinator[GoogleHomeDevice | None]
         if (version := device.sw_version) is None:
             return
         registry = dr.async_get(self.hass)
-        entry = registry.async_get_device(identifiers={(DOMAIN, self.device_id)})
+        entry = registry.async_get_device_by_identifier(
+            (DOMAIN, self.device_id), self.config_entry.entry_id
+        )
         if entry is not None and entry.sw_version != version:
             registry.async_update_device(entry.id, sw_version=version)
 

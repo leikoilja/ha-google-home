@@ -116,7 +116,7 @@ target:
   entity_id: sensor.kitchen_device
 ```
 
-Target any Google Home sensor of the device, such as its device sensor, or the device itself; see [Targets](#targets). To reboot from the device page or a dashboard, press the device's [reboot button](entities.md#reboot-button) instead.
+Target a Google Home sensor of the device, such as its device sensor, or the device itself; see [Targets](#targets). Its [update sensor](entities.md#update-sensor) doesn't work: it's a binary sensor, so naming it reboots nothing, and the log shows "Referenced entities binary_sensor.kitchen_update are missing or not currently available". To reboot from the device page or a dashboard, press the device's [reboot button](entities.md#reboot-button) instead.
 
 If a device doesn't confirm the reboot, for example because it has just gone offline, the action fails with an error that names the device and says why. A device whose sensors are [unavailable](#unavailable-sensors), for example once it hasn't answered 5 updates in a row, is skipped without an error. With several devices, the action reboots every device that answers, then fails with one error that names every device that didn't confirm. See [A setting or reboot fails](troubleshooting.md#a-setting-or-reboot-fails), and to let your automation carry on, [Continue after an error](#continue-after-an-error).
 
@@ -144,7 +144,7 @@ You can name sensors, as in the examples above, or target devices, areas, floors
 - **Reboot device** reboots each device once, however many of its sensors the target covers. It skips a device that has [only a device sensor](troubleshooting.md#no-alarms-or-timers-sensors), or whose alarms and timers sensors are both hidden or disabled. For a device without alarms, such as an NVIDIA Shield, or with hidden or disabled sensors, target its device sensor instead.
 - **Refresh devices** updates all devices once.
 
-For the four delete actions, naming another Google Home sensor fails, and nothing is deleted on any device, even if you also name the right sensor. For example, Delete alarm with `sensor.kitchen_timers` fails with "Entity sensor.kitchen_timers does not support action google_home.delete_alarm." So does a group or template that includes other Google Home sensors, such as `{{ integration_entities('google_home') }}`.
+For the four delete actions, naming another Google Home sensor, such as a device sensor, fails, and nothing is deleted on any device, even if you also name the right sensor. For example, Delete alarm with `sensor.kitchen_timers` fails with "Entity sensor.kitchen_timers does not support action google_home.delete_alarm." So does a group or template that includes other Google Home sensors, such as `{{ integration_entities('google_home') }}`. The [update sensor](entities.md#update-sensor) is different: it's a binary sensor, so the action ignores it and runs on the other sensors you name, and the log shows that the update sensor is missing or not currently available.
 
 The form for Delete alarm and Delete timer in **Tools** > **Actions** offers only the sensor. To target a device, use YAML. The device ID is the last part of the device page's address in Home Assistant.
 

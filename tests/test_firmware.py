@@ -94,11 +94,13 @@ async def test_device_page_shows_firmware(
     replies: Replies,
     clock: Mock,
     device_registry: dr.DeviceRegistry,
+    caplog: pytest.LogCaptureFixture,
 ) -> None:
     """Show the speaker's firmware version from setup, and a new one at the next check.
 
     Home Assistant reads it from the entities only when it adds them. A check that
-    gets no version keeps the one shown.
+    gets no version keeps the one shown. Looking the device up in the registry uses no
+    API that Home Assistant has deprecated.
     """
     await set_up(hass, config_entry)
     assert shown_firmware(device_registry, config_entry) == SHOWN
@@ -123,6 +125,15 @@ async def test_device_page_shows_firmware(
         assert speaker.data is not None
         assert speaker.data.sw_version == known
         assert shown_firmware(device_registry, config_entry) == "3.78.523456"
+
+    # Home Assistant warns once about each place where a custom integration calls an
+    # API that it deprecated, such as the registry's async_get_device
+    assert not [
+        record.getMessage()
+        for record in caplog.records
+        if record.name == "homeassistant.helpers.frame"
+        and "integration 'google_home'" in record.getMessage()
+    ]
 
 
 @pytest.mark.usefixtures("google")
