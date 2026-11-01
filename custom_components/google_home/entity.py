@@ -68,13 +68,17 @@ class GoogleHomeBaseEntity(CoordinatorEntity[GoogleHomeDeviceCoordinator], ABC):
     @property
     @override
     def device_info(self) -> DeviceInfo | None:
-        """Return device info."""
-        return DeviceInfo(
+        """Return device info, with the firmware version once the device has said it."""
+        info = DeviceInfo(
             identifiers={(DOMAIN, self.device_id)},
             name=self.device_name,
             manufacturer=MANUFACTURER,
             model=self.device_model,
         )
+        # Never None, which would clear the version that the device page shows
+        if (device := self.get_device()) is not None and device.sw_version is not None:
+            info.sw_version = device.sw_version
+        return info
 
     def get_device(self) -> GoogleHomeDevice | None:
         """Return the entity's device, if Google lists it."""

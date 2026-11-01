@@ -19,7 +19,8 @@ SENSOR: Final = "sensor"
 SWITCH: Final = "switch"
 NUMBER: Final = "number"
 BUTTON: Final = "button"
-PLATFORMS: Final = [SENSOR, SWITCH, NUMBER, BUTTON]
+BINARY_SENSOR: Final = "binary_sensor"
+PLATFORMS: Final = [SENSOR, SWITCH, NUMBER, BUTTON, BINARY_SENSOR]
 
 # Services
 SERVICE_REBOOT: Final = "reboot_device"
@@ -51,6 +52,7 @@ LABEL_TIMERS: Final = "timers"
 LABEL_DEVICE: Final = "device"
 LABEL_DO_NOT_DISTURB: Final = "Do Not Disturb"
 LABEL_REBOOT: Final = "reboot"
+LABEL_FIRMWARE_UPDATE: Final = "firmware update"
 
 # DEVICE PORT
 PORT: Final = 8443
@@ -64,6 +66,12 @@ API_ENDPOINT_DO_NOT_DISTURB: Final = "setup/assistant/notifications"
 # Answers without a local auth token, so it identifies a known host and shows
 # whether a device whose alarms answer "not found" has Google Assistant
 API_ENDPOINT_EUREKA_INFO: Final = "setup/eureka_info?params=name,device_info"
+# The device's firmware versions, which also answer without a token. A display's
+# system version is only here.
+API_ENDPOINT_BUILD_INFO: Final = "setup/eureka_info?params=build_info"
+# Without params, the info has whether the device has a firmware update waiting, which
+# no params give. It also has the device's network and location, which aren't kept.
+API_ENDPOINT_UPDATE_INFO: Final = "setup/eureka_info"
 
 # HEADERS
 HEADER_CAST_LOCAL_AUTH: Final = "cast-local-authorization-token"
@@ -116,6 +124,9 @@ FOUND_DEVICE_FETCH_GAP: Final = 5 * 60  # sec
 # to a device whose alarms keep answering "not found" but which reports Google
 # Assistant or gives no clear answer.
 SUPPORT_CHECK_DELAY: Final = 10 * 60  # sec
+# Ask a device for its firmware version and whether it has an update at most this
+# often, counted from the start of the last check. Firmware changes rarely.
+FIRMWARE_CHECK_INTERVAL: Final = 20 * 60  # sec
 
 # JSON parameter values when retrieving information from devices
 JSON_ALARM: Final = "alarm"
