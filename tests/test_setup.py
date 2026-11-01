@@ -72,6 +72,7 @@ DEVICE_SENSOR = "sensor.kitchen_speaker_device"
 ALARMS_SENSOR = "sensor.kitchen_speaker_alarms"
 DND_SWITCH = "switch.kitchen_speaker_do_not_disturb"
 VOLUME_NUMBER = "number.kitchen_speaker_alarm_volume"
+UPDATE_SENSOR = "binary_sensor.kitchen_speaker_update"
 # The speaker's entities and their states, as it answers in SUPPORTED: an alarm at
 # 1700000000 s, 22:13:20 UTC, shown in the tests' time zone US/Pacific, no timer,
 # which the timers sensor shows as unavailable, alarm volume 0.7, and notifications
@@ -83,9 +84,12 @@ STATES = {
     DND_SWITCH: STATE_ON,
     VOLUME_NUMBER: "70",
     "button.kitchen_speaker_reboot": STATE_UNKNOWN,
+    # Its info says no update is waiting
+    UPDATE_SENSOR: STATE_OFF,
 }
 # The icon that each entity has shown since before icons.json, in the states above.
-# The reboot button has none of its own: the frontend shows its icon for restart.
+# The reboot button and update sensor have none of their own: the frontend shows its
+# icons for restart and updates.
 ICONS = {
     DEVICE_SENSOR: "mdi:form-textbox-password",
     ALARMS_SENSOR: "mdi:alarm-multiple",
@@ -93,6 +97,7 @@ ICONS = {
     DND_SWITCH: "mdi:minus-circle",
     VOLUME_NUMBER: "mdi:volume-high",
     "button.kitchen_speaker_reboot": None,
+    UPDATE_SENSOR: None,
 }
 # The actions, each with data that it accepts
 ACTIONS: dict[str, dict[str, object]] = {
@@ -208,9 +213,13 @@ async def shown_icons(
     for entity_id in STATES:
         entry = entity_registry.async_get(entity_id)
         entity_state = hass.states.get(entity_id)
-        assert entry is not None and entry.translation_key is not None
-        assert entity_state is not None
-        icons = loaded.get(entry.domain, {}).get(entry.translation_key, EntityIcons())
+        assert entry is not None and entity_state is not None
+        # Without a translation key, it has no icons in icons.json
+        icons = (
+            loaded.get(entry.domain, {}).get(entry.translation_key, EntityIcons())
+            if entry.translation_key is not None
+            else EntityIcons()
+        )
         value = entity_state.state
         try:
             number: float | None = float(value)
@@ -256,10 +265,11 @@ async def test_setup(
         (DOMAIN, SPEAKER_ID), config_entry.entry_id
     )
     assert device is not None
-    assert (device.name, device.manufacturer, device.model) == (
+    assert (device.name, device.manufacturer, device.model, device.sw_version) == (
         SPEAKER_NAME,
         MANUFACTURER,
         "Nest Audio",
+        "3.77.512345",
     )
     assert {
         entity.entity_id: entity.device_id
