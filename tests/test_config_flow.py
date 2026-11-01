@@ -16,19 +16,21 @@ import logging
 from pathlib import Path
 from typing import cast
 from unittest.mock import AsyncMock, Mock, patch
+from urllib.parse import parse_qs
 
+from aiohttp import ClientConnectionError
 from ghome_foyer_api.api_pb2 import HomeGraph  # pylint: disable=no-name-in-module
+from glocaltokens.const import ACCESS_TOKEN_SERVICE
 from glocaltokens.exceptions import AuthenticationError, HomegraphError
+import gpsoauth
 import grpc  # type: ignore[import-untyped]
 import pytest
 from pytest_homeassistant.common import MockConfigEntry
-from requests import Response
-from requests.exceptions import (
-    ConnectionError as RequestsConnectionError,
-    HTTPError,
-    ReadTimeout,
-    RequestException,
+from pytest_homeassistant.test_util.aiohttp import (
+    AiohttpClientMocker,
+    AiohttpClientMockResponse,
 )
+from yarl import URL
 
 from custom_components.google_home.api import GlocaltokensApiClient
 from custom_components.google_home.config_flow import GoogleHomeFlowHandler
@@ -50,6 +52,8 @@ from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.service_info.zeroconf import ZeroconfServiceInfo
+
+from .test_missing_devices import answered
 
 # pylint: enable=wrong-import-order
 
@@ -74,20 +78,41 @@ def fixture_home_graph() -> Iterator[Mock]:
     Adding the integration asks for the account's homes after signing in.
     """
     with patch(
-        "glocaltokens.client.GLocalAuthenticationTokens.get_home_graph",
+        "glocaltokens.client.GLocalAuthenticationTokens.async_get_home_graph",
         autospec=True,
         return_value=HomeGraph(),
     ) as home_graph:
         yield home_graph
 
 
+@contextmanager
+def google_sign_in(exchange_token: Mock, perform_oauth: Mock) -> Iterator[None]:
+    """Answer glocaltokens' requests to Google's sign-in with what these give.
+
+    They answer, or raise, as gpsoauth's functions of the same name would, with the
+    email address, the cookie or master token, and the Android ID of the request:
+    exchange_token() for a master token, perform_oauth() for an access token.
+    """
+
+    async def auth_request(data: dict[str, str]) -> object:
+        if data["service"] == "ac2dm":
+            return exchange_token(data["Email"], data["Token"], data["androidId"])
+        return perform_oauth(data["Email"], data["EncryptedPasswd"], data["androidId"])
+
+    # Without autospec, so that a test can give other answers for a while
+    with patch(
+        "glocaltokens.client.GLocalAuthenticationTokens._async_auth_request",
+        side_effect=auth_request,
+    ):
+        yield
+
+
 @pytest.fixture(name="flow")
 def fixture_flow(create_session: Mock) -> GoogleHomeFlowHandler:
-    """Return a config flow with a fake Home Assistant that runs jobs inline."""
+    """Return a config flow with a fake Home Assistant."""
     hass = Mock()
     hass.data = {}
     hass.config_entries.async_entries.return_value = []
-    hass.async_add_executor_job = AsyncMock(side_effect=lambda func, *args: func(*args))
     # Home Assistant creates its shared session long before anyone signs in
     async_get_clientsession(hass)
     create_session.reset_mock()
@@ -109,7 +134,7 @@ def fixture_client() -> Iterator[Mock]:
         )
         client.return_value.async_get_access_token = AsyncMock(return_value="access")
         # Like glocaltokens, make up an Android ID only when it isn't given one
-        client.return_value.get_android_id = AsyncMock(
+        client.return_value.get_android_id = Mock(
             side_effect=lambda: (
                 client.call_args.kwargs.get("android_id") or "test-android-id"
             )
@@ -123,13 +148,8 @@ def test_browser_sign_in_with_glocaltokens(flow: GoogleHomeFlowHandler) -> None:
 
     The address is the one Google gives with the master token.
     """
-    with (
-        patch(
-            "glocaltokens.client.exchange_token",
-            return_value={"Token": MASTER_TOKEN, "Email": "test@example.com"},
-        ) as exchange,
-        patch("glocaltokens.client.perform_oauth", return_value={"Auth": "access"}),
-    ):
+    exchange = Mock(return_value={"Token": MASTER_TOKEN, "Email": "test@example.com"})
+    with google_sign_in(exchange, Mock(return_value={"Auth": "access"})):
         result = asyncio.run(
             flow.async_step_browser({"oauth_token": "oauth2_4/cookie"})
         )
@@ -148,10 +168,7 @@ def test_browser_sign_in_rejected_by_google(
     caplog: pytest.LogCaptureFixture,
 ) -> None:
     """Point out a cookie that Google refuses, logging its reason in one line."""
-    with patch(
-        "glocaltokens.client.exchange_token",
-        return_value={"Error": "BadAuthentication"},
-    ):
+    with google_sign_in(Mock(return_value={"Error": "BadAuthentication"}), Mock()):
         result = asyncio.run(
             flow.async_step_browser({"oauth_token": "oauth2_4/cookie"})
         )
@@ -169,10 +186,7 @@ def test_master_token_rejected_by_google(
     caplog: pytest.LogCaptureFixture,
 ) -> None:
     """Point out a master token that Google refuses, logging its reason in one line."""
-    with patch(
-        "glocaltokens.client.perform_oauth",
-        return_value={"Error": "BadAuthentication"},
-    ):
+    with google_sign_in(Mock(), Mock(return_value={"Error": "BadAuthentication"})):
         result = asyncio.run(
             flow.async_step_master_token({"master_token": MASTER_TOKEN})
         )
@@ -184,18 +198,28 @@ def test_master_token_rejected_by_google(
     create_session.assert_not_called()
 
 
+@pytest.mark.parametrize(
+    ("error", "logged"),
+    [
+        (ClientConnectionError("No network"), "No network"),
+        # aiohttp's timeout has no message
+        (TimeoutError(), "TimeoutError"),
+    ],
+)
 def test_sign_in_without_network(
-    flow: GoogleHomeFlowHandler, client: Mock, caplog: pytest.LogCaptureFixture
+    flow: GoogleHomeFlowHandler,
+    client: Mock,
+    caplog: pytest.LogCaptureFixture,
+    error: Exception,
+    logged: str,
 ) -> None:
     """Log the network error in one line when Google can't be reached."""
-    client.return_value.async_get_master_token.side_effect = RequestException(
-        "No network"
-    )
+    client.return_value.async_get_master_token.side_effect = error
 
     result = asyncio.run(flow.async_step_master_token({"master_token": MASTER_TOKEN}))
 
     assert result["errors"] == {"base": "google-unreachable"}
-    assert_logged_without_traceback(caplog, "Failed to sign in: No network")
+    assert_logged_without_traceback(caplog, f"Failed to sign in: {logged}")
 
 
 def assert_logged_without_traceback(
@@ -216,18 +240,19 @@ def assert_logged_without_traceback(
 @pytest.mark.parametrize(
     "error",
     [
-        RequestException("No network"),
+        ClientConnectionError("No network"),
+        TimeoutError(),
+        # Google's answer with the address isn't JSON
+        json.JSONDecodeError("Expecting value", "", 0),
         AuthenticationError("Google gave no master token", "BadAuthentication"),
     ],
 )
 def test_get_email_failure(error: Exception) -> None:
     """Treat a failed email lookup as no email address, so setup still succeeds."""
-    hass = Mock()
-    hass.async_add_executor_job = AsyncMock(side_effect=lambda func, *args: func(*args))
-    client = GlocaltokensApiClient(hass, Mock(), master_token=MASTER_TOKEN)
+    client = GlocaltokensApiClient(Mock(), Mock(), master_token=MASTER_TOKEN)
 
     with patch(
-        "glocaltokens.client.GLocalAuthenticationTokens.get_email",
+        "glocaltokens.client.GLocalAuthenticationTokens.async_get_email",
         side_effect=error,
     ):
         assert asyncio.run(client.async_get_email()) is None
@@ -358,25 +383,15 @@ def test_reauth_account_unknown(
     assert_saved(flow, saved)
 
 
-def answered(status: HTTPStatus) -> HTTPError:
-    """Return the error glocaltokens raises when Google answers with this status."""
-    response = Response()
-    response.status_code = status
-    return HTTPError(response=response)
-
-
 @contextmanager
 def google_answers(answer: dict[str, str] | Exception) -> Iterator[None]:
     """Give this answer to glocaltokens' requests for a master token and an access token."""
     reply = (
-        {"side_effect": answer}
+        Mock(side_effect=answer)
         if isinstance(answer, Exception)
-        else {"return_value": answer}
+        else Mock(return_value=answer)
     )
-    with (
-        patch("glocaltokens.client.exchange_token", **reply),
-        patch("glocaltokens.client.perform_oauth", **reply),
-    ):
+    with google_sign_in(reply, reply):
         yield
 
 
@@ -391,11 +406,11 @@ def google_answers(answer: dict[str, str] | Exception) -> Iterator[None]:
         pytest.param(answered(HTTPStatus.SERVICE_UNAVAILABLE), "google-busy", id="503"),
         pytest.param(answered(HTTPStatus.TOO_MANY_REQUESTS), "google-busy", id="429"),
         pytest.param(
-            RequestsConnectionError("Connection refused"),
+            ClientConnectionError("Connection refused"),
             "google-unreachable",
             id="unreachable",
         ),
-        pytest.param(ReadTimeout(), "google-unreachable", id="timeout"),
+        pytest.param(TimeoutError(), "google-unreachable", id="timeout"),
     ],
 )
 @pytest.mark.parametrize(
@@ -491,17 +506,13 @@ def fixture_sign_in() -> Iterator[Mock]:
     It exchanges a cookie for NEW_MASTER_TOKEN, and gives an access token for any
     master token. glocaltokens' requests to it are recorded.
     """
+    exchange_token = Mock(return_value={"Token": NEW_MASTER_TOKEN})
+    perform_oauth = Mock(return_value={"Auth": "access"})
     with (
-        patch(
-            "glocaltokens.client.exchange_token",
-            return_value={"Token": NEW_MASTER_TOKEN},
-        ) as exchange_token,
-        patch(
-            "glocaltokens.client.perform_oauth", return_value={"Auth": "access"}
-        ) as perform_oauth,
+        google_sign_in(exchange_token, perform_oauth),
         # Google's userinfo endpoint, which gives the address, isn't simulated
         patch(
-            "glocaltokens.client.GLocalAuthenticationTokens.get_email",
+            "glocaltokens.client.GLocalAuthenticationTokens.async_get_email",
             autospec=True,
             return_value=EMAIL,
         ) as get_email,
@@ -601,6 +612,38 @@ async def test_sign_in(
     assert {sent_id for _, sent_id in sent} == {android_id}
 
 
+@pytest.mark.usefixtures("mock_setup_entry")
+async def test_sign_in_through_home_assistant_session(
+    hass: HomeAssistant, aioclient_mock: AiohttpClientMocker
+) -> None:
+    """Send glocaltokens' requests to Google's sign-in through Home Assistant's session.
+
+    Home Assistant closes it when it stops; glocaltokens would otherwise open a
+    session of its own for each request.
+    """
+    services: list[str] = []
+
+    async def answer(method: str, url: URL, data: bytes) -> AiohttpClientMockResponse:
+        [service] = parse_qs(data.decode())["service"]
+        services.append(service)
+        # A master token for the cookie, then an access token for the master token
+        text = (
+            f"Token={NEW_MASTER_TOKEN}\nEmail={EMAIL}\n"
+            if service == "ac2dm"
+            else "Auth=access\n"
+        )
+        return AiohttpClientMockResponse(method, url, text=text)
+
+    aioclient_mock.post(gpsoauth.AUTH_URL, side_effect=answer)
+
+    result = await submit(hass, await choose(hass, "browser"), SIGN_IN_INPUT["browser"])
+
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    [entry] = hass.config_entries.async_entries(DOMAIN)
+    assert (entry.title, entry.data["master_token"]) == (EMAIL, NEW_MASTER_TOKEN)
+    assert services == ["ac2dm", ACCESS_TOKEN_SERVICE]
+
+
 # The account's homes
 HOMES = HomeGraph(
     homes=[
@@ -622,7 +665,8 @@ HOMES = HomeGraph(
             HomegraphError(grpc.StatusCode.UNAVAILABLE, "Unavailable"),
             id="no-home-graph",
         ),
-        pytest.param(RequestsConnectionError(), id="unreachable"),
+        pytest.param(ClientConnectionError(), id="unreachable"),
+        pytest.param(TimeoutError(), id="timed-out"),
     ],
 )
 async def test_sign_in_adds_every_home(
@@ -705,7 +749,7 @@ async def test_sign_in_format_error(
         ),
         pytest.param(
             "master_token",
-            RequestsConnectionError("Connection refused"),
+            ClientConnectionError("Connection refused"),
             "google-unreachable",
             id="google-unreachable",
         ),

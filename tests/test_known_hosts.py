@@ -5,14 +5,13 @@ from http import HTTPStatus
 from unittest.mock import AsyncMock, MagicMock, Mock
 
 from aiohttp import ClientError
-from ghome_foyer_api.api_pb2 import HomeGraph  # pylint: disable=no-name-in-module
 from glocaltokens.client import Device
 import pytest
 
 from custom_components.google_home.api import GlocaltokensApiClient
 from custom_components.google_home.models import GoogleHomeDevice
 
-from .test_missing_devices import found, make_client
+from .test_missing_devices import fetching, found, make_client
 from .test_offline_devices import STARTING, device_sensor
 from .test_unsupported_devices import (
     ALARMS,
@@ -139,7 +138,6 @@ def test_known_hosts_use_first_host_of_a_device() -> None:
 def test_known_hosts_fill_in_devices_from_glocaltokens() -> None:
     """Find a device that glocaltokens returns without an address at its known host."""
     hass = Mock()
-    hass.async_add_executor_job = AsyncMock(side_effect=lambda func, *args: func(*args))
     client = GlocaltokensApiClient(
         hass,
         fake_session({"10.0.1.5": ("Den speaker left", "dddd")}),
@@ -148,8 +146,7 @@ def test_known_hosts_fill_in_devices_from_glocaltokens() -> None:
     )
     pair = Device("pair", "Den speakers", LOCAL_AUTH_TOKEN, cloud_device_id="DDDD")
     client._client = Mock(  # noqa: SLF001  # pylint: disable=protected-access
-        get_google_devices=Mock(return_value=[pair]),
-        get_home_graph=Mock(return_value=HomeGraph()),
+        async_get_google_devices_and_home_graph=fetching(Mock(return_value=[pair]))
     )
 
     # Its info answered there, which its first update uses
@@ -164,7 +161,6 @@ def test_known_hosts_fill_in_devices_from_glocaltokens() -> None:
 def test_known_hosts_fill_in_device_fetched_again() -> None:
     """Find a device at its known host when Google's list, fetched again, gives its ID."""
     hass = Mock()
-    hass.async_add_executor_job = AsyncMock(side_effect=lambda func, *args: func(*args))
     client = GlocaltokensApiClient(
         hass,
         fake_session({"10.0.1.5": ("Den speaker left", "dddd")}),
@@ -177,8 +173,7 @@ def test_known_hosts_fill_in_device_fetched_again() -> None:
     client.google_devices_fetched = True
     pair = Device("pair", "Den speakers", LOCAL_AUTH_TOKEN, cloud_device_id="DDDD")
     client._client = Mock(  # noqa: SLF001  # pylint: disable=protected-access
-        get_google_devices=Mock(return_value=[pair]),
-        get_home_graph=Mock(return_value=HomeGraph()),
+        async_get_google_devices_and_home_graph=fetching(Mock(return_value=[pair]))
     )
 
     # The scheduled fetch is due
@@ -193,15 +188,15 @@ def test_known_hosts_fill_in_device_fetched_again() -> None:
 def test_known_hosts_not_asked_when_mdns_found_everything() -> None:
     """Don't wait on known hosts when mDNS found an address for every device."""
     hass = Mock()
-    hass.async_add_executor_job = AsyncMock(side_effect=lambda func, *args: func(*args))
     session = Mock()
     client = GlocaltokensApiClient(
         hass, session, master_token=MASTER_TOKEN, known_hosts=["10.0.1.5"]
     )
     found_by_mdns = found("kitchen", "10.0.0.3", name="Kitchen", cloud_device_id="AAAA")
     client._client = Mock(  # noqa: SLF001  # pylint: disable=protected-access
-        get_google_devices=Mock(return_value=[found_by_mdns]),
-        get_home_graph=Mock(return_value=HomeGraph()),
+        async_get_google_devices_and_home_graph=fetching(
+            Mock(return_value=[found_by_mdns])
+        )
     )
 
     assert asyncio.run(client.async_update_device_list()) == {}
