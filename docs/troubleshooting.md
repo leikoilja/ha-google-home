@@ -195,7 +195,14 @@ Open **Settings** > **Devices & services** > **Google Home** to see why it isn't
 
 ## Download diagnostics
 
-The diagnostics file shows the integration's options and, for each device, its model, whether it answers and its last reply about alarms and timers, as the device sent it. Attach the file, as well as [debug logs](#collect-debug-logs), when you [open an issue](https://github.com/leikoilja/ha-google-home/issues/new/choose).
+The diagnostics file shows:
+
+- The integration's options.
+- For each device: its model, whether it answers, whether Home Assistant has received its mDNS announcements since the integration loaded, and its last reply about alarms and timers, as the device sent it.
+- How many other Cast devices on your network have announced themselves since the integration loaded but aren't in Google's device list, such as TVs with Chromecast built in, or speakers in another Google account. Only the number, not their names or addresses.
+- When you downloaded it.
+
+Attach the file, as well as [debug logs](#collect-debug-logs), when you [open an issue](https://github.com/leikoilja/ha-google-home/issues/new/choose).
 
 1. Go to **Settings** > **Devices & services** > **Google Home**.
 2. Open the **⋮** menu and select **Download diagnostics**. Your browser downloads the file.

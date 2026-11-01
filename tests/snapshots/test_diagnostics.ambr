@@ -43,6 +43,7 @@
         'ip_address': '**REDACTED**',
         'last_exception': None,
         'last_update_success': True,
+        'mdns_reported': True,
         'model': 'Nest Audio',
         'name': 'Kitchen speaker',
         'reachable': True,
@@ -54,6 +55,8 @@
         'unanswered_updates': 0,
       }),
     }),
+    'mdns_reported_not_listed': 1,
+    'now': '2026-10-15T05:00:00-07:00',
     'options': dict({
       'known_hosts': '**REDACTED**',
       'update_interval': 30,

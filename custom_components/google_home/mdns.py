@@ -1,7 +1,7 @@
 """Find Google Cast devices with mDNS between fetches of Google's device list."""
 
 import asyncio
-from collections.abc import Awaitable, Callable
+from collections.abc import Awaitable, Callable, KeysView
 from datetime import datetime
 import ipaddress
 import logging
@@ -75,6 +75,14 @@ class FoundDevices:
     def get(self, cloud_device_id: str | None) -> FoundDevice | None:
         """Return what mDNS last reported about the device with this ID."""
         return self._devices.get(cloud_device_id or "")
+
+    @property
+    def cloud_device_ids(self) -> KeysView[str]:
+        """Return Google's IDs of the devices that mDNS reported, except forgotten ones.
+
+        A fetch forgets a device's reports when Google's list drops it.
+        """
+        return self._devices.keys()
 
     @callback
     def async_device_found(self, cloud_device_id: str, name: str, address: str) -> None:

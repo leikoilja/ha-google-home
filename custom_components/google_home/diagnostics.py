@@ -2,6 +2,7 @@
 
 from homeassistant.components.diagnostics import async_redact_data
 from homeassistant.core import HomeAssistant
+from homeassistant.util import dt as dt_util
 
 from .const import (
     CONF_ANDROID_ID,
@@ -51,6 +52,7 @@ async def async_get_config_entry_diagnostics(
     # failed first update until one works. A device that Google no longer lists has
     # only how its last update went.
     listed = {device.device_id: device for device in data.client.google_devices}
+    found = data.client.found_devices
     devices: dict[str, object] = {}
     for device_id, coordinator in data.devices.items():
         info = _last_update(coordinator)
@@ -71,10 +73,28 @@ async def async_get_config_entry_diagnostics(
                 "do_not_disturb": device.do_not_disturb,
                 "alarm_volume": device.alarm_volume,
                 "alarms_reply": device.alarms_reply,
+                # Whether mDNS reported it since the integration loaded, or since a fetch
+                # last dropped it from Google's list. None without Google's ID to match
+                # a report to.
+                "mdns_reported": (
+                    found.get(device.cloud_device_id) is not None
+                    if device.cloud_device_id
+                    else None
+                ),
             }
         devices[device_id] = info
+    # How many Cast devices that mDNS reported since the integration loaded aren't in
+    # Google's list, also those offline since. A fetch that drops a device from the
+    # list forgets its reports. None until a fetch of the list has worked, as a
+    # rejected token marks the list to fetch again but keeps its devices.
+    not_listed = (
+        len(found.cloud_device_ids - {d.cloud_device_id for d in listed.values()})
+        if data.client.google_devices_fetched or listed
+        else None
+    )
     return async_redact_data(
         {
+            "now": dt_util.now().isoformat(),
             "data": dict(entry.data),
             "options": dict(entry.options),
             "account": _last_update(data.account)
@@ -82,6 +102,7 @@ async def async_get_config_entry_diagnostics(
                 "google_devices_fetched": data.client.google_devices_fetched,
                 "sign_in_rejected": data.client.sign_in_error is not None,
             },
+            "mdns_reported_not_listed": not_listed,
             "devices": devices,
         },
         TO_REDACT,

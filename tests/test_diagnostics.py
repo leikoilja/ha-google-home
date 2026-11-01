@@ -32,14 +32,17 @@ from homeassistant.components.diagnostics import REDACTED
 from homeassistant.core import HomeAssistant
 
 from .conftest import (
+    BEDROOM,
+    BEDROOM_ID,
     SPEAKER_CLOUD_ID,
     SPEAKER_ID,
     SPEAKER_NAME,
     Replies,
+    bedroom_speaker,
     kitchen_speaker,
 )
-from .test_coordinators import BEDROOM, BEDROOM_ID, runtime, update_account
-from .test_missing_devices import ALARM_ID, found
+from .test_coordinators import REJECTING, runtime, update_account
+from .test_missing_devices import ALARM_ID, answered, found
 from .test_setup import set_up
 from .test_unsupported_devices import ALARMS, SPEAKER, SUPPORTED
 
@@ -53,6 +56,11 @@ MASTER_TOKEN = "aas_et/" + "m" * 216
 ANDROID_ID = "a1b2c3d4e5f60718"
 LOCAL_AUTH_TOKEN = "invented-local-token-" + "t" * 87
 KNOWN_HOST = "10.0.0.9"
+# A Cast device on the network that Google's list doesn't have, which diagnostics
+# only counts
+TV_CLOUD_ID = "living-room-tv-cloud-id"
+TV_NAME = "Living Room TV"
+TV = "10.0.0.7"
 BEDROOM_TOKEN = "invented-bedroom-token-" + "b" * 85
 SECRETS = [
     USERNAME,
@@ -62,6 +70,8 @@ SECRETS = [
     LOCAL_AUTH_TOKEN,
     SPEAKER,
     KNOWN_HOST,
+    TV_NAME,
+    TV,
 ]
 # An alarm and a timer with labels the user typed, which diagnostics keeps
 ALARMS_REPLY = {
@@ -86,6 +96,7 @@ ALARMS_REPLY = {
 }
 
 
+@pytest.mark.freeze_time("2026-10-15 12:00:00+00:00")
 async def test_diagnostics(
     hass: HomeAssistant,
     hass_client: ClientSessionGenerator,
@@ -96,7 +107,9 @@ async def test_diagnostics(
     """Show the settings and the speaker's state, without credentials or addresses.
 
     The speaker's last alarms reply is kept as it came, with its labels. The entry's
-    title, which is the account's email address, is left out.
+    title, which is the account's email address, is left out. mDNS reported the
+    speaker and a TV that Google doesn't list, which is only counted. The time is
+    shown in Home Assistant's time zone, US/Pacific in tests.
     """
     entry = MockConfigEntry(
         domain=DOMAIN,
@@ -123,6 +136,9 @@ async def test_diagnostics(
     ]
     replies[SPEAKER][ALARMS] = (HTTPStatus.OK, ALARMS_REPLY)
     await set_up(hass, entry)
+    found_devices = runtime(entry).client.found_devices
+    found_devices.async_device_found(SPEAKER_CLOUD_ID, SPEAKER_NAME, SPEAKER)
+    found_devices.async_device_found(TV_CLOUD_ID, TV_NAME, TV)
 
     diagnostics = await get_diagnostics_for_config_entry(hass, hass_client, entry)
 
@@ -142,6 +158,9 @@ async def test_diagnostics(
     speaker = cast(dict[str, dict[str, object]], diagnostics["devices"])[SPEAKER_ID]
     assert (speaker["ip_address"], speaker["auth_token"]) == (REDACTED, REDACTED)
     assert speaker["alarms_reply"] == ALARMS_REPLY
+    assert speaker["mdns_reported"] is True
+    assert diagnostics["mdns_reported_not_listed"] == 1
+    assert diagnostics["now"] == "2026-10-15T05:00:00-07:00"
 
 
 @pytest.mark.usefixtures("google")
@@ -196,19 +215,29 @@ async def test_diagnostics_of_speaker_google_stops_listing(
     google: Mock,
     clock: Mock,
 ) -> None:
-    """Show only how the last update went for a speaker that Google no longer lists."""
+    """Show only how the last update went for a speaker that Google no longer lists.
+
+    Once the second home graph without it removes it, it isn't shown at all. If mDNS
+    reports it, it counts as a Cast device that Google's list doesn't have.
+    """
     await set_up(hass, config_entry)
     google.return_value = []
     clock.return_value = FETCH_DEVICES_INTERVAL
     await update_account(hass, config_entry)
 
-    diagnostics = await get_diagnostics_for_config_entry(
-        hass, hass_client, config_entry
+    unlisted = await get_diagnostics_for_config_entry(hass, hass_client, config_entry)
+    runtime(config_entry).client.found_devices.async_device_found(
+        SPEAKER_CLOUD_ID, SPEAKER_NAME, SPEAKER
     )
+    clock.return_value = 2 * FETCH_DEVICES_INTERVAL
+    await update_account(hass, config_entry)
+    removed = await get_diagnostics_for_config_entry(hass, hass_client, config_entry)
 
-    assert diagnostics["devices"] == {
-        SPEAKER_ID: {"last_update_success": True, "last_exception": None}
-    }
+    assert (unlisted["devices"], unlisted["mdns_reported_not_listed"]) == (
+        {SPEAKER_ID: {"last_update_success": True, "last_exception": None}},
+        0,
+    )
+    assert (removed["devices"], removed["mdns_reported_not_listed"]) == ({}, 1)
 
 
 async def test_diagnostics_of_speaker_whose_first_update_fails(
@@ -250,3 +279,74 @@ async def test_diagnostics_of_speaker_whose_first_update_fails(
     assert {key: bedroom.get(key) for key in expected} == expected
     text = json.dumps(diagnostics)
     assert [secret for secret in (BEDROOM, BEDROOM_TOKEN) if secret in text] == []
+
+
+async def test_diagnostics_mdns_reports_by_speaker(
+    hass: HomeAssistant,
+    hass_client: ClientSessionGenerator,
+    config_entry: MockConfigEntry,
+    google: Mock,
+    replies: Replies,
+) -> None:
+    """Show whether mDNS reported each speaker, unknown for one without Google's ID.
+
+    The bedroom speaker rejects every token, which leaves Google's list to fetch
+    again, but the list and so the count are still known.
+    """
+    hall = found("hall", "10.0.0.4", name="Hall speaker")
+    hall.cloud_device_id = None
+    google.return_value = [kitchen_speaker(), bedroom_speaker(), hall]
+    replies[BEDROOM] = dict(REJECTING)
+    replies["10.0.0.4"] = dict(SUPPORTED)
+    await set_up(hass, config_entry)
+    found_devices = runtime(config_entry).client.found_devices
+    found_devices.async_device_found(SPEAKER_CLOUD_ID, SPEAKER_NAME, SPEAKER)
+    found_devices.async_device_found(TV_CLOUD_ID, TV_NAME, TV)
+
+    diagnostics = await get_diagnostics_for_config_entry(
+        hass, hass_client, config_entry
+    )
+
+    devices = cast(dict[str, dict[str, object]], diagnostics["devices"])
+    account = cast(dict[str, object], diagnostics["account"])
+    assert {
+        device_id: info["mdns_reported"] for device_id, info in devices.items()
+    } == {
+        SPEAKER_ID: True,
+        BEDROOM_ID: False,
+        "hall": None,
+    }
+    assert (
+        account["google_devices_fetched"],
+        diagnostics["mdns_reported_not_listed"],
+    ) == (
+        False,
+        1,
+    )
+
+
+@pytest.mark.usefixtures("replies")
+async def test_diagnostics_before_google_list_is_known(
+    hass: HomeAssistant,
+    hass_client: ClientSessionGenerator,
+    config_entry: MockConfigEntry,
+    google: Mock,
+) -> None:
+    """Leave the count of Cast devices that Google doesn't list unknown without a list.
+
+    Setup goes on without devices when Google's list can't be fetched.
+    """
+    google.side_effect = answered(HTTPStatus.SERVICE_UNAVAILABLE)
+    await set_up(hass, config_entry)
+    runtime(config_entry).client.found_devices.async_device_found(
+        TV_CLOUD_ID, TV_NAME, TV
+    )
+
+    diagnostics = await get_diagnostics_for_config_entry(
+        hass, hass_client, config_entry
+    )
+
+    assert (diagnostics["devices"], diagnostics["mdns_reported_not_listed"]) == (
+        {},
+        None,
+    )
