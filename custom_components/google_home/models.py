@@ -84,6 +84,10 @@ class GoogleHomeDevice:
         # Whether its info said at the last check that a firmware update is waiting,
         # or None if it didn't say
         self.has_update: bool | None = None
+        # The Wi-Fi network and signal strength in dBm that its info gave at the last
+        # check, or None if it didn't give them. A Nest Hub gives no signal.
+        self.wifi_ssid: str | None = None
+        self.wifi_signal: float | None = None
         # When the last check of its firmware started
         self.firmware_checked_at: float | None = None
 

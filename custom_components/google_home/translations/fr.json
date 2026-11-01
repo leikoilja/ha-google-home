@@ -105,6 +105,9 @@
       },
       "timers": {
         "name": "Minuteurs"
+      },
+      "wifi_network": {
+        "name": "Réseau Wi-Fi"
       }
     },
     "switch": {

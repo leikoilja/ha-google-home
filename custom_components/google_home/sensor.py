@@ -9,8 +9,16 @@ from typing import Literal, override
 
 import probatio
 
-from homeassistant.components.sensor import SensorDeviceClass
-from homeassistant.const import STATE_UNAVAILABLE, EntityCategory
+from homeassistant.components.sensor import (
+    SensorDeviceClass,
+    SensorEntity,
+    SensorStateClass,
+)
+from homeassistant.const import (
+    SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
+    STATE_UNAVAILABLE,
+    EntityCategory,
+)
 from homeassistant.core import HomeAssistant, ServiceCall, callback
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from homeassistant.helpers import config_validation as cv, service
@@ -24,6 +32,8 @@ from .const import (
     LABEL_ALARMS,
     LABEL_DEVICE,
     LABEL_TIMERS,
+    LABEL_WIFI_NETWORK,
+    LABEL_WIFI_SIGNAL,
     SENSOR,
     SERVICE_ATTR_ALARM_ID,
     SERVICE_ATTR_SKIP_REFRESH,
@@ -97,8 +107,14 @@ async def async_setup_entry(
     async_add_devices: AddEntitiesCallback,
 ) -> bool:
     """Set up sensor platform."""
+    # Devices without alarms have Wi-Fi too
     async_add_device_entities(
-        entry, async_add_devices, GoogleHomeDeviceSensor, needs_answer=False
+        entry,
+        async_add_devices,
+        GoogleHomeDeviceSensor,
+        WifiNetworkSensor,
+        WifiSignalSensor,
+        needs_answer=False,
     )
     async_add_device_entities(
         entry, async_add_devices, GoogleHomeAlarmsSensor, GoogleHomeTimersSensor
@@ -400,6 +416,70 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
             "ip_address": device.ip_address,
             "available": device.reachable,
         }
+
+
+class WifiSensor(GoogleHomeBaseEntity, SensorEntity):
+    """What the device's info said about its Wi-Fi at the last firmware check.
+
+    Disabled by default, as few users need it. Every device gets it, also one that
+    doesn't report the value, whose sensor stays unknown.
+    """
+
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+    _attr_entity_registry_enabled_default = False
+
+    @property
+    @override
+    def available(self) -> bool:
+        """Return whether the device was found on the network, as for its device sensor."""
+        device = self.get_device()
+        return (
+            super().available and device is not None and device.ip_address is not None
+        )
+
+
+class WifiNetworkSensor(WifiSensor):
+    """The name (SSID) of the Wi-Fi network that the device uses."""
+
+    _attr_translation_key = "wifi_network"
+
+    @property
+    @override
+    def label(self) -> str:
+        """Label to use for unique id."""
+        return LABEL_WIFI_NETWORK
+
+    @property
+    @override
+    def native_value(self) -> str | None:
+        """Return the network's name, or None until the device gives one."""
+        device = self.get_device()
+        return device.wifi_ssid if device else None
+
+
+class WifiSignalSensor(WifiSensor):
+    """The device's Wi-Fi signal strength, which a Nest Hub doesn't report.
+
+    Without a translation key, Home Assistant names it after its device class, in its
+    language.
+    """
+
+    _attr_device_class = SensorDeviceClass.SIGNAL_STRENGTH
+    _attr_native_unit_of_measurement = SIGNAL_STRENGTH_DECIBELS_MILLIWATT
+    _attr_state_class = SensorStateClass.MEASUREMENT
+
+    @property
+    @override
+    def label(self) -> str:
+        """Label to use for unique id."""
+        return LABEL_WIFI_SIGNAL
+
+    @property
+    @override
+    def native_value(self) -> float | None:
+        """Return the signal strength in dBm, or None until the device gives it."""
+        device = self.get_device()
+        return device.wifi_signal if device else None
 
 
 class GoogleHomeAlarmsSensor(GoogleHomeFeatureEntity):

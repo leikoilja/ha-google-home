@@ -105,6 +105,9 @@
       },
       "timers": {
         "name": "Časovače"
+      },
+      "wifi_network": {
+        "name": "Síť Wi-Fi"
       }
     },
     "switch": {

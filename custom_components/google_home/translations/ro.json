@@ -105,6 +105,9 @@
       },
       "timers": {
         "name": "Temporizatoare"
+      },
+      "wifi_network": {
+        "name": "Rețea Wi-Fi"
       }
     },
     "switch": {

@@ -105,6 +105,9 @@
       },
       "timers": {
         "name": "Χρονόμετρα"
+      },
+      "wifi_network": {
+        "name": "Δίκτυο Wi-Fi"
       }
     },
     "switch": {

@@ -187,7 +187,7 @@ class GoogleHomeDeviceCoordinator(DataUpdateCoordinator[GoogleHomeDevice | None]
 
     @override
     async def _async_update_data(self) -> GoogleHomeDevice | None:
-        """Ask the device for its alarms, timers and settings, and firmware when due.
+        """Ask the device for its alarms, timers and settings, and firmware and Wi-Fi when due.
 
         Only if Google lists it. A fetch of Google's list while the device is asked
         may drop it, or replace it with a new object, so the old one isn't shown

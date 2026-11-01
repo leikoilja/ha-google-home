@@ -105,6 +105,9 @@
       },
       "timers": {
         "name": "Tidtakarar"
+      },
+      "wifi_network": {
+        "name": "Wi-Fi-nettverk"
       }
     },
     "switch": {

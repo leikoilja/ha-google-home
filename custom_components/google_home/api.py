@@ -240,9 +240,9 @@ class GlocaltokensApiClient(GoogleAccountClient):
         that fails isn't asked again until then. Its build info has its versions,
         and its info without params whether an update is waiting; neither needs a
         token. A device that doesn't answer the first isn't asked the second. Only
-        the version and release channel fields and the flag are kept: a field that
-        its info leaves out is unknown, and an answer other than its info keeps what
-        it said before.
+        the version and release channel fields, the flag, and the Wi-Fi network and
+        signal strength are kept: a field that its info leaves out is unknown, and an
+        answer other than its info keeps what it said before.
         """
         now = monotonic()
         if not device.reachable or (
@@ -283,6 +283,15 @@ class GlocaltokensApiClient(GoogleAccountClient):
             has_update = info.get("has_update")
             # Only the JSON true or false
             device.has_update = has_update if isinstance(has_update, bool) else None
+            ssid = info.get("ssid")
+            device.wifi_ssid = ssid if isinstance(ssid, str) and ssid else None
+            signal = info.get("signal_level")
+            # A JSON number, but not true or false, which Python counts as numbers
+            device.wifi_signal = (
+                signal
+                if isinstance(signal, int | float) and not isinstance(signal, bool)
+                else None
+            )
         _LOGGER.debug(
             "%s has firmware %s, update waiting: %s",
             device.name,
