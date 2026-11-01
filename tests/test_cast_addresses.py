@@ -39,8 +39,8 @@ def test_fetch_asks_glocaltokens_without_discovery(
     asyncio.run(network.setup())
 
     glocaltokens = cast(Mock, network.client._client)  # noqa: SLF001  # pylint: disable=protected-access
-    glocaltokens.get_google_devices.assert_called_once_with(
-        disable_discovery=True, force_homegraph_reload=True
+    glocaltokens.async_get_google_devices_and_home_graph.assert_awaited_once_with(
+        discover=False, reload_home_graph=True
     )
 
 

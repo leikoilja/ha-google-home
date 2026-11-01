@@ -9,7 +9,7 @@ license = "MIT"
 requires-python = ">=3.14.2"
 dependencies = [
     "bluetooth-data-tools>=1.29.24",
-    "glocaltokens>=1.2.0",
+    "glocaltokens",
     "homeassistant==2026.11.0b1",
 ]
 
@@ -39,6 +39,9 @@ docs = [
 package = false
 
 [tool.uv.sources]
+# glocaltokens 2.0.0 isn't released yet, so it comes from master's archive, which
+# reports version 0.0.0. Replace this with glocaltokens>=2.0.0 above once it is.
+glocaltokens = { url = "https://github.com/leikoilja/glocaltokens/archive/d8972fd58ca96fe52d2df7a9b21fa47a991aba2c.zip" }
 # Not on PyPI yet, so it comes from core's release archive
 pytest-home-assistant = { url = "https://github.com/home-assistant/core/archive/refs/tags/2026.11.0b1.tar.gz", subdirectory = "packages/pytest-home-assistant" }
 

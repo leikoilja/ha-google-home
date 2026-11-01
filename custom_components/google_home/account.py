@@ -3,15 +3,15 @@
 import asyncio
 from collections.abc import Mapping
 import ipaddress
+import json
 import logging
 from time import monotonic
 from typing import TYPE_CHECKING, Final
 
-from aiohttp import ClientError, ClientSession
+from aiohttp import ClientError, ClientResponseError, ClientSession
 from glocaltokens.client import Device, GLocalAuthenticationTokens
 from glocaltokens.exceptions import AuthenticationError, GLocalTokensError
 from glocaltokens.utils.token import is_aas_et
-from requests.exceptions import HTTPError, RequestException
 
 from homeassistant.core import HomeAssistant
 
@@ -89,6 +89,7 @@ class GoogleAccountClient:
             master_token=master_token,
             oauth_token=oauth_token,
             android_id=android_id,
+            session=session,
         )
         self.google_devices: list[GoogleHomeDevice] = []
         # Whether google_devices is the list of the last successful fetch, which can
@@ -140,9 +141,7 @@ class GoogleAccountClient:
     async def async_get_master_token(self) -> str:
         """Get master API token."""
         try:
-            master_token = await self.hass.async_add_executor_job(
-                self._client.get_master_token
-            )
+            master_token = await self._client.async_get_master_token()
         except AuthenticationError as error:
             raise InvalidMasterToken(str(error)) from error
         if not is_aas_et(master_token):
@@ -152,33 +151,35 @@ class GoogleAccountClient:
     async def async_get_access_token(self) -> str:
         """Get access token using master token."""
         try:
-            return await self.hass.async_add_executor_job(self._client.get_access_token)
+            return await self._client.async_get_access_token()
         except AuthenticationError as error:
             raise InvalidMasterToken(str(error)) from error
 
     async def async_get_email(self) -> str | None:
         """Return the verified email address of the signed-in account, if Google gives it."""
         try:
-            return await self.hass.async_add_executor_job(self._client.get_email)
-        except RequestException, AuthenticationError:
+            return await self._client.async_get_email()
+        # No master token, no answer, or one that isn't JSON
+        except ClientError, TimeoutError, json.JSONDecodeError, AuthenticationError:
             _LOGGER.debug("Failed to get the account's email address", exc_info=True)
             return None
 
     async def async_get_homes(self) -> dict[str, str]:
         """Return the account's homes by ID, with their names, or none if Google doesn't give them."""
         try:
-            home_graph = await self.hass.async_add_executor_job(
-                self._client.get_home_graph
-            )
+            home_graph = await self._client.async_get_home_graph()
         # No home graph, no access token, or no answer
-        except (GLocalTokensError, RequestException) as error:
-            _LOGGER.debug("Failed to get the account's homes: %s", error)
+        except (GLocalTokensError, ClientError, TimeoutError) as error:
+            _LOGGER.debug(
+                "Failed to get the account's homes: %s",
+                str(error) or type(error).__name__,
+            )
             return {}
         return _homes(home_graph)
 
-    async def get_android_id(self) -> str:
+    def get_android_id(self) -> str:
         """Generate random android_id."""
-        return await self.hass.async_add_executor_job(self._client.get_android_id)
+        return self._client.get_android_id()
 
     async def async_update_device_list(self) -> Mapping[str, str]:
         """Start an update of Google's device list: fetch it when due, or while it's unknown.
@@ -193,8 +194,8 @@ class GoogleAccountClient:
         for, or the update's own lookup, gave devices: their info answered then, so
         their next update needn't ask for it.
 
-        Raise RequestException if Google's sign-in can't be reached while the list is
-        unknown.
+        Raise ClientError or TimeoutError if Google's sign-in can't be reached while
+        the list is unknown.
         """
         self._fetches_before_update = self._fetches
         known_hosts = await self.async_fetch_devices_when_due()
@@ -251,12 +252,17 @@ class GoogleAccountClient:
         fetched_for = self.found_devices.fetch_started()
 
         try:
-            google_devices, home_graph = await self.hass.async_add_executor_job(
-                self._get_google_devices
+            # Only the home graph that the list comes from shows that Google no longer
+            # has a device, or which home it's in: glocaltokens leaves devices that it
+            # can't use, such as one without a local token, out of the list. The
+            # devices come without addresses: mDNS gives them.
+            fetch = self._client.async_get_google_devices_and_home_graph
+            google_devices, home_graph = await fetch(
+                discover=False, reload_home_graph=True
             )
         # Google rejected the master token, gave no home graph, or answered with
-        # a 5xx or 429, which glocaltokens raises as HTTPError
-        except (GLocalTokensError, HTTPError) as error:
+        # a 5xx or 429, which glocaltokens raises as ClientResponseError
+        except (GLocalTokensError, ClientResponseError) as error:
             log = _LOGGER.error
             # Only signing in again helps when Google rejects the master token.
             # Other errors say nothing about it, so an earlier rejection stays.
@@ -296,19 +302,6 @@ class GoogleAccountClient:
     def _needs_known_hosts(self) -> bool:
         """Return whether a known host could give a device in the list its address."""
         return bool(self.known_hosts) and self.missing_addresses
-
-    def _get_google_devices(self) -> tuple[list[Device], HomeGraph]:
-        """Fetch Google's home graph: its Cast devices, and the graph itself.
-
-        glocaltokens leaves out devices that it can't use, such as one without a
-        local token, so only the home graph shows that Google no longer has a device,
-        or which home it's in. The devices come without addresses: mDNS gives them.
-        """
-        google_devices = self._client.get_google_devices(
-            disable_discovery=True, force_homegraph_reload=True
-        )
-        # The home graph that the list came from, which glocaltokens keeps for a day
-        return google_devices, self._client.get_home_graph()
 
     def _use_google_devices(
         self, google_devices: list[Device], home_graph: HomeGraph
@@ -420,7 +413,7 @@ class GoogleAccountClient:
             return {}
         try:
             return await self._async_fetch_devices(self._fetches_before_update)
-        except RequestException:
+        except ClientError, TimeoutError:
             _LOGGER.debug("Failed to fetch Google's device list", exc_info=True)
             return {}
 

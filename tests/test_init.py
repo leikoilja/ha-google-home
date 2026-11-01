@@ -166,12 +166,10 @@ def test_keep_devices_of_unloaded_entry() -> None:
 
 def test_keep_devices_when_fetch_fails(caplog: pytest.LogCaptureFixture) -> None:
     """Keep devices when Google's device list couldn't be fetched, and log Google's reason."""
-    hass = Mock()
-    hass.async_add_executor_job = AsyncMock(side_effect=lambda func, *args: func(*args))
-    client = GlocaltokensApiClient(hass, Mock(), master_token=MASTER_TOKEN)
+    client = GlocaltokensApiClient(Mock(), Mock(), master_token=MASTER_TOKEN)
 
     with patch(
-        "glocaltokens.client.GLocalAuthenticationTokens.get_access_token",
+        "glocaltokens.client.GLocalAuthenticationTokens.async_get_access_token",
         side_effect=AuthenticationError(
             "Google gave no access token", "BadAuthentication"
         ),

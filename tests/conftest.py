@@ -13,7 +13,7 @@ from unittest.mock import AsyncMock, MagicMock, Mock, patch
 from weakref import WeakKeyDictionary
 
 from ghome_foyer_api.api_pb2 import HomeGraph  # pylint: disable=no-name-in-module
-from glocaltokens.client import Device
+from glocaltokens.client import Device, GLocalAuthenticationTokens
 import pytest
 from pytest_homeassistant.common import MockConfigEntry
 from pytest_homeassistant.test_util.aiohttp import (
@@ -339,20 +339,23 @@ def fixture_google(
 ) -> Iterator[Mock]:
     """Fake glocaltokens' fetch of Google's device list, which lists one speaker.
 
-    mDNS finds no other device. The list comes from no home graph, so Google has
-    only the devices it lists.
+    The mock gives the list, or raises, as glocaltokens' get_google_devices() would,
+    and the async fetch returns it with an empty home graph, so Google has only the
+    devices it lists. mDNS finds no other device.
     """
+    google = Mock(return_value=[kitchen_speaker()])
+
+    def fetch(
+        client: GLocalAuthenticationTokens, **options: object
+    ) -> tuple[list[Device], HomeGraph]:
+        return google(client, **options), HomeGraph()
+
     with (
         # With autospec, a call that glocaltokens wouldn't accept fails
         patch(
-            "glocaltokens.client.GLocalAuthenticationTokens.get_google_devices",
+            "glocaltokens.client.GLocalAuthenticationTokens.async_get_google_devices_and_home_graph",
             autospec=True,
-            return_value=[kitchen_speaker()],
-        ) as google,
-        patch(
-            "glocaltokens.client.GLocalAuthenticationTokens.get_home_graph",
-            autospec=True,
-            return_value=HomeGraph(),
+            side_effect=fetch,
         ),
         no_browser(),
     ):

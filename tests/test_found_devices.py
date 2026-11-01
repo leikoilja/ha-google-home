@@ -7,7 +7,7 @@ such devices started.
 """
 
 import asyncio
-from collections.abc import Callable, Coroutine
+from collections.abc import Coroutine
 from contextlib import suppress
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -15,10 +15,10 @@ from http import HTTPStatus
 import logging
 from unittest.mock import AsyncMock, MagicMock, Mock
 
+from aiohttp import ClientConnectionError
 from ghome_foyer_api.api_pb2 import HomeGraph  # pylint: disable=no-name-in-module
 from glocaltokens.client import Device
 import pytest
-from requests.exceptions import ConnectionError as RequestsConnectionError
 
 from custom_components.google_home.api import GlocaltokensApiClient
 from custom_components.google_home.const import HEADER_CAST_LOCAL_AUTH
@@ -68,7 +68,6 @@ class Network:
     def __post_init__(self) -> None:
         """Create the client as setup does, before setup fetches the list."""
         hass = Mock()
-        hass.async_add_executor_job = AsyncMock(side_effect=self._executor)
         hass.async_create_background_task = Mock(side_effect=self._create_task)
         self.client = GlocaltokensApiClient(
             hass,
@@ -78,8 +77,7 @@ class Network:
             excluded_homes=self.excluded_homes,
         )
         self.client._client = Mock(  # noqa: SLF001  # pylint: disable=protected-access
-            get_google_devices=Mock(side_effect=self._get_google_devices),
-            get_home_graph=Mock(side_effect=lambda: self.home_graph),
+            async_get_google_devices_and_home_graph=AsyncMock(side_effect=self._fetch)
         )
         self.client.collect_data_from_endpoints = AsyncMock(  # type: ignore[method-assign]
             side_effect=self._poll
@@ -87,15 +85,12 @@ class Network:
         self.client.found_devices.request_update = self._request_update
         self._lock: asyncio.Lock | None = None
 
-    async def _executor(self, func: Callable[[], object]) -> object:
+    async def _fetch(self, **_options: object) -> tuple[list[Device], HomeGraph]:
         self.fetches.append(float(self.clock.return_value))
         await until(lambda: self.google_answers)
-        return func()
-
-    def _get_google_devices(self, **_kwargs: object) -> list[Device]:
         if self.error is not None:
             raise self.error
-        return list(self.listed)
+        return list(self.listed), self.home_graph
 
     def _create_task(
         self, target: Coroutine[object, object, None], _name: str, **_kwargs: object
@@ -264,7 +259,7 @@ def test_device_found_while_fetching(
         elif outcome == "failed":
             network.error = answered(HTTPStatus.SERVICE_UNAVAILABLE)
         elif outcome == "unreachable":
-            network.error = RequestsConnectionError()
+            network.error = ClientConnectionError()
         network.google_answers = True
         await task
         network.error = None
