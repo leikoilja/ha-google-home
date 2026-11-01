@@ -13,13 +13,13 @@ trackers from showing away.
 
 import asyncio
 import base64
-from collections.abc import Callable, Iterable
+from collections.abc import Iterable
 from dataclasses import dataclass
 from enum import StrEnum
 from http import HTTPStatus
 import logging
 import re
-import time
+from time import monotonic
 from typing import Literal, cast
 
 from aiohttp import ClientError, ClientSession, ClientTimeout
@@ -197,7 +197,7 @@ class TrackedDevice:
 
 @dataclass
 class SpeakerScan:
-    """Bluetooth scan state of one speaker. Times come from the scanner's clock."""
+    """Bluetooth scan state of one speaker. Times are monotonic, in seconds."""
 
     name: str
     ip_address: str | None
@@ -234,14 +234,12 @@ class BluetoothScanner:
         account: GoogleAccountCoordinator,
         subentries: Iterable[ConfigSubentry],
         excluded: Iterable[str],
-        clock: Callable[[], float] = time.monotonic,
     ) -> None:
         """Create a scanner for the tracked devices, using the devices Google lists."""
         self._session = session
         self._account = account
         self.tracked = [TrackedDevice(subentry) for subentry in subentries]
         self._excluded = set(excluded)
-        self._clock = clock
         # Speakers that scan, by device ID
         self._speakers: dict[str, SpeakerScan] = {}
         self._unsupported: set[str] = set()
@@ -255,7 +253,7 @@ class BluetoothScanner:
                 for device_id, speaker in list(self._speakers.items())
             )
         )
-        now = self._clock()
+        now = monotonic()
         answered = [speaker for speaker in self._speakers.values() if speaker.answered]
         self._warn_about_blocking_speakers(answered, now)
         # No speaker to scan with can't confirm that a device is away
@@ -317,7 +315,7 @@ class BluetoothScanner:
             else:
                 speaker.answered = True
                 self._read_scan(speaker, start, results)
-        start = self._clock()
+        start = monotonic()
         try:
             await async_start_bluetooth_scan(self._session, device)
         except BluetoothScanUnsupported:
@@ -332,7 +330,7 @@ class BluetoothScanner:
         self, speaker: SpeakerScan, start: float, results: list[BluetoothJsonDict]
     ) -> None:
         """Record the sightings of a scan that started at start, if it's recent."""
-        read = self._clock()
+        read = monotonic()
         if read - start > BLUETOOTH_MAX_RESULT_AGE:
             _LOGGER.debug(
                 "Discarded Bluetooth scan of %s read %.0f seconds after it started",

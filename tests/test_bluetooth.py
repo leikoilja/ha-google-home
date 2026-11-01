@@ -1,7 +1,14 @@
-"""Tests for Bluetooth presence tracking."""
+"""Tests for Bluetooth presence tracking.
+
+The scanner's tests fake the speakers' Bluetooth requests and the clock. The rest
+run the integration inside Home Assistant with the fixtures in conftest.py, and
+fake only the Bluetooth requests, which the speakers' replies table doesn't have.
+"""
 
 import asyncio
 import base64
+from collections.abc import Iterator
+import json
 import logging
 from types import MappingProxyType
 from unittest.mock import AsyncMock, MagicMock, Mock, patch
@@ -9,46 +16,54 @@ from unittest.mock import AsyncMock, MagicMock, Mock, patch
 from aiohttp import ClientError
 from bluetooth_data_tools import get_cipher_for_irk
 import pytest
+from pytest_homeassistant.common import MockConfigEntry
+from pytest_homeassistant.components.diagnostics import get_diagnostics_for_config_entry
+from pytest_homeassistant.typing import ClientSessionGenerator
 
 from custom_components.google_home import (
     async_create_bluetooth_coordinator,
     async_update_entry,
     bluetooth_config,
 )
-from custom_components.google_home.api import GlocaltokensApiClient
 from custom_components.google_home.bluetooth import (
+    BluetoothScanError,
     BluetoothScanner,
+    BluetoothScanUnsupported,
     TrackedDevice,
     TrackerState,
+    async_get_bluetooth_scan_results,
+    async_start_bluetooth_scan,
     normalize_mac,
     parse_irk,
 )
-from custom_components.google_home.config_flow import (
-    BluetoothDeviceSubentryFlow,
-    GoogleHomeOptionsFlowHandler,
-)
-from custom_components.google_home.const import (
-    DATA_BLUETOOTH_CONFIG,
-    DATA_CLIENT,
-    DATA_COORDINATOR,
-    DOMAIN,
-)
 from custom_components.google_home.device_tracker import GoogleHomeBluetoothTracker
-from custom_components.google_home.exceptions import (
-    BluetoothScanError,
-    BluetoothScanUnsupported,
-)
 from custom_components.google_home.models import GoogleHomeDevice
 from custom_components.google_home.types import BluetoothJsonDict
 
 # ruff sorts homeassistant as first-party, pylint as third-party
-# pylint: disable-next=wrong-import-order
-from homeassistant.config_entries import ConfigSubentry
+# pylint: disable=wrong-import-order
+from homeassistant.config_entries import ConfigEntryState, ConfigSubentry
+from homeassistant.const import (
+    STATE_HOME,
+    STATE_NOT_HOME,
+    STATE_UNKNOWN,
+    EntityCategory,
+)
+from homeassistant.core import HomeAssistant
+from homeassistant.data_entry_flow import FlowResultType
+from homeassistant.helpers import device_registry as dr, entity_registry as er
 
-# glocaltokens accepts only master tokens of the real length
-MASTER_TOKEN = "aas_et/" + "x" * 216
+from .conftest import SPEAKER_ID, SPEAKER_NAME
+from .test_coordinators import runtime
+from .test_setup import set_up
+from .test_unsupported_devices import SPEAKER
+
+# pylint: enable=wrong-import-order
+
+BLUETOOTH = "custom_components.google_home.bluetooth"
 IRK = bytes(range(16))
 PHONE = "phone"
+TRACKER = "device_tracker.phone"
 
 
 def rpa(irk: bytes, prand: bytes = b"\x52\x34\x56") -> str:
@@ -77,7 +92,7 @@ def heard(address: str, rssi: int = -50) -> BluetoothJsonDict:
 
 
 class Speakers:
-    """Fake speakers that answer the client's Bluetooth requests."""
+    """Fake speakers that answer the scanner's Bluetooth requests."""
 
     def __init__(self, *names: str) -> None:
         """Create speakers with addresses and tokens."""
@@ -85,7 +100,6 @@ class Speakers:
             GoogleHomeDevice(name.lower(), name, "token", ip_address=f"10.0.0.{i}")
             for i, name in enumerate(names, 1)
         ]
-        self.now = 0.0
         # What each speaker's scan results hold, by device ID
         self.results: dict[str, list[BluetoothJsonDict]] = {}
         self.failing: set[str] = set()
@@ -95,14 +109,16 @@ class Speakers:
         self.starts: list[str] = []
 
     async def async_get_bluetooth_scan_results(
-        self, device: GoogleHomeDevice
+        self, _session: object, device: GoogleHomeDevice
     ) -> list[BluetoothJsonDict]:
         """Return what the speaker heard."""
         self._raise_if_failing(device)
         self.reads.append(device.device_id)
         return self.results.get(device.device_id, [])
 
-    async def async_start_bluetooth_scan(self, device: GoogleHomeDevice) -> None:
+    async def async_start_bluetooth_scan(
+        self, _session: object, device: GoogleHomeDevice
+    ) -> None:
         """Start a scan."""
         self._raise_if_failing(device)
         if device.device_id in self.failing_start:
@@ -121,23 +137,29 @@ def make_scanner(
     tracked: list[ConfigSubentry] | None = None,
     excluded: list[str] | None = None,
 ) -> BluetoothScanner:
-    """Return a scanner using the fake speakers and their clock."""
+    """Return a scanner using the fake speakers, as the account lists them."""
     return BluetoothScanner(
-        Mock(
-            async_get_bluetooth_scan_results=speakers.async_get_bluetooth_scan_results,
-            async_start_bluetooth_scan=speakers.async_start_bluetooth_scan,
-        ),
-        Mock(data=speakers.devices),
+        Mock(),
+        Mock(data={device.device_id: device for device in speakers.devices}),
         tracked or [subentry({"irk": IRK.hex()})],
         excluded or [],
-        clock=lambda: speakers.now,
     )
 
 
 def update(scanner: BluetoothScanner, speakers: Speakers, now: float) -> TrackerState:
     """Run an update at a time and return the phone's state."""
-    speakers.now = now
-    return asyncio.run(scanner.async_update())[PHONE]
+    with (
+        patch(f"{BLUETOOTH}.monotonic", return_value=now),
+        patch(
+            f"{BLUETOOTH}.async_get_bluetooth_scan_results",
+            speakers.async_get_bluetooth_scan_results,
+        ),
+        patch(
+            f"{BLUETOOTH}.async_start_bluetooth_scan",
+            speakers.async_start_bluetooth_scan,
+        ),
+    ):
+        return asyncio.run(scanner.async_update())[PHONE]
 
 
 def states(
@@ -442,13 +464,19 @@ def test_warn_about_speaker_that_blocks_away(caplog: pytest.LogCaptureFixture) -
     states(scanner, speakers, range(0, 60, 30))
     speakers.failing.add("garage")
 
-    with caplog.at_level(logging.WARNING):
-        states(scanner, speakers, range(60, 330, 30))
-        assert not caplog.records
-        states(scanner, speakers, range(330, 600, 30))
+    def warnings() -> list[str]:
+        return [
+            record.getMessage()
+            for record in caplog.records
+            if record.levelno >= logging.WARNING
+        ]
 
-    assert len(caplog.records) == 1
-    assert "Garage" in caplog.text
+    states(scanner, speakers, range(60, 330, 30))
+    assert not warnings()
+    states(scanner, speakers, range(330, 600, 30))
+
+    (warning,) = warnings()
+    assert warning.startswith("Garage hasn't answered Bluetooth scans for 5 minutes")
 
 
 def tracker(data: dict[str, TrackerState] | None) -> GoogleHomeBluetoothTracker:
@@ -518,7 +546,7 @@ def test_no_scanning_when_off_or_nothing_tracked(
     """Send no Bluetooth requests while tracking is off or tracks nothing."""
     entry = make_entry(options, subentries)
 
-    assert async_create_bluetooth_coordinator(Mock(), entry, Mock(), Mock()) is None
+    assert async_create_bluetooth_coordinator(Mock(), entry, Mock()) is None
 
 
 def test_scanner_never_raises() -> None:
@@ -531,42 +559,15 @@ def test_scanner_never_raises() -> None:
 
 
 def run_update_listener(entry: Mock, setup_entry: Mock) -> Mock:
-    """Run the update listener after the entry changed and return Home Assistant."""
+    """Run the update listener after the entry's options changed and return Home Assistant."""
     hass = Mock()
-    hass.data = {
-        DOMAIN: {
-            "entry": {
-                DATA_CLIENT: Mock(known_hosts=[]),
-                DATA_COORDINATOR: Mock(),
-                DATA_BLUETOOTH_CONFIG: bluetooth_config(setup_entry),
-            }
-        }
-    }
+    entry.runtime_data = Mock(
+        client=Mock(known_hosts=[], excluded_homes=set()),
+        devices={},
+        bluetooth_config=bluetooth_config(setup_entry),
+    )
     asyncio.run(async_update_entry(hass, entry))
     return hass
-
-
-@pytest.mark.parametrize(
-    ("before", "after"),
-    [
-        # Adding the first tracked device starts scanning
-        (make_entry({"bluetooth_tracking": True}), [subentry({"irk": IRK.hex()})]),
-        # Removing the last one stops it
-        (
-            make_entry({"bluetooth_tracking": True}, [subentry({"irk": IRK.hex()})]),
-            [],
-        ),
-    ],
-)
-def test_reload_when_tracked_devices_change(
-    before: Mock, after: list[ConfigSubentry]
-) -> None:
-    """Reload when a tracked device is added or removed."""
-    entry = make_entry({"bluetooth_tracking": True}, after)
-
-    hass = run_update_listener(entry, before)
-
-    hass.config_entries.async_schedule_reload.assert_called_once_with("entry")
 
 
 @pytest.mark.parametrize(
@@ -592,86 +593,140 @@ def test_no_reload_when_only_interval_changes() -> None:
     hass.config_entries.async_schedule_reload.assert_not_called()
 
 
-def make_options_flow(
-    options: dict[str, object], devices: list[GoogleHomeDevice]
-) -> GoogleHomeOptionsFlowHandler:
-    """Return the options flow of a loaded entry with these devices."""
-    flow = GoogleHomeOptionsFlowHandler()
-    flow.hass = Mock()
-    flow.hass.config_entries.async_get_known_entry.return_value = Mock(
-        entry_id="entry", options=options
+class Scans:
+    """What each speaker's Bluetooth scans hear, by address, and the clock they read."""
+
+    def __init__(self) -> None:
+        """Start with scans that hear nothing, at time 0."""
+        self.heard: dict[str, list[BluetoothJsonDict]] = {}
+        self.now = 0.0
+        # The speakers asked to start a scan, in order
+        self.started: list[str] = []
+
+    async def results(
+        self, _session: object, device: GoogleHomeDevice
+    ) -> list[BluetoothJsonDict]:
+        """Return what the speaker heard."""
+        return self.heard.get(str(device.ip_address), [])
+
+    async def start(self, _session: object, device: GoogleHomeDevice) -> None:
+        """Start a scan."""
+        self.started.append(device.name)
+
+
+@pytest.fixture(name="scans")
+def fixture_scans() -> Iterator[Scans]:
+    """Fake the speakers' Bluetooth scans and the scanner's clock."""
+    scans = Scans()
+    with (
+        patch(f"{BLUETOOTH}.async_get_bluetooth_scan_results", scans.results),
+        patch(f"{BLUETOOTH}.async_start_bluetooth_scan", scans.start),
+        patch(f"{BLUETOOTH}.monotonic", lambda: scans.now),
+    ):
+        yield scans
+
+
+async def scan(
+    hass: HomeAssistant, entry: MockConfigEntry, scans: Scans, now: float
+) -> str:
+    """Run the Bluetooth update at a time and return the phone's tracker state."""
+    scans.now = now
+    coordinator = runtime(entry).bluetooth
+    assert coordinator is not None
+    await coordinator.async_refresh()
+    await hass.async_block_till_done()
+    state = hass.states.get(TRACKER)
+    assert state is not None
+    return state.state
+
+
+async def track_phone(hass: HomeAssistant, entry: MockConfigEntry) -> None:
+    """Turn Bluetooth tracking on, track the phone by its IRK, and set up the entry."""
+    hass.config_entries.async_update_entry(entry, options={"bluetooth_tracking": True})
+    hass.config_entries.async_add_subentry(entry, subentry({"irk": IRK.hex()}))
+    await set_up(hass, entry)
+
+
+async def add_device(
+    hass: HomeAssistant, entry: MockConfigEntry, user_input: dict[str, str]
+) -> dict[str, object]:
+    """Fill in the form that adds a tracked device, and return the result."""
+    result = await hass.config_entries.subentries.async_init(
+        (entry.entry_id, "bluetooth_device"), context={"source": "user"}
     )
-    flow.hass.data = {DOMAIN: {"entry": {DATA_COORDINATOR: Mock(data=devices)}}}
-    flow.handler = "entry"
-    return flow
-
-
-def test_options_save_bluetooth() -> None:
-    """Save Bluetooth tracking and the excluded speakers."""
-    flow = make_options_flow({}, [])
-
-    result = asyncio.run(
-        flow.async_step_init(
-            {
-                "update_interval": 180,
-                "bluetooth_tracking": True,
-                "bluetooth_excluded_speakers": ["garage"],
-            }
+    assert result["type"] is FlowResultType.FORM
+    return dict(
+        await hass.config_entries.subentries.async_configure(
+            result["flow_id"], user_input
         )
     )
 
-    assert result["type"] == "create_entry"
-    assert result["data"]["bluetooth_tracking"] is True
-    assert result["data"]["bluetooth_excluded_speakers"] == ["garage"]
 
+@pytest.mark.usefixtures("google", "replies")
+async def test_track_phone(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    scans: Scans,
+    entity_registry: er.EntityRegistry,
+    device_registry: dr.DeviceRegistry,
+) -> None:
+    """Add a phone, show it home while the speaker hears it and away once it's gone, then remove it."""
+    hass.config_entries.async_update_entry(
+        config_entry, options={"bluetooth_tracking": True}
+    )
+    await set_up(hass, config_entry)
+    # Nothing is tracked yet
+    assert runtime(config_entry).bluetooth is None
 
-def test_options_offer_speakers_by_name() -> None:
-    """Offer the speakers by name, keeping excluded ones Google no longer lists."""
-    flow = make_options_flow(
-        {"bluetooth_excluded_speakers": ["gone"]},
-        [GoogleHomeDevice("kitchen", "Kitchen", "token")],
+    result = await add_device(hass, config_entry, {"name": "Phone", "irk": IRK.hex()})
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    # Adding it reloads the entry, which starts the first scans in the background
+    await hass.async_block_till_done(wait_background_tasks=True)
+
+    assert config_entry.state is ConfigEntryState.LOADED
+    assert scans.started == [SPEAKER_NAME]
+    (subentry_id,) = config_entry.subentries
+    registered = entity_registry.async_get(TRACKER)
+    assert registered is not None
+    assert registered.config_subentry_id == subentry_id
+    # As Home Assistant's own Bluetooth trackers
+    assert registered.entity_category is EntityCategory.DIAGNOSTIC
+    device = device_registry.async_get(str(registered.device_id))
+    assert device is not None
+    assert (device.name, device.config_subentry_id) == ("Phone", subentry_id)
+    state = hass.states.get(TRACKER)
+    assert state is not None
+    assert (state.state, state.attributes["source_type"]) == (
+        STATE_UNKNOWN,
+        "bluetooth_le",
     )
 
-    result = asyncio.run(flow.async_step_init())
-
-    schema = result["data_schema"]
-    assert schema is not None
-    selector = schema.schema["bluetooth_excluded_speakers"]
-    assert selector.config["options"] == [
-        {"value": "gone", "label": "gone"},
-        {"value": "kitchen", "label": "Kitchen"},
+    scans.heard[SPEAKER] = [heard(rpa(IRK))]
+    assert await scan(hass, config_entry, scans, 30) == STATE_HOME
+    scans.heard[SPEAKER] = []
+    # The scan that started at 0 was the last to hear it
+    assert [await scan(hass, config_entry, scans, now) for now in (60, 90)] == [
+        STATE_HOME,
+        STATE_NOT_HOME,
     ]
 
+    hass.config_entries.async_remove_subentry(config_entry, subentry_id)
+    await hass.async_block_till_done(wait_background_tasks=True)
 
-def make_subentry_flow(
-    options: dict[str, object], subentries: list[ConfigSubentry] | None = None
-) -> BluetoothDeviceSubentryFlow:
-    """Return the flow that adds a tracked device to an entry."""
-    flow = BluetoothDeviceSubentryFlow()
-    flow.hass = Mock()
-    flow.handler = ("entry", "bluetooth_device")
-    flow.context = {"source": "user"}
-    flow._get_entry = Mock(  # type: ignore[method-assign]  # noqa: SLF001  # pylint: disable=protected-access
-        return_value=make_entry(options, subentries)
-    )
-    return flow
+    assert runtime(config_entry).bluetooth is None
+    assert entity_registry.async_get(TRACKER) is None
+    assert hass.states.get(TRACKER) is None
 
 
-def add_device(
-    user_input: dict[str, str], subentries: list[ConfigSubentry] | None = None
-) -> dict[str, object]:
-    """Submit the form that adds a tracked device, with tracking on."""
-    flow = make_subentry_flow({"bluetooth_tracking": True}, subentries)
-    return dict(asyncio.run(flow.async_step_user(user_input)))
-
-
-def test_add_device_needs_tracking_on() -> None:
+async def test_add_device_needs_tracking_on(
+    hass: HomeAssistant, config_entry: MockConfigEntry
+) -> None:
     """Explain that tracking is off instead of adding a device that wouldn't be tracked."""
-    flow = make_subentry_flow({})
+    result = await hass.config_entries.subentries.async_init(
+        (config_entry.entry_id, "bluetooth_device"), context={"source": "user"}
+    )
 
-    result = asyncio.run(flow.async_step_user())
-
-    assert result["type"] == "abort"
+    assert result["type"] is FlowResultType.ABORT
     assert result["reason"] == "bluetooth-tracking-off"
 
 
@@ -685,13 +740,22 @@ def test_add_device_needs_tracking_on() -> None:
         ({"name": "Watch", "mac": "aa-bb-cc-dd-ee-ff"}, {"mac": "AA:BB:CC:DD:EE:FF"}),
     ],
 )
-def test_add_device(user_input: dict[str, str], data: dict[str, str]) -> None:
+async def test_add_device(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    user_input: dict[str, str],
+    data: dict[str, str],
+) -> None:
     """Save the IRK as hex in the order the cipher takes, or the normalized MAC."""
-    result = add_device(user_input)
+    hass.config_entries.async_update_entry(
+        config_entry, options={"bluetooth_tracking": True}
+    )
 
-    assert result["type"] == "create_entry"
-    assert result["title"] == user_input["name"].strip()
-    assert result["data"] == data
+    result = await add_device(hass, config_entry, user_input)
+
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    (added,) = config_entry.subentries.values()
+    assert (added.title, dict(added.data)) == (user_input["name"].strip(), data)
 
 
 @pytest.mark.parametrize(
@@ -705,36 +769,114 @@ def test_add_device(user_input: dict[str, str], data: dict[str, str]) -> None:
         ),
         ({"name": "Phone", "irk": "abc"}, {"irk": "irk-invalid"}),
         ({"name": "Phone", "mac": "abc"}, {"mac": "mac-invalid"}),
+        # The same IRK as the tracked phone's, written differently
+        (
+            {"name": "Phone again", "irk": IRK.hex().upper()},
+            {"base": "already-tracked"},
+        ),
     ],
 )
-def test_add_device_rejects(user_input: dict[str, str], errors: dict[str, str]) -> None:
-    """Point out a missing name, a missing or extra identifier, or a wrong one."""
-    result = add_device(user_input)
-
-    assert result["type"] == "form"
-    assert result["errors"] == errors
-
-
-def test_add_device_rejects_duplicate() -> None:
-    """Refuse to track the same IRK twice."""
-    result = add_device(
-        {"name": "Phone again", "irk": IRK.hex().upper()},
-        [subentry({"irk": IRK.hex()})],
+async def test_add_device_rejects(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    user_input: dict[str, str],
+    errors: dict[str, str],
+) -> None:
+    """Point out a missing name, a missing or extra identifier, a wrong one, or one already tracked."""
+    hass.config_entries.async_update_entry(
+        config_entry, options={"bluetooth_tracking": True}
     )
+    hass.config_entries.async_add_subentry(config_entry, subentry({"irk": IRK.hex()}))
 
-    assert result["errors"] == {"base": "already-tracked"}
+    result = await add_device(hass, config_entry, user_input)
+
+    assert result["type"] is FlowResultType.FORM
+    assert result["errors"] == errors
+    assert list(config_entry.subentries) == [PHONE]
 
 
-def api_client(
-    status: int = 200, body: object = None
-) -> tuple[GlocaltokensApiClient, Mock]:
-    """Return an API client whose device answers with this status and JSON body."""
+@pytest.mark.usefixtures("google", "replies")
+async def test_options_save_bluetooth(
+    hass: HomeAssistant, config_entry: MockConfigEntry
+) -> None:
+    """Save Bluetooth tracking and the excluded speakers."""
+    await set_up(hass, config_entry)
+    result = await hass.config_entries.options.async_init(config_entry.entry_id)
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"],
+        {"bluetooth_tracking": True, "bluetooth_excluded_speakers": [SPEAKER_ID]},
+    )
+    await hass.async_block_till_done()
+
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert config_entry.options["bluetooth_tracking"] is True
+    assert config_entry.options["bluetooth_excluded_speakers"] == [SPEAKER_ID]
+
+
+@pytest.mark.usefixtures("google", "replies")
+@pytest.mark.parametrize(
+    ("loaded", "offered"),
+    [
+        (
+            True,
+            [
+                {"value": "gone", "label": "gone"},
+                {"value": SPEAKER_ID, "label": SPEAKER_NAME},
+            ],
+        ),
+        # Google's list is unknown, so only the excluded speakers are offered
+        (False, [{"value": "gone", "label": "gone"}]),
+    ],
+)
+async def test_options_offer_speakers_by_name(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    loaded: bool,
+    offered: list[dict[str, str]],
+) -> None:
+    """Offer the speakers by name, keeping excluded ones Google no longer lists."""
+    hass.config_entries.async_update_entry(
+        config_entry, options={"bluetooth_excluded_speakers": ["gone"]}
+    )
+    if loaded:
+        await set_up(hass, config_entry)
+
+    result = await hass.config_entries.options.async_init(config_entry.entry_id)
+
+    schema = result["data_schema"]
+    assert schema is not None
+    selector = schema.schema["bluetooth_excluded_speakers"]
+    assert selector.config["options"] == offered
+
+
+@pytest.mark.usefixtures("google", "replies", "scans")
+async def test_diagnostics_leave_out_tracked_devices(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    hass_client: ClientSessionGenerator,
+) -> None:
+    """Never show a tracked device's IRK or MAC address in the diagnostics."""
+    hass.config_entries.async_add_subentry(
+        config_entry,
+        subentry({"mac": "AA:BB:CC:DD:EE:FF"}, subentry_id="watch", title="Watch"),
+    )
+    await track_phone(hass, config_entry)
+
+    diagnostics = json.dumps(
+        await get_diagnostics_for_config_entry(hass, hass_client, config_entry)
+    ).upper()
+
+    assert IRK.hex().upper() not in diagnostics
+    assert "AA:BB:CC:DD:EE:FF" not in diagnostics
+
+
+def mock_session(status: int = 200, body: object = None) -> Mock:
+    """Return a session whose device answers with this status and JSON body."""
     response = MagicMock()
     response.__aenter__.return_value = Mock(
         status=status, json=AsyncMock(return_value=body)
     )
-    session = Mock(request=Mock(return_value=response))
-    return GlocaltokensApiClient(Mock(), session, master_token=MASTER_TOKEN), session
+    return Mock(request=Mock(return_value=response))
 
 
 KITCHEN = GoogleHomeDevice("kitchen", "Kitchen", "token", ip_address="10.0.0.1")
@@ -742,9 +884,9 @@ KITCHEN = GoogleHomeDevice("kitchen", "Kitchen", "token", ip_address="10.0.0.1")
 
 def test_start_scan_request() -> None:
     """Start a 30-second scan that clears the previous results."""
-    client, session = api_client()
+    session = mock_session()
 
-    asyncio.run(client.async_start_bluetooth_scan(KITCHEN))
+    asyncio.run(async_start_bluetooth_scan(session, KITCHEN))
 
     method, url = session.request.call_args.args
     assert (method, url) == ("POST", "https://10.0.0.1:8443/setup/bluetooth/scan")
@@ -761,7 +903,7 @@ def test_start_scan_request() -> None:
 
 def test_scan_results_skip_malformed_entries() -> None:
     """Return the address and signal strength of each well-formed result."""
-    client, _session = api_client(
+    session = mock_session(
         body=[
             {"mac_address": "AA:BB:CC:DD:EE:FF", "rssi": -50, "name": ""},
             {"mac_address": "AA:BB:CC:DD:EE:00"},
@@ -769,7 +911,7 @@ def test_scan_results_skip_malformed_entries() -> None:
         ]
     )
 
-    results = asyncio.run(client.async_get_bluetooth_scan_results(KITCHEN))
+    results = asyncio.run(async_get_bluetooth_scan_results(session, KITCHEN))
 
     assert results == [{"mac_address": "AA:BB:CC:DD:EE:FF", "rssi": -50}]
 
@@ -787,18 +929,18 @@ def test_scan_results_errors(
     status: int, body: object, error: type[BluetoothScanError]
 ) -> None:
     """Raise for 404 as unsupported, and for other failures as errors."""
-    client, _session = api_client(status, body)
+    session = mock_session(status, body)
 
     with pytest.raises(error):
-        asyncio.run(client.async_get_bluetooth_scan_results(KITCHEN))
+        asyncio.run(async_get_bluetooth_scan_results(session, KITCHEN))
 
 
 def test_request_failure_leaves_device_available() -> None:
     """Raise on a connection error without marking the device unavailable."""
-    client, session = api_client()
+    session = mock_session()
     session.request.side_effect = ClientError("offline")
     device = GoogleHomeDevice("kitchen", "Kitchen", "token", ip_address="10.0.0.1")
 
     with pytest.raises(BluetoothScanError):
-        asyncio.run(client.async_start_bluetooth_scan(device))
+        asyncio.run(async_start_bluetooth_scan(session, device))
     assert device.available

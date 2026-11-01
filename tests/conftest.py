@@ -28,7 +28,11 @@ from custom_components.google_home.const import (
 
 # ruff sorts homeassistant as first-party, pylint as third-party
 # pylint: disable=wrong-import-order
-from homeassistant.config_entries import ConfigEntriesFlowManager, OptionsFlowManager
+from homeassistant.config_entries import (
+    ConfigEntriesFlowManager,
+    ConfigSubentryFlowManager,
+    OptionsFlowManager,
+)
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowManager, FlowResult, FlowResultType
 from homeassistant.helpers.translation import async_get_translations
@@ -102,6 +106,10 @@ async def assert_flow_text(manager: FlowManager, result: FlowResult) -> None:
     category = "options" if isinstance(manager, OptionsFlowManager) else "config"
     domain = result.get("translation_domain") or DOMAIN
     prefix = f"component.{domain}.{category}"
+    if isinstance(manager, ConfigSubentryFlowManager):
+        # The handler is the entry's ID and the subentry type
+        category = "config_subentries"
+        prefix = f"component.{domain}.{category}.{result['handler'][1]}"
     text = await async_get_translations(manager.hass, "en", category, [domain])
     keys = [
         f"{prefix}.error.{error}" for error in (result.get("errors") or {}).values()
