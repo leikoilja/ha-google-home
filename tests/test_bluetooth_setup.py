@@ -438,7 +438,7 @@ async def test_options_show_saved_bluetooth_options(
             result["data_schema"], custom_serializer=cv.custom_serializer
         ),
     )
-    (bluetooth,) = [field for field in fields if field["name"] == "bluetooth"]
+    (bluetooth,) = (field for field in fields if field["name"] == "bluetooth")
     assert (bluetooth["type"], bluetooth["default"]) == ("expandable", saved)
 
 
