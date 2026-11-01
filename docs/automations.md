@@ -78,7 +78,7 @@ The trigger follows the time that the integration last saw. The integration [che
 
 Around an alarm's or timer's time, the integration checks that speaker more often than the [update interval](configuration.md#change-the-update-interval):
 
-- About 1 second after its time, or at a regular check that comes sooner. This also applies when a snoozed alarm is due again. Home Assistant can start a check up to about a second early or half a second late, so this check comes about 0.05 to 1.5 seconds after the time the speaker reports.
+- About 1 second after its time, or at a regular check that comes sooner. This also applies when a snoozed alarm is due again. Home Assistant can start a check up to about a second early or half a second late, so this check comes about 0.05 to 1.5 seconds after the time that the integration shows. That time is the speaker's rounded to the second, so the check can come from about half a second before the speaker's own time to about 2 seconds after it.
 - While it isn't ringing yet, every 5 seconds, until about 30 seconds after its time.
 - While it rings, every 10 seconds, until about 65 minutes after its time. With an update interval of 10 seconds or less, the regular checks already come this often.
 
