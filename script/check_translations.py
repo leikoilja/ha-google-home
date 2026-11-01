@@ -4,6 +4,7 @@
 import argparse
 from dataclasses import dataclass, field
 from itertools import groupby
+import json
 from operator import attrgetter
 import os
 from pathlib import Path
@@ -48,6 +49,11 @@ class Report:
 
     issues: list[Issue] = field(default_factory=list)
     rows: list[str] = field(default_factory=list)
+    # For --stats: readable locales, those with every string valid, and the
+    # strings they show in English because they are missing or mismatched
+    translations: int = 0
+    complete: int = 0
+    missing: int = 0
 
     def invalid_catalog(self, path: Path, error: Exception) -> None:
         """Report every available diagnostic and retain an invalid locale's row."""
@@ -247,6 +253,10 @@ def compare_catalog(
             )
             report.issues.append(Issue("error", path, message))
     valid = len(english) - len(missing) - mismatches
+    report.translations += 1
+    report.missing += len(missing) + mismatches
+    if valid == len(english):
+        report.complete += 1
     report.rows.append(
         f"| {path.name} | {valid}/{len(english)} | {len(missing)} | "
         f"{len(obsolete)} | {mismatches} |"
@@ -272,6 +282,12 @@ def main(argv: list[str] | None = None) -> int:
         "mismatches are reported as warnings; "
         "without it, all placeholder mismatches and unknown keys fail",
     )
+    parser.add_argument(
+        "--stats",
+        type=Path,
+        help="Write the number of translations, how many are complete and how "
+        "many strings they show in English to this JSON file",
+    )
     args = parser.parse_args(argv)
     baseline = None
     if args.base_ref is not None:
@@ -280,6 +296,17 @@ def main(argv: list[str] | None = None) -> int:
         except subprocess.CalledProcessError as err:
             sys.exit(f"Cannot read --base-ref: {err.stderr.decode('utf-8').strip()}")
     report = check_translations(REPO_ROOT / TRANSLATIONS, baseline)
+    if args.stats is not None:
+        stats = {
+            "translations": report.translations,
+            "complete": report.complete,
+            "missing": report.missing,
+        }
+        try:
+            args.stats.write_text(json.dumps(stats), encoding="utf-8")
+        except OSError as err:
+            # The stats are informational, so they never change the result
+            print(f"Cannot write --stats: {err}", file=sys.stderr)
     summary = report.markdown()
     if summary_path := os.environ.get("GITHUB_STEP_SUMMARY"):
         key = attrgetter("file", "level")
