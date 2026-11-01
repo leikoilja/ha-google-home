@@ -203,7 +203,7 @@ By default, Home Assistant starts new entity IDs with the device's area. A devic
 To avoid this for entities added later, do one of the following:
 
 - Rename the device in Home Assistant without the room, such as _Speaker_. The device keeps its name in the Google Home app.
-- Remove **Area** in **Settings** > **System** > **Entity ID format**. This is a global setting for new entity IDs, not just Google Home ones. Integrations that suggest their own entity IDs don't use it.
+- Remove **Area** in **Settings** > **System** > **Entity ID format** and select **Save**. This is a global setting for new entity IDs, not just Google Home ones. Integrations that suggest their own entity IDs don't use it.
 
 Entities you already have keep their entity IDs. Changing them is optional. Go to **Settings** > **Devices & services** > **Google Home** and select the device, such as _Kitchen display_. Open the **⋮** menu and select **Recreate entity IDs**. This:
 

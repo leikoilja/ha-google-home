@@ -35,7 +35,7 @@
       },
       "homes": {
         "title": "Vel heimar",
-        "description": "Google-kontoen din er medlem av fleire heimar. Vel heimane du vil leggje til høgtalarar og skjermar frå. Du kan endre dette seinare i innstillingane for integrasjonen.",
+        "description": "Google-kontoen din er medlem av fleire heimar. Vel heimane du vil leggje til høgtalarar og skjermar frå. Du kan endre dette seinare i vala for integrasjonen: Vel **Konfigurer** på sida til integrasjonen.",
         "data": {
           "homes": "Heimar"
         }
@@ -208,7 +208,7 @@
         "already-tracked": "Denne eininga blir allereie spora."
       },
       "abort": {
-        "bluetooth-tracking-off": "Bluetooth-sporing er slått av. Slå på sporinga i alternativa for integrasjonen først: Vel «Konfigurer» på sida til integrasjonen."
+        "bluetooth-tracking-off": "Bluetooth-sporing er slått av. Slå på sporinga i vala for integrasjonen først: Vel «Konfigurer» på sida til integrasjonen."
       }
     }
   },

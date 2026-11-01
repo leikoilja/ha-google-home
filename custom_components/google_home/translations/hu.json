@@ -35,7 +35,7 @@
       },
       "homes": {
         "title": "Otthonok kiválasztása",
-        "description": "Google-fiókja több otthon tagja. Válassza ki azokat az otthonokat, amelyek hangszóróit és kijelzőit hozzá szeretné adni. Ezt később az integráció opcióiban módosíthatja.",
+        "description": "Google-fiókja több otthon tagja. Válassza ki azokat az otthonokat, amelyek hangszóróit és kijelzőit hozzá szeretné adni. Ezt később az integráció opcióiban módosíthatja: válassza a **Konfigurálás** lehetőséget az integráció oldalán.",
         "data": {
           "homes": "Otthonok"
         }
@@ -208,7 +208,7 @@
         "already-tracked": "Ezt az eszközt már követi az integráció."
       },
       "abort": {
-        "bluetooth-tracking-off": "A Bluetooth-követés ki van kapcsolva. Először kapcsolja be az integráció beállításaiban: válassza a „Konfigurálás” lehetőséget az integráció oldalán."
+        "bluetooth-tracking-off": "A Bluetooth-követés ki van kapcsolva. Először kapcsolja be az integráció opcióiban: válassza a „Konfigurálás” lehetőséget az integráció oldalán."
       }
     }
   },

@@ -35,7 +35,7 @@
       },
       "homes": {
         "title": "Zuhause auswählen",
-        "description": "Dein Google-Konto ist Mitglied mehrerer Zuhause. Wähle die Zuhause aus, deren Lautsprecher und Displays hinzugefügt werden sollen. Du kannst das später in den Optionen der Integration ändern.",
+        "description": "Dein Google-Konto ist Mitglied mehrerer Zuhause. Wähle die Zuhause aus, deren Lautsprecher und Displays hinzugefügt werden sollen. Du kannst das später in den Optionen der Integration ändern: Wähle **Konfigurieren** auf der Seite der Integration.",
         "data": {
           "homes": "Zuhause"
         }

@@ -35,7 +35,7 @@
       },
       "homes": {
         "title": "Valitse kodit",
-        "description": "Google-tilisi on usean kodin jäsen. Valitse kodit, joiden kaiuttimet ja näytöt lisätään. Voit muuttaa tätä myöhemmin integraation asetuksissa.",
+        "description": "Google-tilisi on usean kodin jäsen. Valitse kodit, joiden kaiuttimet ja näytöt lisätään. Voit muuttaa tätä myöhemmin integraation asetuksissa: valitse integraation sivulla **Määrittele**.",
         "data": {
           "homes": "Kodit"
         }

@@ -35,7 +35,7 @@
       },
       "homes": {
         "title": "Velg hjem",
-        "description": "Google-kontoen din er medlem av flere hjem. Velg hjemmene du vil legge til høyttalere og skjermer fra. Du kan endre dette senere i alternativene for integrasjonen.",
+        "description": "Google-kontoen din er medlem av flere hjem. Velg hjemmene du vil legge til høyttalere og skjermer fra. Du kan endre dette senere i alternativene for integrasjonen: Velg **Konfigurer** på siden til integrasjonen.",
         "data": {
           "homes": "Hjem"
         }
