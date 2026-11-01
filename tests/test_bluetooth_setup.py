@@ -258,6 +258,66 @@ async def test_deleting_tracked_device_stops_tracking(
     assert runtime(config_entry).bluetooth is None
 
 
+def reload_reasons(caplog: pytest.LogCaptureFixture) -> list[str]:
+    """Return the debug lines that say why the entry reloads."""
+    return [message for message in caplog.messages if message.endswith("reloading...")]
+
+
+@pytest.mark.usefixtures("google", "replies", "scans")
+async def test_log_reload_for_added_device(
+    hass: HomeAssistant, config_entry: MockConfigEntry, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Log that a tracked device was added, not that the options changed."""
+    caplog.set_level(logging.DEBUG, logger="custom_components.google_home")
+    hass.config_entries.async_update_entry(
+        config_entry, options={"bluetooth_tracking": True}
+    )
+    await set_up(hass, config_entry)
+
+    await add_device(hass, config_entry, {"name": "Phone", "irk_or_mac": IRK.hex()})
+    await hass.async_block_till_done(wait_background_tasks=True)
+
+    assert reload_reasons(caplog) == [
+        "Bluetooth device added to tracking, reloading..."
+    ]
+
+
+@pytest.mark.usefixtures("google", "replies", "scans")
+async def test_log_reload_for_removed_device(
+    hass: HomeAssistant, config_entry: MockConfigEntry, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Log that a tracked device was removed, not that the options changed."""
+    caplog.set_level(logging.DEBUG, logger="custom_components.google_home")
+    await track_phone(hass, config_entry)
+
+    hass.config_entries.async_remove_subentry(config_entry, PHONE)
+    await hass.async_block_till_done(wait_background_tasks=True)
+
+    assert reload_reasons(caplog) == [
+        "Bluetooth device removed from tracking, reloading..."
+    ]
+
+
+@pytest.mark.usefixtures("google", "replies", "scans")
+async def test_log_reload_for_changed_options(
+    hass: HomeAssistant, config_entry: MockConfigEntry, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Log that the Bluetooth options changed when a speaker is left out of tracking."""
+    caplog.set_level(logging.DEBUG, logger="custom_components.google_home")
+    await track_phone(hass, config_entry)
+
+    hass.config_entries.async_update_entry(
+        config_entry,
+        options={
+            "bluetooth_tracking": True,
+            "bluetooth_excluded_speakers": [SPEAKER_ID],
+        },
+    )
+    await hass.async_block_till_done(wait_background_tasks=True)
+
+    assert reload_reasons(caplog) == ["Bluetooth options changed, reloading..."]
+
+
 async def test_add_device_needs_tracking_on(
     hass: HomeAssistant, config_entry: MockConfigEntry
 ) -> None:
