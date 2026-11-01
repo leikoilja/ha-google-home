@@ -33,6 +33,13 @@
           "master_token": "Inizia con aas_et/"
         }
       },
+      "homes": {
+        "title": "Scegli le case",
+        "description": "Il tuo account Google fa parte di più case. Scegli le case di cui aggiungere altoparlanti e display. Puoi modificare questa scelta in seguito nelle opzioni dell'integrazione.",
+        "data": {
+          "homes": "Case"
+        }
+      },
       "reauth": {
         "title": "Accedi di nuovo",
         "description": "Google non accetta più le credenziali di accesso salvate per {name}. Accedi di nuovo allo stesso account Google: i tuoi dispositivi, le entità e le automazioni restano invariati. Finché non lo fai, le entità dei tuoi dispositivi potrebbero mostrare valori non aggiornati o non essere disponibili.",
@@ -74,7 +81,8 @@
       "google-busy": "Google è occupato o sta limitando gli accessi. Attendi qualche minuto, poi accedi di nuovo.",
       "oauth-token-format": "Questo non è il cookie oauth_token. Il suo valore inizia con oauth2_4/.",
       "master-token-format": "Un token master inizia con aas_et/ ed è lungo 223 caratteri. Copia il token completo.",
-      "other-account": "Hai effettuato l'accesso con un altro account Google, quindi non è stato modificato nulla. Accedi con l'account usato da questa integrazione. Per usare invece quell'altro account, elimina l'integrazione e aggiungila di nuovo."
+      "other-account": "Hai effettuato l'accesso con un altro account Google, quindi non è stato modificato nulla. Accedi con l'account usato da questa integrazione. Per usare invece quell'altro account, elimina l'integrazione e aggiungila di nuovo.",
+      "no-home-selected": "Scegli almeno una casa."
     }
   },
   "entity": {
@@ -154,15 +162,18 @@
       "init": {
         "data": {
           "update_interval": "Modifica l'intervallo di aggiornamento. Aumentalo se i dispositivi vanno spesso in timeout. Predefinito: {default_interval} (secondi)",
-          "known_hosts": "Host noti"
+          "known_hosts": "Host noti",
+          "homes": "Case"
         },
         "data_description": {
-          "known_hosts": "Indirizzi IP di altoparlanti e display che l'integrazione non riesce a trovare da sola, ad esempio perché si trovano su un'altra rete o VLAN."
+          "known_hosts": "Indirizzi IP di altoparlanti e display che l'integrazione non riesce a trovare da sola, ad esempio perché si trovano su un'altra rete o VLAN.",
+          "homes": "Gli altoparlanti e i display delle case che deselezioni non vengono aggiunti. Se deselezioni una casa, i suoi dispositivi e le relative entità vengono rimossi da Home Assistant, quindi le automazioni, gli script e le plance che li usano smettono di funzionare. Seleziona di nuovo la casa per riaggiungerli con i nomi e le aree che avevi assegnato loro."
         }
       }
     },
     "error": {
-      "known-host-not-ip": "Inserisci solo indirizzi IP, ad esempio 192.168.1.20."
+      "known-host-not-ip": "Inserisci solo indirizzi IP, ad esempio 192.168.1.20.",
+      "no-home-selected": "Scegli almeno una casa."
     }
   },
   "services": {

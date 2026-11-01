@@ -43,7 +43,7 @@ These are the main requirements; [Before you start](installation.md#before-you-s
 
 The integration uses your Google account to get access tokens for your devices from Google, and renews them regularly. Everything else, such as reading alarms or changing the alarm volume, goes directly to the devices over your local network.
 
-You can add the integration only once, so it works with one Google account. To use devices from several homes, [invite that account](https://support.google.com/googlenest/answer/9155535) to each home: the integration adds the devices of every home the account is a member of. Devices that Home Assistant can't find on its network, for example in a home at another address, have only a device sensor and a reboot button, and both are unavailable.
+You can add the integration only once, so it works with one Google account. To use devices from several homes, [invite that account](https://support.google.com/googlenest/answer/9155535) to each home: the integration adds the devices of every home the account is a member of, unless you [choose homes](configuration.md#choose-homes). Devices that Home Assistant can't find on its network, for example in a home at another address, have only a device sensor and a reboot button, and both are unavailable.
 
 ## Languages
 

@@ -17,7 +17,9 @@ from pathlib import Path
 from typing import cast
 from unittest.mock import AsyncMock, Mock, patch
 
-from glocaltokens.exceptions import AuthenticationError
+from ghome_foyer_api.api_pb2 import HomeGraph  # pylint: disable=no-name-in-module
+from glocaltokens.exceptions import AuthenticationError, HomegraphError
+import grpc  # type: ignore[import-untyped]
 import pytest
 from pytest_homeassistant.common import MockConfigEntry
 from requests import Response
@@ -63,6 +65,20 @@ def fixture_create_session() -> Iterator[Mock]:
         "homeassistant.helpers.aiohttp_client._async_create_clientsession"
     ) as create:
         yield create
+
+
+@pytest.fixture(name="home_graph", autouse=True)
+def fixture_home_graph() -> Iterator[Mock]:
+    """Fake Google's home graph, with no homes unless a test gives some.
+
+    Adding the integration asks for the account's homes after signing in.
+    """
+    with patch(
+        "glocaltokens.client.GLocalAuthenticationTokens.get_home_graph",
+        autospec=True,
+        return_value=HomeGraph(),
+    ) as home_graph:
+        yield home_graph
 
 
 @pytest.fixture(name="flow")
@@ -585,6 +601,46 @@ async def test_sign_in(
     assert {sent_id for _, sent_id in sent} == {android_id}
 
 
+# The account's homes
+HOMES = HomeGraph(
+    homes=[
+        HomeGraph.Home(id="home-id", display_name="Home"),
+        HomeGraph.Home(id="flat-id", display_name="Flat"),
+    ]
+)
+
+
+@pytest.mark.usefixtures("mock_setup_entry", "sign_in")
+@pytest.mark.parametrize(
+    "answer",
+    [
+        pytest.param(
+            HomeGraph(homes=[HomeGraph.Home(id="home-id", display_name="Home")]),
+            id="one-home",
+        ),
+        pytest.param(
+            HomegraphError(grpc.StatusCode.UNAVAILABLE, "Unavailable"),
+            id="no-home-graph",
+        ),
+        pytest.param(RequestsConnectionError(), id="unreachable"),
+    ],
+)
+async def test_sign_in_adds_every_home(
+    hass: HomeAssistant, home_graph: Mock, answer: HomeGraph | Exception
+) -> None:
+    """Add the integration straight after signing in without a choice of homes, or the homes.
+
+    Every home's devices are then added, until the options exclude some.
+    """
+    home_graph.side_effect = [answer]
+    result = await choose(hass, "master_token")
+    result = await submit(hass, result, SIGN_IN_INPUT["master_token"])
+
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    [entry] = hass.config_entries.async_entries(DOMAIN)
+    assert entry.options == {}
+
+
 @pytest.mark.usefixtures("mock_setup_entry")
 @pytest.mark.parametrize(
     ("method", "pasted", "error"),
@@ -776,6 +832,7 @@ async def test_reauth(
     hass: HomeAssistant,
     config_entry: MockConfigEntry,
     sign_in: Mock,
+    home_graph: Mock,
     mock_setup_entry: AsyncMock,
     method: str,
 ) -> None:
@@ -783,9 +840,13 @@ async def test_reauth(
 
     The menu names the entry. The forms have text of their own: the setup forms say
     to add the integration again to choose another way to sign in, which can't be
-    done while the entry exists.
+    done while the entry exists. The homes aren't offered again, and the excluded
+    ones stay excluded.
     """
-    hass.config_entries.async_update_entry(config_entry, title="Home")
+    home_graph.return_value = HOMES
+    hass.config_entries.async_update_entry(
+        config_entry, title="Home", options={"excluded_homes": ["flat-id"]}
+    )
     result = await config_entry.start_reauth_flow(hass)
     assert (result["type"], result["step_id"]) == (FlowResultType.MENU, "reauth")
     assert result["menu_options"] == ["browser", "master_token"]
@@ -811,6 +872,7 @@ async def test_reauth(
         "android_id": "android-id",
     }
     assert {android_id for _, android_id in sent_to_google(sign_in)} == {"android-id"}
+    assert config_entry.options == {"excluded_homes": ["flat-id"]}
     mock_setup_entry.assert_awaited_once()
     assert config_entry.state is ConfigEntryState.LOADED
 
@@ -899,9 +961,12 @@ async def test_options(hass: HomeAssistant, config_entry: MockConfigEntry) -> No
     """Ask for IP addresses, as requests to devices are built from them.
 
     Then save known hosts without blanks, surrounding spaces and repeats, in order.
+    The entry isn't loaded, so the homes aren't offered, and the excluded ones stay
+    excluded.
     """
     hass.config_entries.async_update_entry(
-        config_entry, options={"known_hosts": ["10.0.1.5"]}
+        config_entry,
+        options={"known_hosts": ["10.0.1.5"], "excluded_homes": ["flat-id"]},
     )
     result = await hass.config_entries.options.async_init(config_entry.entry_id)
     result = await hass.config_entries.options.async_configure(
@@ -910,7 +975,10 @@ async def test_options(hass: HomeAssistant, config_entry: MockConfigEntry) -> No
 
     assert result["type"] is FlowResultType.FORM
     assert result["errors"] == {"known_hosts": "known-host-not-ip"}
-    assert config_entry.options == {"known_hosts": ["10.0.1.5"]}
+    assert config_entry.options == {
+        "known_hosts": ["10.0.1.5"],
+        "excluded_homes": ["flat-id"],
+    }
 
     result = await hass.config_entries.options.async_configure(
         result["flow_id"],
@@ -924,4 +992,5 @@ async def test_options(hass: HomeAssistant, config_entry: MockConfigEntry) -> No
     assert config_entry.options == {
         "update_interval": 180,
         "known_hosts": ["10.0.1.5", "fd00::5"],
+        "excluded_homes": ["flat-id"],
     }

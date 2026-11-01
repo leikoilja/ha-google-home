@@ -1,6 +1,6 @@
 # Configuration and management
 
-After you [set up the integration](installation.md), you can change how often it checks your devices, add and remove devices, reach devices on another network, and remove the integration. If Home Assistant asks you to sign in again, see [Sign in again](troubleshooting.md#sign-in-again).
+After you [set up the integration](installation.md), you can change how often it checks your devices, add and remove devices, reach devices on another network, choose the homes whose devices it adds, and remove the integration. If Home Assistant asks you to sign in again, see [Sign in again](troubleshooting.md#sign-in-again).
 
 ## Change the update interval
 
@@ -16,7 +16,7 @@ To update immediately, use the [Refresh devices](actions.md#refresh-devices) act
 
 ## Add a device
 
-When you add a speaker or display in the Google Home app, the integration adds it without a reload:
+When you add a speaker or display in the Google Home app, the integration adds it without a reload, unless it's in a home that you [deselected](#choose-homes):
 
 - If Home Assistant receives the device's mDNS announcements, for example because it's on the same network, the device appears about a minute after it joins your network, if Google lists it by then. If another Cast device that the integration didn't know, such as a TV, appeared shortly before, it can take up to 5 minutes.
 - Otherwise, or if Google doesn't list the device yet by then, it appears within about 20 minutes, when the integration next asks Google for your devices.
@@ -63,9 +63,31 @@ After that, the integration asks your known hosts only when it asks Google for y
 
 Give these devices fixed IP addresses in your router, so the addresses don't change. For a speaker pair, add the addresses of both speakers. Only the speaker that leads the pair reports it, so the integration uses that one and ignores the other.
 
+## Choose homes
+
+If your Google account is a member of several homes, you can choose the homes whose speakers and displays the integration adds. It adds every home's devices unless you deselect some. Google still sends the integration the devices of every home. The integration doesn't add the devices of homes you deselect, even if it finds them on your network or at a known host, and doesn't check them for alarms and timers.
+
+When you add the integration, it asks which homes to add if your account has more than one. If Google doesn't give the integration your homes at that point, it adds every home's devices, and you can choose later.
+
+You can change the homes later under **Homes** in the integration's options. **Homes** appears when your account has more than one home, or when the only home left is one that you deselected, so that you can select it again. The integration needs to have got your homes from Google since it last loaded: if **Homes** is missing although your account has several homes, reload the integration first.
+
+Homes are listed by the names they have in the Google Home app. If two of your homes have the same name, rename one of them in the app first, so that you can tell them apart.
+
+To change the homes:
+
+1. Go to **Settings** > **Devices & services** > **Google Home** and select **Configure**.
+2. Under **Homes**, select the homes whose devices to add.
+3. Select **Submit**. If you changed the homes, the integration reloads.
+
+When you deselect a home, the integration removes its devices from Home Assistant, with their entities, as it reloads. Automations, scripts and dashboards that use them stop working. If Google doesn't give the integration your device list as it reloads, the devices stay, unavailable, until the integration next gets the list.
+
+When you select a home again, its devices come back with the names, areas and other settings you gave them. A device that was factory reset and set up again meanwhile has a new ID from Google, so it's added as a new device, without them. As with a [removed device](#remove-a-device), an entity gets its old ID back only if no other entity has taken that ID meanwhile.
+
+Homes that your account joins later are added. A new home appears under **Homes** once the integration next gets your device list from Google, usually within about 20 minutes. To see it sooner, reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. If the options were already open, close them and select **Configure** again. To leave the new home out, deselect it.
+
 ## Remove a device
 
-When you remove a device from the Google Home app, or Google drops it from your home after a factory reset, the integration removes it from Home Assistant, with its entities, once Google's device list has lacked it twice in a row. The integration asks Google for your devices every 20 minutes, so this usually takes 20 to 40 minutes. It doesn't remove a device while Google still has it in your home, even if the integration can't use the device.
+When you remove a device from the Google Home app, or Google drops it from your home after a factory reset, the integration removes it from Home Assistant, with its entities, once Google's device list has lacked it twice in a row. The integration asks Google for your devices every 20 minutes, so this usually takes 20 to 40 minutes. It doesn't remove a device while Google still has it in one of your homes, even if the integration can't use the device, unless you [deselect that home](#choose-homes).
 
 As soon as Google's device list first lacks the device, its entities are unavailable. Removing a device from the Google Home app doesn't reset it: it stays on your network, and the integration keeps updating it until it next asks Google for your devices. After a factory reset, a device forgets your Wi-Fi network and usually stops answering, so its entities can become unavailable sooner, once it hasn't answered 5 updates in a row, before the integration has noticed.
 

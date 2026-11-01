@@ -103,7 +103,8 @@ class GoogleAccountCoordinator(DataUpdateCoordinator[dict[str, GoogleHomeDevice]
         """Remove the entry's devices that enough home graphs in a row lack, with their entities.
 
         That includes a device that no home graph has had since the integration loaded,
-        as Google may have dropped it before. Nothing is removed while the list is
+        as Google may have dropped it before. A device that the last home graph has in
+        an excluded home is removed at once. Nothing is removed while the list is
         unknown. A device that Google lists again later gets a new coordinator and
         entities.
         """
@@ -120,11 +121,18 @@ class GoogleAccountCoordinator(DataUpdateCoordinator[dict[str, GoogleHomeDevice]
         }
         coordinators = self.config_entry.runtime_data.devices
         for device_id in (registered.keys() | coordinators.keys()) - listed.keys():
-            if self.client.home_graphs_without(device_id) < HOME_GRAPHS_BEFORE_REMOVAL:
+            excluded = device_id in self.client.excluded_device_ids
+            if (
+                not excluded
+                and self.client.home_graphs_without(device_id)
+                < HOME_GRAPHS_BEFORE_REMOVAL
+            ):
                 continue
             if (device := registered.get(device_id)) is not None:
                 _LOGGER.info(
-                    "Removed %s, which Google no longer lists",
+                    "Removed %s, which is in a home whose devices aren't added"
+                    if excluded
+                    else "Removed %s, which Google no longer lists",
                     device.name_by_user or device.name,
                 )
                 registry.async_remove_device(device.id)

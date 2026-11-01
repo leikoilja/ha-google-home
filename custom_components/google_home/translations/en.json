@@ -33,6 +33,13 @@
           "master_token": "Starts with aas_et/"
         }
       },
+      "homes": {
+        "title": "Choose homes",
+        "description": "Your Google account is a member of several homes. Choose the homes whose speakers and displays to add. You can change this later in the integration's options.",
+        "data": {
+          "homes": "Homes"
+        }
+      },
       "reauth": {
         "title": "Sign in again",
         "description": "Google no longer accepts the sign-in saved for {name}. Sign in to the same Google account again: your devices, entities and automations stay as they are. Until you do, your devices' entities can show out-of-date values or be unavailable.",
@@ -74,7 +81,8 @@
       "google-busy": "Google is busy or is limiting sign-ins. Wait a few minutes, then sign in again.",
       "oauth-token-format": "This isn't the oauth_token cookie. Its value starts with oauth2_4/.",
       "master-token-format": "A master token starts with aas_et/ and is 223 characters long. Copy the whole token.",
-      "other-account": "You signed in to a different Google account, so nothing was changed. Sign in with the account this integration uses. To use the other account instead, delete the integration and add it again."
+      "other-account": "You signed in to a different Google account, so nothing was changed. Sign in with the account this integration uses. To use the other account instead, delete the integration and add it again.",
+      "no-home-selected": "Choose at least one home."
     }
   },
   "entity": {
@@ -154,15 +162,18 @@
       "init": {
         "data": {
           "update_interval": "Change the update interval. Increase this if your devices do not respond in time. Default: {default_interval} (seconds)",
-          "known_hosts": "Known hosts"
+          "known_hosts": "Known hosts",
+          "homes": "Homes"
         },
         "data_description": {
-          "known_hosts": "IP addresses of speakers and displays that the integration can't find on its own, for example because they're on another network or VLAN."
+          "known_hosts": "IP addresses of speakers and displays that the integration can't find on its own, for example because they're on another network or VLAN.",
+          "homes": "Speakers and displays in homes you deselect aren't added. Deselecting a home removes its devices and their entities from Home Assistant, so automations, scripts and dashboards that use them stop working. Select the home again to add them back with the names and areas you gave them."
         }
       }
     },
     "error": {
-      "known-host-not-ip": "Enter IP addresses only, such as 192.168.1.20."
+      "known-host-not-ip": "Enter IP addresses only, such as 192.168.1.20.",
+      "no-home-selected": "Choose at least one home."
     }
   },
   "services": {

@@ -33,6 +33,13 @@
           "master_token": "以 aas_et/ 開頭"
         }
       },
+      "homes": {
+        "title": "選擇住家",
+        "description": "你的 Google 帳號是多個住家的成員。請選擇要加入哪些住家的音箱和螢幕。你之後可以在整合的選項中變更此設定。",
+        "data": {
+          "homes": "住家"
+        }
+      },
       "reauth": {
         "title": "重新登入",
         "description": "Google 已不再接受為 {name} 儲存的登入資訊。請重新登入同一個 Google 帳號：你的裝置、實體和自動化都會保持不變。在你重新登入之前，裝置的實體可能會顯示過時的數值，或顯示為不可用。",
@@ -74,7 +81,8 @@
       "google-busy": "Google 目前忙碌中或正在限制登入。請稍候幾分鐘，然後重新登入。",
       "oauth-token-format": "這不是 oauth_token Cookie，其值應以 oauth2_4/ 開頭。",
       "master-token-format": "Master token 以 aas_et/ 開頭，共 223 個字元。請複製完整值。",
-      "other-account": "你登入的是其他 Google 帳號，因此未進行任何變更。請使用此整合所用的帳號登入。如要改用剛才登入的帳號，請刪除整合後再重新新增。"
+      "other-account": "你登入的是其他 Google 帳號，因此未進行任何變更。請使用此整合所用的帳號登入。如要改用剛才登入的帳號，請刪除整合後再重新新增。",
+      "no-home-selected": "請至少選擇一個住家。"
     }
   },
   "entity": {
@@ -154,15 +162,18 @@
       "init": {
         "data": {
           "update_interval": "變更更新間隔。如果裝置無法及時回應，請增加此值。預設為 {default_interval} 秒。",
-          "known_hosts": "已知主機"
+          "known_hosts": "已知主機",
+          "homes": "住家"
         },
         "data_description": {
-          "known_hosts": "此整合無法自動找到的音箱和螢幕的 IP 位址，例如位於其他網路或 VLAN 的裝置。"
+          "known_hosts": "此整合無法自動找到的音箱和螢幕的 IP 位址，例如位於其他網路或 VLAN 的裝置。",
+          "homes": "不會加入你取消選取的住家中的音箱和螢幕。取消選取住家會從 Home Assistant 移除該住家的裝置及其實體，因此使用這些裝置的自動化、腳本和儀表板將無法運作。重新選取該住家，即可依你先前設定的名稱和分區重新加入這些裝置。"
         }
       }
     },
     "error": {
-      "known-host-not-ip": "請只輸入 IP 位址，例如 192.168.1.20。"
+      "known-host-not-ip": "請只輸入 IP 位址，例如 192.168.1.20。",
+      "no-home-selected": "請至少選擇一個住家。"
     }
   },
   "services": {
