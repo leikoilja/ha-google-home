@@ -57,6 +57,8 @@ class GoogleHomeBluetoothTracker(
         self._subentry_title = subentry.title
         self._attr_unique_id = subentry.subentry_id
         self._tracker_state = self._state_from_coordinator()
+        # The state and availability last written
+        self._written = (self._tracker_state, self.available)
 
     @property
     @override
@@ -90,9 +92,12 @@ class GoogleHomeBluetoothTracker(
     @callback
     @override
     def _handle_coordinator_update(self) -> None:
-        """Write the state only when it changes, so history gets no row every update."""
-        state = self._state_from_coordinator()
-        if state == self._tracker_state:
-            return
-        self._tracker_state = state
-        self.async_write_ha_state()
+        """Write the state only when it or the availability changes.
+
+        So history gets no row every update.
+        """
+        self._tracker_state = self._state_from_coordinator()
+        written = (self._tracker_state, self.available)
+        if written != self._written:
+            self._written = written
+            self.async_write_ha_state()

@@ -42,7 +42,7 @@ Starting as `unknown` after a restart keeps automations from seeing you leave an
 
 ## Tracker is unavailable
 
-A tracker shows `not_home` only when every speaker has answered for the last 90 seconds. Once a speaker has returned scan results, it counts until Home Assistant restarts. If it then stops answering, it might be the one that hears you, so the integration can't tell whether you left.
+A tracker shows `not_home` only when every speaker has answered for the last 90 seconds. Once a speaker has returned scan results, it counts until the integration reloads, for example when you change its options, or Home Assistant restarts. If it then stops answering, it might be the one that hears you, so the integration can't tell whether you left.
 
 While it can't tell, the tracker keeps its last state for 5 minutes, so a speaker that misses a scan or comes online doesn't make it flap. If you arrive in that time and only the silent speaker can hear you, `home` waits until another speaker hears you. After 5 minutes the tracker shows `unavailable`, and the integration logs a warning that names the speaker.
 
@@ -53,7 +53,7 @@ If that speaker is unplugged or out of service, tell the integration not to use 
 
 You can't delete a speaker that Google still lists in your home, even when it's offline, so excluding it is the way to stop it from blocking `not_home`.
 
-Devices that don't support Bluetooth scans, such as a Chromecast Audio or an Android TV, are left out automatically. So is any device that hasn't returned scan results since Home Assistant started, for example because it was offline.
+Devices that don't support Bluetooth scans, such as a Chromecast Audio or an Android TV, are left out automatically. So is any device that hasn't returned scan results since the integration last loaded, for example because it was offline.
 
 ## Privacy
 
