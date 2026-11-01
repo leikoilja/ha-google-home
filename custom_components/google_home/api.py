@@ -322,6 +322,8 @@ class GlocaltokensApiClient(GoogleAccountClient):
         if response is not None and JSON_TIMER in response and JSON_ALARM in response:
             device.set_timers(cast(list[TimerJsonDict], response[JSON_TIMER]))
             device.set_alarms(cast(list[AlarmJsonDict], response[JSON_ALARM]))
+            if polling:
+                device.polled_snapshots += 1
             _LOGGER.debug(
                 "Successfully retrieved alarms and timers from %s. Response: %s",
                 device.name,

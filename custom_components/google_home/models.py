@@ -79,6 +79,9 @@ class GoogleHomeDevice:
         # The last answer to a request for its alarms and timers, as it came, for
         # diagnostics
         self.alarms_reply: JsonDict | None = None
+        # Updates whose request for alarms and timers got both lists. Actions' requests
+        # don't count, so an update can tell whether it got the lists itself.
+        self.polled_snapshots = 0
         # The firmware fields of its last build info, as it sent them
         self.build_info: dict[str, object] | None = None
         # Whether its info said at the last check that a firmware update is waiting,
