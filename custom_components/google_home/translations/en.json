@@ -157,6 +157,26 @@
       "message": "These devices didn't confirm that they'll reboot: {devices}. Check that they're online and try again later."
     }
   },
+  "issues": {
+    "polling_disabled": {
+      "title": "Polling for changes is turned off",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Polling for changes is turned off",
+            "description": "**Enable polling for changes** is turned off in the integration's system options, so the integration doesn't check your devices on its own. Alarms, timers and other entities update only when you ask, for example with the **Refresh devices** action. For what still works, see {docs_url}.\n\nIf you turn polling back on, the integration reloads, then checks your devices at its update interval. If you keep it off, this repair is hidden until you turn polling on and then off again.",
+            "menu_options": {
+              "turn_on": "Turn polling back on",
+              "keep_off": "Keep polling off and hide this repair"
+            }
+          }
+        },
+        "abort": {
+          "polling_kept_off": "Polling stays off, and this repair is hidden."
+        }
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {

@@ -124,7 +124,7 @@ Not every device supports rebooting. A device can accept the request, so there's
 
 ## Refresh devices
 
-Updates alarms, timers and settings for all devices now, instead of waiting for the next scheduled update. It also restarts the countdown to the next update.
+Updates alarms, timers and settings for all devices now, instead of waiting for the next scheduled update. It also restarts the countdown to the next update. While [polling is turned off](configuration.md#turn-off-polling), it's how your devices update, and it also gets new tokens for devices that rejected theirs.
 
 ```yaml
 action: google_home.refresh_devices
