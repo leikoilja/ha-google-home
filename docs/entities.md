@@ -154,12 +154,12 @@ The Wi-Fi network sensor shows the name (SSID) of the Wi-Fi network the device i
 
 As a rough guide to what the signal strength means:
 
-| Signal strength   | What it suggests                                            |
-| ----------------- | ----------------------------------------------------------- |
-| -67 dBm or higher | Strong: the suggested minimum for streaming music and video |
-| -68 to -70 dBm    | Okay: the suggested minimum for everyday use                |
-| -71 to -80 dBm    | Weak: the connection may be unreliable                      |
-| Below -80 dBm     | Very weak: the device may have trouble staying connected    |
+| Signal strength   | What it suggests                                                  |
+| ----------------- | ----------------------------------------------------------------- |
+| -67 dBm or higher | Strong: the suggested minimum for voice calls and video streaming |
+| -68 to -70 dBm    | Okay: the suggested minimum for email and web browsing            |
+| -71 to -80 dBm    | Weak: the connection may be unreliable                            |
+| Below -80 dBm     | Very weak: the device may have trouble staying connected          |
 
 These ranges are approximate, from general Wi-Fi guidance in [Understanding RSSI](https://www.oscium.com/training/understanding-rssi/), not figures from Google. A strong signal alone doesn't guarantee good performance: interference can still cause problems. If a device's signal is weak, you could try moving it or your router, or adding a mesh Wi-Fi point.
 
