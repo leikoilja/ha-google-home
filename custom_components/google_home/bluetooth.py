@@ -5,10 +5,10 @@ previous update, then starts the next scan. A tracked device is home while a
 speaker heard it recently. It's away only when every speaker that Google lists
 and that has returned scan results since setup has scanned without a break for
 the whole presence window and none heard it: a speaker that stops answering
-can't confirm that a device is gone. Meanwhile the tracker keeps its last state for a few minutes,
-so a missed scan doesn't make it flap. A device that never returned results,
-such as a TV that refuses the connection instead of answering 404, can't keep
-trackers from showing away.
+can't confirm that a device is gone. Meanwhile the tracker keeps its last state
+for a few minutes, so a missed scan doesn't make it flap. A device that never
+returned results, such as a TV that refuses the connection instead of answering
+404, can't keep trackers from showing away.
 """
 
 import asyncio
