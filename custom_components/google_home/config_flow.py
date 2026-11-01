@@ -31,7 +31,7 @@ from homeassistant.helpers.selector import (
 )
 
 from .api import GlocaltokensApiClient
-from .bluetooth import normalize_mac, parse_irk
+from .bluetooth import parse_irk, parse_mac
 from .const import (
     BROWSER_TITLE,
     CONF_ANDROID_ID,
@@ -40,6 +40,7 @@ from .const import (
     CONF_EXCLUDED_HOMES,
     CONF_HOMES,
     CONF_IRK,
+    CONF_IRK_OR_MAC,
     CONF_KNOWN_HOSTS,
     CONF_MASTER_TOKEN,
     CONF_OAUTH_TOKEN,
@@ -455,29 +456,33 @@ class BluetoothDeviceSubentryFlow(ConfigSubentryFlow):
     async def async_step_user(
         self, user_input: dict[str, str] | None = None
     ) -> SubentryFlowResult:
-        """Ask for the device's name and its IRK or MAC address."""
+        """Ask for the device's name, and its IRK or MAC address in one field.
+
+        Which one it is shows from its form: a MAC address is six hex pairs, an IRK
+        16 bytes. Either is saved as before, as an IRK or a MAC address.
+        """
         entry = self._get_entry()
         if not entry.options.get(CONF_BLUETOOTH_TRACKING):
             return self.async_abort(reason="bluetooth-tracking-off")
         errors: dict[str, str] = {}
         if user_input is not None:
             name = user_input[CONF_NAME].strip()
-            irk = user_input.get(CONF_IRK, "").strip()
-            mac = user_input.get(CONF_MAC, "").strip()
+            value = user_input[CONF_IRK_OR_MAC].strip()
             data: dict[str, str] = {}
             if not name:
                 errors[CONF_NAME] = "name-empty"
-            elif bool(irk) == bool(mac):
-                errors["base"] = "irk-or-mac"
-            elif irk:
-                if (irk_bytes := parse_irk(irk)) is None:
-                    errors[CONF_IRK] = "irk-invalid"
-                else:
-                    data = {CONF_IRK: irk_bytes.hex()}
-            elif (address := normalize_mac(mac)) is None:
-                errors[CONF_MAC] = "mac-invalid"
-            else:
+            elif not value:
+                errors[CONF_IRK_OR_MAC] = "irk-or-mac"
+            elif (address := parse_mac(value)) is not None:
                 data = {CONF_MAC: address}
+            elif (irk := parse_irk(value)) is not None:
+                data = {CONF_IRK: irk.hex()}
+            else:
+                # Up to 17 characters, the length of a MAC address with separators,
+                # was probably meant as one
+                errors[CONF_IRK_OR_MAC] = (
+                    "mac-invalid" if len(value) <= 17 else "irk-invalid"
+                )
             if data and any(
                 subentry.data == data
                 for subentry in entry.get_subentries_of_type(SUBENTRY_BLUETOOTH_DEVICE)
@@ -491,8 +496,7 @@ class BluetoothDeviceSubentryFlow(ConfigSubentryFlow):
                 probatio.Schema(
                     {
                         probatio.Required(CONF_NAME): str,
-                        probatio.Optional(CONF_IRK): str,
-                        probatio.Optional(CONF_MAC): str,
+                        probatio.Required(CONF_IRK_OR_MAC): str,
                     }
                 ),
                 user_input,

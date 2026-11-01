@@ -172,6 +172,19 @@ def normalize_mac(value: str) -> str | None:
     return ":".join(digits[i : i + 2] for i in range(0, 12, 2)).upper()
 
 
+def parse_mac(value: str) -> str | None:
+    """Return a MAC address written as six hex pairs, as AA:BB:CC:DD:EE:FF.
+
+    The pairs are separated all by colons or all by hyphens. Returns None for
+    anything else.
+    """
+    if not re.fullmatch(
+        r"[0-9A-Fa-f]{2}([:-])[0-9A-Fa-f]{2}(?:\1[0-9A-Fa-f]{2}){4}", value
+    ):
+        return None
+    return value.replace("-", ":").upper()
+
+
 class TrackedDevice:
     """A Bluetooth device that the user tracks, identified by its IRK or MAC address."""
 

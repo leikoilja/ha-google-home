@@ -9,6 +9,7 @@ which the replies table doesn't have.
 import base64
 from collections.abc import Iterator
 import json
+import logging
 from unittest.mock import Mock, patch
 
 import pytest
@@ -131,7 +132,9 @@ async def test_track_phone(
     # Nothing is tracked yet
     assert runtime(config_entry).bluetooth is None
 
-    result = await add_device(hass, config_entry, {"name": "Phone", "irk": IRK.hex()})
+    result = await add_device(
+        hass, config_entry, {"name": "Phone", "irk_or_mac": IRK.hex()}
+    )
     assert result["type"] is FlowResultType.CREATE_ENTRY
     # Adding it reloads the entry, which starts the first scans in the background
     await hass.async_block_till_done(wait_background_tasks=True)
@@ -262,47 +265,76 @@ async def test_add_device_needs_tracking_on(
 
 
 @pytest.mark.parametrize(
-    ("user_input", "data"),
+    ("value", "data"),
     [
-        (
-            {"name": " Phone ", "irk": base64.b64encode(IRK[::-1]).decode()},
-            {"irk": IRK.hex()},
-        ),
-        ({"name": "Watch", "mac": "aa-bb-cc-dd-ee-ff"}, {"mac": "AA:BB:CC:DD:EE:FF"}),
+        # As macOS Keychain shows it: base64, in reverse byte order
+        (base64.b64encode(IRK[::-1]).decode(), {"irk": IRK.hex()}),
+        (IRK.hex().upper(), {"irk": IRK.hex()}),
+        (" aa-bb-cc-dd-ee-ff ", {"mac": "AA:BB:CC:DD:EE:FF"}),
+        ("AA:BB:CC:DD:EE:0F", {"mac": "AA:BB:CC:DD:EE:0F"}),
     ],
 )
 async def test_add_device(
     hass: HomeAssistant,
     config_entry: MockConfigEntry,
-    user_input: dict[str, str],
+    value: str,
     data: dict[str, str],
 ) -> None:
-    """Save the IRK as hex in the order the cipher takes, or the normalized MAC."""
+    """Tell an IRK from a MAC address in the one field, and save either as before.
+
+    The IRK is saved as hex in the order the cipher takes, the MAC address as
+    AA:BB:CC:DD:EE:FF, which is what tracking reads.
+    """
     hass.config_entries.async_update_entry(
         config_entry, options={"bluetooth_tracking": True}
     )
 
-    result = await add_device(hass, config_entry, user_input)
+    result = await add_device(
+        hass, config_entry, {"name": " Phone ", "irk_or_mac": value}
+    )
 
     assert result["type"] is FlowResultType.CREATE_ENTRY
     (added,) = config_entry.subentries.values()
-    assert (added.title, dict(added.data)) == (user_input["name"].strip(), data)
+    assert (added.title, dict(added.data)) == ("Phone", data)
 
 
 @pytest.mark.parametrize(
     ("user_input", "errors"),
     [
-        ({"name": " ", "irk": IRK.hex()}, {"name": "name-empty"}),
-        ({"name": "Phone"}, {"base": "irk-or-mac"}),
+        ({"name": " ", "irk_or_mac": IRK.hex()}, {"name": "name-empty"}),
+        ({"name": "Phone", "irk_or_mac": " "}, {"irk_or_mac": "irk-or-mac"}),
+        # A MAC address needs the same separator between all six pairs
+        ({"name": "Tag", "irk_or_mac": "aabbccddeeff"}, {"irk_or_mac": "mac-invalid"}),
         (
-            {"name": "Phone", "irk": IRK.hex(), "mac": "AA:BB:CC:DD:EE:FF"},
-            {"base": "irk-or-mac"},
+            {"name": "Tag", "irk_or_mac": "AA:BB-CC:DD:EE:FF"},
+            {"irk_or_mac": "mac-invalid"},
         ),
-        ({"name": "Phone", "irk": "abc"}, {"irk": "irk-invalid"}),
-        ({"name": "Phone", "mac": "abc"}, {"mac": "mac-invalid"}),
+        (
+            {"name": "Tag", "irk_or_mac": "AA:BB:CC:DD:EE"},
+            {"irk_or_mac": "mac-invalid"},
+        ),
+        # Up to 17 characters, the length of a MAC address with separators, is taken
+        # as a MAC address, and longer input as an IRK
+        (
+            {"name": "Tag", "irk_or_mac": "AA:BB:CC:DD:EE:FG"},
+            {"irk_or_mac": "mac-invalid"},
+        ),
+        (
+            {"name": "Tag", "irk_or_mac": "AA:BB:CC:DD:EE:FF0"},
+            {"irk_or_mac": "irk-invalid"},
+        ),
+        (
+            {"name": "Phone", "irk_or_mac": IRK.hex()[:-1]},
+            {"irk_or_mac": "irk-invalid"},
+        ),
+        # Base64 of 15 bytes, not 16
+        (
+            {"name": "Phone", "irk_or_mac": base64.b64encode(bytes(15)).decode()},
+            {"irk_or_mac": "irk-invalid"},
+        ),
         # The same IRK as the tracked phone's, written differently
         (
-            {"name": "Phone again", "irk": IRK.hex().upper()},
+            {"name": "Phone again", "irk_or_mac": IRK.hex().upper()},
             {"base": "already-tracked"},
         ),
     ],
@@ -313,7 +345,7 @@ async def test_add_device_rejects(
     user_input: dict[str, str],
     errors: dict[str, str],
 ) -> None:
-    """Point out a missing name, a missing or extra identifier, a wrong one, or one already tracked."""
+    """Point out a missing name or identifier, a wrong one, or one already tracked."""
     hass.config_entries.async_update_entry(
         config_entry, options={"bluetooth_tracking": True}
     )
@@ -324,6 +356,32 @@ async def test_add_device_rejects(
     assert result["type"] is FlowResultType.FORM
     assert result["errors"] == errors
     assert list(config_entry.subentries) == [PHONE]
+
+
+async def test_add_device_logs_no_irk_or_mac(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Never log an IRK or MAC address entered in the form, valid or not."""
+    caplog.set_level(logging.DEBUG)
+    hass.config_entries.async_update_entry(
+        config_entry, options={"bluetooth_tracking": True}
+    )
+    entered = [
+        base64.b64encode(IRK[::-1]).decode(),
+        IRK.hex()[:-1],
+        "AA:BB:CC:DD:EE:FF",
+        "aabbccddeeff",
+    ]
+
+    for value in entered:
+        await add_device(hass, config_entry, {"name": "Phone", "irk_or_mac": value})
+
+    assert len(config_entry.subentries) == 2
+    logged = caplog.text.upper()
+    for value in [*entered, IRK.hex()]:
+        assert value.upper() not in logged
 
 
 @pytest.mark.usefixtures("google", "replies")
