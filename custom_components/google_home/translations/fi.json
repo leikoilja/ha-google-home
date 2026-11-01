@@ -105,6 +105,9 @@
       },
       "timers": {
         "name": "Ajastimet"
+      },
+      "wifi_network": {
+        "name": "Wi-Fi-verkko"
       }
     },
     "switch": {

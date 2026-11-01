@@ -66,6 +66,8 @@ LABEL_DEVICE: Final = "device"
 LABEL_DO_NOT_DISTURB: Final = "Do Not Disturb"
 LABEL_REBOOT: Final = "reboot"
 LABEL_FIRMWARE_UPDATE: Final = "firmware update"
+LABEL_WIFI_NETWORK: Final = "Wi-Fi network"
+LABEL_WIFI_SIGNAL: Final = "Wi-Fi signal"
 
 # DEVICE PORT
 PORT: Final = 8443
@@ -83,7 +85,8 @@ API_ENDPOINT_EUREKA_INFO: Final = "setup/eureka_info?params=name,device_info"
 # system version is only here.
 API_ENDPOINT_BUILD_INFO: Final = "setup/eureka_info?params=build_info"
 # Without params, the info has whether the device has a firmware update waiting, which
-# no params give. It also has the device's network and location, which aren't kept.
+# no params give. It also has the device's Wi-Fi network and signal strength, which are
+# kept, and its location and IDs, which aren't.
 API_ENDPOINT_UPDATE_INFO: Final = "setup/eureka_info"
 
 # HEADERS
@@ -105,6 +108,22 @@ DATETIME_STR_FORMAT: Final = f"{DATE_STR_FORMAT} {TIME_STR_FORMAT}"
 # Access token only lives about 1 hour
 # Update often to fetch timers in timely manner
 UPDATE_INTERVAL: Final = 15  # sec
+# Around an alarm's or timer's fire time, its device is updated sooner than the update
+# interval, if that's longer. First this many seconds after its fire time, also after a
+# snooze. An update can start up to a second early. It still starts after the fire time
+# rounded to the second, so up to half a second before the speaker's own; then the
+# updates every ONSET_INTERVAL seconds follow.
+FIRE_TIME_DELAY: Final = 1  # sec
+# Then, while it still isn't ringing, every ONSET_INTERVAL seconds, until an update
+# that starts at least ONSET_WINDOW seconds after its fire time. Rings were seen at the
+# first update after the fire time, 2 to 9 seconds after it at a 10-second interval.
+ONSET_INTERVAL: Final = 5  # sec
+ONSET_WINDOW: Final = 30  # sec
+# While it rings, every RINGING_INTERVAL seconds, until an update that starts at least
+# RINGING_WINDOW seconds after its fire time. On one speaker that was tested, an alarm
+# that nobody stopped rang for about an hour, and a timer for about 10 minutes.
+RINGING_INTERVAL: Final = 10  # sec
+RINGING_WINDOW: Final = 65 * 60  # sec
 # Fetch Google's device list again this long after the last fetch, however often
 # the devices are updated, to find devices added in or removed from the Google Home
 # app and the address of a device that was offline. It's a request to Google, so not

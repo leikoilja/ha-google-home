@@ -20,6 +20,9 @@
       },
       "timers": {
         "default": "mdi:timer-sand"
+      },
+      "wifi_network": {
+        "default": "mdi:wifi"
       }
     },
     "switch": {

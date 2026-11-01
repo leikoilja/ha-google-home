@@ -2,15 +2,17 @@
 
 Each Google Home device gets the entities below. The examples use a device named _Living Room_ that isn't in an area, with Home Assistant in English. If your entity IDs repeat the room, see [Room name twice in entity IDs](#room-name-twice-in-entity-ids). In other languages, see [Entity names in other languages](#entity-names-in-other-languages).
 
-| Entity                | Example                             | What it does                                              |
-| --------------------- | ----------------------------------- | --------------------------------------------------------- |
-| Alarms sensor         | `sensor.living_room_alarms`         | Time of the next alarm, with all alarms in its attributes |
-| Timers sensor         | `sensor.living_room_timers`         | Time of the next timer, with all timers in its attributes |
-| Device sensor         | `sensor.living_room_device`         | The device's IP address and connection details            |
-| Do Not Disturb switch | `switch.living_room_do_not_disturb` | Turns Do Not Disturb on or off                            |
-| Alarm volume          | `number.living_room_alarm_volume`   | Sets the alarm volume, from 0 to 100%                     |
-| Reboot button         | `button.living_room_reboot`         | Reboots the device                                        |
-| Update sensor         | `binary_sensor.living_room_update`  | Whether the device says a firmware update is waiting      |
+| Entity                 | Example                              | What it does                                                    |
+| ---------------------- | ------------------------------------ | --------------------------------------------------------------- |
+| Alarms sensor          | `sensor.living_room_alarms`          | Time of the next alarm, with all alarms in its attributes       |
+| Timers sensor          | `sensor.living_room_timers`          | Time of the next timer, with all timers in its attributes       |
+| Device sensor          | `sensor.living_room_device`          | The device's IP address and connection details                  |
+| Do Not Disturb switch  | `switch.living_room_do_not_disturb`  | Turns Do Not Disturb on or off                                  |
+| Alarm volume           | `number.living_room_alarm_volume`    | Sets the alarm volume, from 0 to 100%                           |
+| Reboot button          | `button.living_room_reboot`          | Reboots the device                                              |
+| Update sensor          | `binary_sensor.living_room_update`   | Whether the device says a firmware update is waiting            |
+| Wi-Fi network sensor   | `sensor.living_room_wi_fi_network`   | Name of the Wi-Fi network the device uses. Disabled by default. |
+| Signal strength sensor | `sensor.living_room_signal_strength` | The device's Wi-Fi signal strength. Disabled by default.        |
 
 The device page also shows the device's [firmware version](#firmware-version).
 
@@ -146,18 +148,39 @@ The device page shows the device's firmware version next to **Firmware**, in the
 
 The integration checks it together with the [update sensor](#update-sensor), and the page shows a new version after the next successful check. While the integration doesn't know the version, for example while the device is offline after Home Assistant starts, the page shows the last version it knew.
 
+## Wi-Fi sensors
+
+The Wi-Fi network sensor shows the name (SSID) of the Wi-Fi network the device is connected to. The signal strength sensor shows how strong the device's Wi-Fi signal is, in dBm, such as `-55`: the closer to 0, the stronger. Use them to check a device that often becomes [unavailable](#when-entities-are-unavailable), for example whether it uses the network you expect and how weak its signal is. Both appear under **Diagnostic** on the device page.
+
+As a rough guide to what the signal strength means:
+
+| Signal strength   | What it means                                                                      |
+| ----------------- | ---------------------------------------------------------------------------------- |
+| -67 dBm or higher | Strong: meets or exceeds the suggested minimum for voice calls and video streaming |
+| -68 to -70 dBm    | Okay: meets or exceeds the suggested minimum for email and web browsing            |
+| -71 to -80 dBm    | Weak: the connection may be unreliable                                             |
+| Below -80 dBm     | Very weak: the device may have trouble staying connected                           |
+
+These ranges are approximate, from general Wi-Fi guidance in [Understanding RSSI](https://www.oscium.com/training/understanding-rssi/), not figures from Google. The signal a device needs also varies with your network's requirements. A strong signal alone doesn't guarantee good performance: interference can still cause problems. If a device's signal is weak, you could try moving it or your router, or adding a mesh Wi-Fi point.
+
+Every device gets both sensors, including a device without alarms and timers, but they're disabled by default. To enable one, go to **Settings** > **Devices & services** > **Google Home** and select the device. In the **Diagnostic** card, select the disabled entities, such as **+2 disabled entities**, then the sensor. In its settings, turn on **Enabled** and select **Update**. Home Assistant adds it about 30 seconds later.
+
+A Nest Hub reports its Wi-Fi network but not its signal strength, so its signal strength sensor stays unknown. Other displays may not report a signal either. What a device connected by Ethernet reports isn't known, as none has been checked.
+
+The integration reads both values when it checks the device's firmware; see the [update sensor](#update-sensor) for when it checks. So a value is usually up to 20 minutes old, longer after a check fails or with a longer [update interval](configuration.md#change-the-update-interval), and a short drop in the signal between checks doesn't show. A check that fails keeps the last values. A sensor is unknown until a check succeeds, and when the device's answer doesn't include its value. Like the device sensor, both sensors are unavailable while Home Assistant doesn't know the device's IP address.
+
 ## When entities are unavailable
 
 All entities of a device are unavailable:
 
 - Once Google no longer lists the device, for example after you remove it from the Google Home app, until the integration removes the device. See [Remove a device](configuration.md#remove-a-device).
-- Once the device hasn't answered 5 [updates](configuration.md#change-the-update-interval) in a row, for example while it's unplugged. At the default 15-second interval, that's usually after one to two minutes. With a shorter interval, a speaker that restarts can miss 5 updates and become unavailable for a moment; with a longer one, it takes longer to notice. A [device without alarms and timers](troubleshooting.md#devices-without-alarms-and-timers) is asked only for its information at each update, and its device sensor, reboot button and update sensor follow its answers the same way.
+- Once the device hasn't answered 5 [updates](configuration.md#change-the-update-interval) in a row, for example while it's unplugged. At the default 15-second interval, that's usually after one to two minutes. With a shorter interval, a speaker that restarts can miss 5 updates and become unavailable for a moment; with a longer one, it takes longer to notice. A [device without alarms and timers](troubleshooting.md#devices-without-alarms-and-timers) is asked only for its information at each update, and its device sensor, reboot button, update sensor and Wi-Fi sensors follow its answers the same way.
 - After the device's update fails unexpectedly, for example on a reply the integration can't read, until its next update. Once the integration has started, this affects only that device. While the integration is starting, such an error stops it from starting, and Home Assistant tries again later. When the integration can't get your device list from Google, the devices keep updating with the tokens and addresses they have, and their entities stay available.
 
 Some entities are also unavailable on their own:
 
 - On a [device without alarms and timers](troubleshooting.md#devices-without-alarms-and-timers), such as a Chromecast Audio, the alarms sensor, timers sensor, switch and alarm volume, if it had them. Reloading the integration or restarting Home Assistant brings them back only if the device then answers for these features.
-- The device sensor, reboot button and update sensor, while Home Assistant doesn't know the device's IP address.
+- The device sensor, reboot button, update sensor and Wi-Fi sensors, while Home Assistant doesn't know the device's IP address.
 
 Entities that became unavailable because the device didn't answer are available again at the next update the device answers with anything other than "not found". A speaker that is starting answers "not found" for a while, so they stay unavailable until then. Being available again doesn't always mean new values: if the device rejects its token and Google gives no new one, or answers with another error, they show the values they had. See [Alarms, timers or settings stop changing](troubleshooting.md#alarms-timers-or-settings-stop-changing).
 
@@ -192,8 +215,8 @@ After you confirm, update the automations, scripts and manually configured dashb
 
 ## Entity names in other languages
 
-Home Assistant shows these entities' names in its language, such as _Wecker_ for the alarms sensor in German, or in English where a translation is missing. To correct a translation, see [Translate the integration](contributing.md#translate-the-integration). The update sensor's name is Home Assistant's own name for update sensors, which Home Assistant translates itself.
+Home Assistant shows these entities' names in its language, such as _Wecker_ for the alarms sensor in German, or in English where a translation is missing. To correct a translation, see [Translate the integration](contributing.md#translate-the-integration). The update and signal strength sensors' names are Home Assistant's own names for those kinds of sensors, which Home Assistant translates itself.
 
-In Catalan, Czech, Danish, Dutch, Finnish, French, German, Hungarian, Indonesian, Italian, Norwegian, Polish, Portuguese, Romanian, Slovak, Spanish and Swedish, Home Assistant also builds new entity IDs from the translated names. In German, the alarms sensor of a new device named _Living Room_ gets `sensor.living_room_wecker`. In other languages, such as Russian or Japanese, entity IDs use the English names, as in the table at the top of this page. The update sensor follows Home Assistant's own translation instead, so in some other languages, such as Lithuanian, its entity ID is translated while the others are in English. What counts is the language set for Home Assistant itself, not the language in your user profile.
+In Catalan, Czech, Danish, Dutch, Finnish, French, German, Hungarian, Indonesian, Italian, Norwegian, Polish, Portuguese, Romanian, Slovak, Spanish and Swedish, Home Assistant also builds new entity IDs from the translated names. In German, the alarms sensor of a new device named _Living Room_ gets `sensor.living_room_wecker`. In other languages, such as Russian or Japanese, entity IDs use the English names, as in the table at the top of this page. The update and signal strength sensors follow Home Assistant's own translations instead, so in some other languages, such as Lithuanian, their entity IDs are translated while the others are in English. What counts is the language set for Home Assistant itself, not the language in your user profile.
 
 Entities you already have keep their entity IDs in every language. In the languages listed above, a new device's entity IDs can then differ from those of your other devices, and [Recreate entity IDs](#room-name-twice-in-entity-ids) changes the existing ones to the translated names too, unless you gave an entity a name of your own. Check the list of changes before you confirm.

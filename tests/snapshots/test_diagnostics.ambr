@@ -54,6 +54,8 @@
         'model': 'Nest Audio',
         'name': 'Kitchen speaker',
         'reachable': True,
+        'signal_level': None,
+        'ssid': None,
         'statuses': dict({
           'setup/assistant/alarms (update)': 200,
           'setup/assistant/alarms/volume (update)': 200,

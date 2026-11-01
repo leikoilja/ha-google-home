@@ -14,7 +14,9 @@ from .const import (
 from .coordinator import GoogleAccountCoordinator, GoogleHomeDeviceCoordinator
 from .types import GoogleHomeConfigEntry
 
-# Credentials, tokens and addresses. Alarm and timer labels are kept.
+# Credentials, tokens and addresses, and the Wi-Fi network and access point, location,
+# key and IDs that a device can report, wherever they are. Alarm and timer labels are
+# kept.
 TO_REDACT = {
     CONF_USERNAME,
     CONF_PASSWORD,
@@ -23,6 +25,14 @@ TO_REDACT = {
     CONF_KNOWN_HOSTS,
     "auth_token",
     "ip_address",
+    "ssid",
+    "bssid",
+    "latitude",
+    "longitude",
+    "public_key",
+    "opencast_pin_code",
+    "uma_client_id",
+    "ssdp_udn",
 }
 
 
@@ -75,6 +85,9 @@ async def async_get_config_entry_diagnostics(
                 "alarms_reply": device.alarms_reply,
                 "build_info": device.build_info,
                 "has_update": device.has_update,
+                # Redacted when known, to show whether the device gave it
+                "ssid": device.wifi_ssid,
+                "signal_level": device.wifi_signal,
                 # Whether mDNS reported it since the integration loaded, or since a fetch
                 # last dropped it from Google's list. None without Google's ID to match
                 # a report to.

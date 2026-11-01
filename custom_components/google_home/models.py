@@ -79,11 +79,18 @@ class GoogleHomeDevice:
         # The last answer to a request for its alarms and timers, as it came, for
         # diagnostics
         self.alarms_reply: JsonDict | None = None
+        # Updates whose request for alarms and timers got both lists. Actions' requests
+        # don't count, so an update can tell whether it got the lists itself.
+        self.polled_snapshots = 0
         # The firmware fields of its last build info, as it sent them
         self.build_info: dict[str, object] | None = None
         # Whether its info said at the last check that a firmware update is waiting,
         # or None if it didn't say
         self.has_update: bool | None = None
+        # The Wi-Fi network and signal strength in dBm that its info gave at the last
+        # check, or None if it didn't give them. A Nest Hub gives no signal.
+        self.wifi_ssid: str | None = None
+        self.wifi_signal: float | None = None
         # When the last check of its firmware started
         self.firmware_checked_at: float | None = None
 

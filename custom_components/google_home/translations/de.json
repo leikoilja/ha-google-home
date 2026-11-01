@@ -105,6 +105,9 @@
       },
       "timers": {
         "name": "Timer"
+      },
+      "wifi_network": {
+        "name": "WLAN-Netzwerk"
       }
     },
     "switch": {

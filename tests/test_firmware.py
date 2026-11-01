@@ -8,7 +8,9 @@ from pytest_homeassistant.common import MockConfigEntry
 
 from custom_components.google_home.binary_sensor import FirmwareUpdateBinarySensor
 from custom_components.google_home.const import DOMAIN, FIRMWARE_CHECK_INTERVAL
+from custom_components.google_home.entity import GoogleHomeBaseEntity
 from custom_components.google_home.models import GoogleHomeDevice
+from custom_components.google_home.sensor import WifiNetworkSensor, WifiSignalSensor
 
 # ruff sorts homeassistant as first-party, pylint as third-party
 # pylint: disable=wrong-import-order
@@ -230,18 +232,22 @@ async def test_update_sensor_without_alarms(
 
 
 @pytest.mark.parametrize(
+    "sensor_class", [FirmwareUpdateBinarySensor, WifiNetworkSensor, WifiSignalSensor]
+)
+@pytest.mark.parametrize(
     ("ip_address", "listed", "available"),
     [("10.0.0.2", True, True), (None, True, False), ("10.0.0.2", False, False)],
 )
-def test_update_sensor_available(
-    ip_address: str | None, listed: bool, available: bool
+def test_update_and_wifi_sensors_available(
+    sensor_class: type[GoogleHomeBaseEntity],
+    ip_address: str | None,
+    listed: bool,
+    available: bool,
 ) -> None:
-    """Grey out the update sensor of a device that isn't found or has no IP address, as its device sensor."""
+    """Grey out the update and Wi-Fi sensors of a device that isn't found or has no IP address, as its device sensor."""
     device = GoogleHomeDevice("kitchen", "Kitchen speaker", "token", ip_address)
     coordinator = Mock(data=device if listed else None, last_update_success=True)
-    sensor = FirmwareUpdateBinarySensor(
-        coordinator, Mock(), "kitchen", "Kitchen speaker", None
-    )
+    sensor = sensor_class(coordinator, Mock(), "kitchen", "Kitchen speaker", None)
 
     assert sensor.available is available
 

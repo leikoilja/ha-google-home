@@ -105,6 +105,9 @@
       },
       "timers": {
         "name": "Időzítők"
+      },
+      "wifi_network": {
+        "name": "Wi-Fi-hálózat"
       }
     },
     "switch": {
