@@ -7,13 +7,12 @@ from unittest.mock import AsyncMock, MagicMock, Mock
 from aiohttp import ClientError
 from ghome_foyer_api.api_pb2 import HomeGraph  # pylint: disable=no-name-in-module
 from glocaltokens.client import Device
-from glocaltokens.scanner import NetworkDevice
 import pytest
 
 from custom_components.google_home.api import GlocaltokensApiClient
 from custom_components.google_home.models import GoogleHomeDevice
 
-from .test_missing_devices import make_client
+from .test_missing_devices import found, make_client
 from .test_offline_devices import STARTING, device_sensor
 from .test_unsupported_devices import (
     ALARMS,
@@ -199,13 +198,7 @@ def test_known_hosts_not_asked_when_mdns_found_everything() -> None:
     client = GlocaltokensApiClient(
         hass, session, master_token=MASTER_TOKEN, known_hosts=["10.0.1.5"]
     )
-    found_by_mdns = Device(
-        "kitchen",
-        "Kitchen",
-        LOCAL_AUTH_TOKEN,
-        NetworkDevice("Kitchen", "10.0.0.3", 8009, "Nest Audio", "aaaa"),
-        cloud_device_id="AAAA",
-    )
+    found_by_mdns = found("kitchen", "10.0.0.3", name="Kitchen", cloud_device_id="AAAA")
     client._client = Mock(  # noqa: SLF001  # pylint: disable=protected-access
         get_google_devices=Mock(return_value=[found_by_mdns]),
         get_home_graph=Mock(return_value=HomeGraph()),

@@ -7,13 +7,13 @@ such devices started.
 """
 
 import asyncio
-from collections.abc import Callable, Coroutine, Iterator
+from collections.abc import Callable, Coroutine
 from contextlib import suppress
 from dataclasses import dataclass, field
 from datetime import datetime
 from http import HTTPStatus
 import logging
-from unittest.mock import AsyncMock, MagicMock, Mock, patch
+from unittest.mock import AsyncMock, MagicMock, Mock
 
 from ghome_foyer_api.api_pb2 import HomeGraph  # pylint: disable=no-name-in-module
 from glocaltokens.client import Device
@@ -24,6 +24,7 @@ from custom_components.google_home.api import GlocaltokensApiClient
 from custom_components.google_home.const import HEADER_CAST_LOCAL_AUTH
 from custom_components.google_home.models import GoogleHomeDevice
 
+from .conftest import Timer
 from .test_missing_devices import (
     LOCAL_AUTH_TOKEN,
     MASTER_TOKEN,
@@ -33,38 +34,6 @@ from .test_missing_devices import (
     update_round,
 )
 from .test_removed_devices import in_home_graph
-
-
-@dataclass
-class Timer:
-    """A timer that the client set, as Home Assistant's async_call_later would."""
-
-    at: float
-    action: Callable[[datetime], None]
-    cancelled: bool = False
-    fired: bool = False
-
-    def cancel(self) -> None:
-        """Cancel the timer."""
-        self.cancelled = True
-
-
-@pytest.fixture(name="timers")
-def fixture_timers(clock: Mock) -> Iterator[list[Timer]]:
-    """Record the timers the client sets, at the client's clock."""
-    timers: list[Timer] = []
-
-    def call_later(
-        _hass: object, delay: float, action: Callable[[datetime], None]
-    ) -> Callable[[], None]:
-        timer = Timer(float(clock.return_value) + delay, action)
-        timers.append(timer)
-        return timer.cancel
-
-    with patch(
-        "custom_components.google_home.mdns.async_call_later", side_effect=call_later
-    ):
-        yield timers
 
 
 @dataclass
@@ -243,7 +212,7 @@ def test_known_device_gets_address_without_fetch(
 def test_new_device_fetched_and_asked(clock: Mock, timers: list[Timer]) -> None:
     """Fetch the list 30 seconds after mDNS finds a device it doesn't have, and ask the device in that update.
 
-    The scan of that fetch misses the device, so it uses the address that mDNS
+    Google's list comes without addresses, so it uses the address that mDNS
     reported, without asking the known hosts.
     """
     session = MagicMock()
@@ -827,8 +796,8 @@ def test_rejected_token_fetch_doesnt_delay(clock: Mock, timers: list[Timer]) -> 
     assert network.fetches == [0, 250, 290]
 
 
-def test_scan_replaces_older_mdns_address(clock: Mock, timers: list[Timer]) -> None:
-    """Use the address that a fetch's scan finds over one that mDNS reported before the fetch."""
+def test_cached_address_replaces_older_report(clock: Mock, timers: list[Timer]) -> None:
+    """Use the address in mDNS's cache, which the browser replays after a fetch, over an older report."""
     network = Network(clock, timers, [found("kitchen", "10.0.0.2")])
 
     async def run() -> None:
@@ -841,14 +810,13 @@ def test_scan_replaces_older_mdns_address(clock: Mock, timers: list[Timer]) -> N
     assert network.polled == [("kitchen", "10.0.0.4")]
 
 
-def test_mdns_address_during_fetch_replaces_scan(
-    clock: Mock, timers: list[Timer]
-) -> None:
-    """Keep an address that mDNS reports while a fetch runs, rather than the fetch's older scan."""
+def test_mdns_address_during_fetch_kept(clock: Mock, timers: list[Timer]) -> None:
+    """Keep an address that mDNS reports while a fetch runs, for the device in the new list."""
     network = Network(clock, timers, [found("kitchen", "10.0.0.2")])
 
     async def run() -> None:
         await network.setup()
+        network.listed = [found("kitchen", None)]
         task = await held_fetch(network, 1200)
         network.report("kitchen", "10.0.0.5", at=1201)
         network.google_answers = True

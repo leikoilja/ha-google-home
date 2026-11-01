@@ -359,17 +359,22 @@ async def test_diagnostics_mdns_reports_by_speaker(
 ) -> None:
     """Show whether mDNS reported each speaker, unknown for one without Google's ID.
 
-    The bedroom speaker rejects every token, which leaves Google's list to fetch
-    again, but the list and so the count are still known.
+    The kitchen and bedroom speakers are in mDNS's cache, which the browser replays
+    after each fetch; the office speaker isn't. The bedroom speaker rejects every
+    token, which leaves Google's list to fetch again, but the list and so the count
+    are still known.
     """
-    hall = found("hall", "10.0.0.4", name="Hall speaker")
+    hall = found("hall", None, name="Hall speaker")
     hall.cloud_device_id = None
-    google.return_value = [kitchen_speaker(), bedroom_speaker(), hall]
+    google.return_value = [
+        kitchen_speaker(),
+        bedroom_speaker(),
+        found("office", None, name="Office speaker"),
+        hall,
+    ]
     replies[BEDROOM] = dict(REJECTING)
-    replies["10.0.0.4"] = dict(SUPPORTED)
     await set_up(hass, config_entry)
     found_devices = runtime(config_entry).client.found_devices
-    found_devices.async_device_found(SPEAKER_CLOUD_ID, SPEAKER_NAME, SPEAKER)
     found_devices.async_device_found(TV_CLOUD_ID, TV_NAME, TV)
 
     diagnostics = await get_diagnostics_for_config_entry(
@@ -382,7 +387,8 @@ async def test_diagnostics_mdns_reports_by_speaker(
         device_id: info["mdns_reported"] for device_id, info in devices.items()
     } == {
         SPEAKER_ID: True,
-        BEDROOM_ID: False,
+        BEDROOM_ID: True,
+        "office": False,
         "hall": None,
     }
     assert (
