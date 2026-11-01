@@ -23,7 +23,7 @@ from homeassistant.helpers.typing import ConfigType
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .api import GlocaltokensApiClient
-from .bluetooth import BluetoothScanner, TrackerState
+from .bluetooth import BluetoothScanner, TrackerUpdate
 from .const import (
     BLUETOOTH_SCAN_INTERVAL,
     BROWSER_TITLE,
@@ -203,7 +203,7 @@ def bluetooth_changes(entry: GoogleHomeConfigEntry) -> list[str]:
 
 def async_create_bluetooth_coordinator(
     hass: HomeAssistant, entry: GoogleHomeConfigEntry, session: ClientSession
-) -> DataUpdateCoordinator[dict[str, TrackerState]] | None:
+) -> DataUpdateCoordinator[dict[str, TrackerUpdate]] | None:
     """Create the Bluetooth coordinator, if tracking is on and has devices to track."""
     tracking, excluded, subentry_ids = bluetooth_config(entry)
     if not tracking or not subentry_ids:

@@ -189,6 +189,10 @@ BLUETOOTH_MIN_RSSI: Final = -80  # dBm
 # keeps its last state this long, then shows unavailable. A speaker that has
 # kept trackers from showing away this long is named in a warning.
 BLUETOOTH_UNCERTAIN_LIMIT: Final = 300
+# A tracker shows each speaker's median signal strength over windows this long,
+# for the speakers that heard the device in at least this many scans
+BLUETOOTH_RSSI_WINDOW: Final = 300
+BLUETOOTH_RSSI_MIN_SCANS: Final = 2
 
 # JSON parameter values when retrieving information from devices
 JSON_ALARM: Final = "alarm"

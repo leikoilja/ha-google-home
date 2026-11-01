@@ -8,6 +8,7 @@ which the replies table doesn't have.
 
 import base64
 from collections.abc import Iterator, Mapping
+from functools import partial
 import json
 import logging
 from typing import cast
@@ -17,6 +18,7 @@ import probatio
 import pytest
 from pytest_homeassistant.common import MockConfigEntry, async_capture_events
 from pytest_homeassistant.components.diagnostics import get_diagnostics_for_config_entry
+from pytest_homeassistant.components.recorder.common import async_wait_recording_done
 from pytest_homeassistant.typing import ClientSessionGenerator, WebSocketGenerator
 
 from custom_components.google_home.models import GoogleHomeDevice
@@ -24,6 +26,8 @@ from custom_components.google_home.types import BluetoothJsonDict
 
 # ruff sorts homeassistant as first-party, pylint as third-party
 # pylint: disable=wrong-import-order
+from homeassistant.components.recorder import Recorder
+from homeassistant.components.recorder.history import get_significant_states
 from homeassistant.config_entries import ConfigEntryState
 from homeassistant.const import (
     EVENT_STATE_CHANGED,
@@ -32,7 +36,7 @@ from homeassistant.const import (
     STATE_UNKNOWN,
     EntityCategory,
 )
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, State
 from homeassistant.data_entry_flow import FlowResultType
 from homeassistant.helpers import (
     config_validation as cv,
@@ -40,6 +44,7 @@ from homeassistant.helpers import (
     entity_registry as er,
 )
 from homeassistant.setup import async_setup_component
+from homeassistant.util import dt as dt_util
 
 from .conftest import SPEAKER_ID, SPEAKER_NAME
 from .test_bluetooth import BLUETOOTH, IRK, PHONE, heard, rpa, subentry
@@ -185,6 +190,63 @@ async def test_track_phone(
     assert runtime(config_entry).bluetooth is None
     assert entity_registry.async_get(TRACKER) is None
     assert hass.states.get(TRACKER) is None
+
+
+@pytest.mark.parametrize(
+    ("data", "address"),
+    [
+        ({"irk": IRK.hex()}, rpa(IRK)),
+        ({"mac": "AA:BB:CC:DD:EE:FF"}, "AA:BB:CC:DD:EE:FF"),
+    ],
+    ids=["irk", "mac"],
+)
+@pytest.mark.usefixtures("google", "replies")
+async def test_speakers_shown_but_not_recorded(
+    recorder_mock: Recorder,
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    scans: Scans,
+    data: dict[str, str],
+    address: str,
+) -> None:
+    """Show the speaker's median RSSI on the tracker, without the address it heard, and keep it out of history.
+
+    RSSI that changes in every scan adds a history row only when a window completes.
+    """
+    start = dt_util.utcnow()
+    hass.config_entries.async_update_entry(
+        config_entry, options={"bluetooth_tracking": True}
+    )
+    hass.config_entries.async_add_subentry(config_entry, subentry(data))
+    await set_up(hass, config_entry)
+
+    # Home from 30, so the window runs to 330, hearing it at -50 to -60 dBm
+    for now in range(30, 331, 30):
+        scans.heard[SPEAKER] = [heard(address, -50 - (now - 30) // 30)]
+        assert await scan(hass, config_entry, scans, now) == STATE_HOME
+
+    state = hass.states.get(TRACKER)
+    assert state is not None
+    assert state.attributes["speakers"] == {SPEAKER_NAME: -55}
+    shown = json.dumps(state.attributes).upper()
+    assert address.upper() not in shown
+    assert IRK.hex().upper() not in shown
+    await async_wait_recording_done(hass)
+    history = await recorder_mock.async_add_executor_job(
+        partial(
+            get_significant_states,
+            hass,
+            start,
+            entity_ids=[TRACKER],
+            include_start_time_state=False,
+            significant_changes_only=False,
+        )
+    )
+    # Unknown at setup, home at 30, and the summary at 330
+    assert [
+        (recorded.state, "speakers" in recorded.attributes)
+        for recorded in cast(list[State], history[TRACKER])
+    ] == [(STATE_UNKNOWN, False), (STATE_HOME, False), (STATE_HOME, False)]
 
 
 @pytest.mark.usefixtures("google", "replies")
