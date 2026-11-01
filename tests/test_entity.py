@@ -1,13 +1,13 @@
 """Tests for how Google Home entities are named and when they are available."""
 
 import asyncio
-from collections.abc import AsyncIterator
-from contextlib import asynccontextmanager
+from collections.abc import AsyncIterator, Iterator
+from contextlib import asynccontextmanager, contextmanager
 from datetime import timedelta
 import logging
 from pathlib import Path
 from types import MappingProxyType
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 import pytest
 
@@ -70,6 +70,16 @@ OLD_LABELS: dict[type[GoogleHomeBaseEntity], str] = {
     AlarmVolumeNumber: "alarm volume",
     RebootButton: "reboot",
 }
+
+
+@contextmanager
+def no_registered_devices() -> Iterator[None]:
+    """Give code run with a mocked Home Assistant a device registry without devices."""
+    with (
+        patch.object(dr, "async_get"),
+        patch.object(dr, "async_entries_for_config_entry", return_value=[]),
+    ):
+        yield
 
 
 @asynccontextmanager

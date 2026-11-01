@@ -2,7 +2,6 @@
 
 import asyncio
 from collections.abc import Mapping
-from functools import partial
 import ipaddress
 import logging
 from time import monotonic
@@ -108,6 +107,10 @@ class GoogleAccountClient:
         self._fetches_before_update = 0
         # The known hosts that the last fetch that ended gave devices, by device ID
         self._known_hosts_found: Mapping[str, str] = {}
+        # How many home graphs Google has answered with, and for each device ID the
+        # last of them that had it
+        self._home_graphs_fetched = 0
+        self._last_home_graph_with: dict[str, int] = {}
         # While the list is unknown, a fetch after a failed one waits a while
         self._fetch_backoff = FetchBackoff()
         # Devices found to have no alarms, timers and settings. They aren't asked for
@@ -206,12 +209,8 @@ class GoogleAccountClient:
         fetched_for = self.found_devices.fetch_started()
 
         try:
-            google_devices = await self.hass.async_add_executor_job(
-                partial(
-                    self._client.get_google_devices,
-                    zeroconf_instance=self.zeroconf_instance,
-                    force_homegraph_reload=True,
-                )
+            google_devices, in_home_graph = await self.hass.async_add_executor_job(
+                self._get_google_devices
             )
         # Google rejected the master token, gave no home graph, or answered with
         # a 5xx or 429, which glocaltokens raises as HTTPError
@@ -230,7 +229,7 @@ class GoogleAccountClient:
         self._fetch_backoff.fetch_worked()
         self.sign_in_error = None
         self.google_devices_fetched = True
-        self._use_google_devices(google_devices, started)
+        self._use_google_devices(google_devices, in_home_graph, started)
         self.found_devices.fetch_worked(fetched_for)
         # Known hosts are only asked when mDNS left a device without an address
         if self.known_hosts and any(
@@ -240,16 +239,41 @@ class GoogleAccountClient:
             return await self.async_use_known_hosts()
         return {}
 
-    def _use_google_devices(self, google_devices: list[Device], started: float) -> None:
+    def _get_google_devices(self) -> tuple[list[Device], set[str]]:
+        """Fetch Google's home graph: its Cast devices, and the IDs of all its devices.
+
+        glocaltokens leaves out devices that it can't use, such as one without a
+        local token, so only the home graph shows that Google no longer has a device.
+        """
+        google_devices = self._client.get_google_devices(
+            zeroconf_instance=self.zeroconf_instance, force_homegraph_reload=True
+        )
+        # The home graph that the list came from, which glocaltokens keeps for a day
+        home_graph = self._client.get_home_graph()
+        return google_devices, {
+            device.id.device_id for home in home_graph.homes for device in home.devices
+        }
+
+    def _use_google_devices(
+        self, google_devices: list[Device], in_home_graph: set[str], started: float
+    ) -> None:
         """Replace the device list with the one Google gave to the fetch that started then.
 
         This runs once for each fetch that Google answered with its list, whether the
         update, a device or an action started it, and not for a caller that waited for
-        that fetch, an update that didn't fetch, or a fetch that failed.
+        that fetch, an update that didn't fetch, or a fetch that failed. It also counts
+        the home graph that the list came from, with all its devices, even those that
+        glocaltokens left out of the list.
         """
         known_devices = {device.device_id: device for device in self.google_devices}
         self.google_devices = []
+        self._home_graphs_fetched += 1
+        for device_id in in_home_graph:
+            self._last_home_graph_with[device_id] = self._home_graphs_fetched
         for google_device in google_devices:
+            self._last_home_graph_with[google_device.device_id] = (
+                self._home_graphs_fetched
+            )
             device = GoogleHomeDevice(
                 device_id=google_device.device_id,
                 name=google_device.device_name,
@@ -283,6 +307,15 @@ class GoogleAccountClient:
                 if not device.ip_address and found_device:
                     device.ip_address = found_device.address
             self.google_devices.append(device)
+
+    def home_graphs_without(self, device_id: str) -> int:
+        """Return how many home graphs in a row that Google answered with lack the device.
+
+        A device in a home graph counts even if glocaltokens left it out of the list.
+        Counted since the integration loaded, as if a device that no home graph has
+        had was in one just before.
+        """
+        return self._home_graphs_fetched - self._last_home_graph_with.get(device_id, 0)
 
     async def async_fetch_devices_when_due(self) -> Mapping[str, str]:
         """Fetch Google's device list again when it may have changed.

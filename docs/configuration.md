@@ -27,14 +27,13 @@ If the integration finds your devices only through [known hosts](#add-devices-on
 
 To add back a speaker or display that you removed from the Google Home app:
 
-1. Wait until the integration has noticed the removal, or reload it; see [Remove a device](#remove-a-device).
-2. Delete the old device in Home Assistant: open the device's page, open the **⋮** menu and select **Delete**. If you skip this, the new device's entities get IDs such as `sensor.kitchen_alarms_2` instead of `sensor.kitchen_alarms`.
-3. [Factory reset the device](https://support.google.com/googlenest/answer/7073477). Restarting it isn't enough.
-4. Set it up again in the Google Home app. Give it the same name to keep its entity IDs.
+1. Wait until the integration has removed the old device from Home Assistant, usually 20 to 40 minutes after you removed it from the app, or delete it yourself; see [Remove a device](#remove-a-device). If the old device is still there when the new one appears, the new device's entities get IDs such as `sensor.kitchen_alarms_2` instead of `sensor.kitchen_alarms`.
+2. [Factory reset the device](https://support.google.com/googlenest/answer/7073477). Restarting it isn't enough.
+3. Set it up again in the Google Home app. Give it the same name to keep its entity IDs.
 
 Google gives the device a new ID, so the integration adds it as a new device, as described at the start of this section.
 
-If you deleted a device in Home Assistant and the Google Home app lists it again without a factory reset, the integration doesn't add it back by itself: reload the integration.
+If you deleted a device in Home Assistant yourself and it doesn't come back when the Google Home app lists it again, reload the integration.
 
 ## Add devices on another network
 
@@ -61,11 +60,19 @@ Give these devices fixed IP addresses in your router, so the addresses don't cha
 
 ## Remove a device
 
-When you remove a device from the Google Home app or factory reset it, the integration normally notices within about 20 minutes, when it next asks Google for your devices, and the device's entities become unavailable. Removing a device from the Google Home app doesn't reset it: it stays on your network, and the integration keeps updating it until it next asks Google for your devices. After a factory reset, a device forgets your Wi-Fi network and usually stops answering, so its entities can become unavailable sooner, once it hasn't answered 5 updates in a row, before the integration has noticed. Before you delete the device, reload the integration so that it notices straight away: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. Then open the device's page in Home Assistant, open the **⋮** menu and select **Delete**.
+When you remove a device from the Google Home app, or Google drops it from your home after a factory reset, the integration removes it from Home Assistant, with its entities, once Google's device list has lacked it twice in a row. The integration asks Google for your devices every 20 minutes, so this usually takes 20 to 40 minutes. It doesn't remove a device while Google still has it in your home, even if the integration can't use the device.
+
+As soon as Google's device list first lacks the device, its entities are unavailable. Removing a device from the Google Home app doesn't reset it: it stays on your network, and the integration keeps updating it until it next asks Google for your devices. After a factory reset, a device forgets your Wi-Fi network and usually stops answering, so its entities can become unavailable sooner, once it hasn't answered 5 updates in a row, before the integration has noticed.
+
+When the integration can't get your device list from Google, for example while Google can't be reached, that attempt doesn't count. Reloading the integration or restarting Home Assistant starts the count again, and a device that Google dropped while Home Assistant was off is usually removed about 20 minutes after the integration loads.
+
+To remove a device sooner, delete it yourself. First reload the integration so that it notices straight away: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. Then open the device's page in Home Assistant, open the **⋮** menu and select **Delete**.
 
 Home Assistant offers **Delete** for every device of the integration, but you can't delete one that Google still lists in your home, even if it shows as unavailable: it would come back the next time the integration loads. Until the integration has noticed that Google no longer lists a device, you can't delete that one either. Home Assistant then shows "Failed to remove device entry, rejected by integration".
 
-To use a removed device again, factory reset it first; see [Add a device](#add-a-device).
+If Google briefly leaves a working device out of your home in two lists in a row, the integration removes it and adds it back the next time Google lists it. Home Assistant then restores the settings you changed, such as the device's area and name and its entities' names, IDs and disabled state, as long as no other entity has taken those entity IDs meanwhile.
+
+To use a device again that you removed from the Google Home app, factory reset it first; see [Add a device](#add-a-device).
 
 ## Remove the integration
 

@@ -15,6 +15,7 @@ from http import HTTPStatus
 import logging
 from unittest.mock import AsyncMock, MagicMock, Mock, patch
 
+from ghome_foyer_api.api_pb2 import HomeGraph  # pylint: disable=no-name-in-module
 from glocaltokens.client import Device
 import pytest
 from requests.exceptions import ConnectionError as RequestsConnectionError
@@ -103,7 +104,8 @@ class Network:
             known_hosts=self.known_hosts,
         )
         self.client._client = Mock(  # noqa: SLF001  # pylint: disable=protected-access
-            get_google_devices=Mock(side_effect=self._get_google_devices)
+            get_google_devices=Mock(side_effect=self._get_google_devices),
+            get_home_graph=Mock(return_value=HomeGraph()),
         )
         self.client.collect_data_from_endpoints = AsyncMock(  # type: ignore[method-assign]
             side_effect=self._poll

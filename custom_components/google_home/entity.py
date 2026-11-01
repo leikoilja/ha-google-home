@@ -124,15 +124,16 @@ def async_add_device_entities(
     keeps it updating before the device has entities.
     """
     client = entry.runtime_data.client
-    added: set[str] = set()
-    watched: set[str] = set()
+    # By coordinator, as a device that is removed and listed again gets a new one
+    added: set[GoogleHomeDeviceCoordinator] = set()
+    watched: set[GoogleHomeDeviceCoordinator] = set()
 
     @callback
     def add_entities(coordinator: GoogleHomeDeviceCoordinator) -> None:
         device = coordinator.data
         if (
             device is None
-            or device.device_id in added
+            or coordinator in added
             or (
                 needs_answer
                 and not (
@@ -143,7 +144,7 @@ def async_add_device_entities(
             )
         ):
             return
-        added.add(device.device_id)
+        added.add(coordinator)
         async_add_entities(
             [
                 entity_class(
@@ -155,12 +156,14 @@ def async_add_device_entities(
 
     @callback
     def watch_devices() -> None:
-        for device_id, coordinator in entry.runtime_data.devices.items():
-            if device_id in watched:
+        for coordinator in entry.runtime_data.devices.values():
+            if coordinator in watched:
                 continue
-            watched.add(device_id)
+            watched.add(coordinator)
             # Its first update may have finished already
             add_entities(coordinator)
+            # ponytail: a removed device's coordinator keeps this listener until
+            # unload, though it never updates again
             entry.async_on_unload(
                 coordinator.async_add_listener(partial(add_entities, coordinator))
             )
