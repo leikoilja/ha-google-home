@@ -43,7 +43,9 @@ from .conftest import (
 )
 from .test_coordinators import (
     BEDROOM_ALARMS,
+    BEDROOM_DEVICE,
     KITCHEN_ALARMS,
+    KITCHEN_DEVICE,
     asked,
     asked_by,
     runtime,
@@ -381,6 +383,50 @@ async def test_home_joined_later_added(
     await fetch_list(hass, config_entry, clock, 1)
 
     assert state(hass, BEDROOM_ALARMS) == ALARM_SHOWN
+
+
+def home_attribute(hass: HomeAssistant, entity_id: str) -> object:
+    """Return the home attribute of a device sensor."""
+    entity_state = hass.states.get(entity_id)
+    assert entity_state is not None
+    return entity_state.attributes["home"]
+
+
+@pytest.mark.usefixtures("home_graph")
+async def test_device_sensors_show_their_home(
+    hass: HomeAssistant, config_entry: MockConfigEntry
+) -> None:
+    """Show the name of each speaker's own home in its device sensor."""
+    await set_up(hass, config_entry)
+
+    assert home_attribute(hass, KITCHEN_DEVICE) == "Home"
+    assert home_attribute(hass, BEDROOM_DEVICE) == "Holiday house"
+
+
+async def test_device_sensor_home_without_name(
+    hass: HomeAssistant, config_entry: MockConfigEntry, home_graph: Mock
+) -> None:
+    """Show no home name, rather than the home's ID, when Google gives the home none."""
+    home_graph.return_value = graph(home(HOME, "", KITCHEN_IN_HOME_GRAPH))
+
+    await set_up(hass, config_entry)
+
+    assert home_attribute(hass, KITCHEN_DEVICE) is None
+
+
+async def test_device_sensor_follows_renamed_home(
+    hass: HomeAssistant, config_entry: MockConfigEntry, home_graph: Mock, clock: Mock
+) -> None:
+    """Show a home's new name at the speaker's update after Google's list is fetched again."""
+    await set_up(hass, config_entry)
+    home_graph.return_value = graph(
+        home(HOME, "Main house", KITCHEN_IN_HOME_GRAPH), holiday_house()
+    )
+
+    await fetch_list(hass, config_entry, clock, 1)
+    await runtime(config_entry).devices[SPEAKER_ID].async_refresh()
+
+    assert home_attribute(hass, KITCHEN_DEVICE) == "Main house"
 
 
 @pytest.mark.usefixtures("home_graph")

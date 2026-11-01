@@ -220,6 +220,7 @@
       'device_id': 'kitchen',
       'device_name': 'Kitchen speaker',
       <EntityStateAttribute.FRIENDLY_NAME: 'friendly_name'>: 'Kitchen speaker Device',
+      'home': None,
       'ip_address': '10.0.0.2',
     }),
     'context': <ANY>,

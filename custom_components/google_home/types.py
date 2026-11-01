@@ -62,6 +62,7 @@ class DeviceAttributes(TypedDict):
 
     device_id: str | None
     device_name: str
+    home: str | None
     auth_token: str | None
     ip_address: str | None
     available: bool
