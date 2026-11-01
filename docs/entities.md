@@ -117,9 +117,9 @@ The button is unavailable until Home Assistant finds the device on your network,
 
 Not every device supports rebooting. A device can accept the request, so there's no error and the log shows "Successfully asked Living Room to reboot.", even when it doesn't restart. If that happens, [reboot it from the Google Home app or unplug it for a minute](https://support.google.com/googlehome/answer/7072490).
 
-The button's state is the time it was last pressed in Home Assistant, not when the device last restarted. It's `unknown` until the first press. Each press sets it, even one that fails or doesn't restart the device. Rebooting the device with the [Reboot device](actions.md#reboot-device) action or from the Google Home app doesn't change it, and neither does unplugging it or a power cut.
+The button's state is the time it was last pressed in Home Assistant, not when the device last restarted. It's `unknown` until the first press. Each press sets it, even one that fails or doesn't restart the device. Rebooting the device with the [Reboot device](actions.md#reboot-device) action or from the Google Home app doesn't set it, and neither does unplugging the device or a power cut.
 
-Home Assistant keeps the state when it restarts. If the button is unavailable when Home Assistant stops, for example while the device is unplugged, the state is `unknown` after the restart.
+Home Assistant keeps this time when it restarts. If the button is unavailable when Home Assistant stops, for example while the device is unplugged, the time is lost: once the button is available again, its state is `unknown` until the next press.
 
 ## When entities are unavailable
 
