@@ -589,10 +589,16 @@ def test_speakers_count_only_fresh_scans() -> None:
     assert run(scanner, speakers, 330) == TrackerUpdate(HOME, {"Kitchen": -60})
 
 
-def test_speakers_with_same_name_count_separately() -> None:
+@pytest.mark.parametrize(
+    ("kitchen", "bedroom"),
+    [(-50, -70), (-70, -50)],
+    ids=["first-listed stronger", "second-listed stronger"],
+)
+def test_speakers_with_same_name_count_separately(kitchen: int, bedroom: int) -> None:
     """Count each speaker's own readings, even when two speakers share a name.
 
-    Speakers that share a name share an entry, with the stronger median.
+    Speakers that share a name share an entry, with the stronger median, whichever
+    of them is listed first.
     """
     speakers = Speakers("Kitchen", "Bedroom", "Office")
     speakers.devices[1].name = "Kitchen"
@@ -612,9 +618,27 @@ def test_speakers_with_same_name_count_separately() -> None:
     assert run(scanner, speakers, 330).speakers == {"Office": -60}
 
     # In the next window, both hear it in every scan
-    speakers.results.update(kitchen=[heard(phone, -50)], bedroom=[heard(phone, -70)])
+    speakers.results.update(
+        kitchen=[heard(phone, kitchen)], bedroom=[heard(phone, bedroom)]
+    )
     states(scanner, speakers, range(360, 630, 30))
     assert run(scanner, speakers, 630).speakers == {"Kitchen": -50, "Office": -60}
+
+
+def test_speakers_leave_out_speaker_that_stops_scanning() -> None:
+    """Leave out a speaker that stops scanning partway through a window, and show the rest."""
+    speakers = Speakers("Kitchen", "Office")
+    scanner = make_scanner(speakers)
+    phone = rpa(IRK)
+    speakers.results = {"kitchen": [heard(phone, -50)], "office": [heard(phone, -60)]}
+    # Home from 30, so the window runs to 330
+    assert states(scanner, speakers, range(0, 180, 30))[-1] == HOME
+
+    # Kitchen heard it in five scans, then returns 404, so it no longer scans
+    speakers.unsupported.add("kitchen")
+    assert states(scanner, speakers, range(180, 330, 30))[-1] == HOME
+
+    assert run(scanner, speakers, 330) == TrackerUpdate(HOME, {"Office": -60})
 
 
 def test_speakers_named_as_google_lists_them() -> None:

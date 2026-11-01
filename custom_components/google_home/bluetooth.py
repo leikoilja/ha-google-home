@@ -485,8 +485,9 @@ class BluetoothScanner:
         for device_id, rssi in device.heard.items():
             device.readings.setdefault(device_id, []).append(rssi)
         if now - device.window_start >= BLUETOOTH_RSSI_WINDOW:
-            # Each speaker counts on its own readings, if Google still lists it.
-            # Speakers with the same name share an entry, with the strongest median.
+            # Each speaker counts on its own readings, if it still scans: not one
+            # that Google stopped listing or that returned 404. Speakers with the
+            # same name share an entry, with the strongest median.
             speakers: dict[str, int] = {}
             for device_id, readings in device.readings.items():
                 if (
