@@ -8,6 +8,7 @@ This custom integration brings your Google Home and Nest speakers and displays i
 - Change the alarm volume.
 - Reboot a device.
 - See each device's firmware version and whether it says a firmware update is waiting.
+- Tell whether your phone or another Bluetooth device is home, with [Bluetooth tracking](bluetooth.md).
 
 To start, follow **[Getting Started](installation.md)** to install the integration and sign in.
 
