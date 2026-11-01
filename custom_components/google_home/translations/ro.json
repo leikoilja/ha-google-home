@@ -157,17 +157,55 @@
       "message": "Următoarele dispozitive nu au confirmat că vor reporni: {devices}. Verifică dacă dispozitivele sunt online și încearcă din nou mai târziu."
     }
   },
+  "config_subentries": {
+    "bluetooth_device": {
+      "entry_type": "Dispozitiv Bluetooth",
+      "initiate_flow": {
+        "user": "Adaugă dispozitiv Bluetooth"
+      },
+      "step": {
+        "user": {
+          "title": "Urmărește un dispozitiv Bluetooth",
+          "description": "Introdu IRK-ul unui telefon sau adresa MAC a unui dispozitiv a cărui adresă nu se schimbă niciodată, cum ar fi unele ceasuri și etichete de localizare. Telefoanele își schimbă adresa la fiecare câteva minute, așa că urmărește-le după IRK. Pentru a afla cum găsești IRK-ul, consultă {docs_url}.",
+          "data": {
+            "name": "Nume",
+            "irk": "IRK",
+            "mac": "Adresă MAC"
+          },
+          "data_description": {
+            "name": "Numele dispozitivului de urmărire, de exemplu Telefonul lui Alex.",
+            "irk": "Identity Resolving Key, în format hexazecimal sau base64. Lasă gol pentru a urmări după adresa MAC.",
+            "mac": "De exemplu, AA:BB:CC:DD:EE:FF. Lasă gol pentru a urmări după IRK."
+          }
+        }
+      },
+      "error": {
+        "name-empty": "Introdu un nume.",
+        "irk-or-mac": "Introdu fie un IRK, fie o adresă MAC, nu pe amândouă.",
+        "irk-invalid": "Acesta nu este un IRK. Un IRK are 16 octeți: 32 de cifre hexazecimale sau 24 de caractere base64 care se termină cu ==.",
+        "mac-invalid": "Aceasta nu este o adresă MAC. Introdu 12 cifre hexazecimale, de exemplu AA:BB:CC:DD:EE:FF.",
+        "already-tracked": "Acest dispozitiv este deja urmărit."
+      },
+      "abort": {
+        "bluetooth-tracking-off": "Urmărirea prin Bluetooth este dezactivată. Activeaz-o mai întâi în opțiunile integrării: selectează „Configurare” pe pagina integrării."
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {
         "data": {
           "update_interval": "Modifică intervalul de actualizare. Mărește această valoare dacă dispozitivele nu răspund la timp. Valoare implicită: {default_interval} (secunde).",
           "known_hosts": "Gazde cunoscute",
-          "homes": "Case"
+          "homes": "Case",
+          "bluetooth_tracking": "Urmărire prin Bluetooth",
+          "bluetooth_excluded_speakers": "Difuzoare nefolosite pentru urmărirea prin Bluetooth"
         },
         "data_description": {
           "known_hosts": "Adresele IP ale difuzoarelor și ecranelor pe care integrarea nu le poate găsi automat, de exemplu pentru că se află în altă rețea sau în alt VLAN.",
-          "homes": "Difuzoarele și ecranele din casele pe care le debifezi nu sunt adăugate. Dacă debifezi o casă, dispozitivele ei și entitățile acestora sunt eliminate din Home Assistant, astfel că automatizările, scripturile și tablourile de bord care le folosesc nu mai funcționează. Bifează din nou casa pentru a le adăuga înapoi cu numele și spațiile pe care li le-ai dat."
+          "homes": "Difuzoarele și ecranele din casele pe care le debifezi nu sunt adăugate. Dacă debifezi o casă, dispozitivele ei și entitățile acestora sunt eliminate din Home Assistant, astfel că automatizările, scripturile și tablourile de bord care le folosesc nu mai funcționează. Bifează din nou casa pentru a le adăuga înapoi cu numele și spațiile pe care li le-ai dat.",
+          "bluetooth_tracking": "Folosește difuzoarele ca să afli dacă telefonul tău sau alte dispozitive Bluetooth sunt acasă. După ce o activezi, adaugă dispozitivele de urmărit cu „Adaugă dispozitiv Bluetooth” pe pagina integrării. Cât timp este dezactivată, integrarea nu trimite nicio solicitare Bluetooth difuzoarelor tale.",
+          "bluetooth_excluded_speakers": "Difuzoare care nu caută dispozitive Bluetooth. Adaugă un difuzor scos din priză sau nefuncțional: cât timp un difuzor nu răspunde, dispozitivele de urmărire nu pot afișa „Plecat”."
         }
       }
     },

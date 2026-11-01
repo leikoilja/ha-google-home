@@ -157,17 +157,55 @@
       "message": "Os seguintes dispositivos não confirmaram que vão reiniciar: {devices}. Verifique se estão online e tente novamente mais tarde."
     }
   },
+  "config_subentries": {
+    "bluetooth_device": {
+      "entry_type": "Dispositivo Bluetooth",
+      "initiate_flow": {
+        "user": "Adicionar dispositivo Bluetooth"
+      },
+      "step": {
+        "user": {
+          "title": "Localizar um dispositivo Bluetooth",
+          "description": "Introduza a IRK de um telemóvel ou o endereço MAC de um dispositivo cujo endereço nunca muda, como alguns relógios e etiquetas. Os telemóveis mudam de endereço a cada poucos minutos, por isso localize-os pela IRK. Para saber como encontrar a IRK, consulte {docs_url}.",
+          "data": {
+            "name": "Nome",
+            "irk": "IRK",
+            "mac": "Endereço MAC"
+          },
+          "data_description": {
+            "name": "Nome do localizador, por exemplo Telemóvel do Alex.",
+            "irk": "Identity Resolving Key, em hexadecimal ou base64. Deixe em branco para localizar pelo endereço MAC.",
+            "mac": "Por exemplo, AA:BB:CC:DD:EE:FF. Deixe em branco para localizar pela IRK."
+          }
+        }
+      },
+      "error": {
+        "name-empty": "Introduza um nome.",
+        "irk-or-mac": "Introduza uma IRK ou um endereço MAC, mas não ambos.",
+        "irk-invalid": "Isto não é uma IRK. Uma IRK tem 16 bytes: 32 dígitos hexadecimais ou 24 caracteres base64 terminados em ==.",
+        "mac-invalid": "Isto não é um endereço MAC. Introduza 12 dígitos hexadecimais, por exemplo AA:BB:CC:DD:EE:FF.",
+        "already-tracked": "Este dispositivo já está a ser localizado."
+      },
+      "abort": {
+        "bluetooth-tracking-off": "A localização por Bluetooth está desativada. Ative-a primeiro nas opções da integração: selecione «Configurar» na página da integração."
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {
         "data": {
           "update_interval": "Altere o intervalo de atualização. Aumente este valor se os dispositivos excederem frequentemente o tempo limite. Predefinição: {default_interval} (segundos)",
           "known_hosts": "Anfitriões conhecidos",
-          "homes": "Casas"
+          "homes": "Casas",
+          "bluetooth_tracking": "Localização por Bluetooth",
+          "bluetooth_excluded_speakers": "Altifalantes não utilizados para a localização por Bluetooth"
         },
         "data_description": {
           "known_hosts": "Endereços IP de altifalantes e ecrãs que a integração não consegue encontrar sozinha, por exemplo porque estão noutra rede ou VLAN.",
-          "homes": "Os altifalantes e ecrãs das casas que desmarcar não são adicionados. Desmarcar uma casa remove do Home Assistant os respetivos dispositivos e as entidades destes, pelo que as automatizações, scripts e painéis que os utilizam deixam de funcionar. Volte a marcar a casa para os adicionar novamente com os nomes e as áreas que lhes atribuiu."
+          "homes": "Os altifalantes e ecrãs das casas que desmarcar não são adicionados. Desmarcar uma casa remove do Home Assistant os respetivos dispositivos e as entidades destes, pelo que as automatizações, scripts e painéis que os utilizam deixam de funcionar. Volte a marcar a casa para os adicionar novamente com os nomes e as áreas que lhes atribuiu.",
+          "bluetooth_tracking": "Utilize os seus altifalantes para saber se o seu telemóvel ou outros dispositivos Bluetooth estão em casa. Depois de a ativar, adicione os dispositivos a localizar com «Adicionar dispositivo Bluetooth» na página da integração. Enquanto estiver desativada, a integração não envia pedidos Bluetooth aos seus altifalantes.",
+          "bluetooth_excluded_speakers": "Altifalantes que não procuram dispositivos Bluetooth. Adicione um altifalante desligado da corrente ou fora de serviço: enquanto um altifalante não responder, os localizadores não conseguem mostrar «Ausente»."
         }
       }
     },

@@ -157,17 +157,55 @@
       "message": "Följande enheter bekräftade inte att de kommer att starta om: {devices}. Kontrollera att enheterna är online och försök igen senare."
     }
   },
+  "config_subentries": {
+    "bluetooth_device": {
+      "entry_type": "Bluetooth-enhet",
+      "initiate_flow": {
+        "user": "Lägg till Bluetooth-enhet"
+      },
+      "step": {
+        "user": {
+          "title": "Spåra en Bluetooth-enhet",
+          "description": "Ange IRK för en telefon, eller MAC-adressen för en enhet vars adress aldrig ändras, till exempel vissa klockor och taggar. Telefoner byter adress med några minuters mellanrum, så spåra dem med IRK. Se {docs_url} för hur du hittar IRK.",
+          "data": {
+            "name": "Namn",
+            "irk": "IRK",
+            "mac": "MAC-adress"
+          },
+          "data_description": {
+            "name": "Namnet på spåraren, till exempel Alex telefon.",
+            "irk": "Identity Resolving Key, hexadecimalt eller i base64. Lämna tomt för att spåra med MAC-adress.",
+            "mac": "Till exempel AA:BB:CC:DD:EE:FF. Lämna tomt för att spåra med IRK."
+          }
+        }
+      },
+      "error": {
+        "name-empty": "Ange ett namn.",
+        "irk-or-mac": "Ange antingen en IRK eller en MAC-adress, inte båda.",
+        "irk-invalid": "Det här är ingen IRK. En IRK är 16 byte: 32 hexadecimala siffror eller 24 base64-tecken som slutar med ==.",
+        "mac-invalid": "Det här är ingen MAC-adress. Ange 12 hexadecimala siffror, till exempel AA:BB:CC:DD:EE:FF.",
+        "already-tracked": "Den här enheten spåras redan."
+      },
+      "abort": {
+        "bluetooth-tracking-off": "Bluetooth-spårning är avaktiverad. Aktivera den först i integrationens alternativ: välj ”Konfigurera” på integrationens sida."
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {
         "data": {
           "update_interval": "Ändra uppdateringsintervallet. Öka det om enheterna inte svarar i tid. Standard: {default_interval} sekunder.",
           "known_hosts": "Kända värdar",
-          "homes": "Hem"
+          "homes": "Hem",
+          "bluetooth_tracking": "Bluetooth-spårning",
+          "bluetooth_excluded_speakers": "Högtalare som inte används för Bluetooth-spårning"
         },
         "data_description": {
           "known_hosts": "IP-adresser till högtalare och skärmar som integrationen inte kan hitta på egen hand, till exempel för att de finns i ett annat nätverk eller VLAN.",
-          "homes": "Högtalare och skärmar i hem som du avmarkerar läggs inte till. Om du avmarkerar ett hem tas dess enheter och deras entiteter bort från Home Assistant, så automatiseringar, skript och kontrollpaneler som använder dem slutar fungera. Markera hemmet igen för att lägga tillbaka dem med de namn och områden du gav dem."
+          "homes": "Högtalare och skärmar i hem som du avmarkerar läggs inte till. Om du avmarkerar ett hem tas dess enheter och deras entiteter bort från Home Assistant, så automatiseringar, skript och kontrollpaneler som använder dem slutar fungera. Markera hemmet igen för att lägga tillbaka dem med de namn och områden du gav dem.",
+          "bluetooth_tracking": "Använd dina högtalare för att se om din telefon eller andra Bluetooth-enheter är hemma. När du har aktiverat spårningen lägger du till enheterna som ska spåras med ”Lägg till Bluetooth-enhet” på integrationens sida. Så länge den är avaktiverad skickar integrationen inga Bluetooth-förfrågningar till dina högtalare.",
+          "bluetooth_excluded_speakers": "Högtalare som inte söker efter Bluetooth-enheter. Lägg till en högtalare som är urkopplad eller ur drift: så länge en högtalare inte svarar kan spårare inte visa ”Borta”."
         }
       }
     },

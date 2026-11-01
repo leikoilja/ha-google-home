@@ -157,17 +157,55 @@
       "message": "Seuraavat laitteet eivät vahvistaneet käynnistyvänsä uudelleen: {devices}. Tarkista, että laitteet ovat verkossa, ja yritä myöhemmin uudelleen."
     }
   },
+  "config_subentries": {
+    "bluetooth_device": {
+      "entry_type": "Bluetooth-laite",
+      "initiate_flow": {
+        "user": "Lisää Bluetooth-laite"
+      },
+      "step": {
+        "user": {
+          "title": "Seuraa Bluetooth-laitetta",
+          "description": "Anna puhelimen IRK tai sellaisen laitteen MAC-osoite, jonka osoite ei koskaan muutu, kuten jotkin kellot ja paikannustagit. Puhelimet vaihtavat osoitettaan muutaman minuutin välein, joten seuraa niitä IRK:n avulla. Ohjeet IRK:n löytämiseen: {docs_url}.",
+          "data": {
+            "name": "Nimi",
+            "irk": "IRK",
+            "mac": "MAC-osoite"
+          },
+          "data_description": {
+            "name": "Seurannan nimi, esimerkiksi Alexin puhelin.",
+            "irk": "Identity Resolving Key heksadesimaalina tai base64-muodossa. Jätä tyhjäksi, jos seuraat laitetta MAC-osoitteen avulla.",
+            "mac": "Esimerkiksi AA:BB:CC:DD:EE:FF. Jätä tyhjäksi, jos seuraat laitetta IRK:n avulla."
+          }
+        }
+      },
+      "error": {
+        "name-empty": "Anna nimi.",
+        "irk-or-mac": "Anna joko IRK tai MAC-osoite, ei molempia.",
+        "irk-invalid": "Tämä ei ole IRK. IRK on 16 tavua: 32 heksadesimaalinumeroa tai 24 base64-merkkiä, joiden lopussa on ==.",
+        "mac-invalid": "Tämä ei ole MAC-osoite. Anna 12 heksadesimaalinumeroa, esimerkiksi AA:BB:CC:DD:EE:FF.",
+        "already-tracked": "Tätä laitetta seurataan jo."
+      },
+      "abort": {
+        "bluetooth-tracking-off": "Bluetooth-seuranta ei ole käytössä. Ota se ensin käyttöön integraation asetuksissa: valitse integraation sivulla ”Määrittele”."
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {
         "data": {
           "update_interval": "Muuta päivitysväliä. Suurenna arvoa, jos laitteet eivät vastaa ajoissa. Oletus: {default_interval} sekuntia.",
           "known_hosts": "Tunnetut isännät",
-          "homes": "Kodit"
+          "homes": "Kodit",
+          "bluetooth_tracking": "Bluetooth-seuranta",
+          "bluetooth_excluded_speakers": "Kaiuttimet, joita ei käytetä Bluetooth-seurantaan"
         },
         "data_description": {
           "known_hosts": "Niiden kaiuttimien ja näyttöjen IP-osoitteet, joita integraatio ei löydä automaattisesti esimerkiksi siksi, että ne ovat toisessa verkossa tai VLAN-verkossa.",
-          "homes": "Kodeista, joiden valinnan poistat, ei lisätä kaiuttimia eikä näyttöjä. Kun poistat kodin valinnan, sen laitteet ja niiden entiteetit poistetaan Home Assistantista, joten niitä käyttävät automaatiot, skriptit ja kojelaudat lakkaavat toimimasta. Valitse koti uudelleen, niin laitteet lisätään takaisin antamillasi nimillä ja huoneilla."
+          "homes": "Kodeista, joiden valinnan poistat, ei lisätä kaiuttimia eikä näyttöjä. Kun poistat kodin valinnan, sen laitteet ja niiden entiteetit poistetaan Home Assistantista, joten niitä käyttävät automaatiot, skriptit ja kojelaudat lakkaavat toimimasta. Valitse koti uudelleen, niin laitteet lisätään takaisin antamillasi nimillä ja huoneilla.",
+          "bluetooth_tracking": "Kaiuttimiesi avulla näet, ovatko puhelimesi tai muut Bluetooth-laitteet kotona. Kun olet ottanut seurannan käyttöön, lisää seurattavat laitteet integraation sivulla kohdasta ”Lisää Bluetooth-laite”. Kun seuranta ei ole käytössä, integraatio ei lähetä kaiuttimille Bluetooth-pyyntöjä.",
+          "bluetooth_excluded_speakers": "Kaiuttimet, jotka eivät etsi Bluetooth-laitteita. Lisää tähän kaiutin, joka on irrotettu verkkovirrasta tai poissa käytöstä: niin kauan kuin kaiutin ei vastaa, Bluetooth-seuranta ei voi näyttää tilaa ”Poissa”."
         }
       }
     },

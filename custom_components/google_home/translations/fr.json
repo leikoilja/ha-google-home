@@ -157,17 +157,55 @@
       "message": "Les appareils suivants n'ont pas confirmé qu'ils vont redémarrer : {devices}. Vérifiez qu'ils sont en ligne et réessayez plus tard."
     }
   },
+  "config_subentries": {
+    "bluetooth_device": {
+      "entry_type": "Appareil Bluetooth",
+      "initiate_flow": {
+        "user": "Ajouter un appareil Bluetooth"
+      },
+      "step": {
+        "user": {
+          "title": "Suivre un appareil Bluetooth",
+          "description": "Saisissez l'IRK d'un téléphone, ou l'adresse MAC d'un appareil dont l'adresse ne change jamais, comme certaines montres et balises. Les téléphones changent d'adresse toutes les quelques minutes : suivez-les donc par leur IRK. Pour savoir comment trouver l'IRK, consultez {docs_url}.",
+          "data": {
+            "name": "Nom",
+            "irk": "IRK",
+            "mac": "Adresse MAC"
+          },
+          "data_description": {
+            "name": "Nom du traceur, par exemple Téléphone d'Alex.",
+            "irk": "Identity Resolving Key, en hexadécimal ou en base64. Laissez vide pour suivre par adresse MAC.",
+            "mac": "Par exemple AA:BB:CC:DD:EE:FF. Laissez vide pour suivre par IRK."
+          }
+        }
+      },
+      "error": {
+        "name-empty": "Saisissez un nom.",
+        "irk-or-mac": "Saisissez soit un IRK, soit une adresse MAC, mais pas les deux.",
+        "irk-invalid": "Ce n'est pas un IRK. Un IRK fait 16 octets : 32 chiffres hexadécimaux, ou 24 caractères base64 se terminant par ==.",
+        "mac-invalid": "Ce n'est pas une adresse MAC. Saisissez 12 chiffres hexadécimaux, par exemple AA:BB:CC:DD:EE:FF.",
+        "already-tracked": "Cet appareil est déjà suivi."
+      },
+      "abort": {
+        "bluetooth-tracking-off": "Le suivi Bluetooth est désactivé. Activez-le d'abord dans les options de l'intégration : sélectionnez « Configurer » sur la page de l'intégration."
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {
         "data": {
           "update_interval": "Modifier l'intervalle de mise à jour. Augmentez cette valeur si vos appareils dépassent souvent le délai d'attente. Par défaut : {default_interval} (secondes)",
           "known_hosts": "Hôtes connus",
-          "homes": "Maisons"
+          "homes": "Maisons",
+          "bluetooth_tracking": "Suivi Bluetooth",
+          "bluetooth_excluded_speakers": "Enceintes non utilisées pour le suivi Bluetooth"
         },
         "data_description": {
           "known_hosts": "Adresses IP des enceintes et écrans que l'intégration ne trouve pas d'elle-même, par exemple parce qu'ils sont sur un autre réseau ou VLAN.",
-          "homes": "Les enceintes et écrans des maisons que vous désélectionnez ne sont pas ajoutés. Désélectionner une maison supprime ses appareils et leurs entités de Home Assistant : les automatisations, scripts et tableaux de bord qui les utilisent cessent alors de fonctionner. Sélectionnez à nouveau la maison pour les rajouter avec les noms et pièces que vous leur aviez donnés."
+          "homes": "Les enceintes et écrans des maisons que vous désélectionnez ne sont pas ajoutés. Désélectionner une maison supprime ses appareils et leurs entités de Home Assistant : les automatisations, scripts et tableaux de bord qui les utilisent cessent alors de fonctionner. Sélectionnez à nouveau la maison pour les rajouter avec les noms et pièces que vous leur aviez donnés.",
+          "bluetooth_tracking": "Utilisez vos enceintes pour savoir si votre téléphone ou d'autres appareils Bluetooth sont à la maison. Après l'avoir activé, ajoutez les appareils à suivre avec « Ajouter un appareil Bluetooth » sur la page de l'intégration. Tant qu'il est désactivé, l'intégration n'envoie aucune requête Bluetooth à vos enceintes.",
+          "bluetooth_excluded_speakers": "Enceintes qui ne recherchent pas d'appareils Bluetooth. Ajoutez une enceinte débranchée ou hors service : tant qu'une enceinte ne répond pas, les traceurs ne peuvent pas afficher « Absent »."
         }
       }
     },

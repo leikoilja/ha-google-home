@@ -157,17 +157,55 @@
       "message": "Estos dispositivos no han confirmado que se vayan a reiniciar: {devices}. Comprueba que estén en línea y vuelve a intentarlo más tarde."
     }
   },
+  "config_subentries": {
+    "bluetooth_device": {
+      "entry_type": "Dispositivo Bluetooth",
+      "initiate_flow": {
+        "user": "Añadir dispositivo Bluetooth"
+      },
+      "step": {
+        "user": {
+          "title": "Rastrear un dispositivo Bluetooth",
+          "description": "Introduce la IRK de un teléfono o la dirección MAC de un dispositivo cuya dirección nunca cambia, como algunos relojes y etiquetas localizadoras. Los teléfonos cambian de dirección cada pocos minutos, así que rastréalos por su IRK. Para saber cómo encontrar la IRK, consulta {docs_url}.",
+          "data": {
+            "name": "Nombre",
+            "irk": "IRK",
+            "mac": "Dirección MAC"
+          },
+          "data_description": {
+            "name": "Nombre del rastreador, por ejemplo Teléfono de Alex.",
+            "irk": "Identity Resolving Key (clave de resolución de identidad), en hexadecimal o base64. Déjalo vacío para rastrear por dirección MAC.",
+            "mac": "Por ejemplo, AA:BB:CC:DD:EE:FF. Déjalo vacío para rastrear por IRK."
+          }
+        }
+      },
+      "error": {
+        "name-empty": "Introduce un nombre.",
+        "irk-or-mac": "Introduce una IRK o una dirección MAC, pero no ambas.",
+        "irk-invalid": "Esto no es una IRK. Una IRK tiene 16 bytes: 32 dígitos hexadecimales o 24 caracteres base64 que terminan en ==.",
+        "mac-invalid": "Esto no es una dirección MAC. Introduce 12 dígitos hexadecimales, por ejemplo AA:BB:CC:DD:EE:FF.",
+        "already-tracked": "Este dispositivo ya se está rastreando."
+      },
+      "abort": {
+        "bluetooth-tracking-off": "El seguimiento por Bluetooth está desactivado. Actívalo primero en las opciones de la integración: selecciona «Configurar» en la página de la integración."
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {
         "data": {
           "update_interval": "Cambia el intervalo de actualización. Auméntalo si los dispositivos suelen agotar el tiempo de espera. Valor por defecto: {default_interval} (segundos)",
           "known_hosts": "Hosts conocidos",
-          "homes": "Casas"
+          "homes": "Casas",
+          "bluetooth_tracking": "Seguimiento por Bluetooth",
+          "bluetooth_excluded_speakers": "Altavoces no usados para el seguimiento por Bluetooth"
         },
         "data_description": {
           "known_hosts": "Direcciones IP de altavoces y pantallas que la integración no puede encontrar por sí misma, por ejemplo porque están en otra red o VLAN.",
-          "homes": "Los altavoces y pantallas de las casas que desmarques no se añaden. Al desmarcar una casa, sus dispositivos y las entidades de estos se eliminan de Home Assistant, por lo que las automatizaciones, los scripts y los paneles de control que los usan dejan de funcionar. Vuelve a marcar la casa para añadirlos de nuevo con los nombres y las áreas que les diste."
+          "homes": "Los altavoces y pantallas de las casas que desmarques no se añaden. Al desmarcar una casa, sus dispositivos y las entidades de estos se eliminan de Home Assistant, por lo que las automatizaciones, los scripts y los paneles de control que los usan dejan de funcionar. Vuelve a marcar la casa para añadirlos de nuevo con los nombres y las áreas que les diste.",
+          "bluetooth_tracking": "Usa tus altavoces para saber si tu teléfono u otros dispositivos Bluetooth están en casa. Después de activarlo, añade los dispositivos que quieras rastrear con «Añadir dispositivo Bluetooth» en la página de la integración. Mientras esté desactivado, la integración no envía ninguna solicitud Bluetooth a tus altavoces.",
+          "bluetooth_excluded_speakers": "Altavoces que no buscan dispositivos Bluetooth. Añade un altavoz que esté desenchufado o fuera de servicio: mientras un altavoz no responda, los rastreadores no pueden mostrar «Fuera»."
         }
       }
     },

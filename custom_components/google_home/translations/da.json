@@ -157,17 +157,55 @@
       "message": "Disse enheder bekræftede ikke, at de genstarter: {devices}. Kontrollér, at de er online, og prøv igen senere."
     }
   },
+  "config_subentries": {
+    "bluetooth_device": {
+      "entry_type": "Bluetooth-enhed",
+      "initiate_flow": {
+        "user": "Tilføj Bluetooth-enhed"
+      },
+      "step": {
+        "user": {
+          "title": "Spor en Bluetooth-enhed",
+          "description": "Angiv en telefons IRK eller MAC-adressen på en enhed, hvis adresse aldrig ændres, f.eks. visse ure og tags. Telefoner skifter adresse med få minutters mellemrum, så spor dem via IRK. Se {docs_url} for at finde ud af, hvordan du finder IRK'en.",
+          "data": {
+            "name": "Navn",
+            "irk": "IRK",
+            "mac": "MAC-adresse"
+          },
+          "data_description": {
+            "name": "Navnet på trackeren, f.eks. Alex' telefon.",
+            "irk": "Identity Resolving Key i hex eller base64. Lad feltet være tomt for at spore via MAC-adresse.",
+            "mac": "F.eks. AA:BB:CC:DD:EE:FF. Lad feltet være tomt for at spore via IRK."
+          }
+        }
+      },
+      "error": {
+        "name-empty": "Angiv et navn.",
+        "irk-or-mac": "Angiv enten en IRK eller en MAC-adresse, ikke begge.",
+        "irk-invalid": "Dette er ikke en IRK. En IRK er 16 bytes: 32 hexcifre eller 24 base64-tegn, der ender på ==.",
+        "mac-invalid": "Dette er ikke en MAC-adresse. Angiv 12 hexcifre, f.eks. AA:BB:CC:DD:EE:FF.",
+        "already-tracked": "Denne enhed spores allerede."
+      },
+      "abort": {
+        "bluetooth-tracking-off": "Bluetooth-sporing er slået fra. Slå den først til i integrationens indstillinger: Vælg »Konfigurér« på integrationens side."
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {
         "data": {
           "update_interval": "Skift opdateringsinterval. Øg værdien, hvis dine enheder ofte får timeout. Standard: {default_interval} (sekunder)",
           "known_hosts": "Kendte værter",
-          "homes": "Hjem"
+          "homes": "Hjem",
+          "bluetooth_tracking": "Bluetooth-sporing",
+          "bluetooth_excluded_speakers": "Højttalere, der ikke bruges til Bluetooth-sporing"
         },
         "data_description": {
           "known_hosts": "IP-adresser på højttalere og skærme, som integrationen ikke selv kan finde, f.eks. fordi de er på et andet netværk eller VLAN.",
-          "homes": "Højttalere og skærme i hjem, du fravælger, tilføjes ikke. Hvis du fravælger et hjem, fjernes dets enheder og deres entiteter fra Home Assistant, så automatiseringer, scripts og betjeningspaneler, der bruger dem, holder op med at virke. Vælg hjemmet igen for at få dem tilbage med de navne og områder, du gav dem."
+          "homes": "Højttalere og skærme i hjem, du fravælger, tilføjes ikke. Hvis du fravælger et hjem, fjernes dets enheder og deres entiteter fra Home Assistant, så automatiseringer, scripts og betjeningspaneler, der bruger dem, holder op med at virke. Vælg hjemmet igen for at få dem tilbage med de navne og områder, du gav dem.",
+          "bluetooth_tracking": "Brug dine højttalere til at se, om din telefon eller andre Bluetooth-enheder er hjemme. Når sporingen er slået til, skal du tilføje de enheder, der skal spores, med »Tilføj Bluetooth-enhed« på integrationens side. Mens den er slået fra, sender integrationen ingen Bluetooth-forespørgsler til dine højttalere.",
+          "bluetooth_excluded_speakers": "Højttalere, der ikke søger efter Bluetooth-enheder. Tilføj en højttaler, der er taget ud af stikket eller ude af drift: Mens en højttaler ikke svarer, kan trackere ikke vise »Ude«."
         }
       }
     },

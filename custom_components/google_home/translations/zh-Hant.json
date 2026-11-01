@@ -157,17 +157,55 @@
       "message": "下列裝置未確認將會重新啟動：{devices}。請確認這些裝置已連線，並稍後再試。"
     }
   },
+  "config_subentries": {
+    "bluetooth_device": {
+      "entry_type": "藍牙裝置",
+      "initiate_flow": {
+        "user": "新增藍牙裝置"
+      },
+      "step": {
+        "user": {
+          "title": "追蹤藍牙裝置",
+          "description": "輸入手機的 IRK，或位址永不變更之裝置（例如部分手錶和防丟標籤）的 MAC 位址。手機每隔幾分鐘就會變更位址，因此請以 IRK 追蹤手機。如何找到 IRK，請參閱 {docs_url}。",
+          "data": {
+            "name": "名稱",
+            "irk": "IRK",
+            "mac": "MAC 位址"
+          },
+          "data_description": {
+            "name": "追蹤器名稱，例如「Alex 的手機」。",
+            "irk": "Identity Resolving Key，格式為十六進位或 base64。若要以 MAC 位址追蹤，請留空。",
+            "mac": "例如 AA:BB:CC:DD:EE:FF。若要以 IRK 追蹤，請留空。"
+          }
+        }
+      },
+      "error": {
+        "name-empty": "請輸入名稱。",
+        "irk-or-mac": "請輸入 IRK 或 MAC 位址其中之一，不要同時輸入兩者。",
+        "irk-invalid": "這不是 IRK。IRK 為 16 位元組：32 個十六進位數字，或以 == 結尾的 24 個 base64 字元。",
+        "mac-invalid": "這不是 MAC 位址。請輸入 12 個十六進位數字，例如 AA:BB:CC:DD:EE:FF。",
+        "already-tracked": "此裝置已在追蹤中。"
+      },
+      "abort": {
+        "bluetooth-tracking-off": "藍牙追蹤已關閉。請先在此整合的選項中開啟：在此整合的頁面上選擇「設定」。"
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {
         "data": {
           "update_interval": "變更更新間隔。如果裝置無法及時回應，請增加此值。預設為 {default_interval} 秒。",
           "known_hosts": "已知主機",
-          "homes": "住家"
+          "homes": "住家",
+          "bluetooth_tracking": "藍牙追蹤",
+          "bluetooth_excluded_speakers": "不用於藍牙追蹤的音箱"
         },
         "data_description": {
           "known_hosts": "此整合無法自動找到的音箱和螢幕的 IP 位址，例如位於其他網路或 VLAN 的裝置。",
-          "homes": "不會加入你取消選取的住家中的音箱和螢幕。取消選取住家會從 Home Assistant 移除該住家的裝置及其實體，因此使用這些裝置的自動化、腳本和儀表板將無法運作。重新選取該住家，即可依你先前設定的名稱和分區重新加入這些裝置。"
+          "homes": "不會加入你取消選取的住家中的音箱和螢幕。取消選取住家會從 Home Assistant 移除該住家的裝置及其實體，因此使用這些裝置的自動化、腳本和儀表板將無法運作。重新選取該住家，即可依你先前設定的名稱和分區重新加入這些裝置。",
+          "bluetooth_tracking": "使用音箱判斷你的手機或其他藍牙裝置是否在家。開啟後，請在此整合的頁面上使用「新增藍牙裝置」加入要追蹤的裝置。關閉期間，此整合不會向音箱傳送任何藍牙要求。",
+          "bluetooth_excluded_speakers": "不掃描藍牙裝置的音箱。請加入已拔除電源或停止使用的音箱：只要有音箱沒有回應，追蹤器就無法顯示「離家」。"
         }
       }
     },

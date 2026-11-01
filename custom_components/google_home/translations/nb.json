@@ -157,17 +157,55 @@
       "message": "Disse enhetene bekreftet ikke at de vil starte på nytt: {devices}. Kontroller at enhetene er på nett, og prøv igjen senere."
     }
   },
+  "config_subentries": {
+    "bluetooth_device": {
+      "entry_type": "Bluetooth-enhet",
+      "initiate_flow": {
+        "user": "Legg til Bluetooth-enhet"
+      },
+      "step": {
+        "user": {
+          "title": "Spor en Bluetooth-enhet",
+          "description": "Skriv inn IRK-en til en telefon, eller MAC-adressen til en enhet med en adresse som aldri endres, for eksempel enkelte klokker og sporingsbrikker. Telefoner bytter adresse med noen minutters mellomrom, så spor dem med IRK. Se {docs_url} for hvordan du finner IRK-en.",
+          "data": {
+            "name": "Navn",
+            "irk": "IRK",
+            "mac": "MAC-adresse"
+          },
+          "data_description": {
+            "name": "Navnet på sporeren, for eksempel Alex sin telefon.",
+            "irk": "Identity Resolving Key, heksadesimalt eller i base64. La feltet stå tomt for å spore med MAC-adresse.",
+            "mac": "For eksempel AA:BB:CC:DD:EE:FF. La feltet stå tomt for å spore med IRK."
+          }
+        }
+      },
+      "error": {
+        "name-empty": "Skriv inn et navn.",
+        "irk-or-mac": "Skriv inn enten en IRK eller en MAC-adresse, ikke begge.",
+        "irk-invalid": "Dette er ikke en IRK. En IRK er 16 byte: 32 heksadesimale sifre eller 24 base64-tegn som slutter på ==.",
+        "mac-invalid": "Dette er ikke en MAC-adresse. Skriv inn 12 heksadesimale sifre, for eksempel AA:BB:CC:DD:EE:FF.",
+        "already-tracked": "Denne enheten spores allerede."
+      },
+      "abort": {
+        "bluetooth-tracking-off": "Bluetooth-sporing er slått av. Slå den på i alternativene for integrasjonen først: Velg «Konfigurer» på siden til integrasjonen."
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {
         "data": {
           "update_interval": "Endre oppdateringsintervall. Øk dette hvis enhetene ofte får tidsavbrudd. Standard: {default_interval} (sekunder)",
           "known_hosts": "Kjente verter",
-          "homes": "Hjem"
+          "homes": "Hjem",
+          "bluetooth_tracking": "Bluetooth-sporing",
+          "bluetooth_excluded_speakers": "Høyttalere som ikke brukes til Bluetooth-sporing"
         },
         "data_description": {
           "known_hosts": "IP-adresser til høyttalere og skjermer som integrasjonen ikke finner selv, for eksempel fordi de er på et annet nettverk eller VLAN.",
-          "homes": "Høyttalere og skjermer i hjem du velger bort, legges ikke til. Når du velger bort et hjem, fjernes enhetene i hjemmet og entitetene deres fra Home Assistant, slik at automatiseringer, skript og dashbord som bruker dem, slutter å fungere. Velg hjemmet igjen for å legge dem til på nytt med navnene og områdene du ga dem."
+          "homes": "Høyttalere og skjermer i hjem du velger bort, legges ikke til. Når du velger bort et hjem, fjernes enhetene i hjemmet og entitetene deres fra Home Assistant, slik at automatiseringer, skript og dashbord som bruker dem, slutter å fungere. Velg hjemmet igjen for å legge dem til på nytt med navnene og områdene du ga dem.",
+          "bluetooth_tracking": "Bruk høyttalerne til å se om telefonen din eller andre Bluetooth-enheter er hjemme. Når sporingen er slått på, legger du til enhetene som skal spores, med «Legg til Bluetooth-enhet» på siden til integrasjonen. Når den er slått av, sender ikke integrasjonen noen Bluetooth-forespørsler til høyttalerne.",
+          "bluetooth_excluded_speakers": "Høyttalere som ikke søker etter Bluetooth-enheter. Legg til en høyttaler som er koblet fra strømmen eller ute av drift: Så lenge en høyttaler ikke svarer, kan ikke sporere vise «Borte»."
         }
       }
     },

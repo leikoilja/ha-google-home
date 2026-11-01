@@ -157,17 +157,55 @@
       "message": "다음 기기에서 다시 시작하겠다는 확인을 받지 못했습니다: {devices}. 해당 기기가 모두 온라인 상태인지 확인하고 나중에 다시 시도하세요."
     }
   },
+  "config_subentries": {
+    "bluetooth_device": {
+      "entry_type": "블루투스 기기",
+      "initiate_flow": {
+        "user": "블루투스 기기 추가"
+      },
+      "step": {
+        "user": {
+          "title": "블루투스 기기 추적",
+          "description": "휴대폰의 IRK 또는 일부 시계나 태그처럼 주소가 바뀌지 않는 기기의 MAC 주소를 입력하세요. 휴대폰은 몇 분마다 주소를 바꾸므로 IRK로 추적하세요. IRK를 찾는 방법은 {docs_url}을(를) 참조하세요.",
+          "data": {
+            "name": "이름",
+            "irk": "IRK",
+            "mac": "MAC 주소"
+          },
+          "data_description": {
+            "name": "추적기 이름입니다. 예: 알렉스의 휴대폰",
+            "irk": "Identity Resolving Key(신원 확인 키)이며 16진수 또는 base64 형식입니다. MAC 주소로 추적하려면 비워 두세요.",
+            "mac": "예: AA:BB:CC:DD:EE:FF. IRK로 추적하려면 비워 두세요."
+          }
+        }
+      },
+      "error": {
+        "name-empty": "이름을 입력하세요.",
+        "irk-or-mac": "IRK와 MAC 주소 중 하나만 입력하세요.",
+        "irk-invalid": "IRK가 아닙니다. IRK는 16바이트로, 16진수 32자리 또는 ==로 끝나는 base64 24자입니다.",
+        "mac-invalid": "MAC 주소가 아닙니다. AA:BB:CC:DD:EE:FF처럼 16진수 12자리를 입력하세요.",
+        "already-tracked": "이 기기는 이미 추적 중입니다."
+      },
+      "abort": {
+        "bluetooth-tracking-off": "블루투스 추적이 꺼져 있습니다. 먼저 통합 구성 요소 옵션에서 켜세요. 통합 구성 요소 페이지에서 “구성”을 선택하면 됩니다."
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {
         "data": {
           "update_interval": "업데이트 간격을 변경합니다. 기기가 제때 응답하지 않으면 이 값을 늘리세요. 기본값: {default_interval}초.",
           "known_hosts": "알려진 호스트",
-          "homes": "홈"
+          "homes": "홈",
+          "bluetooth_tracking": "블루투스 추적",
+          "bluetooth_excluded_speakers": "블루투스 추적에 사용하지 않는 스피커"
         },
         "data_description": {
           "known_hosts": "다른 네트워크나 VLAN에 있는 경우처럼 통합 구성 요소가 자동으로 찾을 수 없는 스피커 및 디스플레이의 IP 주소입니다.",
-          "homes": "선택 해제한 홈의 스피커와 디스플레이는 추가되지 않습니다. 홈을 선택 해제하면 해당 홈의 기기와 엔티티가 Home Assistant에서 삭제되므로 이를 사용하는 자동화, 스크립트, 대시보드가 작동하지 않게 됩니다. 홈을 다시 선택하면 지정했던 이름과 영역 그대로 기기가 다시 추가됩니다."
+          "homes": "선택 해제한 홈의 스피커와 디스플레이는 추가되지 않습니다. 홈을 선택 해제하면 해당 홈의 기기와 엔티티가 Home Assistant에서 삭제되므로 이를 사용하는 자동화, 스크립트, 대시보드가 작동하지 않게 됩니다. 홈을 다시 선택하면 지정했던 이름과 영역 그대로 기기가 다시 추가됩니다.",
+          "bluetooth_tracking": "스피커를 사용해 휴대폰이나 다른 블루투스 기기가 집에 있는지 확인합니다. 켠 후 통합 구성 요소 페이지에서 “블루투스 기기 추가”로 추적할 기기를 추가하세요. 꺼져 있는 동안에는 통합 구성 요소가 스피커에 블루투스 요청을 보내지 않습니다.",
+          "bluetooth_excluded_speakers": "블루투스 기기를 검색하지 않는 스피커입니다. 전원이 뽑혀 있거나 사용하지 않는 스피커를 추가하세요. 응답하지 않는 스피커가 있는 동안에는 추적기가 “외출”을 표시할 수 없습니다."
         }
       }
     },

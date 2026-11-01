@@ -157,17 +157,55 @@
       "message": "Následující zařízení nepotvrdila, že se restartují: {devices}. Zkontrolujte, zda jsou zařízení online, a zkuste to znovu později."
     }
   },
+  "config_subentries": {
+    "bluetooth_device": {
+      "entry_type": "Zařízení Bluetooth",
+      "initiate_flow": {
+        "user": "Přidat zařízení Bluetooth"
+      },
+      "step": {
+        "user": {
+          "title": "Sledovat zařízení Bluetooth",
+          "description": "Zadejte IRK telefonu nebo MAC adresu zařízení, jehož adresa se nikdy nemění, například některých hodinek a lokalizačních štítků. Telefony mění adresu každých několik minut, proto je sledujte podle IRK. Jak IRK najít, se dozvíte na {docs_url}.",
+          "data": {
+            "name": "Název",
+            "irk": "IRK",
+            "mac": "MAC adresa"
+          },
+          "data_description": {
+            "name": "Název sledovače, například Alexův telefon.",
+            "irk": "Identity Resolving Key v šestnáctkovém formátu nebo v base64. Pro sledování podle MAC adresy ponechte prázdné.",
+            "mac": "Například AA:BB:CC:DD:EE:FF. Pro sledování podle IRK ponechte prázdné."
+          }
+        }
+      },
+      "error": {
+        "name-empty": "Zadejte název.",
+        "irk-or-mac": "Zadejte buď IRK, nebo MAC adresu, ne obojí.",
+        "irk-invalid": "Toto není IRK. IRK má 16 bajtů: 32 šestnáctkových číslic nebo 24 znaků base64 končících ==.",
+        "mac-invalid": "Toto není MAC adresa. Zadejte 12 šestnáctkových číslic, například AA:BB:CC:DD:EE:FF.",
+        "already-tracked": "Toto zařízení se už sleduje."
+      },
+      "abort": {
+        "bluetooth-tracking-off": "Sledování přes Bluetooth je vypnuté. Nejprve ho zapněte v možnostech integrace: na stránce integrace vyberte „Nastavit“."
+      }
+    }
+  },
   "options": {
     "step": {
       "init": {
         "data": {
           "update_interval": "Změňte interval aktualizace. Pokud zařízení neodpovídají včas, zvyšte tuto hodnotu. Výchozí hodnota: {default_interval} (sekund).",
           "known_hosts": "Známí hostitelé",
-          "homes": "Domácnosti"
+          "homes": "Domácnosti",
+          "bluetooth_tracking": "Sledování přes Bluetooth",
+          "bluetooth_excluded_speakers": "Reproduktory nepoužívané ke sledování přes Bluetooth"
         },
         "data_description": {
           "known_hosts": "IP adresy reproduktorů a displejů, které integrace nedokáže sama najít, například protože jsou v jiné síti nebo VLAN.",
-          "homes": "Reproduktory a displeje z domácností, které odznačíte, se nepřidají. Když domácnost odznačíte, její zařízení a jejich entity se z Home Assistanta odeberou, takže automatizace, skripty a ovládací panely, které je používají, přestanou fungovat. Pokud domácnost znovu označíte, zařízení se vrátí s názvy a oblastmi, které jste jim dali."
+          "homes": "Reproduktory a displeje z domácností, které odznačíte, se nepřidají. Když domácnost odznačíte, její zařízení a jejich entity se z Home Assistanta odeberou, takže automatizace, skripty a ovládací panely, které je používají, přestanou fungovat. Pokud domácnost znovu označíte, zařízení se vrátí s názvy a oblastmi, které jste jim dali.",
+          "bluetooth_tracking": "Pomocí reproduktorů zjistíte, zda je váš telefon nebo jiná zařízení Bluetooth doma. Po zapnutí přidejte sledovaná zařízení pomocí „Přidat zařízení Bluetooth“ na stránce integrace. Dokud je sledování vypnuté, integrace reproduktorům neposílá žádné požadavky Bluetooth.",
+          "bluetooth_excluded_speakers": "Reproduktory, které nevyhledávají zařízení Bluetooth. Přidejte reproduktor, který je odpojený nebo mimo provoz: dokud reproduktor neodpovídá, sledovače nemohou zobrazit „Pryč“."
         }
       }
     },
