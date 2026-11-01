@@ -77,6 +77,34 @@
       "other-account": "Egy másik Google-fiókba jelentkezett be, ezért semmi sem változott. Jelentkezzen be az integráció által használt fiókkal. Ha inkább azt a másik fiókot szeretné használni, törölje az integrációt, és adja hozzá újra."
     }
   },
+  "entity": {
+    "button": {
+      "reboot": {
+        "name": "Újraindítás"
+      }
+    },
+    "number": {
+      "alarm_volume": {
+        "name": "Ébresztés hangereje"
+      }
+    },
+    "sensor": {
+      "alarms": {
+        "name": "Ébresztések"
+      },
+      "device": {
+        "name": "Eszköz"
+      },
+      "timers": {
+        "name": "Időzítők"
+      }
+    },
+    "switch": {
+      "do_not_disturb": {
+        "name": "Ne zavarjanak"
+      }
+    }
+  },
   "exceptions": {
     "alarms_and_timers_not_fetched": {
       "message": "Nem sikerült lekérni a(z) {device} eszköz aktuális ébresztéseit és időzítőit, ezért semmi sem lett törölve erről az eszközről. Ellenőrizze, hogy az eszköz online van-e, és próbálja újra később."

@@ -77,6 +77,34 @@
       "other-account": "Hai effettuato l'accesso con un altro account Google, quindi non è stato modificato nulla. Accedi con l'account usato da questa integrazione. Per usare invece quell'altro account, elimina l'integrazione e aggiungila di nuovo."
     }
   },
+  "entity": {
+    "button": {
+      "reboot": {
+        "name": "Riavvia"
+      }
+    },
+    "number": {
+      "alarm_volume": {
+        "name": "Volume della sveglia"
+      }
+    },
+    "sensor": {
+      "alarms": {
+        "name": "Sveglie"
+      },
+      "device": {
+        "name": "Dispositivo"
+      },
+      "timers": {
+        "name": "Timer"
+      }
+    },
+    "switch": {
+      "do_not_disturb": {
+        "name": "Non disturbare"
+      }
+    }
+  },
   "exceptions": {
     "alarms_and_timers_not_fetched": {
       "message": "Impossibile recuperare le sveglie e i timer attualmente impostati su {device}, quindi non è stato eliminato nulla da questo dispositivo. Verifica che sia online e riprova più tardi."

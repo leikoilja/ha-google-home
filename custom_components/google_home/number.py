@@ -40,7 +40,7 @@ async def async_setup_entry(
 class AlarmVolumeNumber(GoogleHomeFeatureEntity, NumberEntity):
     """Google Home Alarm Volume Number entity."""
 
-    _attr_name = "Alarm volume"
+    _attr_translation_key = "alarm_volume"
     _attr_native_unit_of_measurement = UnitOfRatio.PERCENTAGE
     _attr_entity_category = EntityCategory.CONFIG
     _attr_native_min_value = 0

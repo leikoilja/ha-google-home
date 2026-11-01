@@ -77,6 +77,34 @@
       "other-account": "You signed in to a different Google account, so nothing was changed. Sign in with the account this integration uses. To use the other account instead, delete the integration and add it again."
     }
   },
+  "entity": {
+    "button": {
+      "reboot": {
+        "name": "Reboot"
+      }
+    },
+    "number": {
+      "alarm_volume": {
+        "name": "Alarm volume"
+      }
+    },
+    "sensor": {
+      "alarms": {
+        "name": "Alarms"
+      },
+      "device": {
+        "name": "Device"
+      },
+      "timers": {
+        "name": "Timers"
+      }
+    },
+    "switch": {
+      "do_not_disturb": {
+        "name": "Do Not Disturb"
+      }
+    }
+  },
   "exceptions": {
     "alarms_and_timers_not_fetched": {
       "message": "Couldn't get the current alarms and timers from {device}, so nothing was deleted from it. Check that it's online and try again later."

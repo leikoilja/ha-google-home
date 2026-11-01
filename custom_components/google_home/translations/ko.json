@@ -77,6 +77,34 @@
       "other-account": "다른 Google 계정으로 로그인했기 때문에 아무것도 변경되지 않았습니다. 이 통합 구성 요소가 사용하는 계정으로 로그인하세요. 대신 방금 로그인한 계정을 사용하려면 통합 구성 요소를 삭제한 후 다시 추가하세요."
     }
   },
+  "entity": {
+    "button": {
+      "reboot": {
+        "name": "다시 시작"
+      }
+    },
+    "number": {
+      "alarm_volume": {
+        "name": "알람 볼륨"
+      }
+    },
+    "sensor": {
+      "alarms": {
+        "name": "알람"
+      },
+      "device": {
+        "name": "기기"
+      },
+      "timers": {
+        "name": "타이머"
+      }
+    },
+    "switch": {
+      "do_not_disturb": {
+        "name": "방해 금지"
+      }
+    }
+  },
   "exceptions": {
     "alarms_and_timers_not_fetched": {
       "message": "{device} 기기에서 현재 알람과 타이머를 가져올 수 없어 해당 기기에서 아무것도 삭제하지 않았습니다. 기기가 온라인 상태인지 확인하고 나중에 다시 시도하세요."

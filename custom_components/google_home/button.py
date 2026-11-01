@@ -33,7 +33,7 @@ async def async_setup_entry(
 class RebootButton(GoogleHomeBaseEntity, ButtonEntity):
     """Google Home Reboot button."""
 
-    _attr_name = "Reboot"
+    _attr_translation_key = "reboot"
     _attr_device_class = ButtonDeviceClass.RESTART
     _attr_entity_category = EntityCategory.CONFIG
 

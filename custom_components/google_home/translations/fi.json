@@ -77,6 +77,34 @@
       "other-account": "Kirjauduit eri Google-tilille, joten mitään ei muutettu. Kirjaudu tilille, jota tämä integraatio käyttää. Jos haluat käyttää sen sijaan toista tiliä, poista integraatio ja lisää se uudelleen."
     }
   },
+  "entity": {
+    "button": {
+      "reboot": {
+        "name": "Käynnistä uudelleen"
+      }
+    },
+    "number": {
+      "alarm_volume": {
+        "name": "Herätyksen äänenvoimakkuus"
+      }
+    },
+    "sensor": {
+      "alarms": {
+        "name": "Herätykset"
+      },
+      "device": {
+        "name": "Laite"
+      },
+      "timers": {
+        "name": "Ajastimet"
+      }
+    },
+    "switch": {
+      "do_not_disturb": {
+        "name": "Älä häiritse"
+      }
+    }
+  },
   "exceptions": {
     "alarms_and_timers_not_fetched": {
       "message": "Laitteen {device} nykyisiä herätyksiä ja ajastimia ei voitu hakea, joten laitteesta ei poistettu mitään. Tarkista, että laite on verkossa, ja yritä myöhemmin uudelleen."

@@ -352,7 +352,7 @@ async def async_reboot_devices(
 class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
     """Google Home Device sensor."""
 
-    _attr_name = "Device"
+    _attr_translation_key = "device"
     _attr_icon = ICON_TOKEN
     _attr_entity_category = EntityCategory.DIAGNOSTIC
 
@@ -407,7 +407,7 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
 class GoogleHomeAlarmsSensor(GoogleHomeFeatureEntity):
     """Google Home Alarms sensor."""
 
-    _attr_name = "Alarms"
+    _attr_translation_key = "alarms"
     _attr_icon = ICON_ALARMS
     _attr_device_class = SensorDeviceClass.TIMESTAMP
     _attr_supported_features = GoogleHomeSensorFeature.ALARMS
@@ -484,7 +484,7 @@ class GoogleHomeAlarmsSensor(GoogleHomeFeatureEntity):
 class GoogleHomeTimersSensor(GoogleHomeFeatureEntity):
     """Google Home Timers sensor."""
 
-    _attr_name = "Timers"
+    _attr_translation_key = "timers"
     _attr_icon = ICON_TIMERS
     _attr_device_class = SensorDeviceClass.TIMESTAMP
     _attr_supported_features = GoogleHomeSensorFeature.TIMERS

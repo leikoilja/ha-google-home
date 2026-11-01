@@ -77,6 +77,34 @@
       "other-account": "Anda login ke akun Google yang berbeda, sehingga tidak ada yang diubah. Login dengan akun yang digunakan integrasi ini. Untuk menggunakan akun lain tersebut, hapus integrasi lalu tambahkan kembali."
     }
   },
+  "entity": {
+    "button": {
+      "reboot": {
+        "name": "Mulai ulang"
+      }
+    },
+    "number": {
+      "alarm_volume": {
+        "name": "Volume alarm"
+      }
+    },
+    "sensor": {
+      "alarms": {
+        "name": "Alarm"
+      },
+      "device": {
+        "name": "Perangkat"
+      },
+      "timers": {
+        "name": "Timer"
+      }
+    },
+    "switch": {
+      "do_not_disturb": {
+        "name": "Jangan ganggu"
+      }
+    }
+  },
   "exceptions": {
     "alarms_and_timers_not_fetched": {
       "message": "Tidak dapat mengambil alarm dan timer saat ini dari perangkat {device}, sehingga tidak ada yang dihapus dari perangkat tersebut. Pastikan perangkat online dan coba lagi nanti."
