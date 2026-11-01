@@ -32,29 +32,148 @@
         "data_description": {
           "master_token": "Começa com aas_et/"
         }
+      },
+      "homes": {
+        "title": "Escolher casas",
+        "description": "Sua conta do Google é membro de várias casas. Escolha as casas cujos alto-falantes e telas você quer adicionar. Você pode mudar isso depois nas opções da integração.",
+        "data": {
+          "homes": "Casas"
+        }
+      },
+      "reauth": {
+        "title": "Entrar novamente",
+        "description": "O Google não aceita mais os dados de login salvos para {name}. Faça login novamente na mesma conta do Google: seus dispositivos, entidades e automações continuam como estão. Até lá, as entidades dos seus dispositivos podem mostrar valores desatualizados ou ficar indisponíveis.",
+        "menu_options": {
+          "browser": "Login pelo navegador (recomendado)",
+          "master_token": "Token mestre"
+        },
+        "menu_option_descriptions": {
+          "browser": "Faça login no Google em um navegador de computador e depois cole um cookie. Funciona na maioria das contas.",
+          "master_token": "Cole um token mestre que você já tem."
+        }
+      },
+      "reauth_browser": {
+        "title": "Login pelo navegador",
+        "description": "1. Em um computador, abra {embedded_setup_url} em uma janela anônima do navegador e faça login na mesma conta do Google. Depois de aceitar, a página pode continuar carregando; isso é esperado.\n2. Abra as ferramentas de desenvolvedor do navegador e encontre os cookies de `accounts.google.com`.\n3. Copie o valor do cookie `oauth_token` e cole abaixo imediatamente. Ele expira em poucos minutos e funciona apenas uma vez.\n\nInstruções passo a passo: {browser_docs_url}",
+        "data": {
+          "oauth_token": "Cookie oauth_token"
+        },
+        "data_description": {
+          "oauth_token": "Começa com oauth2_4/"
+        }
+      },
+      "reauth_master_token": {
+        "title": "Token mestre",
+        "description": "Cole um token mestre da mesma conta do Google, por exemplo um que você obteve com outra ferramenta.",
+        "data": {
+          "master_token": "Token mestre da conta do Google"
+        },
+        "data_description": {
+          "master_token": "Começa com aas_et/"
+        }
       }
     },
     "error": {
       "oauth-token-invalid": "O Google não aceitou o cookie. Obtenha um novo e cole imediatamente: ele expira em poucos minutos e funciona apenas uma vez. Copie o valor completo, que começa com oauth2_4/.",
-      "master-token-invalid": "Token mestre inválido. Certifique-se de que o token completo tenha sido especificado (incluindo 'aas_et/')",
+      "master-token-invalid": "O Google não aceitou o token mestre. Verifique se você o copiou corretamente. Se ele funcionava antes, por exemplo até você alterar sua senha do Google, o Google não o aceita mais: use o login pelo navegador em vez disso.",
+      "google-rejected": "O Google não aceitou o login. Para ver os detalhes, consulte os logs do Home Assistant.",
+      "google-unreachable": "Não foi possível se conectar ao Google. Verifique se o Home Assistant está conectado à internet e tente novamente.",
+      "google-busy": "O Google está ocupado ou limitando os logins. Aguarde alguns minutos e entre novamente.",
       "oauth-token-format": "Este não é o cookie oauth_token. O valor dele começa com oauth2_4/.",
-      "master-token-format": "Um token mestre começa com aas_et/ e tem 223 caracteres. Copie o token completo."
+      "master-token-format": "Um token mestre começa com aas_et/ e tem 223 caracteres. Copie o token completo.",
+      "other-account": "Você fez login em outra conta do Google, então nada foi alterado. Faça login com a conta que esta integração usa. Para usar essa outra conta, exclua a integração e adicione-a novamente.",
+      "no-home-selected": "Escolha pelo menos uma casa."
+    }
+  },
+  "entity": {
+    "button": {
+      "reboot": {
+        "name": "Reiniciar"
+      }
+    },
+    "number": {
+      "alarm_volume": {
+        "name": "Volume do alarme"
+      }
+    },
+    "sensor": {
+      "alarms": {
+        "name": "Alarmes"
+      },
+      "device": {
+        "name": "Dispositivo"
+      },
+      "timers": {
+        "name": "Temporizadores"
+      }
+    },
+    "switch": {
+      "do_not_disturb": {
+        "name": "Não perturbe"
+      }
+    }
+  },
+  "exceptions": {
+    "alarms_and_timers_not_fetched": {
+      "message": "Não foi possível obter os alarmes e temporizadores atuais do dispositivo {device}, por isso nada foi excluído dele. Verifique se o dispositivo está online e tente novamente mais tarde."
+    },
+    "alarms_and_timers_not_fetched_from_devices": {
+      "message": "Não foi possível obter os alarmes e temporizadores atuais dos seguintes dispositivos, por isso nada foi excluído deles: {devices}. Verifique se os dispositivos estão online e tente novamente mais tarde."
+    },
+    "alarms_and_timers_not_deleted": {
+      "message": "O dispositivo {device} não confirmou a exclusão dos alarmes ou temporizadores, por isso eles ainda podem estar definidos. Verifique se o dispositivo está online e tente novamente mais tarde."
+    },
+    "alarms_and_timers_not_deleted_from_devices": {
+      "message": "Não foi possível excluir os alarmes ou temporizadores dos seguintes dispositivos, ou confirmar que foram excluídos: {devices}. Verifique se os dispositivos estão online e tente novamente mais tarde."
+    },
+    "invalid_alarm_id": {
+      "message": "“{alarm_id}” não é um ID de alarme. Copie o ID, que começa com alarm/, do atributo alarms do sensor de alarmes do dispositivo."
+    },
+    "invalid_timer_id": {
+      "message": "“{timer_id}” não é um ID de temporizador. Copie o ID, que começa com timer/, do atributo timers do sensor de temporizadores do dispositivo."
+    },
+    "alarm_not_found": {
+      "message": "Não foi possível encontrar o alarme {alarm_id} nos dispositivos selecionados. Ele pode já ter tocado ou ter sido excluído."
+    },
+    "timer_not_found": {
+      "message": "Não foi possível encontrar o temporizador {timer_id} nos dispositivos selecionados. Ele pode já ter terminado ou ter sido excluído."
+    },
+    "device_offline": {
+      "message": "Não foi possível se conectar ao dispositivo {device}. Verifique se ele está ligado e conectado à sua rede e tente novamente."
+    },
+    "device_no_reply": {
+      "message": "O dispositivo {device} não confirmou que executou a ação: ele não respondeu a tempo ou a resposta foi interrompida. Verifique se o dispositivo está online e tente novamente."
+    },
+    "device_token_rejected": {
+      "message": "O dispositivo {device} rejeitou seu token, e obter um novo do Google não adiantou. A integração continua solicitando um novo ao Google, então tente novamente mais tarde."
+    },
+    "device_not_ready": {
+      "message": "O dispositivo {device} respondeu “não encontrado”. Ele pode ainda estar iniciando, então tente novamente mais tarde, ou pode não ter suporte para isso."
+    },
+    "device_request_failed": {
+      "message": "Não foi possível executar a ação no dispositivo {device}. Para ver os detalhes, consulte os logs do Home Assistant."
+    },
+    "devices_not_rebooted": {
+      "message": "Os seguintes dispositivos não confirmaram que vão reiniciar: {devices}. Verifique se os dispositivos estão online e tente novamente mais tarde."
     }
   },
   "options": {
     "step": {
       "init": {
         "data": {
-          "update_interval": "Altere o intervalo de atualização. Aumente-o se os dispositivos excederem o tempo limite com frequência. Padrão: 180 (segundos)",
-          "known_hosts": "Hosts conhecidos"
+          "update_interval": "Altere o intervalo de atualização. Aumente-o se os dispositivos excederem o tempo limite com frequência. Padrão: {default_interval} (segundos)",
+          "known_hosts": "Hosts conhecidos",
+          "homes": "Casas"
         },
         "data_description": {
-          "known_hosts": "Endereços IP de alto-falantes e telas que a integração não consegue encontrar sozinha, por exemplo porque estão em outra rede ou VLAN."
+          "known_hosts": "Endereços IP de alto-falantes e telas que a integração não consegue encontrar sozinha, por exemplo porque estão em outra rede ou VLAN.",
+          "homes": "Alto-falantes e telas das casas que você desmarcar não são adicionados. Desmarcar uma casa remove do Home Assistant os dispositivos dela e as entidades deles, então automações, scripts e dashboards que os usam param de funcionar. Marque a casa novamente para adicioná-los de volta com os nomes e as áreas que você deu a eles."
         }
       }
     },
     "error": {
-      "known-host-not-ip": "Digite apenas endereços IP, como 192.168.1.20."
+      "known-host-not-ip": "Digite apenas endereços IP, como 192.168.1.20.",
+      "no-home-selected": "Escolha pelo menos uma casa."
     }
   },
   "services": {

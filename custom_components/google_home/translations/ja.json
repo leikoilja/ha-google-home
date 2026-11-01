@@ -32,29 +32,148 @@
         "data_description": {
           "master_token": "aas_et/ で始まります"
         }
+      },
+      "homes": {
+        "title": "家を選択",
+        "description": "お使いの Google アカウントは複数の家のメンバーです。スピーカーとディスプレイを追加する家を選択してください。この設定は後で統合のオプションから変更できます。",
+        "data": {
+          "homes": "家"
+        }
+      },
+      "reauth": {
+        "title": "再度ログイン",
+        "description": "Google が {name} の保存済みログイン情報を受け付けなくなりました。同じ Google アカウントにもう一度ログインしてください。デバイス、エンティティ、オートメーションはそのまま残ります。ログインし直すまで、デバイスのエンティティに古い値が表示されたり、エンティティが利用できなくなったりすることがあります。",
+        "menu_options": {
+          "browser": "ブラウザでログイン（推奨）",
+          "master_token": "マスタートークン"
+        },
+        "menu_option_descriptions": {
+          "browser": "パソコンのブラウザで Google にログインし、Cookie を貼り付けます。ほとんどのアカウントで利用できます。",
+          "master_token": "取得済みのマスタートークンを貼り付けます。"
+        }
+      },
+      "reauth_browser": {
+        "title": "ブラウザでログイン",
+        "description": "1. パソコンのブラウザでプライベート ウィンドウ（シークレット ウィンドウなど）を開き、{embedded_setup_url} にアクセスして同じ Google アカウントにログインします。同意した後もページの読み込みが続く場合がありますが、問題ありません。\n2. ブラウザの開発者ツールを開き、`accounts.google.com` の Cookie を探します。\n3. `oauth_token` Cookie の値をコピーして、すぐに下の欄に貼り付けてください。数分以内に有効期限が切れ、1 回しか使用できません。\n\n詳しい手順: {browser_docs_url}",
+        "data": {
+          "oauth_token": "oauth_token Cookie"
+        },
+        "data_description": {
+          "oauth_token": "oauth2_4/ で始まります"
+        }
+      },
+      "reauth_master_token": {
+        "title": "マスタートークン",
+        "description": "別のツールなどで取得した、同じ Google アカウントのマスタートークンを貼り付けてください。",
+        "data": {
+          "master_token": "Google アカウントのマスタートークン"
+        },
+        "data_description": {
+          "master_token": "aas_et/ で始まります"
+        }
       }
     },
     "error": {
       "oauth-token-invalid": "Google が Cookie を受け付けませんでした。新しい Cookie を取得し、すぐに貼り付けてください。数分以内に有効期限が切れ、1 回しか使用できません。oauth2_4/ で始まる値をすべてコピーしてください。",
-      "master-token-invalid": "マスタートークンが無効です。aas_et/ を含むトークン全体を入力したか確認してください。",
+      "master-token-invalid": "Google がマスタートークンを受け付けませんでした。正しくコピーしたか確認してください。以前は使えていた場合（たとえば Google のパスワードを変更するまで）、Google はこのトークンを受け付けなくなっています。代わりに「ブラウザでログイン」を使用してください。",
+      "google-rejected": "Google がログインを受け付けませんでした。詳細は Home Assistant のログを確認してください。",
+      "google-unreachable": "Google に接続できませんでした。Home Assistant がインターネットに接続されていることを確認してから、もう一度お試しください。",
+      "google-busy": "Google が混雑しているか、ログインを制限しています。数分待ってから、再度ログインしてください。",
       "oauth-token-format": "これは oauth_token Cookie ではありません。値は oauth2_4/ で始まります。",
-      "master-token-format": "マスタートークンは aas_et/ で始まる 223 文字の文字列です。トークン全体をコピーしてください。"
+      "master-token-format": "マスタートークンは aas_et/ で始まる 223 文字の文字列です。トークン全体をコピーしてください。",
+      "other-account": "別の Google アカウントでログインしたため、何も変更されていません。この統合で使用しているアカウントでログインしてください。代わりに今回ログインしたアカウントを使用するには、統合を削除して追加し直してください。",
+      "no-home-selected": "家を 1 つ以上選択してください。"
+    }
+  },
+  "entity": {
+    "button": {
+      "reboot": {
+        "name": "再起動"
+      }
+    },
+    "number": {
+      "alarm_volume": {
+        "name": "アラーム音量"
+      }
+    },
+    "sensor": {
+      "alarms": {
+        "name": "アラーム"
+      },
+      "device": {
+        "name": "デバイス"
+      },
+      "timers": {
+        "name": "タイマー"
+      }
+    },
+    "switch": {
+      "do_not_disturb": {
+        "name": "サイレント モード"
+      }
+    }
+  },
+  "exceptions": {
+    "alarms_and_timers_not_fetched": {
+      "message": "{device} から現在のアラームとタイマーを取得できなかったため、このデバイスからは何も削除されませんでした。デバイスがオンラインであることを確認し、しばらくしてからもう一度お試しください。"
+    },
+    "alarms_and_timers_not_fetched_from_devices": {
+      "message": "次のデバイスから現在のアラームとタイマーを取得できなかったため、これらのデバイスからは何も削除されませんでした: {devices}。これらのデバイスがオンラインであることを確認し、しばらくしてからもう一度お試しください。"
+    },
+    "alarms_and_timers_not_deleted": {
+      "message": "{device} からアラームまたはタイマーの削除を確認する応答がなかったため、まだ設定されている可能性があります。デバイスがオンラインであることを確認し、しばらくしてからもう一度お試しください。"
+    },
+    "alarms_and_timers_not_deleted_from_devices": {
+      "message": "次のデバイスでアラームまたはタイマーを削除できなかったか、削除されたことを確認できませんでした: {devices}。これらのデバイスがオンラインであることを確認し、しばらくしてからもう一度お試しください。"
+    },
+    "invalid_alarm_id": {
+      "message": "「{alarm_id}」はアラーム ID ではありません。デバイスのアラームセンサーの alarms 属性から、alarm/ で始まる ID をコピーしてください。"
+    },
+    "invalid_timer_id": {
+      "message": "「{timer_id}」はタイマー ID ではありません。デバイスのタイマーセンサーの timers 属性から、timer/ で始まる ID をコピーしてください。"
+    },
+    "alarm_not_found": {
+      "message": "選択したデバイスでアラーム {alarm_id} が見つかりませんでした。すでに鳴ったか、削除された可能性があります。"
+    },
+    "timer_not_found": {
+      "message": "選択したデバイスでタイマー {timer_id} が見つかりませんでした。すでに終了したか、削除された可能性があります。"
+    },
+    "device_offline": {
+      "message": "{device} に接続できませんでした。デバイスの電源が入っていて、ネットワークに接続されていることを確認してから、もう一度お試しください。"
+    },
+    "device_no_reply": {
+      "message": "{device} から操作を実行したという確認が得られませんでした。応答が間に合わなかったか、途中で途切れました。デバイスがオンラインであることを確認し、もう一度お試しください。"
+    },
+    "device_token_rejected": {
+      "message": "{device} がトークンを拒否し、Google から新しいトークンの取得を試みても解決しませんでした。統合が引き続き Google に新しいトークンを要求するので、しばらくしてからもう一度お試しください。"
+    },
+    "device_not_ready": {
+      "message": "{device} から「見つかりません」という応答がありました。まだ起動中の可能性があるので、しばらくしてからもう一度お試しください。この操作に対応していない可能性もあります。"
+    },
+    "device_request_failed": {
+      "message": "{device} でこの操作を実行できませんでした。詳細は Home Assistant のログを確認してください。"
+    },
+    "devices_not_rebooted": {
+      "message": "次のデバイスから再起動するという確認が得られませんでした: {devices}。これらのデバイスがオンラインであることを確認し、しばらくしてからもう一度お試しください。"
     }
   },
   "options": {
     "step": {
       "init": {
         "data": {
-          "update_interval": "更新間隔を変更します。デバイスの応答が間に合わない場合は、この値を増やしてください。既定値: 180 秒。",
-          "known_hosts": "既知のホスト"
+          "update_interval": "更新間隔を変更します。デバイスの応答が間に合わない場合は、この値を増やしてください。既定値: {default_interval} 秒。",
+          "known_hosts": "既知のホスト",
+          "homes": "家"
         },
         "data_description": {
-          "known_hosts": "別のネットワークや VLAN にあるなどの理由で、この統合が自動検出できないスピーカーやディスプレイの IP アドレス。"
+          "known_hosts": "別のネットワークや VLAN にあるなどの理由で、この統合が自動検出できないスピーカーやディスプレイの IP アドレス。",
+          "homes": "選択を解除した家のスピーカーとディスプレイは追加されません。家の選択を解除すると、その家のデバイスとそのエンティティが Home Assistant から削除されるため、それらを使用しているオートメーション、スクリプト、ダッシュボードは動作しなくなります。その家をもう一度選択すると、設定した名前とエリアのままデバイスが再び追加されます。"
         }
       }
     },
     "error": {
-      "known-host-not-ip": "192.168.1.20 などの IP アドレスのみを入力してください。"
+      "known-host-not-ip": "192.168.1.20 などの IP アドレスのみを入力してください。",
+      "no-home-selected": "家を 1 つ以上選択してください。"
     }
   },
   "services": {

@@ -32,29 +32,148 @@
         "data_description": {
           "master_token": "Begint met aas_et/"
         }
+      },
+      "homes": {
+        "title": "Huizen kiezen",
+        "description": "Je Google-account is lid van meerdere huizen. Kies de huizen waarvan je de speakers en schermen wilt toevoegen. Je kunt dit later wijzigen in de instellingen van de integratie.",
+        "data": {
+          "homes": "Huizen"
+        }
+      },
+      "reauth": {
+        "title": "Opnieuw inloggen",
+        "description": "Google accepteert de opgeslagen inloggegevens voor {name} niet meer. Log opnieuw in met hetzelfde Google-account: je apparaten, entiteiten en automatiseringen blijven zoals ze zijn. Tot je dat doet, kunnen de entiteiten van je apparaten verouderde waarden tonen of niet beschikbaar zijn.",
+        "menu_options": {
+          "browser": "Inloggen via de browser (aanbevolen)",
+          "master_token": "Mastertoken"
+        },
+        "menu_option_descriptions": {
+          "browser": "Log in bij Google in een desktopbrowser en plak daarna een cookie. Werkt voor de meeste accounts.",
+          "master_token": "Plak een mastertoken dat je al hebt."
+        }
+      },
+      "reauth_browser": {
+        "title": "Inloggen via de browser",
+        "description": "1. Open op een computer {embedded_setup_url} in een privévenster en log in met hetzelfde Google-account. Nadat je hebt geaccepteerd, kan de pagina blijven laden; dat is normaal.\n2. Open de ontwikkelaarstools van de browser en zoek de cookies voor `accounts.google.com`.\n3. Kopieer de waarde van de cookie `oauth_token` en plak deze meteen hieronder. De cookie verloopt binnen een paar minuten en werkt maar één keer.\n\nStapsgewijze instructies: {browser_docs_url}",
+        "data": {
+          "oauth_token": "Cookie oauth_token"
+        },
+        "data_description": {
+          "oauth_token": "Begint met oauth2_4/"
+        }
+      },
+      "reauth_master_token": {
+        "title": "Mastertoken",
+        "description": "Plak een mastertoken voor hetzelfde Google-account, bijvoorbeeld een dat je met een ander hulpmiddel hebt verkregen.",
+        "data": {
+          "master_token": "Mastertoken van Google-account"
+        },
+        "data_description": {
+          "master_token": "Begint met aas_et/"
+        }
       }
     },
     "error": {
       "oauth-token-invalid": "Google heeft de cookie niet geaccepteerd. Haal een nieuwe op en plak deze meteen: de cookie verloopt binnen een paar minuten en werkt maar één keer. Kopieer de volledige waarde, die begint met oauth2_4/.",
-      "master-token-invalid": "Mastertoken ongeldig. Controleer of het volledige token is opgegeven (inclusief 'aas_et/')",
+      "master-token-invalid": "Google heeft het mastertoken niet geaccepteerd. Controleer of je het goed hebt gekopieerd. Als het eerder werkte, bijvoorbeeld totdat je je Google-wachtwoord hebt gewijzigd, accepteert Google het niet meer: gebruik in plaats daarvan inloggen via de browser.",
+      "google-rejected": "Google heeft de inlogpoging niet geaccepteerd. Bekijk de logboeken van Home Assistant voor details.",
+      "google-unreachable": "Google kon niet worden bereikt. Controleer of Home Assistant met internet is verbonden en probeer het daarna opnieuw.",
+      "google-busy": "Google is overbelast of beperkt het aantal inlogpogingen. Wacht een paar minuten en log daarna opnieuw in.",
       "oauth-token-format": "Dit is niet de cookie oauth_token. De waarde begint met oauth2_4/.",
-      "master-token-format": "Een mastertoken begint met aas_et/ en is 223 tekens lang. Kopieer het volledige token."
+      "master-token-format": "Een mastertoken begint met aas_et/ en is 223 tekens lang. Kopieer het volledige token.",
+      "other-account": "Je bent ingelogd met een ander Google-account, dus er is niets gewijzigd. Log in met het account dat deze integratie gebruikt. Om in plaats daarvan dat andere account te gebruiken, verwijder je de integratie en voeg je deze opnieuw toe.",
+      "no-home-selected": "Kies ten minste één huis."
+    }
+  },
+  "entity": {
+    "button": {
+      "reboot": {
+        "name": "Herstarten"
+      }
+    },
+    "number": {
+      "alarm_volume": {
+        "name": "Alarmvolume"
+      }
+    },
+    "sensor": {
+      "alarms": {
+        "name": "Alarmen"
+      },
+      "device": {
+        "name": "Apparaat"
+      },
+      "timers": {
+        "name": "Timers"
+      }
+    },
+    "switch": {
+      "do_not_disturb": {
+        "name": "Niet storen"
+      }
+    }
+  },
+  "exceptions": {
+    "alarms_and_timers_not_fetched": {
+      "message": "De huidige alarmen en timers konden niet worden opgehaald van {device}. Er is daarom niets van dit apparaat verwijderd. Controleer of het apparaat online is en probeer het later opnieuw."
+    },
+    "alarms_and_timers_not_fetched_from_devices": {
+      "message": "De huidige alarmen en timers konden niet worden opgehaald van de volgende apparaten: {devices}. Er is daarom niets van deze apparaten verwijderd. Controleer of de apparaten online zijn en probeer het later opnieuw."
+    },
+    "alarms_and_timers_not_deleted": {
+      "message": "{device} heeft het verwijderen van de alarmen of timers niet bevestigd. Ze kunnen dus nog ingesteld zijn. Controleer of het apparaat online is en probeer het later opnieuw."
+    },
+    "alarms_and_timers_not_deleted_from_devices": {
+      "message": "Alarmen of timers konden niet worden verwijderd van de volgende apparaten, of het verwijderen kon niet worden bevestigd: {devices}. Controleer of de apparaten online zijn en probeer het later opnieuw."
+    },
+    "invalid_alarm_id": {
+      "message": "‘{alarm_id}’ is geen alarm-ID. Kopieer de ID, die begint met alarm/, uit het attribuut alarms van de alarmsensor van het apparaat."
+    },
+    "invalid_timer_id": {
+      "message": "‘{timer_id}’ is geen timer-ID. Kopieer de ID, die begint met timer/, uit het attribuut timers van de timersensor van het apparaat."
+    },
+    "alarm_not_found": {
+      "message": "Het alarm {alarm_id} is niet gevonden op de geselecteerde apparaten. Het is mogelijk al afgegaan of verwijderd."
+    },
+    "timer_not_found": {
+      "message": "De timer {timer_id} is niet gevonden op de geselecteerde apparaten. Deze is mogelijk al afgelopen of verwijderd."
+    },
+    "device_offline": {
+      "message": "{device} kon niet worden bereikt. Controleer of het apparaat aanstaat en met je netwerk is verbonden, en probeer het daarna opnieuw."
+    },
+    "device_no_reply": {
+      "message": "{device} heeft niet bevestigd dat de actie is uitgevoerd: het heeft niet op tijd geantwoord of het antwoord werd afgebroken. Controleer of het apparaat online is en probeer het opnieuw."
+    },
+    "device_token_rejected": {
+      "message": "{device} heeft zijn token geweigerd, en het ophalen van een nieuw token bij Google heeft niet geholpen. De integratie blijft een nieuw token aanvragen bij Google, dus probeer het later opnieuw."
+    },
+    "device_not_ready": {
+      "message": "{device} heeft ‘niet gevonden’ geantwoord. Het apparaat is misschien nog aan het opstarten, dus probeer het later opnieuw, of het ondersteunt dit misschien niet."
+    },
+    "device_request_failed": {
+      "message": "Dit kon niet worden uitgevoerd op {device}. Bekijk de logboeken van Home Assistant voor details."
+    },
+    "devices_not_rebooted": {
+      "message": "De volgende apparaten hebben niet bevestigd dat ze herstarten: {devices}. Controleer of de apparaten online zijn en probeer het later opnieuw."
     }
   },
   "options": {
     "step": {
       "init": {
         "data": {
-          "update_interval": "Wijzig het update-interval. Verhoog dit als je apparaten vaak een time-out geven. Standaard: 180 (seconden)",
-          "known_hosts": "Bekende hosts"
+          "update_interval": "Wijzig het update-interval. Verhoog dit als je apparaten vaak een time-out geven. Standaard: {default_interval} (seconden)",
+          "known_hosts": "Bekende hosts",
+          "homes": "Huizen"
         },
         "data_description": {
-          "known_hosts": "IP-adressen van speakers en schermen die de integratie zelf niet kan vinden, bijvoorbeeld omdat ze op een ander netwerk of VLAN staan."
+          "known_hosts": "IP-adressen van speakers en schermen die de integratie zelf niet kan vinden, bijvoorbeeld omdat ze op een ander netwerk of VLAN staan.",
+          "homes": "Speakers en schermen in huizen die je deselecteert, worden niet toegevoegd. Als je een huis deselecteert, worden de apparaten ervan en hun entiteiten uit Home Assistant verwijderd, waardoor automatiseringen, scripts en dashboards die ze gebruiken niet meer werken. Selecteer het huis opnieuw om ze terug te zetten met de namen en ruimtes die je ze had gegeven."
         }
       }
     },
     "error": {
-      "known-host-not-ip": "Voer alleen IP-adressen in, zoals 192.168.1.20."
+      "known-host-not-ip": "Voer alleen IP-adressen in, zoals 192.168.1.20.",
+      "no-home-selected": "Kies ten minste één huis."
     }
   },
   "services": {

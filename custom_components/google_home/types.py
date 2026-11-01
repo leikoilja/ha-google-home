@@ -1,9 +1,17 @@
-"""Various types used in type hints."""
+"""Types used in type hints, and the data a loaded entry keeps."""
 
 from collections.abc import Mapping
-from typing import TypedDict
+from dataclasses import dataclass
+from typing import TYPE_CHECKING, TypedDict
 
 from homeassistant.config_entries import ConfigEntry
+
+if TYPE_CHECKING:
+    from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+
+    from .api import GlocaltokensApiClient
+    from .bluetooth import TrackerState
+    from .coordinator import GoogleAccountCoordinator, GoogleHomeDeviceCoordinator
 
 
 class AlarmJsonDict(TypedDict, total=False):
@@ -22,6 +30,7 @@ class TimerJsonDict(TypedDict, total=False):
     id: str
     fire_time: int
     original_duration: int
+    remaining_duration: int
     status: int
     label: str | None
 
@@ -53,6 +62,7 @@ class GoogleHomeTimerDict(TypedDict):
     local_time: str | None
     local_time_iso: str | None
     duration: str
+    remaining: str | None
     status: str
     label: str | None
 
@@ -87,6 +97,8 @@ class OptionsFlowDict(TypedDict, total=False):
 
     update_interval: int
     known_hosts: list[str]
+    # The homes whose devices are added, of those the form offers
+    homes: list[str]
     bluetooth_tracking: bool
     bluetooth_excluded_speakers: list[str]
 
@@ -96,4 +108,19 @@ type JsonDict = Mapping[
     bool | float | int | str | list[str] | list[AlarmJsonDict] | list[TimerJsonDict],
 ]
 
-type GoogleHomeConfigEntry = ConfigEntry[None]
+
+@dataclass
+class GoogleHomeData:
+    """What a loaded entry keeps: the client, and the coordinators of the account and devices."""
+
+    client: GlocaltokensApiClient
+    account: GoogleAccountCoordinator
+    # By device ID, every device that Google has listed since setup, until removed
+    devices: dict[str, GoogleHomeDeviceCoordinator]
+    # Bluetooth tracking, while it's on and has devices to track
+    bluetooth: DataUpdateCoordinator[dict[str, TrackerState]] | None = None
+    # The Bluetooth settings the entry was set up with, to reload when they change
+    bluetooth_config: tuple[bool, frozenset[str], frozenset[str]] | None = None
+
+
+type GoogleHomeConfigEntry = ConfigEntry[GoogleHomeData]

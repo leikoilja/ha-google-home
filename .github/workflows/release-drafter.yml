@@ -9,6 +9,10 @@ permissions:
   contents: write
   pull-requests: read
 
+# Shared with the publish workflow, see there.
+concurrency:
+  group: release-draft
+
 jobs:
   draft_release:
     name: Release Drafter

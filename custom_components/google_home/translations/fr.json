@@ -32,29 +32,148 @@
         "data_description": {
           "master_token": "Commence par aas_et/"
         }
+      },
+      "homes": {
+        "title": "Choisir les maisons",
+        "description": "Votre compte Google est membre de plusieurs maisons. Choisissez les maisons dont les enceintes et écrans doivent être ajoutés. Vous pourrez modifier ce choix plus tard dans les options de l'intégration.",
+        "data": {
+          "homes": "Maisons"
+        }
+      },
+      "reauth": {
+        "title": "Se reconnecter",
+        "description": "Google n'accepte plus les identifiants de connexion enregistrés pour {name}. Reconnectez-vous au même compte Google : vos appareils, entités et automatisations restent tels quels. D'ici là, les entités de vos appareils peuvent afficher des valeurs obsolètes ou être indisponibles.",
+        "menu_options": {
+          "browser": "Connexion via le navigateur (recommandée)",
+          "master_token": "Jeton maître"
+        },
+        "menu_option_descriptions": {
+          "browser": "Connectez-vous à Google dans un navigateur sur ordinateur, puis collez un cookie. Fonctionne pour la plupart des comptes.",
+          "master_token": "Collez un jeton maître que vous avez déjà."
+        }
+      },
+      "reauth_browser": {
+        "title": "Connexion via le navigateur",
+        "description": "1. Sur un ordinateur, ouvrez {embedded_setup_url} dans une fenêtre de navigation privée et connectez-vous au même compte Google. Une fois que vous avez accepté, la page peut continuer à charger ; c'est normal.\n2. Ouvrez les outils de développement du navigateur et trouvez les cookies de `accounts.google.com`.\n3. Copiez la valeur du cookie `oauth_token` et collez-la ci-dessous immédiatement. Il expire en quelques minutes et ne fonctionne qu'une seule fois.\n\nInstructions détaillées : {browser_docs_url}",
+        "data": {
+          "oauth_token": "Cookie oauth_token"
+        },
+        "data_description": {
+          "oauth_token": "Commence par oauth2_4/"
+        }
+      },
+      "reauth_master_token": {
+        "title": "Jeton maître",
+        "description": "Collez un jeton maître du même compte Google, par exemple un jeton obtenu avec un autre outil.",
+        "data": {
+          "master_token": "Jeton maître du compte Google"
+        },
+        "data_description": {
+          "master_token": "Commence par aas_et/"
+        }
       }
     },
     "error": {
       "oauth-token-invalid": "Google n'a pas accepté le cookie. Récupérez-en un nouveau et collez-le immédiatement : il expire en quelques minutes et ne fonctionne qu'une seule fois. Copiez la valeur complète, qui commence par oauth2_4/.",
-      "master-token-invalid": "Jeton maître non valide. Assurez-vous d'avoir saisi le jeton complet (y compris 'aas_et/')",
+      "master-token-invalid": "Google n'a pas accepté le jeton maître. Vérifiez que vous l'avez copié correctement. S'il fonctionnait auparavant, par exemple jusqu'à ce que vous changiez votre mot de passe Google, Google ne l'accepte plus : utilisez plutôt la connexion via le navigateur.",
+      "google-rejected": "Google n'a pas accepté la connexion. Pour en savoir plus, consultez les journaux de Home Assistant.",
+      "google-unreachable": "Impossible de joindre Google. Vérifiez que Home Assistant est connecté à Internet, puis réessayez.",
+      "google-busy": "Google est occupé ou limite les connexions. Patientez quelques minutes, puis reconnectez-vous.",
       "oauth-token-format": "Ce n'est pas le cookie oauth_token. Sa valeur commence par oauth2_4/.",
-      "master-token-format": "Un jeton maître commence par aas_et/ et comporte 223 caractères. Copiez le jeton complet."
+      "master-token-format": "Un jeton maître commence par aas_et/ et comporte 223 caractères. Copiez le jeton complet.",
+      "other-account": "Vous avez utilisé un autre compte Google pour vous connecter, rien n'a donc été modifié. Connectez-vous avec le compte qu'utilise cette intégration. Pour utiliser plutôt cet autre compte, supprimez l'intégration et ajoutez-la à nouveau.",
+      "no-home-selected": "Choisissez au moins une maison."
+    }
+  },
+  "entity": {
+    "button": {
+      "reboot": {
+        "name": "Redémarrer"
+      }
+    },
+    "number": {
+      "alarm_volume": {
+        "name": "Volume de l'alarme"
+      }
+    },
+    "sensor": {
+      "alarms": {
+        "name": "Alarmes"
+      },
+      "device": {
+        "name": "Appareil"
+      },
+      "timers": {
+        "name": "Minuteurs"
+      }
+    },
+    "switch": {
+      "do_not_disturb": {
+        "name": "Ne pas déranger"
+      }
+    }
+  },
+  "exceptions": {
+    "alarms_and_timers_not_fetched": {
+      "message": "Impossible de récupérer les alarmes et les minuteurs actuels de l'appareil {device}. Rien n'a donc été supprimé de cet appareil. Vérifiez qu'il est en ligne et réessayez plus tard."
+    },
+    "alarms_and_timers_not_fetched_from_devices": {
+      "message": "Impossible de récupérer les alarmes et les minuteurs actuels des appareils suivants : {devices}. Rien n'a donc été supprimé de ces appareils. Vérifiez qu'ils sont en ligne et réessayez plus tard."
+    },
+    "alarms_and_timers_not_deleted": {
+      "message": "L'appareil {device} n'a pas confirmé la suppression des alarmes ou des minuteurs ; ils sont donc peut-être encore programmés. Vérifiez qu'il est en ligne et réessayez plus tard."
+    },
+    "alarms_and_timers_not_deleted_from_devices": {
+      "message": "Impossible de supprimer les alarmes ou les minuteurs des appareils suivants, ou de confirmer leur suppression : {devices}. Vérifiez qu'ils sont en ligne et réessayez plus tard."
+    },
+    "invalid_alarm_id": {
+      "message": "« {alarm_id} » n'est pas un ID d'alarme. Copiez l'ID, qui commence par alarm/, depuis l'attribut alarms du capteur d'alarmes de l'appareil."
+    },
+    "invalid_timer_id": {
+      "message": "« {timer_id} » n'est pas un ID de minuteur. Copiez l'ID, qui commence par timer/, depuis l'attribut timers du capteur de minuteurs de l'appareil."
+    },
+    "alarm_not_found": {
+      "message": "Impossible de trouver l'alarme {alarm_id} sur les appareils sélectionnés. Elle a peut-être déjà sonné ou été supprimée."
+    },
+    "timer_not_found": {
+      "message": "Impossible de trouver le minuteur {timer_id} sur les appareils sélectionnés. Il est peut-être déjà arrivé à son terme ou a été supprimé."
+    },
+    "device_offline": {
+      "message": "Impossible de joindre l'appareil {device}. Vérifiez qu'il est allumé et connecté à votre réseau, puis réessayez."
+    },
+    "device_no_reply": {
+      "message": "L'appareil {device} n'a pas confirmé avoir effectué l'action : il n'a pas répondu à temps ou sa réponse a été interrompue. Vérifiez qu'il est en ligne et réessayez."
+    },
+    "device_token_rejected": {
+      "message": "L'appareil {device} a refusé son jeton, et en obtenir un nouveau auprès de Google n'a rien changé. L'intégration continue d'en demander un nouveau à Google ; réessayez plus tard."
+    },
+    "device_not_ready": {
+      "message": "L'appareil {device} a répondu « introuvable ». Il est peut-être encore en cours de démarrage, auquel cas réessayez plus tard, ou il ne prend peut-être pas en charge cette action."
+    },
+    "device_request_failed": {
+      "message": "Impossible d'effectuer cette action sur l'appareil {device}. Pour en savoir plus, consultez les journaux de Home Assistant."
+    },
+    "devices_not_rebooted": {
+      "message": "Les appareils suivants n'ont pas confirmé qu'ils vont redémarrer : {devices}. Vérifiez qu'ils sont en ligne et réessayez plus tard."
     }
   },
   "options": {
     "step": {
       "init": {
         "data": {
-          "update_interval": "Modifier l'intervalle de mise à jour. Augmentez cette valeur si vos appareils dépassent souvent le délai d'attente. Par défaut : 180 (secondes)",
-          "known_hosts": "Hôtes connus"
+          "update_interval": "Modifier l'intervalle de mise à jour. Augmentez cette valeur si vos appareils dépassent souvent le délai d'attente. Par défaut : {default_interval} (secondes)",
+          "known_hosts": "Hôtes connus",
+          "homes": "Maisons"
         },
         "data_description": {
-          "known_hosts": "Adresses IP des enceintes et écrans que l'intégration ne trouve pas d'elle-même, par exemple parce qu'ils sont sur un autre réseau ou VLAN."
+          "known_hosts": "Adresses IP des enceintes et écrans que l'intégration ne trouve pas d'elle-même, par exemple parce qu'ils sont sur un autre réseau ou VLAN.",
+          "homes": "Les enceintes et écrans des maisons que vous désélectionnez ne sont pas ajoutés. Désélectionner une maison supprime ses appareils et leurs entités de Home Assistant : les automatisations, scripts et tableaux de bord qui les utilisent cessent alors de fonctionner. Sélectionnez à nouveau la maison pour les rajouter avec les noms et pièces que vous leur aviez donnés."
         }
       }
     },
     "error": {
-      "known-host-not-ip": "Saisissez uniquement des adresses IP, comme 192.168.1.20."
+      "known-host-not-ip": "Saisissez uniquement des adresses IP, comme 192.168.1.20.",
+      "no-home-selected": "Choisissez au moins une maison."
     }
   },
   "services": {

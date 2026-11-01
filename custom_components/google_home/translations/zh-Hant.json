@@ -32,29 +32,148 @@
         "data_description": {
           "master_token": "以 aas_et/ 開頭"
         }
+      },
+      "homes": {
+        "title": "選擇住家",
+        "description": "你的 Google 帳號是多個住家的成員。請選擇要加入哪些住家的音箱和螢幕。你之後可以在整合的選項中變更此設定。",
+        "data": {
+          "homes": "住家"
+        }
+      },
+      "reauth": {
+        "title": "重新登入",
+        "description": "Google 已不再接受為 {name} 儲存的登入資訊。請重新登入同一個 Google 帳號：你的裝置、實體和自動化都會保持不變。在你重新登入之前，裝置的實體可能會顯示過時的數值，或顯示為不可用。",
+        "menu_options": {
+          "browser": "透過瀏覽器登入（建議）",
+          "master_token": "Master token"
+        },
+        "menu_option_descriptions": {
+          "browser": "在電腦瀏覽器中登入 Google，然後貼上 Cookie。適用於大多數帳號。",
+          "master_token": "貼上你已取得的 master token。"
+        }
+      },
+      "reauth_browser": {
+        "title": "透過瀏覽器登入",
+        "description": "1. 在電腦上開啟瀏覽器的私密瀏覽視窗（例如無痕視窗），前往 {embedded_setup_url} 並登入同一個 Google 帳號。同意後，網頁可能會持續載入，這是正常現象。\n2. 開啟瀏覽器的開發人員工具，找出 `accounts.google.com` 的 Cookie。\n3. 複製 `oauth_token` Cookie 的值，並立即貼到下方。此值會在幾分鐘內失效，且只能使用一次。\n\n詳細操作步驟：{browser_docs_url}",
+        "data": {
+          "oauth_token": "oauth_token Cookie"
+        },
+        "data_description": {
+          "oauth_token": "以 oauth2_4/ 開頭"
+        }
+      },
+      "reauth_master_token": {
+        "title": "Master token",
+        "description": "請貼上同一個 Google 帳號的 master token，例如使用其他工具取得的值。",
+        "data": {
+          "master_token": "Google 帳號的 master token"
+        },
+        "data_description": {
+          "master_token": "以 aas_et/ 開頭"
+        }
       }
     },
     "error": {
       "oauth-token-invalid": "Google 未接受此 Cookie。請取得新的 Cookie 並立即貼上：此值會在幾分鐘內失效，且只能使用一次。請複製以 oauth2_4/ 開頭的完整值。",
-      "master-token-invalid": "Master token 無效。請確認已輸入完整值，包括 aas_et/。",
+      "master-token-invalid": "Google 未接受此 master token。請確認是否已正確複製。如果此 master token 之前可以使用（例如在你變更 Google 密碼之前），表示 Google 已不再接受它：請改用「透過瀏覽器登入」。",
+      "google-rejected": "Google 未接受此登入。如需詳細資訊，請查看 Home Assistant 日誌。",
+      "google-unreachable": "無法連線至 Google。請確認 Home Assistant 已連上網際網路，然後再試一次。",
+      "google-busy": "Google 目前忙碌中或正在限制登入。請稍候幾分鐘，然後重新登入。",
       "oauth-token-format": "這不是 oauth_token Cookie，其值應以 oauth2_4/ 開頭。",
-      "master-token-format": "Master token 以 aas_et/ 開頭，共 223 個字元。請複製完整值。"
+      "master-token-format": "Master token 以 aas_et/ 開頭，共 223 個字元。請複製完整值。",
+      "other-account": "你登入的是其他 Google 帳號，因此未進行任何變更。請使用此整合所用的帳號登入。如要改用剛才登入的帳號，請刪除整合後再重新新增。",
+      "no-home-selected": "請至少選擇一個住家。"
+    }
+  },
+  "entity": {
+    "button": {
+      "reboot": {
+        "name": "重新啟動"
+      }
+    },
+    "number": {
+      "alarm_volume": {
+        "name": "鬧鐘音量"
+      }
+    },
+    "sensor": {
+      "alarms": {
+        "name": "鬧鐘"
+      },
+      "device": {
+        "name": "裝置"
+      },
+      "timers": {
+        "name": "計時器"
+      }
+    },
+    "switch": {
+      "do_not_disturb": {
+        "name": "勿擾"
+      }
+    }
+  },
+  "exceptions": {
+    "alarms_and_timers_not_fetched": {
+      "message": "無法從 {device} 取得目前的鬧鐘和計時器，因此未從該裝置刪除任何項目。請確認裝置已連線，並稍後再試。"
+    },
+    "alarms_and_timers_not_fetched_from_devices": {
+      "message": "無法從下列裝置取得目前的鬧鐘和計時器，因此未從這些裝置刪除任何項目：{devices}。請確認這些裝置已連線，並稍後再試。"
+    },
+    "alarms_and_timers_not_deleted": {
+      "message": "{device} 未確認已刪除鬧鐘或計時器，因此這些項目可能仍處於已設定狀態。請確認裝置已連線，並稍後再試。"
+    },
+    "alarms_and_timers_not_deleted_from_devices": {
+      "message": "無法從下列裝置刪除鬧鐘或計時器，或無法確認是否已刪除：{devices}。請確認這些裝置已連線，並稍後再試。"
+    },
+    "invalid_alarm_id": {
+      "message": "「{alarm_id}」不是鬧鐘 ID。請從裝置的鬧鐘感測器的 alarms 屬性複製以 alarm/ 開頭的 ID。"
+    },
+    "invalid_timer_id": {
+      "message": "「{timer_id}」不是計時器 ID。請從裝置的計時器感測器的 timers 屬性複製以 timer/ 開頭的 ID。"
+    },
+    "alarm_not_found": {
+      "message": "在選取的裝置上找不到鬧鐘 {alarm_id}。它可能已響過或被刪除。"
+    },
+    "timer_not_found": {
+      "message": "在選取的裝置上找不到計時器 {timer_id}。它可能已結束或被刪除。"
+    },
+    "device_offline": {
+      "message": "無法連線至 {device}。請確認裝置已開啟並連上你的網路，然後再試一次。"
+    },
+    "device_no_reply": {
+      "message": "{device} 未確認已執行此操作：沒有及時回應，或回應中途中斷。請確認裝置已連線，然後再試一次。"
+    },
+    "device_token_rejected": {
+      "message": "{device} 拒絕了它的存取權杖，而向 Google 取得新的權杖也沒有幫助。整合會持續向 Google 要求新的權杖，請稍後再試。"
+    },
+    "device_not_ready": {
+      "message": "{device} 回應「找不到」。裝置可能仍在啟動中，請稍後再試；也可能不支援此操作。"
+    },
+    "device_request_failed": {
+      "message": "無法在 {device} 上執行此操作。如需詳細資訊，請查看 Home Assistant 日誌。"
+    },
+    "devices_not_rebooted": {
+      "message": "下列裝置未確認將會重新啟動：{devices}。請確認這些裝置已連線，並稍後再試。"
     }
   },
   "options": {
     "step": {
       "init": {
         "data": {
-          "update_interval": "變更更新間隔。如果裝置無法及時回應，請增加此值。預設為 180 秒。",
-          "known_hosts": "已知主機"
+          "update_interval": "變更更新間隔。如果裝置無法及時回應，請增加此值。預設為 {default_interval} 秒。",
+          "known_hosts": "已知主機",
+          "homes": "住家"
         },
         "data_description": {
-          "known_hosts": "此整合無法自動找到的音箱和螢幕的 IP 位址，例如位於其他網路或 VLAN 的裝置。"
+          "known_hosts": "此整合無法自動找到的音箱和螢幕的 IP 位址，例如位於其他網路或 VLAN 的裝置。",
+          "homes": "不會加入你取消選取的住家中的音箱和螢幕。取消選取住家會從 Home Assistant 移除該住家的裝置及其實體，因此使用這些裝置的自動化、腳本和儀表板將無法運作。重新選取該住家，即可依你先前設定的名稱和分區重新加入這些裝置。"
         }
       }
     },
     "error": {
-      "known-host-not-ip": "請只輸入 IP 位址，例如 192.168.1.20。"
+      "known-host-not-ip": "請只輸入 IP 位址，例如 192.168.1.20。",
+      "no-home-selected": "請至少選擇一個住家。"
     }
   },
   "services": {

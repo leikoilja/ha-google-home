@@ -32,29 +32,148 @@
         "data_description": {
           "master_token": "Alkaa merkkijonolla aas_et/"
         }
+      },
+      "homes": {
+        "title": "Valitse kodit",
+        "description": "Google-tilisi on usean kodin jäsen. Valitse kodit, joiden kaiuttimet ja näytöt lisätään. Voit muuttaa tätä myöhemmin integraation asetuksissa.",
+        "data": {
+          "homes": "Kodit"
+        }
+      },
+      "reauth": {
+        "title": "Kirjaudu uudelleen",
+        "description": "Google ei enää hyväksy tallennettuja kirjautumistietoja ({name}). Kirjaudu uudelleen samalle Google-tilille: laitteesi, entiteettisi ja automaatiosi säilyvät ennallaan. Siihen asti laitteidesi entiteetit voivat näyttää vanhentuneita arvoja, tai ne eivät välttämättä ole käytettävissä.",
+        "menu_options": {
+          "browser": "Kirjautuminen selaimella (suositeltu)",
+          "master_token": "Päätunniste"
+        },
+        "menu_option_descriptions": {
+          "browser": "Kirjaudu Googleen tietokoneen selaimella ja liitä sitten eväste. Toimii useimmilla tileillä.",
+          "master_token": "Liitä päätunniste, joka sinulla jo on."
+        }
+      },
+      "reauth_browser": {
+        "title": "Kirjautuminen selaimella",
+        "description": "1. Avaa tietokoneella {embedded_setup_url} selaimen yksityisessä ikkunassa, esimerkiksi incognito-ikkunassa, ja kirjaudu sisään samalle Google-tilille. Hyväksymisen jälkeen sivu saattaa jatkaa lataamista; tämä on normaalia.\n2. Avaa selaimen kehittäjätyökalut ja etsi sivuston `accounts.google.com` evästeet.\n3. Kopioi `oauth_token`-evästeen arvo ja liitä se heti alle. Se vanhenee muutamassa minuutissa ja toimii vain kerran.\n\nVaiheittaiset ohjeet: {browser_docs_url}",
+        "data": {
+          "oauth_token": "oauth_token-eväste"
+        },
+        "data_description": {
+          "oauth_token": "Alkaa merkkijonolla oauth2_4/"
+        }
+      },
+      "reauth_master_token": {
+        "title": "Päätunniste",
+        "description": "Liitä saman Google-tilin päätunniste, jonka olet saanut esimerkiksi toisella työkalulla.",
+        "data": {
+          "master_token": "Google-tilin päätunniste"
+        },
+        "data_description": {
+          "master_token": "Alkaa merkkijonolla aas_et/"
+        }
       }
     },
     "error": {
       "oauth-token-invalid": "Google ei hyväksynyt evästettä. Hanki uusi ja liitä se heti: se vanhenee muutamassa minuutissa ja toimii vain kerran. Kopioi koko arvo, joka alkaa merkkijonolla oauth2_4/.",
-      "master-token-invalid": "Päätunniste on virheellinen. Varmista, että olet antanut koko tunnisteen, myös alun aas_et/.",
+      "master-token-invalid": "Google ei hyväksynyt päätunnistetta. Tarkista, että kopioit sen oikein. Jos se toimi aiemmin, esimerkiksi siihen asti, kunnes vaihdoit Google-salasanasi, Google ei enää hyväksy sitä: käytä sen sijaan kirjautumista selaimella.",
+      "google-rejected": "Google ei hyväksynyt kirjautumista. Lisätietoja on Home Assistantin lokeissa.",
+      "google-unreachable": "Googleen ei saatu yhteyttä. Tarkista, että Home Assistant on yhteydessä internetiin, ja yritä sitten uudelleen.",
+      "google-busy": "Google on ruuhkautunut tai rajoittaa kirjautumisia. Odota muutama minuutti ja kirjaudu sitten uudelleen.",
       "oauth-token-format": "Tämä ei ole oauth_token-eväste. Sen arvo alkaa merkkijonolla oauth2_4/.",
-      "master-token-format": "Päätunniste alkaa merkkijonolla aas_et/ ja on 223 merkkiä pitkä. Kopioi koko tunniste."
+      "master-token-format": "Päätunniste alkaa merkkijonolla aas_et/ ja on 223 merkkiä pitkä. Kopioi koko tunniste.",
+      "other-account": "Kirjauduit eri Google-tilille, joten mitään ei muutettu. Kirjaudu tilille, jota tämä integraatio käyttää. Jos haluat käyttää sen sijaan toista tiliä, poista integraatio ja lisää se uudelleen.",
+      "no-home-selected": "Valitse vähintään yksi koti."
+    }
+  },
+  "entity": {
+    "button": {
+      "reboot": {
+        "name": "Käynnistä uudelleen"
+      }
+    },
+    "number": {
+      "alarm_volume": {
+        "name": "Herätyksen äänenvoimakkuus"
+      }
+    },
+    "sensor": {
+      "alarms": {
+        "name": "Herätykset"
+      },
+      "device": {
+        "name": "Laite"
+      },
+      "timers": {
+        "name": "Ajastimet"
+      }
+    },
+    "switch": {
+      "do_not_disturb": {
+        "name": "Älä häiritse"
+      }
+    }
+  },
+  "exceptions": {
+    "alarms_and_timers_not_fetched": {
+      "message": "Laitteen {device} nykyisiä herätyksiä ja ajastimia ei voitu hakea, joten laitteesta ei poistettu mitään. Tarkista, että laite on verkossa, ja yritä myöhemmin uudelleen."
+    },
+    "alarms_and_timers_not_fetched_from_devices": {
+      "message": "Seuraavien laitteiden nykyisiä herätyksiä ja ajastimia ei voitu hakea: {devices}. Näistä laitteista ei siksi poistettu mitään. Tarkista, että laitteet ovat verkossa, ja yritä myöhemmin uudelleen."
+    },
+    "alarms_and_timers_not_deleted": {
+      "message": "Laite {device} ei vahvistanut herätysten tai ajastimien poistamista, joten ne saattavat edelleen olla asetettuina. Tarkista, että laite on verkossa, ja yritä myöhemmin uudelleen."
+    },
+    "alarms_and_timers_not_deleted_from_devices": {
+      "message": "Seuraavista laitteista ei voitu poistaa herätyksiä tai ajastimia tai niiden poistamista ei voitu vahvistaa: {devices}. Tarkista, että laitteet ovat verkossa, ja yritä myöhemmin uudelleen."
+    },
+    "invalid_alarm_id": {
+      "message": "”{alarm_id}” ei ole herätyksen tunnus. Kopioi tunnus, joka alkaa merkkijonolla alarm/, laitteen herätysanturin alarms-attribuutista."
+    },
+    "invalid_timer_id": {
+      "message": "”{timer_id}” ei ole ajastimen tunnus. Kopioi tunnus, joka alkaa merkkijonolla timer/, laitteen ajastinanturin timers-attribuutista."
+    },
+    "alarm_not_found": {
+      "message": "Herätystä {alarm_id} ei löytynyt valituista laitteista. Se on ehkä jo soinut tai poistettu."
+    },
+    "timer_not_found": {
+      "message": "Ajastinta {timer_id} ei löytynyt valituista laitteista. Se on ehkä jo päättynyt tai poistettu."
+    },
+    "device_offline": {
+      "message": "Laitteeseen {device} ei saatu yhteyttä. Tarkista, että laite on päällä ja yhteydessä verkkoosi, ja yritä sitten uudelleen."
+    },
+    "device_no_reply": {
+      "message": "Laite {device} ei vahvistanut suorittaneensa toimintoa: se ei vastannut ajoissa tai sen vastaus katkesi kesken. Tarkista, että laite on verkossa, ja yritä uudelleen."
+    },
+    "device_token_rejected": {
+      "message": "Laite {device} hylkäsi tunnisteensa, eikä uuden hakeminen Googlelta auttanut. Integraatio jatkaa uuden pyytämistä Googlelta, joten yritä myöhemmin uudelleen."
+    },
+    "device_not_ready": {
+      "message": "Laite {device} vastasi ”ei löytynyt”. Se voi olla vielä käynnistymässä, joten yritä myöhemmin uudelleen, tai se ei ehkä tue tätä."
+    },
+    "device_request_failed": {
+      "message": "Toimintoa ei voitu suorittaa laitteella {device}. Lisätietoja on Home Assistantin lokeissa."
+    },
+    "devices_not_rebooted": {
+      "message": "Seuraavat laitteet eivät vahvistaneet käynnistyvänsä uudelleen: {devices}. Tarkista, että laitteet ovat verkossa, ja yritä myöhemmin uudelleen."
     }
   },
   "options": {
     "step": {
       "init": {
         "data": {
-          "update_interval": "Muuta päivitysväliä. Suurenna arvoa, jos laitteet eivät vastaa ajoissa. Oletus: 180 sekuntia.",
-          "known_hosts": "Tunnetut isännät"
+          "update_interval": "Muuta päivitysväliä. Suurenna arvoa, jos laitteet eivät vastaa ajoissa. Oletus: {default_interval} sekuntia.",
+          "known_hosts": "Tunnetut isännät",
+          "homes": "Kodit"
         },
         "data_description": {
-          "known_hosts": "Niiden kaiuttimien ja näyttöjen IP-osoitteet, joita integraatio ei löydä automaattisesti esimerkiksi siksi, että ne ovat toisessa verkossa tai VLAN-verkossa."
+          "known_hosts": "Niiden kaiuttimien ja näyttöjen IP-osoitteet, joita integraatio ei löydä automaattisesti esimerkiksi siksi, että ne ovat toisessa verkossa tai VLAN-verkossa.",
+          "homes": "Kodeista, joiden valinnan poistat, ei lisätä kaiuttimia eikä näyttöjä. Kun poistat kodin valinnan, sen laitteet ja niiden entiteetit poistetaan Home Assistantista, joten niitä käyttävät automaatiot, skriptit ja kojelaudat lakkaavat toimimasta. Valitse koti uudelleen, niin laitteet lisätään takaisin antamillasi nimillä ja huoneilla."
         }
       }
     },
     "error": {
-      "known-host-not-ip": "Anna vain IP-osoitteita, kuten 192.168.1.20."
+      "known-host-not-ip": "Anna vain IP-osoitteita, kuten 192.168.1.20.",
+      "no-home-selected": "Valitse vähintään yksi koti."
     }
   },
   "services": {

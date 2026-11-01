@@ -6,6 +6,10 @@
     "http",
     "zeroconf"
   ],
+  "categories": [
+    "ai_voice.voice_assistants",
+    "media_entertainment.speakers_audio"
+  ],
   "codeowners": [
     "@leikoilja",
     "@DurgNomis-drol",
@@ -22,10 +26,10 @@
   ],
   "requirements": [
     "bluetooth-data-tools>=1.29.24",
-    "glocaltokens==0.11.0"
+    "glocaltokens==1.2.0"
   ],
   "single_config_entry": true,
-  "version": "1.14.0",
+  "version": "1.16.0",
   "zeroconf": [
     "_googlecast._tcp.local."
   ]

@@ -1,18 +1,36 @@
 """Tests for finding devices at known hosts when mDNS can't."""
 
 import asyncio
+from http import HTTPStatus
 from unittest.mock import AsyncMock, MagicMock, Mock
 
 from aiohttp import ClientError
+from ghome_foyer_api.api_pb2 import HomeGraph  # pylint: disable=no-name-in-module
 from glocaltokens.client import Device
 from glocaltokens.scanner import NetworkDevice
+import pytest
 
 from custom_components.google_home.api import GlocaltokensApiClient
-from custom_components.google_home.config_flow import GoogleHomeOptionsFlowHandler
 from custom_components.google_home.models import GoogleHomeDevice
 
-# glocaltokens accepts only tokens of the real length
+from .test_missing_devices import make_client
+from .test_offline_devices import STARTING, device_sensor
+from .test_unsupported_devices import (
+    ALARMS,
+    DND,
+    INFO,
+    NO_ALARMS,
+    SPEAKER,
+    VOLUME,
+    Network,
+    Reply,
+    at,
+    poll,
+)
+
+# A realistic master token: setup checks its length with is_aas_et()
 MASTER_TOKEN = "aas_et/" + "x" * 216
+# glocaltokens returns only devices whose local auth token has this length
 LOCAL_AUTH_TOKEN = "x" * 108
 
 
@@ -26,6 +44,7 @@ def fake_session(answers: dict[str, tuple[str, str] | Exception]) -> Mock:
             response.__aenter__.side_effect = answer
         else:
             name, cloud_device_id = answer
+            response.__aenter__.return_value.status = HTTPStatus.OK
             response.__aenter__.return_value.json = AsyncMock(
                 return_value={
                     "name": name,
@@ -76,6 +95,7 @@ def test_known_hosts_fill_in_missing_addresses() -> None:
             "10.0.1.5": ("Kitchen speaker", "aaaa"),
             "10.0.1.6": ("Office", "bbbb"),
             "10.0.1.7": ClientError("No route to host"),
+            "10.0.1.8": TimeoutError(),
         },
     )
 
@@ -117,48 +137,6 @@ def test_known_hosts_use_first_host_of_a_device() -> None:
     assert pair.ip_address == "10.0.1.8"
 
 
-def make_options_flow(options: dict[str, object]) -> GoogleHomeOptionsFlowHandler:
-    """Return the options flow of an entry with these options."""
-    flow = GoogleHomeOptionsFlowHandler()
-    flow.hass = Mock()
-    flow.hass.config_entries.async_get_known_entry.return_value = Mock(options=options)
-    flow.hass.data = {}
-    flow.handler = "entry-id"
-    return flow
-
-
-def test_options_save_known_hosts() -> None:
-    """Save known hosts without blanks, surrounding spaces and repeats, in order."""
-    flow = make_options_flow({})
-
-    result = asyncio.run(
-        flow.async_step_init(
-            {
-                "update_interval": 180,
-                "known_hosts": [" 10.0.1.5 ", "", "fd00::5", "10.0.1.5"],
-            }
-        )
-    )
-
-    assert result["type"] == "create_entry"
-    assert result["data"] == {
-        "update_interval": 180,
-        "known_hosts": ["10.0.1.5", "fd00::5"],
-    }
-
-
-def test_options_reject_hostnames() -> None:
-    """Ask for IP addresses, as requests to devices are built from them."""
-    flow = make_options_flow({"known_hosts": ["10.0.1.5"]})
-
-    result = asyncio.run(
-        flow.async_step_init({"update_interval": 180, "known_hosts": ["kitchen.local"]})
-    )
-
-    assert result["type"] == "form"
-    assert result["errors"] == {"known_hosts": "known-host-not-ip"}
-
-
 def test_known_hosts_fill_in_devices_from_glocaltokens() -> None:
     """Find a device that glocaltokens returns without an address at its known host."""
     hass = Mock()
@@ -172,12 +150,43 @@ def test_known_hosts_fill_in_devices_from_glocaltokens() -> None:
     pair = Device("pair", "Den speakers", LOCAL_AUTH_TOKEN, cloud_device_id="DDDD")
     client._client = Mock(  # noqa: SLF001  # pylint: disable=protected-access
         get_google_devices=Mock(return_value=[pair]),
-        homegraph=Mock(),
+        get_home_graph=Mock(return_value=HomeGraph()),
     )
 
-    [den] = asyncio.run(client.get_google_devices())
+    # Its info answered there, which its first update uses
+    assert asyncio.run(client.async_update_device_list()) == {"pair": "10.0.1.5"}
 
+    [den] = client.google_devices
     assert den.name == "Den speakers"
+    assert den.cloud_device_id == "dddd"
+    assert den.ip_address == "10.0.1.5"
+
+
+def test_known_hosts_fill_in_device_fetched_again() -> None:
+    """Find a device at its known host when Google's list, fetched again, gives its ID."""
+    hass = Mock()
+    hass.async_add_executor_job = AsyncMock(side_effect=lambda func, *args: func(*args))
+    client = GlocaltokensApiClient(
+        hass,
+        fake_session({"10.0.1.5": ("Den speaker left", "dddd")}),
+        master_token=MASTER_TOKEN,
+        known_hosts=["10.0.1.5"],
+    )
+    # Google didn't give the pair's ID before
+    den = GoogleHomeDevice("pair", "Den speakers", LOCAL_AUTH_TOKEN)
+    client.google_devices = [den]
+    client.google_devices_fetched = True
+    pair = Device("pair", "Den speakers", LOCAL_AUTH_TOKEN, cloud_device_id="DDDD")
+    client._client = Mock(  # noqa: SLF001  # pylint: disable=protected-access
+        get_google_devices=Mock(return_value=[pair]),
+        get_home_graph=Mock(return_value=HomeGraph()),
+    )
+
+    # The scheduled fetch is due
+    client.next_scheduled_fetch = 0
+    assert asyncio.run(client.async_update_device_list()) == {"pair": "10.0.1.5"}
+    # The same object, which keeps what the last update got from the device
+    assert client.google_devices == [den]
     assert den.cloud_device_id == "dddd"
     assert den.ip_address == "10.0.1.5"
 
@@ -199,10 +208,10 @@ def test_known_hosts_not_asked_when_mdns_found_everything() -> None:
     )
     client._client = Mock(  # noqa: SLF001  # pylint: disable=protected-access
         get_google_devices=Mock(return_value=[found_by_mdns]),
-        homegraph=Mock(),
+        get_home_graph=Mock(return_value=HomeGraph()),
     )
 
-    asyncio.run(client.get_google_devices())
+    assert asyncio.run(client.async_update_device_list()) == {}
 
     session.get.assert_not_called()
 
@@ -221,3 +230,44 @@ def test_known_hosts_skip_addresses_mdns_found() -> None:
 
     assert kitchen.ip_address == "10.0.1.5"
     assert office.ip_address == "fd00::2"
+
+
+@pytest.mark.parametrize(
+    ("no_alarms", "replies", "asked"),
+    [
+        pytest.param(False, STARTING, [ALARMS, VOLUME, DND], id="starting"),
+        pytest.param(True, NO_ALARMS, [], id="without-alarms"),
+    ],
+)
+def test_available_attribute_of_device_found_at_known_host(
+    clock: Mock, no_alarms: bool, replies: dict[str, Reply], asked: list[str]
+) -> None:
+    """Use the info that found a device at a known host, rather than asking for it again in that update.
+
+    That info answered 200, so the device is available, though its alarms answer
+    "not found", or it has none. The next update asks for its info as usual.
+    """
+    network = Network()
+    network.replies[SPEAKER] = replies | {
+        INFO: (HTTPStatus.OK, {"device_info": {"cloud_device_id": "device0"}})
+    }
+    client, glocaltokens = make_client(None, session=network.session)
+    client.google_devices = []
+    client.google_devices_fetched = False
+    client.known_hosts = [SPEAKER]
+    if no_alarms:
+        client.unsupported_device_ids.add("device0")
+    coordinator = Mock(data=poll(client, clock, at(0)))
+    assert glocaltokens.get_google_devices.call_count == 1
+    sensor = device_sensor(client, coordinator)
+    assert client.google_devices[0].ip_address == SPEAKER
+
+    assert network.asked(SPEAKER) == [INFO, *asked]
+    assert sensor.extra_state_attributes["available"] is True
+
+    network.replies[SPEAKER][INFO] = HTTPStatus.NOT_FOUND
+    poll(client, clock, at(0, 15))
+    assert network.asked(SPEAKER) == (
+        [INFO] if no_alarms else [ALARMS, INFO, VOLUME, DND]
+    )
+    assert sensor.extra_state_attributes["available"] is False

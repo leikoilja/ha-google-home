@@ -10,11 +10,12 @@ delete_alarm:
   fields:
     entity_id:
       example: "sensor.kitchen_alarms"
-      required: true
+      required: false
       selector:
         entity:
           domain: sensor
           integration: google_home
+          device_class: timestamp
     skip_refresh:
       example: true
       default: false
@@ -31,11 +32,12 @@ delete_timer:
   fields:
     entity_id:
       example: "sensor.kitchen_timers"
-      required: true
+      required: false
       selector:
         entity:
           domain: sensor
           integration: google_home
+          device_class: timestamp
     skip_refresh:
       example: true
       default: false
@@ -53,6 +55,7 @@ delete_all_alarms:
     entity:
       domain: sensor
       integration: google_home
+      device_class: timestamp
   fields:
     skip_refresh:
       example: true
@@ -66,6 +69,7 @@ delete_all_timers:
     entity:
       domain: sensor
       integration: google_home
+      device_class: timestamp
   fields:
     skip_refresh:
       example: true
@@ -75,3 +79,7 @@ delete_all_timers:
         boolean:
 
 refresh_devices:
+  target:
+    entity:
+      domain: sensor
+      integration: google_home

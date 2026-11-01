@@ -32,29 +32,148 @@
         "data_description": {
           "master_token": "Începe cu aas_et/"
         }
+      },
+      "homes": {
+        "title": "Alege casele",
+        "description": "Contul tău Google este membru al mai multor case. Alege casele din care vrei să adaugi difuzoarele și ecranele. Poți schimba asta mai târziu în opțiunile integrării.",
+        "data": {
+          "homes": "Case"
+        }
+      },
+      "reauth": {
+        "title": "Conectează-te din nou",
+        "description": "Google nu mai acceptă datele de conectare salvate pentru {name}. Conectează-te din nou la același cont Google: dispozitivele, entitățile și automatizările tale rămân neschimbate. Până atunci, entitățile dispozitivelor tale pot afișa valori neactualizate sau pot fi indisponibile.",
+        "menu_options": {
+          "browser": "Conectare prin browser (recomandată)",
+          "master_token": "Token principal"
+        },
+        "menu_option_descriptions": {
+          "browser": "Conectează-te la Google într-un browser de pe computer, apoi lipește un cookie. Funcționează pentru majoritatea conturilor.",
+          "master_token": "Lipește un token principal pe care îl ai deja."
+        }
+      },
+      "reauth_browser": {
+        "title": "Conectare prin browser",
+        "description": "1. Pe un computer, deschide {embedded_setup_url} într-o fereastră de navigare privată a browserului, de exemplu o fereastră incognito, și conectează-te la același cont Google. După ce accepți, pagina poate continua să se încarce; acest lucru este normal.\n2. Deschide instrumentele pentru dezvoltatori ale browserului și găsește cookie-urile pentru `accounts.google.com`.\n3. Copiază valoarea cookie-ului `oauth_token` și lipește-o imediat mai jos. Expiră în câteva minute și poate fi folosită o singură dată.\n\nInstrucțiuni pas cu pas: {browser_docs_url}",
+        "data": {
+          "oauth_token": "Cookie oauth_token"
+        },
+        "data_description": {
+          "oauth_token": "Începe cu oauth2_4/"
+        }
+      },
+      "reauth_master_token": {
+        "title": "Token principal",
+        "description": "Lipește un token principal pentru același cont Google, de exemplu unul pe care l-ai obținut cu un alt instrument.",
+        "data": {
+          "master_token": "Token principal al contului Google"
+        },
+        "data_description": {
+          "master_token": "Începe cu aas_et/"
+        }
       }
     },
     "error": {
       "oauth-token-invalid": "Google nu a acceptat cookie-ul. Obține unul nou și lipește-l imediat: expiră în câteva minute și poate fi folosit o singură dată. Copiază întreaga valoare, care începe cu oauth2_4/.",
-      "master-token-invalid": "Tokenul principal nu este valid. Asigură-te că ai introdus tokenul complet, inclusiv aas_et/.",
+      "master-token-invalid": "Google nu a acceptat tokenul principal. Verifică dacă l-ai copiat corect. Dacă a funcționat înainte, de exemplu până când ți-ai schimbat parola Google, Google nu îl mai acceptă: folosește în schimb conectarea prin browser.",
+      "google-rejected": "Google nu a acceptat conectarea. Pentru detalii, consultă jurnalele Home Assistant.",
+      "google-unreachable": "Nu s-a putut contacta Google. Verifică dacă Home Assistant este conectat la internet, apoi încearcă din nou.",
+      "google-busy": "Google este ocupat sau limitează numărul de conectări. Așteaptă câteva minute, apoi conectează-te din nou.",
       "oauth-token-format": "Acesta nu este cookie-ul oauth_token. Valoarea lui începe cu oauth2_4/.",
-      "master-token-format": "Un token principal începe cu aas_et/ și are 223 de caractere. Copiază tokenul complet."
+      "master-token-format": "Un token principal începe cu aas_et/ și are 223 de caractere. Copiază tokenul complet.",
+      "other-account": "Te-ai conectat la un alt cont Google, așa că nu s-a modificat nimic. Conectează-te cu contul pe care îl folosește această integrare. Pentru a folosi în schimb celălalt cont, șterge integrarea și adaug-o din nou.",
+      "no-home-selected": "Alege cel puțin o casă."
+    }
+  },
+  "entity": {
+    "button": {
+      "reboot": {
+        "name": "Repornește"
+      }
+    },
+    "number": {
+      "alarm_volume": {
+        "name": "Volumul alarmei"
+      }
+    },
+    "sensor": {
+      "alarms": {
+        "name": "Alarme"
+      },
+      "device": {
+        "name": "Dispozitiv"
+      },
+      "timers": {
+        "name": "Temporizatoare"
+      }
+    },
+    "switch": {
+      "do_not_disturb": {
+        "name": "Nu deranja"
+      }
+    }
+  },
+  "exceptions": {
+    "alarms_and_timers_not_fetched": {
+      "message": "Nu s-au putut prelua alarmele și cronometrele curente de pe dispozitivul {device}, așa că nu s-a șters nimic de pe acesta. Verifică dacă dispozitivul este online și încearcă din nou mai târziu."
+    },
+    "alarms_and_timers_not_fetched_from_devices": {
+      "message": "Nu s-au putut prelua alarmele și cronometrele curente de pe următoarele dispozitive, așa că nu s-a șters nimic de pe acestea: {devices}. Verifică dacă dispozitivele sunt online și încearcă din nou mai târziu."
+    },
+    "alarms_and_timers_not_deleted": {
+      "message": "Dispozitivul {device} nu a confirmat ștergerea alarmelor sau a cronometrelor, așa că acestea pot fi încă setate. Verifică dacă dispozitivul este online și încearcă din nou mai târziu."
+    },
+    "alarms_and_timers_not_deleted_from_devices": {
+      "message": "Nu s-au putut șterge alarmele sau cronometrele de pe următoarele dispozitive ori nu s-a putut confirma ștergerea lor: {devices}. Verifică dacă dispozitivele sunt online și încearcă din nou mai târziu."
+    },
+    "invalid_alarm_id": {
+      "message": "„{alarm_id}” nu este un ID de alarmă. Copiază ID-ul, care începe cu alarm/, din atributul alarms al senzorului de alarme al dispozitivului."
+    },
+    "invalid_timer_id": {
+      "message": "„{timer_id}” nu este un ID de cronometru. Copiază ID-ul, care începe cu timer/, din atributul timers al senzorului de cronometre al dispozitivului."
+    },
+    "alarm_not_found": {
+      "message": "Nu s-a găsit alarma {alarm_id} pe dispozitivele selectate. Este posibil să fi sunat deja sau să fi fost ștearsă."
+    },
+    "timer_not_found": {
+      "message": "Nu s-a găsit cronometrul {timer_id} pe dispozitivele selectate. Este posibil să se fi încheiat deja sau să fi fost șters."
+    },
+    "device_offline": {
+      "message": "Nu s-a putut contacta dispozitivul {device}. Verifică dacă este pornit și conectat la rețeaua ta, apoi încearcă din nou."
+    },
+    "device_no_reply": {
+      "message": "Dispozitivul {device} nu a confirmat că a executat acțiunea: nu a răspuns la timp sau răspunsul său a fost întrerupt. Verifică dacă dispozitivul este online și încearcă din nou."
+    },
+    "device_token_rejected": {
+      "message": "Dispozitivul {device} a respins tokenul, iar obținerea unuia nou de la Google nu a ajutat. Integrarea continuă să ceară unul nou de la Google, așa că încearcă din nou mai târziu."
+    },
+    "device_not_ready": {
+      "message": "Dispozitivul {device} a răspuns „negăsit”. Este posibil să fie încă în curs de pornire, așa că încearcă din nou mai târziu, sau să nu accepte acest lucru."
+    },
+    "device_request_failed": {
+      "message": "Nu s-a putut executa acțiunea pe dispozitivul {device}. Pentru detalii, consultă jurnalele Home Assistant."
+    },
+    "devices_not_rebooted": {
+      "message": "Următoarele dispozitive nu au confirmat că vor reporni: {devices}. Verifică dacă dispozitivele sunt online și încearcă din nou mai târziu."
     }
   },
   "options": {
     "step": {
       "init": {
         "data": {
-          "update_interval": "Modifică intervalul de actualizare. Mărește această valoare dacă dispozitivele nu răspund la timp. Valoare implicită: 180 de secunde.",
-          "known_hosts": "Gazde cunoscute"
+          "update_interval": "Modifică intervalul de actualizare. Mărește această valoare dacă dispozitivele nu răspund la timp. Valoare implicită: {default_interval} (secunde).",
+          "known_hosts": "Gazde cunoscute",
+          "homes": "Case"
         },
         "data_description": {
-          "known_hosts": "Adresele IP ale difuzoarelor și ecranelor pe care integrarea nu le poate găsi automat, de exemplu pentru că se află în altă rețea sau în alt VLAN."
+          "known_hosts": "Adresele IP ale difuzoarelor și ecranelor pe care integrarea nu le poate găsi automat, de exemplu pentru că se află în altă rețea sau în alt VLAN.",
+          "homes": "Difuzoarele și ecranele din casele pe care le debifezi nu sunt adăugate. Dacă debifezi o casă, dispozitivele ei și entitățile acestora sunt eliminate din Home Assistant, astfel că automatizările, scripturile și tablourile de bord care le folosesc nu mai funcționează. Bifează din nou casa pentru a le adăuga înapoi cu numele și spațiile pe care li le-ai dat."
         }
       }
     },
     "error": {
-      "known-host-not-ip": "Introdu doar adrese IP, cum ar fi 192.168.1.20."
+      "known-host-not-ip": "Introdu doar adrese IP, cum ar fi 192.168.1.20.",
+      "no-home-selected": "Alege cel puțin o casă."
     }
   },
   "services": {

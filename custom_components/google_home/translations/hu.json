@@ -32,29 +32,148 @@
         "data_description": {
           "master_token": "aas_et/ kezdetű"
         }
+      },
+      "homes": {
+        "title": "Otthonok kiválasztása",
+        "description": "Google-fiókja több otthon tagja. Válassza ki azokat az otthonokat, amelyek hangszóróit és kijelzőit hozzá szeretné adni. Ezt később az integráció opcióiban módosíthatja.",
+        "data": {
+          "homes": "Otthonok"
+        }
+      },
+      "reauth": {
+        "title": "Újbóli bejelentkezés",
+        "description": "A Google már nem fogadja el a mentett bejelentkezési adatokat ({name}). Jelentkezzen be újra ugyanabba a Google-fiókba: az eszközei, entitásai és automatizmusai változatlanok maradnak. Amíg ezt meg nem teszi, az eszközei entitásai elavult értékeket mutathatnak, vagy nem érhetők el.",
+        "menu_options": {
+          "browser": "Bejelentkezés böngészővel (ajánlott)",
+          "master_token": "Mestertoken"
+        },
+        "menu_option_descriptions": {
+          "browser": "Jelentkezzen be a Google-fiókjába egy számítógép böngészőjében, majd illesszen be egy cookie-t. A legtöbb fiókkal működik.",
+          "master_token": "Illesszen be egy már meglévő mestertokent."
+        }
+      },
+      "reauth_browser": {
+        "title": "Bejelentkezés böngészővel",
+        "description": "1. Számítógépen nyissa meg a {embedded_setup_url} címet a böngésző privát ablakában, például inkognitó ablakban, és jelentkezzen be ugyanabba a Google-fiókba. Az elfogadás után az oldal tovább töltődhet; ez normális.\n2. Nyissa meg a böngésző fejlesztői eszközeit, és keresse meg az `accounts.google.com` cookie-jait.\n3. Másolja ki az `oauth_token` cookie értékét, és azonnal illessze be alább. Néhány percen belül lejár, és csak egyszer használható.\n\nRészletes útmutató: {browser_docs_url}",
+        "data": {
+          "oauth_token": "oauth_token cookie"
+        },
+        "data_description": {
+          "oauth_token": "oauth2_4/ kezdetű"
+        }
+      },
+      "reauth_master_token": {
+        "title": "Mestertoken",
+        "description": "Illesszen be egy mestertokent ugyanahhoz a Google-fiókhoz, például egy másik eszközzel megszerzettet.",
+        "data": {
+          "master_token": "A Google-fiók mestertokenje"
+        },
+        "data_description": {
+          "master_token": "aas_et/ kezdetű"
+        }
       }
     },
     "error": {
       "oauth-token-invalid": "A Google nem fogadta el a cookie-t. Szerezzen be egy újat, és azonnal illessze be: néhány percen belül lejár, és csak egyszer használható. Másolja ki a teljes, oauth2_4/ kezdetű értéket.",
-      "master-token-invalid": "A mestertoken érvénytelen. Ellenőrizze, hogy a teljes tokent megadta-e, az aas_et/ előtaggal együtt.",
+      "master-token-invalid": "A Google nem fogadta el a mestertokent. Ellenőrizze, hogy helyesen másolta-e ki. Ha korábban működött, például amíg meg nem változtatta a Google-jelszavát, a Google már nem fogadja el: használja helyette a Bejelentkezés böngészővel lehetőséget.",
+      "google-rejected": "A Google nem fogadta el a bejelentkezést. A részletekért tekintse meg a Home Assistant naplóját.",
+      "google-unreachable": "Nem sikerült elérni a Google-t. Ellenőrizze, hogy a Home Assistant csatlakozik-e az internethez, majd próbálja újra.",
+      "google-busy": "A Google túlterhelt, vagy korlátozza a bejelentkezéseket. Várjon néhány percet, majd jelentkezzen be újra.",
       "oauth-token-format": "Ez nem az oauth_token cookie. Annak értéke oauth2_4/ kezdetű.",
-      "master-token-format": "A mestertoken aas_et/ kezdetű és 223 karakter hosszú. Másolja ki a teljes tokent."
+      "master-token-format": "A mestertoken aas_et/ kezdetű és 223 karakter hosszú. Másolja ki a teljes tokent.",
+      "other-account": "Egy másik Google-fiókba jelentkezett be, ezért semmi sem változott. Jelentkezzen be az integráció által használt fiókkal. Ha inkább azt a másik fiókot szeretné használni, törölje az integrációt, és adja hozzá újra.",
+      "no-home-selected": "Válasszon ki legalább egy otthont."
+    }
+  },
+  "entity": {
+    "button": {
+      "reboot": {
+        "name": "Újraindítás"
+      }
+    },
+    "number": {
+      "alarm_volume": {
+        "name": "Ébresztés hangereje"
+      }
+    },
+    "sensor": {
+      "alarms": {
+        "name": "Ébresztések"
+      },
+      "device": {
+        "name": "Eszköz"
+      },
+      "timers": {
+        "name": "Időzítők"
+      }
+    },
+    "switch": {
+      "do_not_disturb": {
+        "name": "Ne zavarjanak"
+      }
+    }
+  },
+  "exceptions": {
+    "alarms_and_timers_not_fetched": {
+      "message": "Nem sikerült lekérni a(z) {device} eszköz aktuális ébresztéseit és időzítőit, ezért semmi sem lett törölve erről az eszközről. Ellenőrizze, hogy az eszköz online van-e, és próbálja újra később."
+    },
+    "alarms_and_timers_not_fetched_from_devices": {
+      "message": "Nem sikerült lekérni a következő eszközök aktuális ébresztéseit és időzítőit: {devices}. Ezért semmi sem lett törölve ezekről az eszközökről. Ellenőrizze, hogy az eszközök online vannak-e, és próbálja újra később."
+    },
+    "alarms_and_timers_not_deleted": {
+      "message": "A(z) {device} eszköz nem erősítette meg az ébresztések vagy időzítők törlését, ezért azok továbbra is be lehetnek állítva. Ellenőrizze, hogy az eszköz online van-e, és próbálja újra később."
+    },
+    "alarms_and_timers_not_deleted_from_devices": {
+      "message": "Nem sikerült törölni az ébresztéseket vagy időzítőket a következő eszközökről, vagy megerősíteni a törlésüket: {devices}. Ellenőrizze, hogy az eszközök online vannak-e, és próbálja újra később."
+    },
+    "invalid_alarm_id": {
+      "message": "A(z) „{alarm_id}” nem ébresztésazonosító. Másolja ki az alarm/ kezdetű azonosítót az eszköz ébresztésérzékelőjének alarms attribútumából."
+    },
+    "invalid_timer_id": {
+      "message": "A(z) „{timer_id}” nem időzítőazonosító. Másolja ki a timer/ kezdetű azonosítót az eszköz időzítőérzékelőjének timers attribútumából."
+    },
+    "alarm_not_found": {
+      "message": "Nem található a(z) {alarm_id} ébresztés a kiválasztott eszközökön. Lehet, hogy már megszólalt vagy törölték."
+    },
+    "timer_not_found": {
+      "message": "Nem található a(z) {timer_id} időzítő a kiválasztott eszközökön. Lehet, hogy már lejárt vagy törölték."
+    },
+    "device_offline": {
+      "message": "Nem sikerült elérni a(z) {device} eszközt. Ellenőrizze, hogy be van-e kapcsolva, és csatlakozik-e a hálózathoz, majd próbálja újra."
+    },
+    "device_no_reply": {
+      "message": "A(z) {device} eszköz nem erősítette meg, hogy végrehajtotta a műveletet: nem válaszolt időben, vagy a válasza megszakadt. Ellenőrizze, hogy az eszköz online van-e, és próbálja újra."
+    },
+    "device_token_rejected": {
+      "message": "A(z) {device} eszköz elutasította a tokenjét, és egy új token lekérése a Google-tól nem segített. Az integráció továbbra is újat kér a Google-tól, ezért próbálja újra később."
+    },
+    "device_not_ready": {
+      "message": "A(z) {device} eszköz azt válaszolta: „nem található”. Lehet, hogy még indul, ezért próbálja újra később, vagy az is lehet, hogy nem támogatja ezt."
+    },
+    "device_request_failed": {
+      "message": "Nem sikerült végrehajtani a műveletet a(z) {device} eszközön. A részletekért tekintse meg a Home Assistant naplóját."
+    },
+    "devices_not_rebooted": {
+      "message": "A következő eszközök nem erősítették meg, hogy újraindulnak: {devices}. Ellenőrizze, hogy az eszközök online vannak-e, és próbálja újra később."
     }
   },
   "options": {
     "step": {
       "init": {
         "data": {
-          "update_interval": "Módosítsa a frissítési időközt. Növelje ezt az értéket, ha az eszközök nem válaszolnak időben. Alapértelmezett: 180 másodperc.",
-          "known_hosts": "Ismert hosztok"
+          "update_interval": "Módosítsa a frissítési időközt. Növelje ezt az értéket, ha az eszközök nem válaszolnak időben. Alapértelmezett: {default_interval} másodperc.",
+          "known_hosts": "Ismert hosztok",
+          "homes": "Otthonok"
         },
         "data_description": {
-          "known_hosts": "Azon hangszórók és kijelzők IP-címei, amelyeket az integráció nem talál meg automatikusan, például mert másik hálózaton vagy VLAN-on vannak."
+          "known_hosts": "Azon hangszórók és kijelzők IP-címei, amelyeket az integráció nem talál meg automatikusan, például mert másik hálózaton vagy VLAN-on vannak.",
+          "homes": "Azoknak az otthonoknak a hangszóróit és kijelzőit, amelyek kijelölését megszünteti, az integráció nem adja hozzá. Ha megszünteti egy otthon kijelölését, az otthon eszközei és azok entitásai törlődnek a Home Assistantból, így az ezeket használó automatizmusok, szkriptek és irányítópultok nem működnek tovább. Jelölje ki újra az otthont, és az eszközök visszakerülnek az Ön által adott nevekkel és területekkel."
         }
       }
     },
     "error": {
-      "known-host-not-ip": "Csak IP-címeket adjon meg, például: 192.168.1.20."
+      "known-host-not-ip": "Csak IP-címeket adjon meg, például: 192.168.1.20.",
+      "no-home-selected": "Válasszon ki legalább egy otthont."
     }
   },
   "services": {

@@ -16,18 +16,22 @@ import base64
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 from enum import StrEnum
+from http import HTTPStatus
 import logging
 import re
 import time
+from typing import Literal, cast
 
+from aiohttp import ClientError, ClientSession, ClientTimeout
+from aiohttp.client_exceptions import ContentTypeError
 from bluetooth_data_tools import get_cipher_for_irk, resolve_private_address
 
 from homeassistant.config_entries import ConfigSubentry
 from homeassistant.const import CONF_MAC
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from .api import GlocaltokensApiClient
 from .const import (
+    API_ENDPOINT_BLUETOOTH_RESULTS,
+    API_ENDPOINT_BLUETOOTH_SCAN,
     BLUETOOTH_MAX_RESULT_AGE,
     BLUETOOTH_MAX_SCAN_GAP,
     BLUETOOTH_MIN_RSSI,
@@ -35,14 +39,100 @@ from .const import (
     BLUETOOTH_SCAN_INTERVAL,
     BLUETOOTH_UNCERTAIN_LIMIT,
     CONF_IRK,
+    HEADER_CAST_LOCAL_AUTH,
+    HEADER_CONTENT_TYPE,
+    PORT,
+    TIMEOUT,
 )
-from .exceptions import BluetoothScanError, BluetoothScanUnsupported
+from .coordinator import GoogleAccountCoordinator
+from .device_info import create_url
 from .models import GoogleHomeDevice
-from .types import BluetoothJsonDict
+from .types import BluetoothJsonDict, JsonDict
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 IRK_LENGTH = 16
+
+
+class BluetoothScanError(Exception):
+    """Error to indicate a device didn't start a Bluetooth scan or return its results."""
+
+
+class BluetoothScanUnsupported(BluetoothScanError):
+    """Error to indicate a device has no Bluetooth scan endpoint."""
+
+
+async def async_start_bluetooth_scan(
+    session: ClientSession, device: GoogleHomeDevice
+) -> None:
+    """Start a Bluetooth scan that clears the results of the previous one.
+
+    The scan lasts until the next Bluetooth update reads its results.
+    """
+    await _async_bluetooth_request(
+        session,
+        "POST",
+        API_ENDPOINT_BLUETOOTH_SCAN,
+        device,
+        {"enable": True, "clear_results": True, "timeout": BLUETOOTH_SCAN_INTERVAL},
+    )
+
+
+async def async_get_bluetooth_scan_results(
+    session: ClientSession, device: GoogleHomeDevice
+) -> list[BluetoothJsonDict]:
+    """Return the Bluetooth devices the device heard since its scan started."""
+    response = await _async_bluetooth_request(
+        session, "GET", API_ENDPOINT_BLUETOOTH_RESULTS, device
+    )
+    if not isinstance(response, list):
+        raise BluetoothScanError(f"{device.name} returned no list of results")
+    return [
+        {"mac_address": result["mac_address"], "rssi": result["rssi"]}
+        for result in cast(list[object], response)
+        if isinstance(result, dict)
+        and isinstance(result.get("mac_address"), str)
+        and isinstance(result.get("rssi"), int)
+    ]
+
+
+async def _async_bluetooth_request(
+    session: ClientSession,
+    method: Literal["GET", "POST"],
+    endpoint: str,
+    device: GoogleHomeDevice,
+    data: JsonDict | None = None,
+) -> object:
+    """Send a Bluetooth request and return its JSON response.
+
+    Unlike the client's requests, a failure leaves the device's availability alone
+    and raises instead of logging, as Bluetooth updates run every 30 seconds.
+    """
+    if not device.ip_address or not device.auth_token:
+        raise BluetoothScanError(f"{device.name} has no IP address or auth token")
+    url = create_url(device.ip_address, PORT, endpoint)
+    headers = {
+        HEADER_CAST_LOCAL_AUTH: device.auth_token,
+        HEADER_CONTENT_TYPE: "application/json",
+    }
+    try:
+        async with session.request(
+            method,
+            url,
+            json=data,
+            headers=headers,
+            timeout=ClientTimeout(total=TIMEOUT),
+        ) as response:
+            if response.status == HTTPStatus.NOT_FOUND:
+                raise BluetoothScanUnsupported(f"{device.name} returned 404")
+            if response.status != HTTPStatus.OK:
+                raise BluetoothScanError(f"{device.name} returned {response.status}")
+            try:
+                return cast(object, await response.json())
+            except ContentTypeError:
+                return None
+    except (ClientError, TimeoutError, ValueError) as err:
+        raise BluetoothScanError(f"{device.name} didn't answer: {err!r}") from err
 
 
 class TrackerState(StrEnum):
@@ -140,15 +230,15 @@ class BluetoothScanner:
 
     def __init__(
         self,
-        client: GlocaltokensApiClient,
-        coordinator: DataUpdateCoordinator[list[GoogleHomeDevice]],
+        session: ClientSession,
+        account: GoogleAccountCoordinator,
         subentries: Iterable[ConfigSubentry],
         excluded: Iterable[str],
         clock: Callable[[], float] = time.monotonic,
     ) -> None:
-        """Create a scanner for the tracked devices, using the coordinator's speakers."""
-        self._client = client
-        self._coordinator = coordinator
+        """Create a scanner for the tracked devices, using the devices Google lists."""
+        self._session = session
+        self._account = account
         self.tracked = [TrackedDevice(subentry) for subentry in subentries]
         self._excluded = set(excluded)
         self._clock = clock
@@ -182,7 +272,7 @@ class BluetoothScanner:
         has returned scan results, it keeps counting while Google lists it, even
         if it stops answering.
         """
-        devices = {device.device_id: device for device in self._coordinator.data or []}
+        devices = dict(self._account.data or {})
         for device_id in list(self._speakers):
             if device_id not in devices:
                 del self._speakers[device_id]
@@ -217,7 +307,7 @@ class BluetoothScanner:
             speaker.run_start = None
         else:
             try:
-                results = await self._client.async_get_bluetooth_scan_results(device)
+                results = await async_get_bluetooth_scan_results(self._session, device)
             except BluetoothScanUnsupported:
                 self._mark_unsupported(device_id, speaker)
                 return
@@ -229,7 +319,7 @@ class BluetoothScanner:
                 self._read_scan(speaker, start, results)
         start = self._clock()
         try:
-            await self._client.async_start_bluetooth_scan(device)
+            await async_start_bluetooth_scan(self._session, device)
         except BluetoothScanUnsupported:
             self._mark_unsupported(device_id, speaker)
         except BluetoothScanError as err:

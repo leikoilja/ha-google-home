@@ -32,29 +32,148 @@
         "data_description": {
           "master_token": "Comença per aas_et/"
         }
+      },
+      "homes": {
+        "title": "Tria les llars",
+        "description": "El teu compte de Google és membre de diverses llars. Tria les llars de les quals vols afegir els altaveus i les pantalles. Pots canviar-ho més endavant a les opcions de la integració.",
+        "data": {
+          "homes": "Llars"
+        }
+      },
+      "reauth": {
+        "title": "Torna a iniciar la sessió",
+        "description": "Google ja no accepta les dades d'inici de sessió desades per a {name}. Torna a iniciar la sessió al mateix compte de Google: els teus dispositius, entitats i automatitzacions es mantenen tal com estan. Fins que no ho facis, les entitats dels teus dispositius poden mostrar valors desactualitzats o no estar disponibles.",
+        "menu_options": {
+          "browser": "Inici de sessió amb el navegador (recomanat)",
+          "master_token": "Testimoni mestre"
+        },
+        "menu_option_descriptions": {
+          "browser": "Inicia la sessió a Google en un navegador d'ordinador i després enganxa una galeta. Funciona amb la majoria de comptes.",
+          "master_token": "Enganxa un testimoni mestre que ja tinguis."
+        }
+      },
+      "reauth_browser": {
+        "title": "Inici de sessió amb el navegador",
+        "description": "1. En un ordinador, obre {embedded_setup_url} en una finestra de navegació privada i inicia la sessió al mateix compte de Google. Després d'acceptar, és possible que la pàgina continuï carregant; és normal.\n2. Obre les eines per a desenvolupadors del navegador i cerca les galetes de `accounts.google.com`.\n3. Copia el valor de la galeta `oauth_token` i enganxa'l a continuació immediatament. Caduca en pocs minuts i només funciona una vegada.\n\nInstruccions pas a pas (en anglès): {browser_docs_url}",
+        "data": {
+          "oauth_token": "Galeta oauth_token"
+        },
+        "data_description": {
+          "oauth_token": "Comença per oauth2_4/"
+        }
+      },
+      "reauth_master_token": {
+        "title": "Testimoni mestre",
+        "description": "Enganxa un testimoni mestre del mateix compte de Google, per exemple un que hagis obtingut amb una altra eina.",
+        "data": {
+          "master_token": "Testimoni mestre de Google"
+        },
+        "data_description": {
+          "master_token": "Comença per aas_et/"
+        }
       }
     },
     "error": {
       "oauth-token-invalid": "Google no ha acceptat la galeta. Obtén-ne una de nova i enganxa-la immediatament: caduca en pocs minuts i només funciona una vegada. Copia el valor sencer, que comença per oauth2_4/.",
-      "master-token-invalid": "El testimoni mestre no és vàlid. Assegura't que has introduït el testimoni complet (inclòs 'aas_et/')",
+      "master-token-invalid": "Google no ha acceptat el testimoni mestre. Comprova que l'has copiat correctament. Si abans funcionava, per exemple fins que vas canviar la contrasenya de Google, Google ja no l'accepta: en lloc d'això, fes servir l'inici de sessió amb el navegador.",
+      "google-rejected": "Google no ha acceptat l'inici de sessió. Per veure'n els detalls, consulta els registres de Home Assistant.",
+      "google-unreachable": "No s'ha pogut connectar amb Google. Comprova que Home Assistant estigui connectat a Internet i torna-ho a provar.",
+      "google-busy": "Google està ocupat o està limitant els inicis de sessió. Espera uns minuts i torna a iniciar la sessió.",
       "oauth-token-format": "Aquesta no és la galeta oauth_token. El seu valor comença per oauth2_4/.",
-      "master-token-format": "Un testimoni mestre comença per aas_et/ i té 223 caràcters. Copia el testimoni sencer."
+      "master-token-format": "Un testimoni mestre comença per aas_et/ i té 223 caràcters. Copia el testimoni sencer.",
+      "other-account": "Has iniciat la sessió en un altre compte de Google, de manera que no s'ha canviat res. Inicia la sessió amb el compte que fa servir aquesta integració. Per fer servir aquest altre compte, elimina la integració i torna-la a afegir.",
+      "no-home-selected": "Tria almenys una llar."
+    }
+  },
+  "entity": {
+    "button": {
+      "reboot": {
+        "name": "Reinicia"
+      }
+    },
+    "number": {
+      "alarm_volume": {
+        "name": "Volum de l'alarma"
+      }
+    },
+    "sensor": {
+      "alarms": {
+        "name": "Alarmes"
+      },
+      "device": {
+        "name": "Dispositiu"
+      },
+      "timers": {
+        "name": "Temporitzadors"
+      }
+    },
+    "switch": {
+      "do_not_disturb": {
+        "name": "No molestis"
+      }
+    }
+  },
+  "exceptions": {
+    "alarms_and_timers_not_fetched": {
+      "message": "No s'han pogut obtenir les alarmes i els temporitzadors actuals de {device}, de manera que no s'ha eliminat res d'aquest dispositiu. Comprova que estigui en línia i torna-ho a provar més tard."
+    },
+    "alarms_and_timers_not_fetched_from_devices": {
+      "message": "No s'han pogut obtenir les alarmes i els temporitzadors actuals d'aquests dispositius, de manera que no se n'ha eliminat res: {devices}. Comprova que estiguin en línia i torna-ho a provar més tard."
+    },
+    "alarms_and_timers_not_deleted": {
+      "message": "{device} no ha confirmat l'eliminació de les alarmes o els temporitzadors, de manera que encara poden estar configurats. Comprova que estigui en línia i torna-ho a provar més tard."
+    },
+    "alarms_and_timers_not_deleted_from_devices": {
+      "message": "No s'han pogut eliminar les alarmes o els temporitzadors d'aquests dispositius, o confirmar que s'hagin eliminat: {devices}. Comprova que estiguin en línia i torna-ho a provar més tard."
+    },
+    "invalid_alarm_id": {
+      "message": "«{alarm_id}» no és un ID d'alarma. Copia l'ID, que comença per alarm/, de l'atribut alarms del sensor d'alarmes del dispositiu."
+    },
+    "invalid_timer_id": {
+      "message": "«{timer_id}» no és un ID de temporitzador. Copia l'ID, que comença per timer/, de l'atribut timers del sensor de temporitzadors del dispositiu."
+    },
+    "alarm_not_found": {
+      "message": "No s'ha pogut trobar l'alarma {alarm_id} als dispositius seleccionats. Pot ser que ja hagi sonat o s'hagi eliminat."
+    },
+    "timer_not_found": {
+      "message": "No s'ha pogut trobar el temporitzador {timer_id} als dispositius seleccionats. Pot ser que ja hagi acabat o s'hagi eliminat."
+    },
+    "device_offline": {
+      "message": "No s'ha pogut connectar amb {device}. Comprova que estigui encès i connectat a la xarxa, i torna-ho a provar."
+    },
+    "device_no_reply": {
+      "message": "{device} no ha confirmat que ho hagi fet: no ha respost a temps, o la resposta s'ha tallat. Comprova que estigui en línia i torna-ho a provar."
+    },
+    "device_token_rejected": {
+      "message": "{device} ha rebutjat el seu testimoni, i obtenir-ne un altre de Google no ha servit de res. La integració continua demanant-ne un de nou a Google, així que torna-ho a provar més tard."
+    },
+    "device_not_ready": {
+      "message": "{device} ha respost «no s'ha trobat». És possible que encara s'estigui iniciant, així que torna-ho a provar més tard, o que no admeti aquesta acció."
+    },
+    "device_request_failed": {
+      "message": "No s'ha pogut dur a terme l'acció a {device}. Per veure'n els detalls, consulta els registres de Home Assistant."
+    },
+    "devices_not_rebooted": {
+      "message": "Aquests dispositius no han confirmat que es reiniciaran: {devices}. Comprova que estiguin en línia i torna-ho a provar més tard."
     }
   },
   "options": {
     "step": {
       "init": {
         "data": {
-          "update_interval": "Canvia l'interval d'actualització. Augmenta'l si els dispositius sovint no responen a temps. Valor per defecte: 180 (segons)",
-          "known_hosts": "Amfitrions coneguts"
+          "update_interval": "Canvia l'interval d'actualització. Augmenta'l si els dispositius sovint no responen a temps. Valor per defecte: {default_interval} (segons)",
+          "known_hosts": "Amfitrions coneguts",
+          "homes": "Llars"
         },
         "data_description": {
-          "known_hosts": "Adreces IP d'altaveus i pantalles que la integració no pot trobar per si mateixa, per exemple perquè són en una altra xarxa o VLAN."
+          "known_hosts": "Adreces IP d'altaveus i pantalles que la integració no pot trobar per si mateixa, per exemple perquè són en una altra xarxa o VLAN.",
+          "homes": "No s'afegeixen els altaveus ni les pantalles de les llars que desmarquis. Si desmarques una llar, els seus dispositius i les entitats d'aquests s'eliminen de Home Assistant, de manera que les automatitzacions, els scripts i els panells que els utilitzen deixen de funcionar. Torna a marcar la llar per tornar-los a afegir amb els noms i les àrees que els vas donar."
         }
       }
     },
     "error": {
-      "known-host-not-ip": "Introdueix només adreces IP, com ara 192.168.1.20."
+      "known-host-not-ip": "Introdueix només adreces IP, com ara 192.168.1.20.",
+      "no-home-selected": "Tria almenys una llar."
     }
   },
   "services": {

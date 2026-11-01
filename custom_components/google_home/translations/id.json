@@ -32,29 +32,148 @@
         "data_description": {
           "master_token": "Diawali dengan aas_et/"
         }
+      },
+      "homes": {
+        "title": "Pilih rumah",
+        "description": "Akun Google Anda adalah anggota beberapa rumah. Pilih rumah yang speaker dan layarnya ingin ditambahkan. Anda dapat mengubahnya nanti di opsi integrasi.",
+        "data": {
+          "homes": "Rumah"
+        }
+      },
+      "reauth": {
+        "title": "Login ulang",
+        "description": "Google tidak lagi menerima data login yang tersimpan untuk {name}. Login ulang ke akun Google yang sama: perangkat, entitas, dan otomasi Anda tetap seperti semula. Sebelum Anda melakukannya, entitas perangkat Anda mungkin menampilkan nilai yang tidak terbaru atau menjadi tidak tersedia.",
+        "menu_options": {
+          "browser": "Login melalui browser (direkomendasikan)",
+          "master_token": "Token master"
+        },
+        "menu_option_descriptions": {
+          "browser": "Login ke Google melalui browser di komputer, lalu tempelkan cookie. Berfungsi untuk sebagian besar akun.",
+          "master_token": "Tempelkan token master yang sudah Anda miliki."
+        }
+      },
+      "reauth_browser": {
+        "title": "Login melalui browser",
+        "description": "1. Di komputer, buka {embedded_setup_url} di jendela penjelajahan pribadi browser, misalnya jendela Samaran, lalu login ke akun Google yang sama. Setelah Anda menyetujui, halaman mungkin terus memuat; ini normal.\n2. Buka alat developer browser dan cari cookie untuk `accounts.google.com`.\n3. Salin nilai cookie `oauth_token` dan segera tempelkan di bawah. Nilai ini kedaluwarsa dalam beberapa menit dan hanya dapat digunakan sekali.\n\nPetunjuk langkah demi langkah: {browser_docs_url}",
+        "data": {
+          "oauth_token": "Cookie oauth_token"
+        },
+        "data_description": {
+          "oauth_token": "Diawali dengan oauth2_4/"
+        }
+      },
+      "reauth_master_token": {
+        "title": "Token master",
+        "description": "Tempelkan token master untuk akun Google yang sama, misalnya token yang Anda peroleh dengan alat lain.",
+        "data": {
+          "master_token": "Token master akun Google"
+        },
+        "data_description": {
+          "master_token": "Diawali dengan aas_et/"
+        }
       }
     },
     "error": {
       "oauth-token-invalid": "Google tidak menerima cookie tersebut. Dapatkan cookie baru dan segera tempelkan: cookie kedaluwarsa dalam beberapa menit dan hanya dapat digunakan sekali. Salin seluruh nilai yang diawali dengan oauth2_4/.",
-      "master-token-invalid": "Token master tidak valid. Pastikan Anda telah memasukkan token lengkap, termasuk aas_et/.",
+      "master-token-invalid": "Google tidak menerima token master tersebut. Pastikan Anda menyalinnya dengan benar. Jika sebelumnya token berfungsi, misalnya hingga Anda mengubah sandi Google, Google tidak lagi menerimanya: gunakan login melalui browser sebagai gantinya.",
+      "google-rejected": "Google tidak menerima login tersebut. Untuk detailnya, lihat log Home Assistant.",
+      "google-unreachable": "Tidak dapat terhubung ke Google. Pastikan Home Assistant terhubung ke internet, lalu coba lagi.",
+      "google-busy": "Google sedang sibuk atau membatasi login. Tunggu beberapa menit, lalu login ulang.",
       "oauth-token-format": "Ini bukan cookie oauth_token. Nilainya diawali dengan oauth2_4/.",
-      "master-token-format": "Token master diawali dengan aas_et/ dan panjangnya 223 karakter. Salin seluruh token."
+      "master-token-format": "Token master diawali dengan aas_et/ dan panjangnya 223 karakter. Salin seluruh token.",
+      "other-account": "Anda login ke akun Google yang berbeda, sehingga tidak ada yang diubah. Login dengan akun yang digunakan integrasi ini. Untuk menggunakan akun lain tersebut, hapus integrasi lalu tambahkan kembali.",
+      "no-home-selected": "Pilih minimal satu rumah."
+    }
+  },
+  "entity": {
+    "button": {
+      "reboot": {
+        "name": "Mulai ulang"
+      }
+    },
+    "number": {
+      "alarm_volume": {
+        "name": "Volume alarm"
+      }
+    },
+    "sensor": {
+      "alarms": {
+        "name": "Alarm"
+      },
+      "device": {
+        "name": "Perangkat"
+      },
+      "timers": {
+        "name": "Timer"
+      }
+    },
+    "switch": {
+      "do_not_disturb": {
+        "name": "Jangan ganggu"
+      }
+    }
+  },
+  "exceptions": {
+    "alarms_and_timers_not_fetched": {
+      "message": "Tidak dapat mengambil alarm dan timer saat ini dari perangkat {device}, sehingga tidak ada yang dihapus dari perangkat tersebut. Pastikan perangkat online dan coba lagi nanti."
+    },
+    "alarms_and_timers_not_fetched_from_devices": {
+      "message": "Tidak dapat mengambil alarm dan timer saat ini dari perangkat berikut, sehingga tidak ada yang dihapus dari perangkat tersebut: {devices}. Pastikan semuanya online dan coba lagi nanti."
+    },
+    "alarms_and_timers_not_deleted": {
+      "message": "Perangkat {device} tidak mengonfirmasi penghapusan alarm atau timer, sehingga alarm atau timer tersebut mungkin masih disetel. Pastikan perangkat online dan coba lagi nanti."
+    },
+    "alarms_and_timers_not_deleted_from_devices": {
+      "message": "Tidak dapat menghapus alarm atau timer dari perangkat berikut, atau mengonfirmasi bahwa alarm atau timer tersebut telah dihapus: {devices}. Pastikan semuanya online dan coba lagi nanti."
+    },
+    "invalid_alarm_id": {
+      "message": "“{alarm_id}” bukan ID alarm. Salin ID yang diawali dengan alarm/ dari atribut alarms pada sensor alarm perangkat."
+    },
+    "invalid_timer_id": {
+      "message": "“{timer_id}” bukan ID timer. Salin ID yang diawali dengan timer/ dari atribut timers pada sensor timer perangkat."
+    },
+    "alarm_not_found": {
+      "message": "Tidak dapat menemukan alarm {alarm_id} di perangkat yang Anda pilih. Alarm mungkin sudah berbunyi atau dihapus."
+    },
+    "timer_not_found": {
+      "message": "Tidak dapat menemukan timer {timer_id} di perangkat yang Anda pilih. Timer mungkin sudah berakhir atau dihapus."
+    },
+    "device_offline": {
+      "message": "Tidak dapat terhubung ke perangkat {device}. Pastikan perangkat menyala dan terhubung ke jaringan Anda, lalu coba lagi."
+    },
+    "device_no_reply": {
+      "message": "Perangkat {device} tidak mengonfirmasi bahwa tindakan ini sudah dilakukan: perangkat tidak merespons tepat waktu, atau responsnya terputus. Pastikan perangkat online dan coba lagi."
+    },
+    "device_token_rejected": {
+      "message": "Perangkat {device} menolak tokennya, dan mendapatkan token baru dari Google tidak membantu. Integrasi terus meminta token baru dari Google, jadi coba lagi nanti."
+    },
+    "device_not_ready": {
+      "message": "Perangkat {device} merespons “tidak ditemukan”. Perangkat mungkin masih dalam proses penyalaan, jadi coba lagi nanti, atau mungkin tidak mendukung tindakan ini."
+    },
+    "device_request_failed": {
+      "message": "Tidak dapat melakukan tindakan ini di perangkat {device}. Untuk detailnya, lihat log Home Assistant."
+    },
+    "devices_not_rebooted": {
+      "message": "Perangkat berikut tidak mengonfirmasi bahwa perangkat tersebut akan dimulai ulang: {devices}. Pastikan semuanya online dan coba lagi nanti."
     }
   },
   "options": {
     "step": {
       "init": {
         "data": {
-          "update_interval": "Ubah interval pembaruan. Tingkatkan nilai ini jika perangkat Anda tidak merespons tepat waktu. Nilai default: 180 detik.",
-          "known_hosts": "Host yang dikenal"
+          "update_interval": "Ubah interval pembaruan. Tingkatkan nilai ini jika perangkat Anda tidak merespons tepat waktu. Nilai default: {default_interval} detik.",
+          "known_hosts": "Host yang dikenal",
+          "homes": "Rumah"
         },
         "data_description": {
-          "known_hosts": "Alamat IP speaker dan layar yang tidak dapat ditemukan secara otomatis oleh integrasi, misalnya karena berada di jaringan atau VLAN lain."
+          "known_hosts": "Alamat IP speaker dan layar yang tidak dapat ditemukan secara otomatis oleh integrasi, misalnya karena berada di jaringan atau VLAN lain.",
+          "homes": "Speaker dan layar di rumah yang pilihannya Anda batalkan tidak ditambahkan. Membatalkan pilihan rumah akan menghapus perangkat rumah tersebut beserta entitasnya dari Home Assistant, sehingga otomasi, skrip, dan dasbor yang menggunakannya berhenti berfungsi. Pilih kembali rumah tersebut untuk menambahkan perangkatnya lagi dengan nama dan area yang telah Anda berikan."
         }
       }
     },
     "error": {
-      "known-host-not-ip": "Masukkan hanya alamat IP, seperti 192.168.1.20."
+      "known-host-not-ip": "Masukkan hanya alamat IP, seperti 192.168.1.20.",
+      "no-home-selected": "Pilih minimal satu rumah."
     }
   },
   "services": {

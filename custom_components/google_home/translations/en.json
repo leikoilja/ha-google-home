@@ -32,13 +32,129 @@
         "data_description": {
           "master_token": "Starts with aas_et/"
         }
+      },
+      "homes": {
+        "title": "Choose homes",
+        "description": "Your Google account is a member of several homes. Choose the homes whose speakers and displays to add. You can change this later in the integration's options.",
+        "data": {
+          "homes": "Homes"
+        }
+      },
+      "reauth": {
+        "title": "Sign in again",
+        "description": "Google no longer accepts the sign-in saved for {name}. Sign in to the same Google account again: your devices, entities and automations stay as they are. Until you do, your devices' entities can show out-of-date values or be unavailable.",
+        "menu_options": {
+          "browser": "Browser sign-in (recommended)",
+          "master_token": "Master token"
+        },
+        "menu_option_descriptions": {
+          "browser": "Sign in to Google in a desktop browser, then paste a cookie. Works for most accounts.",
+          "master_token": "Paste a master token you already have."
+        }
+      },
+      "reauth_browser": {
+        "title": "Browser sign-in",
+        "description": "1. On a computer, open {embedded_setup_url} in a private browser window and sign in to the same Google account. After you accept, the page may keep loading; that is expected.\n2. Open the browser's developer tools and find the cookies for `accounts.google.com`.\n3. Copy the value of the `oauth_token` cookie and paste it below straight away. It expires within minutes and works only once.\n\nStep-by-step instructions: {browser_docs_url}",
+        "data": {
+          "oauth_token": "oauth_token cookie"
+        },
+        "data_description": {
+          "oauth_token": "Starts with oauth2_4/"
+        }
+      },
+      "reauth_master_token": {
+        "title": "Master token",
+        "description": "Paste a master token for the same Google account, for example one that you got with another tool.",
+        "data": {
+          "master_token": "Google account master token"
+        },
+        "data_description": {
+          "master_token": "Starts with aas_et/"
+        }
       }
     },
     "error": {
       "oauth-token-invalid": "Google didn't accept the cookie. Get a new one and paste it straight away: it expires within minutes and works only once. Copy the whole value, starting with oauth2_4/.",
-      "master-token-invalid": "Master token invalid. Make sure that the full token has been specified (including 'aas_et/')",
+      "master-token-invalid": "Google didn't accept the master token. Check that you copied it correctly. If it worked before, for example until you changed your Google password, Google no longer accepts it: use browser sign-in instead.",
+      "google-rejected": "Google didn't accept the sign-in. For details, see the Home Assistant log.",
+      "google-unreachable": "Couldn't reach Google. Check that Home Assistant is connected to the internet, then try again.",
+      "google-busy": "Google is busy or is limiting sign-ins. Wait a few minutes, then sign in again.",
       "oauth-token-format": "This isn't the oauth_token cookie. Its value starts with oauth2_4/.",
-      "master-token-format": "A master token starts with aas_et/ and is 223 characters long. Copy the whole token."
+      "master-token-format": "A master token starts with aas_et/ and is 223 characters long. Copy the whole token.",
+      "other-account": "You signed in to a different Google account, so nothing was changed. Sign in with the account this integration uses. To use the other account instead, delete the integration and add it again.",
+      "no-home-selected": "Choose at least one home."
+    }
+  },
+  "entity": {
+    "button": {
+      "reboot": {
+        "name": "Reboot"
+      }
+    },
+    "number": {
+      "alarm_volume": {
+        "name": "Alarm volume"
+      }
+    },
+    "sensor": {
+      "alarms": {
+        "name": "Alarms"
+      },
+      "device": {
+        "name": "Device"
+      },
+      "timers": {
+        "name": "Timers"
+      }
+    },
+    "switch": {
+      "do_not_disturb": {
+        "name": "Do Not Disturb"
+      }
+    }
+  },
+  "exceptions": {
+    "alarms_and_timers_not_fetched": {
+      "message": "Couldn't get the current alarms and timers from {device}, so nothing was deleted from it. Check that it's online and try again later."
+    },
+    "alarms_and_timers_not_fetched_from_devices": {
+      "message": "Couldn't get the current alarms and timers from these devices, so nothing was deleted from them: {devices}. Check that they're online and try again later."
+    },
+    "alarms_and_timers_not_deleted": {
+      "message": "{device} didn't confirm deleting the alarms or timers, so they may still be set. Check that it's online and try again later."
+    },
+    "alarms_and_timers_not_deleted_from_devices": {
+      "message": "Couldn't delete alarms or timers from these devices, or confirm that they were deleted: {devices}. Check that they're online and try again later."
+    },
+    "invalid_alarm_id": {
+      "message": "“{alarm_id}” isn't an alarm ID. Copy the ID, which starts with alarm/, from the alarms attribute of the device's alarms sensor."
+    },
+    "invalid_timer_id": {
+      "message": "“{timer_id}” isn't a timer ID. Copy the ID, which starts with timer/, from the timers attribute of the device's timers sensor."
+    },
+    "alarm_not_found": {
+      "message": "Couldn't find the alarm {alarm_id} on the devices you targeted. It may already have gone off or been deleted."
+    },
+    "timer_not_found": {
+      "message": "Couldn't find the timer {timer_id} on the devices you targeted. It may already have gone off or been deleted."
+    },
+    "device_offline": {
+      "message": "Couldn't reach {device}. Check that it's on and connected to your network, then try again."
+    },
+    "device_no_reply": {
+      "message": "{device} didn't confirm that it did this: it didn't answer in time, or its answer was cut off. Check that it's online and try again."
+    },
+    "device_token_rejected": {
+      "message": "{device} rejected its token, and getting a new one from Google didn't help. The integration keeps asking Google for one, so try again later."
+    },
+    "device_not_ready": {
+      "message": "{device} answered “not found”. It may still be starting up, so try again later, or it may not support this."
+    },
+    "device_request_failed": {
+      "message": "Couldn't do this on {device}. For details, see the Home Assistant log."
+    },
+    "devices_not_rebooted": {
+      "message": "These devices didn't confirm that they'll reboot: {devices}. Check that they're online and try again later."
     }
   },
   "config_subentries": {
@@ -79,20 +195,23 @@
     "step": {
       "init": {
         "data": {
-          "update_interval": "Change the update interval. Increase this if your devices do not respond in time. Default: 180 (seconds)",
+          "update_interval": "Change the update interval. Increase this if your devices do not respond in time. Default: {default_interval} (seconds)",
           "known_hosts": "Known hosts",
+          "homes": "Homes",
           "bluetooth_tracking": "Bluetooth tracking",
           "bluetooth_excluded_speakers": "Speakers not used for Bluetooth tracking"
         },
         "data_description": {
           "known_hosts": "IP addresses of speakers and displays that the integration can't find on its own, for example because they're on another network or VLAN.",
+          "homes": "Speakers and displays in homes you deselect aren't added. Deselecting a home removes its devices and their entities from Home Assistant, so automations, scripts and dashboards that use them stop working. Select the home again to add them back with the names and areas you gave them.",
           "bluetooth_tracking": "Use your speakers to tell whether your phone or other Bluetooth devices are home. After turning it on, add the devices to track with Add Bluetooth device on the integration's page. While it's off, the integration sends no Bluetooth requests to your speakers.",
           "bluetooth_excluded_speakers": "Speakers that don't scan for Bluetooth devices. Add a speaker that's unplugged or out of service: while a speaker doesn't answer, trackers can't show away."
         }
       }
     },
     "error": {
-      "known-host-not-ip": "Enter IP addresses only, such as 192.168.1.20."
+      "known-host-not-ip": "Enter IP addresses only, such as 192.168.1.20.",
+      "no-home-selected": "Choose at least one home."
     }
   },
   "services": {

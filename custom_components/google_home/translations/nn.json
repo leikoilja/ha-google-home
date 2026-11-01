@@ -32,29 +32,148 @@
         "data_description": {
           "master_token": "Byrjar med aas_et/"
         }
+      },
+      "homes": {
+        "title": "Vel heimar",
+        "description": "Google-kontoen din er medlem av fleire heimar. Vel heimane du vil leggje til høgtalarar og skjermar frå. Du kan endre dette seinare i innstillingane for integrasjonen.",
+        "data": {
+          "homes": "Heimar"
+        }
+      },
+      "reauth": {
+        "title": "Logg på igjen",
+        "description": "Google godtek ikkje lenger den lagra pålogginga for {name}. Logg på den same Google-kontoen igjen: einingane, entitetane og automatiseringane dine blir verande som dei er. Fram til du gjer det, kan entitetane til einingane dine vise utdaterte verdiar eller vere utilgjengelege.",
+        "menu_options": {
+          "browser": "Pålogging i nettlesaren (tilrådd)",
+          "master_token": "Master token"
+        },
+        "menu_option_descriptions": {
+          "browser": "Logg på Google i ein nettlesar på ei datamaskin, og lim deretter inn ein informasjonskapsel. Fungerer for dei fleste kontoane.",
+          "master_token": "Lim inn eit master token du allereie har."
+        }
+      },
+      "reauth_browser": {
+        "title": "Pålogging i nettlesaren",
+        "description": "1. Opne {embedded_setup_url} i eit privat nettlesarvindauge på ei datamaskin, og logg på den same Google-kontoen. Etter at du har godteke, kan sida halde fram med å laste; det er venta.\n2. Opne utviklarverktøya i nettlesaren, og finn informasjonskapslane for `accounts.google.com`.\n3. Kopier verdien til informasjonskapselen `oauth_token`, og lim han inn nedanfor med ein gong. Han er berre gyldig i nokre minutt og fungerer berre éin gong.\n\nRettleiing steg for steg: {browser_docs_url}",
+        "data": {
+          "oauth_token": "Informasjonskapselen oauth_token"
+        },
+        "data_description": {
+          "oauth_token": "Byrjar med oauth2_4/"
+        }
+      },
+      "reauth_master_token": {
+        "title": "Master token",
+        "description": "Lim inn eit master token for den same Google-kontoen, til dømes eit du har fått med eit anna verktøy.",
+        "data": {
+          "master_token": "Master token for Google-kontoen"
+        },
+        "data_description": {
+          "master_token": "Byrjar med aas_et/"
+        }
       }
     },
     "error": {
       "oauth-token-invalid": "Google godtok ikkje informasjonskapselen. Hent ein ny, og lim han inn med ein gong: han er berre gyldig i nokre minutt og fungerer berre éin gong. Kopier heile verdien, som byrjar med oauth2_4/.",
-      "master-token-invalid": "Master token er ugyldig. Kontroller at heile tokenet er gitt (inkludert 'aas_et/')",
+      "master-token-invalid": "Google godtok ikkje master tokenet. Kontroller at du har kopiert det rett. Om det fungerte før, til dømes fram til du endra Google-passordet ditt, godtek ikkje Google det lenger: bruk pålogging i nettlesaren i staden.",
+      "google-rejected": "Google godtok ikkje pålogginga. Sjå Home Assistant-loggane for detaljar.",
+      "google-unreachable": "Klarte ikkje å nå Google. Kontroller at Home Assistant er kopla til internett, og prøv deretter igjen.",
+      "google-busy": "Google har stor pågang eller avgrensar påloggingar. Vent nokre minutt, og logg deretter på igjen.",
       "oauth-token-format": "Dette er ikkje informasjonskapselen oauth_token. Verdien byrjar med oauth2_4/.",
-      "master-token-format": "Eit master token byrjar med aas_et/ og er 223 teikn langt. Kopier heile tokenet."
+      "master-token-format": "Eit master token byrjar med aas_et/ og er 223 teikn langt. Kopier heile tokenet.",
+      "other-account": "Du logga på ein annan Google-konto, så ingenting vart endra. Logg på med kontoen som denne integrasjonen brukar. For å bruke den andre kontoen i staden, slett integrasjonen og legg han til på nytt.",
+      "no-home-selected": "Vel minst éin heim."
+    }
+  },
+  "entity": {
+    "button": {
+      "reboot": {
+        "name": "Start på nytt"
+      }
+    },
+    "number": {
+      "alarm_volume": {
+        "name": "Alarmvolum"
+      }
+    },
+    "sensor": {
+      "alarms": {
+        "name": "Alarmar"
+      },
+      "device": {
+        "name": "Eining"
+      },
+      "timers": {
+        "name": "Tidtakarar"
+      }
+    },
+    "switch": {
+      "do_not_disturb": {
+        "name": "Ikkje forstyrr"
+      }
+    }
+  },
+  "exceptions": {
+    "alarms_and_timers_not_fetched": {
+      "message": "Klarte ikkje å hente gjeldande alarmar og tidtakarar frå {device}, så ingenting vart sletta frå denne eininga. Kontroller at eininga er på nett, og prøv igjen seinare."
+    },
+    "alarms_and_timers_not_fetched_from_devices": {
+      "message": "Klarte ikkje å hente gjeldande alarmar og tidtakarar frå desse einingane, så ingenting vart sletta frå dei: {devices}. Kontroller at einingane er på nett, og prøv igjen seinare."
+    },
+    "alarms_and_timers_not_deleted": {
+      "message": "{device} stadfesta ikkje sletting av alarmane eller tidtakarane, så dei kan framleis vere stilte inn. Kontroller at eininga er på nett, og prøv igjen seinare."
+    },
+    "alarms_and_timers_not_deleted_from_devices": {
+      "message": "Klarte ikkje å slette alarmar eller tidtakarar frå desse einingane, eller stadfeste at dei vart sletta: {devices}. Kontroller at einingane er på nett, og prøv igjen seinare."
+    },
+    "invalid_alarm_id": {
+      "message": "«{alarm_id}» er ikkje ein alarm-ID. Kopier ID-en, som byrjar med alarm/, frå attributtet alarms på alarmsensoren til eininga."
+    },
+    "invalid_timer_id": {
+      "message": "«{timer_id}» er ikkje ein tidtakar-ID. Kopier ID-en, som byrjar med timer/, frå attributtet timers på tidtakarsensoren til eininga."
+    },
+    "alarm_not_found": {
+      "message": "Fann ikkje alarmen {alarm_id} på dei valde einingane. Han kan allereie ha ringt eller vorte sletta."
+    },
+    "timer_not_found": {
+      "message": "Fann ikkje tidtakaren {timer_id} på dei valde einingane. Han kan allereie ha gått ut eller vorte sletta."
+    },
+    "device_offline": {
+      "message": "Klarte ikkje å nå {device}. Kontroller at eininga er slått på og kopla til nettverket ditt, og prøv deretter igjen."
+    },
+    "device_no_reply": {
+      "message": "{device} stadfesta ikkje at handlinga vart utført: eininga svarte ikkje i tide, eller svaret vart avbrote. Kontroller at eininga er på nett, og prøv igjen."
+    },
+    "device_token_rejected": {
+      "message": "{device} avviste tokenet sitt, og det hjelpte ikkje å hente eit nytt frå Google. Integrasjonen held fram med å be Google om eit nytt, så prøv igjen seinare."
+    },
+    "device_not_ready": {
+      "message": "{device} svarte «ikkje funne». Eininga held kanskje framleis på å starte opp, så prøv igjen seinare, eller eininga støttar kanskje ikkje dette."
+    },
+    "device_request_failed": {
+      "message": "Klarte ikkje å utføre handlinga på {device}. Sjå Home Assistant-loggane for detaljar."
+    },
+    "devices_not_rebooted": {
+      "message": "Desse einingane stadfesta ikkje at dei vil starte på nytt: {devices}. Kontroller at einingane er på nett, og prøv igjen seinare."
     }
   },
   "options": {
     "step": {
       "init": {
         "data": {
-          "update_interval": "Endre oppdateringsintervall. Du kan auke dette om einingane ofte får tidsavbrot. Standard: 180 (sekund)",
-          "known_hosts": "Kjende vertar"
+          "update_interval": "Endre oppdateringsintervall. Du kan auke dette om einingane ofte får tidsavbrot. Standard: {default_interval} (sekund)",
+          "known_hosts": "Kjende vertar",
+          "homes": "Heimar"
         },
         "data_description": {
-          "known_hosts": "IP-adresser til høgtalarar og skjermar som integrasjonen ikkje finn sjølv, til dømes fordi dei er på eit anna nettverk eller VLAN."
+          "known_hosts": "IP-adresser til høgtalarar og skjermar som integrasjonen ikkje finn sjølv, til dømes fordi dei er på eit anna nettverk eller VLAN.",
+          "homes": "Høgtalarar og skjermar i heimar du vel bort, blir ikkje lagde til. Når du vel bort ein heim, blir einingane i heimen og entitetane deira fjerna frå Home Assistant, slik at automatiseringar, skript og dashbord som brukar dei, sluttar å fungere. Vel heimen igjen for å leggje dei til på nytt med namna og områda du gav dei."
         }
       }
     },
     "error": {
-      "known-host-not-ip": "Skriv berre inn IP-adresser, til dømes 192.168.1.20."
+      "known-host-not-ip": "Skriv berre inn IP-adresser, til dømes 192.168.1.20.",
+      "no-home-selected": "Vel minst éin heim."
     }
   },
   "services": {

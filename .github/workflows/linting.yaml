@@ -53,4 +53,55 @@ jobs:
           uvx prek run --hook-stage manual python-typing-update --all-files --show-diff-on-failure --color=always
 
       - name: Run tests
-        run: uv run pytest -q
+        run: uv run pytest -q --cov
+
+      - name: Check coverage
+        run: script/check_coverage
+
+      # Report stats shows this total as the PR's Coverage status. Failing
+      # to save it doesn't fail this required check. Re-running only failed
+      # jobs reuses the other jobs' uploads, so keep them for the 30 days a
+      # run can be re-run.
+      - name: Save total coverage
+        continue-on-error: true
+        run: uv run coverage report --format=total --precision=2 > coverage.txt
+
+      - name: Upload coverage stats
+        continue-on-error: true
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: coverage-stats
+          path: coverage.txt
+          if-no-files-found: error
+          retention-days: 30
+
+  translations:
+    name: Translations
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # For PRs, the first parent is the target used in the merge checkout.
+          fetch-depth: 2
+          persist-credentials: false
+
+      - name: Prepare and install deps
+        uses: ./.github/actions/install-deps
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Check translations
+        run: uv run python script/check_translations.py --base-ref HEAD^1 --stats translations.json
+
+      # Report stats summarises these as the PR's Translation coverage
+      # status. See the coverage upload for continue-on-error and retention.
+      - name: Upload translation stats
+        continue-on-error: true
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: translation-stats
+          path: translations.json
+          if-no-files-found: error
+          retention-days: 30

@@ -32,29 +32,148 @@
         "data_description": {
           "master_token": "Starter med aas_et/"
         }
+      },
+      "homes": {
+        "title": "Velg hjem",
+        "description": "Google-kontoen din er medlem av flere hjem. Velg hjemmene du vil legge til høyttalere og skjermer fra. Du kan endre dette senere i alternativene for integrasjonen.",
+        "data": {
+          "homes": "Hjem"
+        }
+      },
+      "reauth": {
+        "title": "Logg på igjen",
+        "description": "Google godtar ikke lenger den lagrede påloggingen for {name}. Logg på den samme Google-kontoen igjen: enhetene, entitetene og automatiseringene dine forblir som de er. Inntil du gjør det, kan entitetene til enhetene dine vise utdaterte verdier eller være utilgjengelige.",
+        "menu_options": {
+          "browser": "Pålogging i nettleseren (anbefalt)",
+          "master_token": "Master token"
+        },
+        "menu_option_descriptions": {
+          "browser": "Logg på Google i en nettleser på en datamaskin, og lim deretter inn en informasjonskapsel. Fungerer for de fleste kontoer.",
+          "master_token": "Lim inn et master token du allerede har."
+        }
+      },
+      "reauth_browser": {
+        "title": "Pålogging i nettleseren",
+        "description": "1. Åpne {embedded_setup_url} i et privat nettleservindu på en datamaskin, og logg på den samme Google-kontoen. Etter at du har godtatt, kan siden fortsette å laste; det er forventet.\n2. Åpne utviklerverktøyene i nettleseren, og finn informasjonskapslene for `accounts.google.com`.\n3. Kopier verdien til informasjonskapselen `oauth_token`, og lim den inn nedenfor med en gang. Den utløper i løpet av noen minutter og fungerer bare én gang.\n\nTrinnvis veiledning: {browser_docs_url}",
+        "data": {
+          "oauth_token": "Informasjonskapselen oauth_token"
+        },
+        "data_description": {
+          "oauth_token": "Starter med oauth2_4/"
+        }
+      },
+      "reauth_master_token": {
+        "title": "Master token",
+        "description": "Lim inn et master token for den samme Google-kontoen, for eksempel et du har fått med et annet verktøy.",
+        "data": {
+          "master_token": "Master token for Google-kontoen"
+        },
+        "data_description": {
+          "master_token": "Starter med aas_et/"
+        }
       }
     },
     "error": {
       "oauth-token-invalid": "Google godtok ikke informasjonskapselen. Hent en ny, og lim den inn med en gang: den utløper i løpet av noen minutter og fungerer bare én gang. Kopier hele verdien, som starter med oauth2_4/.",
-      "master-token-invalid": "Master token er ugyldig. Kontroller at hele tokenet er angitt (inkludert 'aas_et/')",
+      "master-token-invalid": "Google godtok ikke master tokenet. Kontroller at du har kopiert det riktig. Hvis det fungerte før, for eksempel frem til du endret Google-passordet ditt, godtar ikke Google det lenger: bruk pålogging i nettleseren i stedet.",
+      "google-rejected": "Google godtok ikke påloggingen. Se Home Assistant-loggene for detaljer.",
+      "google-unreachable": "Kunne ikke nå Google. Kontroller at Home Assistant er koblet til internett, og prøv deretter igjen.",
+      "google-busy": "Google har stor pågang eller begrenser pålogginger. Vent noen minutter, og logg deretter på igjen.",
       "oauth-token-format": "Dette er ikke informasjonskapselen oauth_token. Verdien starter med oauth2_4/.",
-      "master-token-format": "Et master token starter med aas_et/ og er 223 tegn langt. Kopier hele tokenet."
+      "master-token-format": "Et master token starter med aas_et/ og er 223 tegn langt. Kopier hele tokenet.",
+      "other-account": "Du logget på en annen Google-konto, så ingenting ble endret. Logg på med kontoen som denne integrasjonen bruker. For å bruke den andre kontoen i stedet, slett integrasjonen og legg den til på nytt.",
+      "no-home-selected": "Velg minst ett hjem."
+    }
+  },
+  "entity": {
+    "button": {
+      "reboot": {
+        "name": "Start på nytt"
+      }
+    },
+    "number": {
+      "alarm_volume": {
+        "name": "Alarmvolum"
+      }
+    },
+    "sensor": {
+      "alarms": {
+        "name": "Alarmer"
+      },
+      "device": {
+        "name": "Enhet"
+      },
+      "timers": {
+        "name": "Timere"
+      }
+    },
+    "switch": {
+      "do_not_disturb": {
+        "name": "Ikke forstyrr"
+      }
+    }
+  },
+  "exceptions": {
+    "alarms_and_timers_not_fetched": {
+      "message": "Kunne ikke hente gjeldende alarmer og timere fra {device}, så ingenting ble slettet fra denne enheten. Kontroller at enheten er på nett, og prøv igjen senere."
+    },
+    "alarms_and_timers_not_fetched_from_devices": {
+      "message": "Kunne ikke hente gjeldende alarmer og timere fra disse enhetene, så ingenting ble slettet fra dem: {devices}. Kontroller at enhetene er på nett, og prøv igjen senere."
+    },
+    "alarms_and_timers_not_deleted": {
+      "message": "{device} bekreftet ikke sletting av alarmene eller timerne, så de kan fortsatt være stilt inn. Kontroller at enheten er på nett, og prøv igjen senere."
+    },
+    "alarms_and_timers_not_deleted_from_devices": {
+      "message": "Kunne ikke slette alarmer eller timere fra disse enhetene, eller bekrefte at de ble slettet: {devices}. Kontroller at enhetene er på nett, og prøv igjen senere."
+    },
+    "invalid_alarm_id": {
+      "message": "«{alarm_id}» er ikke en alarm-ID. Kopier ID-en, som begynner med alarm/, fra attributtet alarms på enhetens alarmsensor."
+    },
+    "invalid_timer_id": {
+      "message": "«{timer_id}» er ikke en timer-ID. Kopier ID-en, som begynner med timer/, fra attributtet timers på enhetens timersensor."
+    },
+    "alarm_not_found": {
+      "message": "Fant ikke alarmen {alarm_id} på de valgte enhetene. Den kan allerede ha ringt eller blitt slettet."
+    },
+    "timer_not_found": {
+      "message": "Fant ikke timeren {timer_id} på de valgte enhetene. Den kan allerede ha utløpt eller blitt slettet."
+    },
+    "device_offline": {
+      "message": "Kunne ikke nå {device}. Kontroller at enheten er slått på og koblet til nettverket ditt, og prøv deretter igjen."
+    },
+    "device_no_reply": {
+      "message": "{device} bekreftet ikke at den utførte handlingen: den svarte ikke i tide, eller svaret ble avbrutt. Kontroller at enheten er på nett, og prøv igjen."
+    },
+    "device_token_rejected": {
+      "message": "{device} avviste tokenet sitt, og det hjalp ikke å hente et nytt fra Google. Integrasjonen fortsetter å be Google om et nytt, så prøv igjen senere."
+    },
+    "device_not_ready": {
+      "message": "{device} svarte «ikke funnet». Den holder kanskje fortsatt på å starte, så prøv igjen senere, eller den støtter kanskje ikke dette."
+    },
+    "device_request_failed": {
+      "message": "Kunne ikke utføre handlingen på {device}. Se Home Assistant-loggene for detaljer."
+    },
+    "devices_not_rebooted": {
+      "message": "Disse enhetene bekreftet ikke at de vil starte på nytt: {devices}. Kontroller at enhetene er på nett, og prøv igjen senere."
     }
   },
   "options": {
     "step": {
       "init": {
         "data": {
-          "update_interval": "Endre oppdateringsintervall. Øk dette hvis enhetene ofte får tidsavbrudd. Standard: 180 (sekunder)",
-          "known_hosts": "Kjente verter"
+          "update_interval": "Endre oppdateringsintervall. Øk dette hvis enhetene ofte får tidsavbrudd. Standard: {default_interval} (sekunder)",
+          "known_hosts": "Kjente verter",
+          "homes": "Hjem"
         },
         "data_description": {
-          "known_hosts": "IP-adresser til høyttalere og skjermer som integrasjonen ikke finner selv, for eksempel fordi de er på et annet nettverk eller VLAN."
+          "known_hosts": "IP-adresser til høyttalere og skjermer som integrasjonen ikke finner selv, for eksempel fordi de er på et annet nettverk eller VLAN.",
+          "homes": "Høyttalere og skjermer i hjem du velger bort, legges ikke til. Når du velger bort et hjem, fjernes enhetene i hjemmet og entitetene deres fra Home Assistant, slik at automatiseringer, skript og dashbord som bruker dem, slutter å fungere. Velg hjemmet igjen for å legge dem til på nytt med navnene og områdene du ga dem."
         }
       }
     },
     "error": {
-      "known-host-not-ip": "Skriv bare inn IP-adresser, for eksempel 192.168.1.20."
+      "known-host-not-ip": "Skriv bare inn IP-adresser, for eksempel 192.168.1.20.",
+      "no-home-selected": "Velg minst ett hjem."
     }
   },
   "services": {

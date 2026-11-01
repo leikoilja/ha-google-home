@@ -14,20 +14,20 @@ from homeassistant.helpers.update_coordinator import (
 )
 
 from .bluetooth import TrackerState
-from .const import DATA_BLUETOOTH, DOMAIN, SUBENTRY_BLUETOOTH_DEVICE
+from .const import DOMAIN, SUBENTRY_BLUETOOTH_DEVICE
 from .types import GoogleHomeConfigEntry
+
+# The Bluetooth coordinator does the updates, and trackers have no actions
+PARALLEL_UPDATES = 0
 
 
 async def async_setup_entry(
-    hass: HomeAssistant,
+    _hass: HomeAssistant,
     entry: GoogleHomeConfigEntry,
     async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
     """Set up a tracker for each tracked Bluetooth device, if tracking is on."""
-    coordinator: DataUpdateCoordinator[dict[str, TrackerState]] | None = hass.data[
-        DOMAIN
-    ][entry.entry_id].get(DATA_BLUETOOTH)
-    if coordinator is None:
+    if (coordinator := entry.runtime_data.bluetooth) is None:
         return
     for subentry in entry.get_subentries_of_type(SUBENTRY_BLUETOOTH_DEVICE):
         async_add_entities(

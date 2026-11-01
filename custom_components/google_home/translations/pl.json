@@ -32,29 +32,148 @@
         "data_description": {
           "master_token": "Zaczyna się od aas_et/"
         }
+      },
+      "homes": {
+        "title": "Wybierz domy",
+        "description": "Twoje konto Google jest członkiem kilku domów. Wybierz domy, których głośniki i wyświetlacze mają zostać dodane. Możesz to później zmienić w opcjach integracji.",
+        "data": {
+          "homes": "Domy"
+        }
+      },
+      "reauth": {
+        "title": "Zaloguj się ponownie",
+        "description": "Google nie akceptuje już danych logowania zapisanych dla {name}. Zaloguj się ponownie na to samo konto Google: Twoje urządzenia, encje i automatyzacje pozostaną bez zmian. Dopóki tego nie zrobisz, encje Twoich urządzeń mogą pokazywać nieaktualne wartości lub być niedostępne.",
+        "menu_options": {
+          "browser": "Logowanie w przeglądarce (zalecane)",
+          "master_token": "Token główny"
+        },
+        "menu_option_descriptions": {
+          "browser": "Zaloguj się do Google w przeglądarce na komputerze, a następnie wklej plik cookie. Działa w przypadku większości kont.",
+          "master_token": "Wklej token główny, który już masz."
+        }
+      },
+      "reauth_browser": {
+        "title": "Logowanie w przeglądarce",
+        "description": "1. Na komputerze otwórz {embedded_setup_url} w oknie prywatnym przeglądarki i zaloguj się na to samo konto Google. Po zaakceptowaniu strona może się dalej ładować; to normalne.\n2. Otwórz narzędzia deweloperskie przeglądarki i znajdź pliki cookie dla `accounts.google.com`.\n3. Skopiuj wartość pliku cookie `oauth_token` i od razu wklej ją poniżej. Wygasa po kilku minutach i działa tylko raz.\n\nInstrukcje krok po kroku: {browser_docs_url}",
+        "data": {
+          "oauth_token": "Plik cookie oauth_token"
+        },
+        "data_description": {
+          "oauth_token": "Zaczyna się od oauth2_4/"
+        }
+      },
+      "reauth_master_token": {
+        "title": "Token główny",
+        "description": "Wklej token główny tego samego konta Google, na przykład uzyskany za pomocą innego narzędzia.",
+        "data": {
+          "master_token": "Token główny konta Google"
+        },
+        "data_description": {
+          "master_token": "Zaczyna się od aas_et/"
+        }
       }
     },
     "error": {
       "oauth-token-invalid": "Google nie zaakceptowało pliku cookie. Pobierz nowy i od razu go wklej: wygasa po kilku minutach i działa tylko raz. Skopiuj całą wartość, zaczynającą się od oauth2_4/.",
-      "master-token-invalid": "Główny token jest nieprawidłowy. Upewnij się, że podano pełny token (w tym 'aas_et/')",
+      "master-token-invalid": "Google nie zaakceptowało tokenu głównego. Sprawdź, czy został poprawnie skopiowany. Jeśli wcześniej działał, na przykład do czasu zmiany hasła do konta Google, Google już go nie akceptuje: zamiast tego użyj logowania w przeglądarce.",
+      "google-rejected": "Google nie zaakceptowało logowania. Szczegóły znajdziesz w logach Home Assistanta.",
+      "google-unreachable": "Nie udało się połączyć z Google. Sprawdź, czy Home Assistant ma połączenie z internetem, a następnie spróbuj ponownie.",
+      "google-busy": "Google jest przeciążone lub ogranicza liczbę logowań. Odczekaj kilka minut, a następnie zaloguj się ponownie.",
       "oauth-token-format": "To nie jest plik cookie oauth_token. Jego wartość zaczyna się od oauth2_4/.",
-      "master-token-format": "Token główny zaczyna się od aas_et/ i ma 223 znaki. Skopiuj cały token."
+      "master-token-format": "Token główny zaczyna się od aas_et/ i ma 223 znaki. Skopiuj cały token.",
+      "other-account": "Zalogowano się na inne konto Google, więc nic nie zostało zmienione. Zaloguj się na konto używane przez tę integrację. Aby zamiast tego używać tamtego konta, usuń integrację i dodaj ją ponownie.",
+      "no-home-selected": "Wybierz co najmniej jeden dom."
+    }
+  },
+  "entity": {
+    "button": {
+      "reboot": {
+        "name": "Uruchom ponownie"
+      }
+    },
+    "number": {
+      "alarm_volume": {
+        "name": "Głośność alarmu"
+      }
+    },
+    "sensor": {
+      "alarms": {
+        "name": "Alarmy"
+      },
+      "device": {
+        "name": "Urządzenie"
+      },
+      "timers": {
+        "name": "Timery"
+      }
+    },
+    "switch": {
+      "do_not_disturb": {
+        "name": "Nie przeszkadzać"
+      }
+    }
+  },
+  "exceptions": {
+    "alarms_and_timers_not_fetched": {
+      "message": "Nie udało się pobrać aktualnych alarmów i timerów z urządzenia {device}, więc nic z niego nie usunięto. Sprawdź, czy urządzenie jest online, i spróbuj ponownie później."
+    },
+    "alarms_and_timers_not_fetched_from_devices": {
+      "message": "Nie udało się pobrać aktualnych alarmów i timerów z tych urządzeń, więc nic z nich nie usunięto: {devices}. Sprawdź, czy urządzenia są online, i spróbuj ponownie później."
+    },
+    "alarms_and_timers_not_deleted": {
+      "message": "Urządzenie {device} nie potwierdziło usunięcia alarmów lub timerów, więc mogą one nadal być ustawione. Sprawdź, czy urządzenie jest online, i spróbuj ponownie później."
+    },
+    "alarms_and_timers_not_deleted_from_devices": {
+      "message": "Nie udało się usunąć alarmów lub timerów z tych urządzeń albo potwierdzić ich usunięcia: {devices}. Sprawdź, czy urządzenia są online, i spróbuj ponownie później."
+    },
+    "invalid_alarm_id": {
+      "message": "„{alarm_id}” nie jest identyfikatorem alarmu. Skopiuj identyfikator zaczynający się od alarm/ z atrybutu alarms czujnika alarmów urządzenia."
+    },
+    "invalid_timer_id": {
+      "message": "„{timer_id}” nie jest identyfikatorem timera. Skopiuj identyfikator zaczynający się od timer/ z atrybutu timers czujnika timerów urządzenia."
+    },
+    "alarm_not_found": {
+      "message": "Nie znaleziono alarmu {alarm_id} na wybranych urządzeniach. Mógł już zadzwonić lub zostać usunięty."
+    },
+    "timer_not_found": {
+      "message": "Nie znaleziono timera {timer_id} na wybranych urządzeniach. Mógł już zakończyć odliczanie lub zostać usunięty."
+    },
+    "device_offline": {
+      "message": "Nie udało się połączyć z urządzeniem {device}. Sprawdź, czy jest włączone i podłączone do sieci, a następnie spróbuj ponownie."
+    },
+    "device_no_reply": {
+      "message": "Urządzenie {device} nie potwierdziło, że wykonało akcję: nie odpowiedziało na czas lub jego odpowiedź została przerwana. Sprawdź, czy urządzenie jest online, i spróbuj ponownie."
+    },
+    "device_token_rejected": {
+      "message": "Urządzenie {device} odrzuciło swój token, a pobranie nowego z Google nie pomogło. Integracja nadal prosi Google o nowy, więc spróbuj ponownie później."
+    },
+    "device_not_ready": {
+      "message": "Urządzenie {device} odpowiedziało „nie znaleziono”. Być może nadal się uruchamia, więc spróbuj ponownie później, albo może tego nie obsługiwać."
+    },
+    "device_request_failed": {
+      "message": "Nie udało się wykonać akcji na urządzeniu {device}. Szczegóły znajdziesz w logach Home Assistanta."
+    },
+    "devices_not_rebooted": {
+      "message": "Te urządzenia nie potwierdziły, że uruchomią się ponownie: {devices}. Sprawdź, czy urządzenia są online, i spróbuj ponownie później."
     }
   },
   "options": {
     "step": {
       "init": {
         "data": {
-          "update_interval": "Zmień interwał aktualizacji. Zwiększ go, jeśli urządzenia często przekraczają limit czasu odpowiedzi. Domyślnie: 180 (sekund)",
-          "known_hosts": "Znane hosty"
+          "update_interval": "Zmień interwał aktualizacji. Zwiększ go, jeśli urządzenia często przekraczają limit czasu odpowiedzi. Domyślnie: {default_interval} (sekund)",
+          "known_hosts": "Znane hosty",
+          "homes": "Domy"
         },
         "data_description": {
-          "known_hosts": "Adresy IP głośników i wyświetlaczy, których integracja nie może sama znaleźć, na przykład dlatego, że są w innej sieci lub sieci VLAN."
+          "known_hosts": "Adresy IP głośników i wyświetlaczy, których integracja nie może sama znaleźć, na przykład dlatego, że są w innej sieci lub sieci VLAN.",
+          "homes": "Głośniki i wyświetlacze z odznaczonych domów nie są dodawane. Odznaczenie domu usuwa jego urządzenia i ich encje z Home Assistanta, więc korzystające z nich automatyzacje, skrypty i panele przestają działać. Zaznacz dom ponownie, aby przywrócić urządzenia z nadanymi im nazwami i obszarami."
         }
       }
     },
     "error": {
-      "known-host-not-ip": "Wprowadź tylko adresy IP, na przykład 192.168.1.20."
+      "known-host-not-ip": "Wprowadź tylko adresy IP, na przykład 192.168.1.20.",
+      "no-home-selected": "Wybierz co najmniej jeden dom."
     }
   },
   "services": {
