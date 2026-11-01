@@ -161,7 +161,7 @@
     "bluetooth_device": {
       "entry_type": "Bluetooth device",
       "initiate_flow": {
-        "user": "Add Bluetooth device"
+        "user": "Track a Bluetooth device"
       },
       "step": {
         "user": {
@@ -209,7 +209,7 @@
               "bluetooth_excluded_speakers": "Speakers not used for Bluetooth tracking"
             },
             "data_description": {
-              "bluetooth_tracking": "Use your speakers to tell whether your phone or other Bluetooth devices are home. After turning it on, add the devices to track with Add Bluetooth device on the integration's page. While it's off, the integration sends no Bluetooth requests to your speakers.",
+              "bluetooth_tracking": "Use your speakers to tell whether your phone or other Bluetooth devices are home. After turning it on, select Track a Bluetooth device on the integration's page for each device to track. While it's off, the integration sends no Bluetooth requests to your speakers.",
               "bluetooth_excluded_speakers": "Speakers that don't scan for Bluetooth devices. Add a speaker that's unplugged or out of service: while a speaker doesn't answer, trackers can't show away."
             }
           }

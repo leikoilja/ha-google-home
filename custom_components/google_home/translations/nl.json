@@ -161,7 +161,7 @@
     "bluetooth_device": {
       "entry_type": "Bluetooth-apparaat",
       "initiate_flow": {
-        "user": "Bluetooth-apparaat toevoegen"
+        "user": "Een Bluetooth-apparaat volgen"
       },
       "step": {
         "user": {
@@ -209,7 +209,7 @@
               "bluetooth_excluded_speakers": "Speakers die niet worden gebruikt voor Bluetooth-tracking"
             },
             "data_description": {
-              "bluetooth_tracking": "Gebruik je speakers om te zien of je telefoon of andere Bluetooth-apparaten thuis zijn. Voeg na het inschakelen de apparaten die je wilt volgen toe met ‘Bluetooth-apparaat toevoegen’ op de pagina van de integratie. Zolang het is uitgeschakeld, stuurt de integratie geen Bluetooth-verzoeken naar je speakers.",
+              "bluetooth_tracking": "Gebruik je speakers om te zien of je telefoon of andere Bluetooth-apparaten thuis zijn. Selecteer na het inschakelen ‘Een Bluetooth-apparaat volgen’ op de pagina van de integratie voor elk apparaat dat je wilt volgen. Zolang het is uitgeschakeld, stuurt de integratie geen Bluetooth-verzoeken naar je speakers.",
               "bluetooth_excluded_speakers": "Speakers die niet naar Bluetooth-apparaten zoeken. Voeg een speaker toe die is losgekoppeld of buiten gebruik is: zolang een speaker niet antwoordt, kunnen trackers niet ‘Afwezig’ tonen."
             }
           }

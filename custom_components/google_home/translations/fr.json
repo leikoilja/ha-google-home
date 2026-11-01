@@ -161,7 +161,7 @@
     "bluetooth_device": {
       "entry_type": "Appareil Bluetooth",
       "initiate_flow": {
-        "user": "Ajouter un appareil Bluetooth"
+        "user": "Suivre un appareil Bluetooth"
       },
       "step": {
         "user": {
@@ -209,7 +209,7 @@
               "bluetooth_excluded_speakers": "Enceintes non utilisées pour le suivi Bluetooth"
             },
             "data_description": {
-              "bluetooth_tracking": "Utilisez vos enceintes pour savoir si votre téléphone ou d'autres appareils Bluetooth sont à la maison. Après l'avoir activé, ajoutez les appareils à suivre avec « Ajouter un appareil Bluetooth » sur la page de l'intégration. Tant qu'il est désactivé, l'intégration n'envoie aucune requête Bluetooth à vos enceintes.",
+              "bluetooth_tracking": "Utilisez vos enceintes pour savoir si votre téléphone ou d'autres appareils Bluetooth sont à la maison. Après l'avoir activé, sélectionnez « Suivre un appareil Bluetooth » sur la page de l'intégration pour chaque appareil à suivre. Tant qu'il est désactivé, l'intégration n'envoie aucune requête Bluetooth à vos enceintes.",
               "bluetooth_excluded_speakers": "Enceintes qui ne recherchent pas d'appareils Bluetooth. Ajoutez une enceinte débranchée ou hors service : tant qu'une enceinte ne répond pas, les traceurs ne peuvent pas afficher « Absent »."
             }
           }

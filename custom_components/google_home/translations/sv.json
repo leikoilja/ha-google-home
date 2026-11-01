@@ -161,7 +161,7 @@
     "bluetooth_device": {
       "entry_type": "Bluetooth-enhet",
       "initiate_flow": {
-        "user": "Lägg till Bluetooth-enhet"
+        "user": "Spåra en Bluetooth-enhet"
       },
       "step": {
         "user": {
@@ -209,7 +209,7 @@
               "bluetooth_excluded_speakers": "Högtalare som inte används för Bluetooth-spårning"
             },
             "data_description": {
-              "bluetooth_tracking": "Använd dina högtalare för att se om din telefon eller andra Bluetooth-enheter är hemma. När du har aktiverat spårningen lägger du till enheterna som ska spåras med ”Lägg till Bluetooth-enhet” på integrationens sida. Så länge den är avaktiverad skickar integrationen inga Bluetooth-förfrågningar till dina högtalare.",
+              "bluetooth_tracking": "Använd dina högtalare för att se om din telefon eller andra Bluetooth-enheter är hemma. När du har aktiverat spårningen väljer du ”Spåra en Bluetooth-enhet” på integrationens sida för varje enhet som ska spåras. Så länge den är avaktiverad skickar integrationen inga Bluetooth-förfrågningar till dina högtalare.",
               "bluetooth_excluded_speakers": "Högtalare som inte söker efter Bluetooth-enheter. Lägg till en högtalare som är urkopplad eller ur drift: så länge en högtalare inte svarar kan spårare inte visa ”Borta”."
             }
           }

@@ -161,7 +161,7 @@
     "bluetooth_device": {
       "entry_type": "Bluetooth-eszköz",
       "initiate_flow": {
-        "user": "Bluetooth-eszköz hozzáadása"
+        "user": "Bluetooth-eszköz követése"
       },
       "step": {
         "user": {
@@ -209,7 +209,7 @@
               "bluetooth_excluded_speakers": "Bluetooth-követéshez nem használt hangszórók"
             },
             "data_description": {
-              "bluetooth_tracking": "A hangszórók segítségével megtudhatja, hogy a telefonja vagy más Bluetooth-eszközök otthon vannak-e. Bekapcsolás után adja hozzá a követendő eszközöket az integráció oldalán a „Bluetooth-eszköz hozzáadása” lehetőséggel. Amíg ki van kapcsolva, az integráció nem küld Bluetooth-kéréseket a hangszóróknak.",
+              "bluetooth_tracking": "A hangszórók segítségével megtudhatja, hogy a telefonja vagy más Bluetooth-eszközök otthon vannak-e. Bekapcsolás után minden követendő eszközhöz válassza az integráció oldalán a „Bluetooth-eszköz követése” lehetőséget. Amíg ki van kapcsolva, az integráció nem küld Bluetooth-kéréseket a hangszóróknak.",
               "bluetooth_excluded_speakers": "Hangszórók, amelyek nem keresnek Bluetooth-eszközöket. Adjon hozzá egy áramtalanított vagy üzemen kívüli hangszórót: amíg egy hangszóró nem válaszol, a követők nem tudják a „Távol” állapotot mutatni."
             }
           }

@@ -161,7 +161,7 @@
     "bluetooth_device": {
       "entry_type": "Perangkat Bluetooth",
       "initiate_flow": {
-        "user": "Tambahkan perangkat Bluetooth"
+        "user": "Lacak perangkat Bluetooth"
       },
       "step": {
         "user": {
@@ -209,7 +209,7 @@
               "bluetooth_excluded_speakers": "Speaker yang tidak digunakan untuk pelacakan Bluetooth"
             },
             "data_description": {
-              "bluetooth_tracking": "Gunakan speaker Anda untuk mengetahui apakah ponsel Anda atau perangkat Bluetooth lain ada di rumah. Setelah mengaktifkannya, tambahkan perangkat yang ingin dilacak dengan “Tambahkan perangkat Bluetooth” di halaman integrasi. Selama nonaktif, integrasi tidak mengirim permintaan Bluetooth apa pun ke speaker Anda.",
+              "bluetooth_tracking": "Gunakan speaker Anda untuk mengetahui apakah ponsel Anda atau perangkat Bluetooth lain ada di rumah. Setelah mengaktifkannya, pilih “Lacak perangkat Bluetooth” di halaman integrasi untuk setiap perangkat yang ingin dilacak. Selama nonaktif, integrasi tidak mengirim permintaan Bluetooth apa pun ke speaker Anda.",
               "bluetooth_excluded_speakers": "Speaker yang tidak memindai perangkat Bluetooth. Tambahkan speaker yang dicabut atau tidak berfungsi: selama speaker tidak merespons, pelacak tidak dapat menampilkan “Keluar”."
             }
           }

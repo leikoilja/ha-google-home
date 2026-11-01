@@ -161,7 +161,7 @@
     "bluetooth_device": {
       "entry_type": "Urządzenie Bluetooth",
       "initiate_flow": {
-        "user": "Dodaj urządzenie Bluetooth"
+        "user": "Śledź urządzenie Bluetooth"
       },
       "step": {
         "user": {
@@ -209,7 +209,7 @@
               "bluetooth_excluded_speakers": "Głośniki nieużywane do śledzenia Bluetooth"
             },
             "data_description": {
-              "bluetooth_tracking": "Używaj głośników, aby sprawdzać, czy telefon lub inne urządzenia Bluetooth są w domu. Po włączeniu dodaj urządzenia do śledzenia za pomocą opcji „Dodaj urządzenie Bluetooth” na stronie integracji. Gdy śledzenie jest wyłączone, integracja nie wysyła do głośników żadnych żądań Bluetooth.",
+              "bluetooth_tracking": "Używaj głośników, aby sprawdzać, czy telefon lub inne urządzenia Bluetooth są w domu. Po włączeniu wybierz „Śledź urządzenie Bluetooth” na stronie integracji dla każdego urządzenia, które chcesz śledzić. Gdy śledzenie jest wyłączone, integracja nie wysyła do głośników żadnych żądań Bluetooth.",
               "bluetooth_excluded_speakers": "Głośniki, które nie wyszukują urządzeń Bluetooth. Dodaj głośnik odłączony od zasilania lub niedziałający: dopóki głośnik nie odpowiada, trackery nie mogą pokazać stanu „poza domem”."
             }
           }

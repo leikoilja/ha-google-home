@@ -161,7 +161,7 @@
     "bluetooth_device": {
       "entry_type": "Dispositivo Bluetooth",
       "initiate_flow": {
-        "user": "Aggiungi dispositivo Bluetooth"
+        "user": "Monitora un dispositivo Bluetooth"
       },
       "step": {
         "user": {
@@ -209,7 +209,7 @@
               "bluetooth_excluded_speakers": "Altoparlanti non usati per il tracciamento Bluetooth"
             },
             "data_description": {
-              "bluetooth_tracking": "Usa i tuoi altoparlanti per sapere se il tuo telefono o altri dispositivi Bluetooth sono in casa. Dopo averlo attivato, aggiungi i dispositivi da monitorare con «Aggiungi dispositivo Bluetooth» nella pagina dell'integrazione. Finché è disattivato, l'integrazione non invia alcuna richiesta Bluetooth ai tuoi altoparlanti.",
+              "bluetooth_tracking": "Usa i tuoi altoparlanti per sapere se il tuo telefono o altri dispositivi Bluetooth sono in casa. Dopo averlo attivato, seleziona «Monitora un dispositivo Bluetooth» nella pagina dell'integrazione per ogni dispositivo da monitorare. Finché è disattivato, l'integrazione non invia alcuna richiesta Bluetooth ai tuoi altoparlanti.",
               "bluetooth_excluded_speakers": "Altoparlanti che non cercano dispositivi Bluetooth. Aggiungi un altoparlante scollegato o fuori servizio: finché un altoparlante non risponde, i tracker non possono mostrare «Fuori casa»."
             }
           }

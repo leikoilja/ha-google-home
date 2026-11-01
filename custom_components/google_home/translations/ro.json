@@ -161,7 +161,7 @@
     "bluetooth_device": {
       "entry_type": "Dispozitiv Bluetooth",
       "initiate_flow": {
-        "user": "Adaugă dispozitiv Bluetooth"
+        "user": "Urmărește un dispozitiv Bluetooth"
       },
       "step": {
         "user": {
@@ -209,7 +209,7 @@
               "bluetooth_excluded_speakers": "Difuzoare nefolosite pentru urmărirea prin Bluetooth"
             },
             "data_description": {
-              "bluetooth_tracking": "Folosește difuzoarele ca să afli dacă telefonul tău sau alte dispozitive Bluetooth sunt acasă. După ce o activezi, adaugă dispozitivele de urmărit cu „Adaugă dispozitiv Bluetooth” pe pagina integrării. Cât timp este dezactivată, integrarea nu trimite nicio solicitare Bluetooth difuzoarelor tale.",
+              "bluetooth_tracking": "Folosește difuzoarele ca să afli dacă telefonul tău sau alte dispozitive Bluetooth sunt acasă. După ce o activezi, selectează „Urmărește un dispozitiv Bluetooth” pe pagina integrării pentru fiecare dispozitiv pe care vrei să-l urmărești. Cât timp este dezactivată, integrarea nu trimite nicio solicitare Bluetooth difuzoarelor tale.",
               "bluetooth_excluded_speakers": "Difuzoare care nu caută dispozitive Bluetooth. Adaugă un difuzor scos din priză sau nefuncțional: cât timp un difuzor nu răspunde, dispozitivele de urmărire nu pot afișa „Plecat”."
             }
           }

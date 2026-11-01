@@ -161,7 +161,7 @@
     "bluetooth_device": {
       "entry_type": "Bluetooth-enhet",
       "initiate_flow": {
-        "user": "Legg til Bluetooth-enhet"
+        "user": "Spor en Bluetooth-enhet"
       },
       "step": {
         "user": {
@@ -209,7 +209,7 @@
               "bluetooth_excluded_speakers": "Høyttalere som ikke brukes til Bluetooth-sporing"
             },
             "data_description": {
-              "bluetooth_tracking": "Bruk høyttalerne til å se om telefonen din eller andre Bluetooth-enheter er hjemme. Når sporingen er slått på, legger du til enhetene som skal spores, med «Legg til Bluetooth-enhet» på siden til integrasjonen. Når den er slått av, sender ikke integrasjonen noen Bluetooth-forespørsler til høyttalerne.",
+              "bluetooth_tracking": "Bruk høyttalerne til å se om telefonen din eller andre Bluetooth-enheter er hjemme. Når sporingen er slått på, velger du «Spor en Bluetooth-enhet» på siden til integrasjonen for hver enhet som skal spores. Når den er slått av, sender ikke integrasjonen noen Bluetooth-forespørsler til høyttalerne.",
               "bluetooth_excluded_speakers": "Høyttalere som ikke søker etter Bluetooth-enheter. Legg til en høyttaler som er koblet fra strømmen eller ute av drift: Så lenge en høyttaler ikke svarer, kan ikke sporere vise «Borte»."
             }
           }

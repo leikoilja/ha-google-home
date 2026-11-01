@@ -161,7 +161,7 @@
     "bluetooth_device": {
       "entry_type": "Dispositivo Bluetooth",
       "initiate_flow": {
-        "user": "Adicionar dispositivo Bluetooth"
+        "user": "Localizar um dispositivo Bluetooth"
       },
       "step": {
         "user": {
@@ -209,7 +209,7 @@
               "bluetooth_excluded_speakers": "Altifalantes não utilizados para a localização por Bluetooth"
             },
             "data_description": {
-              "bluetooth_tracking": "Utilize os seus altifalantes para saber se o seu telemóvel ou outros dispositivos Bluetooth estão em casa. Depois de a ativar, adicione os dispositivos a localizar com «Adicionar dispositivo Bluetooth» na página da integração. Enquanto estiver desativada, a integração não envia pedidos Bluetooth aos seus altifalantes.",
+              "bluetooth_tracking": "Utilize os seus altifalantes para saber se o seu telemóvel ou outros dispositivos Bluetooth estão em casa. Depois de a ativar, selecione «Localizar um dispositivo Bluetooth» na página da integração para cada dispositivo a localizar. Enquanto estiver desativada, a integração não envia pedidos Bluetooth aos seus altifalantes.",
               "bluetooth_excluded_speakers": "Altifalantes que não procuram dispositivos Bluetooth. Adicione um altifalante desligado da corrente ou fora de serviço: enquanto um altifalante não responder, os localizadores não conseguem mostrar «Ausente»."
             }
           }

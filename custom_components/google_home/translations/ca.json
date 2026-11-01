@@ -161,7 +161,7 @@
     "bluetooth_device": {
       "entry_type": "Dispositiu Bluetooth",
       "initiate_flow": {
-        "user": "Afegeix un dispositiu Bluetooth"
+        "user": "Segueix un dispositiu Bluetooth"
       },
       "step": {
         "user": {
@@ -209,7 +209,7 @@
               "bluetooth_excluded_speakers": "Altaveus no utilitzats per al seguiment per Bluetooth"
             },
             "data_description": {
-              "bluetooth_tracking": "Utilitza els altaveus per saber si el teu telèfon o altres dispositius Bluetooth són a casa. Després d'activar-lo, afegeix els dispositius que vulguis seguir amb «Afegeix un dispositiu Bluetooth» a la pàgina de la integració. Mentre estigui desactivat, la integració no envia cap sol·licitud Bluetooth als altaveus.",
+              "bluetooth_tracking": "Utilitza els altaveus per saber si el teu telèfon o altres dispositius Bluetooth són a casa. Després d'activar-lo, selecciona «Segueix un dispositiu Bluetooth» a la pàgina de la integració per a cada dispositiu que vulguis seguir. Mentre estigui desactivat, la integració no envia cap sol·licitud Bluetooth als altaveus.",
               "bluetooth_excluded_speakers": "Altaveus que no cerquen dispositius Bluetooth. Afegeix-hi un altaveu desendollat o fora de servei: mentre un altaveu no respon, els rastrejadors no poden mostrar «Fora»."
             }
           }

@@ -161,7 +161,7 @@
     "bluetooth_device": {
       "entry_type": "Bluetooth-laite",
       "initiate_flow": {
-        "user": "Lisää Bluetooth-laite"
+        "user": "Seuraa Bluetooth-laitetta"
       },
       "step": {
         "user": {
@@ -209,7 +209,7 @@
               "bluetooth_excluded_speakers": "Kaiuttimet, joita ei käytetä Bluetooth-seurantaan"
             },
             "data_description": {
-              "bluetooth_tracking": "Kaiuttimiesi avulla näet, ovatko puhelimesi tai muut Bluetooth-laitteet kotona. Kun olet ottanut seurannan käyttöön, lisää seurattavat laitteet integraation sivulla kohdasta ”Lisää Bluetooth-laite”. Kun seuranta ei ole käytössä, integraatio ei lähetä kaiuttimille Bluetooth-pyyntöjä.",
+              "bluetooth_tracking": "Kaiuttimiesi avulla näet, ovatko puhelimesi tai muut Bluetooth-laitteet kotona. Kun olet ottanut seurannan käyttöön, valitse integraation sivulla ”Seuraa Bluetooth-laitetta” jokaiselle laitteelle, jota haluat seurata. Kun seuranta ei ole käytössä, integraatio ei lähetä kaiuttimille Bluetooth-pyyntöjä.",
               "bluetooth_excluded_speakers": "Kaiuttimet, jotka eivät etsi Bluetooth-laitteita. Lisää tähän kaiutin, joka on irrotettu verkkovirrasta tai poissa käytöstä: niin kauan kuin kaiutin ei vastaa, Bluetooth-seuranta ei voi näyttää tilaa ”Poissa”."
             }
           }

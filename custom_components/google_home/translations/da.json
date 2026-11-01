@@ -161,7 +161,7 @@
     "bluetooth_device": {
       "entry_type": "Bluetooth-enhed",
       "initiate_flow": {
-        "user": "Tilføj Bluetooth-enhed"
+        "user": "Spor en Bluetooth-enhed"
       },
       "step": {
         "user": {
@@ -209,7 +209,7 @@
               "bluetooth_excluded_speakers": "Højttalere, der ikke bruges til Bluetooth-sporing"
             },
             "data_description": {
-              "bluetooth_tracking": "Brug dine højttalere til at se, om din telefon eller andre Bluetooth-enheder er hjemme. Når sporingen er slået til, skal du tilføje de enheder, der skal spores, med »Tilføj Bluetooth-enhed« på integrationens side. Mens den er slået fra, sender integrationen ingen Bluetooth-forespørgsler til dine højttalere.",
+              "bluetooth_tracking": "Brug dine højttalere til at se, om din telefon eller andre Bluetooth-enheder er hjemme. Når sporingen er slået til, skal du vælge »Spor en Bluetooth-enhed« på integrationens side for hver enhed, der skal spores. Mens den er slået fra, sender integrationen ingen Bluetooth-forespørgsler til dine højttalere.",
               "bluetooth_excluded_speakers": "Højttalere, der ikke søger efter Bluetooth-enheder. Tilføj en højttaler, der er taget ud af stikket eller ude af drift: Mens en højttaler ikke svarer, kan trackere ikke vise »Ude«."
             }
           }

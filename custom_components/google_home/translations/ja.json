@@ -161,7 +161,7 @@
     "bluetooth_device": {
       "entry_type": "Bluetooth デバイス",
       "initiate_flow": {
-        "user": "Bluetooth デバイスを追加"
+        "user": "Bluetooth デバイスを追跡"
       },
       "step": {
         "user": {
@@ -209,7 +209,7 @@
               "bluetooth_excluded_speakers": "Bluetooth トラッキングに使用しないスピーカー"
             },
             "data_description": {
-              "bluetooth_tracking": "スピーカーを使って、スマートフォンやその他の Bluetooth デバイスが在宅かどうかを判定します。オンにしたら、統合のページで「Bluetooth デバイスを追加」から追跡するデバイスを追加してください。オフの間、この統合はスピーカーに Bluetooth のリクエストを送信しません。",
+              "bluetooth_tracking": "スピーカーを使って、スマートフォンやその他の Bluetooth デバイスが在宅かどうかを判定します。オンにしたら、追跡するデバイスごとに統合のページで「Bluetooth デバイスを追跡」を選択してください。オフの間、この統合はスピーカーに Bluetooth のリクエストを送信しません。",
               "bluetooth_excluded_speakers": "Bluetooth デバイスをスキャンしないスピーカー。電源が抜かれているスピーカーや使用していないスピーカーを追加してください。応答しないスピーカーがある間は、トラッカーを「不在」にできません。"
             }
           }

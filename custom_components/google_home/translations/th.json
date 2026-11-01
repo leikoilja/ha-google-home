@@ -161,7 +161,7 @@
     "bluetooth_device": {
       "entry_type": "อุปกรณ์ Bluetooth",
       "initiate_flow": {
-        "user": "เพิ่มอุปกรณ์ Bluetooth"
+        "user": "ติดตามอุปกรณ์ Bluetooth"
       },
       "step": {
         "user": {
@@ -209,7 +209,7 @@
               "bluetooth_excluded_speakers": "ลำโพงที่ไม่ใช้ติดตามด้วย Bluetooth"
             },
             "data_description": {
-              "bluetooth_tracking": "ใช้ลำโพงของคุณตรวจสอบว่าโทรศัพท์หรืออุปกรณ์ Bluetooth อื่นๆ อยู่ที่บ้านหรือไม่ หลังจากเปิดใช้งานแล้ว ให้เพิ่มอุปกรณ์ที่ต้องการติดตามด้วย “เพิ่มอุปกรณ์ Bluetooth” ในหน้าของ Integration ขณะที่ปิดอยู่ Integration จะไม่ส่งคำขอ Bluetooth ใดๆ ไปยังลำโพงของคุณ",
+              "bluetooth_tracking": "ใช้ลำโพงของคุณตรวจสอบว่าโทรศัพท์หรืออุปกรณ์ Bluetooth อื่นๆ อยู่ที่บ้านหรือไม่ หลังจากเปิดใช้งานแล้ว ให้เลือก “ติดตามอุปกรณ์ Bluetooth” ในหน้าของ Integration สำหรับอุปกรณ์แต่ละเครื่องที่ต้องการติดตาม ขณะที่ปิดอยู่ Integration จะไม่ส่งคำขอ Bluetooth ใดๆ ไปยังลำโพงของคุณ",
               "bluetooth_excluded_speakers": "ลำโพงที่ไม่สแกนหาอุปกรณ์ Bluetooth เพิ่มลำโพงที่ถอดปลั๊กหรือเลิกใช้งานแล้ว เพราะระหว่างที่ลำโพงไม่ตอบสนอง ตัวติดตามจะแสดงสถานะ “Away” (ไม่อยู่บ้าน) ไม่ได้"
             }
           }

@@ -161,7 +161,7 @@
     "bluetooth_device": {
       "entry_type": "Bluetooth-Gerät",
       "initiate_flow": {
-        "user": "Bluetooth-Gerät hinzufügen"
+        "user": "Bluetooth-Gerät verfolgen"
       },
       "step": {
         "user": {
@@ -209,7 +209,7 @@
               "bluetooth_excluded_speakers": "Lautsprecher, die nicht für Bluetooth-Tracking verwendet werden"
             },
             "data_description": {
-              "bluetooth_tracking": "Erkenne mit deinen Lautsprechern, ob dein Smartphone oder andere Bluetooth-Geräte zu Hause sind. Füge nach dem Einschalten die zu verfolgenden Geräte auf der Seite der Integration mit „Bluetooth-Gerät hinzufügen“ hinzu. Solange es ausgeschaltet ist, sendet die Integration keine Bluetooth-Anfragen an deine Lautsprecher.",
+              "bluetooth_tracking": "Erkenne mit deinen Lautsprechern, ob dein Smartphone oder andere Bluetooth-Geräte zu Hause sind. Wähle nach dem Einschalten auf der Seite der Integration „Bluetooth-Gerät verfolgen“ für jedes Gerät, das du verfolgen möchtest. Solange es ausgeschaltet ist, sendet die Integration keine Bluetooth-Anfragen an deine Lautsprecher.",
               "bluetooth_excluded_speakers": "Lautsprecher, die nicht nach Bluetooth-Geräten suchen. Füge einen Lautsprecher hinzu, der vom Strom getrennt oder außer Betrieb ist: Solange ein Lautsprecher nicht antwortet, können Tracker nicht „Abwesend“ anzeigen."
             }
           }

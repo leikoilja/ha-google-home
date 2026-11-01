@@ -161,7 +161,7 @@
     "bluetooth_device": {
       "entry_type": "Dispositivo Bluetooth",
       "initiate_flow": {
-        "user": "Adicionar dispositivo Bluetooth"
+        "user": "Rastrear um dispositivo Bluetooth"
       },
       "step": {
         "user": {
@@ -209,7 +209,7 @@
               "bluetooth_excluded_speakers": "Alto-falantes não usados para rastreamento por Bluetooth"
             },
             "data_description": {
-              "bluetooth_tracking": "Use seus alto-falantes para saber se o seu celular ou outros dispositivos Bluetooth estão em casa. Depois de ativá-lo, adicione os dispositivos a rastrear com “Adicionar dispositivo Bluetooth” na página da integração. Enquanto estiver desativado, a integração não envia nenhuma solicitação Bluetooth aos seus alto-falantes.",
+              "bluetooth_tracking": "Use seus alto-falantes para saber se o seu celular ou outros dispositivos Bluetooth estão em casa. Depois de ativá-lo, selecione “Rastrear um dispositivo Bluetooth” na página da integração para cada dispositivo a rastrear. Enquanto estiver desativado, a integração não envia nenhuma solicitação Bluetooth aos seus alto-falantes.",
               "bluetooth_excluded_speakers": "Alto-falantes que não procuram dispositivos Bluetooth. Adicione um alto-falante desconectado da tomada ou fora de serviço: enquanto um alto-falante não responder, os rastreadores não conseguem mostrar “Ausente”."
             }
           }

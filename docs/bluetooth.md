@@ -10,7 +10,7 @@ It tells home from away, not which room you're in. Bluetooth signal strength cha
 
 1. Go to **Settings** > **Devices & services** > **Google Home** and select **Configure**.
 2. Under **Bluetooth**, turn on **Bluetooth tracking** and select **Submit**.
-3. On the same page, select **Add Bluetooth device** for each device you want to track. See [Add a device to track](#add-a-device-to-track).
+3. On the same page, select **Track a Bluetooth device** for each device you want to track. See [Add a device to track](#add-a-device-to-track).
 
 The speakers start scanning once you've added the first device, and stop when you remove the last one.
 

@@ -161,7 +161,7 @@
     "bluetooth_device": {
       "entry_type": "Bluetooth-eining",
       "initiate_flow": {
-        "user": "Legg til Bluetooth-eining"
+        "user": "Spor ei Bluetooth-eining"
       },
       "step": {
         "user": {
@@ -209,7 +209,7 @@
               "bluetooth_excluded_speakers": "Høgtalarar som ikkje blir brukte til Bluetooth-sporing"
             },
             "data_description": {
-              "bluetooth_tracking": "Bruk høgtalarane til å sjå om telefonen din eller andre Bluetooth-einingar er heime. Når sporinga er slått på, legg du til einingane som skal sporast, med «Legg til Bluetooth-eining» på sida til integrasjonen. Når sporinga er slått av, sender ikkje integrasjonen nokon Bluetooth-førespurnader til høgtalarane.",
+              "bluetooth_tracking": "Bruk høgtalarane til å sjå om telefonen din eller andre Bluetooth-einingar er heime. Når sporinga er slått på, vel du «Spor ei Bluetooth-eining» på sida til integrasjonen for kvar eining som skal sporast. Når sporinga er slått av, sender ikkje integrasjonen nokon Bluetooth-førespurnader til høgtalarane.",
               "bluetooth_excluded_speakers": "Høgtalarar som ikkje søkjer etter Bluetooth-einingar. Legg til ein høgtalar som er kopla frå straumen eller ute av drift: Så lenge ein høgtalar ikkje svarar, kan ikkje sporarar vise «Borte»."
             }
           }

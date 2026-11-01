@@ -161,7 +161,7 @@
     "bluetooth_device": {
       "entry_type": "Zariadenie Bluetooth",
       "initiate_flow": {
-        "user": "Pridať zariadenie Bluetooth"
+        "user": "Sledovať zariadenie Bluetooth"
       },
       "step": {
         "user": {
@@ -209,7 +209,7 @@
               "bluetooth_excluded_speakers": "Reproduktory nepoužívané na sledovanie cez Bluetooth"
             },
             "data_description": {
-              "bluetooth_tracking": "Pomocou reproduktorov zistíte, či je váš telefón alebo iné zariadenia Bluetooth doma. Po zapnutí pridajte sledované zariadenia pomocou „Pridať zariadenie Bluetooth“ na stránke integrácie. Kým je sledovanie vypnuté, integrácia neposiela reproduktorom žiadne požiadavky Bluetooth.",
+              "bluetooth_tracking": "Pomocou reproduktorov zistíte, či je váš telefón alebo iné zariadenia Bluetooth doma. Po zapnutí vyberte na stránke integrácie „Sledovať zariadenie Bluetooth“ pre každé zariadenie, ktoré chcete sledovať. Kým je sledovanie vypnuté, integrácia neposiela reproduktorom žiadne požiadavky Bluetooth.",
               "bluetooth_excluded_speakers": "Reproduktory, ktoré nevyhľadávajú zariadenia Bluetooth. Pridajte reproduktor, ktorý je odpojený alebo mimo prevádzky: kým reproduktor neodpovedá, sledovače nemôžu zobraziť „Neprítomnosť“."
             }
           }

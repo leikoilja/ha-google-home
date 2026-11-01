@@ -161,7 +161,7 @@
     "bluetooth_device": {
       "entry_type": "藍牙裝置",
       "initiate_flow": {
-        "user": "新增藍牙裝置"
+        "user": "追蹤藍牙裝置"
       },
       "step": {
         "user": {
@@ -209,7 +209,7 @@
               "bluetooth_excluded_speakers": "不用於藍牙追蹤的音箱"
             },
             "data_description": {
-              "bluetooth_tracking": "使用音箱判斷你的手機或其他藍牙裝置是否在家。開啟後，請在此整合的頁面上使用「新增藍牙裝置」加入要追蹤的裝置。關閉期間，此整合不會向音箱傳送任何藍牙要求。",
+              "bluetooth_tracking": "使用音箱判斷你的手機或其他藍牙裝置是否在家。開啟後，請針對每個要追蹤的裝置，在此整合的頁面上選擇「追蹤藍牙裝置」。關閉期間，此整合不會向音箱傳送任何藍牙要求。",
               "bluetooth_excluded_speakers": "不掃描藍牙裝置的音箱。請加入已拔除電源或停止使用的音箱：只要有音箱沒有回應，追蹤器就無法顯示「離家」。"
             }
           }
