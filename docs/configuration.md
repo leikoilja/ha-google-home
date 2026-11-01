@@ -42,7 +42,7 @@ If you deleted a device in Home Assistant yourself and it doesn't come back when
 
 ## Add devices on another network
 
-The integration finds your devices on your network with multicast DNS (mDNS). mDNS usually doesn't reach other networks, such as a separate VLAN for smart home devices, or a Home Assistant container that doesn't use `host` network mode. Those devices then have only a [device sensor](entities.md#device-sensor) and a [reboot button](entities.md#reboot-button), and both are unavailable.
+The integration finds your devices on your network with multicast DNS (mDNS). mDNS usually doesn't reach other networks, such as a separate VLAN for smart home devices, or a Home Assistant container that doesn't use `host` network mode. Those devices then have only a [device sensor](entities.md#device-sensor), a [reboot button](entities.md#reboot-button) and an [update sensor](entities.md#update-sensor), and all three are unavailable.
 
 For devices on another network, Home Assistant needs:
 
@@ -71,7 +71,7 @@ When you add the integration, it asks which homes to add if your account has mor
 
 You can change the homes later under **Homes** in the integration's options. **Homes** appears when your account has more than one home, or when the only home left is one that you deselected, so that you can select it again. The integration needs to have got your homes from Google since it last loaded: if **Homes** is missing although your account has several homes, reload the integration first.
 
-Homes are listed by the names they have in the Google Home app. If two of your homes have the same name, rename one of them in the app first, so that you can tell them apart.
+Homes are listed by the names they have in the Google Home app. If two of your homes have the same name, rename one of them in the app first, so that you can tell them apart. The `home` attribute of each device's [device sensor](entities.md#device-sensor) shows the name of its home, so automations and templates can tell which home a device is in. The attribute is hidden while the sensor is unavailable, for example for a device in a home at another address that Home Assistant can't find on its network.
 
 To change the homes:
 

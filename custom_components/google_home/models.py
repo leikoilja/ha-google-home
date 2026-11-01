@@ -41,6 +41,7 @@ class GoogleHomeDevice:
         ip_address: str | None = None,
         hardware: str | None = None,
         cloud_device_id: str | None = None,
+        home_name: str | None = None,
     ):
         """Create Google Home device object."""
         self.device_id = device_id
@@ -50,6 +51,8 @@ class GoogleHomeDevice:
         self.hardware = hardware
         # Google's ID for the device, which it also reports locally
         self.cloud_device_id = cloud_device_id.lower() if cloud_device_id else None
+        # The name of its home in the Google Home app, if Google gives one
+        self.home_name = home_name
         # Whether the last request for alarms, settings or a reboot succeeded. Its
         # alarms, timers and settings entities are added only then.
         self.available = True
@@ -76,6 +79,31 @@ class GoogleHomeDevice:
         # The last answer to a request for its alarms and timers, as it came, for
         # diagnostics
         self.alarms_reply: JsonDict | None = None
+        # The firmware fields of its last build info, as it sent them
+        self.build_info: dict[str, object] | None = None
+        # Whether its info said at the last check that a firmware update is waiting,
+        # or None if it didn't say
+        self.has_update: bool | None = None
+        # When the last check of its firmware started
+        self.firmware_checked_at: float | None = None
+
+    @property
+    def sw_version(self) -> str | None:
+        """Return the firmware version in the form Google publishes for the device.
+
+        A display reports its system version, such as 31.20260101.103.1234567, as its
+        system build number. A speaker or Chromecast Audio reports only a build there,
+        the last part of its Cast version, such as 3.77.512345, which is the one
+        Google publishes for it.
+        """
+        info = self.build_info or {}
+        system = info.get("system_build_number")
+        cast = info.get("cast_build_revision")
+        if isinstance(system, str) and "." in system:
+            return system
+        if isinstance(cast, str) and cast:
+            return cast
+        return system if isinstance(system, str) and system else None
 
     def count_answer(self, status: int | None) -> bool:
         """Count the answer to this update's request, and return whether there was one.

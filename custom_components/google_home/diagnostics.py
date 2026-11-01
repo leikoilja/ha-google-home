@@ -73,6 +73,8 @@ async def async_get_config_entry_diagnostics(
                 "do_not_disturb": device.do_not_disturb,
                 "alarm_volume": device.alarm_volume,
                 "alarms_reply": device.alarms_reply,
+                "build_info": device.build_info,
+                "has_update": device.has_update,
                 # Whether mDNS reported it since the integration loaded, or since a fetch
                 # last dropped it from Google's list. None without Google's ID to match
                 # a report to.

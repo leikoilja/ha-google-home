@@ -460,9 +460,10 @@ def update_entry(
     """Run one update as the coordinators do, the account's and then each device's, and return the account's devices.
 
     The entry gets the coordinators on its first update. The devices aren't asked,
-    but each device's update must still reach them.
+    not even for their firmware, but each device's update must still reach them.
     """
     client.collect_data_from_endpoints = AsyncMock()  # type: ignore[method-assign]
+    client.update_firmware = AsyncMock()  # type: ignore[method-assign]
     if not isinstance(entry.runtime_data, GoogleHomeData):
         account = GoogleAccountCoordinator(HASS, entry, client, timedelta(seconds=15))
         entry.runtime_data = GoogleHomeData(client, account, {})
