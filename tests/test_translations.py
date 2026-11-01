@@ -351,6 +351,19 @@ def test_cli_writes_stats(git_repo: Path) -> None:
     }
 
 
+def test_cli_keeps_result_when_stats_cannot_be_written(
+    git_repo: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """Informational stats never change the check's result or its summary."""
+    stats = git_repo / "missing" / "stats.json"
+
+    assert translations.main(["--base-ref", "HEAD", "--stats", str(stats)]) == 0
+    assert "| de.json | 1/1 | 0 | 0 | 0 |" in (git_repo / "summary.md").read_text(
+        encoding="utf-8"
+    )
+    assert "Cannot write --stats" in capsys.readouterr().err
+
+
 @pytest.mark.parametrize("content", [b'{"help":', b"\xef\xbb\xbf{}", b"\xff"])
 def test_broken_base_can_be_repaired(git_repo: Path, content: bytes) -> None:
     """An unreadable base file is treated as empty when checking its replacement."""

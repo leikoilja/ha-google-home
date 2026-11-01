@@ -60,7 +60,8 @@ jobs:
 
       # Report stats shows this total as the PR's Coverage status. Failing
       # to save it doesn't fail this required check. Re-running only failed
-      # jobs reuses the other jobs' uploads, so keep them as long as re-runs.
+      # jobs reuses the other jobs' uploads, so keep them for the 30 days a
+      # run can be re-run.
       - name: Save total coverage
         continue-on-error: true
         run: uv run coverage report --format=total --precision=2 > coverage.txt

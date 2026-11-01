@@ -55,18 +55,25 @@ jobs:
       # replaces an earlier number instead of leaving it on the commit.
       - name: Set statuses
         run: |
-          JOBS=$(gh api "repos/${GH_REPO}/actions/runs/${RUN_ID}/jobs" --jq '[.jobs[] | {name, id, conclusion}]')
+          JOBS=$(gh api "repos/${GH_REPO}/actions/runs/${RUN_ID}/jobs" --jq '[.jobs[] | {name, id, conclusion, started_at}]')
 
           # Show the stats if the job succeeded, or why there are none
           post() {
-            local context=$1 job=$2 description=$3 state=success id conclusion
+            local context=$1 job=$2 artifact=$3 description=$4 state=success id conclusion started saved
             id=$(jq -r --arg job "${job}" 'map(select(.name == $job))[0].id // empty' <<<"${JOBS}")
             conclusion=$(jq -r --arg job "${job}" 'map(select(.name == $job))[0].conclusion // "not found"' <<<"${JOBS}")
+            started=$(jq -r --arg job "${job}" 'map(select(.name == $job))[0].started_at // empty' <<<"${JOBS}")
+            # The download took the artifact of this name with the highest ID.
+            # If the job was re-run and its upload failed, that one is from an
+            # earlier attempt, created before the job's latest start. A job
+            # that wasn't re-run keeps its start time, so its upload counts.
+            saved=$(gh api "repos/${GH_REPO}/actions/runs/${RUN_ID}/artifacts?name=${artifact}" \
+              --jq '.artifacts | max_by(.id) | .created_at // empty')
             if [ "${conclusion}" = failure ]; then
               state=failure description="${job}: failure"
             elif [ "${conclusion}" != success ]; then
               state=error description="${job}: ${conclusion}"
-            elif [ -z "${description}" ]; then
+            elif [ -z "${description}" ] || [[ ${saved} < ${started} ]]; then
               state=error description="${job} saved no valid stats"
             fi
             gh api --method POST "repos/${GH_REPO}/statuses/${HEAD_SHA}" \
@@ -86,5 +93,5 @@ jobs:
               else "\(.complete) of \(.translations) translations complete, \(.missing) string\(if .missing == 1 then "" else "s" end) missing"
               end' 2>/dev/null) || true
 
-          post Coverage Pre-commit "${COVERAGE:+${COVERAGE}%}"
-          post "Translation coverage" Translations "${TRANSLATIONS}"
+          post Coverage Pre-commit coverage-stats "${COVERAGE:+${COVERAGE}%}"
+          post "Translation coverage" Translations translation-stats "${TRANSLATIONS}"

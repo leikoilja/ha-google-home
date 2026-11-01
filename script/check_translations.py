@@ -297,16 +297,16 @@ def main(argv: list[str] | None = None) -> int:
             sys.exit(f"Cannot read --base-ref: {err.stderr.decode('utf-8').strip()}")
     report = check_translations(REPO_ROOT / TRANSLATIONS, baseline)
     if args.stats is not None:
-        args.stats.write_text(
-            json.dumps(
-                {
-                    "translations": report.translations,
-                    "complete": report.complete,
-                    "missing": report.missing,
-                }
-            ),
-            encoding="utf-8",
-        )
+        stats = {
+            "translations": report.translations,
+            "complete": report.complete,
+            "missing": report.missing,
+        }
+        try:
+            args.stats.write_text(json.dumps(stats), encoding="utf-8")
+        except OSError as err:
+            # The stats are informational, so they never change the result
+            print(f"Cannot write --stats: {err}", file=sys.stderr)
     summary = report.markdown()
     if summary_path := os.environ.get("GITHUB_STEP_SUMMARY"):
         key = attrgetter("file", "level")
