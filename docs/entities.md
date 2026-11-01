@@ -154,14 +154,14 @@ The Wi-Fi network sensor shows the name (SSID) of the Wi-Fi network the device i
 
 As a rough guide to what the signal strength means:
 
-| Signal strength   | What it suggests                                                  |
-| ----------------- | ----------------------------------------------------------------- |
-| -67 dBm or higher | Strong: the suggested minimum for voice calls and video streaming |
-| -68 to -70 dBm    | Okay: the suggested minimum for email and web browsing            |
-| -71 to -80 dBm    | Weak: the connection may be unreliable                            |
-| Below -80 dBm     | Very weak: the device may have trouble staying connected          |
+| Signal strength   | What it means                                                                      |
+| ----------------- | ---------------------------------------------------------------------------------- |
+| -67 dBm or higher | Strong: meets or exceeds the suggested minimum for voice calls and video streaming |
+| -68 to -70 dBm    | Okay: meets or exceeds the suggested minimum for email and web browsing            |
+| -71 to -80 dBm    | Weak: the connection may be unreliable                                             |
+| Below -80 dBm     | Very weak: the device may have trouble staying connected                           |
 
-These ranges are approximate, from general Wi-Fi guidance in [Understanding RSSI](https://www.oscium.com/training/understanding-rssi/), not figures from Google. A strong signal alone doesn't guarantee good performance: interference can still cause problems. If a device's signal is weak, you could try moving it or your router, or adding a mesh Wi-Fi point.
+These ranges are approximate, from general Wi-Fi guidance in [Understanding RSSI](https://www.oscium.com/training/understanding-rssi/), not figures from Google. The signal a device needs also varies with your network's requirements. A strong signal alone doesn't guarantee good performance: interference can still cause problems. If a device's signal is weak, you could try moving it or your router, or adding a mesh Wi-Fi point.
 
 Every device gets both sensors, including a device without alarms and timers, but they're disabled by default. To enable one, go to **Settings** > **Devices & services** > **Google Home** and select the device. In the **Diagnostic** card, select the disabled entities, such as **+2 disabled entities**, then the sensor. In its settings, turn on **Enabled** and select **Update**. Home Assistant adds it about 30 seconds later.
 
