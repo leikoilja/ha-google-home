@@ -20,7 +20,8 @@ from pytest_homeassistant.components.diagnostics import get_diagnostics_for_conf
 from pytest_homeassistant.test_util.aiohttp import AiohttpClientMocker
 from pytest_homeassistant.typing import ClientSessionGenerator
 
-from custom_components.google_home.const import DOMAIN
+from custom_components.google_home.account import KNOWN_HOSTS_INTERVAL
+from custom_components.google_home.const import DOMAIN, FETCH_DEVICES_INTERVAL
 
 # ruff sorts homeassistant as first-party, pylint as third-party
 # pylint: disable=wrong-import-order
@@ -473,10 +474,13 @@ async def test_known_host_of_excluded_home_not_added(
     replies: Replies,
     aioclient_mock: AiohttpClientMocker,
     device_registry: dr.DeviceRegistry,
+    clock: Mock,
 ) -> None:
     """Don't add an excluded home's speaker at a known host, though it's asked which device it is.
 
     mDNS finds neither speaker, so the known host is asked for the kitchen speaker.
+    Having said which device it is, it isn't asked again until the next fetch of
+    Google's list, though the kitchen speaker still has no address.
     """
     replies[BEDROOM][INFO] = (
         HTTPStatus.OK,
@@ -492,6 +496,18 @@ async def test_known_host_of_excluded_home_not_added(
 
     assert asked_by(asked(aioclient_mock), BEDROOM) == [INFO]
     assert bedroom_device(device_registry, config_entry) is None
+
+    clock.return_value = KNOWN_HOSTS_INTERVAL
+    await update_account(hass, config_entry)
+
+    assert asked(aioclient_mock) == []
+
+    # A fetch asks every known host again
+    clock.return_value = FETCH_DEVICES_INTERVAL
+    with patch("glocaltokens.client.discover_devices", return_value=[]):
+        await update_account(hass, config_entry)
+
+    assert asked_by(asked(aioclient_mock), BEDROOM) == [INFO]
 
 
 async def test_options_offer_excluded_home_alone(

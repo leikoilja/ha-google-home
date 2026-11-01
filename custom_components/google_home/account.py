@@ -5,7 +5,7 @@ from collections.abc import Mapping
 import ipaddress
 import logging
 from time import monotonic
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Final
 
 from aiohttp import ClientError, ClientSession
 from glocaltokens.client import Device, GLocalAuthenticationTokens
@@ -26,6 +26,10 @@ if TYPE_CHECKING:
     from ghome_foyer_api.api_pb2 import HomeGraph  # pylint: disable=no-name-in-module
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
+
+# Between fetches of Google's list, known hosts are asked at most this often for a
+# device that has no address
+KNOWN_HOSTS_INTERVAL: Final = 5 * 60  # sec
 
 
 class FetchBackoff:
@@ -100,6 +104,10 @@ class GoogleAccountClient:
         self.setting_up = False
         self.zeroconf_instance = zeroconf_instance
         self.known_hosts = known_hosts or []
+        # When known hosts were last asked, and those that said which device they are
+        # when they were last asked
+        self._known_hosts_asked_at: float | None = None
+        self._identified_hosts: set[str] = set()
         # The Google homes whose devices aren't added, by ID
         self.excluded_homes = set(excluded_homes or [])
         # The homes in the last home graph that Google answered with, by ID, with
@@ -179,9 +187,13 @@ class GoogleAccountClient:
         """Start an update of Google's device list: fetch it when due, or while it's unknown.
 
         From here until the next update, whatever asks for Google's list gets it at
-        most once: on schedule, when it's unknown, or for a rejected token. Return the
-        known hosts, by device ID, that the fetch this update ran or waited for gave
-        devices: their info answered then, so their next update needn't ask for it.
+        most once: on schedule, when it's unknown, or for a rejected token. Between
+        fetches, a device without an address is looked for at the known hosts every
+        KNOWN_HOSTS_INTERVAL seconds, without asking Google.
+
+        Return the known hosts, by device ID, that the fetch this update ran or waited
+        for, or the update's own lookup, gave devices: their info answered then, so
+        their next update needn't ask for it.
 
         Raise RequestException if Google's sign-in can't be reached while the list is
         unknown.
@@ -190,6 +202,12 @@ class GoogleAccountClient:
         known_hosts = await self.async_fetch_devices_when_due()
         if not self.google_devices_fetched:
             known_hosts = await self._async_fetch_devices(self._fetches_before_update)
+        # A fetch that asked the known hosts makes this wait a full interval
+        asked_at = self._known_hosts_asked_at
+        if self._needs_known_hosts() and (
+            asked_at is None or monotonic() >= asked_at + KNOWN_HOSTS_INTERVAL
+        ):
+            known_hosts = await self.async_use_known_hosts(between_fetches=True)
         return known_hosts
 
     async def _async_fetch_devices(self, fetches: int) -> Mapping[str, str]:
@@ -258,12 +276,19 @@ class GoogleAccountClient:
         self._use_google_devices(google_devices, home_graph, started)
         self.found_devices.fetch_worked(fetched_for)
         # Known hosts are only asked when mDNS left a device without an address
-        if self.known_hosts and any(
-            not device.ip_address and device.cloud_device_id
-            for device in self.google_devices
-        ):
+        if self._needs_known_hosts():
             return await self.async_use_known_hosts()
         return {}
+
+    def _needs_known_hosts(self) -> bool:
+        """Return whether a known host could give a device in the list its address.
+
+        A device without Google's other ID for it can't be matched to a host.
+        """
+        return bool(self.known_hosts) and any(
+            not device.ip_address and device.cloud_device_id
+            for device in self.google_devices
+        )
 
     def _get_google_devices(self) -> tuple[list[Device], HomeGraph]:
         """Fetch Google's home graph: its Cast devices, and the graph itself.
@@ -398,14 +423,23 @@ class GoogleAccountClient:
             _LOGGER.debug("Failed to fetch Google's device list", exc_info=True)
             return {}
 
-    async def async_use_known_hosts(self) -> dict[str, str]:
+    async def async_use_known_hosts(
+        self, *, between_fetches: bool = False
+    ) -> dict[str, str]:
         """Give devices that mDNS didn't find the address of the known host they're at.
 
         Hosts are matched by the ID that Google and the device itself report. In a
         speaker pair, only the leading speaker reports the pair's ID; the other
         reports its own, which Google doesn't list, so it's never used. Return the
         hosts given, by device ID: their info answered 200 just now.
+
+        Between fetches, only the hosts that didn't say which device they are when
+        last asked. One that did is a device with an address, or one that isn't
+        added, such as the other speaker of a pair or a device in a home whose devices
+        aren't added. A fetch asks them all again.
         """
+        # A fetch's lookup counts too, so the next one between fetches waits for it
+        self._known_hosts_asked_at = monotonic()
         # A host that mDNS already gave to a device can't fill in another one
         found = {
             ipaddress.ip_address(device.ip_address)
@@ -413,16 +447,24 @@ class GoogleAccountClient:
             if device.ip_address
         }
         hosts = [
-            host for host in self.known_hosts if ipaddress.ip_address(host) not in found
+            host
+            for host in self.known_hosts
+            if ipaddress.ip_address(host) not in found
+            and not (between_fetches and host in self._identified_hosts)
         ]
+        if between_fetches and hosts:
+            _LOGGER.debug("Asking known hosts for the devices that have no address")
         cloud_device_ids = await asyncio.gather(
             *(self._async_get_cloud_device_id(host) for host in hosts)
         )
         hosts_by_id: dict[str, str] = {}
         for host, cloud_device_id in zip(hosts, cloud_device_ids, strict=True):
-            if cloud_device_id is not None:
-                # As with mDNS, the first host that reports a device is used
-                hosts_by_id.setdefault(cloud_device_id, host)
+            if cloud_device_id is None:
+                self._identified_hosts.discard(host)
+                continue
+            self._identified_hosts.add(host)
+            # As with mDNS, the first host that reports a device is used
+            hosts_by_id.setdefault(cloud_device_id, host)
         given: dict[str, str] = {}
         for device in self.google_devices:
             if device.ip_address or not device.cloud_device_id:

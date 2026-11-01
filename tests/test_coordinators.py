@@ -17,6 +17,7 @@ from pytest_homeassistant.common import MockConfigEntry, async_fire_time_changed
 from pytest_homeassistant.test_util.aiohttp import AiohttpClientMocker
 from requests.exceptions import ConnectionError as RequestsConnectionError
 
+from custom_components.google_home.account import KNOWN_HOSTS_INTERVAL
 from custom_components.google_home.api import GlocaltokensApiClient
 from custom_components.google_home.const import (
     API_ENDPOINT_ALARM_DELETE,
@@ -60,6 +61,7 @@ from .test_unsupported_devices import (
     DND,
     ENDPOINTS,
     INFO,
+    OTHER,
     SPEAKER,
     SUPPORTED,
     UPDATE,
@@ -395,6 +397,59 @@ async def test_known_host_answer_after_setup(
     assert asked_by(asked(aioclient_mock), SPEAKER) == [INFO, *EVERYTHING, *FIRMWARE]
     device = hass.states.get("sensor.kitchen_speaker_device")
     assert device is not None
+    assert device.attributes["available"] is True
+
+
+async def test_known_hosts_asked_every_5_minutes_between_fetches(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    google: Mock,
+    replies: Replies,
+    aioclient_mock: AiohttpClientMocker,
+    clock: Mock,
+) -> None:
+    """Look for a speaker without an address at the known hosts every 5 minutes, without asking Google.
+
+    Neither known host answered at setup. Once the speaker's host answers, the speaker
+    is asked straight away, without asking for its info again, and no host is asked
+    after that, as no speaker needs an address. The other host never answers.
+    """
+    google.return_value = [kitchen_speaker(None)]
+    replies[SPEAKER] = {**STARTING, INFO: TimeoutError()}
+    replies[OTHER] = {INFO: TimeoutError()}
+    hass.config_entries.async_update_entry(
+        config_entry, options={CONF_KNOWN_HOSTS: [SPEAKER, OTHER]}
+    )
+    await set_up(hass, config_entry)
+    requests = asked(aioclient_mock)
+    sent = {0: {host: asked_by(requests, host) for host in (SPEAKER, OTHER)}}
+
+    # An update every 15 seconds, up to the scheduled fetch 20 minutes after setup's
+    for seconds in range(15, FETCH_DEVICES_INTERVAL + 1, 15):
+        if seconds == 3 * KNOWN_HOSTS_INTERVAL:
+            replies[SPEAKER][INFO] = (
+                HTTPStatus.OK,
+                {"device_info": {"cloud_device_id": SPEAKER_CLOUD_ID}},
+            )
+        clock.return_value = seconds
+        await update_account(hass, config_entry)
+        if requests := asked(aioclient_mock):
+            sent[seconds] = {
+                host: asked_by(requests, host) for host in (SPEAKER, OTHER)
+            }
+
+    # Setup's fetch asks each host once, and nothing asks again before 5 minutes
+    assert sent == {
+        0: {SPEAKER: [INFO], OTHER: [INFO]},
+        300: {SPEAKER: [INFO], OTHER: [INFO]},
+        600: {SPEAKER: [INFO], OTHER: [INFO]},
+        900: {SPEAKER: [INFO, *EVERYTHING, *FIRMWARE], OTHER: [INFO]},
+    }
+    # Setup's and the scheduled one
+    assert google.call_count == 2
+    device = hass.states.get(KITCHEN_DEVICE)
+    assert device is not None
+    assert device.state == SPEAKER
     assert device.attributes["available"] is True
 
 
