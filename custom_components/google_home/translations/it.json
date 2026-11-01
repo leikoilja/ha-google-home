@@ -105,6 +105,9 @@
       },
       "timers": {
         "name": "Timer"
+      },
+      "wifi_network": {
+        "name": "Rete Wi-Fi"
       }
     },
     "switch": {
@@ -155,6 +158,26 @@
     },
     "devices_not_rebooted": {
       "message": "Questi dispositivi non hanno confermato che si riavvieranno: {devices}. Verifica che siano online e riprova più tardi."
+    }
+  },
+  "issues": {
+    "polling_disabled": {
+      "title": "Il rilevamento delle variazioni è disabilitato",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Il rilevamento delle variazioni è disabilitato",
+            "description": "L'opzione **Abilita il rilevamento delle variazioni** è disabilitata nelle opzioni di sistema dell'integrazione, quindi l'integrazione non controlla i tuoi dispositivi di propria iniziativa. Sveglie, timer e altre entità si aggiornano solo quando lo chiedi, ad esempio con l'azione **Aggiorna i dispositivi**. Per sapere cosa continua a funzionare, consulta {docs_url}.\n\nSe riabiliti il rilevamento delle variazioni, l'integrazione viene ricaricata e poi controlla i tuoi dispositivi in base al suo intervallo di aggiornamento. Se lo lasci disabilitato, questa riparazione resta nascosta finché non abiliti il rilevamento e poi lo disabiliti di nuovo.",
+            "menu_options": {
+              "turn_on": "Riabilita il rilevamento delle variazioni",
+              "keep_off": "Lascia il rilevamento disabilitato e nascondi questa riparazione"
+            }
+          }
+        },
+        "abort": {
+          "polling_kept_off": "Il rilevamento delle variazioni resta disabilitato e questa riparazione è stata nascosta."
+        }
+      }
     }
   },
   "config_subentries": {

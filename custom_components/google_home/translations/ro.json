@@ -105,6 +105,9 @@
       },
       "timers": {
         "name": "Temporizatoare"
+      },
+      "wifi_network": {
+        "name": "Rețea Wi-Fi"
       }
     },
     "switch": {
@@ -155,6 +158,26 @@
     },
     "devices_not_rebooted": {
       "message": "Următoarele dispozitive nu au confirmat că vor reporni: {devices}. Verifică dacă dispozitivele sunt online și încearcă din nou mai târziu."
+    }
+  },
+  "issues": {
+    "polling_disabled": {
+      "title": "Interogarea pentru modificări este dezactivată",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Interogarea pentru modificări este dezactivată",
+            "description": "Opțiunea **Enable polling for changes** este dezactivată în opțiunile de sistem ale integrării, așa că integrarea nu îți verifică singură dispozitivele. Alarmele, temporizatoarele și celelalte entități se actualizează doar când ceri tu, de exemplu cu acțiunea **Actualizează starea dispozitivelor**. Pentru a vedea ce funcționează în continuare, consultă {docs_url}.\n\nDacă reactivezi interogarea, integrarea se reîncarcă, apoi îți verifică dispozitivele la intervalul de actualizare. Dacă o lași dezactivată, această remediere rămâne ascunsă până când activezi interogarea și apoi o dezactivezi din nou.",
+            "menu_options": {
+              "turn_on": "Reactivează interogarea",
+              "keep_off": "Lasă interogarea dezactivată și ascunde această remediere"
+            }
+          }
+        },
+        "abort": {
+          "polling_kept_off": "Interogarea rămâne dezactivată, iar această remediere a fost ascunsă."
+        }
+      }
     }
   },
   "config_subentries": {

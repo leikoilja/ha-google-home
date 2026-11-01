@@ -224,6 +224,7 @@ def test_setup_browses_before_first_fetch() -> None:
     entry = Mock(
         data={"master_token": MASTER_TOKEN, "username": "", "password": ""},
         options={},
+        pref_disable_polling=False,
         async_on_unload=Mock(
             side_effect=lambda func: events.append(f"on unload: {func.__name__}")
         ),
@@ -244,6 +245,8 @@ def test_setup_browses_before_first_fetch() -> None:
     with (
         patch("custom_components.google_home.zeroconf.async_get_instance"),
         patch("custom_components.google_home.async_get_clientsession"),
+        # It needs Home Assistant's issue registry
+        patch("custom_components.google_home.async_show_polling_disabled"),
         patch(
             "custom_components.google_home.GoogleAccountCoordinator",
             return_value=account,

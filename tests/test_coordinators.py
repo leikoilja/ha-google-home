@@ -297,7 +297,8 @@ async def test_speaker_added_in_google_home_app(
 ) -> None:
     """Ask a speaker that a scheduled fetch finds straight away, and add its entities without a reload.
 
-    A speaker that doesn't answer gets only its device sensor and reboot button.
+    A speaker that doesn't answer gets only its device and Wi-Fi sensors and reboot
+    button.
     """
     await set_up(hass, config_entry)
     asked(aioclient_mock)
@@ -324,7 +325,12 @@ async def test_speaker_added_in_google_home_app(
         )
         if entry.entity_id.startswith(("sensor.office", "button.office"))
     }
-    assert added == {"sensor.office_speaker_device", "button.office_speaker_reboot"}
+    assert added == {
+        "sensor.office_speaker_device",
+        "sensor.office_speaker_wi_fi_network",
+        "sensor.office_speaker_signal_strength",
+        "button.office_speaker_reboot",
+    }
 
 
 async def test_known_host_answer_at_setup(
@@ -674,7 +680,7 @@ async def test_nothing_asked_after_unload(
     """
     await set_up(hass, config_entry)
     held = Held(SUPPORTED[ALARMS])
-    replies[BEDROOM] = dict(SUPPORTED) | {ALARMS: held}
+    replies[BEDROOM] = {**SUPPORTED, ALARMS: held}
     google.return_value = [kitchen_speaker(), bedroom_speaker()]
     clock.return_value = FETCH_DEVICES_INTERVAL
     await runtime(config_entry).account.async_refresh()

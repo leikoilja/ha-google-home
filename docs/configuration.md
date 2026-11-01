@@ -1,6 +1,6 @@
 # Configuration and management
 
-After you [set up the integration](installation.md), you can change how often it checks your devices, add and remove devices, reach devices on another network, choose the homes whose devices it adds, track phones with Bluetooth, and remove the integration. If Home Assistant asks you to sign in again, see [Sign in again](troubleshooting.md#sign-in-again).
+After you [set up the integration](installation.md), you can change how often it checks your devices or turn that off, add and remove devices, reach devices on another network, choose the homes whose devices it adds, track phones with Bluetooth, and remove the integration. If Home Assistant asks you to sign in again, see [Sign in again](troubleshooting.md#sign-in-again).
 
 ## Change the update interval
 
@@ -8,11 +8,58 @@ The integration checks your devices for changes every 15 seconds by default.
 
 To change the interval, go to **Settings** > **Devices & services** > **Google Home** and select **Configure**. Shorter intervals update alarms and timers sooner but send more requests to your devices.
 
-If a speaker or display with alarms and timers often shows `false` in the `available` attribute of its [device sensor](entities.md#device-sensor) while it's on, or its entities become unavailable for a moment while it restarts, increase the interval, for example to 180 seconds, the default before version 1.16.
+Around an alarm's or timer's time, and while it rings, the integration checks that speaker more often than a longer interval, so that ringing shows within seconds and its end within about 10 seconds; see [How quickly ringing shows](automations.md#how-quickly-ringing-shows). A check that the speaker answers normally sends it 3 requests. The figures below are estimates for these extra checks alone, on a speaker that answers each one promptly. Not included: refreshes that you or the integration start, actions, and the extra requests of a check that gets an error or a rejected token. With an interval of 180 seconds:
+
+- An alarm that you stop after a minute costs about 7 checks more than the interval alone.
+- An alarm that rings for an hour until it stops by itself costs about 340 more checks, about 1,020 requests, in that hour.
+- Each time an alarm or timer goes off, including again after a snooze, it costs at most about 375 more checks, about 1,125 requests, until 65 minutes after its time.
+
+With the default interval of 15 seconds, the checks while it rings come more often than the interval too: an alarm that rings for an hour costs about 120 more checks, about 360 requests.
+
+The [firmware check](entities.md#update-sensor) still comes at most every 20 minutes. It's made at the first check after it's due, which while an alarm or timer rings can be one of these extra checks, so it then comes closer to every 20 minutes than at a long interval alone.
+
+If a speaker or display with alarms and timers often shows `false` in the `available` attribute of its [device sensor](entities.md#device-sensor) while it's on, or its entities become unavailable for a moment while it restarts, increase the interval, for example to 180 seconds, the default before version 1.16. The extra checks around an alarm's or timer's time still come at their own pace, but stop as soon as the speaker doesn't answer one, until it answers again.
 
 **Configure** shows the interval in use. If you saved these options in version 1.15 or older, for example to add known hosts, it's the interval you saved, which was 180 seconds unless you changed it. To use the new default, enter 15 and select **Submit**.
 
 To update immediately, use the [Refresh devices](actions.md#refresh-devices) action.
+
+## Turn off polling
+
+You can stop the integration from checking your devices on its own: go to **Settings** > **Devices & services** > **Google Home** > **⋮** > **System options** and turn off **Enable polling for changes**. Most of what the integration shows then changes only when you ask for an update, so turn polling off only if you update your devices yourself, for example from an automation.
+
+While polling is off:
+
+- When Home Assistant starts or the integration reloads, the integration gets your devices from Google and asks each device once, so its entities show current values.
+- Alarms, timers and the other entities update only when you run [Refresh devices](actions.md#refresh-devices) or [`homeassistant.update_entity`](https://www.home-assistant.io/actions/homeassistant.update_entity/), or after an action that deletes alarms or timers. The other actions still work.
+- A device that goes offline keeps its entities available until it misses 5 of these updates in a row.
+- The speakers don't scan for Bluetooth devices on their own, so [Bluetooth trackers](bluetooth.md) show `unknown`.
+- At an update, the integration also gets your devices from Google when it's due: if it last did at least 20 minutes before, or if mDNS found a Cast device that Google's list doesn't have at least 30 seconds before. Devices and homes that you add in or remove from the Google Home app change in Home Assistant only at these updates, as described in [Add a device](#add-a-device) and [Remove a device](#remove-a-device). A device that you removed goes once Google's list has lacked it at two of these updates in a row. To see a change straight away, reload the integration.
+- When a device's access token changes, usually within a day, the integration gets the new token from Google at the device's next update. If an action fails because the device rejected its token, run Refresh devices, then try the action again.
+
+This automation updates your devices every 5 minutes. List the [device sensor](entities.md#device-sensor) of each device to update:
+
+```yaml
+alias: Update Google Home devices
+triggers:
+  - trigger: time_pattern
+    minutes: "/5"
+actions:
+  - action: homeassistant.update_entity
+    target:
+      entity_id:
+        - sensor.kitchen_device
+        - sensor.living_room_device
+```
+
+It uses `homeassistant.update_entity` rather than Refresh devices, which Home Assistant doesn't run while the sensors it targets are unavailable. When a device misses 5 updates in a row, for example while it's unplugged, its sensors become unavailable. A Refresh devices automation that targets them then updates no device at all, and with polling off nothing else makes them available again. `homeassistant.update_entity` updates the device of each entity you list, even one that's unavailable.
+
+While polling is off, **Settings** > **System** > **Repairs** shows **Polling for changes is turned off**. Select it, then choose:
+
+- **Turn polling back on**: the integration reloads, checks your devices at the [update interval](#change-the-update-interval) again, and the repair goes away. Turning **Enable polling for changes** back on in **System options** does the same once the integration reloads.
+- **Keep polling off and hide this repair**: Home Assistant hides the repair, also after a restart. It shows again if you turn polling on and later off again. To find it while it's hidden, open the **⋮** menu in **Repairs** and select **Show ignored repairs**.
+
+Closing the repair without choosing changes nothing.
 
 ## Add a device
 

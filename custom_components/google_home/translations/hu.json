@@ -105,6 +105,9 @@
       },
       "timers": {
         "name": "Időzítők"
+      },
+      "wifi_network": {
+        "name": "Wi-Fi-hálózat"
       }
     },
     "switch": {
@@ -155,6 +158,26 @@
     },
     "devices_not_rebooted": {
       "message": "A következő eszközök nem erősítették meg, hogy újraindulnak: {devices}. Ellenőrizze, hogy az eszközök online vannak-e, és próbálja újra később."
+    }
+  },
+  "issues": {
+    "polling_disabled": {
+      "title": "A változások lekérdezése le van tiltva",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "A változások lekérdezése le van tiltva",
+            "description": "A **Lekérdezés engedélyezése a változásokhoz** beállítás le van tiltva az integráció rendszerbeállításaiban, ezért az integráció nem ellenőrzi magától az eszközeit. Az ébresztések, időzítők és más entitások csak akkor frissülnek, ha Ön kéri, például az **Eszközök állapotának frissítése** művelettel. Hogy mi működik továbbra is, azt itt találja: {docs_url}.\n\nHa újra engedélyezi a lekérdezést, az integráció újratöltődik, majd a beállított frissítési időközönként ellenőrzi az eszközeit. Ha letiltva hagyja, ez a javítás rejtve marad, amíg nem engedélyezi, majd újra le nem tiltja a lekérdezést.",
+            "menu_options": {
+              "turn_on": "Lekérdezés újbóli engedélyezése",
+              "keep_off": "A lekérdezés letiltva hagyása és a javítás elrejtése"
+            }
+          }
+        },
+        "abort": {
+          "polling_kept_off": "A lekérdezés letiltva marad, ez a javítás pedig rejtve van."
+        }
+      }
     }
   },
   "config_subentries": {

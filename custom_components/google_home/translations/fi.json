@@ -105,6 +105,9 @@
       },
       "timers": {
         "name": "Ajastimet"
+      },
+      "wifi_network": {
+        "name": "Wi-Fi-verkko"
       }
     },
     "switch": {
@@ -155,6 +158,26 @@
     },
     "devices_not_rebooted": {
       "message": "Seuraavat laitteet eivät vahvistaneet käynnistyvänsä uudelleen: {devices}. Tarkista, että laitteet ovat verkossa, ja yritä myöhemmin uudelleen."
+    }
+  },
+  "issues": {
+    "polling_disabled": {
+      "title": "Muutosten kysely on poistettu käytöstä",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Muutosten kysely on poistettu käytöstä",
+            "description": "Asetus **Ota muutosten kysely käyttöön** on poistettu käytöstä integraation järjestelmäasetuksissa, joten integraatio ei tarkista laitteitasi itsestään. Herätykset, ajastimet ja muut entiteetit päivittyvät vain, kun pyydät, esimerkiksi toiminnolla **Päivitä laitteiden tila**. Tietoa siitä, mikä toimii edelleen: {docs_url}.\n\nJos otat kyselyn uudelleen käyttöön, integraatio ladataan uudelleen, ja sen jälkeen se tarkistaa laitteesi päivitysvälin mukaan. Jos pidät kyselyn poissa käytöstä, tämä korjaus piilotetaan, kunnes otat kyselyn käyttöön ja poistat sen sitten taas käytöstä.",
+            "menu_options": {
+              "turn_on": "Ota kysely uudelleen käyttöön",
+              "keep_off": "Pidä kysely poissa käytöstä ja piilota tämä korjaus"
+            }
+          }
+        },
+        "abort": {
+          "polling_kept_off": "Kysely pysyy poissa käytöstä, ja tämä korjaus on piilotettu."
+        }
+      }
     }
   },
   "config_subentries": {

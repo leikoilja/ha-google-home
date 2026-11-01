@@ -123,10 +123,12 @@ class FoundDevices:
 
     @callback
     def async_stop(self) -> None:
-        """Stop fetching the list for devices that mDNS finds, as the entry unloads.
+        """Stop fetching the list for devices that mDNS finds.
 
-        It's for good: cancelling the update runs its cleanup, which mustn't set a
-        timer again. Loading the entry again creates a new client.
+        As the entry unloads, or at setup while polling is off. It's for good:
+        cancelling the update runs its cleanup, which mustn't set a timer again.
+        Loading the entry again creates a new client. Found devices still get their
+        addresses.
         """
         self._stopped = True
         self._schedule()

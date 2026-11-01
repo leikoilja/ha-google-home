@@ -105,6 +105,9 @@
       },
       "timers": {
         "name": "Timers"
+      },
+      "wifi_network": {
+        "name": "Wi-Fi-nätverk"
       }
     },
     "switch": {
@@ -155,6 +158,26 @@
     },
     "devices_not_rebooted": {
       "message": "Följande enheter bekräftade inte att de kommer att starta om: {devices}. Kontrollera att enheterna är online och försök igen senare."
+    }
+  },
+  "issues": {
+    "polling_disabled": {
+      "title": "Pollning för ändringar är inaktiverad",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Pollning för ändringar är inaktiverad",
+            "description": "Alternativet **Aktivera pollning för ändringar** är avstängt i integrationens systemalternativ, så integrationen kontrollerar inte dina enheter på egen hand. Alarm, timers och andra entiteter uppdateras bara när du ber om det, till exempel med åtgärden **Uppdatera enheter**. Se vad som fortfarande fungerar på {docs_url}.\n\nOm du aktiverar pollning igen laddas integrationen om och kontrollerar sedan dina enheter med uppdateringsintervallet. Om du låter pollning vara inaktiverad döljs den här lagningen tills du aktiverar pollning och sedan inaktiverar den igen.",
+            "menu_options": {
+              "turn_on": "Aktivera pollning igen",
+              "keep_off": "Låt pollning vara inaktiverad och dölj den här lagningen"
+            }
+          }
+        },
+        "abort": {
+          "polling_kept_off": "Pollning förblir inaktiverad och den här lagningen är dold."
+        }
+      }
     }
   },
   "config_subentries": {
