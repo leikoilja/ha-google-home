@@ -205,7 +205,13 @@ async def test_schedule_after_speaker_fetch(
 
 @pytest.fixture(name="time_frozen_before")
 def fixture_time_frozen_before() -> None:
-    """Freeze time once before the clock is set, as an earlier test in the process may have."""
+    """Freeze time once before the clock is set, as an earlier test in the process may have.
+
+    freezegun first forgets what it found in the client's modules, so this freeze finds
+    their real monotonic whatever ran before, as the first freeze in a process does.
+    """
+    for module in (api, account, mdns):
+        freezegun.api._GLOBAL_MODULES_CACHE.pop(module.__name__, None)  # noqa: SLF001  # pylint: disable=protected-access
     with freezegun.freeze_time():
         pass
 
