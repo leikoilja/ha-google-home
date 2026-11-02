@@ -36,6 +36,8 @@ Google refused the cookie or master token for a reason that the integration does
 
 Home Assistant couldn't connect to Google, or Google didn't answer in time. Check that Home Assistant is connected to the internet. The integration signs in at `android.clients.google.com`, and after setup gets your devices from `googlehomefoyer-pa.googleapis.com`. If a DNS filter or firewall, such as Pi-hole or AdGuard Home, blocks either, allow it. Then try again. With browser sign-in, get a new cookie if a few minutes have passed.
 
+Once the integration is added, [System information](#check-system-information) shows whether Home Assistant reaches both.
+
 ### "Google is busy or is limiting sign-ins"
 
 Google answered with a server error, or asked the integration to slow down. This doesn't mean that your cookie or master token is wrong. Wait a few minutes, then sign in again. With browser sign-in, get a new cookie, as the old one expires within minutes.
@@ -193,6 +195,29 @@ While the integration isn't loaded, its [actions](actions.md), such as `google_h
 
 Open **Settings** > **Devices & services** > **Google Home** to see why it isn't loaded, and if Home Assistant asks you to, [sign in again](#sign-in-again). Once the integration is loaded, the actions run again.
 
+## Check System information
+
+Home Assistant's System information has a **Google Home** section. It shows whether Home Assistant can reach Google, whether the integration has your devices from Google, and how many of them don't answer. Unlike [diagnostics](#download-diagnostics), it's there once you've added the integration, even if it then fails to set up. It isn't there while you add the integration for the first time, so it can't help when [adding the integration shows an error](#setup-fails).
+
+To open it, go to **Settings** > **System** > **Repairs**, open the **⋮** menu and select **System information**.
+
+The section shows:
+
+- **Reach Google sign-in server** and **Reach Google device list server**: each shows `ok` if its host, `android.clients.google.com` or `googlehomefoyer-pa.googleapis.com`, answered a plain web request. Otherwise it shows `unreachable` or `timeout`, with a **more info** link to ["Couldn't reach Google"](#couldnt-reach-google). Any answer counts as `ok`, so `ok` doesn't show that Google accepts the sign-in or gives your devices.
+- **Google's device list**:
+    - `fetched`: the integration's devices come from a time when Google gave the list. It doesn't say when that was.
+    - `not fetched`: Google hasn't given the list since the integration started, or a device's token changed and the list is to be fetched again.
+    - `sign-in rejected`: Google rejected the master token during an earlier attempt, and no attempt has worked since. It stays even if Google later answers with a server error or asks to try later. [Sign in again](#sign-in-again).
+- **Retry not before**: while the integration has no list from Google and waits after a failed attempt, the earliest time it asks Google again. It asks at the first [update](configuration.md#change-the-update-interval) after that time. While [polling is turned off](configuration.md#turn-off-polling), it asks only when something updates the devices, such as [Refresh devices](actions.md#refresh-devices).
+- **Polling for changes**: `false` while [polling is turned off](configuration.md#turn-off-polling). **Bluetooth tracking**: `true` if you [turned it on](bluetooth.md#turn-on-bluetooth-tracking) in the options.
+- **Devices in Google's list** and **Devices not answering**: how many devices the integration has from Google, without those in homes that you [deselected](configuration.md#choose-homes), and how many of them don't answer. These show once Google has given the list, even an empty one.
+    - A device without an IP address doesn't answer: the integration can't ask it. See [Home Assistant can't reach your devices](#device-offline-or-not-compatible).
+    - A device that missed 5 updates in a row counts until it answers. A "not found" answer, which a speaker gives for a while when it starts, doesn't end that; any other answer does, even an error.
+
+If the integration fails to set up, the section shows only whether Home Assistant can reach Google. Open **Settings** > **Devices & services** > **Google Home** to see why setup failed.
+
+The values are in English in every language. The Google Home section has no names, email addresses, IDs or IP addresses. **Copy** copies the whole of System information, though, with the other integrations' sections and details about your system: check the text before you post it.
+
 ## Download diagnostics
 
 The diagnostics file shows:
@@ -209,7 +234,7 @@ Attach the file, as well as [debug logs](#collect-debug-logs), when you [open an
 1. Go to **Settings** > **Devices & services** > **Google Home**.
 2. Open the **⋮** menu and select **Download diagnostics**. Your browser downloads the file.
 
-The menu has **Download diagnostics** only while the integration is set up. If setup fails, [collect debug logs](#collect-debug-logs) instead.
+The menu has **Download diagnostics** only while the integration is set up. If setup fails, [collect debug logs](#collect-debug-logs) instead. Once the integration is added, [System information](#check-system-information) also works while it fails to set up.
 
 !!! warning "Check the file before sharing it"
 

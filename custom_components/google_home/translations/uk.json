@@ -310,5 +310,17 @@
       "description": "Оновити стан усіх пристроїв Google Home.",
       "name": "Оновити пристрої"
     }
+  },
+  "system_health": {
+    "info": {
+      "can_reach_sign_in": "Доступ до сервера входу Google",
+      "can_reach_device_list": "Доступ до сервера списку пристроїв Google",
+      "device_list": "Список пристроїв Google",
+      "retry_not_before": "Повтор не раніше",
+      "polling": "Опитування щодо змін",
+      "bluetooth_tracking": "Відстеження через Bluetooth",
+      "devices_listed": "Пристрої у списку Google",
+      "devices_not_answering": "Пристрої, які не відповідають"
+    }
   }
 }

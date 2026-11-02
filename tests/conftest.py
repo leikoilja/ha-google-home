@@ -367,8 +367,9 @@ def fixture_replies(aioclient_mock: AiohttpClientMocker) -> Replies:
     """Answer each request to a speaker as this table says when it's sent.
 
     By address and endpoint, as in test_unsupported_devices, Held to answer only once
-    released, or ForToken to answer only requests with that token. The speaker at
-    SPEAKER is a Google or Nest speaker.
+    released, or ForToken to answer only requests with that token. Another host, such
+    as Google's, is answered by its path. The speaker at SPEAKER is a Google or Nest
+    speaker.
     """
     replies: Replies = {SPEAKER: dict(SUPPORTED)}
     endpoints = {**ENDPOINTS, API_ENDPOINT_ALARM_DELETE: DELETE}
@@ -376,7 +377,8 @@ def fixture_replies(aioclient_mock: AiohttpClientMocker) -> Replies:
     async def answer(method: str, url: URL, _data: object) -> AiohttpClientMockResponse:
         # The mock records the request, with its headers, just before asking this
         _, _, _, headers = aioclient_mock.mock_calls[-1]
-        reply = replies[str(url.host)][endpoints[url.path_qs.removeprefix("/")]]
+        path = url.path_qs.removeprefix("/")
+        reply = replies[str(url.host)][endpoints.get(path, path)]
         if isinstance(reply, ForToken):
             token = (headers or {}).get(HEADER_CAST_LOCAL_AUTH)
             reply = reply.reply if token == reply.token else HTTPStatus.UNAUTHORIZED

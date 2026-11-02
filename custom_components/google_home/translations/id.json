@@ -310,5 +310,17 @@
       "description": "Memperbarui status semua perangkat Google Home.",
       "name": "Perbarui status perangkat"
     }
+  },
+  "system_health": {
+    "info": {
+      "can_reach_sign_in": "Keterjangkauan server login Google",
+      "can_reach_device_list": "Keterjangkauan server daftar perangkat Google",
+      "device_list": "Daftar perangkat Google",
+      "retry_not_before": "Coba lagi paling cepat",
+      "polling": "Polling untuk perubahan",
+      "bluetooth_tracking": "Pelacakan Bluetooth",
+      "devices_listed": "Perangkat di daftar Google",
+      "devices_not_answering": "Perangkat yang tidak merespons"
+    }
   }
 }

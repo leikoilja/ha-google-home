@@ -310,5 +310,17 @@
       "description": "Actualiser l'état de tous les appareils Google Home.",
       "name": "Actualiser les appareils"
     }
+  },
+  "system_health": {
+    "info": {
+      "can_reach_sign_in": "Accès au serveur de connexion Google",
+      "can_reach_device_list": "Accès au serveur de la liste des appareils Google",
+      "device_list": "Liste des appareils de Google",
+      "retry_not_before": "Nouvelle tentative au plus tôt",
+      "polling": "Interrogation périodique des changements",
+      "bluetooth_tracking": "Suivi Bluetooth",
+      "devices_listed": "Appareils dans la liste de Google",
+      "devices_not_answering": "Appareils qui ne répondent pas"
+    }
   }
 }

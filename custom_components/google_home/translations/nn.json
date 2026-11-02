@@ -310,5 +310,17 @@
       "description": "Oppdater statusen til alle Google Home-einingar.",
       "name": "Oppdater einingar"
     }
+  },
+  "system_health": {
+    "info": {
+      "can_reach_sign_in": "Nå påloggingstenaren til Google",
+      "can_reach_device_list": "Nå tenaren for einingslista til Google",
+      "device_list": "Einingslista til Google",
+      "retry_not_before": "Nytt forsøk tidlegast",
+      "polling": "Polling av oppdateringar",
+      "bluetooth_tracking": "Bluetooth-sporing",
+      "devices_listed": "Einingar i lista til Google",
+      "devices_not_answering": "Einingar som ikkje svarar"
+    }
   }
 }

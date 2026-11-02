@@ -310,5 +310,17 @@
       "description": "Den Status aller Google Home-Geräte aktualisieren.",
       "name": "Geräte aktualisieren"
     }
+  },
+  "system_health": {
+    "info": {
+      "can_reach_sign_in": "Google-Anmeldeserver erreichbar",
+      "can_reach_device_list": "Server für Googles Geräteliste erreichbar",
+      "device_list": "Googles Geräteliste",
+      "retry_not_before": "Neuer Versuch frühestens",
+      "polling": "Abfrage von Änderungen",
+      "bluetooth_tracking": "Bluetooth-Tracking",
+      "devices_listed": "Geräte in Googles Liste",
+      "devices_not_answering": "Geräte, die nicht antworten"
+    }
   }
 }

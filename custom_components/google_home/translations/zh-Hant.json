@@ -310,5 +310,17 @@
       "description": "更新所有 Google Home 裝置的狀態。",
       "name": "更新裝置"
     }
+  },
+  "system_health": {
+    "info": {
+      "can_reach_sign_in": "連線 Google 登入伺服器",
+      "can_reach_device_list": "連線 Google 裝置清單伺服器",
+      "device_list": "Google 的裝置清單",
+      "retry_not_before": "最早重試時間",
+      "polling": "輪詢變更",
+      "bluetooth_tracking": "藍牙追蹤",
+      "devices_listed": "Google 清單中的裝置",
+      "devices_not_answering": "未回應的裝置"
+    }
   }
 }

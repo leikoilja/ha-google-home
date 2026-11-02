@@ -310,5 +310,17 @@
       "description": "Actualizar el estado de todos los dispositivos Google Home.",
       "name": "Actualizar dispositivos"
     }
+  },
+  "system_health": {
+    "info": {
+      "can_reach_sign_in": "Acceso al servidor de inicio de sesión de Google",
+      "can_reach_device_list": "Acceso al servidor de la lista de dispositivos de Google",
+      "device_list": "Lista de dispositivos de Google",
+      "retry_not_before": "Reintento no antes de",
+      "polling": "Sondeo de cambios",
+      "bluetooth_tracking": "Seguimiento por Bluetooth",
+      "devices_listed": "Dispositivos en la lista de Google",
+      "devices_not_answering": "Dispositivos que no responden"
+    }
   }
 }

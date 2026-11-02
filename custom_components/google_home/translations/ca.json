@@ -310,5 +310,17 @@
       "description": "Actualitza l'estat de tots els dispositius Google Home.",
       "name": "Actualitza dispositius"
     }
+  },
+  "system_health": {
+    "info": {
+      "can_reach_sign_in": "Servidor d'inici de sessió de Google accessible",
+      "can_reach_device_list": "Servidor de la llista de dispositius de Google accessible",
+      "device_list": "Llista de dispositius de Google",
+      "retry_not_before": "Reintent no abans de",
+      "polling": "Sondeig per obtenir canvis",
+      "bluetooth_tracking": "Seguiment per Bluetooth",
+      "devices_listed": "Dispositius a la llista de Google",
+      "devices_not_answering": "Dispositius que no responen"
+    }
   }
 }

@@ -310,5 +310,17 @@
       "description": "รีเฟรชสถานะของอุปกรณ์ Google Home ทั้งหมด",
       "name": "รีเฟรชสถานะอุปกรณ์"
     }
+  },
+  "system_health": {
+    "info": {
+      "can_reach_sign_in": "เข้าถึงเซิร์ฟเวอร์ลงชื่อเข้าใช้ของ Google",
+      "can_reach_device_list": "เข้าถึงเซิร์ฟเวอร์รายการอุปกรณ์ของ Google",
+      "device_list": "รายการอุปกรณ์ของ Google",
+      "retry_not_before": "ลองอีกครั้งได้เร็วที่สุดเมื่อ",
+      "polling": "การตรวจหาการเปลี่ยนแปลงอัตโนมัติ",
+      "bluetooth_tracking": "การติดตามด้วย Bluetooth",
+      "devices_listed": "อุปกรณ์ในรายการของ Google",
+      "devices_not_answering": "อุปกรณ์ที่ไม่ตอบสนอง"
+    }
   }
 }

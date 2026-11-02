@@ -310,5 +310,17 @@
       "description": "모든 Google Home 기기의 상태를 새로고침합니다.",
       "name": "기기 상태 새로고침"
     }
+  },
+  "system_health": {
+    "info": {
+      "can_reach_sign_in": "Google 로그인 서버 연결",
+      "can_reach_device_list": "Google 기기 목록 서버 연결",
+      "device_list": "Google 기기 목록",
+      "retry_not_before": "가장 이른 재시도 시각",
+      "polling": "변경 사항 폴링",
+      "bluetooth_tracking": "블루투스 추적",
+      "devices_listed": "Google 목록에 있는 기기",
+      "devices_not_answering": "응답하지 않는 기기"
+    }
   }
 }

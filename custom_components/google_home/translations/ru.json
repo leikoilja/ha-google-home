@@ -310,5 +310,17 @@
       "description": "Обновить состояние всех устройств Google Home.",
       "name": "Обновить устройства"
     }
+  },
+  "system_health": {
+    "info": {
+      "can_reach_sign_in": "Доступ к серверу входа Google",
+      "can_reach_device_list": "Доступ к серверу списка устройств Google",
+      "device_list": "Список устройств Google",
+      "retry_not_before": "Повтор не ранее",
+      "polling": "Опрос устройств",
+      "bluetooth_tracking": "Отслеживание по Bluetooth",
+      "devices_listed": "Устройства в списке Google",
+      "devices_not_answering": "Устройства, которые не отвечают"
+    }
   }
 }

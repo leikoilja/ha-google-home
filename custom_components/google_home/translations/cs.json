@@ -310,5 +310,17 @@
       "description": "Aktualizuje stav všech zařízení Google Home.",
       "name": "Aktualizovat stav zařízení"
     }
+  },
+  "system_health": {
+    "info": {
+      "can_reach_sign_in": "Dostupnost přihlašovacího serveru Googlu",
+      "can_reach_device_list": "Dostupnost serveru se seznamem zařízení Googlu",
+      "device_list": "Seznam zařízení Googlu",
+      "retry_not_before": "Další pokus nejdříve",
+      "polling": "Dotazování na změny",
+      "bluetooth_tracking": "Sledování přes Bluetooth",
+      "devices_listed": "Zařízení v seznamu Googlu",
+      "devices_not_answering": "Zařízení, která neodpovídají"
+    }
   }
 }
