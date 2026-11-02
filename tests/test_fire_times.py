@@ -930,22 +930,17 @@ async def test_firmware_checked_every_20_minutes_while_ringing(
     due 50 s after it: at the update every 10 s at 51 s. The one after is due 20 minutes
     after that check started, again at an update every 10 s.
     """
-    # The client times the checks with monotonic, which freezegun replaces only in some
-    # orders of the tests that ran before: use the event loop's time, which it moves
-    with patch("custom_components.google_home.api.monotonic", hass.loop.time):
-        await start(
-            hass, config_entry, replies, freezer, 50 - FIRMWARE_CHECK_INTERVAL, SET
-        )
+    await start(hass, config_entry, replies, freezer, 50 - FIRMWARE_CHECK_INTERVAL, SET)
 
-        assert await run(
-            hass,
-            aioclient_mock,
-            freezer,
-            replies,
-            51 + FIRMWARE_CHECK_INTERVAL,
-            {0: RINGING},
-            API_ENDPOINT_BUILD_INFO,
-        ) == [51, 51 + FIRMWARE_CHECK_INTERVAL]
+    assert await run(
+        hass,
+        aioclient_mock,
+        freezer,
+        replies,
+        51 + FIRMWARE_CHECK_INTERVAL,
+        {0: RINGING},
+        API_ENDPOINT_BUILD_INFO,
+    ) == [51, 51 + FIRMWARE_CHECK_INTERVAL]
 
 
 @pytest.mark.usefixtures("google")

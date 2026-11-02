@@ -6,12 +6,17 @@ for their timers. The speakers reject every token unless a test says otherwise.
 """
 
 import asyncio
+from datetime import timedelta
 from unittest.mock import Mock
 
 from aiohttp import ClientConnectionError
+import freezegun
+from freezegun.api import FrozenDateTimeFactory
 from glocaltokens.client import Device
 import pytest
 from pytest_homeassistant.common import MockConfigEntry
+
+from custom_components.google_home import account, api, mdns
 
 # ruff sorts homeassistant as first-party, pylint as third-party
 # pylint: disable-next=wrong-import-order
@@ -196,3 +201,27 @@ async def test_schedule_after_speaker_fetch(
         await data.devices["device0"].async_refresh()
 
     assert times == [614, 1815]
+
+
+@pytest.fixture(name="time_frozen_before")
+def fixture_time_frozen_before() -> None:
+    """Freeze time once before the clock is set, as an earlier test in the process may have."""
+    with freezegun.freeze_time():
+        pass
+
+
+@pytest.mark.usefixtures("time_frozen_before")
+def test_clock_holds_while_time_is_frozen(
+    clock: Mock, freezer: FrozenDateTimeFactory
+) -> None:
+    """Keep the client's time where the test sets it, also while the test freezes time.
+
+    Under pytest -n, whether an earlier test in the same process froze time depends on
+    how the tests are shared out.
+    """
+    clock.return_value = 5.0
+    freezer.tick(timedelta(seconds=60))
+
+    # Through vars(): mypy doesn't count monotonic, imported from time, as theirs
+    times = [vars(module)["monotonic"]() for module in (api, account, mdns)]
+    assert times == [5.0, 5.0, 5.0]
