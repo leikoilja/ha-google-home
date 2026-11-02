@@ -122,6 +122,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -
     entry.async_on_unload(found_devices.async_stop)
     # Before the first refresh, so it also shows while setup is retried
     async_show_polling_disabled(hass, entry)
+    glocaltokens_client.polling_off = entry.pref_disable_polling
     if entry.pref_disable_polling:
         # The fetches for devices that mDNS finds are scheduled too, so they stop
         found_devices.async_stop()

@@ -686,7 +686,9 @@ class GlocaltokensApiClient(GoogleAccountClient):
                 )
             self._mark_token_rejected(device, polling=polling)
         if failure is not None:
-            raise DeviceRequestFailed(device.name, failure)
+            raise DeviceRequestFailed(
+                device.name, failure, polling_off=self.polling_off
+            )
         return resp
 
     def _mark_token_rejected(self, device: GoogleHomeDevice, *, polling: bool) -> None:
@@ -697,6 +699,12 @@ class GlocaltokensApiClient(GoogleAccountClient):
                     "Failed to fetch data from %s due to invalid token. "
                     "Will refresh the token and try again."
                 ),
+                device.name,
+            )
+        elif self.polling_off:
+            _LOGGER.warning(
+                "Failed to send the request to %s due to invalid token. "
+                "Polling is off: run Refresh devices, then try again.",
                 device.name,
             )
         else:

@@ -150,6 +150,9 @@
     "device_token_rejected": {
       "message": "Perangkat {device} menolak tokennya, dan mendapatkan token baru dari Google tidak membantu. Integrasi terus meminta token baru dari Google, jadi coba lagi nanti."
     },
+    "device_token_rejected_polling_off": {
+      "message": "Perangkat {device} menolak tokennya, dan mendapatkan token baru dari Google tidak membantu. Polling untuk perubahan dinonaktifkan, sehingga integrasi tidak meminta token baru dari Google lagi secara mandiri: jalankan aksi “Perbarui status perangkat”, lalu coba lagi."
+    },
     "device_not_ready": {
       "message": "Perangkat {device} merespons “tidak ditemukan”. Perangkat mungkin masih dalam proses penyalaan, jadi coba lagi nanti, atau mungkin tidak mendukung tindakan ini."
     },

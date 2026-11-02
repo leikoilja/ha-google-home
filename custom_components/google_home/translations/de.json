@@ -150,6 +150,9 @@
     "device_token_rejected": {
       "message": "Das Gerät {device} hat sein Token abgelehnt, und das Anfordern eines neuen bei Google hat nicht geholfen. Die Integration fordert weiterhin ein neues bei Google an, versuche es also später erneut."
     },
+    "device_token_rejected_polling_off": {
+      "message": "Das Gerät {device} hat sein Token abgelehnt, und das Anfordern eines neuen bei Google hat nicht geholfen. Die Abfrage von Änderungen ist deaktiviert, daher fragt die Integration nicht selbstständig erneut bei Google an: Führe die Aktion „Geräte aktualisieren“ aus und versuche es dann erneut."
+    },
     "device_not_ready": {
       "message": "Das Gerät {device} hat „nicht gefunden“ geantwortet. Möglicherweise startet es noch, versuche es also später erneut, oder es unterstützt dies vielleicht nicht."
     },
