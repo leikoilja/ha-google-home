@@ -150,6 +150,9 @@
     "device_token_rejected": {
       "message": "{device} heeft zijn token geweigerd, en het ophalen van een nieuw token bij Google heeft niet geholpen. De integratie blijft een nieuw token aanvragen bij Google, dus probeer het later opnieuw."
     },
+    "device_token_rejected_polling_off": {
+      "message": "{device} heeft zijn token geweigerd, en het ophalen van een nieuw token bij Google heeft niet geholpen. Polling voor wijzigingen is uitgeschakeld, dus de integratie vraagt niet uit zichzelf opnieuw een token aan bij Google: voer de actie ‘Apparaten verversen’ uit en probeer het daarna opnieuw."
+    },
     "device_not_ready": {
       "message": "{device} heeft ‘niet gevonden’ geantwoord. Het apparaat is misschien nog aan het opstarten, dus probeer het later opnieuw, of het ondersteunt dit misschien niet."
     },

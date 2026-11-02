@@ -150,6 +150,9 @@
     "device_token_rejected": {
       "message": "{device} 拒絕了它的存取權杖，而向 Google 取得新的權杖也沒有幫助。整合會持續向 Google 要求新的權杖，請稍後再試。"
     },
+    "device_token_rejected_polling_off": {
+      "message": "{device} 拒絕了它的存取權杖，而向 Google 取得新的權杖也沒有幫助。輪詢變更已關閉，因此整合不會自動再向 Google 要求新的權杖：請執行「更新裝置」操作，然後再試一次。"
+    },
     "device_not_ready": {
       "message": "{device} 回應「找不到」。裝置可能仍在啟動中，請稍後再試；也可能不支援此操作。"
     },

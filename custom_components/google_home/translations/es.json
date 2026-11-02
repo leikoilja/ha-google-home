@@ -150,6 +150,9 @@
     "device_token_rejected": {
       "message": "{device} ha rechazado su token y obtener uno nuevo de Google no ha servido de nada. La integración sigue pidiendo uno nuevo a Google, así que vuelve a intentarlo más tarde."
     },
+    "device_token_rejected_polling_off": {
+      "message": "{device} ha rechazado su token y obtener uno nuevo de Google no ha servido de nada. El sondeo de cambios está deshabilitado, así que la integración no vuelve a pedir uno a Google por sí misma: ejecuta la acción «Actualizar dispositivos» y vuelve a intentarlo."
+    },
     "device_not_ready": {
       "message": "{device} ha respondido «no encontrado». Puede que aún se esté iniciando, así que vuelve a intentarlo más tarde, o que no admita esta acción."
     },
