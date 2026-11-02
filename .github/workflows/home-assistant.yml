@@ -5,6 +5,12 @@ on:
     branches:
       - master
   pull_request:
+  # Both checks run images that change upstream: hassfest's with each Home
+  # Assistant beta and release, HACS's from its main branch. A daily run
+  # reports a new rule on master before an unrelated PR runs into it.
+  schedule:
+    - cron: "23 5 * * *"
+  workflow_dispatch:
 
 permissions:
   contents: read
