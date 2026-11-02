@@ -12,7 +12,6 @@ from unittest.mock import MagicMock, Mock, patch
 
 from ghome_foyer_api.api_pb2 import HomeGraph  # pylint: disable=no-name-in-module
 from glocaltokens.exceptions import HomegraphError
-from glocaltokens.scanner import NetworkDevice
 import grpc  # type: ignore[import-untyped]
 import pytest
 from pytest_homeassistant.common import MockConfigEntry
@@ -41,6 +40,7 @@ from .conftest import (
     SPEAKER_ID,
     SPEAKER_NAME,
     Replies,
+    no_browser,
 )
 from .test_coordinators import (
     BEDROOM_ALARMS,
@@ -101,27 +101,19 @@ def graph(*homes: HomeGraph.Home) -> HomeGraph:
 def fixture_home_graph(
     mock_async_zeroconf: MagicMock,  # pylint: disable=unused-argument
     replies: Replies,
+    mdns_cache: dict[str, tuple[str, str]],
 ) -> Iterator[Mock]:
     """Fake Google's home graph with both homes, and mDNS, which finds both speakers."""
     replies[BEDROOM] = dict(SUPPORTED)
+    mdns_cache[SPEAKER_CLOUD_ID] = (SPEAKER_NAME, SPEAKER)
+    mdns_cache[BEDROOM_CLOUD_ID] = ("Bedroom speaker", BEDROOM)
     with (
         patch(
             "glocaltokens.client.GLocalAuthenticationTokens.get_home_graph",
             autospec=True,
             return_value=graph(at_home(), holiday_house()),
         ) as home_graph,
-        patch(
-            "glocaltokens.client.discover_devices",
-            return_value=[
-                NetworkDevice(
-                    SPEAKER_NAME, SPEAKER, 8009, "Nest Audio", SPEAKER_CLOUD_ID
-                ),
-                NetworkDevice(
-                    "Bedroom speaker", BEDROOM, 8009, "Nest Audio", BEDROOM_CLOUD_ID
-                ),
-            ],
-        ),
-        patch("custom_components.google_home.mdns.AsyncServiceBrowser"),
+        no_browser(),
     ):
         yield home_graph
 
@@ -447,7 +439,8 @@ async def test_excluded_home_speaker_not_reported_missing(
     """Don't count or log an excluded home's speaker that mDNS finds as missing from Google's list.
 
     Google lists it; the user left its home out. A Cast device that no home has, such
-    as a TV, still counts as missing in diagnostics and the log.
+    as a TV, still counts as missing in diagnostics and the log. The kitchen speaker
+    gets its address from mDNS's cache after setup's fetch.
     """
     caplog.set_level(logging.DEBUG, logger="custom_components.google_home")
     hass.config_entries.async_update_entry(
@@ -466,6 +459,7 @@ async def test_excluded_home_speaker_not_reported_missing(
     assert [
         message for _, message in logged(caplog) if message.startswith("mDNS found")
     ] == [
+        f"mDNS found {SPEAKER_NAME} at {SPEAKER}",
         (
             f"mDNS found Bedroom speaker at {BEDROOM}, which is in a home whose"
             " devices aren't added"
@@ -482,6 +476,7 @@ async def test_known_host_of_excluded_home_not_added(
     aioclient_mock: AiohttpClientMocker,
     device_registry: dr.DeviceRegistry,
     clock: Mock,
+    mdns_cache: dict[str, tuple[str, str]],
 ) -> None:
     """Don't add an excluded home's speaker at a known host, though it's asked which device it is.
 
@@ -498,8 +493,8 @@ async def test_known_host_of_excluded_home_not_added(
         options={"known_hosts": [BEDROOM], "excluded_homes": [HOLIDAY_HOUSE]},
     )
 
-    with patch("glocaltokens.client.discover_devices", return_value=[]):
-        await set_up(hass, config_entry)
+    mdns_cache.clear()
+    await set_up(hass, config_entry)
 
     assert asked_by(asked(aioclient_mock), BEDROOM) == [INFO]
     assert bedroom_device(device_registry, config_entry) is None
@@ -511,8 +506,7 @@ async def test_known_host_of_excluded_home_not_added(
 
     # A fetch asks every known host again
     clock.return_value = FETCH_DEVICES_INTERVAL
-    with patch("glocaltokens.client.discover_devices", return_value=[]):
-        await update_account(hass, config_entry)
+    await update_account(hass, config_entry)
 
     assert asked_by(asked(aioclient_mock), BEDROOM) == [INFO]
 

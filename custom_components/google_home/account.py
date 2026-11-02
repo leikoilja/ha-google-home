@@ -12,7 +12,6 @@ from glocaltokens.client import Device, GLocalAuthenticationTokens
 from glocaltokens.exceptions import AuthenticationError, GLocalTokensError
 from glocaltokens.utils.token import is_aas_et
 from requests.exceptions import HTTPError, RequestException
-from zeroconf import Zeroconf
 
 from homeassistant.core import HomeAssistant
 
@@ -75,7 +74,6 @@ class GoogleAccountClient:
         master_token: str | None = None,
         oauth_token: str | None = None,
         android_id: str | None = None,
-        zeroconf_instance: Zeroconf | None = None,
         known_hosts: list[str] | None = None,
         excluded_homes: list[str] | None = None,
     ):
@@ -102,7 +100,6 @@ class GoogleAccountClient:
         # Whether setup's first update is running. If Google rejects the master token
         # then, setup fails with Google's reason, which Home Assistant logs.
         self.setting_up = False
-        self.zeroconf_instance = zeroconf_instance
         self.known_hosts = known_hosts or []
         # When known hosts were last asked, and those that said which device they are
         # when they were last asked
@@ -119,7 +116,7 @@ class GoogleAccountClient:
         self.excluded_cloud_device_ids: set[str] = set()
         # Setup fetches the list straight after creating the client
         self.next_scheduled_fetch = monotonic() + FETCH_DEVICES_INTERVAL
-        # The Cast devices that mDNS finds between fetches
+        # The Cast devices that mDNS finds, which give the devices their addresses
         self.found_devices = FoundDevices(self)
         # Google's list is fetched one at a time, and at most once per update of the
         # list: fetches that ended, and how many had ended when the current update
@@ -274,40 +271,49 @@ class GoogleAccountClient:
         self._fetch_backoff.fetch_worked()
         self.sign_in_error = None
         self.google_devices_fetched = True
-        self._use_google_devices(google_devices, home_graph, started)
+        self._use_google_devices(google_devices, home_graph)
         self.found_devices.fetch_worked(fetched_for)
+        await self.found_devices.async_browse_again()
+        # Setup asks each device straight after this, and with polling off only then
+        if self.setting_up:
+            await self.found_devices.async_wait_for_addresses()
         # Known hosts are only asked when mDNS left a device without an address
         if self._needs_known_hosts():
             return await self.async_use_known_hosts()
         return {}
 
-    def _needs_known_hosts(self) -> bool:
-        """Return whether a known host could give a device in the list its address.
+    @property
+    def missing_addresses(self) -> bool:
+        """Return whether mDNS or a known host could give a device in the list its address.
 
-        A device without Google's other ID for it can't be matched to a host.
+        A device without Google's other ID for it can't be matched to either.
         """
-        return bool(self.known_hosts) and any(
+        return any(
             not device.ip_address and device.cloud_device_id
             for device in self.google_devices
         )
+
+    def _needs_known_hosts(self) -> bool:
+        """Return whether a known host could give a device in the list its address."""
+        return bool(self.known_hosts) and self.missing_addresses
 
     def _get_google_devices(self) -> tuple[list[Device], HomeGraph]:
         """Fetch Google's home graph: its Cast devices, and the graph itself.
 
         glocaltokens leaves out devices that it can't use, such as one without a
         local token, so only the home graph shows that Google no longer has a device,
-        or which home it's in.
+        or which home it's in. The devices come without addresses: mDNS gives them.
         """
         google_devices = self._client.get_google_devices(
-            zeroconf_instance=self.zeroconf_instance, force_homegraph_reload=True
+            disable_discovery=True, force_homegraph_reload=True
         )
         # The home graph that the list came from, which glocaltokens keeps for a day
         return google_devices, self._client.get_home_graph()
 
     def _use_google_devices(
-        self, google_devices: list[Device], home_graph: HomeGraph, started: float
+        self, google_devices: list[Device], home_graph: HomeGraph
     ) -> None:
-        """Replace the device list with the one Google gave to the fetch that started then.
+        """Replace the device list with the one that Google gave to a fetch.
 
         This runs once for each fetch that Google answered with its list, whether the
         update, a device or an action started it, and not for a caller that waited for
@@ -347,25 +353,16 @@ class GoogleAccountClient:
                 device_id=google_device.device_id,
                 name=google_device.device_name,
                 auth_token=google_device.local_auth_token,
-                ip_address=google_device.ip_address,
                 hardware=google_device.hardware,
                 cloud_device_id=google_device.cloud_device_id,
                 home_name=google_device.home_name,
             )
-            # Prefer an address that mDNS reported while this fetch ran over the fetch's
-            # scan, and the scan over an earlier report.
-            # ponytail: a report during the fetch wins even if the scan read a newer
-            # address, until the next report or fetch
-            found_device = self.found_devices.get(device.cloud_device_id)
-            if found_device and found_device.reported_at > started:
-                device.ip_address = found_device.address
             # Keep a known device's alarms, timers and settings, so a device
-            # that doesn't answer this update doesn't lose them
+            # that doesn't answer this update doesn't lose them. Its address too, which
+            # mDNS and known hosts keep up to date, also while this fetch ran.
             if known_device := known_devices.get(device.device_id):
                 known_device.name = device.name
                 known_device.auth_token = device.auth_token
-                # mDNS can miss a device that it found before: keep its address
-                known_device.ip_address = device.ip_address or known_device.ip_address
                 known_device.hardware = device.hardware
                 known_device.cloud_device_id = device.cloud_device_id
                 known_device.home_name = device.home_name
@@ -374,9 +371,12 @@ class GoogleAccountClient:
                 device.alarms_unsupported = (
                     device.device_id in self.unsupported_device_ids
                 )
-                # The scan missed a device that mDNS reported before it was listed
-                if not device.ip_address and found_device:
-                    device.ip_address = found_device.address
+            # mDNS may have reported the device while the list didn't have it with
+            # this ID
+            if not device.ip_address and (
+                found_device := self.found_devices.get(device.cloud_device_id)
+            ):
+                device.ip_address = found_device.address
             self.google_devices.append(device)
 
     @property
