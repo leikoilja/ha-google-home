@@ -592,6 +592,54 @@ async def test_one_speaker_failing_leaves_the_others(
     assert state(hass, KITCHEN_ALARMS) == "2023-11-14T14:13:20-08:00"
 
 
+@pytest.mark.usefixtures("google", "two_speakers")
+async def test_speaker_failing_at_setup_gets_entities_once_it_answers(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    replies: Replies,
+    freezer: FrozenDateTimeFactory,
+    entity_registry: er.EntityRegistry,
+) -> None:
+    """Set up the other speakers when one's first update fails unexpectedly, and add its entities at its first update that works.
+
+    Here its timer comes without its fields. It keeps updating on its own: the
+    account's next update asks it once, and only its own update asks it after that.
+    It then gets the same entities as the speaker that answered at setup, without a
+    reload.
+    """
+
+    def labels(device_id: str) -> set[str]:
+        """Return the label of each of the speaker's entities, from its unique ID."""
+        return {
+            registered.unique_id.removeprefix(f"{device_id}/")
+            for registered in er.async_entries_for_config_entry(
+                entity_registry, config_entry.entry_id
+            )
+            if registered.unique_id.startswith(f"{device_id}/")
+        }
+
+    replies[BEDROOM][ALARMS] = (HTTPStatus.OK, {"alarm": [], "timer": [{}]})
+
+    await set_up(hass, config_entry)
+
+    assert config_entry.state is ConfigEntryState.LOADED
+    assert state(hass, KITCHEN_ALARMS) == "2023-11-14T14:13:20-08:00"
+    assert labels(BEDROOM_ID) == set()
+    freezer.tick(timedelta(seconds=15))
+    async_fire_time_changed(hass)
+    await hass.async_block_till_done(wait_background_tasks=True)
+    assert labels(BEDROOM_ID) == set()
+
+    replies[BEDROOM][ALARMS] = SUPPORTED[ALARMS]
+    freezer.tick(timedelta(seconds=15))
+    async_fire_time_changed(hass)
+    await hass.async_block_till_done(wait_background_tasks=True)
+
+    assert labels(BEDROOM_ID) == labels(SPEAKER_ID)
+    assert state(hass, BEDROOM_ALARMS) == "2023-11-14T14:13:20-08:00"
+    assert state(hass, BEDROOM_DEVICE) == BEDROOM
+
+
 @pytest.mark.usefixtures("two_speakers")
 async def test_rejected_token_at_setup(
     hass: HomeAssistant,

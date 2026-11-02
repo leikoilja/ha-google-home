@@ -150,6 +150,9 @@
     "device_token_rejected": {
       "message": "{device} ha rebutjat el seu testimoni, i obtenir-ne un altre de Google no ha servit de res. La integració continua demanant-ne un de nou a Google, així que torna-ho a provar més tard."
     },
+    "device_token_rejected_polling_off": {
+      "message": "{device} ha rebutjat el seu testimoni, i obtenir-ne un altre de Google no ha servit de res. El sondeig està desactivat, de manera que la integració no torna a demanar-ne un a Google per si mateixa: executa l'acció «Actualitza dispositius» i torna-ho a provar."
+    },
     "device_not_ready": {
       "message": "{device} ha respost «no s'ha trobat». És possible que encara s'estigui iniciant, així que torna-ho a provar més tard, o que no admeti aquesta acció."
     },

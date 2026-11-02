@@ -150,6 +150,9 @@
     "device_token_rejected": {
       "message": "Laite {device} hylkäsi tunnisteensa, eikä uuden hakeminen Googlelta auttanut. Integraatio jatkaa uuden pyytämistä Googlelta, joten yritä myöhemmin uudelleen."
     },
+    "device_token_rejected_polling_off": {
+      "message": "Laite {device} hylkäsi tunnisteensa, eikä uuden hakeminen Googlelta auttanut. Muutosten kysely on poistettu käytöstä, joten integraatio ei pyydä Googlelta uutta itsestään: suorita toiminto ”Päivitä laitteiden tila” ja yritä sitten uudelleen."
+    },
     "device_not_ready": {
       "message": "Laite {device} vastasi ”ei löytynyt”. Se voi olla vielä käynnistymässä, joten yritä myöhemmin uudelleen, tai se ei ehkä tue tätä."
     },
