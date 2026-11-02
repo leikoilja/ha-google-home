@@ -310,5 +310,17 @@
       "description": "Actualizează starea tuturor dispozitivelor Google Home.",
       "name": "Actualizează starea dispozitivelor"
     }
+  },
+  "system_health": {
+    "info": {
+      "can_reach_sign_in": "Contactează serverul de conectare Google",
+      "can_reach_device_list": "Contactează serverul listei de dispozitive Google",
+      "device_list": "Lista de dispozitive Google",
+      "retry_not_before": "Reîncercare nu mai devreme de",
+      "polling": "Interogarea pentru modificări",
+      "bluetooth_tracking": "Urmărire prin Bluetooth",
+      "devices_listed": "Dispozitive din lista Google",
+      "devices_not_answering": "Dispozitive care nu răspund"
+    }
   }
 }

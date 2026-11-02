@@ -310,5 +310,17 @@
       "description": "すべての Google Home デバイスの状態を更新します。",
       "name": "デバイスを更新"
     }
+  },
+  "system_health": {
+    "info": {
+      "can_reach_sign_in": "Google ログインサーバーへのアクセス",
+      "can_reach_device_list": "Google デバイスリストサーバーへのアクセス",
+      "device_list": "Google のデバイスリスト",
+      "retry_not_before": "最も早い再試行時刻",
+      "polling": "変更のポーリング",
+      "bluetooth_tracking": "Bluetooth トラッキング",
+      "devices_listed": "Google のリストにあるデバイス",
+      "devices_not_answering": "応答しないデバイス"
+    }
   }
 }

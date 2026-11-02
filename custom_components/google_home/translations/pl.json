@@ -310,5 +310,17 @@
       "description": "Odśwież stan wszystkich urządzeń Google Home.",
       "name": "Odśwież urządzenia"
     }
+  },
+  "system_health": {
+    "info": {
+      "can_reach_sign_in": "Dostęp do serwera logowania Google",
+      "can_reach_device_list": "Dostęp do serwera listy urządzeń Google",
+      "device_list": "Lista urządzeń Google",
+      "retry_not_before": "Ponowna próba nie wcześniej niż",
+      "polling": "Cykliczne odpytywanie",
+      "bluetooth_tracking": "Śledzenie Bluetooth",
+      "devices_listed": "Urządzenia na liście Google",
+      "devices_not_answering": "Urządzenia, które nie odpowiadają"
+    }
   }
 }

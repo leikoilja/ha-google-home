@@ -310,5 +310,17 @@
       "description": "Frissíti az összes Google Home-eszköz állapotát.",
       "name": "Eszközök állapotának frissítése"
     }
+  },
+  "system_health": {
+    "info": {
+      "can_reach_sign_in": "Google bejelentkezési szerver elérése",
+      "can_reach_device_list": "Google eszközlista-szerver elérése",
+      "device_list": "A Google eszközlistája",
+      "retry_not_before": "Újrapróbálkozás legkorábban",
+      "polling": "Változások lekérdezése",
+      "bluetooth_tracking": "Bluetooth-követés",
+      "devices_listed": "Eszközök a Google listáján",
+      "devices_not_answering": "Nem válaszoló eszközök"
+    }
   }
 }

@@ -310,5 +310,17 @@
       "description": "Ανανέωση της κατάστασης όλων των συσκευών Google Home.",
       "name": "Ανανέωση συσκευών"
     }
+  },
+  "system_health": {
+    "info": {
+      "can_reach_sign_in": "Πρόσβαση στον server σύνδεσης της Google",
+      "can_reach_device_list": "Πρόσβαση στον server της λίστας συσκευών της Google",
+      "device_list": "Λίστα συσκευών της Google",
+      "retry_not_before": "Νέα προσπάθεια όχι πριν από",
+      "polling": "Ανίχνευση για αλλαγές",
+      "bluetooth_tracking": "Παρακολούθηση Bluetooth",
+      "devices_listed": "Συσκευές στη λίστα της Google",
+      "devices_not_answering": "Συσκευές που δεν αποκρίνονται"
+    }
   }
 }

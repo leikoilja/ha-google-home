@@ -310,5 +310,17 @@
       "description": "Päivittää kaikkien Google Home ‑laitteiden tilan.",
       "name": "Päivitä laitteiden tila"
     }
+  },
+  "system_health": {
+    "info": {
+      "can_reach_sign_in": "Tavoita Googlen kirjautumispalvelin",
+      "can_reach_device_list": "Tavoita Googlen laiteluettelon palvelin",
+      "device_list": "Googlen laiteluettelo",
+      "retry_not_before": "Uusi yritys aikaisintaan",
+      "polling": "Muutosten kysely",
+      "bluetooth_tracking": "Bluetooth-seuranta",
+      "devices_listed": "Laitteet Googlen luettelossa",
+      "devices_not_answering": "Laitteet, jotka eivät vastaa"
+    }
   }
 }

@@ -65,6 +65,10 @@ class FetchBackoff:
         """Return whether it's too soon after a failed fetch to fetch again."""
         return now < self._retry_at
 
+    def wait_left(self, now: float) -> float:
+        """Return how many seconds are left until the list may be fetched again, or 0."""
+        return max(0.0, self._retry_at - now)
+
 
 class GoogleAccountClient:
     """The Google account: its tokens, Google's list of its devices, and known hosts."""
@@ -442,6 +446,17 @@ class GoogleAccountClient:
         doesn't undo it.
         """
         return self._home_graphs_fetched > 0
+
+    def fetch_wait_left(self) -> float:
+        """Return how many seconds are left, while the list is unknown, until it may be fetched again.
+
+        The fetch starts no sooner, and only once an update asks for the list. 0 while the
+        list is known, as the wait after a failed fetch then doesn't apply, and once the
+        wait has passed.
+        """
+        if self.google_devices_fetched:
+            return 0.0
+        return self._fetch_backoff.wait_left(monotonic())
 
     def home_graphs_without(self, device_id: str) -> int:
         """Return how many home graphs in a row that Google answered with lack the device.

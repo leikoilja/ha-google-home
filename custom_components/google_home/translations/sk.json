@@ -310,5 +310,17 @@
       "description": "Obnoviť stav všetkých zariadení Google Home.",
       "name": "Obnoviť zariadenia"
     }
+  },
+  "system_health": {
+    "info": {
+      "can_reach_sign_in": "Dostupnosť prihlasovacieho servera Google",
+      "can_reach_device_list": "Dostupnosť servera so zoznamom zariadení Google",
+      "device_list": "Zoznam zariadení Google",
+      "retry_not_before": "Ďalší pokus najskôr",
+      "polling": "Dotazovanie na zmeny",
+      "bluetooth_tracking": "Sledovanie cez Bluetooth",
+      "devices_listed": "Zariadenia v zozname Google",
+      "devices_not_answering": "Zariadenia, ktoré neodpovedajú"
+    }
   }
 }

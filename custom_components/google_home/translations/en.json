@@ -310,5 +310,17 @@
       "description": "Refresh the status of all Google Home Devices.",
       "name": "Refresh devices"
     }
+  },
+  "system_health": {
+    "info": {
+      "can_reach_sign_in": "Reach Google sign-in server",
+      "can_reach_device_list": "Reach Google device list server",
+      "device_list": "Google's device list",
+      "retry_not_before": "Retry not before",
+      "polling": "Polling for changes",
+      "bluetooth_tracking": "Bluetooth tracking",
+      "devices_listed": "Devices in Google's list",
+      "devices_not_answering": "Devices not answering"
+    }
   }
 }
