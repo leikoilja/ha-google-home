@@ -10,6 +10,7 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.util import dt as dt_util
 
 from .const import CONF_BLUETOOTH_TRACKING, DOMAIN, UNANSWERED_UPDATES
+from .coordinator import async_device_disabled
 from .types import GoogleHomeConfigEntry
 
 TROUBLESHOOTING_URL = "https://ha-google-home.pages.dev/troubleshooting/"
@@ -74,8 +75,10 @@ async def system_health_info(hass: HomeAssistant) -> dict[str, object]:
         info["devices_listed"] = len(devices)
         # A device without an address isn't asked. One that missed enough updates in
         # a row counts until it answers, also while it answers "not found" as it starts.
+        # A disabled device isn't asked either, so it doesn't count.
         info["devices_not_answering"] = sum(
-            not device.ip_address or device.unanswered_updates >= UNANSWERED_UPDATES
+            (not device.ip_address or device.unanswered_updates >= UNANSWERED_UPDATES)
+            and not async_device_disabled(hass, entry, device.device_id)
             for device in devices
         )
     return info

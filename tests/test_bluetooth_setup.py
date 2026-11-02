@@ -8,6 +8,7 @@ which the replies table doesn't have.
 
 import base64
 from collections.abc import Iterator, Mapping
+from datetime import timedelta
 from functools import partial
 import json
 import logging
@@ -16,7 +17,11 @@ from unittest.mock import Mock, patch
 
 import probatio
 import pytest
-from pytest_homeassistant.common import MockConfigEntry, async_capture_events
+from pytest_homeassistant.common import (
+    MockConfigEntry,
+    async_capture_events,
+    async_fire_time_changed,
+)
 from pytest_homeassistant.components.diagnostics import get_diagnostics_for_config_entry
 from pytest_homeassistant.components.recorder.common import async_wait_recording_done
 from pytest_homeassistant.typing import ClientSessionGenerator, WebSocketGenerator
@@ -28,7 +33,7 @@ from custom_components.google_home.types import BluetoothJsonDict
 # pylint: disable=wrong-import-order
 from homeassistant.components.recorder import Recorder
 from homeassistant.components.recorder.history import get_significant_states
-from homeassistant.config_entries import ConfigEntryState
+from homeassistant.config_entries import RELOAD_AFTER_UPDATE_DELAY, ConfigEntryState
 from homeassistant.const import (
     EVENT_STATE_CHANGED,
     STATE_HOME,
@@ -49,6 +54,7 @@ from homeassistant.util import dt as dt_util
 from .conftest import SPEAKER_ID, SPEAKER_NAME
 from .test_bluetooth import BLUETOOTH, IRK, PHONE, heard, rpa, subentry
 from .test_coordinators import runtime
+from .test_disabled_devices import kitchen_device, set_disabled
 from .test_removed_devices import fetch_list
 from .test_setup import set_up
 from .test_unsupported_devices import SPEAKER
@@ -56,6 +62,7 @@ from .test_unsupported_devices import SPEAKER
 # pylint: enable=wrong-import-order
 
 TRACKER = "device_tracker.phone"
+BEDROOM_NAME = "Bedroom speaker"
 
 
 class Scans:
@@ -267,6 +274,52 @@ async def test_excluded_speaker_not_asked(
 
     assert runtime(config_entry).bluetooth is not None
     assert scans.started == []
+
+
+@pytest.mark.usefixtures("two_speakers")
+async def test_disabled_speaker_not_asked(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    scans: Scans,
+    device_registry: dr.DeviceRegistry,
+) -> None:
+    """Scan only with the enabled speaker while the other is disabled, also after a restart.
+
+    What the disabled speaker heard no longer counts. Enabling it reloads the entry,
+    which scans with it again.
+    """
+    await track_phone(hass, config_entry)
+    await hass.async_block_till_done(wait_background_tasks=True)
+    scans.heard[SPEAKER] = [heard(rpa(IRK))]
+    assert await scan(hass, config_entry, scans, 30) == STATE_HOME
+    kitchen = kitchen_device(device_registry, config_entry)
+    await set_disabled(hass, device_registry, kitchen.id, disabled=True)
+    scans.started.clear()
+
+    # The scan that started at 0 was the last of the kitchen's that counted
+    assert [await scan(hass, config_entry, scans, now) for now in (60, 90)] == [
+        STATE_HOME,
+        STATE_NOT_HOME,
+    ]
+    # As at a restart while the kitchen is disabled
+    assert await hass.config_entries.async_reload(config_entry.entry_id)
+    await hass.async_block_till_done(wait_background_tasks=True)
+    # At 60 and 90, and at the reload's setup
+    assert scans.started == [BEDROOM_NAME] * 3
+
+    scans.started.clear()
+    disabled_scanner = runtime(config_entry).bluetooth
+    await set_disabled(hass, device_registry, kitchen.id, disabled=False)
+    # Not with the freezer: once freezegun has seen the integration's real clocks, its
+    # later starts put its own clock over the clock fixture's, and this module runs
+    # before tests that use both
+    async_fire_time_changed(
+        hass, dt_util.utcnow() + timedelta(seconds=RELOAD_AFTER_UPDATE_DELAY + 1)
+    )
+    await hass.async_block_till_done(wait_background_tasks=True)
+
+    assert runtime(config_entry).bluetooth is not disabled_scanner
+    assert set(scans.started) == {BEDROOM_NAME, SPEAKER_NAME}
 
 
 @pytest.mark.usefixtures("google", "replies", "scans")

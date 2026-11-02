@@ -26,6 +26,7 @@ from homeassistant.components import system_health
 from homeassistant.config_entries import ConfigEntryState
 from homeassistant.const import STATE_UNAVAILABLE
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.translation import async_get_translations
 from homeassistant.setup import async_setup_component
 
@@ -360,6 +361,40 @@ async def test_device_not_answering(
         **DEFAULT_OPTIONS,
         "devices_listed": 1,
         "devices_not_answering": not_answering,
+    }
+
+
+@pytest.mark.usefixtures("google")
+async def test_disabled_device_not_counted_as_not_answering(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    replies: Replies,
+    device_registry: dr.DeviceRegistry,
+) -> None:
+    """Don't count a device that's disabled in Home Assistant as not answering, but keep it listed.
+
+    It isn't asked, so its missed updates stay as they were when it was disabled.
+    """
+    await set_up(hass, config_entry)
+    replies[SPEAKER] = dict(SILENT)
+    await refresh(hass, config_entry, times=5)
+    assert (await section(hass))["devices_not_answering"] == 1
+    device = device_registry.async_get_device_by_identifier(
+        (DOMAIN, SPEAKER_ID), config_entry.entry_id
+    )
+    assert device is not None
+
+    device_registry.async_update_device(
+        device.id, disabled_by=dr.DeviceEntryDisabler.USER
+    )
+    await hass.async_block_till_done()
+
+    assert await section(hass) == {
+        **REACHABLE,
+        "device_list": "fetched",
+        **DEFAULT_OPTIONS,
+        "devices_listed": 1,
+        "devices_not_answering": 0,
     }
 
 

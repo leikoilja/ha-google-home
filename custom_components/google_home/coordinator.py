@@ -47,14 +47,26 @@ def fire_times(device: GoogleHomeDevice) -> Iterator[tuple[str, int, Status]]:
             yield timer.timer_id, timer.fire_time, timer.status
 
 
+@callback
+def async_device_disabled(
+    hass: HomeAssistant, entry: GoogleHomeConfigEntry, device_id: str
+) -> bool:
+    """Return whether the entry's device with this ID is disabled in Home Assistant."""
+    device = dr.async_get(hass).async_get_device_by_identifier(
+        (DOMAIN, device_id), entry.entry_id
+    )
+    return device is not None and device.disabled
+
+
 class GoogleAccountCoordinator(DataUpdateCoordinator[dict[str, GoogleHomeDevice]]):
     """Google's list of the account's devices, by ID, and a coordinator for each device.
 
     Each update starts a round in which Google's list is fetched at most once, whether
     the update, a device or an action asks for it. Then the device coordinators follow
     the list: a device Google stops listing has no data, and a device that is new, listed
-    again or just found at a known host is asked once straight away. Its coordinator
-    stays, with its entities, until the entry unloads or the device is removed.
+    again or just found at a known host is asked once straight away, unless it's
+    disabled. Its coordinator stays, with its entities, until the entry unloads or the
+    device is removed.
     """
 
     config_entry: GoogleHomeConfigEntry
@@ -315,7 +327,13 @@ class GoogleHomeDeviceCoordinator(DataUpdateCoordinator[GoogleHomeDevice | None]
         may drop it, or replace it with a new object, so the old one isn't shown
         again. The next update is at the update interval, or sooner around a fire time
         if this one got the alarms and timers itself.
+
+        Nothing is asked while the device is disabled in Home Assistant, and no update
+        is scheduled: Home Assistant reloads the entry once it's enabled again.
         """
+        if async_device_disabled(self.hass, self.config_entry, self.device_id):
+            self.update_interval = None
+            return self.data
         # Before the alarms are asked, so no later than they answer
         started = self.hass.loop.time()
         # Until this update finishes, a listener can't time the next one from the last

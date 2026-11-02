@@ -83,6 +83,8 @@ If that speaker is unplugged or out of service, tell the integration not to use 
 
 You can't delete a speaker that Google still lists in your home, even when it's offline, so excluding it is the way to stop it from blocking `not_home`.
 
+A speaker that you [disable in Home Assistant](configuration.md#stop-checking-some-devices) doesn't scan either, and what it heard no longer counts, until you enable it again. If no other speaker scans, trackers can't tell whether you're home, as described above.
+
 A silent speaker also stops blocking `not_home` once Google no longer lists it, for example after you remove it from the Google Home app. Reloading the integration (**Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**) or restarting Home Assistant has the same effect until the speaker answers again.
 
 Devices that don't support Bluetooth scans, such as a Chromecast Audio or an Android TV, are left out automatically. So is any device that hasn't returned scan results since the integration last loaded, for example because it was offline.
