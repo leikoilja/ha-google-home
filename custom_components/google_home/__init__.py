@@ -39,6 +39,7 @@ from .const import (
     ISSUE_NO_ADDED_HOME,
     ISSUE_POLLING_DISABLED,
     MASTER_TOKEN_TITLE,
+    NO_DEVICES_DOCS_URL,
     PLATFORMS,
     SUBENTRY_BLUETOOTH_DEVICE,
     UPDATE_INTERVAL,
@@ -281,8 +282,9 @@ def async_show_no_added_home(
             ISSUE_NO_ADDED_HOME,
             config_entry_id=entry.entry_id,
             is_fixable=False,
-            severity=ir.IssueSeverity.WARNING,
             # Without an added home, every home in the graph has an ID
+            learn_more_url=None if client.homes else NO_DEVICES_DOCS_URL,
+            severity=ir.IssueSeverity.WARNING,
             translation_key="homes_deselected" if client.homes else "no_home",
             translation_placeholders={"integration_url": INTEGRATION_PAGE_URL},
         )

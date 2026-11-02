@@ -122,6 +122,8 @@ async def test_repair_when_only_deselected_homes_left(
     await fetch_list(hass, config_entry, clock, 1)
 
     assert await shown_repair(hass, issue_registry) == "homes_deselected"
+    issue = repair(issue_registry)
+    assert issue is not None and issue.learn_more_url is None
 
     if join_or_select:
         home_graph.return_value = graph(
@@ -158,6 +160,12 @@ async def test_repair_while_google_reports_no_home(
     await set_up(hass, config_entry)
 
     assert await shown_repair(hass, issue_registry) == "no_home"
+    # Its Learn more opens the troubleshooting, which also covers accounts that can't
+    # join a home
+    issue = repair(issue_registry)
+    assert issue is not None and issue.learn_more_url == (
+        "https://ha-google-home.pages.dev/troubleshooting/#no-devices-appear"
+    )
 
     home_graph.return_value = graph(at_home())
     if polling:
