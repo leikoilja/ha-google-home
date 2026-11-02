@@ -150,6 +150,9 @@
     "device_token_rejected": {
       "message": "{device} afviste sit token, og det hjalp ikke at hente et nyt fra Google. Integrationen bliver ved med at bede Google om et nyt, så prøv igen senere."
     },
+    "device_token_rejected_polling_off": {
+      "message": "{device} afviste sit token, og det hjalp ikke at hente et nyt fra Google. Automatisk hentning af opdateringer er slået fra, så integrationen beder ikke selv Google om et nyt igen: kør handlingen »Opdater enheder«, og prøv derefter igen."
+    },
     "device_not_ready": {
       "message": "{device} svarede »ikke fundet«. Den er måske stadig ved at starte, så prøv igen senere, eller den understøtter det måske ikke."
     },

@@ -150,6 +150,9 @@
     "device_token_rejected": {
       "message": "Dispozitivul {device} a respins tokenul, iar obținerea unuia nou de la Google nu a ajutat. Integrarea continuă să ceară unul nou de la Google, așa că încearcă din nou mai târziu."
     },
+    "device_token_rejected_polling_off": {
+      "message": "Dispozitivul {device} a respins tokenul, iar obținerea unuia nou de la Google nu a ajutat. Interogarea pentru modificări este dezactivată, așa că integrarea nu cere singură din nou un token de la Google: rulează acțiunea „Actualizează starea dispozitivelor”, apoi încearcă din nou."
+    },
     "device_not_ready": {
       "message": "Dispozitivul {device} a răspuns „negăsit”. Este posibil să fie încă în curs de pornire, așa că încearcă din nou mai târziu, sau să nu accepte acest lucru."
     },

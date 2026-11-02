@@ -150,6 +150,9 @@
     "device_token_rejected": {
       "message": "{device} rejected its token, and getting a new one from Google didn't help. The integration keeps asking Google for one, so try again later."
     },
+    "device_token_rejected_polling_off": {
+      "message": "{device} rejected its token, and getting a new one from Google didn't help. Polling is turned off, so the integration doesn't ask Google again by itself: run the Refresh devices action, then try again."
+    },
     "device_not_ready": {
       "message": "{device} answered “not found”. It may still be starting up, so try again later, or it may not support this."
     },

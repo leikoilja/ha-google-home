@@ -150,6 +150,9 @@
     "device_token_rejected": {
       "message": "L'appareil {device} a refusé son jeton, et en obtenir un nouveau auprès de Google n'a rien changé. L'intégration continue d'en demander un nouveau à Google ; réessayez plus tard."
     },
+    "device_token_rejected_polling_off": {
+      "message": "L'appareil {device} a refusé son jeton, et en obtenir un nouveau auprès de Google n'a rien changé. L'interrogation périodique des changements est désactivée : l'intégration n'en redemande donc pas à Google d'elle-même. Exécutez l'action « Actualiser les appareils », puis réessayez."
+    },
     "device_not_ready": {
       "message": "L'appareil {device} a répondu « introuvable ». Il est peut-être encore en cours de démarrage, auquel cas réessayez plus tard, ou il ne prend peut-être pas en charge cette action."
     },

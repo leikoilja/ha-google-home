@@ -26,7 +26,9 @@ from custom_components.google_home.const import (
     FETCH_DEVICES_INTERVAL,
     FOUND_DEVICE_FETCH_DELAY,
     HEADER_CAST_LOCAL_AUTH,
+    UPDATE_INTERVAL,
 )
+from custom_components.google_home.exceptions import DeviceRequestFailed
 
 # ruff sorts homeassistant as first-party, pylint as third-party
 # pylint: disable=wrong-import-order
@@ -53,6 +55,7 @@ from .conftest import (
 from .test_coordinators import BEDROOM_ALARMS
 from .test_diagnostics import TV, TV_CLOUD_ID, TV_NAME
 from .test_missing_devices import found
+from .test_sensor import error_message
 from .test_setup import (
     ALARMS_SENSOR,
     DEVICE_SENSOR,
@@ -62,7 +65,7 @@ from .test_setup import (
     state,
     updated_at,
 )
-from .test_unsupported_devices import ALARMS, INFO, SPEAKER, SUPPORTED
+from .test_unsupported_devices import ALARMS, INFO, REBOOT, SPEAKER, SUPPORTED
 
 # pylint: enable=wrong-import-order
 
@@ -510,3 +513,91 @@ async def test_known_host_asked_only_at_refresh_while_polling_off(
     assert state(hass, DEVICE_SENSOR) == SPEAKER
     assert state(hass, ALARMS_SENSOR) == STATES[ALARMS_SENSOR]
     assert google.call_count == 1
+
+
+async def press_reboot(hass: HomeAssistant) -> None:
+    """Press the speaker's reboot button."""
+    await hass.services.async_call(
+        "button",
+        "press",
+        {ATTR_ENTITY_ID: "button.kitchen_speaker_reboot"},
+        blocking=True,
+    )
+
+
+@pytest.mark.parametrize(
+    ("polling", "advice", "logged"),
+    [
+        pytest.param(
+            True,
+            "The integration keeps asking Google for one, so try again later.",
+            "Token will be refreshed, please try again later.",
+            id="polling on",
+        ),
+        pytest.param(
+            False,
+            "Polling is turned off, so the integration doesn't ask Google again by "
+            "itself: run the Refresh devices action, then try again.",
+            "Polling is off: run Refresh devices, then try again.",
+            id="polling off",
+        ),
+    ],
+)
+async def test_token_rejected_says_how_to_get_new_one(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    google: Mock,
+    replies: Replies,
+    aioclient_mock: AiohttpClientMocker,
+    freezer: FrozenDateTimeFactory,
+    caplog: pytest.LogCaptureFixture,
+    polling: bool,
+    advice: str,
+    logged: str,
+) -> None:
+    """Say how a speaker that rejects its token gets a new one, and get it that way.
+
+    With polling on, the next update asks Google again by itself. With polling off,
+    nothing does until a refresh, so the error says to run Refresh devices.
+    """
+    hass.config_entries.async_update_entry(
+        config_entry, pref_disable_polling=not polling
+    )
+    await set_up(hass, config_entry)
+    # The speaker's token changed, and Google doesn't have the new one yet
+    replies[SPEAKER][REBOOT] = ForToken(NEW_TOKEN, (HTTPStatus.OK, {}))
+
+    with pytest.raises(DeviceRequestFailed) as err:
+        await press_reboot(hass)
+
+    assert error_message(err.value) == (
+        f"{SPEAKER_NAME} rejected its token, and getting a new one from Google "
+        f"didn't help. {advice}"
+    )
+    assert (
+        f"Failed to send the request to {SPEAKER_NAME} due to invalid token. {logged}"
+    ) in [record.getMessage() for record in caplog.records]
+
+    google.return_value = [
+        found(
+            SPEAKER_ID,
+            SPEAKER,
+            NEW_TOKEN,
+            name=SPEAKER_NAME,
+            cloud_device_id=SPEAKER_CLOUD_ID,
+        )
+    ]
+    if polling:
+        freezer.tick(timedelta(seconds=UPDATE_INTERVAL))
+        async_fire_time_changed(hass)
+    else:
+        await refresh_devices(hass)
+    await hass.async_block_till_done(wait_background_tasks=True)
+    aioclient_mock.mock_calls.clear()
+
+    await press_reboot(hass)
+
+    assert [
+        headers[HEADER_CAST_LOCAL_AUTH]
+        for _, _, _, headers in aioclient_mock.mock_calls
+    ] == [NEW_TOKEN]

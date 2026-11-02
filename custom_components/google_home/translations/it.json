@@ -150,6 +150,9 @@
     "device_token_rejected": {
       "message": "{device} ha rifiutato il suo token e ottenerne uno nuovo da Google non è servito. L'integrazione continua a chiederne uno nuovo a Google, quindi riprova più tardi."
     },
+    "device_token_rejected_polling_off": {
+      "message": "{device} ha rifiutato il suo token e ottenerne uno nuovo da Google non è servito. Il rilevamento delle variazioni è disabilitato, quindi l'integrazione non ne richiede uno nuovo a Google di propria iniziativa: esegui l'azione «Aggiorna i dispositivi», poi riprova."
+    },
     "device_not_ready": {
       "message": "{device} ha risposto «non trovato». Potrebbe essere ancora in fase di avvio, quindi riprova più tardi, oppure potrebbe non supportare questa azione."
     },
