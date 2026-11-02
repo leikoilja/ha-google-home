@@ -11,6 +11,7 @@ from pathlib import Path
 import subprocess
 import sys
 from tempfile import TemporaryDirectory
+from typing import cast
 from zipfile import ZipFile
 
 from github import Auth, Github, InputGitTreeElement
@@ -18,6 +19,7 @@ from github.GitCommit import GitCommit
 from github.GithubException import UnknownObjectException
 from github.GitRelease import GitRelease
 from github.Repository import Repository
+from packaging.requirements import Requirement
 
 from homeassistant.util.json import JsonObjectType, json_loads_object
 
@@ -76,9 +78,12 @@ def update_manifests(repo: Repository, version: str) -> str:
     print("Updating manifest.json...")
     manifest = read_json(repo, MANIFEST_PATH, head.sha)
     manifest["version"] = version
-    manifest["requirements"] = [
-        f"glocaltokens=={package_version('glocaltokens')}",
-    ]
+    requirements = cast(list[str], manifest["requirements"])
+    names = [Requirement(requirement).name for requirement in requirements]
+    if "glocaltokens" not in names:
+        sys.exit(f"{MANIFEST_PATH} has no glocaltokens requirement to pin")
+    pin = f"glocaltokens=={package_version('glocaltokens')}"
+    requirements[names.index("glocaltokens")] = pin
 
     print("Updating hacs.json...")
     hacs_config = read_json(repo, "hacs.json", head.sha)
