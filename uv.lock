@@ -1051,18 +1051,18 @@ wheels = [
 
 [[package]]
 name = "glocaltokens"
-version = "1.2.0"
+version = "2.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
+    { name = "aiohttp" },
     { name = "ghome-foyer-api" },
     { name = "gpsoauth" },
     { name = "grpcio" },
     { name = "requests" },
-    { name = "zeroconf" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ce/6f/19c08f48772d45e4c5f89c85645360b845f10e69bdea542ce7984d04ee59/glocaltokens-1.2.0.tar.gz", hash = "sha256:577d33d16eb67b3dc3ae04f3d617d8b770005451740a3aabfd1a6214f801ba8f", size = 97824, upload-time = "2026-10-26T11:25:04.339Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/6d/53/644459b967fe10229ecf1dea8848acef08f4133ff7ed7f49b0c1646dd977/glocaltokens-2.0.0.tar.gz", hash = "sha256:a2a09b694dab5fbe6ceb79177703f6550e2c3ae95b31bd22abb788e82df10db1", size = 201824, upload-time = "2026-11-02T14:15:32.755Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/00/00/88f29707ceab2e75736e79a1d96babe9dabb2c3fb462edef59407b8eca53/glocaltokens-1.2.0-py3-none-any.whl", hash = "sha256:4af2e2f45523e43887557ff404435266f5af9c58dfbe8c3ba40232ab56377e6b", size = 20736, upload-time = "2026-10-26T11:25:03.129Z" },
+    { url = "https://files.pythonhosted.org/packages/51/b2/bb6e7f1a816d7b28b7f7009ba7ee2c8fb51d3f5b5bc9c4aa85ccab491362/glocaltokens-2.0.0-py3-none-any.whl", hash = "sha256:a85bdda04bd422f81a395870fdea7ac804c80897e0ac369fa87c80c6bb44ca22", size = 30589, upload-time = "2026-11-02T14:15:31.314Z" },
 ]
 
 [[package]]
@@ -1096,7 +1096,7 @@ docs = [
 [package.metadata]
 requires-dist = [
     { name = "bluetooth-data-tools", specifier = ">=1.29.24" },
-    { name = "glocaltokens", specifier = ">=1.2.0" },
+    { name = "glocaltokens", specifier = ">=2.0.0" },
     { name = "homeassistant", specifier = "==2026.11.0b1" },
 ]
 
