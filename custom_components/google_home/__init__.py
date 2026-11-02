@@ -132,10 +132,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -
     glocaltokens_client.setting_up = True
     try:
         await account.async_config_entry_first_refresh()
-        # Each device is asked once before its entities are added
+        # Each device is asked once before its entities are added. Not a first
+        # refresh, so a device whose update fails unexpectedly doesn't fail setup: it
+        # gets its entities at its first update that works.
         await asyncio.gather(
             *(
-                coordinator.async_config_entry_first_refresh()
+                coordinator.async_refresh()
                 for coordinator in entry.runtime_data.devices.values()
             )
         )
