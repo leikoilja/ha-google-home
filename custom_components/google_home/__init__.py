@@ -35,8 +35,11 @@ from .const import (
     CONF_MASTER_TOKEN,
     CONF_UPDATE_INTERVAL,
     DOMAIN,
+    INTEGRATION_PAGE_URL,
+    ISSUE_NO_ADDED_HOME,
     ISSUE_POLLING_DISABLED,
     MASTER_TOKEN_TITLE,
+    NO_DEVICES_DOCS_URL,
     PLATFORMS,
     SUBENTRY_BLUETOOTH_DEVICE,
     UPDATE_INTERVAL,
@@ -122,6 +125,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -
     entry.async_on_unload(found_devices.async_stop)
     # Before the first refresh, so it also shows while setup is retried
     async_show_polling_disabled(hass, entry)
+    # Before the first refresh, whose home graph decides it, so that a failed setup
+    # also removes it
+    async_show_no_added_home(hass, entry, glocaltokens_client)
     glocaltokens_client.polling_off = entry.pref_disable_polling
     if entry.pref_disable_polling:
         # The fetches for devices that mDNS finds are scheduled too, so they stop
@@ -249,6 +255,49 @@ def async_show_polling_disabled(
         severity=ir.IssueSeverity.WARNING,
         translation_key=ISSUE_POLLING_DISABLED,
     )
+
+
+@callback
+def async_show_no_added_home(
+    hass: HomeAssistant, entry: GoogleHomeConfigEntry, client: GlocaltokensApiClient
+) -> None:
+    """Show a repair while Google's last home graph has no home whose devices are added.
+
+    Each home graph that Google answers with decides, whichever update, device or
+    action fetched it. Until the first one, and after a fetch that fails, the repair
+    stays as it was. The account's homes are then all deselected, or Google reports
+    none: one repair covers both, so it stays hidden when one becomes the other. It
+    isn't kept over a restart, except whether it's hidden, and goes when the entry
+    unloads, also if setup fails.
+    """
+
+    @callback
+    def homes_answered(home_added: bool) -> None:
+        if home_added:
+            ir.async_delete_issue(hass, DOMAIN, ISSUE_NO_ADDED_HOME)
+            return
+        ir.async_create_issue(
+            hass,
+            DOMAIN,
+            ISSUE_NO_ADDED_HOME,
+            config_entry_id=entry.entry_id,
+            is_fixable=False,
+            # Without an added home, every home in the graph has an ID
+            learn_more_url=None if client.homes else NO_DEVICES_DOCS_URL,
+            severity=ir.IssueSeverity.WARNING,
+            translation_key="homes_deselected" if client.homes else "no_home",
+            translation_placeholders={"integration_url": INTEGRATION_PAGE_URL},
+        )
+
+    @callback
+    def stop_repair() -> None:
+        # Detached, so that a fetch that Google answers later, such as an action's,
+        # can't change the repair of the entry loaded again, or of a deleted one
+        client.homes_answered = None
+        ir.async_delete_issue(hass, DOMAIN, ISSUE_NO_ADDED_HOME)
+
+    client.homes_answered = homes_answered
+    entry.async_on_unload(stop_repair)
 
 
 async def async_name_after_account(

@@ -181,6 +181,14 @@
           "polling_kept_off": "Interogarea rămâne dezactivată, iar această remediere a fost ascunsă."
         }
       }
+    },
+    "homes_deselected": {
+      "title": "Nicio casă a contului tău Google nu este selectată",
+      "description": "Contul tău Google este membru doar al unor case pe care le-ai debifat în opțiunile integrării, așa că integrarea nu adaugă difuzoarele și ecranele din ele. Ca să adaugi dispozitivele unei case, deschide [integrarea Google Home]({integration_url}), selectează **Configurare**, bifează casa la **Case**, apoi selectează **Trimite**.\n\nDacă vrei să lași aceste case debifate, selectează **Ignoră**."
+    },
+    "no_home": {
+      "title": "Google nu raportează nicio casă pentru contul tău",
+      "description": "Google raportează că contul cu care s-a conectat integrarea nu este membru al niciunei case, așa că nu există difuzoare sau ecrane de adăugat. În aplicația Google Home, invită acest cont în casa în care se află dispozitivele tale și acceptă invitația. Apoi reîncarcă [integrarea Google Home]({integration_url}): selectează **⋮** > **Reîncarcă**.\n\nDacă păstrezi integrarea intenționat, de exemplu în timpul unei mutări, selectează **Ignoră**. Dacă nu mai ai nevoie de ea, o poți șterge din aceeași pagină."
     }
   },
   "config_subentries": {

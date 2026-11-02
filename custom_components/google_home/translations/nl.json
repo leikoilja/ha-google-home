@@ -181,6 +181,14 @@
           "polling_kept_off": "Polling blijft uitgeschakeld en deze reparatie is verborgen."
         }
       }
+    },
+    "homes_deselected": {
+      "title": "Geen van de huizen van je Google-account is geselecteerd",
+      "description": "Je Google-account is alleen lid van huizen die je hebt gedeselecteerd in de instellingen van de integratie, dus de integratie voegt de speakers en schermen in die huizen niet toe. Om de apparaten van een huis toe te voegen, open je de [Google Home-integratie]({integration_url}), selecteer je **Configureer**, selecteer je het huis onder **Huizen** en selecteer je daarna **Verzend**.\n\nAls je deze huizen gedeselecteerd wilt laten, selecteer je **Negeer**."
+    },
+    "no_home": {
+      "title": "Google meldt geen huis voor je account",
+      "description": "Google meldt dat het account waarmee de integratie is ingelogd geen lid is van een huis, dus er zijn geen speakers of schermen om toe te voegen. Nodig dit account in de Google Home-app uit voor het huis waarin je apparaten staan, en accepteer de uitnodiging. Herlaad daarna de [Google Home-integratie]({integration_url}): selecteer **⋮** > **Herladen**.\n\nAls je de integratie bewust houdt, bijvoorbeeld tijdens een verhuizing, selecteer je **Negeer**. Als je de integratie niet meer nodig hebt, kun je deze op dezelfde pagina verwijderen."
     }
   },
   "config_subentries": {

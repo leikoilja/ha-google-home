@@ -518,6 +518,7 @@ def test_setup_browses_before_first_fetch() -> None:
         asyncio.run(async_setup_entry(Mock(), entry))
     assert events == [
         "on unload: async_stop",
+        "on unload: stop_repair",
         "browse",
         "first refresh",
     ]
