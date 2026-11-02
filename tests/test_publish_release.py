@@ -87,7 +87,15 @@ class FakeRepo:
         """Start master with one commit."""
         self.files: dict[str, dict[str, dict[str, object]]] = {
             "base": {
-                MANIFEST: {"domain": "google_home", "version": "1.15.0"},
+                MANIFEST: {
+                    "domain": "google_home",
+                    "requirements": [
+                        "first-package>=1.0",
+                        "glocaltokens==1.0.0",
+                        "other-package>=1.2",
+                    ],
+                    "version": "1.15.0",
+                },
                 "hacs.json": HACS_JSON,
             }
         }
@@ -171,6 +179,38 @@ def test_rerun_reuses_release_commit(repo: FakeRepo) -> None:
     next_tagged = repo.release("1.17.1")
     assert repo.parents[next_tagged] == master
     assert repo.files[next_tagged][MANIFEST]["version"] == "1.17.1"
+
+
+def test_release_pins_glocaltokens_and_keeps_other_requirements(
+    repo: FakeRepo,
+) -> None:
+    """The release keeps every other requirement the manifest declares, in order."""
+    tagged = repo.release("1.17.0")
+
+    pin = f"glocaltokens=={package_version('glocaltokens')}"
+    assert pin != "glocaltokens==1.0.0"
+    for sha in (tagged, repo.master):
+        assert repo.files[sha][MANIFEST]["requirements"] == [
+            "first-package>=1.0",
+            pin,
+            "other-package>=1.2",
+        ]
+
+
+def test_release_stops_without_glocaltokens_requirement(repo: FakeRepo) -> None:
+    """Master stays as it was, rather than released without the pin."""
+    repo.files["base"][MANIFEST]["requirements"] = [
+        "first-package>=1.0",
+        "other-package>=1.2",
+    ]
+
+    with pytest.raises(
+        SystemExit, match=f"^{re.escape(MANIFEST)} has no glocaltokens requirement"
+    ):
+        repo.release("1.17.0")
+
+    assert repo.master == "base"
+    assert list(repo.files) == ["base"]
 
 
 class FakeAsset:
