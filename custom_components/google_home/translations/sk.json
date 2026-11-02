@@ -38,6 +38,9 @@
         "description": "Váš účet Google je členom viacerých domácností. Vyberte domácnosti, ktorých reproduktory a displeje chcete pridať. Neskôr to môžete zmeniť v možnostiach integrácie: na stránke integrácie vyberte **Konfigurovať**.",
         "data": {
           "homes": "Domácnosti"
+        },
+        "data_description": {
+          "homes": "Označte aspoň jednu domácnosť. Pridajú sa aj reproduktory a displeje z domácností, ktorých členom sa váš účet stane neskôr."
         }
       },
       "reauth": {

@@ -38,6 +38,9 @@
         "description": "Akun Google Anda adalah anggota beberapa rumah. Pilih rumah yang speaker dan layarnya ingin ditambahkan. Anda dapat mengubahnya nanti di opsi integrasi: pilih **Konfigurasikan** di halaman integrasi.",
         "data": {
           "homes": "Rumah"
+        },
+        "data_description": {
+          "homes": "Pilih minimal satu rumah. Jika nanti akun Anda bergabung dengan rumah lain, speaker dan layar di rumah tersebut juga ditambahkan."
         }
       },
       "reauth": {

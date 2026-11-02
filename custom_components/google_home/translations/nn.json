@@ -38,6 +38,9 @@
         "description": "Google-kontoen din er medlem av fleire heimar. Vel heimane du vil leggje til høgtalarar og skjermar frå. Du kan endre dette seinare i vala for integrasjonen: Vel **Konfigurer** på sida til integrasjonen.",
         "data": {
           "homes": "Heimar"
+        },
+        "data_description": {
+          "homes": "Vel minst éin heim. Høgtalarar og skjermar i heimar som kontoen din seinare blir medlem av, blir òg lagde til."
         }
       },
       "reauth": {

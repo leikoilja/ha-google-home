@@ -38,6 +38,9 @@
         "description": "Contul tău Google este membru al mai multor case. Alege casele din care vrei să adaugi difuzoarele și ecranele. Poți schimba asta mai târziu în opțiunile integrării: selectează **Configurare** pe pagina integrării.",
         "data": {
           "homes": "Case"
+        },
+        "data_description": {
+          "homes": "Bifează cel puțin o casă. Dacă mai târziu contul tău devine membru al altei case, difuzoarele și ecranele din acea casă sunt adăugate și ele."
         }
       },
       "reauth": {

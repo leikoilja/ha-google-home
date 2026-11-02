@@ -38,6 +38,9 @@
         "description": "Google-kontoen din er medlem av flere hjem. Velg hjemmene du vil legge til høyttalere og skjermer fra. Du kan endre dette senere i alternativene for integrasjonen: Velg **Konfigurer** på siden til integrasjonen.",
         "data": {
           "homes": "Hjem"
+        },
+        "data_description": {
+          "homes": "Velg minst ett hjem. Høyttalere og skjermer i hjem som kontoen din senere blir medlem av, legges også til."
         }
       },
       "reauth": {
