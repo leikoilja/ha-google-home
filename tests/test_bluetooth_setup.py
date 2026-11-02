@@ -285,8 +285,9 @@ async def test_disabled_speaker_not_asked(
 ) -> None:
     """Scan only with the enabled speaker while the other is disabled, also after a restart.
 
-    What the disabled speaker heard no longer counts. Enabling it reloads the entry,
-    which scans with it again.
+    The disabled speaker no longer keeps the tracker from showing away, and what it
+    heard before expires as usual. Enabling it reloads the entry, which scans with it
+    again.
     """
     await track_phone(hass, config_entry)
     await hass.async_block_till_done(wait_background_tasks=True)
