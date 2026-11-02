@@ -15,9 +15,10 @@ rules:
   config-flow-test-coverage:
     status: todo
     comment: >-
-      The tests don't yet finish the options flow after it refuses to deselect
-      every home, or the Bluetooth device flow after it rejects a name or
-      identifier, as the rule asks for each error.
+      The rule asks for each error to be followed by finishing the same flow.
+      The tests don't yet do that when signing in again fails, other than with
+      another account, when the options refuse to deselect every home, or when
+      the Bluetooth device flow rejects a name or identifier.
   dependency-transparency: done
   docs-actions: done
   docs-conditions:
