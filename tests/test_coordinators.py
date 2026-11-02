@@ -10,12 +10,12 @@ from datetime import timedelta
 from http import HTTPStatus
 from unittest.mock import Mock
 
+from aiohttp import ClientConnectionError
 from freezegun.api import FrozenDateTimeFactory
 from glocaltokens.client import Device
 import pytest
 from pytest_homeassistant.common import MockConfigEntry, async_fire_time_changed
 from pytest_homeassistant.test_util.aiohttp import AiohttpClientMocker
-from requests.exceptions import ConnectionError as RequestsConnectionError
 
 from custom_components.google_home.account import KNOWN_HOSTS_INTERVAL
 from custom_components.google_home.api import GlocaltokensApiClient
@@ -845,7 +845,7 @@ async def test_update_joining_failed_fetch_uses_no_known_host(
     # A round without a fetch, so the action may fetch
     await data.account.async_refresh()
 
-    glocaltokens.get_google_devices.side_effect = RequestsConnectionError
+    glocaltokens.get_google_devices.side_effect = ClientConnectionError
     google_answers.clear()
     action = asyncio.create_task(client.set_do_not_disturb(kitchen, enable=True))
     await until(lambda: network.asked(SPEAKER) == [DND])

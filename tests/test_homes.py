@@ -109,7 +109,7 @@ def fixture_home_graph(
     mdns_cache[BEDROOM_CLOUD_ID] = ("Bedroom speaker", BEDROOM)
     with (
         patch(
-            "glocaltokens.client.GLocalAuthenticationTokens.get_home_graph",
+            "glocaltokens.client.GLocalAuthenticationTokens.async_get_home_graph",
             autospec=True,
             return_value=graph(at_home(), holiday_house()),
         ) as home_graph,
@@ -122,9 +122,12 @@ def fixture_home_graph(
 def fixture_sign_in() -> Iterator[None]:
     """Fake Google giving an access token for any master token, without an email address."""
     with (
-        patch("glocaltokens.client.perform_oauth", return_value={"Auth": "access"}),
         patch(
-            "glocaltokens.client.GLocalAuthenticationTokens.get_email",
+            "glocaltokens.client.GLocalAuthenticationTokens._async_auth_request",
+            return_value={"Auth": "access"},
+        ),
+        patch(
+            "glocaltokens.client.GLocalAuthenticationTokens.async_get_email",
             autospec=True,
             return_value=None,
         ),

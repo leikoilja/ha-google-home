@@ -11,13 +11,14 @@ from types import MappingProxyType
 from typing import cast
 from unittest.mock import AsyncMock, MagicMock, Mock, PropertyMock, call, patch
 
+from aiohttp import ClientConnectionError, ClientResponseError
 from ghome_foyer_api.api_pb2 import HomeGraph  # pylint: disable=no-name-in-module
 from glocaltokens.client import Device
 from glocaltokens.exceptions import AuthenticationError, HomegraphError
+import gpsoauth
 import grpc  # type: ignore[import-untyped]
 import pytest
-from requests import Response
-from requests.exceptions import ConnectionError as RequestsConnectionError, HTTPError
+from yarl import URL
 
 from custom_components.google_home import (
     async_remove_config_entry_device,
@@ -63,11 +64,9 @@ MINUTE = 60
 HOUR = 60 * MINUTE
 
 
-def answered(status: HTTPStatus) -> HTTPError:
-    """Return the error glocaltokens raises when Google answers with this status."""
-    response = Response()
-    response.status_code = status
-    return HTTPError(response=response)
+def answered(status: HTTPStatus) -> ClientResponseError:
+    """Return the error glocaltokens raises when Google's sign-in answers with this status."""
+    return ClientResponseError(Mock(real_url=URL(gpsoauth.AUTH_URL)), (), status=status)
 
 
 # What glocaltokens raises when Google doesn't give the list, other than when its
@@ -84,7 +83,9 @@ FETCH_ERRORS = [
     pytest.param(answered(HTTPStatus.SERVICE_UNAVAILABLE), id="http-503"),
     pytest.param(answered(HTTPStatus.TOO_MANY_REQUESTS), id="http-429"),
 ]
-UNREACHABLE = pytest.param(RequestsConnectionError(), id="unreachable")
+UNREACHABLE = pytest.param(ClientConnectionError(), id="unreachable")
+# What glocaltokens raises when Google's sign-in doesn't answer in time
+TIMED_OUT = pytest.param(TimeoutError(), id="timed-out")
 # The errors that say nothing about the master token
 NOT_REJECTED = [error for error in FETCH_ERRORS if error.id != "token-rejected"]
 
@@ -154,15 +155,7 @@ def make_client(
 
     With google_answers_when, a fetch of Google's list waits until it holds.
     """
-
-    async def executor(func: Callable[[], object]) -> object:
-        if google_answers_when is not None:
-            await until(google_answers_when)
-        return func()
-
-    hass = Mock()
-    hass.async_add_executor_job = AsyncMock(side_effect=executor)
-    client = GlocaltokensApiClient(hass, session or Mock(), master_token=MASTER_TOKEN)
+    client = GlocaltokensApiClient(Mock(), session or Mock(), master_token=MASTER_TOKEN)
     client.google_devices = [
         GoogleHomeDevice(f"device{index}", f"Device {index}", "token", ip_address)
         for index, ip_address in enumerate(ip_addresses)
@@ -171,16 +164,31 @@ def make_client(
     # Unless a test says otherwise, Google and mDNS return the same devices again,
     # from no home graph
     glocaltokens = Mock(
-        get_home_graph=Mock(return_value=HomeGraph()),
         get_google_devices=Mock(
             return_value=[
                 found(device.device_id, device.ip_address)
                 for device in client.google_devices
             ]
-        ),
+        )
+    )
+    glocaltokens.async_get_google_devices_and_home_graph = fetching(
+        glocaltokens.get_google_devices, google_answers_when
     )
     client._client = glocaltokens  # noqa: SLF001  # pylint: disable=protected-access
     return client, glocaltokens
+
+
+def fetching(google: Mock, answers_when: Callable[[], bool] | None = None) -> AsyncMock:
+    """Return glocaltokens' async fetch: what google gives, as get_google_devices() would, from no home graph."""
+
+    async def answer(
+        *args: object, **options: object
+    ) -> tuple[list[Device], HomeGraph]:
+        if answers_when is not None:
+            await until(answers_when)
+        return google(*args, **options), HomeGraph()
+
+    return AsyncMock(side_effect=answer)
 
 
 async def update_round(client: GlocaltokensApiClient) -> dict[str, GoogleHomeDevice]:
@@ -259,7 +267,7 @@ def test_fetch_every_20_minutes(
 
 
 @pytest.mark.parametrize("ip_addresses", [("10.0.0.2",), ()])
-@pytest.mark.parametrize("error", [*FETCH_ERRORS, UNREACHABLE])
+@pytest.mark.parametrize("error", [*FETCH_ERRORS, UNREACHABLE, TIMED_OUT])
 def test_scheduled_fetch_fails(
     clock: Mock, ip_addresses: tuple[str, ...], error: Exception
 ) -> None:
@@ -375,7 +383,7 @@ def fetch_times(
     for seconds in range(start, start + HOUR + 1, 15):
         clock.return_value = seconds
         fetches = glocaltokens.get_google_devices.call_count
-        with contextlib.suppress(RequestsConnectionError):
+        with contextlib.suppress(ClientConnectionError):
             asyncio.run(update_round(client))
         if glocaltokens.get_google_devices.call_count > fetches:
             fetched_at.append(seconds)
@@ -440,9 +448,9 @@ def test_unreachable_at_setup() -> None:
     """
     client, glocaltokens = make_client()
     client.google_devices_fetched = False
-    glocaltokens.get_google_devices.side_effect = RequestsConnectionError
+    glocaltokens.get_google_devices.side_effect = ClientConnectionError
 
-    with pytest.raises(RequestsConnectionError):
+    with pytest.raises(ClientConnectionError):
         update(client)
 
 
@@ -529,10 +537,9 @@ async def set_up(
             patch("custom_components.google_home.async_browse_cast_devices"),
             patch("custom_components.google_home.async_get_clientsession"),
             patch.object(hass.config_entries, "async_forward_entry_setups"),
-            patch.multiple(
-                "glocaltokens.client.GLocalAuthenticationTokens",
-                get_google_devices=google,
-                get_home_graph=Mock(return_value=HomeGraph()),
+            patch(
+                "glocaltokens.client.GLocalAuthenticationTokens.async_get_google_devices_and_home_graph",
+                fetching(google),
             ),
         ):
             await async_setup_entry(hass, entry)
@@ -640,8 +647,8 @@ def test_log_sign_in_rejected_after_failed_update(
     client, glocaltokens = make_client()
     client.google_devices_fetched = False
     entry = Mock()
-    glocaltokens.get_google_devices.side_effect = RequestsConnectionError
-    with pytest.raises(RequestsConnectionError):
+    glocaltokens.get_google_devices.side_effect = ClientConnectionError
+    with pytest.raises(ClientConnectionError):
         update_entry(client, entry)
 
     glocaltokens.get_google_devices.side_effect = rejected()
@@ -708,7 +715,7 @@ def test_ask_to_sign_in_until_fetch_works(clock: Mock) -> None:
     # An update that doesn't fetch the list
     assert asks_after(FETCH_DEVICES_INTERVAL + 1)
     # Fetches that fail for other reasons
-    assert asks_after(2 * FETCH_DEVICES_INTERVAL, RequestsConnectionError())
+    assert asks_after(2 * FETCH_DEVICES_INTERVAL, ClientConnectionError())
     assert asks_after(
         3 * FETCH_DEVICES_INTERVAL, answered(HTTPStatus.SERVICE_UNAVAILABLE)
     )
@@ -741,8 +748,8 @@ def test_ask_to_sign_in_after_failed_update(clock: Mock) -> None:
 
     # Once the wait after the failed fetch has passed
     clock.return_value = FETCH_DEVICES_INTERVAL + MINUTE
-    glocaltokens.get_google_devices.side_effect = RequestsConnectionError
-    with pytest.raises(RequestsConnectionError):
+    glocaltokens.get_google_devices.side_effect = ClientConnectionError
+    with pytest.raises(ClientConnectionError):
         update_entry(client, entry)
     entry.async_start_reauth.assert_not_called()
 

@@ -5,10 +5,10 @@ import ipaddress
 import logging
 from typing import cast, override
 
+from aiohttp import ClientError, ClientResponseError
 from glocaltokens.exceptions import AuthenticationError
 from glocaltokens.utils.token import is_aas_et
 import probatio
-from requests.exceptions import HTTPError, RequestException
 
 from homeassistant.config_entries import (
     SOURCE_REAUTH,
@@ -207,7 +207,7 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
             CONF_USERNAME: username,
             # Older versions saved an app password here
             CONF_PASSWORD: "",
-            CONF_ANDROID_ID: await client.get_android_id(),
+            CONF_ANDROID_ID: client.get_android_id(),
         }
         if self.source != SOURCE_REAUTH:
             homes = await client.async_get_homes()
@@ -325,9 +325,10 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
         try:
             await client.async_get_master_token()
             await client.async_get_access_token()
-        except (InvalidMasterToken, RequestException) as error:
-            # The form shows the error, so a traceback would only look like a bug
-            _LOGGER.warning("Failed to sign in: %s", error)
+        except (InvalidMasterToken, ClientError, TimeoutError) as error:
+            # The form shows the error, so a traceback would only look like a bug.
+            # A timeout has no message of its own.
+            _LOGGER.warning("Failed to sign in: %s", str(error) or type(error).__name__)
             return _sign_in_error(error, rejected)
         return None
 
@@ -537,12 +538,15 @@ def _homes_selector(homes: Mapping[str, str]) -> SelectSelector:
     )
 
 
-def _sign_in_error(error: InvalidMasterToken | RequestException, rejected: str) -> str:
+def _sign_in_error(
+    error: InvalidMasterToken | ClientError | TimeoutError, rejected: str
+) -> str:
     """Return the form error for why Google gave no master token or access token."""
-    # glocaltokens raises HTTPError only when Google answers with a 5xx or 429
-    if isinstance(error, HTTPError):
+    # glocaltokens raises ClientResponseError for Google's 5xx or 429 answers, and
+    # aiohttp for an answer that it can't read
+    if isinstance(error, ClientResponseError):
         return "google-busy"
-    if isinstance(error, RequestException):
+    if isinstance(error, ClientError | TimeoutError):
         return "google-unreachable"
     # Google refuses a used or expired cookie and a revoked master token with
     # BadAuthentication. Other reasons don't say that a new one would help.

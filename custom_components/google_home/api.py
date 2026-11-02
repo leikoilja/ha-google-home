@@ -14,7 +14,6 @@ from aiohttp import (
     ClientTimeout,
 )
 from aiohttp.client_exceptions import ClientConnectorError, ContentTypeError
-from requests.exceptions import RequestException
 
 from .account import GoogleAccountClient
 from .const import (
@@ -726,6 +725,6 @@ class GlocaltokensApiClient(GoogleAccountClient):
         if device.auth_token == rejected_token:
             try:
                 await self._async_fetch_devices(self._fetches_before_update)
-            except RequestException:
+            except ClientError, TimeoutError:
                 _LOGGER.debug("Failed to fetch Google's device list", exc_info=True)
         return device.auth_token != rejected_token
