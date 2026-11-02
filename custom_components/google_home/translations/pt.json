@@ -38,6 +38,9 @@
         "description": "A sua conta Google é membro de várias casas. Escolha as casas cujos altifalantes e ecrãs pretende adicionar. Pode alterar isto mais tarde nas opções da integração: selecione **Configurar** na página da integração.",
         "data": {
           "homes": "Casas"
+        },
+        "data_description": {
+          "homes": "Marque pelo menos uma casa. Se mais tarde a sua conta se tornar membro de outra casa, os altifalantes e ecrãs dessa casa também serão adicionados."
         }
       },
       "reauth": {

@@ -527,7 +527,10 @@ async def test_add_device_rejects(
     user_input: dict[str, str],
     errors: dict[str, str],
 ) -> None:
-    """Point out a missing name or identifier, a wrong one, or one already tracked."""
+    """Point out a missing name or identifier, a wrong one, or one already tracked.
+
+    A name and another device's identifier on the same form then add that device.
+    """
     hass.config_entries.async_update_entry(
         config_entry, options={"bluetooth_tracking": True}
     )
@@ -538,6 +541,16 @@ async def test_add_device_rejects(
     assert result["type"] is FlowResultType.FORM
     assert result["errors"] == errors
     assert list(config_entry.subentries) == [PHONE]
+
+    added = await hass.config_entries.subentries.async_configure(
+        str(result["flow_id"]), {"name": "Watch", "irk_or_mac": "AA:BB:CC:DD:EE:FF"}
+    )
+
+    assert added["type"] is FlowResultType.CREATE_ENTRY
+    assert [
+        (tracked.title, dict(tracked.data))
+        for tracked in config_entry.subentries.values()
+    ] == [("Phone", {"irk": IRK.hex()}), ("Watch", {"mac": "AA:BB:CC:DD:EE:FF"})]
 
 
 async def test_add_device_logs_no_irk_or_mac(

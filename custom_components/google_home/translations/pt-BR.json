@@ -38,6 +38,9 @@
         "description": "Sua conta do Google é membro de várias casas. Escolha as casas cujos alto-falantes e telas você quer adicionar. Você pode mudar isso depois nas opções da integração: selecione **Configurar** na página da integração.",
         "data": {
           "homes": "Casas"
+        },
+        "data_description": {
+          "homes": "Marque pelo menos uma casa. Se depois sua conta se tornar membro de outra casa, os alto-falantes e as telas dessa casa também serão adicionados."
         }
       },
       "reauth": {

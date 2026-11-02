@@ -533,11 +533,16 @@ def sent_to_google(sign_in: Mock) -> list[tuple[str, str]]:
     ]
 
 
-async def choose(hass: HomeAssistant, method: str) -> ConfigFlowResult:
-    """Start adding the integration, and choose how to sign in."""
-    result = await hass.config_entries.flow.async_init(
-        DOMAIN, context={"source": SOURCE_USER}
-    )
+async def choose(
+    hass: HomeAssistant, method: str, entry: MockConfigEntry | None = None
+) -> ConfigFlowResult:
+    """Start adding the integration, or signing in again to the entry, and choose how."""
+    if entry is not None:
+        result = await entry.start_reauth_flow(hass)
+    else:
+        result = await hass.config_entries.flow.async_init(
+            DOMAIN, context={"source": SOURCE_USER}
+        )
     return await hass.config_entries.flow.async_configure(
         result["flow_id"], {"next_step_id": method}
     )
@@ -548,6 +553,14 @@ async def submit(
 ) -> ConfigFlowResult:
     """Submit the form that the flow shows."""
     return await hass.config_entries.flow.async_configure(result["flow_id"], user_input)
+
+
+def saved_master_tokens(hass: HomeAssistant) -> list[str]:
+    """Return the master token of each of the integration's entries."""
+    return [
+        entry.data["master_token"]
+        for entry in hass.config_entries.async_entries(DOMAIN)
+    ]
 
 
 @pytest.mark.usefixtures("mock_setup_entry")
@@ -703,26 +716,33 @@ async def test_sign_in_adds_every_home(
         ),
     ],
 )
+@pytest.mark.parametrize("reauth", [False, True], ids=["setup", "reauth"])
 async def test_sign_in_format_error(
     hass: HomeAssistant,
+    request: pytest.FixtureRequest,
     sign_in: Mock,
     method: str,
     pasted: dict[str, str],
     error: dict[str, str],
+    reauth: bool,
 ) -> None:
     """Point out a value that can't be the cookie or master token without asking Google.
 
-    Pasting the right one then adds the integration.
+    Pasting the right one then adds the integration, or saves its master token in the
+    entry when signing in again.
     """
-    result = await submit(hass, await choose(hass, method), pasted)
+    entry = request.getfixturevalue("config_entry") if reauth else None
+    result = await submit(hass, await choose(hass, method, entry), pasted)
 
-    assert (result["type"], result["step_id"]) == (FlowResultType.FORM, method)
+    step = f"reauth_{method}" if reauth else method
+    assert (result["type"], result["step_id"]) == (FlowResultType.FORM, step)
     assert result["errors"] == error
     assert sent_to_google(sign_in) == []
+    assert saved_master_tokens(hass) == ([MASTER_TOKEN] if reauth else [])
 
-    result = await submit(hass, result, SIGN_IN_INPUT[method])
+    await submit(hass, result, SIGN_IN_INPUT[method])
 
-    assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert saved_master_tokens(hass) == [NEW_MASTER_TOKEN]
 
 
 @pytest.mark.usefixtures("mock_setup_entry", "sign_in")
@@ -761,27 +781,33 @@ async def test_sign_in_format_error(
         ),
     ],
 )
+@pytest.mark.parametrize("reauth", [False, True], ids=["setup", "reauth"])
 async def test_sign_in_error(
     hass: HomeAssistant,
+    request: pytest.FixtureRequest,
     method: str,
     answer: dict[str, str] | Exception,
     error: str,
+    reauth: bool,
 ) -> None:
-    """Show why Google gave no master token on the same form, without adding the integration.
+    """Show why Google gave no master token on the same form, changing nothing.
 
-    Once Google gives one, submitting the form again adds it.
+    Once Google gives one, submitting the form again adds the integration, or saves the
+    master token in the entry when signing in again.
     """
-    result = await choose(hass, method)
+    entry = request.getfixturevalue("config_entry") if reauth else None
+    result = await choose(hass, method, entry)
     with google_answers(answer):
         result = await submit(hass, result, SIGN_IN_INPUT[method])
 
-    assert (result["type"], result["step_id"]) == (FlowResultType.FORM, method)
+    step = f"reauth_{method}" if reauth else method
+    assert (result["type"], result["step_id"]) == (FlowResultType.FORM, step)
     assert result["errors"] == {"base": error}
-    assert hass.config_entries.async_entries(DOMAIN) == []
+    assert saved_master_tokens(hass) == ([MASTER_TOKEN] if reauth else [])
 
-    result = await submit(hass, result, SIGN_IN_INPUT[method])
+    await submit(hass, result, SIGN_IN_INPUT[method])
 
-    assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert saved_master_tokens(hass) == [NEW_MASTER_TOKEN]
 
 
 def speaker(name: str, address: str) -> ZeroconfServiceInfo:

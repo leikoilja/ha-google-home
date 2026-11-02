@@ -38,6 +38,9 @@
         "description": "Google-tilisi on usean kodin jäsen. Valitse kodit, joiden kaiuttimet ja näytöt lisätään. Voit muuttaa tätä myöhemmin integraation asetuksissa: valitse integraation sivulla **Määrittele**.",
         "data": {
           "homes": "Kodit"
+        },
+        "data_description": {
+          "homes": "Valitse vähintään yksi koti. Kaiuttimet ja näytöt lisätään myös kodeista, joiden jäseneksi tilisi tulee myöhemmin."
         }
       },
       "reauth": {

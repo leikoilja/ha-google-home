@@ -620,7 +620,10 @@ async def test_options_home_joined_while_form_open_added(
 async def test_options_no_home_refused(
     hass: HomeAssistant, config_entry: MockConfigEntry
 ) -> None:
-    """Refuse to deselect every home whose devices are added, showing the homes as the user left them."""
+    """Refuse to deselect every home whose devices are added, showing the homes as the user left them.
+
+    Selecting a home on the same form then saves the choice.
+    """
     await set_up(hass, config_entry)
 
     result = await choose_homes(hass, config_entry, [])
@@ -629,3 +632,13 @@ async def test_options_no_home_refused(
     assert result["errors"] == {"homes": "no-home-selected"}
     assert offered(result) == {"labels": ["Holiday house", "Home"], "selected": []}
     assert config_entry.options == {}
+
+    result = await save_options(hass, result, {"homes": [HOME]})
+
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert config_entry.options == {
+        "update_interval": 15,
+        "known_hosts": [],
+        "excluded_homes": [HOLIDAY_HOUSE],
+        **BLUETOOTH_OFF,
+    }
