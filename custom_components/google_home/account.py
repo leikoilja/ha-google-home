@@ -1,7 +1,7 @@
 """The Google account's tokens and device list, and addresses from known hosts."""
 
 import asyncio
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 import ipaddress
 import json
 import logging
@@ -127,6 +127,10 @@ class GoogleAccountClient:
         # in that home graph, including those that glocaltokens leaves out of the list
         self.excluded_device_ids: set[str] = set()
         self.excluded_cloud_device_ids: set[str] = set()
+        # Told whether a home's devices are added, each time Google answers with a
+        # home graph. Setup sets it, and unloading the entry clears it, so a fetch
+        # that Google answers after that, such as an action's, doesn't reach the repair.
+        self.homes_answered: Callable[[bool], None] | None = None
         # Setup fetches the list straight after creating the client
         self.next_scheduled_fetch = monotonic() + FETCH_DEVICES_INTERVAL
         # The Cast devices that mDNS finds, which give the devices their addresses
@@ -382,7 +386,8 @@ class GoogleAccountClient:
         that fetch, an update that didn't fetch, or a fetch that failed. It also counts
         the home graph that the list came from, with all its devices, even those that
         glocaltokens left out of the list, and notes its homes and the devices of
-        excluded homes, which the list leaves out.
+        excluded homes, which the list leaves out. Then it tells setup whether a home's
+        devices are added, even if a device then finds no new token in the list.
         """
         known_devices = {device.device_id: device for device in self.google_devices}
         self.google_devices = []
@@ -440,6 +445,12 @@ class GoogleAccountClient:
             ):
                 device.ip_address = found_device.address
             self.google_devices.append(device)
+        # Read now, after Google answered: unloading may have cleared it meanwhile. A
+        # home without an ID can't be excluded, so its devices are added.
+        if self.homes_answered is not None:
+            self.homes_answered(
+                any(home.id not in self.excluded_homes for home in home_graph.homes)
+            )
 
     @property
     def google_devices_fetched_once(self) -> bool:

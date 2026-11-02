@@ -54,6 +54,16 @@ ISSUE_POLLING_DISABLED: Final = "polling_disabled"
 POLLING_DOCS_URL: Final = (
     "https://ha-google-home.pages.dev/configuration/#turn-off-polling"
 )
+# The repair shown while Google's home graph has no home whose devices are added: the
+# account's homes are all deselected, or Google reports none. Its text links to the
+# integration's page, where the entry's Configure and Reload are. When Google reports
+# no home, its Learn more opens the troubleshooting that covers accounts that can't
+# join a home, such as Google Workspace accounts.
+ISSUE_NO_ADDED_HOME: Final = "no_added_home"
+INTEGRATION_PAGE_URL: Final = f"/config/integrations/integration/{DOMAIN}"
+NO_DEVICES_DOCS_URL: Final = (
+    "https://ha-google-home.pages.dev/troubleshooting/#no-devices-appear"
+)
 
 # Configuration and options
 CONF_ANDROID_ID: Final = "android_id"

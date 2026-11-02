@@ -184,6 +184,14 @@
           "polling_kept_off": "Kysely pysyy poissa käytöstä, ja tämä korjaus on piilotettu."
         }
       }
+    },
+    "homes_deselected": {
+      "title": "Yhtäkään Google-tilisi kodeista ei ole valittu",
+      "description": "Google-tilisi on vain sellaisten kotien jäsen, joiden valinnan olet poistanut integraation asetuksissa, joten integraatio ei lisää niiden kaiuttimia eikä näyttöjä. Jos haluat lisätä kodin laitteet, avaa [Google Home ‑integraatio]({integration_url}), valitse **Määrittele**, valitse koti kohdassa **Kodit** ja valitse sitten **Lähetä**.\n\nJos haluat pitää näiden kotien valinnan poistettuna, valitse **Sivuta**."
+    },
+    "no_home": {
+      "title": "Google ei ilmoita tilillesi yhtään kotia",
+      "description": "Googlen mukaan tili, jolla integraatio kirjautui, ei ole minkään kodin jäsen, joten lisättäviä kaiuttimia tai näyttöjä ei ole. Kutsu Google Home ‑sovelluksessa tämä tili kotiin, jossa laitteesi ovat, ja hyväksy kutsu. Lataa sitten [Google Home ‑integraatio]({integration_url}) uudelleen: valitse **⋮** > **Lataa uudelleen**.\n\nJos pidät integraation tarkoituksella, esimerkiksi muuton aikana, valitse **Sivuta**. Jos et enää tarvitse sitä, voit poistaa sen samalla sivulla."
     }
   },
   "config_subentries": {

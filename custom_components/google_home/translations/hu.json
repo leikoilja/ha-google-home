@@ -184,6 +184,14 @@
           "polling_kept_off": "A lekérdezés letiltva marad, ez a javítás pedig rejtve van."
         }
       }
+    },
+    "homes_deselected": {
+      "title": "Google-fiókjának egyik otthona sincs kijelölve",
+      "description": "Google-fiókja csak olyan otthonok tagja, amelyek kijelölését megszüntette az integráció opcióiban, ezért az integráció nem adja hozzá az ezekben lévő hangszórókat és kijelzőket. Egy otthon eszközeinek hozzáadásához nyissa meg a [Google Home-integrációt]({integration_url}), válassza a **Konfigurálás** lehetőséget, jelölje ki az otthont az **Otthonok** alatt, majd válassza a **Mehet** lehetőséget.\n\nHa továbbra sem szeretné kijelölni ezeket az otthonokat, válassza a **Mellőzés** lehetőséget."
+    },
+    "no_home": {
+      "title": "A Google nem jelez otthont a fiókjához",
+      "description": "A Google szerint az a fiók, amellyel az integráció bejelentkezett, egyetlen otthonnak sem tagja, így nincsenek hozzáadható hangszórók vagy kijelzők. A Google Home alkalmazásban hívja meg ezt a fiókot abba az otthonba, amelyben az eszközei vannak, és fogadja el a meghívást. Ezután töltse újra a [Google Home-integrációt]({integration_url}): válassza a **⋮** > **Konfiguráció újratöltése** lehetőséget.\n\nHa szándékosan tartja meg az integrációt, például költözés közben, válassza a **Mellőzés** lehetőséget. Ha már nincs rá szüksége, ugyanezen az oldalon törölheti."
     }
   },
   "config_subentries": {

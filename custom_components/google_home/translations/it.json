@@ -184,6 +184,14 @@
           "polling_kept_off": "Il rilevamento delle variazioni resta disabilitato e questa riparazione è stata nascosta."
         }
       }
+    },
+    "homes_deselected": {
+      "title": "Nessuna casa del tuo account Google è selezionata",
+      "description": "Il tuo account Google fa parte solo di case che hai deselezionato nelle opzioni dell'integrazione, quindi l'integrazione non ne aggiunge gli altoparlanti e i display. Per aggiungere i dispositivi di una casa, apri l'[integrazione Google Home]({integration_url}), seleziona **Configura**, seleziona la casa in **Case**, quindi seleziona **Invia**.\n\nSe vuoi mantenere deselezionate queste case, seleziona **Ignora**."
+    },
+    "no_home": {
+      "title": "Google non indica nessuna casa per il tuo account",
+      "description": "Google indica che l'account con cui l'integrazione ha effettuato l'accesso non fa parte di nessuna casa, quindi non ci sono altoparlanti o display da aggiungere. Nell'app Google Home, invita questo account nella casa in cui si trovano i tuoi dispositivi e accetta l'invito. Poi ricarica l'[integrazione Google Home]({integration_url}): seleziona **⋮** > **Ricarica**.\n\nSe tieni l'integrazione di proposito, ad esempio durante un trasloco, seleziona **Ignora**. Se non ti serve più, puoi eliminarla dalla stessa pagina."
     }
   },
   "config_subentries": {

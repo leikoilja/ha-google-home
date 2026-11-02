@@ -184,6 +184,14 @@
           "polling_kept_off": "A procura continua desativada e esta correção foi ocultada."
         }
       }
+    },
+    "homes_deselected": {
+      "title": "Nenhuma casa da sua conta Google está selecionada",
+      "description": "A sua conta Google só é membro de casas que desmarcou nas opções da integração, por isso a integração não adiciona os altifalantes e ecrãs dessas casas. Para adicionar os dispositivos de uma casa, abra a [integração Google Home]({integration_url}), selecione **Configurar**, marque a casa em **Casas** e depois selecione **Enviar**.\n\nSe pretender manter estas casas desmarcadas, selecione **Ignorar**."
+    },
+    "no_home": {
+      "title": "A Google não indica nenhuma casa para a sua conta",
+      "description": "A Google indica que a conta com que a integração iniciou sessão não é membro de nenhuma casa, por isso não há altifalantes nem ecrãs para adicionar. Na aplicação Google Home, convide esta conta para a casa onde estão os seus dispositivos e aceite o convite. Depois, recarregue a [integração Google Home]({integration_url}): selecione **⋮** > **Recarregar**.\n\nSe está a manter a integração de propósito, por exemplo durante uma mudança de casa, selecione **Ignorar**. Se já não precisar dela, pode eliminá-la na mesma página."
     }
   },
   "config_subentries": {

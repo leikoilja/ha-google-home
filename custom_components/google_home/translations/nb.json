@@ -184,6 +184,14 @@
           "polling_kept_off": "Polling forblir av, og denne reparasjonen er skjult."
         }
       }
+    },
+    "homes_deselected": {
+      "title": "Ingen av hjemmene til Google-kontoen din er valgt",
+      "description": "Google-kontoen din er bare medlem av hjem du har valgt bort i alternativene for integrasjonen, så integrasjonen legger ikke til høyttalerne og skjermene i dem. For å legge til enhetene i et hjem åpner du [Google Home-integrasjonen]({integration_url}), velger **Konfigurer**, velger hjemmet under **Hjem** og velger deretter **Send inn**.\n\nHvis du vil la disse hjemmene være valgt bort, velger du **Ignorer**."
+    },
+    "no_home": {
+      "title": "Google oppgir ikke noe hjem for kontoen din",
+      "description": "Google oppgir at kontoen integrasjonen er logget på med, ikke er medlem av noe hjem, så det finnes ingen høyttalere eller skjermer å legge til. I Google Home-appen inviterer du denne kontoen til hjemmet enhetene dine er i, og godtar invitasjonen. Last deretter inn [Google Home-integrasjonen]({integration_url}) på nytt: Velg **⋮** > **Last inn på nytt**.\n\nHvis du beholder integrasjonen med vilje, for eksempel mens du flytter, velger du **Ignorer**. Hvis du ikke trenger den lenger, kan du slette den på den samme siden."
     }
   },
   "config_subentries": {
