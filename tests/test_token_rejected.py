@@ -35,11 +35,12 @@ from .test_missing_devices import (
     HASS,
     LOCAL_AUTH_TOKEN,
     MINUTE,
-    REJECTED_LOG,
+    REJECTED,
     TIMED_OUT,
     UNREACHABLE,
     answered,
     can_delete,
+    failure_logged,
     fetches_in,
     found,
     logged,
@@ -381,7 +382,8 @@ def test_log_sign_in_rejected_in_action(caplog: pytest.LogCaptureFixture) -> Non
 
     assert err.value.reason == "token_rejected"
     assert glocaltokens.get_google_devices.call_count == 1
-    assert ("ERROR", REJECTED_LOG) in logged(caplog)
+    # The list is now unknown, so the next update after the backoff tries again
+    assert failure_logged(REJECTED, 1) in logged(caplog)
 
 
 def test_ask_to_sign_in_when_token_fetch_rejected() -> None:

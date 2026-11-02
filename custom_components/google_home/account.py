@@ -5,6 +5,7 @@ from collections.abc import Mapping
 import ipaddress
 import json
 import logging
+import math
 from time import monotonic
 from typing import TYPE_CHECKING, Final
 
@@ -45,11 +46,15 @@ class FetchBackoff:
         self._failures = 0
         self._retry_at = 0.0
 
-    def fetch_started(self, now: float) -> None:
-        """Count a fetch that starts now as failed, until fetch_worked() says otherwise."""
+    def fetch_started(self, now: float) -> float:
+        """Count a fetch that starts now as failed, until fetch_worked() says otherwise.
+
+        Return when the next fetch may start if this one fails.
+        """
         delay = FETCH_RETRY_DELAYS[min(self._failures, len(FETCH_RETRY_DELAYS) - 1)]
         self._retry_at = now + delay
         self._failures += 1
+        return self._retry_at
 
     def fetch_worked(self) -> None:
         """Forget the failures once Google answers."""
@@ -133,6 +138,12 @@ class GoogleAccountClient:
         self._last_home_graph_with: dict[str, int] = {}
         # While the list is unknown, a fetch after a failed one waits a while
         self._fetch_backoff = FetchBackoff()
+        # The type of error that the last failed fetch raised, and whether a failure
+        # was logged as an error, until a fetch works. A failure is logged once, and
+        # again only when a fetch fails differently, also after one that couldn't
+        # reach Google.
+        self._fetch_error: type[Exception] | None = None
+        self._fetch_error_logged = False
         # Devices found to have no alarms, timers and settings. They aren't asked for
         # them again until the integration is loaded again, even if Google's list
         # drops them and later lists them again.
@@ -209,7 +220,9 @@ class GoogleAccountClient:
             known_hosts = await self.async_use_known_hosts(between_fetches=True)
         return known_hosts
 
-    async def _async_fetch_devices(self, fetches: int) -> Mapping[str, str]:
+    async def _async_fetch_devices(
+        self, fetches: int, *, scheduled: bool = False
+    ) -> Mapping[str, str]:
         """Fetch Google's device list, unless a fetch has ended since there were `fetches`.
 
         A caller that waits while another fetch runs uses that fetch's devices and
@@ -217,6 +230,10 @@ class GoogleAccountClient:
         fetches it until the backoff after a failed fetch has passed: neither the
         update nor a device that rejects its token. With a known list, a rejected
         token still gets a fetch straight away.
+
+        A scheduled fetch is one that's due while the list is known; if it fails, the
+        list stays known. Any other failed fetch leaves the list unknown, including one
+        for a rejected token.
 
         Return the known hosts that this fetch, or the one that ended since there were
         `fetches`, gave devices, by device ID. Only one fetch ends per update, so that's
@@ -233,22 +250,29 @@ class GoogleAccountClient:
                 return {}
             known_hosts: Mapping[str, str] = {}
             try:
-                known_hosts = await self._async_get_devices_from_google()
+                known_hosts = await self._async_get_devices_from_google(
+                    scheduled=scheduled
+                )
             finally:
                 self._fetches += 1
                 # A fetch that failed found none
                 self._known_hosts_found = known_hosts
             return known_hosts
 
-    async def _async_get_devices_from_google(self) -> Mapping[str, str]:
+    async def _async_get_devices_from_google(
+        self, *, scheduled: bool
+    ) -> Mapping[str, str]:
         """Ask Google for the device list, and update the devices from it.
+
+        A failure is logged once, with when the list is fetched again, and again only
+        when a fetch fails differently or after one works.
 
         Return the known hosts that this fetch gave devices, by device ID.
         """
         started = monotonic()
         # Whether this works or not, the next scheduled fetch waits a full interval
         self.next_scheduled_fetch = started + FETCH_DEVICES_INTERVAL
-        self._fetch_backoff.fetch_started(started)
+        retry_at = self._fetch_backoff.fetch_started(started)
         fetched_for = self.found_devices.fetch_started()
 
         try:
@@ -263,18 +287,39 @@ class GoogleAccountClient:
         # Google rejected the master token, gave no home graph, or answered with
         # a 5xx or 429, which glocaltokens raises as ClientResponseError
         except (GLocalTokensError, ClientResponseError) as error:
-            log = _LOGGER.error
             # Only signing in again helps when Google rejects the master token.
             # Other errors say nothing about it, so an earlier rejection stays.
             if isinstance(error, AuthenticationError):
                 self.sign_in_error = error
-                # Setup then fails with Google's reason, which Home Assistant logs
-                if self.setting_up:
-                    log = _LOGGER.debug
-            log("Failed to fetch Google's device list: %s", error)
+            # A repeat of the last failure is logged only for debugging, as is a
+            # rejection at setup: setup then fails with Google's reason, which Home
+            # Assistant logs. The exact type counts, as AuthenticationError is also a
+            # GLocalTokensError.
+            # pylint: disable-next=unidiomatic-typecheck
+            if type(error) is self._fetch_error or (
+                isinstance(error, AuthenticationError) and self.setting_up
+            ):
+                _LOGGER.debug("Failed to fetch Google's device list: %s", error)
+            else:
+                due = self.next_scheduled_fetch if scheduled else retry_at
+                _LOGGER.error(
+                    "Failed to fetch Google's device list (%s): %s",
+                    self._when_fetched_again(error, due),
+                    error,
+                )
+                self._fetch_error_logged = True
+            self._fetch_error = type(error)
             # Keep the devices of an earlier fetch rather than drop them
             return {}
+        # Google's sign-in can't be reached, which the caller raises or logs
+        except (ClientError, TimeoutError) as error:
+            self._fetch_error = type(error)
+            raise
         self._fetch_backoff.fetch_worked()
+        if self._fetch_error_logged:
+            _LOGGER.info("Fetching Google's device list works again")
+        self._fetch_error = None
+        self._fetch_error_logged = False
         self.sign_in_error = None
         self.google_devices_fetched = True
         self._use_google_devices(google_devices, home_graph)
@@ -287,6 +332,23 @@ class GoogleAccountClient:
         if self._needs_known_hosts():
             return await self.async_use_known_hosts()
         return {}
+
+    def _when_fetched_again(self, error: Exception, due: float) -> str:
+        """Say when Google's list is fetched again after a fetch failed with this error.
+
+        `due` is when the next fetch may start. It runs at the first update after that.
+        """
+        # Without devices, the update then fails, and Home Assistant doesn't update the
+        # account again until signing in again reloads the integration
+        if isinstance(error, AuthenticationError) and not self.google_devices:
+            return "sign in again to fetch it"
+        # From now, as the fetch that failed took a while. Rounded up, so the next update
+        # is said only once the wait has passed.
+        wait = math.ceil((due - monotonic()) / 60)
+        when = f"the first update after {wait} min" if wait > 0 else "the next update"
+        return (
+            f"next try at {when}; further failures like this are logged at debug level"
+        )
 
     @property
     def missing_addresses(self) -> bool:
@@ -412,7 +474,9 @@ class GoogleAccountClient:
         else:
             return {}
         try:
-            return await self._async_fetch_devices(self._fetches_before_update)
+            return await self._async_fetch_devices(
+                self._fetches_before_update, scheduled=True
+            )
         except ClientError, TimeoutError:
             _LOGGER.debug("Failed to fetch Google's device list", exc_info=True)
             return {}
