@@ -46,13 +46,23 @@ type RequestFailure = Literal[
 class DeviceRequestFailed(HomeAssistantError):
     """Error to indicate a device didn't carry out an action, or didn't confirm it."""
 
-    def __init__(self, device_name: str, reason: RequestFailure) -> None:
-        """Name the device and the reason in the message."""
+    def __init__(
+        self, device_name: str, reason: RequestFailure, *, polling_off: bool = False
+    ) -> None:
+        """Name the device and the reason in the message.
+
+        With polling_off, a rejected token's message says to refresh, as no update
+        asks Google for a new token by itself.
+        """
+        key = f"device_{reason}"
+        if polling_off and reason == "token_rejected":
+            key = "device_token_rejected_polling_off"
         super().__init__(
             translation_domain=DOMAIN,
             # device_offline, device_no_reply, device_token_rejected,
-            # device_not_ready or device_request_failed
-            translation_key=f"device_{reason}",
+            # device_token_rejected_polling_off, device_not_ready or
+            # device_request_failed
+            translation_key=key,
             translation_placeholders={"device": device_name},
         )
         self.device_name = device_name

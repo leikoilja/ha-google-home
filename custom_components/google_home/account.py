@@ -110,6 +110,9 @@ class GoogleAccountClient:
         # Whether setup's first update is running. If Google rejects the master token
         # then, setup fails with Google's reason, which Home Assistant logs.
         self.setting_up = False
+        # Whether polling is turned off in the entry's system options, so no update
+        # comes unless asked for. Home Assistant reloads the entry when it changes.
+        self.polling_off = False
         self.known_hosts = known_hosts or []
         # When known hosts were last asked, and those that said which device they are
         # when they were last asked

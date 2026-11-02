@@ -150,6 +150,9 @@
     "device_token_rejected": {
       "message": "Urządzenie {device} odrzuciło swój token, a pobranie nowego z Google nie pomogło. Integracja nadal prosi Google o nowy, więc spróbuj ponownie później."
     },
+    "device_token_rejected_polling_off": {
+      "message": "Urządzenie {device} odrzuciło swój token, a pobranie nowego z Google nie pomogło. Cykliczne odpytywanie jest wyłączone, więc integracja sama nie poprosi ponownie Google o nowy token: uruchom akcję „Odśwież urządzenia”, a potem spróbuj ponownie."
+    },
     "device_not_ready": {
       "message": "Urządzenie {device} odpowiedziało „nie znaleziono”. Być może nadal się uruchamia, więc spróbuj ponownie później, albo może tego nie obsługiwać."
     },

@@ -150,6 +150,9 @@
     "device_token_rejected": {
       "message": "{device} 기기가 토큰을 거부했으며, Google에서 새 토큰을 받는 것도 도움이 되지 않았습니다. 통합 구성 요소가 Google에 새 토큰을 계속 요청하므로 나중에 다시 시도하세요."
     },
+    "device_token_rejected_polling_off": {
+      "message": "{device} 기기가 토큰을 거부했으며, Google에서 새 토큰을 받는 것도 도움이 되지 않았습니다. 변경 사항 폴링이 꺼져 있어 통합 구성 요소가 스스로 Google에 다시 요청하지 않습니다. “기기 상태 새로고침” 액션을 실행한 후 다시 시도하세요."
+    },
     "device_not_ready": {
       "message": "{device} 기기가 “찾을 수 없음”이라고 응답했습니다. 아직 시작 중일 수 있으니 나중에 다시 시도하세요. 또는 이 작업을 지원하지 않을 수도 있습니다."
     },

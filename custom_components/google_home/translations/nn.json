@@ -150,6 +150,9 @@
     "device_token_rejected": {
       "message": "{device} avviste tokenet sitt, og det hjelpte ikkje å hente eit nytt frå Google. Integrasjonen held fram med å be Google om eit nytt, så prøv igjen seinare."
     },
+    "device_token_rejected_polling_off": {
+      "message": "{device} avviste tokenet sitt, og det hjelpte ikkje å hente eit nytt frå Google. Polling av oppdateringar er slått av, så integrasjonen ber ikkje Google om eit nytt igjen på eiga hand: køyr handlinga «Oppdater einingar», og prøv deretter igjen."
+    },
     "device_not_ready": {
       "message": "{device} svarte «ikkje funne». Eininga held kanskje framleis på å starte opp, så prøv igjen seinare, eller eininga støttar kanskje ikkje dette."
     },

@@ -122,6 +122,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -
     entry.async_on_unload(found_devices.async_stop)
     # Before the first refresh, so it also shows while setup is retried
     async_show_polling_disabled(hass, entry)
+    glocaltokens_client.polling_off = entry.pref_disable_polling
     if entry.pref_disable_polling:
         # The fetches for devices that mDNS finds are scheduled too, so they stop
         found_devices.async_stop()
@@ -132,10 +133,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -
     glocaltokens_client.setting_up = True
     try:
         await account.async_config_entry_first_refresh()
-        # Each device is asked once before its entities are added
+        # Each device is asked once before its entities are added. Not a first
+        # refresh, so a device whose update fails unexpectedly doesn't fail setup: it
+        # gets its entities at its first update that works.
         await asyncio.gather(
             *(
-                coordinator.async_config_entry_first_refresh()
+                coordinator.async_refresh()
                 for coordinator in entry.runtime_data.devices.values()
             )
         )

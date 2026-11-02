@@ -118,28 +118,28 @@
   },
   "exceptions": {
     "alarms_and_timers_not_fetched": {
-      "message": "Nu s-au putut prelua alarmele și cronometrele curente de pe dispozitivul {device}, așa că nu s-a șters nimic de pe acesta. Verifică dacă dispozitivul este online și încearcă din nou mai târziu."
+      "message": "Nu s-au putut prelua alarmele și temporizatoarele curente de pe dispozitivul {device}, așa că nu s-a șters nimic de pe acesta. Verifică dacă dispozitivul este online și încearcă din nou mai târziu."
     },
     "alarms_and_timers_not_fetched_from_devices": {
-      "message": "Nu s-au putut prelua alarmele și cronometrele curente de pe următoarele dispozitive, așa că nu s-a șters nimic de pe acestea: {devices}. Verifică dacă dispozitivele sunt online și încearcă din nou mai târziu."
+      "message": "Nu s-au putut prelua alarmele și temporizatoarele curente de pe următoarele dispozitive, așa că nu s-a șters nimic de pe acestea: {devices}. Verifică dacă dispozitivele sunt online și încearcă din nou mai târziu."
     },
     "alarms_and_timers_not_deleted": {
-      "message": "Dispozitivul {device} nu a confirmat ștergerea alarmelor sau a cronometrelor, așa că acestea pot fi încă setate. Verifică dacă dispozitivul este online și încearcă din nou mai târziu."
+      "message": "Dispozitivul {device} nu a confirmat ștergerea alarmelor sau a temporizatoarelor, așa că acestea pot fi încă setate. Verifică dacă dispozitivul este online și încearcă din nou mai târziu."
     },
     "alarms_and_timers_not_deleted_from_devices": {
-      "message": "Nu s-au putut șterge alarmele sau cronometrele de pe următoarele dispozitive ori nu s-a putut confirma ștergerea lor: {devices}. Verifică dacă dispozitivele sunt online și încearcă din nou mai târziu."
+      "message": "Nu s-au putut șterge alarmele sau temporizatoarele de pe următoarele dispozitive ori nu s-a putut confirma ștergerea lor: {devices}. Verifică dacă dispozitivele sunt online și încearcă din nou mai târziu."
     },
     "invalid_alarm_id": {
       "message": "„{alarm_id}” nu este un ID de alarmă. Copiază ID-ul, care începe cu alarm/, din atributul alarms al senzorului de alarme al dispozitivului."
     },
     "invalid_timer_id": {
-      "message": "„{timer_id}” nu este un ID de cronometru. Copiază ID-ul, care începe cu timer/, din atributul timers al senzorului de cronometre al dispozitivului."
+      "message": "„{timer_id}” nu este un ID de temporizator. Copiază ID-ul, care începe cu timer/, din atributul timers al senzorului de temporizatoare al dispozitivului."
     },
     "alarm_not_found": {
       "message": "Nu s-a găsit alarma {alarm_id} pe dispozitivele selectate. Este posibil să fi sunat deja sau să fi fost ștearsă."
     },
     "timer_not_found": {
-      "message": "Nu s-a găsit cronometrul {timer_id} pe dispozitivele selectate. Este posibil să se fi încheiat deja sau să fi fost șters."
+      "message": "Nu s-a găsit temporizatorul {timer_id} pe dispozitivele selectate. Este posibil să se fi încheiat deja sau să fi fost șters."
     },
     "device_offline": {
       "message": "Nu s-a putut contacta dispozitivul {device}. Verifică dacă este pornit și conectat la rețeaua ta, apoi încearcă din nou."
@@ -149,6 +149,9 @@
     },
     "device_token_rejected": {
       "message": "Dispozitivul {device} a respins tokenul, iar obținerea unuia nou de la Google nu a ajutat. Integrarea continuă să ceară unul nou de la Google, așa că încearcă din nou mai târziu."
+    },
+    "device_token_rejected_polling_off": {
+      "message": "Dispozitivul {device} a respins tokenul, iar obținerea unuia nou de la Google nu a ajutat. Interogarea pentru modificări este dezactivată, așa că integrarea nu cere singură din nou un token de la Google: rulează acțiunea „Actualizează starea dispozitivelor”, apoi încearcă din nou."
     },
     "device_not_ready": {
       "message": "Dispozitivul {device} a răspuns „negăsit”. Este posibil să fie încă în curs de pornire, așa că încearcă din nou mai târziu, sau să nu accepte acest lucru."
@@ -265,14 +268,14 @@
       "name": "Șterge alarma"
     },
     "delete_timer": {
-      "description": "Șterge un cronometru de pe un dispozitiv Google Home.",
+      "description": "Șterge un temporizator de pe un dispozitiv Google Home.",
       "fields": {
         "timer_id": {
-          "description": "ID-ul cronometrului (timer/xxx).",
-          "name": "ID cronometru"
+          "description": "ID-ul temporizatorului (timer/xxx).",
+          "name": "ID temporizator"
         },
         "skip_refresh": {
-          "description": "Omite actualizarea stării dispozitivelor Google Home după ștergerea unui cronometru.",
+          "description": "Omite actualizarea stării dispozitivelor Google Home după ștergerea unui temporizator.",
           "name": "Omite actualizarea stării"
         },
         "entity_id": {
@@ -280,7 +283,7 @@
           "name": "Entitate"
         }
       },
-      "name": "Șterge cronometrul"
+      "name": "Șterge temporizatorul"
     },
     "delete_all_alarms": {
       "description": "Șterge toate alarmele de pe dispozitivele Google Home.",
@@ -293,14 +296,14 @@
       "name": "Șterge toate alarmele"
     },
     "delete_all_timers": {
-      "description": "Șterge toate cronometrele de pe dispozitivele Google Home.",
+      "description": "Șterge toate temporizatoarele de pe dispozitivele Google Home.",
       "fields": {
         "skip_refresh": {
-          "description": "Omite actualizarea stării dispozitivelor Google Home după ștergerea tuturor cronometrelor.",
+          "description": "Omite actualizarea stării dispozitivelor Google Home după ștergerea tuturor temporizatoarelor.",
           "name": "Omite actualizarea stării"
         }
       },
-      "name": "Șterge toate cronometrele"
+      "name": "Șterge toate temporizatoarele"
     },
     "reboot_device": {
       "description": "Repornește un dispozitiv Google Home.",

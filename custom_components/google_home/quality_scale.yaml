@@ -1,0 +1,95 @@
+# Home Assistant's integration quality scale rules, as of Home Assistant 2026.11:
+# https://contributors.home-assistant.io/core/quality-scale/rules/
+# Hassfest doesn't check this file for custom integrations.
+rules:
+  # Bronze
+  action-setup: done
+  appropriate-polling: done
+  brands: done
+  common-modules: done
+  config-flow:
+    status: todo
+    comment: >-
+      The homes field of the setup step has no description, which the rule asks
+      for on every field; the step's own text explains the choice.
+  config-flow-test-coverage:
+    status: todo
+    comment: >-
+      The rule asks for each error to be followed by finishing the same flow.
+      The tests don't yet do that when signing in again fails, other than with
+      another account, when the options refuse to deselect every home, or when
+      the Bluetooth device flow rejects a name or identifier.
+  dependency-transparency: done
+  docs-actions: done
+  docs-conditions:
+    status: exempt
+    comment: The integration provides no conditions of its own.
+  docs-high-level-description: done
+  docs-installation-instructions: done
+  docs-removal-instructions: done
+  docs-triggers:
+    status: exempt
+    comment: The integration provides no triggers of its own.
+  entity-event-setup:
+    status: exempt
+    comment: Entities get their data from coordinators and subscribe to no events.
+  entity-unique-id: done
+  has-entity-name: done
+  runtime-data: done
+  test-before-configure: done
+  test-before-setup: done
+  unique-config-entry: done
+
+  # Silver
+  action-exceptions: done
+  config-entry-unloading: done
+  docs-configuration-parameters: done
+  docs-installation-parameters: done
+  entity-unavailable: done
+  integration-owner: done
+  log-when-unavailable:
+    status: todo
+    comment: >-
+      A speaker that can't be reached or doesn't answer in time, and a failed
+      fetch of Google's device list, are logged once, and once more when they
+      work again. A request to a speaker that fails with another client error,
+      such as a reset connection, still logs an error with a traceback at every
+      update.
+  parallel-updates: done
+  reauthentication-flow: done
+  test-coverage: done
+
+  # Gold
+  devices: done
+  diagnostics: done
+  discovery: done
+  discovery-update-info: done
+  docs-data-update: done
+  docs-examples: done
+  docs-known-limitations: done
+  docs-supported-devices: done
+  docs-supported-functions: done
+  docs-troubleshooting: done
+  docs-use-cases: done
+  dynamic-devices: done
+  entity-category: done
+  entity-device-class: done
+  entity-disabled-by-default: done
+  entity-translations: done
+  exception-translations:
+    status: todo
+    comment: When Google rejects the sign-in at setup, the error shows Google's untranslated reason.
+  icon-translations: done
+  reconfiguration-flow:
+    status: exempt
+    comment: >-
+      Setup asks only for a Google sign-in, which signing in again updates, and
+      for the homes, which the options change. To use another Google account,
+      the integration is deleted and added again.
+  repair-issues: done
+  stale-devices: done
+
+  # Platinum
+  async-dependency: done
+  inject-websession: done
+  strict-typing: done

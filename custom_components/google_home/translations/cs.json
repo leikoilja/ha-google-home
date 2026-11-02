@@ -150,6 +150,9 @@
     "device_token_rejected": {
       "message": "Zařízení {device} odmítlo svůj token a získání nového od Googlu nepomohlo. Integrace bude dál žádat Google o nový, takže to zkuste znovu později."
     },
+    "device_token_rejected_polling_off": {
+      "message": "Zařízení {device} odmítlo svůj token a získání nového od Googlu nepomohlo. Dotazování na změny je vypnuté, takže integrace sama znovu nežádá Google o nový token: spusťte akci „Aktualizovat stav zařízení“ a pak to zkuste znovu."
+    },
     "device_not_ready": {
       "message": "Zařízení {device} odpovědělo „nenalezeno“. Možná se ještě spouští, takže to zkuste znovu později, nebo to možná nepodporuje."
     },
