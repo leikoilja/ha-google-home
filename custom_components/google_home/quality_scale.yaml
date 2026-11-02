@@ -7,18 +7,8 @@ rules:
   appropriate-polling: done
   brands: done
   common-modules: done
-  config-flow:
-    status: todo
-    comment: >-
-      The homes field of the setup step has no description, which the rule asks
-      for on every field; the step's own text explains the choice.
-  config-flow-test-coverage:
-    status: todo
-    comment: >-
-      The rule asks for each error to be followed by finishing the same flow.
-      The tests don't yet do that when signing in again fails, other than with
-      another account, when the options refuse to deselect every home, or when
-      the Bluetooth device flow rejects a name or identifier.
+  config-flow: done
+  config-flow-test-coverage: done
   dependency-transparency: done
   docs-actions: done
   docs-conditions:

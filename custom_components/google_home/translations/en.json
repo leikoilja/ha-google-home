@@ -38,6 +38,9 @@
         "description": "Your Google account is a member of several homes. Choose the homes whose speakers and displays to add. You can change this later in the integration's options: select **Configure** on the integration's page.",
         "data": {
           "homes": "Homes"
+        },
+        "data_description": {
+          "homes": "Select at least one home. Speakers and displays in homes that your account joins later are also added."
         }
       },
       "reauth": {
