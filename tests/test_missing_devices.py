@@ -184,14 +184,17 @@ def make_client(
 
 
 def fetching(google: Mock, answers_when: Callable[[], bool] | None = None) -> AsyncMock:
-    """Return glocaltokens' async fetch: what google gives, as get_google_devices() would, from no home graph."""
+    """Return glocaltokens' async fetch: what google gives, as get_google_devices() would.
+
+    As with the google fixture, the home graph's one home has no ID and no devices.
+    """
 
     async def answer(
         *args: object, **options: object
     ) -> tuple[list[Device], HomeGraph]:
         if answers_when is not None:
             await until(answers_when)
-        return google(*args, **options), HomeGraph()
+        return google(*args, **options), HomeGraph(homes=[HomeGraph.Home()])
 
     return AsyncMock(side_effect=answer)
 

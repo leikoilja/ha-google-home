@@ -181,6 +181,14 @@
           "polling_kept_off": "Polling tetap nonaktif, dan perbaikan ini disembunyikan."
         }
       }
+    },
+    "homes_deselected": {
+      "title": "Tidak ada rumah akun Google Anda yang dipilih",
+      "description": "Akun Google Anda hanya menjadi anggota rumah yang pilihannya Anda batalkan di opsi integrasi, sehingga integrasi tidak menambahkan speaker dan layar di rumah tersebut. Untuk menambahkan perangkat suatu rumah, buka [integrasi Google Home]({integration_url}), pilih **Konfigurasikan**, pilih rumah tersebut di **Rumah**, lalu pilih **Kirimkan**.\n\nJika Anda ingin rumah-rumah ini tetap tidak dipilih, pilih **Abaikan**."
+    },
+    "no_home": {
+      "title": "Google tidak melaporkan rumah apa pun untuk akun Anda",
+      "description": "Google melaporkan bahwa akun yang digunakan integrasi untuk login bukan anggota rumah mana pun, sehingga tidak ada speaker atau layar yang dapat ditambahkan. Di aplikasi Google Home, undang akun ini ke rumah tempat perangkat Anda berada, lalu terima undangannya. Kemudian, muat ulang [integrasi Google Home]({integration_url}): pilih **⋮** > **Muat Ulang**.\n\nJika Anda sengaja mempertahankan integrasi ini, misalnya saat sedang pindah rumah, pilih **Abaikan**. Jika tidak memerlukannya lagi, Anda dapat menghapusnya di halaman yang sama."
     }
   },
   "config_subentries": {

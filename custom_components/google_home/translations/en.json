@@ -181,6 +181,14 @@
           "polling_kept_off": "Polling stays off, and this repair is hidden."
         }
       }
+    },
+    "homes_deselected": {
+      "title": "None of your Google account's homes is selected",
+      "description": "Your Google account is only a member of homes that you deselected in the integration's options, so the integration doesn't add the speakers and displays in them. To add a home's devices, open the [Google Home integration]({integration_url}), select **Configure**, select the home under **Homes**, then select **Submit**.\n\nIf you want to keep these homes deselected, select **Ignore**."
+    },
+    "no_home": {
+      "title": "Google reports no home for your account",
+      "description": "Google reports that the account the integration signed in with isn't a member of any home, so there are no speakers or displays to add. In the Google Home app, invite this account to the home that your devices are in, and accept the invitation. Then reload the [Google Home integration]({integration_url}): select **⋮** > **Reload**.\n\nIf you're keeping the integration on purpose, for example while you're between homes, select **Ignore**. If you no longer need it, you can delete it on the same page."
     }
   },
   "config_subentries": {

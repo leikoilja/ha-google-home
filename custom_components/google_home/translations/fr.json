@@ -181,6 +181,14 @@
           "polling_kept_off": "L'interrogation périodique reste désactivée et cette correction est masquée."
         }
       }
+    },
+    "homes_deselected": {
+      "title": "Aucune maison de votre compte Google n'est sélectionnée",
+      "description": "Votre compte Google n'est membre que de maisons que vous avez désélectionnées dans les options de l'intégration, donc l'intégration n'ajoute pas leurs enceintes et écrans. Pour ajouter les appareils d'une maison, ouvrez l'[intégration Google Home]({integration_url}), sélectionnez **Configurer**, sélectionnez la maison sous **Maisons**, puis sélectionnez **Valider**.\n\nSi vous voulez garder ces maisons désélectionnées, sélectionnez **Ignorer**."
+    },
+    "no_home": {
+      "title": "Google n'indique aucune maison pour votre compte",
+      "description": "Google indique que le compte avec lequel l'intégration s'est connectée n'est membre d'aucune maison, il n'y a donc aucune enceinte ni aucun écran à ajouter. Dans l'application Google Home, invitez ce compte dans la maison où se trouvent vos appareils, puis acceptez l'invitation. Rechargez ensuite l'[intégration Google Home]({integration_url}) : sélectionnez **⋮** > **Recharger**.\n\nSi vous gardez l'intégration volontairement, par exemple pendant un déménagement, sélectionnez **Ignorer**. Si vous n'en avez plus besoin, vous pouvez la supprimer sur la même page."
     }
   },
   "config_subentries": {

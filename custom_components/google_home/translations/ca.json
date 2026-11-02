@@ -181,6 +181,14 @@
           "polling_kept_off": "El sondeig continua desactivat i aquesta reparació s'ha amagat."
         }
       }
+    },
+    "homes_deselected": {
+      "title": "Cap llar del teu compte de Google no està seleccionada",
+      "description": "El teu compte de Google només és membre de llars que has desmarcat a les opcions de la integració, de manera que la integració no n'afegeix els altaveus ni les pantalles. Per afegir els dispositius d'una llar, obre la [integració Google Home]({integration_url}), selecciona **Configura**, marca la llar a **Llars** i després selecciona **Envia**.\n\nSi vols mantenir aquestes llars desmarcades, selecciona **Ignora**."
+    },
+    "no_home": {
+      "title": "Google no indica cap llar per al teu compte",
+      "description": "Google indica que el compte amb què la integració ha iniciat la sessió no és membre de cap llar, de manera que no hi ha altaveus ni pantalles per afegir. A l'aplicació Google Home, convida aquest compte a la llar on tens els dispositius i accepta la invitació. Després, torna a carregar la [integració Google Home]({integration_url}): selecciona **⋮** > **Torna a carregar**.\n\nSi mantens la integració expressament, per exemple mentre et canvies de casa, selecciona **Ignora**. Si ja no la necessites, la pots eliminar a la mateixa pàgina."
     }
   },
   "config_subentries": {
