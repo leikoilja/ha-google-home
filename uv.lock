@@ -1096,7 +1096,7 @@ docs = [
 [package.metadata]
 requires-dist = [
     { name = "bluetooth-data-tools", specifier = ">=1.29.24" },
-    { name = "glocaltokens", specifier = ">=2.0.0" },
+    { name = "glocaltokens", specifier = "==2.0.0" },
     { name = "homeassistant", specifier = "==2026.11.0b1" },
 ]
 
