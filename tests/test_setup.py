@@ -13,6 +13,7 @@ from typing import TypedDict
 from unittest.mock import Mock, patch
 
 from freezegun.api import FrozenDateTimeFactory
+from glocaltokens.exceptions import AuthenticationError
 import probatio
 import pytest
 from pytest_homeassistant.common import (
@@ -344,16 +345,41 @@ async def test_platform_fails_to_unload(
     assert config_entry.reason == "Failed to unload one or more platforms"
 
 
+@pytest.mark.parametrize(
+    ("error", "reason"),
+    [
+        (rejected(), "BadAuthentication"),
+        # Google gave no reason, so glocaltokens' message is all there is
+        (
+            AuthenticationError("Google gave no access token"),
+            "Google gave no access token",
+        ),
+    ],
+    ids=["Google's reason", "no reason"],
+)
 async def test_master_token_rejected_at_setup(
-    hass: HomeAssistant, config_entry: MockConfigEntry, google: Mock
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    google: Mock,
+    error: AuthenticationError,
+    reason: str,
 ) -> None:
-    """Fail setup and ask to sign in again when Google rejects the master token."""
-    google.side_effect = rejected()
+    """Fail setup with a translated reason, and ask to sign in again, when Google rejects the master token."""
+    google.side_effect = error
 
     assert not await hass.config_entries.async_setup(config_entry.entry_id)
     await hass.async_block_till_done()
 
     assert config_entry.state is ConfigEntryState.SETUP_ERROR
+    # The frontend shows the translation of the key, with the placeholders. The
+    # reason is the English text without the final period, which Home Assistant
+    # also logs.
+    assert config_entry.error_reason_translation_domain == DOMAIN
+    assert config_entry.error_reason_translation_key == "sign_in_rejected"
+    assert config_entry.error_reason_translation_placeholders == {"reason": reason}
+    assert config_entry.reason == (
+        f"Google didn't accept the sign-in ({reason}). Sign in again"
+    )
     [flow] = hass.config_entries.flow.async_progress_by_handler(DOMAIN)
     assert flow["context"].get("source") == SOURCE_REAUTH
     assert flow["context"].get("entry_id") == config_entry.entry_id

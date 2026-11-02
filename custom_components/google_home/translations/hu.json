@@ -164,6 +164,9 @@
     },
     "devices_not_rebooted": {
       "message": "A következő eszközök nem erősítették meg, hogy újraindulnak: {devices}. Ellenőrizze, hogy az eszközök online vannak-e, és próbálja újra később."
+    },
+    "sign_in_rejected": {
+      "message": "A Google nem fogadta el a bejelentkezést ({reason}). Jelentkezzen be újra."
     }
   },
   "issues": {

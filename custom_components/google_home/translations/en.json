@@ -164,6 +164,9 @@
     },
     "devices_not_rebooted": {
       "message": "These devices didn't confirm that they'll reboot: {devices}. Check that they're online and try again later."
+    },
+    "sign_in_rejected": {
+      "message": "Google didn't accept the sign-in ({reason}). Sign in again."
     }
   },
   "issues": {

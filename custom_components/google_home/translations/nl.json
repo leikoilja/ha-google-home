@@ -164,6 +164,9 @@
     },
     "devices_not_rebooted": {
       "message": "De volgende apparaten hebben niet bevestigd dat ze herstarten: {devices}. Controleer of de apparaten online zijn en probeer het later opnieuw."
+    },
+    "sign_in_rejected": {
+      "message": "Google heeft de inlogpoging niet geaccepteerd ({reason}). Log opnieuw in."
     }
   },
   "issues": {

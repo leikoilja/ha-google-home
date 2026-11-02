@@ -164,6 +164,9 @@
     },
     "devices_not_rebooted": {
       "message": "다음 기기에서 다시 시작하겠다는 확인을 받지 못했습니다: {devices}. 해당 기기가 모두 온라인 상태인지 확인하고 나중에 다시 시도하세요."
+    },
+    "sign_in_rejected": {
+      "message": "Google에서 로그인을 수락하지 않았습니다({reason}). 다시 로그인하세요."
     }
   },
   "issues": {

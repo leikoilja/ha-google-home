@@ -164,6 +164,9 @@
     },
     "devices_not_rebooted": {
       "message": "次のデバイスから再起動するという確認が得られませんでした: {devices}。これらのデバイスがオンラインであることを確認し、しばらくしてからもう一度お試しください。"
+    },
+    "sign_in_rejected": {
+      "message": "Google がログインを受け付けませんでした（{reason}）。再度ログインしてください。"
     }
   },
   "issues": {
