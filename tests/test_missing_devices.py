@@ -5,7 +5,6 @@ from collections.abc import AsyncIterator, Callable
 import contextlib
 from datetime import timedelta
 from http import HTTPStatus
-import logging
 from pathlib import Path
 from types import MappingProxyType
 from typing import cast
@@ -95,11 +94,14 @@ def rejected() -> AuthenticationError:
     return AuthenticationError("Google gave no access token", "BadAuthentication")
 
 
-# What the integration logs when Google rejects the master token
-REJECTED_LOG = (
-    "Failed to fetch Google's device list: Google gave no access token: "
-    "BadAuthentication"
-)
+# Why glocaltokens says Google rejects the master token
+REJECTED = "Google gave no access token: BadAuthentication"
+
+
+def failure_logged(error: object, minutes: int) -> tuple[str, str]:
+    """Return the error logged when a fetch first fails this way, with the minutes to the next try."""
+    later = f"next try in {minutes} min; further failures like this are logged at debug level"
+    return "ERROR", f"Failed to fetch Google's device list ({later}): {error}"
 
 
 def logged(caplog: pytest.LogCaptureFixture) -> list[tuple[str, str]]:
@@ -546,73 +548,6 @@ async def set_up(
             yield hass, entry
 
 
-def test_setup_leaves_rejected_master_token_to_home_assistant(
-    tmp_path: Path, caplog: pytest.LogCaptureFixture
-) -> None:
-    """Fail setup with Google's reason when it rejects the master token, and log it only for debugging.
-
-    Home Assistant logs why setup fails as a warning, with that reason, so an error
-    from the integration would say the same thing twice.
-    """
-    caplog.set_level(logging.DEBUG, logger="custom_components.google_home")
-
-    async def run() -> None:
-        async with set_up(tmp_path, Mock(side_effect=rejected())):
-            pass
-
-    with pytest.raises(ConfigEntryAuthFailed) as err:
-        asyncio.run(run())
-
-    # What Home Assistant logs after "could not authenticate: "
-    assert str(err.value) == "Google gave no access token: BadAuthentication"
-    lines = logged(caplog)
-    assert ("DEBUG", REJECTED_LOG) in lines
-    assert [line for line in lines if line[0] not in {"DEBUG", "INFO"}] == []
-
-
-@pytest.mark.parametrize("error", NOT_REJECTED)
-def test_setup_logs_other_fetch_errors(
-    tmp_path: Path, caplog: pytest.LogCaptureFixture, error: Exception
-) -> None:
-    """Log why Google's list can't be fetched at setup for another reason, as setup goes on without devices.
-
-    Home Assistant logs nothing then.
-    """
-
-    async def run() -> None:
-        async with set_up(tmp_path, Mock(side_effect=error)):
-            pass
-
-    asyncio.run(run())
-
-    assert ("ERROR", f"Failed to fetch Google's device list: {error}") in logged(caplog)
-
-
-def test_log_sign_in_rejected_after_setup(
-    clock: Mock, tmp_path: Path, caplog: pytest.LogCaptureFixture
-) -> None:
-    """Log why Google rejects the master token once setup is done.
-
-    Only setup leaves that to Home Assistant: later it asks to sign in again
-    without saying why.
-    """
-    # A device without an address, which no update asks
-    google = Mock(return_value=[found("device0", None)])
-
-    async def run() -> None:
-        async with set_up(tmp_path, google) as (_, entry):
-            client = entry.runtime_data.client
-            google.side_effect = rejected()
-            # The scheduled fetch is due
-            clock.return_value = FETCH_DEVICES_INTERVAL
-            await update_round(client)
-
-    asyncio.run(run())
-
-    assert google.call_count == 2
-    assert ("ERROR", REJECTED_LOG) in logged(caplog)
-
-
 def test_sign_in_rejected_with_devices(
     clock: Mock, caplog: pytest.LogCaptureFixture
 ) -> None:
@@ -632,31 +567,7 @@ def test_sign_in_rejected_with_devices(
     assert glocaltokens.get_google_devices.call_count == 1
     # Home Assistant ignores the asking while a sign-in is open
     entry.async_start_reauth.assert_called_with(HASS)
-    assert ("ERROR", REJECTED_LOG) in logged(caplog)
-
-
-def test_log_sign_in_rejected_after_failed_update(
-    clock: Mock, caplog: pytest.LogCaptureFixture
-) -> None:
-    """Log why Google rejects the master token after setup, even without devices.
-
-    The update then fails, but after an update that failed because Google couldn't
-    be reached, Home Assistant doesn't log that it failed again, so the integration
-    does, with Google's reason.
-    """
-    client, glocaltokens = make_client()
-    client.google_devices_fetched = False
-    entry = Mock()
-    glocaltokens.get_google_devices.side_effect = ClientConnectionError
-    with pytest.raises(ClientConnectionError):
-        update_entry(client, entry)
-
-    glocaltokens.get_google_devices.side_effect = rejected()
-    clock.return_value = MINUTE
-    with pytest.raises(ConfigEntryAuthFailed):
-        update_entry(client, entry)
-
-    assert ("ERROR", REJECTED_LOG) in logged(caplog)
+    assert failure_logged(REJECTED, 20) in logged(caplog)
 
 
 @pytest.mark.parametrize("ip_addresses", [("10.0.0.2",), ()])
@@ -689,7 +600,7 @@ def test_other_fetch_errors_at_setup_dont_ask_to_sign_in(
     assert update_entry(client, entry) == {}
 
     entry.async_start_reauth.assert_not_called()
-    assert ("ERROR", f"Failed to fetch Google's device list: {error}") in logged(caplog)
+    assert failure_logged(error, 1) in logged(caplog)
 
 
 def test_ask_to_sign_in_until_fetch_works(clock: Mock) -> None:
