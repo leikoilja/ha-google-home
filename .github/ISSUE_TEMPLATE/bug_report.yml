@@ -1,0 +1,60 @@
+name: Bug report
+description: Report a problem with the integration.
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Search the [existing issues](https://github.com/leikoilja/ha-google-home/issues?q=is%3Aissue) first. If one describes your problem, add to it instead.
+
+        **Don't paste or attach your master token, the `oauth_token` cookie or any other token or cookie.** The master token and the cookie give access to your Google account.
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the problem
+      description: What happened, and what did you expect to happen instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: What you did before the problem happened.
+      placeholder: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+  - type: input
+    id: integration-version
+    attributes:
+      label: Integration version
+      description: |
+        Find it under the title on [**Settings** > **Devices & services** > **Google Home**](https://my.home-assistant.io/redirect/integration/?domain=google_home). If it isn't the [latest release](https://github.com/leikoilja/ha-google-home/releases/latest), update and check that the problem still happens.
+      placeholder: 1.17.0
+    validations:
+      required: true
+  - type: input
+    id: ha-version
+    attributes:
+      label: Home Assistant version
+      description: Find it in [**Settings** > **About**](https://my.home-assistant.io/redirect/info/).
+      placeholder: 2026.11.0
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostics or System information
+      description: |
+        Attach the diagnostics file: go to **Settings** > **Devices & services** > **Google Home**, open the **⋮** menu and select **Download diagnostics**. See [Download diagnostics](https://ha-google-home.pages.dev/troubleshooting/#download-diagnostics). The file replaces your credentials, tokens and IP addresses with `**REDACTED**`, but keeps your device names and the times and labels of your alarms and timers. Check the file before you attach it.
+
+        If the integration isn't set up, paste the [System information](https://my.home-assistant.io/redirect/system_health/) instead: go to **Settings** > **System** > **Repairs**, open the **⋮** menu and select **System information**. Check it before you post it.
+  - type: textarea
+    id: logs
+    attributes:
+      label: Debug logs
+      description: |
+        Attach the log file. To collect debug logs, follow [Collect debug logs](https://ha-google-home.pages.dev/troubleshooting/#collect-debug-logs). If you paste lines instead, put a line of three backticks (```) before and after them.
+
+        Debug logs can contain your email address, tokens and the IP addresses of your devices. Replace them with xxx before you post the logs.
