@@ -35,7 +35,7 @@
       },
       "homes": {
         "title": "Tria les llars",
-        "description": "El teu compte de Google és membre de diverses llars. Tria les llars de les quals vols afegir els altaveus i les pantalles. Pots canviar-ho més endavant a les opcions de la integració.",
+        "description": "El teu compte de Google és membre de diverses llars. Tria les llars de les quals vols afegir els altaveus i les pantalles. Pots canviar-ho més endavant a les opcions de la integració: selecciona **Configura** a la pàgina de la integració.",
         "data": {
           "homes": "Llars"
         }

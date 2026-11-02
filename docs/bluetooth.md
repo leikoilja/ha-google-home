@@ -4,7 +4,7 @@ Your Google speakers can tell Home Assistant whether your phone, or another Blue
 
 Bluetooth tracking is off until you turn it on. While it's off, the integration sends no Bluetooth requests to your speakers.
 
-It tells home from away, not which room you're in. Bluetooth signal strength changes a lot even when a phone doesn't move, so the integration doesn't use it to place you in a room.
+It tells home from away, not which room you're in. Bluetooth signal strength changes a lot even when a phone doesn't move, so the integration doesn't use it to place you in a room. Each tracker does show [which speakers hear the device, and how strongly](#see-which-speakers-hear-a-device).
 
 ## Turn on Bluetooth tracking
 
@@ -46,6 +46,30 @@ Starting as `unknown` after a restart keeps automations from seeing you leave an
 
 While [polling is turned off](configuration.md#turn-off-polling) in the integration's system options, the speakers don't scan on their own, and [Refresh devices](actions.md#refresh-devices) doesn't make them scan, so trackers usually stay `unknown`.
 
+## See which speakers hear a device
+
+Each tracker has a `speakers` attribute. It lists the speakers that hear the device, by their names in the Google Home app, with the signal strength of each in dBm. Values closer to 0 are stronger, and the strongest speaker comes first:
+
+```yaml
+speakers:
+  Speaker A: -58
+  Speaker B: -74
+```
+
+You can see it in [**Settings** > **Tools** > **States**](https://my.home-assistant.io/redirect/tools_states/), or use it in templates, such as `{{ state_attr('device_tracker.example_device', 'speakers') }}`.
+
+Each value is the median of what that speaker heard over 5 minutes. A speaker is listed only if it heard the device in at least two scans in that time, at -80 dBm or stronger: the same readings that count for `home`. The attribute updates every 5 minutes.
+
+When the tracker's state changes, the 5 minutes start again, so a value never mixes readings from before and after. The attribute is empty (`{}`):
+
+- While the device is away.
+- For the first 5 minutes after the tracker changes to `home`, including after Home Assistant starts.
+- After 5 minutes in which no speaker heard the device in two scans, even if the tracker still shows `home`.
+
+Treat the values as a rough guide. In testing, one speaker's readings varied by about 20 dB with a phone lying still. The median smooths this out, but the strongest speaker isn't necessarily the nearest, so don't rely on the attribute to tell which room you're in. It's useful for checking how well your speakers cover the places where you keep the device: a device that only one speaker hears, at close to -80 dBm, can show `not_home` when its signal stays below that for 90 seconds.
+
+Home Assistant doesn't keep the attribute's values in its history, so only the current value is available. When the value changes, Home Assistant still records a small history entry for the tracker, at most one every 5 minutes while the device is home.
+
 ## Tracker is unavailable
 
 A tracker shows `not_home` only when every speaker has answered for the last 90 seconds. That includes every speaker that has returned scan results since the integration last loaded, as long as Google lists it. If one of them stops answering, it might be the one that hears you, so the integration can't tell whether you left.
@@ -66,7 +90,7 @@ Devices that don't support Bluetooth scans, such as a Chromecast Audio or an And
 ## Privacy
 
 - The IRKs and MAC addresses you enter are stored in Home Assistant's configuration, like the master token. The integration doesn't log them or show them in entity attributes.
-- The speakers hear every Bluetooth device nearby, including your neighbors'. The integration keeps only whether your tracked devices were heard. It doesn't store or log other addresses.
+- The speakers hear every Bluetooth device nearby, including your neighbors'. The integration keeps only whether your tracked devices were heard, by which speakers and how strongly. It doesn't store or log other addresses.
 - The integration gets the scan results from your speakers over your local network and doesn't send them anywhere.
 
 ## Known limitations

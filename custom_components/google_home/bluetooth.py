@@ -9,6 +9,11 @@ can't confirm that a device is gone. Meanwhile the tracker keeps its last state
 for a few minutes, so a missed scan doesn't make it flap. A device that never
 returned results, such as a TV that refuses the connection instead of answering
 404, can't keep trackers from showing away.
+
+Each tracker also shows how strongly each speaker heard the device: the median
+over windows of a few minutes, as single readings swing by about 20 dB even
+when the device lies still. A window covers only time in one state, so it
+restarts whenever the tracker's state changes.
 """
 
 import asyncio
@@ -19,6 +24,7 @@ from enum import StrEnum
 from http import HTTPStatus
 import logging
 import re
+from statistics import median
 from time import monotonic
 from typing import Literal, cast
 
@@ -36,6 +42,8 @@ from .const import (
     BLUETOOTH_MAX_SCAN_GAP,
     BLUETOOTH_MIN_RSSI,
     BLUETOOTH_PRESENCE_WINDOW,
+    BLUETOOTH_RSSI_MIN_SCANS,
+    BLUETOOTH_RSSI_WINDOW,
     BLUETOOTH_SCAN_INTERVAL,
     BLUETOOTH_UNCERTAIN_LIMIT,
     CONF_IRK,
@@ -147,6 +155,16 @@ class TrackerState(StrEnum):
     UNAVAILABLE = "unavailable"
 
 
+@dataclass(frozen=True)
+class TrackerUpdate:
+    """State of a tracked device after an update, and the speakers that hear it."""
+
+    state: TrackerState
+    # Median RSSI in dBm of each speaker over the latest completed window, by
+    # speaker name, strongest first
+    speakers: dict[str, int]
+
+
 def parse_irk(value: str) -> bytes | None:
     """Return the IRK in a format Home Assistant's Private BLE Device accepts.
 
@@ -200,6 +218,15 @@ class TrackedDevice:
         # The latest home or away state, and when the speakers last confirmed it
         self.state = TrackerState.UNKNOWN
         self.confirmed_at: float | None = None
+        # The strongest RSSI each speaker heard the device at in this update,
+        # by the speaker's device ID
+        self.heard: dict[str, int] = {}
+        # The state of the latest update, and the window of RSSI readings by
+        # device ID since it started or the last window completed
+        self.shown_state: TrackerState | None = None
+        self.window_start = 0.0
+        self.readings: dict[str, list[int]] = {}
+        self.speakers: dict[str, int] = {}
 
     def matches(self, address: str) -> bool:
         """Return whether a normalized address is this device's."""
@@ -258,9 +285,11 @@ class BluetoothScanner:
         self._speakers: dict[str, SpeakerScan] = {}
         self._unsupported: set[str] = set()
 
-    async def async_update(self) -> dict[str, TrackerState]:
-        """Read the scans of the previous update, start new ones, and return the states."""
+    async def async_update(self) -> dict[str, TrackerUpdate]:
+        """Read the scans of the previous update, start new ones, and return the updates."""
         devices = self._update_speakers()
+        for device in self.tracked:
+            device.heard = {}
         await asyncio.gather(
             *(
                 self._async_update_speaker(device_id, speaker, devices[device_id])
@@ -273,7 +302,9 @@ class BluetoothScanner:
         # No speaker to scan with can't confirm that a device is away
         covered = bool(answered) and all(speaker.covers(now) for speaker in answered)
         return {
-            device.subentry_id: self._state(device, now, covered)
+            device.subentry_id: self._tracker_update(
+                device, self._state(device, now, covered), now
+            )
             for device in self.tracked
         }
 
@@ -282,7 +313,8 @@ class BluetoothScanner:
 
         A speaker starts scanning once it has an address and a token. Once it
         has returned scan results, it keeps counting while Google lists it, even
-        if it stops answering.
+        if it stops answering. It keeps the name Google lists it by, also after
+        a rename.
         """
         devices = dict(self._account.data or {})
         for device_id in list(self._speakers):
@@ -297,7 +329,9 @@ class BluetoothScanner:
                     self._speakers[device_id] = SpeakerScan(
                         device.name, device.ip_address, device.auth_token
                     )
-            elif (speaker.ip_address, speaker.auth_token) != (
+                continue
+            speaker.name = device.name
+            if (speaker.ip_address, speaker.auth_token) != (
                 device.ip_address,
                 device.auth_token,
             ):
@@ -328,7 +362,7 @@ class BluetoothScanner:
                 speaker.run_start = None
             else:
                 speaker.answered = True
-                self._read_scan(speaker, start, results)
+                self._read_scan(device_id, speaker, start, results)
         start = monotonic()
         try:
             await async_start_bluetooth_scan(self._session, device)
@@ -341,7 +375,11 @@ class BluetoothScanner:
             speaker.pending_start = start
 
     def _read_scan(
-        self, speaker: SpeakerScan, start: float, results: list[BluetoothJsonDict]
+        self,
+        device_id: str,
+        speaker: SpeakerScan,
+        start: float,
+        results: list[BluetoothJsonDict],
     ) -> None:
         """Record the sightings of a scan that started at start, if it's recent."""
         read = monotonic()
@@ -362,11 +400,16 @@ class BluetoothScanner:
             if address is None:
                 continue
             for device in self.tracked:
-                if device.matches(address) and (
-                    device.last_sighted is None or device.last_sighted < start
-                ):
+                if not device.matches(address):
+                    continue
+                if device.last_sighted is None or device.last_sighted < start:
                     # The scan's start, as the device may have been heard then
                     device.last_sighted = start
+                # One reading per scan, even if it heard several of the
+                # device's addresses
+                device.heard[device_id] = max(
+                    result["rssi"], device.heard.get(device_id, result["rssi"])
+                )
         if (
             speaker.run_start is None
             or speaker.covered_until is None
@@ -426,3 +469,35 @@ class BluetoothScanner:
         elif now - device.confirmed_at >= BLUETOOTH_UNCERTAIN_LIMIT:
             return TrackerState.UNAVAILABLE
         return device.state
+
+    def _tracker_update(
+        self, device: TrackedDevice, state: TrackerState, now: float
+    ) -> TrackerUpdate:
+        """Add the update's readings to the window and return the device's update.
+
+        A state change starts a new window and empties the speakers, so a summary
+        never mixes readings from before and after it, and away shows none. A
+        completed window replaces the speakers, even with none that qualify.
+        """
+        if state != device.shown_state:
+            device.shown_state, device.window_start = state, now
+            device.readings, device.speakers = {}, {}
+        for device_id, rssi in device.heard.items():
+            device.readings.setdefault(device_id, []).append(rssi)
+        if now - device.window_start >= BLUETOOTH_RSSI_WINDOW:
+            # Each speaker counts on its own readings, if it still scans: not one
+            # that Google stopped listing or that returned 404. Speakers with the
+            # same name share an entry, with the strongest median.
+            speakers: dict[str, int] = {}
+            for device_id, readings in device.readings.items():
+                if (
+                    len(readings) >= BLUETOOTH_RSSI_MIN_SCANS
+                    and (speaker := self._speakers.get(device_id)) is not None
+                ):
+                    rssi = round(median(readings))
+                    speakers[speaker.name] = max(rssi, speakers.get(speaker.name, rssi))
+            device.speakers = dict(
+                sorted(speakers.items(), key=lambda item: (-item[1], item[0]))
+            )
+            device.window_start, device.readings = now, {}
+        return TrackerUpdate(state, device.speakers)

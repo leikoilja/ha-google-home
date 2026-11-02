@@ -35,7 +35,7 @@
       },
       "homes": {
         "title": "Scegli le case",
-        "description": "Il tuo account Google fa parte di più case. Scegli le case di cui aggiungere altoparlanti e display. Puoi modificare questa scelta in seguito nelle opzioni dell'integrazione.",
+        "description": "Il tuo account Google fa parte di più case. Scegli le case di cui aggiungere altoparlanti e display. Puoi modificare questa scelta in seguito nelle opzioni dell'integrazione: seleziona **Configura** nella pagina dell'integrazione.",
         "data": {
           "homes": "Case"
         }

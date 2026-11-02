@@ -35,7 +35,7 @@
       },
       "homes": {
         "title": "Huizen kiezen",
-        "description": "Je Google-account is lid van meerdere huizen. Kies de huizen waarvan je de speakers en schermen wilt toevoegen. Je kunt dit later wijzigen in de instellingen van de integratie.",
+        "description": "Je Google-account is lid van meerdere huizen. Kies de huizen waarvan je de speakers en schermen wilt toevoegen. Je kunt dit later wijzigen in de instellingen van de integratie: selecteer **Configureer** op de pagina van de integratie.",
         "data": {
           "homes": "Huizen"
         }
@@ -208,7 +208,7 @@
         "already-tracked": "Dit apparaat wordt al gevolgd."
       },
       "abort": {
-        "bluetooth-tracking-off": "Bluetooth-tracking is uitgeschakeld. Schakel het eerst in bij de opties van de integratie: selecteer ‘Configureer’ op de pagina van de integratie."
+        "bluetooth-tracking-off": "Bluetooth-tracking is uitgeschakeld. Schakel het eerst in bij de instellingen van de integratie: selecteer ‘Configureer’ op de pagina van de integratie."
       }
     }
   },

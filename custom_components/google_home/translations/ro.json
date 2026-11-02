@@ -35,7 +35,7 @@
       },
       "homes": {
         "title": "Alege casele",
-        "description": "Contul tău Google este membru al mai multor case. Alege casele din care vrei să adaugi difuzoarele și ecranele. Poți schimba asta mai târziu în opțiunile integrării.",
+        "description": "Contul tău Google este membru al mai multor case. Alege casele din care vrei să adaugi difuzoarele și ecranele. Poți schimba asta mai târziu în opțiunile integrării: selectează **Configurare** pe pagina integrării.",
         "data": {
           "homes": "Case"
         }

@@ -35,7 +35,7 @@
       },
       "homes": {
         "title": "Choose homes",
-        "description": "Your Google account is a member of several homes. Choose the homes whose speakers and displays to add. You can change this later in the integration's options.",
+        "description": "Your Google account is a member of several homes. Choose the homes whose speakers and displays to add. You can change this later in the integration's options: select **Configure** on the integration's page.",
         "data": {
           "homes": "Homes"
         }

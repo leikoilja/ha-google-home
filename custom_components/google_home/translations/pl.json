@@ -35,7 +35,7 @@
       },
       "homes": {
         "title": "Wybierz domy",
-        "description": "Twoje konto Google jest członkiem kilku domów. Wybierz domy, których głośniki i wyświetlacze mają zostać dodane. Możesz to później zmienić w opcjach integracji.",
+        "description": "Twoje konto Google jest członkiem kilku domów. Wybierz domy, których głośniki i wyświetlacze mają zostać dodane. Możesz to później zmienić w opcjach integracji: wybierz **Konfiguruj** na stronie integracji.",
         "data": {
           "homes": "Domy"
         }
