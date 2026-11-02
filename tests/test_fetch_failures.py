@@ -127,8 +127,11 @@ def test_log_sign_in_rejected_after_failed_update(
     with pytest.raises(ConfigEntryAuthFailed):
         update_entry(client, entry)
 
-    # The second failure in a row waits 2 minutes
-    assert failure_logged(REJECTED, 2) in logged(caplog)
+    # Without devices, Home Assistant doesn't update again until then
+    later = "sign in again to fetch it"
+    assert ("ERROR", f"Failed to fetch Google's device list ({later}): {REJECTED}") in (
+        logged(caplog)
+    )
 
 
 @pytest.mark.parametrize("error", FETCH_ERRORS)
@@ -141,11 +144,20 @@ def test_log_failed_fetches_once_until_one_works(
     is, rather than one for each try. A failure after a fetch works is logged again.
     """
     caplog.set_level(logging.DEBUG, logger="custom_components.google_home")
-    client, glocaltokens = make_client()
+    # A device rejected its token, so the list is unknown, and Google keeps it
+    client, glocaltokens = make_client("10.0.0.2")
     client.google_devices_fetched = False
-    # Setup's fetch and the next two fail, the fourth and the scheduled fetch 20
-    # minutes after it work, and the next scheduled fetch fails
-    glocaltokens.get_google_devices.side_effect = [error, error, error, [], [], error]
+    listed = glocaltokens.get_google_devices.return_value
+    # The next three fetches fail, the fourth and the scheduled fetch 20 minutes after
+    # it work, and the next scheduled fetch fails
+    glocaltokens.get_google_devices.side_effect = [
+        error,
+        error,
+        error,
+        listed,
+        listed,
+        error,
+    ]
     for minutes in (0, 1, 3, 8, 28, 48):
         clock.return_value = minutes * MINUTE
         update(client)
@@ -172,7 +184,8 @@ def test_log_failed_fetch_again_when_it_fails_differently(
     try is 1, 2, 5, 10 and then 20 minutes after each.
     """
     caplog.set_level(logging.DEBUG, logger="custom_components.google_home")
-    client, glocaltokens = make_client()
+    # A device rejected its token, so the list is unknown
+    client, glocaltokens = make_client("10.0.0.2")
     client.google_devices_fetched = False
     unavailable = answered(HTTPStatus.SERVICE_UNAVAILABLE)
     no_home_graph = HomegraphError(grpc.StatusCode.UNAVAILABLE, "Unavailable.")
@@ -224,3 +237,41 @@ def test_dont_log_recovery_after_google_couldnt_be_reached(
 
     assert glocaltokens.get_google_devices.call_count == 3
     assert [line for line in logged(caplog) if line[0] != "DEBUG"] == []
+
+
+@pytest.mark.parametrize(
+    ("fetched", "starts_at", "when"),
+    [
+        # The next scheduled fetch is due 20 minutes after this one started
+        (True, FETCH_DEVICES_INTERVAL, "the first update after 17 min"),
+        # The first wait after a failed fetch is 1 minute, which has passed
+        (False, 0, "the next update"),
+    ],
+)
+def test_log_next_try_from_when_fetch_fails(
+    clock: Mock,
+    caplog: pytest.LogCaptureFixture,
+    fetched: bool,
+    starts_at: int,
+    when: str,
+) -> None:
+    """Say how long until the next try from when a fetch fails, as the wait starts with the fetch.
+
+    Here Google answers with 503 after 3 minutes.
+    """
+    client, glocaltokens = make_client("10.0.0.2")
+    client.google_devices_fetched = fetched
+    unavailable = answered(HTTPStatus.SERVICE_UNAVAILABLE)
+
+    def answer_late(*_args: object, **_options: object) -> None:
+        clock.return_value = starts_at + 3 * MINUTE
+        raise unavailable
+
+    glocaltokens.get_google_devices.side_effect = answer_late
+    clock.return_value = starts_at
+    update(client)
+
+    later = f"next try at {when}; further failures like this are logged at debug level"
+    assert [line for line in logged(caplog) if line[0] != "DEBUG"] == [
+        ("ERROR", f"Failed to fetch Google's device list ({later}): {unavailable}")
+    ]

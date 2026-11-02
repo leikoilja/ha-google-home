@@ -5,6 +5,7 @@ from collections.abc import Mapping
 import ipaddress
 import json
 import logging
+import math
 from time import monotonic
 from typing import TYPE_CHECKING, Final
 
@@ -45,15 +46,15 @@ class FetchBackoff:
         self._failures = 0
         self._retry_at = 0.0
 
-    def fetch_started(self, now: float) -> int:
+    def fetch_started(self, now: float) -> float:
         """Count a fetch that starts now as failed, until fetch_worked() says otherwise.
 
-        Return how many seconds the next fetch waits if this one fails.
+        Return when the next fetch may start if this one fails.
         """
         delay = FETCH_RETRY_DELAYS[min(self._failures, len(FETCH_RETRY_DELAYS) - 1)]
         self._retry_at = now + delay
         self._failures += 1
-        return delay
+        return self._retry_at
 
     def fetch_worked(self) -> None:
         """Forget the failures once Google answers."""
@@ -263,15 +264,15 @@ class GoogleAccountClient:
     ) -> Mapping[str, str]:
         """Ask Google for the device list, and update the devices from it.
 
-        A failure is logged once, with when the next fetch is, and again only when a
-        fetch fails differently or after one works.
+        A failure is logged once, with when the list is fetched again, and again only
+        when a fetch fails differently or after one works.
 
         Return the known hosts that this fetch gave devices, by device ID.
         """
         started = monotonic()
         # Whether this works or not, the next scheduled fetch waits a full interval
         self.next_scheduled_fetch = started + FETCH_DEVICES_INTERVAL
-        backoff = self._fetch_backoff.fetch_started(started)
+        retry_at = self._fetch_backoff.fetch_started(started)
         fetched_for = self.found_devices.fetch_started()
 
         try:
@@ -300,11 +301,10 @@ class GoogleAccountClient:
             ):
                 _LOGGER.debug("Failed to fetch Google's device list: %s", error)
             else:
-                retry = FETCH_DEVICES_INTERVAL if scheduled else backoff
+                due = self.next_scheduled_fetch if scheduled else retry_at
                 _LOGGER.error(
-                    "Failed to fetch Google's device list (next try in %d min; further "
-                    "failures like this are logged at debug level): %s",
-                    retry // 60,
+                    "Failed to fetch Google's device list (%s): %s",
+                    self._when_fetched_again(error, due),
                     error,
                 )
                 self._fetch_error_logged = True
@@ -332,6 +332,23 @@ class GoogleAccountClient:
         if self._needs_known_hosts():
             return await self.async_use_known_hosts()
         return {}
+
+    def _when_fetched_again(self, error: Exception, due: float) -> str:
+        """Say when Google's list is fetched again after a fetch failed with this error.
+
+        `due` is when the next fetch may start. It runs at the first update after that.
+        """
+        # Without devices, the update then fails, and Home Assistant doesn't update the
+        # account again until signing in again reloads the integration
+        if isinstance(error, AuthenticationError) and not self.google_devices:
+            return "sign in again to fetch it"
+        # From now, as the fetch that failed took a while. Rounded up, so the next update
+        # is said only once the wait has passed.
+        wait = math.ceil((due - monotonic()) / 60)
+        when = f"the first update after {wait} min" if wait > 0 else "the next update"
+        return (
+            f"next try at {when}; further failures like this are logged at debug level"
+        )
 
     @property
     def missing_addresses(self) -> bool:

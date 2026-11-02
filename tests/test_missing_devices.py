@@ -100,7 +100,10 @@ REJECTED = "Google gave no access token: BadAuthentication"
 
 def failure_logged(error: object, minutes: int) -> tuple[str, str]:
     """Return the error logged when a fetch first fails this way, with the minutes to the next try."""
-    later = f"next try in {minutes} min; further failures like this are logged at debug level"
+    later = (
+        f"next try at the first update after {minutes} min; "
+        "further failures like this are logged at debug level"
+    )
     return "ERROR", f"Failed to fetch Google's device list ({later}): {error}"
 
 
