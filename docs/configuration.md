@@ -1,6 +1,6 @@
 # Configuration and management
 
-After you [set up the integration](installation.md), you can change how often it checks your devices or turn that off, add and remove devices, reach devices on another network, choose the homes whose devices it adds, track phones with Bluetooth, and remove the integration. If Home Assistant asks you to sign in again, see [Sign in again](troubleshooting.md#sign-in-again).
+After you [set up the integration](installation.md), you can change how often it checks your devices or turn that off for all or some of them, add and remove devices, reach devices on another network, choose the homes whose devices it adds, track phones with Bluetooth, and remove the integration. If Home Assistant asks you to sign in again, see [Sign in again](troubleshooting.md#sign-in-again).
 
 ## Change the update interval
 
@@ -60,6 +60,12 @@ While polling is off, **Settings** > **System** > **Repairs** shows **Polling fo
 - **Keep polling off and hide this repair**: Home Assistant hides the repair, also after a restart. It shows again if you turn polling on and later off again. To find it while it's hidden, open the **⋮** menu in **Repairs** and select **Show ignored repairs**.
 
 Closing the repair without choosing changes nothing.
+
+## Stop checking some devices
+
+To stop checking only some devices, rather than [turning off polling](#turn-off-polling) for all of them, disable them in Home Assistant: on the device's page, select the pencil icon (**Edit settings**), turn off **Enable device** and select **Update**. Home Assistant disables the device's entities with it, and the integration stops checking that device, also when you run [Refresh devices](actions.md#refresh-devices). A disabled speaker doesn't scan for [Bluetooth tracking](bluetooth.md#tracker-is-unavailable) either.
+
+Home Assistant hides disabled devices in **Settings** > **Devices & services** > **Devices**. To find one again, go to **Settings** > **Devices & services** > **Google Home** and select the link with the number of devices: that list includes disabled ones. To check the device again, select **Enable** on its page. Home Assistant reloads the integration about 30 seconds later.
 
 ## Add a device
 

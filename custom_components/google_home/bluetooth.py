@@ -52,7 +52,7 @@ from .const import (
     PORT,
     TIMEOUT,
 )
-from .coordinator import GoogleAccountCoordinator
+from .coordinator import GoogleAccountCoordinator, async_device_disabled
 from .device_info import create_url
 from .models import GoogleHomeDevice
 from .types import BluetoothJsonDict, JsonDict
@@ -314,9 +314,15 @@ class BluetoothScanner:
         A speaker starts scanning once it has an address and a token. Once it
         has returned scan results, it keeps counting while Google lists it, even
         if it stops answering. It keeps the name Google lists it by, also after
-        a rename.
+        a rename. A speaker that is disabled in Home Assistant doesn't scan or
+        count until it's enabled again.
         """
-        devices = dict(self._account.data or {})
+        account = self._account
+        devices = {
+            device_id: device
+            for device_id, device in (account.data or {}).items()
+            if not async_device_disabled(account.hass, account.config_entry, device_id)
+        }
         for device_id in list(self._speakers):
             if device_id not in devices:
                 del self._speakers[device_id]

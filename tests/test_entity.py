@@ -75,8 +75,10 @@ OLD_LABELS: dict[type[GoogleHomeBaseEntity], str] = {
 @contextmanager
 def no_registered_devices() -> Iterator[None]:
     """Give code run with a mocked Home Assistant a device registry without devices."""
+    registry = Mock(spec=dr.DeviceRegistry)
+    registry.async_get_device_by_identifier.return_value = None
     with (
-        patch.object(dr, "async_get"),
+        patch.object(dr, "async_get", return_value=registry),
         patch.object(dr, "async_entries_for_config_entry", return_value=[]),
     ):
         yield

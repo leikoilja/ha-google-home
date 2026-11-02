@@ -36,8 +36,12 @@ from custom_components.google_home.models import GoogleHomeDevice
 from custom_components.google_home.types import BluetoothJsonDict
 
 # ruff sorts homeassistant as first-party, pylint as third-party
-# pylint: disable-next=wrong-import-order
+# pylint: disable=wrong-import-order
 from homeassistant.config_entries import ConfigSubentry
+
+from .test_entity import no_registered_devices
+
+# pylint: enable=wrong-import-order
 
 BLUETOOTH = "custom_components.google_home.bluetooth"
 IRK = bytes(range(16))
@@ -130,6 +134,7 @@ def make_scanner(
 def run(scanner: BluetoothScanner, speakers: Speakers, now: float) -> TrackerUpdate:
     """Run an update at a time and return the phone's update."""
     with (
+        no_registered_devices(),
         patch(f"{BLUETOOTH}.monotonic", return_value=now),
         patch(
             f"{BLUETOOTH}.async_get_bluetooth_scan_results",

@@ -214,6 +214,7 @@ The section shows:
 - **Devices in Google's list** and **Devices not answering**: how many devices the integration has from Google, without those in homes that you [deselected](configuration.md#choose-homes), and how many of them don't answer. These show once Google has given the list, even an empty one.
     - A device without an IP address doesn't answer: the integration can't ask it. See [Home Assistant can't reach your devices](#device-offline-or-not-compatible).
     - A device that missed 5 updates in a row counts until it answers. A "not found" answer, which a speaker gives for a while when it starts, doesn't end that; any other answer does, even an error.
+    - A device that you [disabled](configuration.md#stop-checking-some-devices) isn't asked, so it isn't counted as not answering. It's still in Google's list.
 
 If the integration fails to set up, the section shows only whether Home Assistant can reach Google. Open **Settings** > **Devices & services** > **Google Home** to see why setup failed.
 
