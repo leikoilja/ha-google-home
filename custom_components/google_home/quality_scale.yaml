@@ -1,6 +1,7 @@
 # Home Assistant's integration quality scale rules, as of Home Assistant 2026.11:
 # https://contributors.home-assistant.io/core/quality-scale/rules/
-# Hassfest doesn't check this file for custom integrations.
+# Hassfest doesn't check this file for custom integrations, so CI runs
+# script/check_quality_scale.py instead.
 rules:
   # Bronze
   action-setup: done
