@@ -109,7 +109,7 @@ The script downloads Home Assistant's source code from GitHub (about 34 MB), at 
 
 If the check reports `required key not provided` for a rule after you bump `homeassistant`, that version added the rule. Read the rule, meet it or decide why it doesn't apply, and add it in Home Assistant's order as done or exempt.
 
-The `strict-typing` validator always fails, because a custom integration can't be on Home Assistant's own `.strict-typing` list. The script expects that error; the mypy check in prek runs in strict mode, which covers the rule.
+The `strict-typing` validator first looks for the integration on Home Assistant's own `.strict-typing` list, which a custom integration can't join. The mypy check in prek runs in strict mode, so the script adds the integration to its downloaded copy of the list. The validator then checks that each requirement in `manifest.json` ships type hints, in a `py.typed` file or a `types-` package, and fails for one that doesn't. It checks the installed version, so every requirement must also be in `pyproject.toml`.
 
 After the file passes, the script checks copies of it with one mistake each: a rule marked `todo`, a missing rule, two rules out of order, an exemption without a comment, a key outside `rules`, and `reconfiguration-flow` marked done, which fails because the integration has no reconfigure step. If it accepts any of them, it fails with "Self-check: the check accepted" and the copies it accepted. After a bump, that means Home Assistant's checks changed, and the script needs updating. If you add a reconfigure step and mark `reconfiguration-flow` done, that copy no longer has a mistake: replace it in the script with another rule whose validator fails.
 

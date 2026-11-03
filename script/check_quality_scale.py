@@ -8,13 +8,14 @@ rule must be listed, in core's order, as done or as exempt with a comment, and
 the rules marked done must pass core's validators.
 """
 
-import importlib
+from importlib import import_module, metadata
 from pathlib import Path
 import sys
 import tarfile
 import tempfile
 import urllib.request
 
+from packaging.requirements import Requirement
 import probatio
 from probatio.humanize import humanize_error
 
@@ -30,15 +31,18 @@ CORE_FILES = (
     "script/hassfest/",
     "packages/hassfest/hassfest/",
 )
-# Core's own .strict-typing list can't include a custom integration. The mypy
-# check in prek runs in strict mode, which covers the rule.
-EXPECTED_ERRORS = {
-    "strict-typing": [
-        "Integration does not have strict typing enabled (is missing from .strict-typing)"
-    ]
-}
-
 type Document = dict[str, object]
+
+
+def installed(requirement: str) -> str:
+    """Return the requirement pinned to its installed version."""
+    name = Requirement(requirement).name
+    try:
+        return f"{name}=={metadata.version(name)}"
+    except metadata.PackageNotFoundError:
+        sys.exit(
+            f"manifest.json requires {name}, which isn't installed: add it to pyproject.toml"
+        )
 
 
 def status_of(value: object) -> object:
@@ -52,8 +56,8 @@ class Hassfest:
     def __init__(self, core: Path) -> None:
         """Import hassfest from core's source and load the integration."""
         sys.path[:0] = [str(core), str(core / "packages/hassfest")]
-        self.quality_scale = importlib.import_module("script.hassfest.quality_scale")
-        model = importlib.import_module("hassfest.model")
+        self.quality_scale = import_module("script.hassfest.quality_scale")
+        model = import_module("hassfest.model")
         self.config = model.Config(
             specific_integrations=None,
             root=core,
@@ -62,6 +66,18 @@ class Hassfest:
         )
         self.integration = model.Integration(INTEGRATION, self.config)
         self.integration.load_manifest()
+        # The strict-typing validator first looks for the integration on
+        # core's .strict-typing list of integrations that mypy checks in
+        # strict mode. A custom integration can't be on it, so add it to the
+        # downloaded copy: the mypy check in prek runs in strict mode.
+        with (core / ".strict-typing").open("a", encoding="utf-8") as file:
+            file.write(f"\nhomeassistant.components.{INTEGRATION.name}.*\n")
+        # The validator then checks that each requirement ships type hints.
+        # It reads only name==version and skips a version that isn't
+        # installed, so give it each requirement's installed version.
+        self.integration.manifest["requirements"] = [
+            installed(requirement) for requirement in self.integration.requirements
+        ]
         self.rule_names: list[str] = [
             rule.name for rule in self.quality_scale.ALL_RULES
         ]
@@ -102,7 +118,7 @@ class Hassfest:
             if name not in done or validator is None:
                 continue
             found = validator.validate(self.config, self.integration, rules_done=done)
-            if found and found != EXPECTED_ERRORS.get(name):
+            if found:
                 errors.extend(f"{name}: {error}" for error in found)
         return errors
 
@@ -134,9 +150,9 @@ class Hassfest:
                 f"required key not provided at 'rules.{first}.comment'",
             ),
             # The integration has no reconfigure step, so core's validator
-            # fails. Without this case, an exception for strict-typing that
-            # hid every validator's errors would go unnoticed. If the
-            # integration gets one, use another rule whose validator fails.
+            # fails. Without this case, a check that ignored the validators'
+            # errors would go unnoticed. If the integration gets one, use
+            # another rule whose validator fails.
             (
                 "reconfiguration-flow marked done",
                 {**rules, "reconfiguration-flow": "done"},
