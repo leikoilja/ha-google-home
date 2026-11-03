@@ -13,8 +13,8 @@ updates:
       # Bumped by hand, together with hacs.json and the code it needs.
       - dependency-name: "homeassistant"
       # Comes from the same Home Assistant release, so it's bumped by hand with it.
-      - dependency-name: "pytest-home-assistant"
-      # Pinned by pytest-home-assistant, so it moves with it.
+      - dependency-name: "pytest-homeassistant"
+      # Pinned by pytest-homeassistant, so it moves with it.
       - dependency-name: "pytest"
   - package-ecosystem: pre-commit
     directory: "/"

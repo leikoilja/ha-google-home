@@ -15,7 +15,7 @@ The integration's setup screens, options, entity names and action descriptions f
 Translations are files in [`custom_components/google_home/translations`](https://github.com/leikoilja/ha-google-home/tree/master/custom_components/google_home/translations). You can edit them on GitHub in your browser:
 
 - **To fix a translation**, open your language's file, select the pencil icon, and make your changes.
-- **To add a language**, open [`en.json`](https://github.com/leikoilja/ha-google-home/blob/master/custom_components/google_home/translations/en.json), copy its contents, then [create a new file](https://github.com/leikoilja/ha-google-home/new/master/custom_components/google_home/translations) and paste them. Name the file using a code from [Home Assistant's language list](https://github.com/home-assistant/core/blob/2026.11.0b1/homeassistant/generated/languages.py), such as `de.json` for German or `pt-BR.json` for Brazilian Portuguese, and translate the text.
+- **To add a language**, open [`en.json`](https://github.com/leikoilja/ha-google-home/blob/master/custom_components/google_home/translations/en.json), copy its contents, then [create a new file](https://github.com/leikoilja/ha-google-home/new/master/custom_components/google_home/translations) and paste them. Name the file using a code from [Home Assistant's language list](https://github.com/home-assistant/core/blob/2026.11.0b4/homeassistant/generated/languages.py), such as `de.json` for German or `pt-BR.json` for Brazilian Portuguese, and translate the text.
 
 Translate only the text after each colon. Keep the keys before the colons and anything in curly brackets, such as `{docs_url}`, unchanged. Home Assistant fills those in.
 
@@ -51,7 +51,7 @@ Run the tests:
 uv run pytest
 ```
 
-Some tests run the integration inside Home Assistant, with fixtures from Home Assistant's [pytest-home-assistant](https://github.com/home-assistant/core/tree/dev/packages/pytest-home-assistant). It isn't on PyPI yet, so `pyproject.toml` installs it from a Home Assistant release archive, under `[tool.uv.sources]`. When you change `homeassistant` in `pyproject.toml`, change that archive to the same version. Nothing checks that they match.
+Some tests run the integration inside Home Assistant, with fixtures from Home Assistant's [pytest-homeassistant](https://github.com/home-assistant/core/tree/dev/packages/pytest-homeassistant). Each Home Assistant release publishes it with the same version, and it requires that exact `homeassistant`: when you change `homeassistant` in `pyproject.toml`, change `pytest-homeassistant` to the same version, or `uv lock` fails.
 
 If you change an entity's name, state, attributes or registry entry on purpose, update the snapshots with `uv run pytest --snapshot-update`, and review the changes under `tests/snapshots/` before you commit. Entity icons are in `icons.json`, which the snapshots don't cover: if you change one, update the expected icons in `tests/test_setup.py`.
 
