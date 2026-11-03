@@ -270,6 +270,42 @@ def test_log_outage_once_however_fetches_fail(
     ]
 
 
+def test_log_scheduled_fetch_outage_once_across_a_timeout(
+    clock: Mock, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Log an outage of scheduled fetches once, although a timeout comes between two fetches that get 503.
+
+    The list is known, so the fetches are 20 minutes apart and keep it. Only the
+    first 503 is an error; the timeout and the second 503 are logged for debugging,
+    and the fourth fetch, which works, once at info level.
+    """
+    caplog.set_level(logging.DEBUG, logger="custom_components.google_home")
+    client, glocaltokens = make_client("10.0.0.2")
+    listed = glocaltokens.get_google_devices.return_value
+    unavailable = answered(HTTPStatus.SERVICE_UNAVAILABLE)
+    glocaltokens.get_google_devices.side_effect = [
+        unavailable,
+        TimeoutError(),
+        unavailable,
+        listed,
+    ]
+    for minutes in (20, 40, 60, 80):
+        clock.return_value = minutes * MINUTE
+        update(client)
+
+    assert glocaltokens.get_google_devices.call_count == 4
+    lines = logged(caplog)
+    assert [line for line in lines if line[0] != "DEBUG"] == [
+        failure_logged(unavailable, 20),
+        ("INFO", "Fetching Google's device list works again"),
+    ]
+    failed = "Failed to fetch Google's device list: "
+    assert [line for line in lines if line[1].startswith(failed)] == [
+        ("DEBUG", failed + "TimeoutError"),
+        ("DEBUG", failed + str(unavailable)),
+    ]
+
+
 @pytest.mark.parametrize(
     ("error", "reason"),
     [
