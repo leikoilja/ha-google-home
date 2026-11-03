@@ -143,7 +143,8 @@ class GoogleAccountClient:
         # Why Google last rejected the master token, until a fetch succeeds
         self.sign_in_error: AuthenticationError | None = None
         # Whether setup's first update is running. If Google rejects the master token
-        # then, setup fails with Google's reason, which Home Assistant logs.
+        # at setup's own fetch, setup fails with Google's reason, which Home Assistant
+        # logs.
         self.setting_up = False
         # Whether polling is turned off in the entry's system options, so no update
         # comes unless asked for. Home Assistant reloads the entry when it changes.
@@ -350,7 +351,7 @@ class GoogleAccountClient:
             # Other errors say nothing about it, so an earlier rejection stays.
             if isinstance(error, AuthenticationError):
                 self.sign_in_error = error
-            self._log_failed_fetch(error, due)
+            self._log_failed_fetch(error, due, scheduled=scheduled)
             # Keep the devices of an earlier fetch rather than drop them
             return {}
         # Google can't be reached. Setup's own fetch then fails setup, and Home
@@ -359,7 +360,7 @@ class GoogleAccountClient:
         except (ClientError, TimeoutError) as error:
             if self.setting_up and not scheduled:
                 raise
-            self._log_failed_fetch(error, due)
+            self._log_failed_fetch(error, due, scheduled=scheduled)
             return {}
         self._fetch_backoff.fetch_worked()
         if self._fetch_error_logged:
@@ -378,18 +379,21 @@ class GoogleAccountClient:
             return await self.async_use_known_hosts()
         return {}
 
-    def _log_failed_fetch(self, error: Exception, due: float) -> None:
+    def _log_failed_fetch(
+        self, error: Exception, due: float, *, scheduled: bool
+    ) -> None:
         """Log a failed fetch of Google's list, which may start again at due.
 
         The first failure of an outage is logged as an error, and the others only for
-        debugging, however they fail, until a fetch works. A rejection at setup is
-        logged only for debugging too: setup then fails with Google's reason, which
-        Home Assistant logs.
+        debugging, however they fail, until a fetch works. A rejection at setup's own
+        fetch is logged only for debugging too: setup then fails with Google's reason,
+        which Home Assistant logs. A scheduled fetch while setup still runs keeps the
+        list, so while it has devices, nothing else logs why Google rejected it.
         """
         # A connection error or timeout can come without a message
         reason = str(error) or type(error).__name__
         if self._fetch_error_logged or (
-            isinstance(error, AuthenticationError) and self.setting_up
+            isinstance(error, AuthenticationError) and self.setting_up and not scheduled
         ):
             _LOGGER.debug("Failed to fetch Google's device list: %s", reason)
             return
