@@ -126,14 +126,23 @@
     "alarms_and_timers_not_fetched": {
       "message": "No s'han pogut obtenir les alarmes i els temporitzadors actuals de {device}, de manera que no s'ha eliminat res d'aquest dispositiu. Comprova que estigui en línia i torna-ho a provar més tard."
     },
+    "alarms_and_timers_not_fetched_token_rejected_polling_off": {
+      "message": "No s'han pogut obtenir les alarmes i els temporitzadors actuals de {device}, de manera que no s'ha eliminat res d'aquest dispositiu. El dispositiu ha rebutjat el seu testimoni, i obtenir-ne un altre de Google no ha servit de res. El sondeig està desactivat, de manera que la integració no torna a demanar-ne un a Google per si mateixa: executa l'acció «Actualitza dispositius» i torna-ho a provar."
+    },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "No s'han pogut obtenir les alarmes i els temporitzadors actuals d'aquests dispositius, de manera que no se n'ha eliminat res: {devices}. Comprova que estiguin en línia i torna-ho a provar més tard."
     },
     "alarms_and_timers_not_deleted": {
       "message": "{device} no ha confirmat l'eliminació de les alarmes o els temporitzadors, de manera que encara poden estar configurats. Comprova que estigui en línia i torna-ho a provar més tard."
     },
+    "alarms_and_timers_not_deleted_token_rejected_polling_off": {
+      "message": "{device} no ha confirmat l'eliminació de les alarmes o els temporitzadors, de manera que encara poden estar configurats. El dispositiu ha rebutjat el seu testimoni, i obtenir-ne un altre de Google no ha servit de res. El sondeig està desactivat, de manera que la integració no torna a demanar-ne un a Google per si mateixa: executa l'acció «Actualitza dispositius» i torna-ho a provar."
+    },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "No s'han pogut eliminar les alarmes o els temporitzadors d'aquests dispositius, o confirmar que s'hagin eliminat: {devices}. Comprova que estiguin en línia i torna-ho a provar més tard."
+    },
+    "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
+      "message": "No s'han pogut eliminar les alarmes o els temporitzadors d'aquests dispositius, o confirmar que s'hagin eliminat: {devices}. Almenys un d'ells ha rebutjat el seu testimoni, i obtenir-ne un altre de Google no ha servit de res. El sondeig està desactivat, de manera que la integració no torna a demanar-ne un a Google per si mateixa: executa l'acció «Actualitza dispositius», comprova que els dispositius estiguin en línia i torna-ho a provar."
     },
     "invalid_alarm_id": {
       "message": "«{alarm_id}» no és un ID d'alarma. Copia l'ID, que comença per alarm/, de l'atribut alarms del sensor d'alarmes del dispositiu."

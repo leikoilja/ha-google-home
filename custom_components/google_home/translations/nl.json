@@ -126,14 +126,23 @@
     "alarms_and_timers_not_fetched": {
       "message": "De huidige alarmen en timers konden niet worden opgehaald van {device}. Er is daarom niets van dit apparaat verwijderd. Controleer of het apparaat online is en probeer het later opnieuw."
     },
+    "alarms_and_timers_not_fetched_token_rejected_polling_off": {
+      "message": "De huidige alarmen en timers konden niet worden opgehaald van {device}. Er is daarom niets van dit apparaat verwijderd. Het apparaat heeft zijn token geweigerd, en het ophalen van een nieuw token bij Google heeft niet geholpen. Polling voor wijzigingen is uitgeschakeld, dus de integratie vraagt niet uit zichzelf opnieuw een token aan bij Google: voer de actie ‘Apparaten verversen’ uit en probeer het daarna opnieuw."
+    },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "De huidige alarmen en timers konden niet worden opgehaald van de volgende apparaten: {devices}. Er is daarom niets van deze apparaten verwijderd. Controleer of de apparaten online zijn en probeer het later opnieuw."
     },
     "alarms_and_timers_not_deleted": {
       "message": "{device} heeft het verwijderen van de alarmen of timers niet bevestigd. Ze kunnen dus nog ingesteld zijn. Controleer of het apparaat online is en probeer het later opnieuw."
     },
+    "alarms_and_timers_not_deleted_token_rejected_polling_off": {
+      "message": "{device} heeft het verwijderen van de alarmen of timers niet bevestigd. Ze kunnen dus nog ingesteld zijn. Het apparaat heeft zijn token geweigerd, en het ophalen van een nieuw token bij Google heeft niet geholpen. Polling voor wijzigingen is uitgeschakeld, dus de integratie vraagt niet uit zichzelf opnieuw een token aan bij Google: voer de actie ‘Apparaten verversen’ uit en probeer het daarna opnieuw."
+    },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "Alarmen of timers konden niet worden verwijderd van de volgende apparaten, of het verwijderen kon niet worden bevestigd: {devices}. Controleer of de apparaten online zijn en probeer het later opnieuw."
+    },
+    "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
+      "message": "Alarmen of timers konden niet worden verwijderd van de volgende apparaten, of het verwijderen kon niet worden bevestigd: {devices}. Ten minste één ervan heeft zijn token geweigerd, en het ophalen van een nieuw token bij Google heeft niet geholpen. Polling voor wijzigingen is uitgeschakeld, dus de integratie vraagt niet uit zichzelf opnieuw een token aan bij Google: voer de actie ‘Apparaten verversen’ uit, controleer of de apparaten online zijn en probeer het daarna opnieuw."
     },
     "invalid_alarm_id": {
       "message": "‘{alarm_id}’ is geen alarm-ID. Kopieer de ID, die begint met alarm/, uit het attribuut alarms van de alarmsensor van het apparaat."

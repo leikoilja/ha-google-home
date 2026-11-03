@@ -126,14 +126,23 @@
     "alarms_and_timers_not_fetched": {
       "message": "Tidak dapat mengambil alarm dan timer saat ini dari perangkat {device}, sehingga tidak ada yang dihapus dari perangkat tersebut. Pastikan perangkat online dan coba lagi nanti."
     },
+    "alarms_and_timers_not_fetched_token_rejected_polling_off": {
+      "message": "Tidak dapat mengambil alarm dan timer saat ini dari perangkat {device}, sehingga tidak ada yang dihapus dari perangkat tersebut. Perangkat tersebut menolak tokennya, dan mendapatkan token baru dari Google tidak membantu. Polling untuk perubahan dinonaktifkan, sehingga integrasi tidak meminta token baru dari Google lagi secara mandiri: jalankan aksi “Perbarui status perangkat”, lalu coba lagi."
+    },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Tidak dapat mengambil alarm dan timer saat ini dari perangkat berikut, sehingga tidak ada yang dihapus dari perangkat tersebut: {devices}. Pastikan semuanya online dan coba lagi nanti."
     },
     "alarms_and_timers_not_deleted": {
       "message": "Perangkat {device} tidak mengonfirmasi penghapusan alarm atau timer, sehingga alarm atau timer tersebut mungkin masih disetel. Pastikan perangkat online dan coba lagi nanti."
     },
+    "alarms_and_timers_not_deleted_token_rejected_polling_off": {
+      "message": "Perangkat {device} tidak mengonfirmasi penghapusan alarm atau timer, sehingga alarm atau timer tersebut mungkin masih disetel. Perangkat tersebut menolak tokennya, dan mendapatkan token baru dari Google tidak membantu. Polling untuk perubahan dinonaktifkan, sehingga integrasi tidak meminta token baru dari Google lagi secara mandiri: jalankan aksi “Perbarui status perangkat”, lalu coba lagi."
+    },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "Tidak dapat menghapus alarm atau timer dari perangkat berikut, atau mengonfirmasi bahwa alarm atau timer tersebut telah dihapus: {devices}. Pastikan semuanya online dan coba lagi nanti."
+    },
+    "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
+      "message": "Tidak dapat menghapus alarm atau timer dari perangkat berikut, atau mengonfirmasi bahwa alarm atau timer tersebut telah dihapus: {devices}. Setidaknya salah satu di antaranya menolak tokennya, dan mendapatkan token baru dari Google tidak membantu. Polling untuk perubahan dinonaktifkan, sehingga integrasi tidak meminta token baru dari Google lagi secara mandiri: jalankan aksi “Perbarui status perangkat”, pastikan semua perangkat tersebut online, lalu coba lagi."
     },
     "invalid_alarm_id": {
       "message": "“{alarm_id}” bukan ID alarm. Salin ID yang diawali dengan alarm/ dari atribut alarms pada sensor alarm perangkat."

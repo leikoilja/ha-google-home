@@ -126,14 +126,23 @@
     "alarms_and_timers_not_fetched": {
       "message": "Nem sikerült lekérni a(z) {device} eszköz aktuális ébresztéseit és időzítőit, ezért semmi sem lett törölve erről az eszközről. Ellenőrizze, hogy az eszköz online van-e, és próbálja újra később."
     },
+    "alarms_and_timers_not_fetched_token_rejected_polling_off": {
+      "message": "Nem sikerült lekérni a(z) {device} eszköz aktuális ébresztéseit és időzítőit, ezért semmi sem lett törölve erről az eszközről. Az eszköz elutasította a tokenjét, és egy új token lekérése a Google-tól nem segített. A változások lekérdezése le van tiltva, ezért az integráció magától nem kér újra tokent a Google-tól: futtassa az „Eszközök állapotának frissítése” műveletet, majd próbálja újra."
+    },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Nem sikerült lekérni a következő eszközök aktuális ébresztéseit és időzítőit: {devices}. Ezért semmi sem lett törölve ezekről az eszközökről. Ellenőrizze, hogy az eszközök online vannak-e, és próbálja újra később."
     },
     "alarms_and_timers_not_deleted": {
       "message": "A(z) {device} eszköz nem erősítette meg az ébresztések vagy időzítők törlését, ezért azok továbbra is be lehetnek állítva. Ellenőrizze, hogy az eszköz online van-e, és próbálja újra később."
     },
+    "alarms_and_timers_not_deleted_token_rejected_polling_off": {
+      "message": "A(z) {device} eszköz nem erősítette meg az ébresztések vagy időzítők törlését, ezért azok továbbra is be lehetnek állítva. Az eszköz elutasította a tokenjét, és egy új token lekérése a Google-tól nem segített. A változások lekérdezése le van tiltva, ezért az integráció magától nem kér újra tokent a Google-tól: futtassa az „Eszközök állapotának frissítése” műveletet, majd próbálja újra."
+    },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "Nem sikerült törölni az ébresztéseket vagy időzítőket a következő eszközökről, vagy megerősíteni a törlésüket: {devices}. Ellenőrizze, hogy az eszközök online vannak-e, és próbálja újra később."
+    },
+    "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
+      "message": "Nem sikerült törölni az ébresztéseket vagy időzítőket a következő eszközökről, vagy megerősíteni a törlésüket: {devices}. Legalább az egyikük elutasította a tokenjét, és egy új token lekérése a Google-tól nem segített. A változások lekérdezése le van tiltva, ezért az integráció magától nem kér újra tokent a Google-tól: futtassa az „Eszközök állapotának frissítése” műveletet, ellenőrizze, hogy az eszközök online vannak-e, majd próbálja újra."
     },
     "invalid_alarm_id": {
       "message": "A(z) „{alarm_id}” nem ébresztésazonosító. Másolja ki az alarm/ kezdetű azonosítót az eszköz ébresztésérzékelőjének alarms attribútumából."

@@ -126,14 +126,23 @@
     "alarms_and_timers_not_fetched": {
       "message": "Laitteen {device} nykyisiä herätyksiä ja ajastimia ei voitu hakea, joten laitteesta ei poistettu mitään. Tarkista, että laite on verkossa, ja yritä myöhemmin uudelleen."
     },
+    "alarms_and_timers_not_fetched_token_rejected_polling_off": {
+      "message": "Laitteen {device} nykyisiä herätyksiä ja ajastimia ei voitu hakea, joten laitteesta ei poistettu mitään. Laite hylkäsi tunnisteensa, eikä uuden hakeminen Googlelta auttanut. Muutosten kysely on poistettu käytöstä, joten integraatio ei pyydä Googlelta uutta itsestään: suorita toiminto ”Päivitä laitteiden tila” ja yritä sitten uudelleen."
+    },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Seuraavien laitteiden nykyisiä herätyksiä ja ajastimia ei voitu hakea: {devices}. Näistä laitteista ei siksi poistettu mitään. Tarkista, että laitteet ovat verkossa, ja yritä myöhemmin uudelleen."
     },
     "alarms_and_timers_not_deleted": {
       "message": "Laite {device} ei vahvistanut herätysten tai ajastimien poistamista, joten ne saattavat edelleen olla asetettuina. Tarkista, että laite on verkossa, ja yritä myöhemmin uudelleen."
     },
+    "alarms_and_timers_not_deleted_token_rejected_polling_off": {
+      "message": "Laite {device} ei vahvistanut herätysten tai ajastimien poistamista, joten ne saattavat edelleen olla asetettuina. Laite hylkäsi tunnisteensa, eikä uuden hakeminen Googlelta auttanut. Muutosten kysely on poistettu käytöstä, joten integraatio ei pyydä Googlelta uutta itsestään: suorita toiminto ”Päivitä laitteiden tila” ja yritä sitten uudelleen."
+    },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "Seuraavista laitteista ei voitu poistaa herätyksiä tai ajastimia tai niiden poistamista ei voitu vahvistaa: {devices}. Tarkista, että laitteet ovat verkossa, ja yritä myöhemmin uudelleen."
+    },
+    "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
+      "message": "Seuraavista laitteista ei voitu poistaa herätyksiä tai ajastimia tai niiden poistamista ei voitu vahvistaa: {devices}. Ainakin yksi niistä hylkäsi tunnisteensa, eikä uuden hakeminen Googlelta auttanut. Muutosten kysely on poistettu käytöstä, joten integraatio ei pyydä Googlelta uutta itsestään: suorita toiminto ”Päivitä laitteiden tila”, tarkista, että laitteet ovat verkossa, ja yritä sitten uudelleen."
     },
     "invalid_alarm_id": {
       "message": "”{alarm_id}” ei ole herätyksen tunnus. Kopioi tunnus, joka alkaa merkkijonolla alarm/, laitteen herätysanturin alarms-attribuutista."
