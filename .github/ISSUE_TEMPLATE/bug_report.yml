@@ -51,9 +51,9 @@ body:
 
         Also paste the **Google Home** section of [System information](https://my.home-assistant.io/redirect/system_health/): go to **Settings** > **System** > **Repairs**, open the **⋮** menu and select **System information**. The section shows whether Home Assistant can reach Google, whether the integration has your devices from Google and how many of them don't answer, without names, email addresses, IDs or IP addresses. See [Check System information](https://ha-google-home.pages.dev/troubleshooting/#check-system-information).
 
-        If the integration fails to set up, there's no **Download diagnostics**, and the section shows only whether Home Assistant can reach Google. If adding the integration fails, the section isn't there either.
-
         **Copy** copies the whole of System information, with the other integrations' sections and details about your system. Paste only the Google Home part, from `<details><summary>Google Home</summary>` to the next `</details>`.
+
+        The section isn't there if your **Integration version** is 1.16.0 or earlier, or if adding the integration fails. If you can't find it, say so. If the integration fails to set up, there's no **Download diagnostics**, and the section shows only whether Home Assistant can reach Google.
   - type: textarea
     id: logs
     attributes:
