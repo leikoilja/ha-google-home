@@ -126,14 +126,23 @@
     "alarms_and_timers_not_fetched": {
       "message": "Kunne ikke hente de aktuelle alarmer og timere fra {device}, så der blev ikke slettet noget fra enheden. Kontrollér, at den er online, og prøv igen senere."
     },
+    "alarms_and_timers_not_fetched_token_rejected_polling_off": {
+      "message": "Kunne ikke hente de aktuelle alarmer og timere fra {device}, så der blev ikke slettet noget fra enheden. Den afviste sit token, og det hjalp ikke at hente et nyt fra Google. Automatisk hentning af opdateringer er slået fra, så integrationen beder ikke selv Google om et nyt igen: kør handlingen »Opdater enheder«, og prøv derefter igen."
+    },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Kunne ikke hente de aktuelle alarmer og timere fra disse enheder, så der blev ikke slettet noget fra dem: {devices}. Kontrollér, at de er online, og prøv igen senere."
     },
     "alarms_and_timers_not_deleted": {
       "message": "{device} bekræftede ikke sletningen af alarmerne eller timerne, så de kan stadig være indstillet. Kontrollér, at den er online, og prøv igen senere."
     },
+    "alarms_and_timers_not_deleted_token_rejected_polling_off": {
+      "message": "{device} bekræftede ikke sletningen af alarmerne eller timerne, så de kan stadig være indstillet. Den afviste sit token, og det hjalp ikke at hente et nyt fra Google. Automatisk hentning af opdateringer er slået fra, så integrationen beder ikke selv Google om et nyt igen: kør handlingen »Opdater enheder«, og prøv derefter igen."
+    },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "Kunne ikke slette alarmer eller timere fra disse enheder eller bekræfte, at de blev slettet: {devices}. Kontrollér, at de er online, og prøv igen senere."
+    },
+    "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
+      "message": "Kunne ikke slette alarmer eller timere fra disse enheder eller bekræfte, at de blev slettet: {devices}. Mindst én af dem afviste sit token, og det hjalp ikke at hente et nyt fra Google. Automatisk hentning af opdateringer er slået fra, så integrationen beder ikke selv Google om et nyt igen: kør handlingen »Opdater enheder«, kontrollér, at enhederne er online, og prøv derefter igen."
     },
     "invalid_alarm_id": {
       "message": "»{alarm_id}« er ikke et alarm-ID. Kopiér ID'et, som begynder med alarm/, fra attributten alarms på enhedens alarmsensor."

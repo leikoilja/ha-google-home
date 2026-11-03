@@ -126,14 +126,23 @@
     "alarms_and_timers_not_fetched": {
       "message": "Couldn't get the current alarms and timers from {device}, so nothing was deleted from it. Check that it's online and try again later."
     },
+    "alarms_and_timers_not_fetched_token_rejected_polling_off": {
+      "message": "Couldn't get the current alarms and timers from {device}, so nothing was deleted from it. It rejected its token, and getting a new one from Google didn't help. Polling is turned off, so the integration doesn't ask Google again by itself: run the Refresh devices action, then try again."
+    },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Couldn't get the current alarms and timers from these devices, so nothing was deleted from them: {devices}. Check that they're online and try again later."
     },
     "alarms_and_timers_not_deleted": {
       "message": "{device} didn't confirm deleting the alarms or timers, so they may still be set. Check that it's online and try again later."
     },
+    "alarms_and_timers_not_deleted_token_rejected_polling_off": {
+      "message": "{device} didn't confirm deleting the alarms or timers, so they may still be set. It rejected its token, and getting a new one from Google didn't help. Polling is turned off, so the integration doesn't ask Google again by itself: run the Refresh devices action, then try again."
+    },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "Couldn't delete alarms or timers from these devices, or confirm that they were deleted: {devices}. Check that they're online and try again later."
+    },
+    "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
+      "message": "Couldn't delete alarms or timers from these devices, or confirm that they were deleted: {devices}. At least one of them rejected its token, and getting a new one from Google didn't help. Polling is turned off, so the integration doesn't ask Google again by itself: run the Refresh devices action, check that the devices are online, then try again."
     },
     "invalid_alarm_id": {
       "message": "“{alarm_id}” isn't an alarm ID. Copy the ID, which starts with alarm/, from the alarms attribute of the device's alarms sensor."

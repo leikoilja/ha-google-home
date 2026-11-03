@@ -308,13 +308,19 @@ async def async_delete_from_devices[_SensorT: GoogleHomeBaseEntity](
         elif isinstance(result, BaseException):
             raise result
     if len(failed) > 1:
+        # One Refresh devices covers every device, so the error needn't say which
+        # needs it
+        if any(error.refresh_needed for error in failed):
+            key = (
+                "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off"
+            )
+        elif all(isinstance(error, AlarmsAndTimersNotFetched) for error in failed):
+            key = "alarms_and_timers_not_fetched_from_devices"
+        else:
+            key = "alarms_and_timers_not_deleted_from_devices"
         raise HomeAssistantError(
             translation_domain=DOMAIN,
-            translation_key=(
-                "alarms_and_timers_not_fetched_from_devices"
-                if all(isinstance(error, AlarmsAndTimersNotFetched) for error in failed)
-                else "alarms_and_timers_not_deleted_from_devices"
-            ),
+            translation_key=key,
             translation_placeholders={
                 "devices": ", ".join(sorted(error.device_name for error in failed))
             },
