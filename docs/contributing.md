@@ -35,6 +35,79 @@ uv sync
 
 Or open the repository in its [dev container](https://containers.dev/), in Visual Studio Code or GitHub Codespaces, which has uv and the dependencies installed.
 
+### How the integration works
+
+The code is in [`custom_components/google_home`](https://github.com/leikoilja/ha-google-home/tree/master/custom_components/google_home). `__init__.py` sets up the config entry: it creates the account's client and coordinator, starts the mDNS browser and adds the entity platforms. The client's requests to Google are in `account.py`, and those to each device in `api.py`. Setup, in `config_flow.py`, signs in with a client of its own and saves the master token in the config entry.
+
+- A stacked box means there are several, such as one for each device.
+- A two-way arrow carries information both ways, such as a request and its answer. A one-way arrow hands something over, and a dotted arrow finds the devices on your network.
+- The blue parts are built on Home Assistant's config entries, entity platforms, actions, repairs, diagnostics and system health. The coordinators are its `DataUpdateCoordinator`s.
+
+```mermaid
+flowchart LR
+    key["<div style='white-space:nowrap;color:inherit'><span style='display:inline-block;width:0.8em;height:0.8em;vertical-align:-0.1em;margin-right:0.4em;border:2px solid rgb(30,136,229)'></span>Used by Home Assistant<span style='display:inline-block;width:2.5em'></span><span style='display:inline-block;width:0.8em;height:0.8em;vertical-align:-0.1em;margin-right:0.4em;border:2px solid rgb(239,108,0)'></span>Integration internals<span style='display:inline-block;width:2.5em'></span><span style='display:inline-block;width:0.8em;height:0.8em;vertical-align:-0.1em;margin-right:0.4em;border:2px dashed rgb(158,158,158)'></span>Outside Home Assistant</div>"]
+    style key fill:none,stroke:none
+```
+
+```mermaid
+flowchart TB
+    subgraph google["Google's servers, through glocaltokens"]
+        signin@{ shape: cloud, label: "<b>Google<br>sign-in</b><br><span style='font-size:0.85em;opacity:0.7;color:inherit'>gpsoauth</span>" }
+        foyer@{ shape: cloud, label: "<b>Google Home Foyer API</b><br><span style='font-size:0.85em;opacity:0.7;color:inherit'>gRPC</span>" }
+    end
+
+    flows["<b>Setup and options</b><br><span style='font-size:0.85em;opacity:0.7;color:inherit'>config_flow.py</span>"]
+    client["<b>Account client</b><br><span style='font-size:0.85em;opacity:0.7;color:inherit'>account.py, api.py</span>"]
+    mdns["<b>mDNS browser</b><br><span style='font-size:0.85em;opacity:0.7;color:inherit'>mdns.py</span>"]
+    account["<b>Account coordinator</b><br><span style='font-size:0.85em;opacity:0.7;color:inherit'>coordinator.py</span>"]
+    actions["<b>Actions</b><br><span style='font-size:0.85em;opacity:0.7;color:inherit'>sensor.py</span>"]
+    support["<b>Repairs, diagnostics,<br>System information</b><br><span style='font-size:0.85em;opacity:0.7;color:inherit'>__init__.py, repairs.py,<br>diagnostics.py, system_health.py</span>"]
+    subgraph devcol[" "]
+        devices@{ shape: procs, label: "<b>Device coordinators</b><br><span style='font-size:0.85em;opacity:0.7;color:inherit'>coordinator.py, api.py</span>" }
+        entities@{ shape: procs, label: "<b>Entities</b><br><span style='font-size:0.85em;opacity:0.7;color:inherit'>entity.py and a file per platform</span>" }
+        devices <-- "state, changes" --> entities
+    end
+    subgraph btcol[" "]
+        bluetooth["<b>Bluetooth coordinator</b><br><span style='font-size:0.85em;opacity:0.7;color:inherit'>__init__.py, bluetooth.py</span>"]
+        trackers@{ shape: procs, label: "<b>Device trackers</b><br><span style='font-size:0.85em;opacity:0.7;color:inherit'>device_tracker.py</span>" }
+        bluetooth -- "home or away" --> trackers
+    end
+    speakers@{ shape: procs, label: "<b>Speakers and displays</b><br><span style='font-size:0.85em;opacity:0.7;color:inherit'>local API, HTTPS port 8443</span>" }
+
+    signin <-- "master and access tokens" --> client
+    foyer <-- "home graph" --> client
+    google ~~~ flows
+    flows <-- "sign-in, homes,<br>config entry" --> client
+    flows ~~~ account
+    account -- "sign in again" --> flows
+    mdns -- "addresses" --> client
+    client -- "device list" --> account
+    client -- "state" --> support
+    account -- "adds and removes" --> devices
+    actions -- "delete, reboot, refresh" --> devices
+    mdns <-. "Cast devices" .-> speakers
+    client <-. "known hosts" .-> speakers
+    devices <-- "alarms, timers, settings,<br>firmware, Wi-Fi" --> speakers
+    account -- "device list" --> bluetooth
+    flows -- "devices to track" --> bluetooth
+    bluetooth <-- "scans" --> speakers
+
+    classDef ha stroke:#1e88e5,stroke-width:2px
+    classDef own stroke:#ef6c00,stroke-width:2px
+    classDef outside stroke:#9e9e9e,stroke-width:2px,stroke-dasharray:5 3
+    class flows,actions,support,entities,trackers ha
+    class client,mdns,account,devices,bluetooth own
+    class signin,foyer,speakers outside
+    style google stroke:#9e9e9e,stroke-dasharray:5 3
+    style devcol fill:none,stroke:none
+    style btcol fill:none,stroke:none
+```
+
+- **Google's device list:** [glocaltokens](https://github.com/leikoilja/glocaltokens) signs in with the saved master token and gets the home graph over gRPC: the device list, with each device's local token and home. Devices in [homes you deselect](configuration.md#choose-homes) are left out. The account coordinator updates at the [update interval](configuration.md#change-the-update-interval) in the options, but Google's list is fetched only every 20 minutes, and sooner when mDNS finds a Cast device that the list lacks or a device rejects its token. While the list is unknown, the wait before the next fetch grows with each failure.
+- **Addresses:** Google's list has none. mDNS gives them, and known hosts fill in the devices that mDNS doesn't find.
+- **Devices:** each device's coordinator asks the device's local API with its token, at the update interval and more often around an alarm's or timer's fire time. It asks for the firmware and Wi-Fi every 20 minutes.
+- **Bluetooth:** while Bluetooth tracking is on and has devices to track, a coordinator asks the speakers to scan every 30 seconds, and reads each scan's results at the next update.
+
 ### Try your changes
 
 ```shell
