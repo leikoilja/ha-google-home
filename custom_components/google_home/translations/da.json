@@ -38,6 +38,9 @@
         "description": "Din Google-konto er medlem af flere hjem. Vælg de hjem, hvis højttalere og skærme skal tilføjes. Du kan ændre det senere i integrationens indstillinger: Vælg **Konfigurér** på integrationens side.",
         "data": {
           "homes": "Hjem"
+        },
+        "data_description": {
+          "homes": "Vælg mindst ét hjem. Højttalere og skærme i hjem, som din konto senere bliver medlem af, tilføjes også."
         }
       },
       "reauth": {
@@ -181,6 +184,14 @@
           "polling_kept_off": "Automatisk hentning forbliver slået fra, og denne reparation er skjult."
         }
       }
+    },
+    "homes_deselected": {
+      "title": "Ingen af din Google-kontos hjem er valgt",
+      "description": "Din Google-konto er kun medlem af hjem, som du har fravalgt i integrationens indstillinger, så integrationen tilføjer ikke højttalerne og skærmene i dem. Hvis du vil tilføje et hjems enheder, skal du åbne [Google Home-integrationen]({integration_url}), vælge **Konfigurér**, vælge hjemmet under **Hjem** og derefter vælge **Indsend**.\n\nHvis du vil beholde disse hjem fravalgt, skal du vælge **Ignorér**."
+    },
+    "no_home": {
+      "title": "Google angiver intet hjem for din konto",
+      "description": "Google angiver, at den konto, integrationen er logget ind med, ikke er medlem af noget hjem, så der er ingen højttalere eller skærme at tilføje. I Google Home-appen skal du invitere denne konto til det hjem, dine enheder er i, og acceptere invitationen. Genindlæs derefter [Google Home-integrationen]({integration_url}): Vælg **⋮** > **Genindlæs**.\n\nHvis du beholder integrationen med vilje, f.eks. mens du flytter, skal du vælge **Ignorér**. Hvis du ikke længere har brug for den, kan du slette den på samme side."
     }
   },
   "config_subentries": {

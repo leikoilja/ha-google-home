@@ -38,6 +38,9 @@
         "description": "Váš účet Google je členem několika domácností. Vyberte domácnosti, jejichž reproduktory a displeje chcete přidat. Později to můžete změnit ve volbách integrace: na stránce integrace vyberte **Nastavit**.",
         "data": {
           "homes": "Domácnosti"
+        },
+        "data_description": {
+          "homes": "Označte alespoň jednu domácnost. Přidají se také reproduktory a displeje z domácností, jejichž členem se váš účet stane později."
         }
       },
       "reauth": {
@@ -181,6 +184,14 @@
           "polling_kept_off": "Dotazování zůstává vypnuté a tato oprava je skrytá."
         }
       }
+    },
+    "homes_deselected": {
+      "title": "Není vybrána žádná domácnost vašeho účtu Google",
+      "description": "Váš účet Google je členem jen domácností, které jste odznačili ve volbách integrace, takže integrace jejich reproduktory a displeje nepřidává. Pokud chcete přidat zařízení některé domácnosti, otevřete [integraci Google Home]({integration_url}), vyberte **Nastavit**, v části **Domácnosti** označte danou domácnost a pak vyberte **Odeslat**.\n\nPokud chcete tyto domácnosti nechat odznačené, vyberte **Ignorovat**."
+    },
+    "no_home": {
+      "title": "Google pro váš účet neuvádí žádnou domácnost",
+      "description": "Google uvádí, že účet, ke kterému se integrace přihlásila, není členem žádné domácnosti, takže nejsou žádné reproduktory ani displeje k přidání. V aplikaci Google Home pozvěte tento účet do domácnosti, ve které jsou vaše zařízení, a pozvánku přijměte. Pak znovu načtěte [integraci Google Home]({integration_url}): vyberte **⋮** > **Nově načíst**.\n\nPokud si integraci ponecháváte záměrně, například během stěhování, vyberte **Ignorovat**. Pokud ji už nepotřebujete, můžete ji na stejné stránce smazat."
     }
   },
   "config_subentries": {

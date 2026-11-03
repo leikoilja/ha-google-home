@@ -38,6 +38,9 @@
         "description": "Tu cuenta de Google es miembro de varias casas. Elige las casas cuyos altavoces y pantallas quieres añadir. Puedes cambiarlo más adelante en las opciones de la integración: selecciona **Configurar** en la página de la integración.",
         "data": {
           "homes": "Casas"
+        },
+        "data_description": {
+          "homes": "Marca al menos una casa. También se añaden los altavoces y pantallas de las casas a las que tu cuenta se una más adelante."
         }
       },
       "reauth": {
@@ -181,6 +184,14 @@
           "polling_kept_off": "El sondeo sigue deshabilitado y esta reparación se ha ocultado."
         }
       }
+    },
+    "homes_deselected": {
+      "title": "No hay ninguna casa de tu cuenta de Google seleccionada",
+      "description": "Tu cuenta de Google solo es miembro de casas que desmarcaste en las opciones de la integración, así que la integración no añade sus altavoces ni sus pantallas. Para añadir los dispositivos de una casa, abre la [integración Google Home]({integration_url}), selecciona **Configurar**, marca la casa en **Casas** y luego selecciona **Enviar**.\n\nSi quieres mantener estas casas desmarcadas, selecciona **Ignorar**."
+    },
+    "no_home": {
+      "title": "Google no indica ninguna casa para tu cuenta",
+      "description": "Google indica que la cuenta con la que la integración inició sesión no es miembro de ninguna casa, así que no hay altavoces ni pantallas que añadir. En la aplicación Google Home, invita a esta cuenta a la casa en la que están tus dispositivos y acepta la invitación. Después, recarga la [integración Google Home]({integration_url}): selecciona **⋮** > **Recargar**.\n\nSi mantienes la integración a propósito, por ejemplo mientras te mudas, selecciona **Ignorar**. Si ya no la necesitas, puedes eliminarla en la misma página."
     }
   },
   "config_subentries": {

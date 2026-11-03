@@ -38,6 +38,9 @@
         "description": "Dein Google-Konto ist Mitglied mehrerer Zuhause. Wähle die Zuhause aus, deren Lautsprecher und Displays hinzugefügt werden sollen. Du kannst das später in den Optionen der Integration ändern: Wähle **Konfigurieren** auf der Seite der Integration.",
         "data": {
           "homes": "Zuhause"
+        },
+        "data_description": {
+          "homes": "Wähle mindestens ein Zuhause aus. Lautsprecher und Displays in Zuhause, denen dein Konto später beitritt, werden ebenfalls hinzugefügt."
         }
       },
       "reauth": {
@@ -181,6 +184,14 @@
           "polling_kept_off": "Die Abfrage bleibt deaktiviert und diese Reparatur ist ausgeblendet."
         }
       }
+    },
+    "homes_deselected": {
+      "title": "Keines der Zuhause deines Google-Kontos ist ausgewählt",
+      "description": "Dein Google-Konto ist nur Mitglied von Zuhause, die du in den Optionen der Integration abgewählt hast, daher fügt die Integration deren Lautsprecher und Displays nicht hinzu. Um die Geräte eines Zuhauses hinzuzufügen, öffne die [Google Home-Integration]({integration_url}), wähle **Konfigurieren**, wähle das Zuhause unter **Zuhause** aus und wähle dann **OK**.\n\nWenn du diese Zuhause abgewählt lassen möchtest, wähle **Ignorieren**."
+    },
+    "no_home": {
+      "title": "Google meldet kein Zuhause für dein Konto",
+      "description": "Google meldet, dass das Konto, mit dem sich die Integration angemeldet hat, kein Mitglied eines Zuhauses ist, daher gibt es keine Lautsprecher oder Displays zum Hinzufügen. Lade dieses Konto in der Google Home App in das Zuhause ein, in dem sich deine Geräte befinden, und nimm die Einladung an. Lade danach die [Google Home-Integration]({integration_url}) neu: Wähle **⋮** > **Neu laden**.\n\nWenn du die Integration absichtlich behältst, zum Beispiel während eines Umzugs, wähle **Ignorieren**. Wenn du sie nicht mehr brauchst, kannst du sie auf derselben Seite löschen."
     }
   },
   "config_subentries": {

@@ -38,6 +38,9 @@
         "description": "Google-kontoen din er medlem av fleire heimar. Vel heimane du vil leggje til høgtalarar og skjermar frå. Du kan endre dette seinare i vala for integrasjonen: Vel **Konfigurer** på sida til integrasjonen.",
         "data": {
           "homes": "Heimar"
+        },
+        "data_description": {
+          "homes": "Vel minst éin heim. Høgtalarar og skjermar i heimar som kontoen din seinare blir medlem av, blir òg lagde til."
         }
       },
       "reauth": {
@@ -181,6 +184,14 @@
           "polling_kept_off": "Polling blir verande av, og denne reparasjonen er gøymd."
         }
       }
+    },
+    "homes_deselected": {
+      "title": "Ingen av heimane til Google-kontoen din er valde",
+      "description": "Google-kontoen din er berre medlem av heimar du har valt bort i vala for integrasjonen, så integrasjonen legg ikkje til høgtalarane og skjermane i dei. For å leggje til einingane i ein heim opnar du [Google Home-integrasjonen]({integration_url}), vel **Konfigurer**, vel heimen under **Heimar** og vel deretter **Send inn**.\n\nOm du vil la desse heimane vere valde bort, vel du **Ignorer**."
+    },
+    "no_home": {
+      "title": "Google oppgjev ingen heim for kontoen din",
+      "description": "Google oppgjev at kontoen integrasjonen er logga på med, ikkje er medlem av nokon heim, så det finst ingen høgtalarar eller skjermar å leggje til. I Google Home-appen inviterer du denne kontoen til heimen einingane dine er i, og godtek invitasjonen. Last deretter inn [Google Home-integrasjonen]({integration_url}) på nytt: Vel **⋮** > **Last inn på nytt**.\n\nOm du beheld integrasjonen med vilje, til dømes medan du flyttar, vel du **Ignorer**. Om du ikkje treng integrasjonen lenger, kan du slette ho på same sida."
     }
   },
   "config_subentries": {

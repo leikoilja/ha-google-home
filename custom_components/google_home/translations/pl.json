@@ -38,6 +38,9 @@
         "description": "Twoje konto Google jest członkiem kilku domów. Wybierz domy, których głośniki i wyświetlacze mają zostać dodane. Możesz to później zmienić w opcjach integracji: wybierz **Konfiguruj** na stronie integracji.",
         "data": {
           "homes": "Domy"
+        },
+        "data_description": {
+          "homes": "Zaznacz co najmniej jeden dom. Dodawane są też głośniki i wyświetlacze z domów, do których Twoje konto dołączy później."
         }
       },
       "reauth": {
@@ -181,6 +184,14 @@
           "polling_kept_off": "Odpytywanie pozostaje wyłączone, a ten problem został ukryty."
         }
       }
+    },
+    "homes_deselected": {
+      "title": "Nie wybrano żadnego domu Twojego konta Google",
+      "description": "Twoje konto Google jest członkiem tylko domów odznaczonych w opcjach integracji, więc integracja nie dodaje znajdujących się w nich głośników i wyświetlaczy. Aby dodać urządzenia domu, otwórz [integrację Google Home]({integration_url}), wybierz **Konfiguruj**, zaznacz dom w polu **Domy**, a następnie wybierz **Zatwierdź**.\n\nJeśli chcesz, żeby te domy pozostały odznaczone, wybierz **Ignoruj**."
+    },
+    "no_home": {
+      "title": "Google nie zgłasza żadnego domu dla Twojego konta",
+      "description": "Według Google konto, na które zalogowała się integracja, nie jest członkiem żadnego domu, więc nie ma głośników ani wyświetlaczy do dodania. W aplikacji Google Home zaproś to konto do domu, w którym są Twoje urządzenia, i zaakceptuj zaproszenie. Następnie wczytaj ponownie [integrację Google Home]({integration_url}): wybierz **⋮** > **Wczytaj ponownie**.\n\nJeśli celowo zachowujesz integrację, na przykład podczas przeprowadzki, wybierz **Ignoruj**. Jeśli już jej nie potrzebujesz, możesz ją usunąć na tej samej stronie."
     }
   },
   "config_subentries": {
