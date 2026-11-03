@@ -91,6 +91,12 @@ To run them on every commit, install the git hook once:
 uvx prek install
 ```
 
+### Keep the quality scale up to date
+
+[`quality_scale.yaml`](https://github.com/leikoilja/ha-google-home/blob/master/custom_components/google_home/quality_scale.yaml) records each rule of Home Assistant's [integration quality scale](https://contributors.home-assistant.io/core/quality-scale/) as done or exempt, with the reason for each exemption. Changes must keep meeting the rules marked done, and update the file when they affect a rule: adding a trigger, for example, makes `docs-triggers` apply, so document the trigger and mark the rule done.
+
+Hassfest skips this file for custom integrations, even when you run it yourself, so CI doesn't check it against the rules. When a change affects a rule or you bump `homeassistant` in `pyproject.toml`, check the file against core's source at the version `pyproject.toml` pins: write a short Python script that runs `SCHEMA` and the done rules' `VALIDATORS` from `script/hassfest/quality_scale.py`, and check that no rule is `todo`. The `strict-typing` validator always fails, because a custom integration can't be on core's own `.strict-typing` list; the mypy check in prek runs in strict mode, which covers the rule.
+
 ### Edit the docs
 
 The docs are in `docs/` and built with [Zensical](https://zensical.org/). Preview them at <http://localhost:8000> while you edit:
