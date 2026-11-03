@@ -263,7 +263,7 @@ def test_unsupported_message_syntax_fails(
     [
         "L'aide est ici : {docs_url}",
         "l’{docs_url}",
-        "Siehe ‘{docs_url}’",
+        'Siehe "{docs_url}".',
         "Siehe `{docs_url}`",
         "Siehe {docs_url} und {docs_url}",
         "1 < 2 > 0: {docs_url}",
@@ -274,6 +274,140 @@ def test_plain_placeholders_with_punctuation(catalogs: Path, value: str) -> None
     (catalogs / "de.json").write_text(
         json.dumps({"config": {"help": value}}), encoding="utf-8"
     )
+    assert not translations.check_translations(catalogs).failed
+
+
+@pytest.mark.parametrize(
+    ("value", "name", "suffix"),
+    [
+        # Korean particles and Chinese full stops that broke links in real translations
+        ("도움말은 {docs_url}을 참고하세요.", "docs_url", "을"),
+        ("기능은 {docs_url}을 참고하세요.\n\n폴링을 켜세요.", "docs_url", "을"),
+        ("방법은 {docs_url}을(를) 참조하세요.", "docs_url", "을(를)"),
+        ("창을 열고 {embedded_setup_url}에 접속하세요.", "embedded_setup_url", "에"),
+        (
+            "1. {embedded_setup_url}에 접속하세요.\n2. 로그인하세요.",
+            "embedded_setup_url",
+            "에",
+        ),
+        ("如需協助，請參閱 {docs_url}。", "docs_url", "。"),
+        ("請參閱 {docs_url}。\n\n如果重新開啟輪詢", "docs_url", "。"),
+        ("請參閱 {docs_url}。完成後重新載入。", "docs_url", "。完成後重新載入。"),
+        # Only ASCII punctuation right before a space or the end stays out
+        ("Siehe ‘{docs_url}’", "docs_url", "’"),
+        ("Siehe {docs_url}.Dann", "docs_url", ".Dann"),
+        ("Siehe {docs_url})weiter", "docs_url", ")weiter"),
+        ("See {url}을", "url", "을"),
+        # A closing ** stays out only when marked closes the bold first, which it
+        # doesn't after a URL ending in "/"
+        ("**{docs_url}**을", "docs_url", "**을"),
+        # Incomplete or escaped Markdown leaves the URL bare
+        ("`{docs_url}을", "docs_url", "을"),
+        ("\\`{docs_url}을`", "docs_url", "을`"),
+        ("\\[Hilfe]({docs_url})를", "docs_url", ")를"),
+        ("\\<{docs_url}>", "docs_url", ">"),
+        ("]({docs_url}을", "docs_url", "을"),
+        ("<{docs_url}을", "docs_url", "을"),
+        ("[a\\]({docs_url})을", "docs_url", ")을"),
+        ("[`a]({docs_url})을", "docs_url", ")을"),
+        # Text inside a link's parentheses or angle brackets joins the link
+        ("[Hilfe]({docs_url}을)", "docs_url", "을"),
+        ("[Hilfe]({docs_url}.) und mehr", "docs_url", "."),
+        ("[Hilfe](\n{docs_url}.)", "docs_url", "."),
+        ("[Hilfe]({docs_url}<을)", "docs_url", "<을"),
+        ("<{docs_url}(>", "docs_url", "("),
+        # marked carries on after an unmatched "(", so a later placeholder counts
+        (
+            "{embedded_setup_url}(또는{browser_docs_url}을 참고)",
+            "browser_docs_url",
+            "을",
+        ),
+        # Backticks pair only with a run of the same length, and once one is left
+        # unpaired, later ones can pair across a line break
+        ("``{docs_url}`을", "docs_url", "`을"),
+        ("`{docs_url}``을", "docs_url", "``을"),
+        ("`a\nb`{docs_url}`을", "docs_url", "`을"),
+        # A blank line, written with LF or CR, ends a code span or link text
+        ("`a\n\n{docs_url}을 `", "docs_url", "을"),
+        ("`a\r\r{docs_url}을 `", "docs_url", "을"),
+        ("[a\r\rb]({docs_url})을", "docs_url", ")을"),
+        # The frontend's JavaScript doesn't treat U+0085 as whitespace
+        ("{docs_url}\x85을", "docs_url", "\x85을"),
+    ],
+)
+@pytest.mark.parametrize("language", ["en", "de"])
+def test_text_glued_to_url_placeholder_fails(
+    catalogs: Path, value: str, name: str, suffix: str, language: str
+) -> None:
+    """Reject text that Home Assistant's Markdown would make part of a link."""
+    (catalogs / f"{language}.json").write_text(
+        json.dumps({"config": {"help": value}}), encoding="utf-8"
+    )
+    baseline: translations.Baseline = {"de.json": {("config", "help"): value}}
+    report = translations.check_translations(catalogs, baseline)
+    assert report.failed
+    assert report.issues[0].level == "error"
+    assert report.issues[0].file.name == f"{language}.json"
+    assert report.issues[0].message.startswith(
+        f"config.help: Text right after {{{name}}} can become part of its link: "
+        f"{suffix!r}. Add a space after the placeholder, rephrase, or write a "
+        f"Markdown link such as [text]({{{name}}})"
+    )
+
+
+def test_text_after_closing_emphasis_fails_by_policy(catalogs: Path) -> None:
+    """Ask for a space after bold around a URL even where it renders correctly.
+
+    marked closes the bold before "。" and links the URL alone, but the same
+    markers before a letter end up in the link for some of the integration's URLs.
+    """
+    (catalogs / "de.json").write_text(
+        json.dumps({"config": {"help": "**{docs_url}**。"}}), encoding="utf-8"
+    )
+    report = translations.check_translations(catalogs)
+    assert report.failed
+    assert "{docs_url} can become part of its link: '**。'" in report.issues[0].message
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        # How real translations were fixed
+        "도움말은 {docs_url} 페이지를 참고하세요.",
+        "如需協助，請參閱 {docs_url}",
+        "步驟說明：{browser_docs_url}",
+        "詳しくは、{docs_url}",
+        # Whitespace, including JavaScript's U+3000 and U+FEFF
+        "Siehe {docs_url}\nund dann",
+        "請參閱 {docs_url}\u3000完成",
+        "Siehe {docs_url}\ufeffweiter",
+        # ASCII punctuation and closing markers before a space or the end
+        "See {docs_url}.",
+        "See {docs_url}, then",
+        "See {docs_url}: done",
+        "See {docs_url}!",
+        "Help ({docs_url}).",
+        "See {docs_url}...",
+        "**{docs_url}**.",
+        "**{docs_url}** 페이지를",
+        # Complete Markdown links, autolinks and code spans
+        "[문서]({integration_url})를",
+        "[docs]( {docs_url})를",
+        "[{docs_url}]({docs_url})를",
+        "[a\\]b]({docs_url})를",
+        "**[문서]({docs_url})**。",
+        "<{docs_url}>을",
+        "`See {docs_url}`을",
+        # Only URL placeholders are checked
+        "{device}을 확인하세요",
+    ],
+)
+def test_url_placeholder_set_apart_from_text(catalogs: Path, value: str) -> None:
+    """Accept separators, punctuation and Markdown that keep the link correct."""
+    for language in ("en", "de"):
+        (catalogs / f"{language}.json").write_text(
+            json.dumps({"config": {"help": value}}), encoding="utf-8"
+        )
     assert not translations.check_translations(catalogs).failed
 
 
