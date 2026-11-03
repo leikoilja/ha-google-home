@@ -130,7 +130,7 @@ def test_wait_starts_over_once_device_accepts_token(clock: Mock) -> None:
 
 
 def test_device_waits_longer_only_after_another_fetch(clock: Mock) -> None:
-    """Make a device wait longer only once a fetch after the one it counted gives a token it rejects.
+    """Make a device wait longer only for a fetch that started once its wait was over, not one it already counted.
 
     Its update once the wait is over can come before the account's update starts a
     new round, in a round whose fetch it already counted. Rejecting that token
@@ -149,6 +149,36 @@ def test_device_waits_longer_only_after_another_fetch(clock: Mock) -> None:
     assert glocaltokens.get_google_devices.call_count == 1
 
     assert when_fetched(client, glocaltokens, clock, [MINUTE + 15]) == [MINUTE + 15]
+
+
+def test_fetch_during_wait_doesnt_make_device_wait_longer(clock: Mock) -> None:
+    """Don't make a device wait longer for a fetch that started while it waited, such as another device's.
+
+    Its update once the wait is over can come before the account's update starts a
+    new round, in a round in which another device fetched the list during the wait.
+    Rejecting the token from that fetch again doesn't make it wait 2 minutes from
+    that fetch, so the next round fetches.
+    """
+    client, glocaltokens, session = rejecting_and_answering()
+    kitchen, bedroom = client.google_devices
+    # The device rejects the token Google gives, and waits until 60 seconds
+    assert when_fetched(client, glocaltokens, clock, [0, 45]) == [0]
+
+    # The other device restarts with a new token, which Google gives
+    session.request.side_effect = accepting(NEWER_TOKEN).request.side_effect
+    glocaltokens.get_google_devices.side_effect = None
+    glocaltokens.get_google_devices.return_value = [
+        found("device0", "10.0.0.2", OLD_TOKEN),
+        found("device1", "10.0.0.3", NEWER_TOKEN),
+    ]
+    # Their own updates, in the round that started at 45 seconds
+    for seconds, device in ((50, bedroom), (55, kitchen), (60, kitchen)):
+        clock.return_value = seconds
+        asyncio.run(client.update_device(device))
+    assert glocaltokens.get_google_devices.call_count == 2
+    assert bedroom.available
+
+    assert when_fetched(client, glocaltokens, clock, [75]) == [75]
 
 
 def test_action_waits_with_device(clock: Mock) -> None:
@@ -202,11 +232,14 @@ def test_device_fetch_fails_once_wait_is_over(clock: Mock) -> None:
 
 
 # What the log says when a device rejects the token from a fetch that worked, with
-# the minutes until Google is asked again
+# the minutes until Google is asked again, and what its error adds
 REJECTED_MESSAGE = (
     "device0 rejected the token that Google gave it. Google is asked for a new one "
-    "at the first update after {} min; further rejections are logged at debug level "
-    "until it accepts one"
+    "at the first update after {} min"
+)
+REJECTED_ERROR = (
+    f"{REJECTED_MESSAGE}; further rejections are logged at debug level until it "
+    "accepts one"
 )
 
 
@@ -219,7 +252,7 @@ REJECTED_MESSAGE = (
             3 * MINUTE,
             [0, 60, 180],
             [
-                ("ERROR", REJECTED_MESSAGE.format(2)),
+                ("ERROR", REJECTED_ERROR.format(2)),
                 ("INFO", "Updating device0 works again"),
             ],
             id="rejects-next-token",
@@ -254,3 +287,5 @@ def test_log_device_rejecting_tokens_once(
     assert when_fetched(client, glocaltokens, clock, times) == fetched
     assert [line for line in logged(caplog) if line[0] != "DEBUG"] == not_debug
     assert ("DEBUG", REJECTED_MESSAGE.format(1)) in logged(caplog)
+    # After the error, its rejection at 75 seconds is logged with the error's wording
+    assert (("DEBUG", REJECTED_ERROR.format(2)) in logged(caplog)) == bool(not_debug)

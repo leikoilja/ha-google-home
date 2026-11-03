@@ -739,10 +739,10 @@ class GlocaltokensApiClient(GoogleAccountClient):
         While polling is on, a device that rejects the token from a fetch that worked
         waits before its rejection fetches Google's list again: the next of
         FETCH_RETRY_DELAYS from the start of that fetch, longer for each later fetch
-        whose token it rejects once the wait is over, until it accepts a token. Once it
-        has rejected the tokens from two fetches in a row, the first update it fails
-        logs an error, and the others log for debugging: right after a device
-        restarts, Google may still give its old token for a short while.
+        that starts once the wait is over and whose token it rejects, until it accepts
+        a token. Once it has rejected the tokens from two fetches in a row, the first
+        update it fails logs an error, and the others log for debugging: right after a
+        device restarts, Google may still give its old token for a short while.
 
         After a fetch that failed, or while polling is off, the list is fetched again
         at the next update or, after a failed fetch, at the first update once the
@@ -755,19 +755,23 @@ class GlocaltokensApiClient(GoogleAccountClient):
             self.google_devices_fetched = False
         else:
             wait = self._token_waits.setdefault(device.device_id, TokenWait())
-            if wait.fetches < self._fetches and not wait.waiting(monotonic()):
+            if wait.counts(self._last_fetch_started):
                 wait.fetch_started(self._last_fetch_started)
-                wait.fetches = self._fetches
         if polling and wait is not None:
             message = (
                 "%s rejected the token that Google gave it. Google is asked for a new "
-                "one at %s; further rejections are logged at debug level until it "
-                "accepts one"
+                "one at %s"
             )
             when = first_update_after(wait.wait_left(monotonic()))
             if wait.repeated:
                 log_failure(
-                    device, polling, "token_rejected", message, device.name, when
+                    device,
+                    polling,
+                    "token_rejected",
+                    f"{message}; further rejections are logged at debug level until "
+                    "it accepts one",
+                    device.name,
+                    when,
                 )
             else:
                 _LOGGER.debug(message, device.name, when)

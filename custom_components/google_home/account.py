@@ -88,17 +88,15 @@ class TokenWait(FetchBackoff):
     """When a device's rejected token may fetch Google's list again, while polling.
 
     For a device that rejected the token from a fetch that worked, until it accepts
-    one: for it, each such fetch counts as failed. Each fetch counts at most once,
-    and only after the wait from the last one is over, so a rejection while the
-    device waits, or of a token from a fetch it already counted, doesn't make it wait
+    one: for it, each such fetch counts as failed. Only a fetch that started once the
+    wait was over counts, so a rejection while the device waits, or of a token from a
+    fetch that started meanwhile or that it already counted, doesn't make it wait
     longer.
     """
 
-    def __init__(self) -> None:
-        """Start with no fetches counted."""
-        super().__init__()
-        # How many fetches had ended when it last counted one
-        self.fetches = -1
+    def counts(self, started: float) -> bool:
+        """Return whether a fetch that started at this time counts: the wait was over by then."""
+        return started >= self._retry_at
 
     @property
     def repeated(self) -> bool:
