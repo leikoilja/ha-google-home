@@ -86,6 +86,9 @@
       "master-token-format": "Un token master inizia con aas_et/ ed è lungo 223 caratteri. Copia il token completo.",
       "other-account": "Hai effettuato l'accesso con un altro account Google, quindi non è stato modificato nulla. Accedi con l'account usato da questa integrazione. Per usare invece quell'altro account, elimina l'integrazione e aggiungila di nuovo.",
       "no-home-selected": "Scegli almeno una casa."
+    },
+    "abort": {
+      "no-home": "Google indica che questo account non fa parte di nessuna casa, quindi non ci sono altoparlanti o display da aggiungere. Nell'app Google Home, invita l'account nella casa in cui si trovano i tuoi dispositivi, accetta l'invito e poi aggiungi di nuovo l'integrazione. Un account Google Workspace non può essere invitato, quindi aggiungi l'integrazione con un account Gmail che fa parte della casa. Per maggiori dettagli, consulta {docs_url}."
     }
   },
   "entity": {

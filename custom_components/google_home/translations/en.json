@@ -86,6 +86,9 @@
       "master-token-format": "A master token starts with aas_et/ and is 223 characters long. Copy the whole token.",
       "other-account": "You signed in to a different Google account, so nothing was changed. Sign in with the account this integration uses. To use the other account instead, delete the integration and add it again.",
       "no-home-selected": "Choose at least one home."
+    },
+    "abort": {
+      "no-home": "Google reports that this account isn't a member of any home, so there are no speakers or displays to add. In the Google Home app, invite the account to the home that your devices are in and accept the invitation, then add the integration again. A Google Workspace account can't be invited, so add the integration with a Gmail account that is a member of the home instead. For details, see {docs_url}."
     }
   },
   "entity": {

@@ -86,6 +86,9 @@
       "master-token-format": "Master token 以 aas_et/ 開頭，共 223 個字元。請複製完整值。",
       "other-account": "你登入的是其他 Google 帳號，因此未進行任何變更。請使用此整合所用的帳號登入。如要改用剛才登入的帳號，請刪除整合後再重新新增。",
       "no-home-selected": "請至少選擇一個住家。"
+    },
+    "abort": {
+      "no-home": "Google 回報，這個帳號不是任何住家的成員，因此沒有可以加入的音箱或螢幕。請在 Google Home 應用程式中，邀請這個帳號加入你的裝置所在的住家並接受邀請，然後重新新增整合。Google Workspace 帳號無法受邀，因此請改用身為該住家成員的 Gmail 帳號新增整合。詳情請參閱：{docs_url}"
     }
   },
   "entity": {

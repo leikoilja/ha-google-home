@@ -86,6 +86,9 @@
       "master-token-format": "Hlavný token sa začína aas_et/ a má 223 znakov. Skopírujte celý token.",
       "other-account": "Prihlásili ste sa do iného účtu Google, preto sa nič nezmenilo. Prihláste sa do účtu, ktorý táto integrácia používa. Ak chcete namiesto toho používať ten druhý účet, integráciu odstráňte a pridajte ju znova.",
       "no-home-selected": "Vyberte aspoň jednu domácnosť."
+    },
+    "abort": {
+      "no-home": "Google uvádza, že tento účet nie je členom žiadnej domácnosti, takže nie sú žiadne reproduktory ani displeje na pridanie. V aplikácii Google Home pozvite tento účet do domácnosti, v ktorej sú vaše zariadenia, pozvánku prijmite a potom pridajte integráciu znova. Účet Google Workspace nie je možné pozvať, preto namiesto neho pridajte integráciu s účtom Gmail, ktorý je členom domácnosti. Podrobnosti nájdete na {docs_url}."
     }
   },
   "entity": {
