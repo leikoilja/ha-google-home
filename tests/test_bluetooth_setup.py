@@ -15,6 +15,7 @@ import logging
 from typing import cast
 from unittest.mock import Mock, patch
 
+from freezegun.api import FrozenDateTimeFactory
 import probatio
 import pytest
 from pytest_homeassistant.common import (
@@ -26,6 +27,7 @@ from pytest_homeassistant.components.diagnostics import get_diagnostics_for_conf
 from pytest_homeassistant.components.recorder.common import async_wait_recording_done
 from pytest_homeassistant.typing import ClientSessionGenerator, WebSocketGenerator
 
+from custom_components.google_home import bluetooth as scanner_module
 from custom_components.google_home.models import GoogleHomeDevice
 from custom_components.google_home.types import BluetoothJsonDict
 
@@ -87,8 +89,14 @@ class Scans:
 
 
 @pytest.fixture(name="scans")
-def fixture_scans() -> Iterator[Scans]:
-    """Fake the speakers' Bluetooth scans and the scanner's clock."""
+def fixture_scans(request: pytest.FixtureRequest) -> Iterator[Scans]:
+    """Fake the speakers' Bluetooth scans and the scanner's clock.
+
+    In a test that also freezes time, the freezer starts first, for the reason the
+    clock fixture gives.
+    """
+    if "freezer" in request.fixturenames:
+        request.getfixturevalue("freezer")
     scans = Scans()
     with (
         patch(f"{BLUETOOTH}.async_get_bluetooth_scan_results", scans.results),
@@ -132,6 +140,22 @@ async def add_device(
             result["flow_id"], user_input
         )
     )
+
+
+@pytest.mark.usefixtures("time_frozen_before")
+def test_scans_clock_holds_while_time_is_frozen(
+    scans: Scans, freezer: FrozenDateTimeFactory
+) -> None:
+    """Keep the scanner's time where the test sets it, also while the test freezes time.
+
+    Under pytest -n, whether an earlier test in the same process froze time depends on
+    how the tests are shared out.
+    """
+    scans.now = 5.0
+    freezer.tick(timedelta(seconds=60))
+
+    # Through vars(): mypy doesn't count monotonic, imported from time, as the module's
+    assert vars(scanner_module)["monotonic"]() == 5.0
 
 
 @pytest.mark.usefixtures("google", "replies")
@@ -311,8 +335,6 @@ async def test_disabled_speaker_not_asked(
     scans.started.clear()
     disabled_scanner = runtime(config_entry).bluetooth
     await set_disabled(hass, device_registry, kitchen.id, disabled=False)
-    # Not with the freezer: once freezegun has seen the scanner's real clock, its later
-    # starts put its own clock over the scans fixture's
     async_fire_time_changed(
         hass, dt_util.utcnow() + timedelta(seconds=RELOAD_AFTER_UPDATE_DELAY + 1)
     )

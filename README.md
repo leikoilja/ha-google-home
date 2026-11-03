@@ -71,5 +71,5 @@ Ask questions in [GitHub Discussions](https://github.com/leikoilja/ha-google-hom
 [quality-scale]: https://ha-google-home.pages.dev/#quality-scale
 [releases-shield]: https://img.shields.io/github/release/leikoilja/ha-google-home.svg?style=for-the-badge
 [releases]: https://github.com/leikoilja/ha-google-home/releases
-[installs-shield]: https://img.shields.io/badge/dynamic/json?style=for-the-badge&color=blue&label=installs&cacheSeconds=3600&url=https://analytics.home-assistant.io/custom_integrations.json&query=$.google_home.total
-[installs]: https://analytics.home-assistant.io/custom_integrations.json
+[installs-shield]: https://img.shields.io/badge/dynamic/json?style=for-the-badge&color=blue&logo=home-assistant&label=installs&cacheSeconds=3600&url=https://analytics.home-assistant.io/custom_integrations.json&query=$.google_home.total
+[installs]: https://www.home-assistant.io/integrations/analytics/
