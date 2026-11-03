@@ -8,10 +8,12 @@ from collections.abc import Awaitable, Callable, Iterable
 from datetime import timedelta
 from http import HTTPStatus
 from importlib import import_module
+import logging
 from pathlib import Path
 from typing import TypedDict
 from unittest.mock import Mock, patch
 
+from aiohttp import ClientConnectionError
 from freezegun.api import FrozenDateTimeFactory
 from glocaltokens.exceptions import AuthenticationError
 import probatio
@@ -383,6 +385,42 @@ async def test_master_token_rejected_at_setup(
     [flow] = hass.config_entries.flow.async_progress_by_handler(DOMAIN)
     assert flow["context"].get("source") == SOURCE_REAUTH
     assert flow["context"].get("entry_id") == config_entry.entry_id
+
+
+@pytest.mark.usefixtures("replies")
+@pytest.mark.parametrize(
+    "error", [ClientConnectionError(), TimeoutError()], ids=["unreachable", "timed-out"]
+)
+async def test_setup_retried_while_google_unreachable(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    google: Mock,
+    caplog: pytest.LogCaptureFixture,
+    error: Exception,
+) -> None:
+    """Retry setup while Google can't be reached, and set up once it answers.
+
+    Home Assistant logs that it retries, so the integration logs nothing above
+    debug level.
+    """
+    google.side_effect = error
+
+    assert not await hass.config_entries.async_setup(config_entry.entry_id)
+    await hass.async_block_till_done()
+    states = [config_entry.state]
+    assert [
+        record.getMessage()
+        for record in caplog.records
+        if record.name == "custom_components.google_home"
+        and record.levelno > logging.DEBUG
+    ] == []
+
+    google.side_effect = None
+    await hass.config_entries.async_reload(config_entry.entry_id)
+    await hass.async_block_till_done()
+    states.append(config_entry.state)
+
+    assert states == [ConfigEntryState.SETUP_RETRY, ConfigEntryState.LOADED]
 
 
 async def test_known_hosts_changed(

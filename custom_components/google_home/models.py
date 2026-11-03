@@ -72,6 +72,10 @@ class GoogleHomeDevice:
         # Updates in a row whose alarms request, or info request if it has no alarms,
         # the device didn't answer
         self.unanswered_updates = 0
+        # The failures of its updates' requests that were logged as errors, by type,
+        # until an update works, and whether a request of the running update failed
+        self.logged_failures: set[str] = set()
+        self.update_failed = False
         self.do_not_disturb = False
         self.alarm_volume = GOOGLE_HOME_ALARM_DEFAULT_VALUE
         self._timers: list[GoogleHomeTimer] = []

@@ -61,8 +61,31 @@ BUILD_INFO_FIELDS = (
 )
 
 
+def log_failure(
+    device: GoogleHomeDevice,
+    polling: bool,
+    failure: str,
+    message: str,
+    *args: object,
+    exc_info: bool = False,
+) -> None:
+    """Log a failed request to the device as an error, or for debugging if its updates already did.
+
+    An update logs each type of failure once, until an update of the device works,
+    and the others for debugging, and its failure marks the running update as
+    failed. An action logs every failure.
+    """
+    if polling:
+        device.update_failed = True
+        if failure in device.logged_failures:
+            _LOGGER.debug(message, *args, exc_info=exc_info)
+            return
+        device.logged_failures.add(failure)
+    _LOGGER.error(message, *args, exc_info=exc_info)
+
+
 def answer_failure(
-    device: GoogleHomeDevice, response: ClientResponse
+    device: GoogleHomeDevice, response: ClientResponse, *, polling: bool
 ) -> RequestFailure:
     """Log an answer other than 200 from the device, and return why it failed."""
     if response.status == HTTPStatus.UNAUTHORIZED:
@@ -81,7 +104,10 @@ def answer_failure(
             device.hardware,
         )
         return "not_ready"
-    _LOGGER.error(
+    log_failure(
+        device,
+        polling,
+        f"HTTP {response.status}",
         "Failed to access %s, API returned %d: %s",
         device.name,
         response.status,
@@ -118,9 +144,15 @@ class GlocaltokensApiClient(GoogleAccountClient):
             return False
         if not device.auth_token and not device.alarms_unsupported:
             return False
+        device.update_failed = False
         await self.collect_data_from_endpoints(
             device, found_at_known_host=found_at_known_host
         )
+        # It answered, and none of its requests failed: alarms and settings, or its
+        # info if it has no alarms
+        if device.logged_failures and device.reachable and not device.update_failed:
+            _LOGGER.info("Updating %s works again", device.name)
+            device.logged_failures.clear()
         return True
 
     async def collect_data_from_endpoints(
@@ -330,7 +362,10 @@ class GlocaltokensApiClient(GoogleAccountClient):
             )
             return device
         if response is not None:
-            _LOGGER.error(
+            log_failure(
+                device,
+                polling,
+                "unknown alarms reply",
                 (
                     "Failed to parse fetched alarms and timers for device %s - "
                     "API returned unknown json structure. "
@@ -574,6 +609,7 @@ class GlocaltokensApiClient(GoogleAccountClient):
             )
         except DeviceRequestFailed:
             if polling:
+                device.update_failed = True
                 return None
             raise
 
@@ -637,7 +673,7 @@ class GlocaltokensApiClient(GoogleAccountClient):
                         resp = {}
                     device.available = True
                 else:
-                    failure = answer_failure(device, response)
+                    failure = answer_failure(device, response, polling=polling)
             # Only once the answer has been read, if it's read: a 200 whose body
             # times out or is cut off isn't an answer
             device.statuses[endpoint, polling] = status
@@ -651,9 +687,13 @@ class GlocaltokensApiClient(GoogleAccountClient):
             raise DeviceRequestFailed(device.name, "offline") from error
         except ClientError as error:
             # Make sure that we log the exception from the client if one occurred.
-            _LOGGER.exception(
+            log_failure(
+                device,
+                polling,
+                type(error).__name__,
                 "Request from %s device error",
                 device.name,
+                exc_info=True,
             )
             device.available = False
             # A connection that closed or an answer that was cut off: the device
@@ -733,6 +773,7 @@ class GlocaltokensApiClient(GoogleAccountClient):
         if device.auth_token == rejected_token:
             try:
                 await self._async_fetch_devices(self._fetches_before_update)
+            # Google can't be reached at setup
             except ClientError, TimeoutError:
                 _LOGGER.debug("Failed to fetch Google's device list", exc_info=True)
         return device.auth_token != rejected_token
