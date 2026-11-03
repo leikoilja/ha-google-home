@@ -328,6 +328,8 @@ def test_plain_placeholders_with_punctuation(catalogs: Path, value: str) -> None
         ("`{docs_url}``을", "docs_url", "``을"),
         ("`a\nb`{docs_url}`을", "docs_url", "`을"),
         ("`a\rb`{docs_url}`을", "docs_url", "`을"),
+        # Only a line of spaces or tabs is blank; NBSP doesn't end the paragraph
+        ("`a\n\xa0\nb`{docs_url}`을", "docs_url", "`을"),
         # A blank line, written with LF or CR, ends a code span or link text
         ("`a\n\n{docs_url}을 `", "docs_url", "을"),
         ("`a\r\r{docs_url}을 `", "docs_url", "을"),
@@ -361,11 +363,20 @@ def test_text_glued_to_url_placeholder_fails(
         (
             "Hilfe: {docs_url}.Danach",
             (
-                "Put a space or line break right after the placeholder, or after "
-                "ASCII punctuation such as '.' that follows it; rephrase; or write "
-                "a Markdown link such as [text]({docs_url})"
+                "Put a space or line break after the placeholder and any ASCII "
+                "punctuation right after it, such as '.' or '**'; rephrase; or "
+                "write a Markdown link such as [text]({docs_url})"
             ),
             "Hilfe: {docs_url}. Danach",
+        ),
+        (
+            "**{docs_url}**s",
+            (
+                "Put a space or line break after the placeholder and any ASCII "
+                "punctuation right after it, such as '.' or '**'; rephrase; or "
+                "write a Markdown link such as [text]({docs_url})"
+            ),
+            "**{docs_url}** s",
         ),
         (
             "[Hilfe]({docs_url}.)",
@@ -377,8 +388,19 @@ def test_text_glued_to_url_placeholder_fails(
         ),
         (
             "<{docs_url}(>",
-            "Keep only the placeholder inside <>, as in <{docs_url}>",
+            (
+                "Keep only the placeholder inside <>, as in <{docs_url}>, and "
+                "nothing else inside any link parentheses around it"
+            ),
             "<{docs_url}>(",
+        ),
+        (
+            "[Hilfe](<{docs_url}.>)",
+            (
+                "Keep only the placeholder inside <>, as in <{docs_url}>, and "
+                "nothing else inside any link parentheses around it"
+            ),
+            "[Hilfe](<{docs_url}>).",
         ),
     ],
 )

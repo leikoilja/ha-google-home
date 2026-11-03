@@ -171,7 +171,10 @@ def check_paragraph_url_suffixes(paragraph: str) -> None:
             spans_paired = False
         elif match["angle"]:
             name, suffix = match["angle"], match["inside"]
-            advice = f"Keep only the placeholder inside <>, as in <{{{name}}}>"
+            advice = (
+                f"Keep only the placeholder inside <>, as in <{{{name}}}>, and "
+                "nothing else inside any link parentheses around it"
+            )
         elif match["name"]:
             name = match["name"]
             if match["target"] is not None and match["rest"]:
@@ -187,8 +190,8 @@ def check_paragraph_url_suffixes(paragraph: str) -> None:
                     link = kept[0]
                 suffix = link.removeprefix(SAMPLE_URL)
                 advice = (
-                    "Put a space or line break right after the placeholder, or after "
-                    "ASCII punctuation such as '.' that follows it; rephrase; or "
+                    "Put a space or line break after the placeholder and any ASCII "
+                    "punctuation right after it, such as '.' or '**'; rephrase; or "
                     f"write a Markdown link such as [text]({{{name}}})"
                 )
             # marked carries on after the link, where the dropped text can hold
