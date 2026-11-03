@@ -273,7 +273,8 @@ class GoogleAccountClient:
 
         The first failure of an outage is logged as an error, with when the list is
         fetched again, and the others for debugging until a fetch works. Raise
-        ClientError or TimeoutError if Google can't be reached at setup.
+        ClientError or TimeoutError if Google can't be reached at setup, other than
+        at a scheduled fetch.
 
         Return the known hosts that this fetch gave devices, by device ID.
         """
@@ -304,10 +305,11 @@ class GoogleAccountClient:
             self._log_failed_fetch(error, due)
             # Keep the devices of an earlier fetch rather than drop them
             return {}
-        # Google can't be reached. At setup, setup then fails, and Home Assistant
-        # tries again.
+        # Google can't be reached. Setup's own fetch then fails setup, and Home
+        # Assistant tries again. A scheduled fetch while setup still runs, such as
+        # for a device that mDNS found, keeps the list it fetched.
         except (ClientError, TimeoutError) as error:
-            if self.setting_up:
+            if self.setting_up and not scheduled:
                 raise
             self._log_failed_fetch(error, due)
             return {}

@@ -151,6 +151,29 @@ def test_ask_to_sign_in_when_rejected_during_outage(
     ]
 
 
+def test_keep_list_when_scheduled_fetch_during_setup_fails(
+    clock: Mock, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Keep the list when a fetch that is due while setup still runs can't reach Google, and log it once.
+
+    Only setup's own fetch fails setup. An update of the account while setup still
+    asks the devices, such as for a device that mDNS found, fetches on schedule and
+    keeps the list it has, so Home Assistant doesn't log that the update failed.
+    """
+    client, glocaltokens = make_client("10.0.0.2")
+    devices = list(client.google_devices)
+    client.setting_up = True
+    glocaltokens.get_google_devices.side_effect = ClientConnectionError()
+    clock.return_value = FETCH_DEVICES_INTERVAL
+
+    assert list(update(client).values()) == devices
+    assert glocaltokens.get_google_devices.call_count == 1
+    assert client.google_devices_fetched
+    assert [line for line in logged(caplog) if line[0] != "DEBUG"] == [
+        failure_logged("ClientConnectionError", 20)
+    ]
+
+
 @pytest.mark.parametrize("error", FETCH_ERRORS)
 def test_log_failed_fetches_once_until_one_works(
     clock: Mock, caplog: pytest.LogCaptureFixture, error: Exception
