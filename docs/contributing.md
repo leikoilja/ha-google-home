@@ -15,7 +15,7 @@ The integration's setup screens, options, entity names and action descriptions f
 Translations are files in [`custom_components/google_home/translations`](https://github.com/leikoilja/ha-google-home/tree/master/custom_components/google_home/translations). You can edit them on GitHub in your browser:
 
 - **To fix a translation**, open your language's file, select the pencil icon, and make your changes.
-- **To add a language**, open [`en.json`](https://github.com/leikoilja/ha-google-home/blob/master/custom_components/google_home/translations/en.json), copy its contents, then [create a new file](https://github.com/leikoilja/ha-google-home/new/master/custom_components/google_home/translations) and paste them. Name the file using a code from [Home Assistant's language list](https://github.com/home-assistant/core/blob/2026.11.0b1/homeassistant/generated/languages.py), such as `de.json` for German or `pt-BR.json` for Brazilian Portuguese, and translate the text.
+- **To add a language**, open [`en.json`](https://github.com/leikoilja/ha-google-home/blob/master/custom_components/google_home/translations/en.json), copy its contents, then [create a new file](https://github.com/leikoilja/ha-google-home/new/master/custom_components/google_home/translations) and paste them. Name the file using a code from [Home Assistant's language list](https://github.com/home-assistant/core/blob/2026.11.0b4/homeassistant/generated/languages.py), such as `de.json` for German or `pt-BR.json` for Brazilian Portuguese, and translate the text.
 
 Translate only the text after each colon. Keep the keys before the colons and anything in curly brackets, such as `{docs_url}`, unchanged. Home Assistant fills those in.
 
@@ -53,7 +53,7 @@ Run the tests:
 uv run pytest
 ```
 
-Some tests run the integration inside Home Assistant, with fixtures from Home Assistant's [pytest-home-assistant](https://github.com/home-assistant/core/tree/dev/packages/pytest-home-assistant). It isn't on PyPI yet, so `pyproject.toml` installs it from a Home Assistant release archive, under `[tool.uv.sources]`. When you change `homeassistant` in `pyproject.toml`, change that archive to the same version. Nothing checks that they match.
+Some tests run the integration inside Home Assistant, with fixtures from Home Assistant's [pytest-homeassistant](https://github.com/home-assistant/core/tree/dev/packages/pytest-homeassistant). Each Home Assistant release publishes it with the same version, and it requires that exact `homeassistant`: when you change `homeassistant` in `pyproject.toml`, change `pytest-homeassistant` to the same version, or `uv lock` fails.
 
 If you change an entity's name, state, attributes or registry entry on purpose, update the snapshots with `uv run pytest --snapshot-update`, and review the changes under `tests/snapshots/` before you commit. Entity icons are in `icons.json`, which the snapshots don't cover: if you change one, update the expected icons in `tests/test_setup.py`.
 
@@ -97,7 +97,33 @@ uvx prek install
 
 [`quality_scale.yaml`](https://github.com/leikoilja/ha-google-home/blob/master/custom_components/google_home/quality_scale.yaml) records each rule of Home Assistant's [integration quality scale](https://contributors.home-assistant.io/core/quality-scale/) as done or exempt, with the reason for each exemption. Changes must keep meeting the rules marked done, and update the file when they affect a rule: adding a trigger, for example, makes `docs-triggers` apply, so document the trigger and mark the rule done.
 
-Hassfest skips this file for custom integrations, even when you run it yourself, so CI doesn't check it against the rules. When a change affects a rule or you bump `homeassistant` in `pyproject.toml`, check the file against core's source at the version `pyproject.toml` pins: write a short Python script that runs `SCHEMA` and the done rules' `VALIDATORS` from `script/hassfest/quality_scale.py`, and check that no rule is `todo`. The `strict-typing` validator always fails, because a custom integration can't be on core's own `.strict-typing` list; the mypy check in prek runs in strict mode, which covers the rule.
+Hassfest skips this file for custom integrations, even when you run it yourself, so the **Pre-commit** check on your pull request runs it through Home Assistant's quality scale code instead. To run the check locally:
+
+```shell
+uv run python script/check_quality_scale.py
+```
+
+The script downloads Home Assistant's source code from GitHub (about 34 MB), at the version `pyproject.toml` pins, and checks that:
+
+- The file lists every rule of that version, in the order of Home Assistant's [list of rules](https://github.com/home-assistant/core/blob/dev/script/hassfest/quality_scale.py), and nothing else. The order is the script's own check.
+- Each rule is done, or exempt with a comment. None is `todo`, which Home Assistant allows but the script doesn't.
+- The rules marked done pass Home Assistant's validators. Only a few rules have one, such as `config-flow` and `runtime-data`, so for the rest the check can't confirm that the integration meets them.
+
+If the check reports `required key not provided` for a rule after you bump `homeassistant`, that version added the rule. Read the rule, meet it or decide why it doesn't apply, and add it in Home Assistant's order as done or exempt.
+
+The `strict-typing` validator first looks for the integration on Home Assistant's own `.strict-typing` list, which a custom integration can't join. The mypy check in prek runs in strict mode, so the script adds the integration to its downloaded copy of the list. The validator then checks that each requirement in `manifest.json` ships type hints, in a `py.typed` file or a `types-` package, and fails for one that doesn't. It checks the installed version, so every requirement must also be in `pyproject.toml`.
+
+After the file passes, the script checks copies of it with one mistake each:
+
+- A rule marked `todo`.
+- A missing rule.
+- Two rules out of order.
+- An exemption without a comment.
+- A key outside `rules`.
+- `reconfiguration-flow` marked done, which fails because the integration has no reconfigure step.
+- A requirement without type hints, from a stand-in package the script creates.
+
+If it accepts any of them, it fails with "Self-check: the check accepted" and the copies it accepted. After a bump, that means Home Assistant's checks changed, and the script needs updating. If you add a reconfigure step and mark `reconfiguration-flow` done, that copy no longer has a mistake: replace it in the script with another rule whose validator fails.
 
 ### Edit the docs
 
