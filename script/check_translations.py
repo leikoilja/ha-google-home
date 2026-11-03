@@ -190,9 +190,9 @@ def check_paragraph_url_suffixes(paragraph: str) -> None:
                     link = kept[0]
                 suffix = link.removeprefix(SAMPLE_URL)
                 advice = (
-                    "Put a space or line break after the placeholder and any ASCII "
-                    "punctuation right after it, such as '.' or '**'; rephrase; or "
-                    f"write a Markdown link such as [text]({{{name}}})"
+                    "Put a space or line break after the placeholder and any of "
+                    "the characters . , : ; ! ? ' \" ) * _ ~ right after it; "
+                    f"rephrase; or write a Markdown link such as [text]({{{name}}})"
                 )
             # marked carries on after the link, where the dropped text can hold
             # another placeholder

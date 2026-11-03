@@ -293,8 +293,9 @@ def test_plain_placeholders_with_punctuation(catalogs: Path, value: str) -> None
         ("如需協助，請參閱 {docs_url}。", "docs_url", "。"),
         ("請參閱 {docs_url}。\n\n如果重新開啟輪詢", "docs_url", "。"),
         ("請參閱 {docs_url}。完成後重新載入。", "docs_url", "。完成後重新載入。"),
-        # Only ASCII punctuation right before a space or the end stays out
+        # Only . , : ; ! ? ' " ) * _ ~ right before a space or the end stay out
         ("Siehe ‘{docs_url}’", "docs_url", "’"),
+        ("Siehe {docs_url}- Details", "docs_url", "-"),
         ("Siehe {docs_url}.Dann", "docs_url", ".Dann"),
         ("Siehe {docs_url})weiter", "docs_url", ")weiter"),
         ("See {url}을", "url", "을"),
@@ -357,25 +358,26 @@ def test_text_glued_to_url_placeholder_fails(
     )
 
 
+BARE_ADVICE = (
+    "Put a space or line break after the placeholder and any of the characters "
+    ". , : ; ! ? ' \" ) * _ ~ right after it; rephrase; or write a Markdown link "
+    "such as [text]({docs_url})"
+)
+
+
 @pytest.mark.parametrize(
     ("value", "advice", "fixed"),
     [
         (
             "Hilfe: {docs_url}.Danach",
-            (
-                "Put a space or line break after the placeholder and any ASCII "
-                "punctuation right after it, such as '.' or '**'; rephrase; or "
-                "write a Markdown link such as [text]({docs_url})"
-            ),
+            BARE_ADVICE,
             "Hilfe: {docs_url}. Danach",
         ),
+        ("See {docs_url}-details", BARE_ADVICE, "See {docs_url} -details"),
+        ("See {docs_url}/de", BARE_ADVICE, "See {docs_url} /de"),
         (
             "**{docs_url}**s",
-            (
-                "Put a space or line break after the placeholder and any ASCII "
-                "punctuation right after it, such as '.' or '**'; rephrase; or "
-                "write a Markdown link such as [text]({docs_url})"
-            ),
+            BARE_ADVICE,
             "**{docs_url}** s",
         ),
         (
