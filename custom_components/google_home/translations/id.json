@@ -86,6 +86,9 @@
       "master-token-format": "Token master diawali dengan aas_et/ dan panjangnya 223 karakter. Salin seluruh token.",
       "other-account": "Anda login ke akun Google yang berbeda, sehingga tidak ada yang diubah. Login dengan akun yang digunakan integrasi ini. Untuk menggunakan akun lain tersebut, hapus integrasi lalu tambahkan kembali.",
       "no-home-selected": "Pilih minimal satu rumah."
+    },
+    "abort": {
+      "no-home": "Google melaporkan bahwa akun ini bukan anggota rumah mana pun, sehingga tidak ada speaker atau layar yang dapat ditambahkan. Di aplikasi Google Home, undang akun ini ke rumah tempat perangkat Anda berada, terima undangannya, lalu tambahkan kembali integrasi. Akun Google Workspace tidak dapat diundang, jadi tambahkan integrasi dengan akun Gmail yang merupakan anggota rumah tersebut. Untuk detailnya, lihat {docs_url}."
     }
   },
   "entity": {

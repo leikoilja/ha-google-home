@@ -86,6 +86,9 @@
       "master-token-format": "Een mastertoken begint met aas_et/ en is 223 tekens lang. Kopieer het volledige token.",
       "other-account": "Je bent ingelogd met een ander Google-account, dus er is niets gewijzigd. Log in met het account dat deze integratie gebruikt. Om in plaats daarvan dat andere account te gebruiken, verwijder je de integratie en voeg je deze opnieuw toe.",
       "no-home-selected": "Kies ten minste één huis."
+    },
+    "abort": {
+      "no-home": "Google meldt dat dit account geen lid is van een huis, dus er zijn geen speakers of schermen om toe te voegen. Nodig het account in de Google Home-app uit voor het huis waarin je apparaten staan, accepteer de uitnodiging en voeg de integratie daarna opnieuw toe. Een Google Workspace-account kan niet worden uitgenodigd, dus voeg de integratie in dat geval toe met een Gmail-account dat lid is van het huis. Zie {docs_url} voor meer informatie."
     }
   },
   "entity": {

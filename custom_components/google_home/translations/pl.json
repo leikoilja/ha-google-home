@@ -86,6 +86,9 @@
       "master-token-format": "Token główny zaczyna się od aas_et/ i ma 223 znaki. Skopiuj cały token.",
       "other-account": "Zalogowano się na inne konto Google, więc nic nie zostało zmienione. Zaloguj się na konto używane przez tę integrację. Aby zamiast tego używać tamtego konta, usuń integrację i dodaj ją ponownie.",
       "no-home-selected": "Wybierz co najmniej jeden dom."
+    },
+    "abort": {
+      "no-home": "Według Google to konto nie jest członkiem żadnego domu, więc nie ma głośników ani wyświetlaczy do dodania. W aplikacji Google Home zaproś to konto do domu, w którym są Twoje urządzenia, zaakceptuj zaproszenie, a potem dodaj integrację ponownie. Konta Google Workspace nie można zaprosić, więc w takim przypadku dodaj integrację za pomocą konta Gmail, które jest członkiem domu. Szczegóły znajdziesz na stronie {docs_url}."
     }
   },
   "entity": {

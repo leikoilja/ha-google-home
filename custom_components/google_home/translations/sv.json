@@ -86,6 +86,9 @@
       "master-token-format": "En master token börjar med aas_et/ och är 223 tecken lång. Kopiera hela värdet.",
       "other-account": "Du loggade in på ett annat Google-konto, så inget ändrades. Logga in med kontot som den här integrationen använder. Om du i stället vill använda det andra kontot raderar du integrationen och lägger till den igen.",
       "no-home-selected": "Välj minst ett hem."
+    },
+    "abort": {
+      "no-home": "Google rapporterar att det här kontot inte är medlem i något hem, så det finns inga högtalare eller skärmar att lägga till. I Google Home-appen bjuder du in kontot till hemmet där dina enheter finns, godkänner inbjudan och lägger sedan till integrationen igen. Ett Google Workspace-konto kan inte bjudas in, så lägg i stället till integrationen med ett Gmail-konto som är medlem i hemmet. Mer information finns på {docs_url}."
     }
   },
   "entity": {

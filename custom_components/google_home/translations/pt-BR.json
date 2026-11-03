@@ -86,6 +86,9 @@
       "master-token-format": "Um token mestre começa com aas_et/ e tem 223 caracteres. Copie o token completo.",
       "other-account": "Você fez login em outra conta do Google, então nada foi alterado. Faça login com a conta que esta integração usa. Para usar essa outra conta, exclua a integração e adicione-a novamente.",
       "no-home-selected": "Escolha pelo menos uma casa."
+    },
+    "abort": {
+      "no-home": "O Google informa que esta conta não é membro de nenhuma casa, então não há alto-falantes nem telas para adicionar. No app Google Home, convide a conta para a casa em que seus dispositivos estão, aceite o convite e adicione a integração novamente. Uma conta do Google Workspace não pode ser convidada, então adicione a integração com uma conta do Gmail que seja membro da casa. Para mais detalhes, consulte {docs_url}."
     }
   },
   "entity": {
