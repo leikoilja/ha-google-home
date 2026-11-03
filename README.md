@@ -43,13 +43,13 @@ Install the integration from HACS: search for **Google Home**. Then follow **[Ge
 Read the full documentation at **[ha-google-home.pages.dev](https://ha-google-home.pages.dev/)**:
 
 - [Getting Started](https://ha-google-home.pages.dev/installation/): prerequisites, installation, sign-in and a first check with a timer
-- [Configuration and management](https://ha-google-home.pages.dev/configuration/): update interval, adding and removing devices, devices on another network and removing the integration
+- [Configuration and management](https://ha-google-home.pages.dev/configuration/): update interval, polling, adding and removing devices, devices on another network, homes and removing the integration
 - [Automation examples](https://ha-google-home.pages.dev/automations/): lights before an alarm, blinds when it goes off and timer notifications
 - [Entities](https://ha-google-home.pages.dev/entities/): alarms, timers, Do Not Disturb, alarm volume, reboot, firmware updates, firmware version and Wi-Fi
 - [Bluetooth tracking](https://ha-google-home.pages.dev/bluetooth/): whether your phone and other Bluetooth devices are home, using your speakers
 - [Actions](https://ha-google-home.pages.dev/actions/): delete alarms and timers, reboot and refresh devices
 - [Other integrations](https://ha-google-home.pages.dev/other-integrations/): media, media volume, spoken messages, Assistant commands and other Google Home devices
-- [Troubleshooting](https://ha-google-home.pages.dev/troubleshooting/)
+- [Troubleshooting](https://ha-google-home.pages.dev/troubleshooting/): setup errors, missing devices, unavailable entities, diagnostics and debug logs
 - [Community](https://ha-google-home.pages.dev/community/): dashboard cards and Node-RED flows
 - [Contributing](https://ha-google-home.pages.dev/contributing/): questions, bug reports, translations and development
 

@@ -60,7 +60,7 @@ You can see it in [**Settings** > **Tools** > **States**](https://my.home-assist
 
 Each value is the median of what that speaker heard over 5 minutes. A speaker is listed only if it heard the device in at least two scans in that time, at -80 dBm or stronger: the same readings that count for `home`. The attribute updates every 5 minutes.
 
-When the tracker's state changes, the 5 minutes start again, so a value never mixes readings from before and after. The attribute is empty (`{}`):
+The attribute is empty (`{}`):
 
 - While the device is away.
 - For the first 5 minutes after the tracker changes to `home`, including after Home Assistant starts.
@@ -68,7 +68,7 @@ When the tracker's state changes, the 5 minutes start again, so a value never mi
 
 Treat the values as a rough guide. In testing, one speaker's readings varied by about 20 dB with a phone lying still. The median smooths this out, but the strongest speaker isn't necessarily the nearest, so don't rely on the attribute to tell which room you're in. It's useful for checking how well your speakers cover the places where you keep the device: a device that only one speaker hears, at close to -80 dBm, can show `not_home` when its signal stays below that for 90 seconds.
 
-Home Assistant doesn't keep the attribute's values in its history, so only the current value is available. When the value changes, Home Assistant still records a small history entry for the tracker, at most one every 5 minutes while the device is home.
+Home Assistant doesn't keep the attribute's values in its history, so only the current value is available.
 
 ## Tracker is unavailable
 
@@ -83,9 +83,9 @@ If that speaker is unplugged or out of service, tell the integration not to use 
 
 You can't delete a speaker that Google still lists in your home, even when it's offline. To stop it from blocking `not_home`, exclude it, or disable it as described below.
 
-A speaker that you [disable in Home Assistant](configuration.md#stop-checking-some-devices) stops scanning until you enable it again, and no longer keeps trackers from showing `not_home`. A device that it heard just before you disabled it still shows `home` until that sighting is 90 seconds old, as with any speaker. If no other speaker scans, trackers can't tell whether you're home, as described above.
+A speaker that you [disable in Home Assistant](configuration.md#stop-checking-some-devices) stops scanning until you enable it again, and no longer keeps trackers from showing `not_home`. If no other speaker scans, trackers can't tell whether you're home, as described above.
 
-A silent speaker also stops blocking `not_home` once Google no longer lists it, for example after you remove it from the Google Home app. Reloading the integration (**Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**) or restarting Home Assistant has the same effect until the speaker answers again.
+A silent speaker also stops blocking `not_home` once Google no longer lists it, for example after you remove it from the Google Home app. Reloading the integration or restarting Home Assistant has the same effect until the speaker answers again.
 
 Devices that don't support Bluetooth scans, such as a Chromecast Audio or an Android TV, are left out automatically. So is any device that hasn't returned scan results since the integration last loaded, for example because it was offline.
 

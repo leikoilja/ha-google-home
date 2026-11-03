@@ -6,7 +6,7 @@ For help with setup or usage, search [GitHub Discussions](https://github.com/lei
 
 ## Report a bug or suggest a feature
 
-[Open an issue](https://github.com/leikoilja/ha-google-home/issues/new/choose). For a bug, include the integration version, the [diagnostics file](troubleshooting.md#download-diagnostics) and [debug logs](troubleshooting.md#collect-debug-logs).
+[Open an issue](https://github.com/leikoilja/ha-google-home/issues/new/choose). For a bug, include the integration version, the [diagnostics file](troubleshooting.md#download-diagnostics), the **Google Home** section of [System information](troubleshooting.md#check-system-information), which isn't there in version 1.16.0 or earlier, and [debug logs](troubleshooting.md#collect-debug-logs).
 
 ## Translate the integration
 
@@ -64,7 +64,7 @@ script/check_coverage
 
 The first command lists each file's coverage and the lines the tests miss; `176->178` means the tests never go from line 176 to line 178, and `283->exit` that they never leave the function from line 283. The second prints each file's coverage and names each one below 90%. CI adds the table to the workflow summary: open **Details** next to the **Pre-commit** check on your pull request, then select **Summary**. If your change adds code that no test reaches, add a test that checks what the code does, not one that only runs it.
 
-If you add or change a feature, update `en.json`; you do not need to translate it into other languages. Missing strings and keys that became obsolete do not block your PR. Newly added translation keys must exist in English. If the **Translations** check reports “Check for a mistyped key”, correct any spelling mistake or remove the entry if its English key was removed. Placeholder-name mismatches block new or edited text. If the exact text already appeared in the same language file at the base revision, a mismatch produces a warning and Home Assistant uses English instead, even if the key moved.
+If you add or change a feature, update `en.json`; you do not need to translate it into other languages. Missing strings and keys that became obsolete do not block your PR. Newly added translation keys must exist in English. If the **Translations** check reports “Check for a mistyped key”, correct any spelling mistake or remove the entry if its English key was removed. Placeholder-name mismatches block new or edited text; in text that is unchanged since the base revision, they only warn, and Home Assistant uses English for it.
 
 Every translation file must contain valid JSON encoded as UTF-8 without a byte order mark (BOM), with unique keys, non-empty string values and the [placeholder syntax described above](#translate-the-integration). CI rejects errors in these rules even in files your PR does not change; the `check json` hook catches duplicate keys.
 
@@ -77,7 +77,7 @@ uv run python script/check_translations.py --base-ref "$(git merge-base HEAD FET
 
 The command reports translation coverage and identifies errors by file and key. Omit `--base-ref` and its value to treat all placeholder-name mismatches and unknown keys as errors.
 
-CI compares its checkout with its first parent: the target used for a PR's merge checkout, or the preceding commit on a push. It adds translation coverage and all diagnostics to the workflow summary. These checks cannot judge the accuracy or naturalness of the wording.
+CI adds translation coverage and all diagnostics to the workflow summary. These checks cannot judge the accuracy or naturalness of the wording.
 
 [prek](https://prek.j178.dev/) runs the linters and formatters, including [ruff](https://docs.astral.sh/ruff/) and [dprint](https://dprint.dev/). Run them on all files:
 

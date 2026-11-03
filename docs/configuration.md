@@ -1,6 +1,6 @@
 # Configuration and management
 
-After you [set up the integration](installation.md), you can change how often it checks your devices or turn that off for all or some of them, add and remove devices, reach devices on another network, choose the homes whose devices it adds, track phones with Bluetooth, and remove the integration. If Home Assistant asks you to sign in again, see [Sign in again](troubleshooting.md#sign-in-again).
+After you [set up the integration](installation.md), use this page to change how it checks your devices, manage devices and homes, or remove it. If Home Assistant asks you to sign in again, see [Sign in again](troubleshooting.md#sign-in-again).
 
 ## Change the update interval
 
@@ -8,17 +8,9 @@ The integration checks your devices for changes every 15 seconds by default.
 
 To change the interval, go to **Settings** > **Devices & services** > **Google Home** and select **Configure**. Shorter intervals update alarms and timers sooner but send more requests to your devices.
 
-Around an alarm's or timer's time, and while it rings, the integration checks that speaker more often than a longer interval, so that ringing shows within seconds and its end within about 10 seconds; see [How quickly ringing shows](automations.md#how-quickly-ringing-shows). A check that the speaker answers normally sends it 3 requests. The figures below are estimates for these extra checks alone, on a speaker that answers each one promptly. Not included: refreshes that you or the integration start, actions, and the extra requests of a check that gets an error or a rejected token. With an interval of 180 seconds:
+Around an alarm's or timer's time, and while it rings, the integration checks that speaker more often than the interval, so that ringing shows within seconds and its end within about 10 seconds even with a long interval. These checks add requests while an alarm or timer is due or ringing. See [How quickly ringing shows](automations.md#how-quickly-ringing-shows).
 
-- An alarm that you stop after a minute costs about 7 checks more than the interval alone.
-- An alarm that rings for an hour until it stops by itself costs about 340 more checks, about 1,020 requests, in that hour.
-- Each time an alarm or timer goes off, including again after a snooze, it costs at most about 375 more checks, about 1,125 requests, until 65 minutes after its time.
-
-With the default interval of 15 seconds, the checks while it rings come more often than the interval too: an alarm that rings for an hour costs about 120 more checks, about 360 requests.
-
-The [firmware check](entities.md#update-sensor) still comes at most every 20 minutes. It's made at the first check after it's due, which while an alarm or timer rings can be one of these extra checks, so it then comes closer to every 20 minutes than at a long interval alone.
-
-If a speaker or display with alarms and timers often shows `false` in the `available` attribute of its [device sensor](entities.md#device-sensor) while it's on, or its entities become unavailable for a moment while it restarts, increase the interval, for example to 180 seconds, the default before version 1.16. The extra checks around an alarm's or timer's time still come at their own pace, but stop as soon as the speaker doesn't answer one, until it answers again.
+If a speaker or display with alarms and timers often shows `false` in the `available` attribute of its [device sensor](entities.md#device-sensor) while it's on, or its entities become unavailable for a moment while it restarts, increase the interval, for example to 180 seconds, the default before version 1.16.
 
 **Configure** shows the interval in use. If you saved these options in version 1.15 or older, for example to add known hosts, it's the interval you saved, which was 180 seconds unless you changed it. To use the new default, enter 15 and select **Submit**.
 
@@ -34,7 +26,7 @@ While polling is off:
 - Alarms, timers and the other entities update only when you run [Refresh devices](actions.md#refresh-devices) or [`homeassistant.update_entity`](https://www.home-assistant.io/actions/homeassistant.update_entity/), or after an action that deletes alarms or timers. The other actions still work.
 - A device that goes offline keeps its entities available until it misses 5 of these updates in a row.
 - The speakers don't scan for Bluetooth devices on their own, so [Bluetooth trackers](bluetooth.md) show `unknown`.
-- At an update, the integration also gets your devices from Google when it's due: if it last did at least 20 minutes before, or if mDNS found a Cast device that Google's list doesn't have at least 30 seconds before. Devices and homes that you add in or remove from the Google Home app change in Home Assistant only at these updates, as described in [Add a device](#add-a-device) and [Remove a device](#remove-a-device). A device that you removed goes once Google's list has lacked it at two of these updates in a row. To see a change straight away, reload the integration.
+- Devices and homes that you add in or remove from the Google Home app change in Home Assistant only at these updates, when the integration also gets your devices from Google if that's due; see [Add a device](#add-a-device) and [Remove a device](#remove-a-device). To see a change straight away, reload the integration.
 - When a device's access token changes, usually within a day, the integration gets the new token from Google at the device's next update. If an action fails because the device rejected its token, run Refresh devices, then try the action again.
 
 This automation updates your devices every 5 minutes. List the [device sensor](entities.md#device-sensor) of each device to update:
@@ -52,7 +44,7 @@ actions:
         - sensor.living_room_device
 ```
 
-It uses `homeassistant.update_entity` rather than Refresh devices, which Home Assistant doesn't run while the sensors it targets are unavailable. When a device misses 5 updates in a row, for example while it's unplugged, its sensors become unavailable. A Refresh devices automation that targets them then updates no device at all, and with polling off nothing else makes them available again. `homeassistant.update_entity` updates the device of each entity you list, even one that's unavailable.
+It uses `homeassistant.update_entity` because Home Assistant doesn't run Refresh devices on unavailable sensors: once a device misses 5 updates in a row, for example while it's unplugged, a Refresh devices automation that targets its sensors never updates it again. `homeassistant.update_entity` updates the device of each entity you list, even one that's unavailable.
 
 While polling is off, **Settings** > **System** > **Repairs** shows **Polling for changes is turned off**. Select it, then choose:
 
@@ -71,10 +63,10 @@ Home Assistant hides disabled devices in **Settings** > **Devices & services** >
 
 When you add a speaker or display in the Google Home app, the integration adds it without a reload, unless it's in a home that you [deselected](#choose-homes):
 
-- If Home Assistant receives the device's mDNS announcements, for example because it's on the same network, the device appears about a minute after it joins your network, if Google lists it by then. If another Cast device that the integration didn't know, such as a TV, appeared shortly before, it can take up to 5 minutes.
+- If Home Assistant receives the device's mDNS announcements, for example because it's on the same network, the device usually appears about a minute after it joins your network, if Google lists it by then.
 - Otherwise, or if Google doesn't list the device yet by then, it appears within about 20 minutes, when the integration next asks Google for your devices.
 
-To add the device straight away, reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. The integration then asks Google for your devices. The device appears only once Google lists it, and some of its entities only once Home Assistant can reach it; see [Entities](entities.md).
+To add the device straight away, reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. The device appears only once Google lists it, and some of its entities only once Home Assistant can reach it; see [Entities](entities.md).
 
 If the integration finds your devices only through [known hosts](#add-devices-on-another-network), add the new device's IP address there instead. Saving it reloads the integration, which then reaches the device at that address.
 
@@ -85,9 +77,7 @@ To add back a speaker or display that you removed from the Google Home app, or t
 3. If you're adding back the same device, [factory reset it](https://support.google.com/googlenest/answer/7073477). Restarting it isn't enough.
 4. Set up the device in the Google Home app. To get entity IDs like the old device's, give it the same name.
 
-Google gives the device a new ID, so the integration adds it as a new device with new entities, as described at the start of this section. Home Assistant doesn't carry over the old device's settings, such as its area, its name in Home Assistant and the entity IDs you changed.
-
-Home Assistant builds the new entity IDs from the device's name in the Google Home app, as for any new device. With the same name, they're usually the old device's original entity IDs, such as `sensor.kitchen_alarms`. In the languages where Home Assistant builds entity IDs from translated names, though, the new entities get translated IDs, such as `sensor.kitchen_wecker` in German, even if the old ones are in English. See [Entity names in other languages](entities.md#entity-names-in-other-languages).
+Google gives the device a new ID, so the integration adds it as a new device with new entities. Home Assistant doesn't carry over the old device's settings, such as its area, its name in Home Assistant and the entity IDs you changed. With the same name, the new entity IDs are usually the old device's original ones, such as `sensor.kitchen_alarms`. In some languages they're translated, such as `sensor.kitchen_wecker` in German, even if the old ones are in English; see [Entity names in other languages](entities.md#entity-names-in-other-languages).
 
 If an automation, script or manually configured dashboard card uses an old entity ID that the new device doesn't have, update it. You can also give the new entity the old ID once the old device is gone: on the device page, select the entity, then the settings (gear) icon, change **Entity ID** and select **Update**.
 
@@ -112,21 +102,19 @@ To add devices as known hosts:
 2. Under **Known hosts**, add the IP address of each device that the integration can't find.
 3. Select **Submit**. The integration reloads, asks each address which device it is, and uses the address for that device.
 
-After that, the integration asks your known hosts again only while a device has no address: at the first [update](#change-the-update-interval) at least 5 minutes after it last asked them, and whenever it asks Google for your devices, for example for a device's new access token, which can be sooner. With the default 15-second update interval, a device that was offline when the integration loaded is found at its known host within about 5 minutes of coming back online. With a longer interval, it's found at the first update after those 5 minutes. Except when it asks Google, the integration skips known hosts that have already said which device they are, such as the other speaker of a pair or a device in a home you deselected. With a network interface on the devices' network or an mDNS reflector, the integration gets a device's address as soon as the device announces itself, as on the same network.
-
-While [polling is off](#turn-off-polling), the integration asks your known hosts only at the updates you ask for: at the first one at least 5 minutes after it last asked them, and when it asks Google for your devices. An automation that updates your devices every 5 minutes, like the example in that section, can run just before then. The device is then found at the automation's next run, up to about 10 minutes after it comes back online.
+A device that was offline when the integration loaded is found at its known host within about 5 minutes of coming back online, or at the first [update](#change-the-update-interval) after that with a longer interval. While [polling is off](#turn-off-polling), the integration asks known hosts only at the updates you ask for, so with an automation that updates your devices every 5 minutes it can take up to about 10 minutes. With a network interface on the devices' network or an mDNS reflector, the integration gets a device's address as soon as the device announces itself, as on the same network.
 
 Give these devices fixed IP addresses in your router, so the addresses don't change. For a speaker pair, add the addresses of both speakers. Only the speaker that leads the pair reports it, so the integration uses that one and ignores the other.
 
 ## Choose homes
 
-If your Google account is a member of several homes, you can choose the homes whose speakers and displays the integration adds. It adds every home's devices unless you deselect some. Google still sends the integration the devices of every home. The integration doesn't add the devices of homes you deselect, even if it finds them on your network or at a known host, and doesn't check them for alarms and timers.
+If your Google account is a member of several homes, you can choose the homes whose speakers and displays the integration adds. It adds every home's devices unless you deselect some. The integration doesn't add the devices of homes you deselect, even if it finds them on your network or at a known host, and doesn't check them for alarms and timers.
 
 When you add the integration, it asks which homes to add if your account has more than one. If Google doesn't give the integration your homes at that point, it adds every home's devices, and you can choose later.
 
-You can change the homes later under **Homes** in the integration's options. **Homes** appears when your account has more than one home, or when the only home left is one that you deselected, so that you can select it again. The integration needs to have got your homes from Google since it last loaded: if **Homes** is missing although your account has several homes, reload the integration first.
+You can change the homes later under **Homes** in the integration's options. **Homes** appears when your account has more than one home, or when its only home is one that you deselected. If **Homes** is missing although your account has several homes, reload the integration first.
 
-Homes are listed by the names they have in the Google Home app. If two of your homes have the same name, rename one of them in the app first, so that you can tell them apart. The `home` attribute of each device's [device sensor](entities.md#device-sensor) shows the name of its home, so automations and templates can tell which home a device is in. The attribute is hidden while the sensor is unavailable, for example for a device in a home at another address that Home Assistant can't find on its network.
+Homes are listed by the names they have in the Google Home app. If two of your homes have the same name, rename one of them in the app first, so that you can tell them apart. The `home` attribute of each device's [device sensor](entities.md#device-sensor) shows the name of its home, so automations and templates can tell which home a device is in. The attribute is hidden while the sensor is unavailable.
 
 To change the homes:
 
@@ -134,15 +122,15 @@ To change the homes:
 2. Under **Homes**, select the homes whose devices to add.
 3. Select **Submit**. If you changed the homes, the integration reloads.
 
-When you deselect a home, the integration removes its devices from Home Assistant, with their entities, as it reloads. Automations, scripts and dashboards that use them stop working. If Google doesn't give the integration your device list as it reloads, the devices stay, unavailable, until the integration next gets the list.
+When you deselect a home, the integration removes its devices from Home Assistant, with their entities, as it reloads. Automations, scripts and dashboards that use them stop working.
 
-When you select a home again, its devices come back with the names, areas and other settings you gave them. A device that was factory reset and set up again meanwhile has a new ID from Google, so it's added as a new device, without them. As with a [removed device](#remove-a-device), an entity gets its old ID back only if no other entity has taken that ID meanwhile.
+When you select a home again, its devices come back with the names, areas and other settings you gave them, except a device that was factory reset meanwhile, which comes back as a new device. As with a [removed device](#remove-a-device), an entity gets its old ID back only if no other entity has taken that ID meanwhile.
 
 Homes that your account joins later are added. A new home appears under **Homes** once the integration next gets your device list from Google, usually within about 20 minutes. To see it sooner, reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. If the options were already open, close them and select **Configure** again. To leave the new home out, deselect it.
 
 If your account is left with only homes that you deselected, for example after you leave the home you selected, the integration doesn't add their devices. Once it next gets your homes from Google, **Settings** > **System** > **Repairs** shows **None of your Google account's homes is selected**. To fix it, select a home under **Homes** as described above: the integration reloads, and the repair goes away. If your account joins another home instead, the integration adds it and removes the repair once it next gets your homes from Google. With [polling turned off](#turn-off-polling), the integration doesn't ask Google by itself: reload it after your account joins the home.
 
-If you keep the homes deselected on purpose, open the repair and select **Ignore**. Home Assistant hides the repair, also after a restart. It shows again if none of your homes is selected after the integration reloads, for example after you change the known hosts, or after it failed to start, for example because it couldn't reach Google. To find it while it's hidden, open the **⋮** menu in **Repairs** and select **Show ignored repairs**.
+If you keep the homes deselected on purpose, open the repair and select **Ignore**. Home Assistant hides the repair, also after a restart. It shows again if none of your homes is selected after the integration reloads. To find it while it's hidden, open the **⋮** menu in **Repairs** and select **Show ignored repairs**.
 
 ## Track phones and other Bluetooth devices
 
@@ -152,15 +140,13 @@ Your speakers can tell whether your phone or another Bluetooth device is home. T
 
 When you remove a device from the Google Home app, or Google drops it from your home after a factory reset, the integration removes it from Home Assistant, with its entities, once Google's device list has lacked it twice in a row. The integration asks Google for your devices every 20 minutes, so this usually takes 20 to 40 minutes. It doesn't remove a device while Google still has it in one of your homes, even if the integration can't use the device, unless you [deselect that home](#choose-homes).
 
-As soon as Google's device list first lacks the device, its entities are unavailable. Removing a device from the Google Home app doesn't reset it: it stays on your network, and the integration keeps updating it until it next asks Google for your devices. After a factory reset, a device forgets your Wi-Fi network and usually stops answering, so its entities can become unavailable sooner, once it hasn't answered 5 updates in a row, before the integration has noticed.
-
-When the integration can't get your device list from Google, for example while Google can't be reached, that attempt doesn't count. Reloading the integration or restarting Home Assistant starts the count again, and a device that Google dropped while Home Assistant was off is usually removed about 20 minutes after the integration loads.
+As soon as Google's device list first lacks the device, its entities are unavailable. An attempt that can't get the list from Google doesn't count, and reloading the integration or restarting Home Assistant starts the count again.
 
 To remove a device sooner, delete it yourself. First reload the integration so that it notices straight away: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. Then open the device's page in Home Assistant, open the **⋮** menu and select **Delete**.
 
 Home Assistant offers **Delete** for every device of the integration, but you can't delete one that Google still lists in your home, even if it shows as unavailable: it would come back the next time the integration loads. Until the integration has noticed that Google no longer lists a device, you can't delete that one either. Home Assistant then shows "Failed to remove device entry, rejected by integration". A [tracked Bluetooth device](bluetooth.md#add-a-device-to-track) isn't in Google's list: the integration never removes it, and deleting it stops tracking it.
 
-If Google briefly leaves a working device out of your home in two lists in a row, the integration removes it and adds it back the next time Google lists it. Home Assistant then restores the settings you changed, such as the device's area and name and its entities' names, IDs and disabled state, as long as no other entity has taken those entity IDs meanwhile.
+If Google briefly leaves a working device out of your home in two lists in a row, the integration removes it and adds it back the next time Google lists it. Home Assistant then restores the settings you changed, such as its area and its entities' names and IDs, as long as no other entity has taken those entity IDs meanwhile.
 
 To use a device again that you removed from the Google Home app, factory reset it first; see [Add a device](#add-a-device).
 
