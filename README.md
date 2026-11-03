@@ -1,6 +1,6 @@
 [![GitHub Release][releases-shield]][releases]
-[![hacs][hacsbadge]][hacs]
 [![Home Assistant quality scale: Platinum][quality-scale-shield]][quality-scale]
+[![hacs][hacsbadge]][hacs]
 [![Installs][installs-shield]][installs]
 
 <p align="center">
