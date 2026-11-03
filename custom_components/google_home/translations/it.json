@@ -164,6 +164,9 @@
     },
     "devices_not_rebooted": {
       "message": "Questi dispositivi non hanno confermato che si riavvieranno: {devices}. Verifica che siano online e riprova più tardi."
+    },
+    "sign_in_rejected": {
+      "message": "Google non ha accettato l'accesso ({reason}). Accedi di nuovo."
     }
   },
   "issues": {

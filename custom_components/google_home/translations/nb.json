@@ -164,6 +164,9 @@
     },
     "devices_not_rebooted": {
       "message": "Disse enhetene bekreftet ikke at de vil starte på nytt: {devices}. Kontroller at enhetene er på nett, og prøv igjen senere."
+    },
+    "sign_in_rejected": {
+      "message": "Google godtok ikke påloggingen ({reason}). Logg på igjen."
     }
   },
   "issues": {

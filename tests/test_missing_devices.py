@@ -509,8 +509,9 @@ def test_sign_in_rejected_at_setup() -> None:
     glocaltokens.get_google_devices.side_effect = rejected()
     entry = Mock()
 
-    with pytest.raises(ConfigEntryAuthFailed, match="BadAuthentication"):
+    with pytest.raises(ConfigEntryAuthFailed) as err:
         update_entry(client, entry)
+    assert err.value.translation_placeholders == {"reason": "BadAuthentication"}
     # Home Assistant starts it for a failed setup
     entry.async_start_reauth.assert_not_called()
 

@@ -164,6 +164,9 @@
     },
     "devices_not_rebooted": {
       "message": "Următoarele dispozitive nu au confirmat că vor reporni: {devices}. Verifică dacă dispozitivele sunt online și încearcă din nou mai târziu."
+    },
+    "sign_in_rejected": {
+      "message": "Google nu a acceptat conectarea ({reason}). Conectează-te din nou."
     }
   },
   "issues": {

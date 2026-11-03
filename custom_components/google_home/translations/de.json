@@ -164,6 +164,9 @@
     },
     "devices_not_rebooted": {
       "message": "Die folgenden Geräte haben nicht bestätigt, dass sie neu starten: {devices}. Prüfe, ob sie online sind, und versuche es später erneut."
+    },
+    "sign_in_rejected": {
+      "message": "Google hat die Anmeldung nicht akzeptiert ({reason}). Melde dich erneut an."
     }
   },
   "issues": {

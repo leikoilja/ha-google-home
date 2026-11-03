@@ -164,6 +164,9 @@
     },
     "devices_not_rebooted": {
       "message": "下列裝置未確認將會重新啟動：{devices}。請確認這些裝置已連線，並稍後再試。"
+    },
+    "sign_in_rejected": {
+      "message": "Google 未接受此登入（{reason}）。請重新登入。"
     }
   },
   "issues": {

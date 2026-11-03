@@ -164,6 +164,9 @@
     },
     "devices_not_rebooted": {
       "message": "Te urządzenia nie potwierdziły, że uruchomią się ponownie: {devices}. Sprawdź, czy urządzenia są online, i spróbuj ponownie później."
+    },
+    "sign_in_rejected": {
+      "message": "Google nie zaakceptowało logowania ({reason}). Zaloguj się ponownie."
     }
   },
   "issues": {
