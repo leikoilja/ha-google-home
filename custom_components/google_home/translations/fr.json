@@ -167,6 +167,9 @@
     },
     "devices_not_rebooted": {
       "message": "Les appareils suivants n'ont pas confirmé qu'ils vont redémarrer : {devices}. Vérifiez qu'ils sont en ligne et réessayez plus tard."
+    },
+    "sign_in_rejected": {
+      "message": "Google n'a pas accepté la connexion ({reason}). Reconnectez-vous."
     }
   },
   "issues": {

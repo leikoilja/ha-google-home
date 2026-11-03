@@ -167,6 +167,9 @@
     },
     "devices_not_rebooted": {
       "message": "Aquests dispositius no han confirmat que es reiniciaran: {devices}. Comprova que estiguin en línia i torna-ho a provar més tard."
+    },
+    "sign_in_rejected": {
+      "message": "Google no ha acceptat l'inici de sessió ({reason}). Torna a iniciar la sessió."
     }
   },
   "issues": {

@@ -167,6 +167,9 @@
     },
     "devices_not_rebooted": {
       "message": "Perangkat berikut tidak mengonfirmasi bahwa perangkat tersebut akan dimulai ulang: {devices}. Pastikan semuanya online dan coba lagi nanti."
+    },
+    "sign_in_rejected": {
+      "message": "Google tidak menerima login tersebut ({reason}). Login ulang."
     }
   },
   "issues": {

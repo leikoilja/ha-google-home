@@ -7,8 +7,11 @@ from homeassistant.exceptions import HomeAssistantError
 from .const import DOMAIN
 
 
-class InvalidMasterToken(HomeAssistantError):
-    """Error to indicate the master token is invalid."""
+class InvalidMasterToken(Exception):
+    """Error to indicate the master token is invalid.
+
+    It's raised only while the config flow signs in, which turns it into a form error.
+    """
 
 
 class AlarmsAndTimersNotFetched(HomeAssistantError):

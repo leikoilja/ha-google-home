@@ -54,8 +54,10 @@ def test_setup_leaves_rejected_master_token_to_home_assistant(
     with pytest.raises(ConfigEntryAuthFailed) as err:
         asyncio.run(run())
 
-    # What Home Assistant logs after "could not authenticate: "
-    assert str(err.value) == "Google gave no access token: BadAuthentication"
+    # Home Assistant logs the English text after "could not authenticate: ", with
+    # Google's reason (test_setup.py checks the text, which needs the translations)
+    assert err.value.translation_key == "sign_in_rejected"
+    assert err.value.translation_placeholders == {"reason": "BadAuthentication"}
     lines = logged(caplog)
     assert ("DEBUG", f"Failed to fetch Google's device list: {REJECTED}") in lines
     assert [line for line in lines if line[0] not in {"DEBUG", "INFO"}] == []

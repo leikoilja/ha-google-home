@@ -167,6 +167,9 @@
     },
     "devices_not_rebooted": {
       "message": "Os seguintes dispositivos não confirmaram que vão reiniciar: {devices}. Verifique se os dispositivos estão online e tente novamente mais tarde."
+    },
+    "sign_in_rejected": {
+      "message": "O Google não aceitou o login ({reason}). Entre novamente."
     }
   },
   "issues": {

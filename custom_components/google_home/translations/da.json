@@ -167,6 +167,9 @@
     },
     "devices_not_rebooted": {
       "message": "Disse enheder bekræftede ikke, at de genstarter: {devices}. Kontrollér, at de er online, og prøv igen senere."
+    },
+    "sign_in_rejected": {
+      "message": "Google accepterede ikke loginet ({reason}). Log ind igen."
     }
   },
   "issues": {

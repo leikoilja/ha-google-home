@@ -167,6 +167,9 @@
     },
     "devices_not_rebooted": {
       "message": "Seuraavat laitteet eivät vahvistaneet käynnistyvänsä uudelleen: {devices}. Tarkista, että laitteet ovat verkossa, ja yritä myöhemmin uudelleen."
+    },
+    "sign_in_rejected": {
+      "message": "Google ei hyväksynyt kirjautumista ({reason}). Kirjaudu uudelleen."
     }
   },
   "issues": {

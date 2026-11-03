@@ -167,6 +167,9 @@
     },
     "devices_not_rebooted": {
       "message": "Nasledujúce zariadenia nepotvrdili, že sa reštartujú: {devices}. Skontrolujte, či sú zariadenia online, a skúste to znova neskôr."
+    },
+    "sign_in_rejected": {
+      "message": "Google prihlásenie neprijal ({reason}). Prihláste sa znova."
     }
   },
   "issues": {

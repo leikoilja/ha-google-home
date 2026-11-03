@@ -167,6 +167,9 @@
     },
     "devices_not_rebooted": {
       "message": "Estos dispositivos no han confirmado que se vayan a reiniciar: {devices}. Comprueba que estén en línea y vuelve a intentarlo más tarde."
+    },
+    "sign_in_rejected": {
+      "message": "Google no ha aceptado el inicio de sesión ({reason}). Vuelve a iniciar sesión."
     }
   },
   "issues": {

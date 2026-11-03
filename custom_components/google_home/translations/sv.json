@@ -167,6 +167,9 @@
     },
     "devices_not_rebooted": {
       "message": "Följande enheter bekräftade inte att de kommer att starta om: {devices}. Kontrollera att enheterna är online och försök igen senare."
+    },
+    "sign_in_rejected": {
+      "message": "Google godkände inte inloggningen ({reason}). Logga in igen."
     }
   },
   "issues": {
