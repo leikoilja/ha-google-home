@@ -86,6 +86,9 @@
       "master-token-format": "Päätunniste alkaa merkkijonolla aas_et/ ja on 223 merkkiä pitkä. Kopioi koko tunniste.",
       "other-account": "Kirjauduit eri Google-tilille, joten mitään ei muutettu. Kirjaudu tilille, jota tämä integraatio käyttää. Jos haluat käyttää sen sijaan toista tiliä, poista integraatio ja lisää se uudelleen.",
       "no-home-selected": "Valitse vähintään yksi koti."
+    },
+    "abort": {
+      "no-home": "Googlen mukaan tämä tili ei ole minkään kodin jäsen, joten lisättäviä kaiuttimia tai näyttöjä ei ole. Kutsu Google Home ‑sovelluksessa tili kotiin, jossa laitteesi ovat, hyväksy kutsu ja lisää sitten integraatio uudelleen. Google Workspace ‑tiliä ei voi kutsua, joten lisää integraatio sen sijaan Gmail-tilillä, joka on kodin jäsen. Lisätietoja on osoitteessa {docs_url}."
     }
   },
   "entity": {
