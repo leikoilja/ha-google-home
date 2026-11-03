@@ -102,7 +102,7 @@ def failure_logged(error: object, minutes: int) -> tuple[str, str]:
     """Return the error logged when a fetch first fails this way, with the minutes to the next try."""
     later = (
         f"next try at the first update after {minutes} min; "
-        "further failures like this are logged at debug level"
+        "further failures are logged at debug level until a fetch works"
     )
     return "ERROR", f"Failed to fetch Google's device list ({later}): {error}"
 
@@ -450,12 +450,14 @@ def test_fetch_less_often_after_setup_without_devices(
 
 
 def test_unreachable_at_setup() -> None:
-    """Fail the update when Google's sign-in can't be reached before the list is known.
+    """Fail setup's update when Google can't be reached.
 
-    At setup, Home Assistant then tries setting up the integration again.
+    Home Assistant then tries setting up the integration again. After setup, the
+    update keeps the devices instead.
     """
     client, glocaltokens = make_client()
     client.google_devices_fetched = False
+    client.setting_up = True
     glocaltokens.get_google_devices.side_effect = ClientConnectionError
 
     with pytest.raises(ClientConnectionError):
@@ -644,13 +646,13 @@ def test_ask_to_sign_in_until_fetch_works(clock: Mock) -> None:
     assert glocaltokens.get_google_devices.call_count == 4
 
 
-def test_ask_to_sign_in_after_failed_update(clock: Mock) -> None:
-    """Ask to sign in again on the update after one that fails.
+def test_ask_to_sign_in_while_google_unreachable(clock: Mock) -> None:
+    """Keep asking to sign in again while Google can't be reached after it rejected the master token.
 
-    After a device rejects its token, updates fetch Google's list until it works,
-    and an update that fetches it fails when Google can't be reached. Google's
-    earlier rejection still stands, so the next update that works asks to sign in
-    again.
+    After a device rejects its token, updates fetch Google's list until it works.
+    A fetch that can't reach Google says nothing about the master token, so
+    Google's earlier rejection still stands, and each update asks to sign in again.
+    Home Assistant ignores that while a sign-in is open.
     """
     client, glocaltokens = make_client(
         "10.0.0.2", session=answering(HTTPStatus.UNAUTHORIZED)
@@ -663,19 +665,17 @@ def test_ask_to_sign_in_after_failed_update(clock: Mock) -> None:
     asyncio.run(client.update_alarms_and_timers(kitchen))
     entry.async_start_reauth.reset_mock()
 
-    # Once the wait after the failed fetch has passed
-    clock.return_value = FETCH_DEVICES_INTERVAL + MINUTE
-    glocaltokens.get_google_devices.side_effect = ClientConnectionError
-    with pytest.raises(ClientConnectionError):
-        update_entry(client, entry)
-    entry.async_start_reauth.assert_not_called()
-
-    clock.return_value = FETCH_DEVICES_INTERVAL + 3 * MINUTE
-    glocaltokens.get_google_devices.side_effect = answered(
-        HTTPStatus.SERVICE_UNAVAILABLE
-    )
-    assert list(update_entry(client, entry).values()) == [kitchen]
-    entry.async_start_reauth.assert_called_with(HASS)
+    # Once the wait after the failed fetch has passed, and again after the next wait
+    for minutes, error in (
+        (1, ClientConnectionError()),
+        (3, answered(HTTPStatus.SERVICE_UNAVAILABLE)),
+    ):
+        clock.return_value = FETCH_DEVICES_INTERVAL + minutes * MINUTE
+        glocaltokens.get_google_devices.side_effect = error
+        assert list(update_entry(client, entry).values()) == [kitchen]
+        entry.async_start_reauth.assert_called_with(HASS)
+        entry.async_start_reauth.reset_mock()
+    assert glocaltokens.get_google_devices.call_count == 3
 
 
 def test_keep_polled_data_after_token_rejected() -> None:

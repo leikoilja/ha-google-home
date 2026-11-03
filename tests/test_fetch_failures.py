@@ -1,7 +1,6 @@
 """Tests for logging failed fetches of Google's device list."""
 
 import asyncio
-import contextlib
 from http import HTTPStatus
 import logging
 from pathlib import Path
@@ -106,32 +105,50 @@ def test_log_sign_in_rejected_after_setup(
     assert failure_logged(REJECTED, 20) in logged(caplog)
 
 
-def test_log_sign_in_rejected_after_failed_update(
+def test_log_sign_in_rejected_after_setup_without_devices(
     clock: Mock, caplog: pytest.LogCaptureFixture
 ) -> None:
-    """Log why Google rejects the master token after setup, even without devices.
+    """Log why Google rejects the master token after a setup that went on without devices.
 
-    The update then fails, but after an update that failed because Google couldn't
-    be reached, Home Assistant doesn't log that it failed again, so the integration
-    does, with Google's reason.
+    The update then fails, and Home Assistant doesn't update the account again until
+    signing in again reloads the integration, so the error says to sign in again.
+    """
+    client, glocaltokens = make_client()
+    client.google_devices_fetched = False
+    glocaltokens.get_google_devices.side_effect = rejected()
+    clock.return_value = MINUTE
+    with pytest.raises(ConfigEntryAuthFailed):
+        update_entry(client, Mock())
+
+    later = "sign in again to fetch it"
+    assert [line for line in logged(caplog) if line[0] != "DEBUG"] == [
+        ("ERROR", f"Failed to fetch Google's device list ({later}): {REJECTED}")
+    ]
+
+
+def test_ask_to_sign_in_when_rejected_during_outage(
+    clock: Mock, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Fail the update when Google rejects the master token during an outage, without devices.
+
+    Home Assistant then logs that authentication failed and asks to sign in again,
+    as the integration logged only the outage's first failure as an error.
     """
     client, glocaltokens = make_client()
     client.google_devices_fetched = False
     entry = Mock()
-    glocaltokens.get_google_devices.side_effect = ClientConnectionError
-    with pytest.raises(ClientConnectionError):
-        update_entry(client, entry)
+    glocaltokens.get_google_devices.side_effect = ClientConnectionError()
+    assert not update_entry(client, entry)
 
     glocaltokens.get_google_devices.side_effect = rejected()
     clock.return_value = MINUTE
-    with pytest.raises(ConfigEntryAuthFailed):
+    with pytest.raises(ConfigEntryAuthFailed) as err:
         update_entry(client, entry)
 
-    # Without devices, Home Assistant doesn't update again until then
-    later = "sign in again to fetch it"
-    assert ("ERROR", f"Failed to fetch Google's device list ({later}): {REJECTED}") in (
-        logged(caplog)
-    )
+    assert str(err.value) == REJECTED
+    assert [line for line in logged(caplog) if line[0] != "DEBUG"] == [
+        failure_logged("ClientConnectionError", 1)
+    ]
 
 
 @pytest.mark.parametrize("error", FETCH_ERRORS)
@@ -173,70 +190,94 @@ def test_log_failed_fetches_once_until_one_works(
     assert lines.count(failed) == 2
 
 
-def test_log_failed_fetch_again_when_it_fails_differently(
+def test_log_outage_once_however_fetches_fail(
     clock: Mock, caplog: pytest.LogCaptureFixture
 ) -> None:
-    """Log a failed fetch as an error again when the one before failed another way.
+    """Log only the first failed fetch of an outage as an error, however the others fail, and when a fetch works again.
 
-    Such as when Google's sign-in, after being unavailable, rejects the master token,
-    or answers again after it couldn't be reached. Any error status from Google is
-    one way to fail, so an outage that alternates between them logs once. The next
-    try is 1, 2, 5, 10 and then 20 minutes after each.
+    Such as when Google's sign-in is busy, then rejects the master token, the home
+    graph can't be fetched, or Google can't be reached, whichever request fails.
+    The tries are 1, 2, 5, 10 and then 20 minutes apart, and the error says when the
+    first of them is. The others are logged for debugging, with their reason.
     """
     caplog.set_level(logging.DEBUG, logger="custom_components.google_home")
-    # A device rejected its token, so the list is unknown
+    # The list is unknown, as after a device rejected its token
     client, glocaltokens = make_client("10.0.0.2")
     client.google_devices_fetched = False
     unavailable = answered(HTTPStatus.SERVICE_UNAVAILABLE)
     no_home_graph = HomegraphError(grpc.StatusCode.UNAVAILABLE, "Unavailable.")
+    too_many = answered(HTTPStatus.TOO_MANY_REQUESTS)
+    deadline = HomegraphError(grpc.StatusCode.DEADLINE_EXCEEDED, "Deadline Exceeded")
     glocaltokens.get_google_devices.side_effect = [
         unavailable,
         rejected(),
-        rejected(),
         no_home_graph,
-        unavailable,
-        too_many := answered(HTTPStatus.TOO_MANY_REQUESTS),
-        ClientConnectionError(),
         too_many,
+        ClientConnectionError(),
+        TimeoutError(),
+        deadline,
+        [],
     ]
     for minutes in (*RETRY_MINUTES, 78):
         clock.return_value = minutes * MINUTE
-        # Home Assistant logs the update that fails as Google can't be reached
-        with contextlib.suppress(ClientConnectionError):
-            update(client)
+        update(client)
 
     assert glocaltokens.get_google_devices.call_count == 8
-    assert [line for line in logged(caplog) if line[0] != "DEBUG"] == [
+    lines = logged(caplog)
+    assert [line for line in lines if line[0] != "DEBUG"] == [
         failure_logged(unavailable, 1),
-        failure_logged(REJECTED, 2),
-        failure_logged(no_home_graph, 10),
-        failure_logged(unavailable, 20),
-        failure_logged(too_many, 20),
+        ("INFO", "Fetching Google's device list works again"),
+    ]
+    failed = "Failed to fetch Google's device list: "
+    # An error that Google's sign-in can't be reached or doesn't answer in time may
+    # have no message, so its type is the reason
+    assert [line for line in lines if line[1].startswith(failed)] == [
+        ("DEBUG", failed + reason)
+        for reason in (
+            REJECTED,
+            str(no_home_graph),
+            str(too_many),
+            "ClientConnectionError",
+            "TimeoutError",
+            str(deadline),
+        )
     ]
 
 
-def test_dont_log_recovery_after_google_couldnt_be_reached(
-    clock: Mock, caplog: pytest.LogCaptureFixture
+@pytest.mark.parametrize(
+    ("error", "reason"),
+    [
+        (ClientConnectionError(), "ClientConnectionError"),
+        (TimeoutError(), "TimeoutError"),
+        (ClientConnectionError("Cannot connect to host"), "Cannot connect to host"),
+    ],
+    ids=["unreachable", "timed-out", "unreachable-with-message"],
+)
+def test_log_google_unreachable_once_after_setup(
+    clock: Mock, caplog: pytest.LogCaptureFixture, error: Exception, reason: str
 ) -> None:
-    """Log nothing when a fetch works after fetches that couldn't reach Google.
+    """Log once when Google can't be reached after setup, also before any fetch has worked, and once when a fetch works again.
 
-    The integration didn't log those as errors: Home Assistant logs that the update
-    failed, and that it recovered.
+    The update keeps the devices rather than fail, so Home Assistant logs neither
+    that it failed nor that it recovered. Each outage is logged: here the list is
+    unknown until the third fetch works, and the fetch scheduled 20 minutes later
+    fails again.
     """
+    # Setup went on without devices
     client, glocaltokens = make_client()
     client.google_devices_fetched = False
-    glocaltokens.get_google_devices.side_effect = [
-        ClientConnectionError(),
-        TimeoutError(),
-        [],
-    ]
-    for minutes in RETRY_MINUTES[:3]:
+    glocaltokens.get_google_devices.side_effect = [error, TimeoutError(), [], error, []]
+    for minutes in (0, 1, 3, 23, 43):
         clock.return_value = minutes * MINUTE
-        with contextlib.suppress(ClientConnectionError, TimeoutError):
-            update(client)
+        assert update(client) == {}
 
-    assert glocaltokens.get_google_devices.call_count == 3
-    assert [line for line in logged(caplog) if line[0] != "DEBUG"] == []
+    assert glocaltokens.get_google_devices.call_count == 5
+    assert [line for line in logged(caplog) if line[0] != "DEBUG"] == [
+        failure_logged(reason, 1),
+        ("INFO", "Fetching Google's device list works again"),
+        failure_logged(reason, 20),
+        ("INFO", "Fetching Google's device list works again"),
+    ]
 
 
 @pytest.mark.parametrize(
@@ -271,7 +312,10 @@ def test_log_next_try_from_when_fetch_fails(
     clock.return_value = starts_at
     update(client)
 
-    later = f"next try at {when}; further failures like this are logged at debug level"
+    later = (
+        f"next try at {when}; further failures are logged at debug level until a "
+        "fetch works"
+    )
     assert [line for line in logged(caplog) if line[0] != "DEBUG"] == [
         ("ERROR", f"Failed to fetch Google's device list ({later}): {unavailable}")
     ]
