@@ -45,11 +45,15 @@ body:
   - type: textarea
     id: diagnostics
     attributes:
-      label: Diagnostics or System information
+      label: Diagnostics and System information
       description: |
         Attach the diagnostics file: go to **Settings** > **Devices & services** > **Google Home**, open the **⋮** menu and select **Download diagnostics**. See [Download diagnostics](https://ha-google-home.pages.dev/troubleshooting/#download-diagnostics). The file replaces your credentials, tokens and IP addresses with `**REDACTED**`, but keeps your device names and the times and labels of your alarms and timers. Check the file before you attach it.
 
-        If the integration isn't set up, paste the [System information](https://my.home-assistant.io/redirect/system_health/) instead: go to **Settings** > **System** > **Repairs**, open the **⋮** menu and select **System information**. Check it before you post it.
+        Also paste the **Google Home** section of [System information](https://my.home-assistant.io/redirect/system_health/): go to **Settings** > **System** > **Repairs**, open the **⋮** menu and select **System information**. The section shows whether Home Assistant can reach Google, whether the integration has your devices from Google and how many of them don't answer, without names, email addresses, IDs or IP addresses. See [Check System information](https://ha-google-home.pages.dev/troubleshooting/#check-system-information).
+
+        **Copy** copies the whole of System information, with the other integrations' sections and details about your system. Paste only the Google Home part, from `<details><summary>Google Home</summary>` to the next `</details>`.
+
+        The section isn't there if your **Integration version** is 1.16.0 or earlier, or if adding the integration fails. If you can't find it, say so. If the integration fails to set up, there's no **Download diagnostics**, and the section shows only whether Home Assistant can reach Google.
   - type: textarea
     id: logs
     attributes:
