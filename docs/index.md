@@ -1,5 +1,7 @@
 # Google Home for Home Assistant
 
+[![Home Assistant quality scale: Platinum][quality-scale-badge]](#quality-scale)
+
 This custom integration brings your Google Home and Nest speakers and displays into Home Assistant. You can:
 
 - See every alarm and timer set on each device, and use them in automations.
@@ -46,6 +48,12 @@ The integration uses your Google account to get access tokens for your devices f
 
 You can add the integration only once, so it works with one Google account. To use devices from several homes, [invite that account](https://support.google.com/googlenest/answer/9155535) to each home: the integration adds the devices of every home the account is a member of, unless you [choose homes](configuration.md#choose-homes). Devices that Home Assistant can't reach, for example in a home at another address, are added, but their entities stay unavailable.
 
+## Quality scale
+
+Home Assistant's [integration quality scale](https://www.home-assistant.io/docs/quality_scale/) grades integrations on user experience, features and code quality, in tiers from Bronze to Platinum. This integration follows every rule up to Platinum, the highest tier. Home Assistant shows tiers only for its built-in integrations, so **Settings** > **Devices & services** > **Google Home** shows **Custom integration** instead. [`quality_scale.yaml`](https://github.com/leikoilja/ha-google-home/blob/master/custom_components/google_home/quality_scale.yaml) lists each rule, and why the few that don't apply are exempt.
+
 ## Languages
 
 The integration's setup screens, options, entity names and action descriptions follow your Home Assistant language. Text that isn't translated yet is shown in English. To add or fix a translation, see [Translate the integration](contributing.md#translate-the-integration).
+
+[quality-scale-badge]: https://img.shields.io/badge/quality%20scale-%F0%9F%8F%86%20platinum-e5e4e2.svg?style=for-the-badge
