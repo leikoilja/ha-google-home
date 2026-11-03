@@ -32,7 +32,7 @@ data:
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `entity_id`    | Alarms sensor of the device, such as `sensor.kitchen_alarms`. Leave it out when you [target the device](#targets) instead.                                                                                                                                                                                                                                                      |
 | `alarm_id`     | ID of the alarm to delete. Find it in the `alarms` attribute of the [alarms sensor](entities.md#alarms-sensor). It starts with `alarm/`.                                                                                                                                                                                                                                        |
-| `skip_refresh` | Optional. The action reads the device's current alarms before deleting, so the sensor shows them straight away, without the deleted alarm once the device confirms. `false`, the default, also asks for an update of each device it sent a delete to. `true` leaves that to the device's next scheduled update. To update all devices, use [Refresh devices](#refresh-devices). |
+| `skip_refresh` | Optional. The sensor shows the device's current alarms straight away, without the deleted one once the device confirms. By default (`false`), the action then also asks each device it sent a delete to for an update. `true` leaves that to the next scheduled update. To update all devices, use [Refresh devices](#refresh-devices). |
 
 To delete the next alarm, use a template:
 
@@ -62,7 +62,7 @@ data:
 | `timer_id`     | ID of the timer to delete. Find it in the `timers` attribute of the [timers sensor](entities.md#timers-sensor). It starts with `timer/`. |
 | `skip_refresh` | Optional. Same as for [Delete alarm](#delete-alarm).                                                                                     |
 
-As for [Delete alarm](#delete-alarm), the action asks the device for its current timers first, and sends the delete only if the device still has the timer. Otherwise it fails. See [If a delete fails](#if-a-delete-fails).
+As for [Delete alarm](#delete-alarm), the action fails if the device no longer has the timer. See [If a delete fails](#if-a-delete-fails).
 
 ## Delete all alarms
 
@@ -80,7 +80,7 @@ target:
 
 Target the alarms sensor of each device, or the devices themselves; see [Targets](#targets). To clear every speaker, target `entity_id: all`. The action asks each device for its current alarms first, so it also deletes alarms set since the last update.
 
-If the action can't get a device's current alarms, for example because the device has just gone offline, it sends no delete request to that device, so its alarms stay. It still runs for the other devices you target, then fails. See [If a delete fails](#if-a-delete-fails).
+If the action can't get a device's current alarms, for example because the device has just gone offline, that device's alarms stay. See [If a delete fails](#if-a-delete-fails).
 
 ## Delete all timers
 
@@ -98,7 +98,7 @@ target:
 
 Target the timers sensor of each device, or the devices themselves; see [Targets](#targets). To clear every speaker, target `entity_id: all`. The action asks each device for its current timers first, so it also deletes timers set since the last update.
 
-If the action can't get a device's current timers, it sends no delete request to that device, so its timers stay. It still runs for the other devices you target, then fails. See [If a delete fails](#if-a-delete-fails).
+If the action can't get a device's current timers, that device's timers stay. See [If a delete fails](#if-a-delete-fails).
 
 ## If a delete fails
 
@@ -118,9 +118,9 @@ target:
 
 Target a Google Home sensor of the device, such as its device sensor, or the device itself; see [Targets](#targets). Its [update sensor](entities.md#update-sensor) doesn't work: it's a binary sensor, so naming it reboots nothing, and the log shows "Referenced entities binary_sensor.kitchen_update are missing or not currently available". To reboot from the device page or a dashboard, press the device's [reboot button](entities.md#reboot-button) instead.
 
-If a device doesn't confirm the reboot, for example because it has just gone offline, the action fails with an error that names the device and says why. A device whose sensors are [unavailable](#unavailable-sensors), for example once it hasn't answered 5 updates in a row, is skipped without an error. With several devices, the action reboots every device that answers, then fails with one error that names every device that didn't confirm. See [A setting or reboot fails](troubleshooting.md#a-setting-or-reboot-fails), and to let your automation carry on, [Continue after an error](#continue-after-an-error).
+If a device doesn't confirm the reboot, for example because it has just gone offline, the action reboots every other device that answers, then fails with one error that names every device that didn't confirm. A device whose sensors are [unavailable](#unavailable-sensors) is skipped without an error. See [A setting or reboot fails](troubleshooting.md#a-setting-or-reboot-fails), and to let your automation carry on, [Continue after an error](#continue-after-an-error).
 
-Not every device supports rebooting. A device can accept the request, so there's no error and the log shows "Successfully asked Kitchen to reboot.", even when it doesn't restart. If that happens, [reboot it from the Google Home app or unplug it for a minute](https://support.google.com/googlehome/answer/7072490).
+Not every device supports rebooting, even when there's no error; see the [reboot button](entities.md#reboot-button).
 
 ## Refresh devices
 
@@ -144,9 +144,9 @@ You can name sensors, as in the examples above, or target devices, areas, floors
 - **Reboot device** reboots each device once, however many of its sensors the target covers. It skips a device that has [only a device sensor](troubleshooting.md#no-alarms-or-timers-sensors), or whose alarms and timers sensors are both hidden or disabled. For a device without alarms, such as an NVIDIA Shield, or with hidden or disabled sensors, target its device sensor instead.
 - **Refresh devices** updates all devices once.
 
-For the four delete actions, naming another Google Home sensor, such as a device sensor, fails, and nothing is deleted on any device, even if you also name the right sensor. For example, Delete alarm with `sensor.kitchen_timers` fails with "Entity sensor.kitchen_timers does not support action google_home.delete_alarm." So does a group or template that includes other Google Home sensors, such as `{{ integration_entities('google_home') }}`. The [update sensor](entities.md#update-sensor) is different: it's a binary sensor, so the action ignores it and runs on the other sensors you name, and the log shows that the update sensor is missing or not currently available.
+For the four delete actions, naming another Google Home sensor, such as a device sensor, or a group or template that includes one, such as `{{ integration_entities('google_home') }}`, fails, and nothing is deleted on any device. For example, Delete alarm with `sensor.kitchen_timers` fails with "Entity sensor.kitchen_timers does not support action google_home.delete_alarm." Naming the [update sensor](entities.md#update-sensor) doesn't fail: it's a binary sensor, so the actions skip it and run on the other sensors you name, as Reboot device does.
 
-The form for Delete alarm and Delete timer in **Tools** > **Actions** offers only the sensor. To target a device, use YAML. The device ID is the last part of the device page's address in Home Assistant.
+The form for Delete alarm and Delete timer in **Settings** > **Tools** > **Actions** offers only the sensor. To target a device, use YAML. The device ID is the last part of the device page's address in Home Assistant.
 
 ```yaml
 action: google_home.delete_alarm

@@ -70,7 +70,7 @@ Each timer in `timers` has these keys:
 | `status`         | `set`                                                | [Status](#alarm-and-timer-status) of the timer                                                                                                       |
 | `label`          | `Pasta`                                              | Name of the timer, if you gave it one                                                                                                                |
 
-To use the time left in a template or automation, convert `remaining` to seconds with `as_timedelta`. For example, `{{ as_timedelta('0:07:45').total_seconds() }}` gives 465 seconds. `remaining` is `None` (shown as `null`) for timers that aren't paused or if the speaker doesn't report it, and `as_timedelta` raises an error for `None`, so check first, for example with `timer.remaining is not none`.
+To use the time left in a template or automation, convert `remaining` to seconds with `as_timedelta`. For example, `{{ as_timedelta('0:07:45').total_seconds() }}` gives 465 seconds. `remaining` is `None` unless the timer is paused, and `as_timedelta` fails on `None`, so check first, for example with `timer.remaining is not none`.
 
 ## Alarm and timer status
 
@@ -96,7 +96,7 @@ The state is the device's IP address on your network. If no IP address is availa
 | `device_name` | Name of the device in the Google Home app                                                                                                                                                                            |
 | `home`        | Name of the device's home in the Google Home app. `None` if the home has no name. A renamed home's new name shows once the integration next gets your device list from Google, usually within about 20 minutes.      |
 | `ip_address`  | IP address of the device                                                                                                                                                                                             |
-| `available`   | `true` if, at the last update, the device answered successfully when asked for its alarms, or else when asked for its information, which needs no token. `false` otherwise, for example while the device is offline. |
+| `available`   | `true` if the device answered at the last update, even if it rejected its token or is still starting. `false` otherwise, for example while the device is offline.                                                    |
 | `auth_token`  | Token Home Assistant uses to talk to the device                                                                                                                                                                      |
 
 !!! warning
@@ -121,24 +121,22 @@ target:
   entity_id: button.living_room_reboot
 ```
 
-The button is unavailable until Home Assistant finds the device on your network, and once the device hasn't answered 5 updates in a row. If the device goes offline, pressing the button before then fails with an error; see [If a setting or reboot fails](#if-a-setting-or-reboot-fails). The `available` attribute of the [device sensor](#device-sensor) shows whether the device answered successfully at the last update.
+The button is unavailable until Home Assistant finds the device on your network, and once the device hasn't answered 5 updates in a row. If the device goes offline, pressing the button before then fails with an error; see [If a setting or reboot fails](#if-a-setting-or-reboot-fails).
 
 Not every device supports rebooting. A device can accept the request, so there's no error and the log shows "Successfully asked Living Room to reboot.", even when it doesn't restart. If that happens, [reboot it from the Google Home app or unplug it for a minute](https://support.google.com/googlehome/answer/7072490).
 
-The button's state is the time it was last pressed in Home Assistant, not when the device last restarted. It's `unknown` until the first press. Each press sets it, even one that fails or doesn't restart the device. Rebooting the device with the [Reboot device](actions.md#reboot-device) action or from the Google Home app doesn't set it, and neither does unplugging the device or a power cut.
-
-Home Assistant keeps this time when it restarts. If the button is unavailable when Home Assistant stops, for example while the device is unplugged, the time is lost: once the button is available again, its state is `unknown` until the next press.
+The button's state is the time it was last pressed in Home Assistant, even a press that failed, not when the device last restarted. The [Reboot device](actions.md#reboot-device) action and the Google Home app don't set it. Home Assistant keeps it when it restarts, unless the button is unavailable when Home Assistant stops.
 
 ## Update sensor
 
-The sensor is on, shown as **Update available**, when the device says that a firmware update is waiting to be installed, and off, shown as **Up-to-date**, when it says there's none. It's unknown until the device has said, and becomes unknown if the device answers with its information but without saying. If the request fails, for example because the device doesn't answer it, the sensor keeps its last state. It appears under **Diagnostic** on the device page. Like the device sensor, it's unavailable while Home Assistant doesn't know the device's IP address.
+The sensor is on, shown as **Update available**, when the device says that a firmware update is waiting to be installed, and off, shown as **Up-to-date**, when it says there's none. It's unknown until the device has said, and becomes unknown if the device answers without saying. It appears under **Diagnostic** on the device page. Like the device sensor, it's unavailable while Home Assistant doesn't know the device's IP address.
 
 The sensor shows only what the device itself reports. The integration doesn't compare the device's [firmware version](#firmware-version) with the versions Google publishes; to check, compare them yourself. It can't install updates either: Google installs them on its devices by itself. Before you rely on the sensor, for example in an automation, be aware that:
 
 - Google doesn't document what the device's report means. Google releases each update in stages, so a device may report no update while other devices already run a newer version; Google's page lists a version only once every device can get it. A device in Google's preview program may also not report preview updates.
-- So far, no device has been seen reporting an update, so it isn't known how long before installing an update a device reports it.
+- No device has been seen reporting an update yet.
 
-The integration checks each device at its first [update](configuration.md#change-the-update-interval) after Home Assistant starts or the integration reloads, then at the first update at least 20 minutes after the previous check started. A device that doesn't answer at an update isn't checked at that update. Each successful check shows what the device says then. A check that fails keeps the last values and waits 20 minutes, so new values can take longer to appear, as they do with a longer update interval. Running [Refresh devices](actions.md#refresh-devices) doesn't check sooner.
+The integration checks each device when Home Assistant starts or the integration reloads, then at most every 20 minutes, at the first [update](configuration.md#change-the-update-interval) after that. A check that fails keeps the last values. Running [Refresh devices](actions.md#refresh-devices) doesn't check sooner.
 
 ## Firmware version
 
@@ -148,7 +146,7 @@ The device page shows the device's firmware version next to **Firmware**, in the
 - For a display, such as a Nest Hub, its system firmware version, such as `31.20260101.103.1234567`, as on the same page.
 - For a Chromecast Audio, its Cast firmware version, such as `1.56.123456`, as on [Google's Chromecast firmware versions page](https://support.google.com/chromecast/answer/7124014).
 
-The integration checks it together with the [update sensor](#update-sensor), and the page shows a new version after the next successful check. While the integration doesn't know the version, for example while the device is offline after Home Assistant starts, the page shows the last version it knew.
+The integration checks it with the [update sensor](#update-sensor). While the integration doesn't know the version, for example while the device is offline after Home Assistant starts, the page shows the last version it knew.
 
 ## Wi-Fi sensors
 
@@ -163,38 +161,38 @@ As a rough guide to what the signal strength means:
 | -71 to -80 dBm    | Weak: the connection may be unreliable                                             |
 | Below -80 dBm     | Very weak: the device may have trouble staying connected                           |
 
-These ranges are approximate, from general Wi-Fi guidance in [Understanding RSSI](https://www.oscium.com/training/understanding-rssi/), not figures from Google. The signal a device needs also varies with your network's requirements. A strong signal alone doesn't guarantee good performance: interference can still cause problems. If a device's signal is weak, you could try moving it or your router, or adding a mesh Wi-Fi point.
+These ranges are a rough guide from [Understanding RSSI](https://www.oscium.com/training/understanding-rssi/), not figures from Google. If a device's signal is weak, try moving it or your router, or adding a mesh Wi-Fi point.
 
 Every device gets both sensors, including a device without alarms and timers, but they're disabled by default. To enable one, go to **Settings** > **Devices & services** > **Google Home** and select the device. In the **Diagnostic** card, select the disabled entities, such as **+2 disabled entities**, then the sensor. In its settings, turn on **Enabled** and select **Update**. Home Assistant adds it about 30 seconds later.
 
 A Nest Hub reports its Wi-Fi network but not its signal strength, so its signal strength sensor stays unknown. Other displays may not report a signal either. What a device connected by Ethernet reports isn't known, as none has been checked.
 
-The integration reads both values when it checks the device's firmware; see the [update sensor](#update-sensor) for when it checks. So a value is usually up to 20 minutes old, longer after a check fails or with a longer [update interval](configuration.md#change-the-update-interval), and a short drop in the signal between checks doesn't show. A check that fails keeps the last values. A sensor is unknown until a check succeeds, and when the device's answer doesn't include its value. Like the device sensor, both sensors are unavailable while Home Assistant doesn't know the device's IP address.
+The integration reads both values when it checks the [update sensor](#update-sensor), so a value is usually up to 20 minutes old, and a short drop in the signal between checks doesn't show. A sensor is unknown until the device reports its value, and becomes unknown again if an answer leaves it out. A check that fails keeps the last values. Like the device sensor, both sensors are unavailable while Home Assistant doesn't know the device's IP address.
 
 ## When entities are unavailable
 
 All entities of a device are unavailable:
 
 - Once Google no longer lists the device, for example after you remove it from the Google Home app, until the integration removes the device. See [Remove a device](configuration.md#remove-a-device).
-- Once the device hasn't answered 5 [updates](configuration.md#change-the-update-interval) in a row, for example while it's unplugged. At the default 15-second interval, that's usually after one to two minutes. With a shorter interval, a speaker that restarts can miss 5 updates and become unavailable for a moment; with a longer one, it takes longer to notice. A [device without alarms and timers](troubleshooting.md#devices-without-alarms-and-timers) is asked only for its information at each update, and its device sensor, reboot button, update sensor and Wi-Fi sensors follow its answers the same way.
-- After the device's update fails unexpectedly, for example on a reply the integration can't read, until its next update. This affects only that device, also when Home Assistant starts or the integration reloads: the other devices are set up, and this device gets its entities at its first update that works. Until then, the entities it already had are unavailable, and a newly added device has none. With [polling off](configuration.md#turn-off-polling), ask it again by running [Refresh devices](actions.md#refresh-devices) on another device's sensor, or reload the integration. When the integration can't get your device list from Google, the devices keep updating with the tokens and addresses they have, and their entities stay available.
+- Once the device hasn't answered 5 [updates](configuration.md#change-the-update-interval) in a row, for example while it's unplugged. At the default 15-second interval, that's usually after one to two minutes. With a shorter interval, a speaker that restarts can miss 5 updates and become unavailable for a moment; with a longer one, it takes longer to notice.
+- After the device's update fails unexpectedly, until its next update that works. This affects only that device, also when Home Assistant starts: a device that fails then gets its entities at its first update that works. With [polling off](configuration.md#turn-off-polling), run [Refresh devices](actions.md#refresh-devices) on another device's sensor, or reload the integration.
+
+When the integration can't get your device list from Google, the devices keep updating and their entities stay available.
 
 Some entities are also unavailable on their own:
 
 - On a [device without alarms and timers](troubleshooting.md#devices-without-alarms-and-timers), such as a Chromecast Audio, the alarms sensor, timers sensor, switch and alarm volume, if it had them. Reloading the integration or restarting Home Assistant brings them back only if the device then answers for these features.
 - The device sensor, reboot button, update sensor and Wi-Fi sensors, while Home Assistant doesn't know the device's IP address.
 
-Entities that became unavailable because the device didn't answer are available again at the next update the device answers with anything other than "not found". A speaker that is starting answers "not found" for a while, so they stay unavailable until then. Being available again doesn't always mean new values: if the device rejects its token and Google gives no new one, or answers with another error, they show the values they had. See [Alarms, timers or settings stop changing](troubleshooting.md#alarms-timers-or-settings-stop-changing).
+Entities that became unavailable because the device didn't answer are available again at the next update the device answers, after it finishes starting. Being available again doesn't always mean new values; see [Alarms, timers or settings stop changing](troubleshooting.md#alarms-timers-or-settings-stop-changing).
 
 Home Assistant skips an unavailable entity without an error, so an action on it does nothing and doesn't fail. For the integration's own actions, see [Unavailable sensors](actions.md#unavailable-sensors).
 
-The alarms and timers sensors also show `unavailable` as their state when nothing is coming up. That isn't an unavailable entity: in [**Settings** > **Tools** > **States**](https://my.home-assistant.io/redirect/tools_states/), the sensor still has its `alarms` or `timers` attribute, and actions still run on it.
-
 ## If a setting or reboot fails
 
-Turning Do Not Disturb on or off, setting the alarm volume and pressing Reboot fail with an error, rather than look successful, when the request to the device fails, for example because the device has just gone offline. Once its entities are [unavailable](#when-entities-are-unavailable), Home Assistant skips them without an error. The error names the device and says why. For each message and what to do, see [A setting or reboot fails](troubleshooting.md#a-setting-or-reboot-fails).
+Turning Do Not Disturb on or off, setting the alarm volume and pressing Reboot fail with an error that names the device and says why when the request to the device fails, for example because the device has just gone offline. For each message and what to do, see [A setting or reboot fails](troubleshooting.md#a-setting-or-reboot-fails).
 
-The error stops your automation or script at this step, unless you [let it continue](actions.md#continue-after-an-error). If one action targets several entities, such as the Do Not Disturb switches of two devices, Home Assistant runs it on all of them and shows only the first error. For several reboots, use [Reboot device](actions.md#reboot-device), which names every device that failed.
+The error stops your automation or script at this step, unless you [let it continue](actions.md#continue-after-an-error). If one action targets several entities, Home Assistant runs it on all of them and shows only the first error. For several reboots, use [Reboot device](actions.md#reboot-device), which names every device that failed.
 
 ## Room name twice in entity IDs
 
