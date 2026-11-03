@@ -147,7 +147,8 @@ def test_ask_to_sign_in_when_rejected_during_outage(
     with pytest.raises(ConfigEntryAuthFailed) as err:
         update_entry(client, entry)
 
-    assert str(err.value) == REJECTED
+    assert err.value.translation_key == "sign_in_rejected"
+    assert err.value.translation_placeholders == {"reason": "BadAuthentication"}
     assert [line for line in logged(caplog) if line[0] != "DEBUG"] == [
         failure_logged("ClientConnectionError", 1)
     ]
