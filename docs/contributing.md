@@ -111,7 +111,17 @@ If the check reports `required key not provided` for a rule after you bump `home
 
 The `strict-typing` validator first looks for the integration on Home Assistant's own `.strict-typing` list, which a custom integration can't join. The mypy check in prek runs in strict mode, so the script adds the integration to its downloaded copy of the list. The validator then checks that each requirement in `manifest.json` ships type hints, in a `py.typed` file or a `types-` package, and fails for one that doesn't. It checks the installed version, so every requirement must also be in `pyproject.toml`.
 
-After the file passes, the script checks copies of it with one mistake each: a rule marked `todo`, a missing rule, two rules out of order, an exemption without a comment, a key outside `rules`, and `reconfiguration-flow` marked done, which fails because the integration has no reconfigure step. If it accepts any of them, it fails with "Self-check: the check accepted" and the copies it accepted. After a bump, that means Home Assistant's checks changed, and the script needs updating. If you add a reconfigure step and mark `reconfiguration-flow` done, that copy no longer has a mistake: replace it in the script with another rule whose validator fails.
+After the file passes, the script checks copies of it with one mistake each:
+
+- A rule marked `todo`.
+- A missing rule.
+- Two rules out of order.
+- An exemption without a comment.
+- A key outside `rules`.
+- `reconfiguration-flow` marked done, which fails because the integration has no reconfigure step.
+- A requirement without type hints, from a stand-in package the script creates.
+
+If it accepts any of them, it fails with "Self-check: the check accepted" and the copies it accepted. After a bump, that means Home Assistant's checks changed, and the script needs updating. If you add a reconfigure step and mark `reconfiguration-flow` done, that copy no longer has a mistake: replace it in the script with another rule whose validator fails.
 
 ### Edit the docs
 

@@ -31,6 +31,8 @@ CORE_FILES = (
     "script/hassfest/",
     "packages/hassfest/hassfest/",
 )
+# A package without type hints, which the self-check adds as a requirement
+UNTYPED = "untyped-self-check"
 type Document = dict[str, object]
 
 
@@ -56,6 +58,16 @@ class Hassfest:
     def __init__(self, core: Path) -> None:
         """Import hassfest from core's source and load the integration."""
         sys.path[:0] = [str(core), str(core / "packages/hassfest")]
+        # Install UNTYPED there: package metadata only, with no py.typed. Core
+        # reads its files from RECORD, which must not be empty.
+        dist_info = core / f"{UNTYPED.replace('-', '_')}-1.0.dist-info"
+        dist_info.mkdir()
+        (dist_info / "METADATA").write_text(
+            f"Metadata-Version: 2.1\nName: {UNTYPED}\nVersion: 1.0\n", encoding="utf-8"
+        )
+        (dist_info / "RECORD").write_text(
+            f"{dist_info.name}/METADATA,,\n", encoding="utf-8"
+        )
         self.quality_scale = import_module("script.hassfest.quality_scale")
         model = import_module("hassfest.model")
         self.config = model.Config(
@@ -171,10 +183,26 @@ class Hassfest:
                 f"not a valid option at '{first}'",
             )
         )
-        return {
+        rejected = {
             case: any(error in found for found in self.check(changed))
             for case, changed, error in documents
         }
+
+        # Without this case, a check that skipped strict-typing's requirement
+        # check would go unnoticed
+        requirements = self.integration.manifest["requirements"]
+        self.integration.manifest["requirements"] = [
+            *requirements,
+            installed(f"{UNTYPED}>=1"),
+        ]
+        try:
+            rejected["a requirement without type hints"] = any(
+                f"strict-typing: Requirements ['{UNTYPED}==1.0']" in found
+                for found in self.check(document)
+            )
+        finally:
+            self.integration.manifest["requirements"] = requirements
+        return rejected
 
 
 def extract_core(version: str, destination: Path) -> None:
