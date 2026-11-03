@@ -1,7 +1,6 @@
-[![GitHub Workflow Status][workflow-shield]][workflow]
 [![GitHub Release][releases-shield]][releases]
 [![hacs][hacsbadge]][hacs]
-[![GitHub Activity][commits-shield]][commits]
+[![Home Assistant quality scale: Platinum][quality-scale-shield]][quality-scale]
 [![Installs][installs-shield]][installs]
 
 <p align="center">
@@ -64,15 +63,13 @@ Ask questions in [GitHub Discussions](https://github.com/leikoilja/ha-google-hom
 - Code template was mainly taken from [@Ludeeus](https://github.com/ludeeus)'s [integration_blueprint][integration_blueprint] template.
 - Under the hood the integration uses [glocaltokens](https://github.com/leikoilja/glocaltokens) python package.
 
-[commits-shield]: https://img.shields.io/github/commit-activity/y/leikoilja/ha-google-home.svg?style=for-the-badge
-[commits]: https://github.com/leikoilja/ha-google-home/commits/master
 [community-discussion]: https://community.home-assistant.io/t/solution-to-track-your-google-home-alarms-and-timers-and-trigger-different-home-assistant-events/61534/74
 [hacs]: https://hacs.xyz
 [hacsbadge]: https://img.shields.io/badge/HACS-Default-orange.svg?style=for-the-badge
 [integration_blueprint]: https://github.com/custom-components/integration_blueprint
+[quality-scale-shield]: https://img.shields.io/badge/quality%20scale-%F0%9F%8F%86%20platinum-e5e4e2.svg?style=for-the-badge
+[quality-scale]: https://ha-google-home.pages.dev/#quality-scale
 [releases-shield]: https://img.shields.io/github/release/leikoilja/ha-google-home.svg?style=for-the-badge
 [releases]: https://github.com/leikoilja/ha-google-home/releases
-[workflow-shield]: https://img.shields.io/github/actions/workflow/status/leikoilja/ha-google-home/linting.yaml?branch=master&style=for-the-badge
-[workflow]: https://github.com/leikoilja/ha-google-home/actions
 [installs-shield]: https://img.shields.io/badge/dynamic/json?style=for-the-badge&color=blue&label=installs&cacheSeconds=3600&url=https://analytics.home-assistant.io/custom_integrations.json&query=$.google_home.total
 [installs]: https://analytics.home-assistant.io/custom_integrations.json
