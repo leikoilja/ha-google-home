@@ -1,11 +1,14 @@
 """Tests for Bluetooth presence tracking: the scanner, the tracker and the requests.
 
 The scanner's tests fake the speakers' Bluetooth requests and the clock. The tests
+with speakers that take time to answer are in test_bluetooth_timing.py, and those
 that run inside Home Assistant are in test_bluetooth_setup.py.
 """
 
 import asyncio
 import base64
+from collections.abc import Callable, Iterator
+from contextlib import contextmanager
 import logging
 from types import MappingProxyType
 from unittest.mock import AsyncMock, MagicMock, Mock, patch
@@ -131,11 +134,12 @@ def make_scanner(
     )
 
 
-def run(scanner: BluetoothScanner, speakers: Speakers, now: float) -> TrackerUpdate:
-    """Run an update at a time and return the phone's update."""
+@contextmanager
+def faked(speakers: Speakers, clock: Callable[[], float]) -> Iterator[None]:
+    """Fake the speakers' Bluetooth requests and the scanner's clock."""
     with (
         no_registered_devices(),
-        patch(f"{BLUETOOTH}.monotonic", return_value=now),
+        patch(f"{BLUETOOTH}.monotonic", clock),
         patch(
             f"{BLUETOOTH}.async_get_bluetooth_scan_results",
             speakers.async_get_bluetooth_scan_results,
@@ -145,6 +149,12 @@ def run(scanner: BluetoothScanner, speakers: Speakers, now: float) -> TrackerUpd
             speakers.async_start_bluetooth_scan,
         ),
     ):
+        yield
+
+
+def run(scanner: BluetoothScanner, speakers: Speakers, now: float) -> TrackerUpdate:
+    """Run an update at a time and return the phone's update."""
+    with faked(speakers, lambda: now):
         return asyncio.run(scanner.async_update())[PHONE]
 
 
@@ -337,6 +347,46 @@ def test_discard_delayed_results() -> None:
     assert update(scanner, speakers, 330) == HOME
     speakers.results["kitchen"] = []
     assert states(scanner, speakers, range(360, 420, 30)) == [HOME, NOT_HOME]
+
+
+@pytest.mark.parametrize(
+    ("late", "expected"),
+    [
+        # Read 45 seconds after they started, the scans count, and the next ones
+        # start 15 seconds after they ended, so the speakers' scanning is unbroken
+        (135, [NOT_HOME, NOT_HOME, NOT_HOME]),
+        # Read later, they're discarded: away waits for 90 seconds of new scans
+        (135.5, [HOME, HOME, NOT_HOME]),
+    ],
+)
+def test_scans_read_at_age_limit(late: float, expected: list[TrackerState]) -> None:
+    """Use scans read up to 45 seconds after they started, and show away on time."""
+    speakers = Speakers("Kitchen", "Bedroom")
+    scanner = make_scanner(speakers)
+    speakers.results["kitchen"] = [heard(rpa(IRK))]
+    assert states(scanner, speakers, range(0, 120, 30)) == [UNKNOWN, HOME, HOME, HOME]
+
+    # The phone left after the scans started at 60, and the update after 90 runs late
+    speakers.results["kitchen"] = []
+    assert update(scanner, speakers, late) == HOME
+    assert [update(scanner, speakers, late + t) for t in (30, 60, 90)] == expected
+
+
+def test_late_scan_never_shows_away() -> None:
+    """Never show away because of scans read too late to use.
+
+    Counted as scanning, the late scans would complete 90 seconds of it, though one
+    heard the phone.
+    """
+    speakers = Speakers("Kitchen", "Bedroom")
+    scanner = make_scanner(speakers)
+    assert states(scanner, speakers, range(0, 90, 30)) == [UNKNOWN] * 3
+
+    # The phone arrived during the scans started at 60, which are read 45.5 seconds
+    # after they started
+    speakers.results["kitchen"] = [heard(rpa(IRK))]
+    assert update(scanner, speakers, 105.5) == UNKNOWN
+    assert update(scanner, speakers, 135.5) == HOME
 
 
 def test_new_token_skips_next_read() -> None:

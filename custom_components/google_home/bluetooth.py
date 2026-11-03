@@ -45,12 +45,12 @@ from .const import (
     BLUETOOTH_RSSI_MIN_SCANS,
     BLUETOOTH_RSSI_WINDOW,
     BLUETOOTH_SCAN_INTERVAL,
+    BLUETOOTH_TIMEOUT,
     BLUETOOTH_UNCERTAIN_LIMIT,
     CONF_IRK,
     HEADER_CAST_LOCAL_AUTH,
     HEADER_CONTENT_TYPE,
     PORT,
-    TIMEOUT,
 )
 from .coordinator import GoogleAccountCoordinator, async_device_disabled
 from .device_info import create_url
@@ -115,7 +115,9 @@ async def _async_bluetooth_request(
     """Send a Bluetooth request and return its JSON response.
 
     Unlike the client's requests, a failure leaves the device's availability alone
-    and raises instead of logging, as Bluetooth updates run every 30 seconds.
+    and raises instead of logging, as Bluetooth updates run every 30 seconds. The
+    device has less time to answer than the client's requests give it, so that scan
+    results are read while they're fresh enough to use.
     """
     if not device.ip_address or not device.auth_token:
         raise BluetoothScanError(f"{device.name} has no IP address or auth token")
@@ -130,7 +132,7 @@ async def _async_bluetooth_request(
             url,
             json=data,
             headers=headers,
-            timeout=ClientTimeout(total=TIMEOUT),
+            timeout=ClientTimeout(total=BLUETOOTH_TIMEOUT),
         ) as response:
             if response.status == HTTPStatus.NOT_FOUND:
                 raise BluetoothScanUnsupported(f"{device.name} returned 404")

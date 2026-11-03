@@ -12,6 +12,7 @@ from typing import Concatenate, cast
 from unittest.mock import AsyncMock, MagicMock, Mock, patch
 from weakref import WeakKeyDictionary
 
+import freezegun
 from ghome_foyer_api.api_pb2 import HomeGraph  # pylint: disable=no-name-in-module
 from glocaltokens.client import Device, GLocalAuthenticationTokens
 import pytest
@@ -22,6 +23,7 @@ from pytest_homeassistant.test_util.aiohttp import (
 )
 from yarl import URL
 
+from custom_components.google_home import account, api, bluetooth, mdns
 from custom_components.google_home.account import GoogleAccountClient
 from custom_components.google_home.const import (
     API_ENDPOINT_ALARM_DELETE,
@@ -117,6 +119,20 @@ def fixture_clock(request: pytest.FixtureRequest) -> Iterator[Mock]:
         patch("custom_components.google_home.mdns.monotonic", monotonic),
     ):
         yield monotonic
+
+
+@pytest.fixture(name="time_frozen_before")
+def fixture_time_frozen_before() -> None:
+    """Freeze time once before the clocks are set, as an earlier test in the process may have.
+
+    freezegun first forgets what it found in the modules whose monotonic the clock and
+    scans fixtures patch, so this freeze finds their real monotonic whatever ran before,
+    as the first freeze in a process does.
+    """
+    for module in (api, account, mdns, bluetooth):
+        freezegun.api._GLOBAL_MODULES_CACHE.pop(module.__name__, None)  # noqa: SLF001  # pylint: disable=protected-access
+    with freezegun.freeze_time():
+        pass
 
 
 @pytest.fixture(name="mdns_cache", autouse=True)

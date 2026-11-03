@@ -197,6 +197,14 @@ BLUETOOTH_SCAN_INTERVAL: Final = 30
 BLUETOOTH_MAX_RESULT_AGE: Final = 45
 # A longer gap between scans breaks a speaker's unbroken coverage
 BLUETOOTH_MAX_SCAN_GAP: Final = 15
+# How long a speaker has to answer a Bluetooth request. A scan is read one interval
+# after it started, plus up to half a second that Home Assistant adds, plus up to
+# three requests: the slowest speaker's results and scan requests in the update that
+# started it, which the next update waits for, and its own results request in the
+# next. Three must fit in the 15 seconds the limits above leave after a scan, with
+# time to spare. aiohttp would round a timeout of 5 seconds or more up to the next
+# whole second.
+BLUETOOTH_TIMEOUT: Final = 4
 # A tracked device is home this long after the start of a scan that heard it,
 # and away once every speaker has scanned this long without hearing it
 BLUETOOTH_PRESENCE_WINDOW: Final = 90
