@@ -30,5 +30,25 @@
         "default": "mdi:minus-circle"
       }
     }
+  },
+  "services": {
+    "delete_alarm": {
+      "service": "mdi:alarm-off"
+    },
+    "delete_all_alarms": {
+      "service": "mdi:alarm-off"
+    },
+    "delete_all_timers": {
+      "service": "mdi:timer-cancel"
+    },
+    "delete_timer": {
+      "service": "mdi:timer-cancel"
+    },
+    "reboot_device": {
+      "service": "mdi:restart"
+    },
+    "refresh_devices": {
+      "service": "mdi:refresh"
+    }
   }
 }
