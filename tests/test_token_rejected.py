@@ -555,13 +555,17 @@ def asked(session: Mock, since: int, address: str) -> list[str]:
     ]
 
 
-def test_update_devices_while_google_unreachable(clock: Mock, tmp_path: Path) -> None:
+def test_update_devices_while_google_unreachable(
+    clock: Mock, tmp_path: Path, caplog: pytest.LogCaptureFixture
+) -> None:
     """Keep updating the devices, and their entities available, while Google's list can't be fetched.
 
-    Only the account's update fails, when it tries to fetch the list. A device that
-    answers shows its new alarms, and one that rejects its token is still asked for
-    its alarms and settings, keeps what it showed and doesn't make the integration
-    fetch the list. Its entities stay available: rejecting its token is an answer.
+    A device that answers shows its new alarms, and one that rejects its token is
+    still asked for its alarms and settings, keeps what it showed and doesn't make
+    the integration fetch the list. Its entities stay available: rejecting its token
+    is an answer. The account's update keeps the list rather than fail, so Home
+    Assistant logs neither that it failed nor that it recovered at each try: the
+    integration logs the outage once, and once more when a fetch works again.
     """
     kitchen_reply = dict(REPLY)
     session = two_devices_one_rejecting(kitchen_reply)
@@ -611,12 +615,7 @@ def test_update_devices_while_google_unreachable(clock: Mock, tmp_path: Path) ->
             # The alarm on the device that answers is dismissed
             kitchen_reply["alarm"] = []
             # The fetch at 15 seconds fails, and is tried again 1 minute later
-            for seconds, fetches, account_works in (
-                (15, 2, False),
-                (30, 2, True),
-                (60, 2, True),
-                (75, 3, False),
-            ):
+            for seconds, fetches in ((15, 2), (30, 2), (60, 2), (75, 3)):
                 requests = session.request.call_count
                 await update(seconds)
                 assert glocaltokens.get_google_devices.call_count == fetches
@@ -631,9 +630,20 @@ def test_update_devices_while_google_unreachable(clock: Mock, tmp_path: Path) ->
                     ALARM_ID
                 ]
                 assert (kitchen.available, bedroom.available) == (True, False)
-                assert shown() == (account_works, [True, True])
+                assert shown() == (True, [True, True])
+
+            # Google answers again at the next try, 2 minutes after the last
+            glocaltokens.get_google_devices.side_effect = None
+            await update(195)
+            assert glocaltokens.get_google_devices.call_count == 4
+            assert shown() == (True, [True, True])
 
     asyncio.run(run())
+
+    assert [line for line in logged(caplog) if line[0] != "DEBUG"] == [
+        failure_logged("ClientConnectionError", 1),
+        ("INFO", "Fetching Google's device list works again"),
+    ]
 
 
 def test_token_fetch_postpones_scheduled_fetch(clock: Mock) -> None:
