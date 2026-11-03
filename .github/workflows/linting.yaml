@@ -52,6 +52,10 @@ jobs:
         run: |
           uvx prek run --hook-stage manual python-typing-update --all-files --show-diff-on-failure --color=always
 
+      # Hassfest skips quality_scale.yaml for custom integrations
+      - name: Check quality scale
+        run: uv run python script/check_quality_scale.py
+
       - name: Run tests
         run: uv run pytest -q --cov
 
