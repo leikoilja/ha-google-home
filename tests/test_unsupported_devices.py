@@ -7,6 +7,7 @@ from json import JSONDecodeError
 from unittest.mock import AsyncMock, MagicMock, Mock
 
 from aiohttp import ContentTypeError
+from glocaltokens.client import Device
 import pytest
 
 from custom_components.google_home.api import GlocaltokensApiClient
@@ -339,10 +340,11 @@ def test_keep_asking_starting_speaker(clock: Mock) -> None:
     """Keep asking a speaker whose alarms answer "not found" while it starts.
 
     In the order seen on a restarting Home Mini: "not found", then its old token
-    rejected, then its alarms with the new token, 40 seconds after the first "not
-    found". That answer starts the 10 minutes over, so a "not found" 10 minutes
-    after the first one is a new first one, and it isn't checked for Google
-    Assistant then: its info, which would show none, doesn't mark it.
+    rejected, then its alarms with the new token. The speaker gets that token at its
+    first update a minute after the fetch for its rejected token, here 90 seconds
+    after the first "not found". That answer starts the 10 minutes over, so a "not
+    found" 10 minutes after the first one is a new first one, and it isn't checked
+    for Google Assistant then: its info, which would show none, doesn't mark it.
     """
     client, glocaltokens, network = setup(
         dict.fromkeys([*EVERYTHING, INFO], HTTPStatus.NOT_FOUND)
@@ -368,12 +370,21 @@ def test_keep_asking_starting_speaker(clock: Mock) -> None:
     add_features()
     assert features_added() == []
 
-    # The next update fetches the list again, which gives the new token
-    network.replies[SPEAKER] = dict(SUPPORTED)
-    glocaltokens.get_google_devices.return_value = [found("device0", SPEAKER)]
-    coordinator.data = poll(client, clock, at(0, 40))
+    # It waits a minute after that fetch, so the next update doesn't ask Google
+    poll(client, clock, at(0, 40))
+    assert network.asked(SPEAKER) == WITH_INFO
+    assert glocaltokens.get_google_devices.call_count == 1
+
+    # Its first update after that fetches the list again, which gives the new token
+    def new_token(**_kwargs: object) -> list[Device]:
+        network.replies[SPEAKER] = dict(SUPPORTED)
+        return [found("device0", SPEAKER)]
+
+    glocaltokens.get_google_devices.side_effect = new_token
+    coordinator.data = poll(client, clock, at(1, 30))
     assert glocaltokens.get_google_devices.call_count == 2
-    assert network.asked(SPEAKER) == EVERYTHING
+    # Its alarms again with the new token
+    assert network.asked(SPEAKER) == [ALARMS, *EVERYTHING]
     assert [alarm.alarm_id for alarm in mini.get_sorted_alarms()] == [ALARM_ID]
     add_features()
     assert {label for _, label in features_added()} == FEATURE_LABELS

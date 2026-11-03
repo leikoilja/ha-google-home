@@ -277,8 +277,9 @@ def test_rejected_token_fetch_covers_found_device(
 ) -> None:
     """Don't fetch for a found device when a fetch for a rejected token already did.
 
-    The device rejects the new token too, so every update fetches the list as
-    before, but the found device's timer starts nothing.
+    The device rejects the new token too, so it fetches the list again once its
+    wait is over, but the found device's timer starts nothing: the list is known,
+    and the fetch already covered the device.
     """
     response = MagicMock()
     response.__aenter__.return_value.status = HTTPStatus.UNAUTHORIZED
@@ -293,7 +294,7 @@ def test_rejected_token_fetch_covers_found_device(
         assert timer.at == 630
         await network.update(610)
         assert network.fetches == [0, 610]
-        assert not network.client.google_devices_fetched
+        assert network.client.google_devices_fetched
         await network.fire(timer)
         assert network.requests == 0
         assert network.live() == []
@@ -301,6 +302,35 @@ def test_rejected_token_fetch_covers_found_device(
 
     asyncio.run(run())
     assert network.fetches == [0, 610, 700]
+
+
+def test_found_device_fetched_for_while_rejecting_device_waits(
+    clock: Mock, timers: list[Timer]
+) -> None:
+    """Fetch for a found device while a device that rejects every token waits.
+
+    The wait holds back only the fetches that the waiting device's rejections would
+    start. Rejecting the token from this fetch doesn't make it wait longer.
+    """
+    response = MagicMock()
+    response.__aenter__.return_value.status = HTTPStatus.UNAUTHORIZED
+    session = Mock(request=Mock(return_value=response))
+    network = Network(clock, timers, [found("kitchen", "10.0.0.2")], session)
+    network.real_polling = True
+
+    async def run() -> None:
+        await network.setup()
+        # It rejects its token, and the one from the fetch that starts, so it waits
+        # until 75 seconds
+        await network.update(15)
+        network.report("office", "10.0.0.7", at=20)
+        await network.fire_due()
+        assert network.fetches == [0, 15, 50]
+        await network.update(60)
+        await network.update(75)
+
+    asyncio.run(run())
+    assert network.fetches == [0, 15, 50, 75]
 
 
 def test_unlisted_device_fetched_for_once(clock: Mock, timers: list[Timer]) -> None:

@@ -169,11 +169,13 @@ async def test_lists_that_speakers_fetch_count_toward_removal(
 ) -> None:
     """Count each list Google answers, also one that a speaker's rejected token fetches.
 
-    Such a fetch, and the account's fetch of the then unknown list, can both end
-    between two of the account's checks for devices to remove. A list that has the speaker again starts
-    the count over. Once two lists in a row lack it, it's removed when the list is
-    known again.
+    With polling off, a speaker that rejects the token from such a fetch leaves the
+    list unknown. Such a fetch, and the account's fetch of the then unknown list, can
+    both end between two of the account's checks for devices to remove. A list that
+    has the speaker again starts the count over. Once two lists in a row lack it,
+    it's removed when the list is known again.
     """
+    hass.config_entries.async_update_entry(config_entry, pref_disable_polling=True)
     await set_up(hass, config_entry)
     data = runtime(config_entry)
     google.return_value = [kitchen_speaker()]
