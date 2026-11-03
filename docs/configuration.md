@@ -26,7 +26,7 @@ While polling is off:
 - Alarms, timers and the other entities update only when you run [Refresh devices](actions.md#refresh-devices) or [`homeassistant.update_entity`](https://www.home-assistant.io/actions/homeassistant.update_entity/), or after an action that deletes alarms or timers. The other actions still work.
 - A device that goes offline keeps its entities available until it misses 5 of these updates in a row.
 - The speakers don't scan for Bluetooth devices on their own, so [Bluetooth trackers](bluetooth.md) show `unknown`.
-- Devices and homes that you add in or remove from the Google Home app change in Home Assistant only at these updates, when the integration also gets your devices from Google if that's due; see [Add a device](#add-a-device) and [Remove a device](#remove-a-device). To see a change straight away, reload the integration.
+- Devices and homes that you add in or remove from the Google Home app change in Home Assistant only at these updates: the integration gets your devices from Google at the first of them at least 20 minutes after it last did; see [Add a device](#add-a-device) and [Remove a device](#remove-a-device). To see a change straight away, reload the integration.
 - When a device's access token changes, usually within a day, the integration gets the new token from Google at the device's next update. If an action fails because the device rejected its token, run Refresh devices, then try the action again.
 
 This automation updates your devices every 5 minutes. List the [device sensor](entities.md#device-sensor) of each device to update:
@@ -122,7 +122,7 @@ To change the homes:
 2. Under **Homes**, select the homes whose devices to add.
 3. Select **Submit**. If you changed the homes, the integration reloads.
 
-When you deselect a home, the integration removes its devices from Home Assistant, with their entities, as it reloads. Automations, scripts and dashboards that use them stop working.
+When you deselect a home, the integration removes its devices from Home Assistant, with their entities, as it reloads. Automations, scripts and dashboards that use them stop working. If Google doesn't give the integration your device list as it reloads, the devices stay, unavailable, until it next gets the list.
 
 When you select a home again, its devices come back with the names, areas and other settings you gave them, except a device that was factory reset meanwhile, which comes back as a new device. As with a [removed device](#remove-a-device), an entity gets its old ID back only if no other entity has taken that ID meanwhile.
 

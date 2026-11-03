@@ -6,7 +6,7 @@ For help with setup or usage, search [GitHub Discussions](https://github.com/lei
 
 ## Report a bug or suggest a feature
 
-[Open an issue](https://github.com/leikoilja/ha-google-home/issues/new/choose). For a bug, include the integration version, the [diagnostics file](troubleshooting.md#download-diagnostics), the **Google Home** section of [System information](troubleshooting.md#check-system-information), which isn't there in version 1.16.0 or earlier, and [debug logs](troubleshooting.md#collect-debug-logs).
+[Open an issue](https://github.com/leikoilja/ha-google-home/issues/new/choose). For a bug, include the integration version, the [diagnostics file](troubleshooting.md#download-diagnostics), the **Google Home** section of [System information](troubleshooting.md#check-system-information) and [debug logs](troubleshooting.md#collect-debug-logs). Versions 1.16.0 and earlier have neither the diagnostics file nor that section.
 
 ## Translate the integration
 

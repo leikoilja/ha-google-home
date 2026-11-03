@@ -129,7 +129,7 @@ The button's state is the time it was last pressed in Home Assistant, even a pre
 
 ## Update sensor
 
-The sensor is on, shown as **Update available**, when the device says that a firmware update is waiting to be installed, and off, shown as **Up-to-date**, when it says there's none. It's unknown until the device has said. It appears under **Diagnostic** on the device page. Like the device sensor, it's unavailable while Home Assistant doesn't know the device's IP address.
+The sensor is on, shown as **Update available**, when the device says that a firmware update is waiting to be installed, and off, shown as **Up-to-date**, when it says there's none. It's unknown until the device has said, and becomes unknown if the device answers without saying. It appears under **Diagnostic** on the device page. Like the device sensor, it's unavailable while Home Assistant doesn't know the device's IP address.
 
 The sensor shows only what the device itself reports. The integration doesn't compare the device's [firmware version](#firmware-version) with the versions Google publishes; to check, compare them yourself. It can't install updates either: Google installs them on its devices by itself. Before you rely on the sensor, for example in an automation, be aware that:
 
@@ -167,7 +167,7 @@ Every device gets both sensors, including a device without alarms and timers, bu
 
 A Nest Hub reports its Wi-Fi network but not its signal strength, so its signal strength sensor stays unknown. Other displays may not report a signal either. What a device connected by Ethernet reports isn't known, as none has been checked.
 
-The integration reads both values when it checks the [update sensor](#update-sensor), so a value is usually up to 20 minutes old, and a short drop in the signal between checks doesn't show. A sensor is unknown until a check succeeds. Like the device sensor, both sensors are unavailable while Home Assistant doesn't know the device's IP address.
+The integration reads both values when it checks the [update sensor](#update-sensor), so a value is usually up to 20 minutes old, and a short drop in the signal between checks doesn't show. A sensor is unknown until the device reports its value, and becomes unknown again if an answer leaves it out. A check that fails keeps the last values. Like the device sensor, both sensors are unavailable while Home Assistant doesn't know the device's IP address.
 
 ## When entities are unavailable
 
