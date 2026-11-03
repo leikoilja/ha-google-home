@@ -86,6 +86,9 @@
       "master-token-format": "Un token principal începe cu aas_et/ și are 223 de caractere. Copiază tokenul complet.",
       "other-account": "Te-ai conectat la un alt cont Google, așa că nu s-a modificat nimic. Conectează-te cu contul pe care îl folosește această integrare. Pentru a folosi în schimb celălalt cont, șterge integrarea și adaug-o din nou.",
       "no-home-selected": "Alege cel puțin o casă."
+    },
+    "abort": {
+      "no-home": "Google raportează că acest cont nu este membru al niciunei case, așa că nu există difuzoare sau ecrane de adăugat. În aplicația Google Home, invită contul în casa în care se află dispozitivele tale, acceptă invitația, apoi adaugă din nou integrarea. Un cont Google Workspace nu poate fi invitat, așa că adaugă integrarea cu un cont Gmail care este membru al casei. Pentru detalii, consultă {docs_url}."
     }
   },
   "entity": {
@@ -164,6 +167,9 @@
     },
     "devices_not_rebooted": {
       "message": "Următoarele dispozitive nu au confirmat că vor reporni: {devices}. Verifică dacă dispozitivele sunt online și încearcă din nou mai târziu."
+    },
+    "sign_in_rejected": {
+      "message": "Google nu a acceptat conectarea ({reason}). Conectează-te din nou."
     }
   },
   "issues": {

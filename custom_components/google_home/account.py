@@ -183,8 +183,13 @@ class GoogleAccountClient:
             _LOGGER.debug("Failed to get the account's email address", exc_info=True)
             return None
 
-    async def async_get_homes(self) -> dict[str, str]:
-        """Return the account's homes by ID, with their names, or none if Google doesn't give them."""
+    async def async_get_homes(self) -> dict[str, str] | None:
+        """Return the account's homes by ID, with their names.
+
+        None means that Google reports no home for the account. Without the home
+        graph, or when none of its homes has an ID, the result is empty, so there's
+        nothing to choose.
+        """
         try:
             home_graph = await self._client.async_get_home_graph()
         # No home graph, no access token, or no answer
@@ -194,6 +199,8 @@ class GoogleAccountClient:
                 str(error) or type(error).__name__,
             )
             return {}
+        if not home_graph.homes:
+            return None
         return _homes(home_graph)
 
     def get_android_id(self) -> str:

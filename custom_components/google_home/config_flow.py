@@ -50,6 +50,7 @@ from .const import (
     CONF_USERNAME,
     DOMAIN,
     MASTER_TOKEN_TITLE,
+    NO_DEVICES_DOCS_URL,
     SUBENTRY_BLUETOOTH_DEVICE,
     UPDATE_INTERVAL,
 )
@@ -211,6 +212,14 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
         }
         if self.source != SOURCE_REAUTH:
             homes = await client.async_get_homes()
+            # Stop rather than add an entry without devices, and not with a form
+            # error: a browser cookie works only once, so it couldn't be submitted
+            # again.
+            if homes is None:
+                return self.async_abort(
+                    reason="no-home",
+                    description_placeholders={"docs_url": NO_DEVICES_DOCS_URL},
+                )
             # Without a choice, or the homes, every home's devices are added
             if len(homes) > 1:
                 self._title, self._data, self._homes = title, data, homes

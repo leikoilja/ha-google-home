@@ -86,6 +86,9 @@
       "master-token-format": "Ein Master-Token beginnt mit aas_et/ und ist 223 Zeichen lang. Kopiere das vollständige Token.",
       "other-account": "Du hast dich bei einem anderen Google-Konto angemeldet, daher wurde nichts geändert. Melde dich mit dem Konto an, das diese Integration verwendet. Um stattdessen das andere Konto zu verwenden, lösche die Integration und füge sie erneut hinzu.",
       "no-home-selected": "Wähle mindestens ein Zuhause aus."
+    },
+    "abort": {
+      "no-home": "Google meldet, dass dieses Konto kein Mitglied eines Zuhauses ist, daher gibt es keine Lautsprecher oder Displays zum Hinzufügen. Lade das Konto in der Google Home App in das Zuhause ein, in dem sich deine Geräte befinden, nimm die Einladung an und füge die Integration dann erneut hinzu. Ein Google Workspace-Konto kann nicht eingeladen werden. Füge die Integration in dem Fall stattdessen mit einem Gmail-Konto hinzu, das Mitglied des Zuhauses ist. Weitere Informationen findest du unter {docs_url}."
     }
   },
   "entity": {
@@ -164,6 +167,9 @@
     },
     "devices_not_rebooted": {
       "message": "Die folgenden Geräte haben nicht bestätigt, dass sie neu starten: {devices}. Prüfe, ob sie online sind, und versuche es später erneut."
+    },
+    "sign_in_rejected": {
+      "message": "Google hat die Anmeldung nicht akzeptiert ({reason}). Melde dich erneut an."
     }
   },
   "issues": {

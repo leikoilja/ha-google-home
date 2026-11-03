@@ -6,6 +6,9 @@ exchanges the cookie and looks up the address, which error a failed sign-in show
 and logs, and which accounts count as the entry's.
 """
 
+# Sign-in, signing in again and discovery share these fixtures
+# pylint: disable=too-many-lines
+
 import asyncio
 from collections.abc import AsyncIterator, Iterator
 from contextlib import contextmanager
@@ -73,14 +76,16 @@ def fixture_create_session() -> Iterator[Mock]:
 
 @pytest.fixture(name="home_graph", autouse=True)
 def fixture_home_graph() -> Iterator[Mock]:
-    """Fake Google's home graph, with no homes unless a test gives some.
+    """Fake Google's home graph, with one home unless a test gives others.
 
     Adding the integration asks for the account's homes after signing in.
     """
     with patch(
         "glocaltokens.client.GLocalAuthenticationTokens.async_get_home_graph",
         autospec=True,
-        return_value=HomeGraph(),
+        return_value=HomeGraph(
+            homes=[HomeGraph.Home(id="home-id", display_name="Home")]
+        ),
     ) as home_graph:
         yield home_graph
 
@@ -674,6 +679,11 @@ HOMES = HomeGraph(
             HomeGraph(homes=[HomeGraph.Home(id="home-id", display_name="Home")]),
             id="one-home",
         ),
+        # A home all the same, whose devices are added
+        pytest.param(
+            HomeGraph(homes=[HomeGraph.Home(display_name="Home")]),
+            id="home-without-id",
+        ),
         pytest.param(
             HomegraphError(grpc.StatusCode.UNAVAILABLE, "Unavailable"),
             id="no-home-graph",
@@ -696,6 +706,28 @@ async def test_sign_in_adds_every_home(
     assert result["type"] is FlowResultType.CREATE_ENTRY
     [entry] = hass.config_entries.async_entries(DOMAIN)
     assert entry.options == {}
+
+
+@pytest.mark.usefixtures("mock_setup_entry", "sign_in")
+@pytest.mark.parametrize("method", METHODS)
+async def test_sign_in_no_home(
+    hass: HomeAssistant, home_graph: Mock, method: str
+) -> None:
+    """Stop adding the integration when Google reports no home for the account.
+
+    The integration would have no devices. The reason links to the troubleshooting
+    for accounts that can't join a home.
+    """
+    home_graph.return_value = HomeGraph()
+    result = await submit(hass, await choose(hass, method), SIGN_IN_INPUT[method])
+
+    assert result["type"] is FlowResultType.ABORT
+    assert result["reason"] == "no-home"
+    assert result["description_placeholders"] == {
+        "docs_url": "https://ha-google-home.pages.dev/troubleshooting/#no-devices-appear"
+    }
+    assert "{docs_url}" in ENGLISH["config"]["abort"]["no-home"]
+    assert hass.config_entries.async_entries(DOMAIN) == []
 
 
 @pytest.mark.usefixtures("mock_setup_entry")
@@ -897,6 +929,7 @@ async def test_single_entry(
     assert result["reason"] == "single_instance_allowed"
 
 
+@pytest.mark.parametrize("homes", [HOMES, HomeGraph()], ids=["homes", "no-home"])
 @pytest.mark.parametrize("method", METHODS)
 async def test_reauth(
     hass: HomeAssistant,
@@ -905,15 +938,17 @@ async def test_reauth(
     home_graph: Mock,
     mock_setup_entry: AsyncMock,
     method: str,
+    homes: HomeGraph,
 ) -> None:
     """Save the new master token in the entry and reload it, keeping its Android ID.
 
     The menu names the entry. The forms have text of their own: the setup forms say
     to add the integration again to choose another way to sign in, which can't be
     done while the entry exists. The homes aren't offered again, and the excluded
-    ones stay excluded.
+    ones stay excluded. An account that Google reports no home for signs in too: the
+    entry exists, and the no-home repair covers it.
     """
-    home_graph.return_value = HOMES
+    home_graph.return_value = homes
     hass.config_entries.async_update_entry(
         config_entry, title="Home", options={"excluded_homes": ["flat-id"]}
     )

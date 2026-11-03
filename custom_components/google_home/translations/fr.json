@@ -86,6 +86,9 @@
       "master-token-format": "Un jeton maître commence par aas_et/ et comporte 223 caractères. Copiez le jeton complet.",
       "other-account": "Vous avez utilisé un autre compte Google pour vous connecter, rien n'a donc été modifié. Connectez-vous avec le compte qu'utilise cette intégration. Pour utiliser plutôt cet autre compte, supprimez l'intégration et ajoutez-la à nouveau.",
       "no-home-selected": "Choisissez au moins une maison."
+    },
+    "abort": {
+      "no-home": "Google indique que ce compte n'est membre d'aucune maison, il n'y a donc aucune enceinte ni aucun écran à ajouter. Dans l'application Google Home, invitez le compte dans la maison où se trouvent vos appareils, acceptez l'invitation, puis ajoutez à nouveau l'intégration. Un compte Google Workspace ne pouvant pas être invité, ajoutez plutôt l'intégration avec un compte Gmail membre de la maison. Pour en savoir plus, consultez {docs_url}."
     }
   },
   "entity": {
@@ -164,6 +167,9 @@
     },
     "devices_not_rebooted": {
       "message": "Les appareils suivants n'ont pas confirmé qu'ils vont redémarrer : {devices}. Vérifiez qu'ils sont en ligne et réessayez plus tard."
+    },
+    "sign_in_rejected": {
+      "message": "Google n'a pas accepté la connexion ({reason}). Reconnectez-vous."
     }
   },
   "issues": {

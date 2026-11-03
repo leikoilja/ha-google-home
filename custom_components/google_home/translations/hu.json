@@ -86,6 +86,9 @@
       "master-token-format": "A mestertoken aas_et/ kezdetű és 223 karakter hosszú. Másolja ki a teljes tokent.",
       "other-account": "Egy másik Google-fiókba jelentkezett be, ezért semmi sem változott. Jelentkezzen be az integráció által használt fiókkal. Ha inkább azt a másik fiókot szeretné használni, törölje az integrációt, és adja hozzá újra.",
       "no-home-selected": "Válasszon ki legalább egy otthont."
+    },
+    "abort": {
+      "no-home": "A Google szerint ez a fiók egyetlen otthonnak sem tagja, így nincsenek hozzáadható hangszórók vagy kijelzők. A Google Home alkalmazásban hívja meg a fiókot abba az otthonba, amelyben az eszközei vannak, fogadja el a meghívást, majd adja hozzá újra az integrációt. Google Workspace-fiókot nem lehet meghívni, ezért ilyenkor egy olyan Gmail-fiókkal adja hozzá az integrációt, amely tagja az otthonnak. Részletek: {docs_url}."
     }
   },
   "entity": {
@@ -164,6 +167,9 @@
     },
     "devices_not_rebooted": {
       "message": "A következő eszközök nem erősítették meg, hogy újraindulnak: {devices}. Ellenőrizze, hogy az eszközök online vannak-e, és próbálja újra később."
+    },
+    "sign_in_rejected": {
+      "message": "A Google nem fogadta el a bejelentkezést ({reason}). Jelentkezzen be újra."
     }
   },
   "issues": {

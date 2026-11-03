@@ -86,6 +86,9 @@
       "master-token-format": "Et master token starter med aas_et/ og er 223 tegn langt. Kopiér hele tokenet.",
       "other-account": "Du loggede ind på en anden Google-konto, så der blev ikke ændret noget. Log ind med den konto, som denne integration bruger. Hvis du i stedet vil bruge den anden konto, skal du slette integrationen og tilføje den igen.",
       "no-home-selected": "Vælg mindst ét hjem."
+    },
+    "abort": {
+      "no-home": "Google angiver, at denne konto ikke er medlem af noget hjem, så der er ingen højttalere eller skærme at tilføje. I Google Home-appen skal du invitere kontoen til det hjem, dine enheder er i, acceptere invitationen og derefter tilføje integrationen igen. En Google Workspace-konto kan ikke inviteres, så tilføj i stedet integrationen med en Gmail-konto, der er medlem af hjemmet. Du kan læse mere på {docs_url}."
     }
   },
   "entity": {
@@ -164,6 +167,9 @@
     },
     "devices_not_rebooted": {
       "message": "Disse enheder bekræftede ikke, at de genstarter: {devices}. Kontrollér, at de er online, og prøv igen senere."
+    },
+    "sign_in_rejected": {
+      "message": "Google accepterede ikke loginet ({reason}). Log ind igen."
     }
   },
   "issues": {

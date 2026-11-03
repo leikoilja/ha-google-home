@@ -65,9 +65,7 @@ rules:
   entity-device-class: done
   entity-disabled-by-default: done
   entity-translations: done
-  exception-translations:
-    status: todo
-    comment: When Google rejects the sign-in at setup, the error shows Google's untranslated reason.
+  exception-translations: done
   icon-translations: done
   reconfiguration-flow:
     status: exempt

@@ -103,7 +103,13 @@ class GoogleAccountCoordinator(DataUpdateCoordinator[dict[str, GoogleHomeDevice]
         known_hosts = await self.client.async_update_device_list()
         if (error := self.client.sign_in_error) is not None:
             if not self.client.google_devices:
-                raise ConfigEntryAuthFailed(str(error)) from error
+                raise ConfigEntryAuthFailed(
+                    translation_domain=DOMAIN,
+                    translation_key="sign_in_rejected",
+                    # Google's reason, such as BadAuthentication, or glocaltokens'
+                    # message if Google gave none
+                    translation_placeholders={"reason": error.error or str(error)},
+                ) from error
             self.async_ask_to_sign_in_if_rejected()
         listed = {device.device_id: device for device in self.client.google_devices}
         coordinators = self.config_entry.runtime_data.devices

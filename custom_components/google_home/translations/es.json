@@ -86,6 +86,9 @@
       "master-token-format": "Un token maestro empieza por aas_et/ y tiene 223 caracteres. Copia el token completo.",
       "other-account": "Has iniciado sesión en otra cuenta de Google, por lo que no se ha cambiado nada. Inicia sesión con la cuenta que usa esta integración. Para usar esa otra cuenta, elimina la integración y vuelve a añadirla.",
       "no-home-selected": "Elige al menos una casa."
+    },
+    "abort": {
+      "no-home": "Google indica que esta cuenta no es miembro de ninguna casa, así que no hay altavoces ni pantallas que añadir. En la aplicación Google Home, invita a la cuenta a la casa en la que están tus dispositivos, acepta la invitación y vuelve a añadir la integración. Una cuenta de Google Workspace no se puede invitar, así que añade la integración con una cuenta de Gmail que sea miembro de la casa. Para más información, consulta {docs_url}."
     }
   },
   "entity": {
@@ -164,6 +167,9 @@
     },
     "devices_not_rebooted": {
       "message": "Estos dispositivos no han confirmado que se vayan a reiniciar: {devices}. Comprueba que estén en línea y vuelve a intentarlo más tarde."
+    },
+    "sign_in_rejected": {
+      "message": "Google no ha aceptado el inicio de sesión ({reason}). Vuelve a iniciar sesión."
     }
   },
   "issues": {
