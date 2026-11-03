@@ -2,7 +2,7 @@
 
 Each update of the account's list starts a round. The tests run the coordinators'
 updates in an explicit order, with the client's clock set for each, rather than wait
-for their timers. The speakers reject every token unless a test says otherwise.
+for their timers.
 """
 
 import asyncio
@@ -54,20 +54,20 @@ def recording(clock: Mock, glocaltokens: Mock) -> list[float]:
     [
         pytest.param(
             [(0, ACCOUNT), (14, KITCHEN), (15, ACCOUNT), (29, KITCHEN), (30, ACCOUNT)],
-            [14, 15, 30],
+            [14, 29],
             id="speaker-before-account",
         ),
         pytest.param(
             [(0, ACCOUNT), (3, KITCHEN), (9, BEDROOM_ID), (15, ACCOUNT)],
-            [3, 15],
+            [3],
             id="two-speakers",
         ),
         pytest.param(
-            [(0, ACCOUNT), (3, BOTH), (15, ACCOUNT)], [3, 15], id="speakers-together"
+            [(0, ACCOUNT), (3, BOTH), (15, ACCOUNT)], [3], id="speakers-together"
         ),
         pytest.param(
             [(0, ACCOUNT), (2, KITCHEN), (10, KITCHEN_REFRESH), (15, ACCOUNT)],
-            [2, 15],
+            [2],
             id="manual-refresh",
         ),
     ],
@@ -81,21 +81,32 @@ async def test_one_fetch_per_round(
 ) -> None:
     """Fetch Google's list at most once from one update of the list to the next, whoever asks.
 
-    The speakers reject every token, so the list stays unknown and each update of
-    the list fetches it. A speaker's update fetches it only when nothing has since
-    the update of the list started. A refresh of a speaker doesn't start a round.
+    Before each of its updates, a speaker's token changes, and Google's list has the
+    new one, so the list stays known and its updates don't fetch it. A speaker's
+    update fetches it only when nothing has since the update of the list started.
+    Otherwise it rejects its token with no fetch left in the round, and waits. A
+    refresh of a speaker doesn't start a round.
     """
     google_answers = asyncio.Event()
     google_answers.set()
-    session = accepting(NEVER)
+    session = accepting(LOCAL_AUTH_TOKEN)
     client, glocaltokens = make_client(
         SPEAKER, BEDROOM, session=session, google_answers_when=google_answers.is_set
     )
+    kitchen, bedroom = client.google_devices
     times = recording(clock, glocaltokens)
     data = coordinators(hass, config_entry, client)
 
     for seconds, update in steps:
         clock.return_value = seconds
+        # The token the client has for each speaker that updates is one it no
+        # longer accepts
+        for device, speakers in (
+            (kitchen, {KITCHEN, KITCHEN_REFRESH, BOTH}),
+            (bedroom, {BEDROOM_ID, BOTH}),
+        ):
+            if update in speakers:
+                device.auth_token = "token"
         if update == ACCOUNT:
             await data.account.async_refresh()
         elif update == BOTH:
@@ -124,10 +135,11 @@ async def test_one_fetch_per_round_across_speaker_update(
 ) -> None:
     """Fetch once in each round when the list's update starts a new one during a speaker's update.
 
-    The speaker's update starts at 14 seconds and fetches for its rejected token.
-    The list's update at 15 seconds comes between its alarms and its alarm volume,
-    and fetches the list, which is unknown. The speaker's later requests are in that
-    round and don't fetch again.
+    With polling off, a speaker that rejects every token leaves the list unknown, so
+    each update of the list fetches it. The speaker's update starts at 14 seconds
+    and fetches for its rejected token. The list's update at 15 seconds comes
+    between its alarms and its alarm volume, and fetches the list. The speaker's
+    later requests are in that round and don't fetch again.
     """
     requests = 0
 
@@ -140,6 +152,8 @@ async def test_one_fetch_per_round_across_speaker_update(
             await data.account.async_refresh()
 
     client, glocaltokens = make_client(SPEAKER, session=accepting(NEVER, before_answer))
+    hass.config_entries.async_update_entry(config_entry, pref_disable_polling=True)
+    client.polling_off = True
     times = recording(clock, glocaltokens)
     data = coordinators(hass, config_entry, client)
     await data.account.async_refresh()

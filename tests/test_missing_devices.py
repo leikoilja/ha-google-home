@@ -1,7 +1,7 @@
 """Tests for fetching Google's device list again after setup."""
 
 import asyncio
-from collections.abc import AsyncIterator, Callable
+from collections.abc import AsyncIterator, Callable, Iterable
 import contextlib
 from datetime import timedelta
 from http import HTTPStatus
@@ -383,19 +383,29 @@ def answering(status: HTTPStatus) -> Mock:
 def fetch_times(
     client: GlocaltokensApiClient, glocaltokens: Mock, clock: Mock, start: int
 ) -> list[int]:
-    """Update every 15 seconds for an hour from start, asking the devices, and return when Google's list was fetched.
+    """Update every 15 seconds for an hour from start, asking the devices, and return when Google's list was fetched."""
+    return when_fetched(client, glocaltokens, clock, range(start, start + HOUR + 1, 15))
+
+
+def when_fetched(
+    client: GlocaltokensApiClient,
+    glocaltokens: Mock,
+    clock: Mock,
+    times: Iterable[int],
+) -> list[int]:
+    """Update at each of these times, asking the devices, and return those at which Google's list was fetched.
 
     An update that fetches the list fails when Google can't be reached.
     """
-    fetched_at: list[int] = []
-    for seconds in range(start, start + HOUR + 1, 15):
+    fetched: list[int] = []
+    for seconds in times:
         clock.return_value = seconds
         fetches = glocaltokens.get_google_devices.call_count
         with contextlib.suppress(ClientConnectionError):
             asyncio.run(update_round(client))
         if glocaltokens.get_google_devices.call_count > fetches:
-            fetched_at.append(seconds)
-    return fetched_at
+            fetched.append(seconds)
+    return fetched
 
 
 # When Google's list is fetched while it is unknown and every fetch fails, in minutes
@@ -410,25 +420,23 @@ def test_fetch_less_often_while_list_unknown_after_token_rejected(
 ) -> None:
     """Wait longer and longer between fetches of Google's list while it is unknown and can't be fetched.
 
-    After a device rejects even its new token, the list is unknown. Each update
-    would otherwise fetch it while Google fails: at its start, and again when the
-    device rejects its token, which the device does on every update until Google
-    gives it a new one. Until a fetch works, no device can be deleted.
+    After a device rejects its token and the fetch for a new one fails, the list is
+    unknown. Each update would otherwise fetch it while Google fails: at its start,
+    and again when the device rejects its token, which the device does on every
+    update until Google gives it a new one. Until a fetch works, no device can be
+    deleted.
     """
     client, glocaltokens = make_client(
         "10.0.0.2", session=answering(HTTPStatus.UNAUTHORIZED)
     )
     [kitchen] = client.google_devices
-    asyncio.run(client.update_alarms_and_timers(kitchen))
-    # The rejection fetched the list straight away
-    assert glocaltokens.get_google_devices.call_count == 1
-    assert not client.google_devices_fetched
-
     glocaltokens.get_google_devices.side_effect = error
 
+    # The first update's rejection fetches the list straight away
     assert fetch_times(client, glocaltokens, clock, 15) == [
         15 + minutes * MINUTE for minutes in RETRY_MINUTES
     ]
+    assert not client.google_devices_fetched
     assert not can_delete(client, {"device0": kitchen}, "removed")
 
 
@@ -679,7 +687,7 @@ def test_ask_to_sign_in_while_google_unreachable(clock: Mock) -> None:
     assert glocaltokens.get_google_devices.call_count == 3
 
 
-def test_keep_polled_data_after_token_rejected() -> None:
+def test_keep_polled_data_after_token_rejected(clock: Mock) -> None:
     """Keep the data of the other devices when Google's list is fetched after a device rejects its token.
 
     The fetch gives new tokens, but a device that doesn't answer that update
@@ -691,9 +699,12 @@ def test_keep_polled_data_after_token_rejected() -> None:
     bedroom.set_alarms([{"id": ALARM_ID, "fire_time": 1700000000000, "status": 1}])
     bedroom.do_not_disturb = True
     bedroom.alarm_volume = 70
-    # The rejection fetches the list straight away, and the kitchen rejects its
-    # new token too, so the next update fetches it again
+    # The rejection fetches the list straight away, which fails, so the first update
+    # once the wait after that is over fetches it again
+    glocaltokens.get_google_devices.side_effect = ClientConnectionError
     asyncio.run(client.update_alarms_and_timers(kitchen))
+    glocaltokens.get_google_devices.side_effect = None
+    clock.return_value = MINUTE
 
     # Google lists both devices again, and neither answers this update
     session.request.side_effect = TimeoutError

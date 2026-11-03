@@ -44,7 +44,9 @@ rules:
       A speaker's entities becoming unavailable, and available again, are logged
       once at info level. A failed fetch of Google's device list is logged once
       as an error, as Home Assistant's coordinator does, and once at info level
-      when it works again.
+      when it works again. A speaker that keeps rejecting the token Google gives
+      it is logged once as an error too, and once at info level when its updates
+      work again.
   parallel-updates: done
   reauthentication-flow: done
   test-coverage: done

@@ -15,7 +15,7 @@ from aiohttp import (
 )
 from aiohttp.client_exceptions import ClientConnectorError, ContentTypeError
 
-from .account import GoogleAccountClient
+from .account import GoogleAccountClient, TokenWait, first_update_after
 from .const import (
     API_ENDPOINT_ALARM_DELETE,
     API_ENDPOINT_ALARM_VOLUME,
@@ -665,6 +665,8 @@ class GlocaltokensApiClient(GoogleAccountClient):
             ) as response:
                 status = response.status
                 if response.status == HTTPStatus.OK:
+                    # It accepts its token, so its next rejection fetches straight away
+                    self._token_waits.pop(device.device_id, None)
                     try:
                         # Without read_reply, what comes after the status, or
                         # doesn't, can't undo it
@@ -732,8 +734,48 @@ class GlocaltokensApiClient(GoogleAccountClient):
         return resp
 
     def _mark_token_rejected(self, device: GoogleHomeDevice, *, polling: bool) -> None:
-        """Mark a device that rejected its token, with no new one to try."""
-        if polling:
+        """Mark a device that rejected its token, with no new one to try.
+
+        While polling is on, a device that rejects the token from a fetch that worked
+        waits before its rejection fetches Google's list again: the next of
+        FETCH_RETRY_DELAYS from the start of that fetch, longer for each later fetch
+        that starts once the wait is over and whose token it rejects, until it accepts
+        a token. Once it has rejected the tokens from two fetches in a row, the first
+        update it fails logs an error, and the others log for debugging: right after a
+        device restarts, Google may still give its old token for a short while.
+
+        After a fetch that failed, or while polling is off, the list is fetched again
+        at the next update or, after a failed fetch, at the first update once the
+        backoff has passed. Keep the devices meanwhile, so the fetch keeps their data,
+        and the others still update if Google can't be reached.
+        """
+        device.available = False
+        wait: TokenWait | None = None
+        if self.polling_off or self._fetch_backoff.failing:
+            self.google_devices_fetched = False
+        else:
+            wait = self._token_waits.setdefault(device.device_id, TokenWait())
+            if wait.counts(self._last_fetch_started):
+                wait.fetch_started(self._last_fetch_started)
+        if polling and wait is not None:
+            message = (
+                "%s rejected the token that Google gave it. Google is asked for a new "
+                "one at %s"
+            )
+            when = first_update_after(wait.wait_left(monotonic()))
+            if wait.repeated:
+                log_failure(
+                    device,
+                    polling,
+                    "token_rejected",
+                    f"{message}; further rejections are logged at debug level until "
+                    "it accepts one",
+                    device.name,
+                    when,
+                )
+            else:
+                _LOGGER.debug(message, device.name, when)
+        elif polling:
             _LOGGER.debug(
                 (
                     "Failed to fetch data from %s due to invalid token. "
@@ -753,24 +795,22 @@ class GlocaltokensApiClient(GoogleAccountClient):
                 "Token will be refreshed, please try again later.",
                 device.name,
             )
-        # Fetch Google's list, with new tokens, at the next update or, after a failed
-        # fetch, at the first update once the backoff has passed. Keep the devices
-        # meanwhile, so the fetch keeps their data, and the others still update if
-        # Google can't be reached.
-        self.google_devices_fetched = False
-        device.available = False
 
     async def _async_get_new_token(
         self, device: GoogleHomeDevice, rejected_token: str
     ) -> bool:
         """Return whether a device that rejected its token has a new one now.
 
-        If no fetch since the request was sent has brought one, fetch Google's list.
+        If no fetch since the request was sent has brought one, fetch Google's list,
+        unless the device waits after rejecting the token from a fetch that worked.
         Only one fetch runs from one update to the next, so once it has, the device
         waits for the next update. While the list is unknown, it also waits for the
         backoff after a failed fetch.
         """
-        if device.auth_token == rejected_token:
+        wait = self._token_waits.get(device.device_id)
+        if device.auth_token == rejected_token and not (
+            wait is not None and wait.waiting(monotonic())
+        ):
             try:
                 await self._async_fetch_devices(self._fetches_before_update)
             # Google can't be reached at setup

@@ -23,6 +23,32 @@ type Baseline = dict[str, Catalog]
 REPO_ROOT = Path(__file__).resolve().parents[1]
 TRANSLATIONS = Path("custom_components/google_home/translations")
 PLACEHOLDER = re.compile(r"\{([A-Za-z_][A-Za-z0-9_]*)\}")
+# JavaScript's \s; Python's differs for U+001C to U+001F, U+0085 and U+FEFF
+SPACE = r"\t\n\v\f\r \xa0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\ufeff"
+URL = r"\{(?:\w*_)?url\}"
+# The frontend fills in placeholders, then renders Markdown with marked 18.1.2 and GFM.
+# A link target or <...> link keeps everything inside it, and a bare URL runs to the
+# next whitespace or "<". The check scans for these one-line constructs left to right
+# as marked does, without validating whole Markdown links: a placeholder after "]("
+# is checked as a link target even if the link is incomplete, and any other one
+# outside a recognised construct is checked as a bare URL.
+URL_CONTEXT = re.compile(
+    r"\\[\\`<\[\]]"  # an escaped character, which opens nothing
+    r"|(?P<code>`+)(?:[^`\r\n]|[^`\r\n][^\r\n]*?[^`\r\n])(?P=code)(?!`)"  # code span
+    r"|`+"  # backticks that open no code span
+    rf"|\[(?:\\[^\r\n]|[^\[\]\\`\r\n])*\]\([ \t]*{URL}[ \t]*\)"  # [text]({docs_url})
+    rf"|<\{{(?P<angle>(?:\w*_)?url)\}}(?P<inside>[^{SPACE}\x00-\x1f<>]*)>"
+    rf"|(?P<target>\]\([ \t\r\n]*)?\{{(?P<name>(?:\w*_)?url)\}}"
+    rf"(?=(?P<rest>[^ \x00-\x1f)]*))(?P<tail>[^{SPACE}<]*)"
+)
+# marked's _backpedal, copied as is: it drops ?!.,:;*_'"~ and an unmatched ) from the
+# end of a bare URL, cuts it before an unmatched ( and keeps the rest. Applied to a
+# sample URL with the glued text, it gives the same result as with the integration's
+# URLs, which have no (, ) or & and end in / or a letter.
+BACKPEDAL = re.compile(
+    r"""(?:[^?!.,:;*_'"~()&]+|\([^)]*\)|&(?![a-zA-Z0-9]+;$)|[?!.,:;*_'"~)]+(?!$))+"""
+)
+SAMPLE_URL = "https://example.com/"
 
 
 class CatalogError(ValueError):
@@ -113,7 +139,69 @@ def placeholders(value: str) -> frozenset[str]:
         )
     if re.search(r"<(?:[A-Za-z]|/)", value):
         raise ValueError("ICU rich-text tags are unsupported; use plain text instead")
+    check_url_suffixes(value)
     return frozenset(PLACEHOLDER.findall(value))
+
+
+def check_url_suffixes(value: str) -> None:
+    """Reject text right after a URL placeholder that the frontend may link with it.
+
+    This is stricter than the frontend where emphasis closes right after the URL:
+    `**{docs_url}**.Next` links correctly, but `**{docs_url}**s` puts `**s` in the
+    link when the URL ends in "/", and translators can't see which URL a key gets.
+    """
+    # Like marked, read CR and CRLF as LF. Backticks pair only within a paragraph,
+    # which a blank line ends.
+    text = value.replace("\r\n", "\n").replace("\r", "\n")
+    for paragraph in re.split(r"\n[ \t]*\n", text):
+        check_paragraph_url_suffixes(paragraph)
+
+
+def check_paragraph_url_suffixes(paragraph: str) -> None:
+    """Check the URL placeholders in one paragraph, left to right as marked reads it."""
+    pos, spans_paired = 0, True
+    while match := URL_CONTEXT.search(paragraph, pos):
+        pos = match.end()
+        name = suffix = advice = ""
+        if match["code"]:
+            if not spans_paired:
+                # marked may pair these backticks differently, so check inside
+                pos = match.start() + len(match["code"])
+        elif match[0].startswith("`"):
+            spans_paired = False
+        elif match["angle"]:
+            name, suffix = match["angle"], match["inside"]
+            advice = (
+                f"Keep only the placeholder inside <>, as in <{{{name}}}>, and "
+                "nothing else inside any link parentheses around it"
+            )
+        elif match["name"]:
+            name = match["name"]
+            if match["target"] is not None and match["rest"]:
+                # A link target keeps everything up to whitespace or ")"
+                suffix = match["rest"]
+                advice = (
+                    "Keep only the placeholder inside the link's parentheses, "
+                    f"as in [text]({{{name}}})"
+                )
+            else:
+                link = SAMPLE_URL + match["tail"]
+                while (kept := BACKPEDAL.match(link)) and kept[0] != link:
+                    link = kept[0]
+                suffix = link.removeprefix(SAMPLE_URL)
+                advice = (
+                    "Put a space or line break after the placeholder and any of "
+                    "the characters . , : ; ! ? ' \" ) * _ ~ right after it; "
+                    f"rephrase; or write a Markdown link such as [text]({{{name}}})"
+                )
+            # marked carries on after the link, where the dropped text can hold
+            # another placeholder
+            pos = match.start("tail")
+        if suffix:
+            raise ValueError(
+                f"Text right after {{{name}}} can become part of its link: "
+                f"{suffix!r}. {advice}"
+            )
 
 
 def parse_catalog(content: bytes) -> Catalog:

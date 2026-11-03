@@ -184,7 +184,8 @@ def test_no_usable_token_after_token_rejected(
     """Fetch Google's list only once in an update when the devices that reject their tokens get none they accept.
 
     However long the fetch takes. The devices keep their data, and the next
-    update fetches the list again.
+    update fetches the list again: after a failed fetch, the list is unknown, and
+    after one that worked, the devices' wait of a minute from its start is over.
     """
     session = accepting(NEWER_TOKEN)
     client, glocaltokens = make_client(
@@ -218,7 +219,10 @@ def test_no_usable_token_after_token_rejected(
     assert (kitchen.available, bedroom.available) == (False, False)
     assert [alarm.alarm_id for alarm in kitchen.get_sorted_alarms()] == [ALARM_ID]
     assert kitchen.alarm_volume == 70
-    assert not can_delete(client, {"device0": kitchen, "device1": bedroom}, "removed")
+    # Only a fetch that worked shows which devices Google no longer lists
+    assert can_delete(client, {"device0": kitchen, "device1": bedroom}, "removed") == (
+        not isinstance(google, Exception)
+    )
 
     # Google gives tokens they accept by the next update
     glocaltokens.get_google_devices.side_effect = None
@@ -307,9 +311,10 @@ def test_fetch_once_in_update_after_action_rejects_new_token(clock: Mock) -> Non
 
     The scheduled fetch gives the new token and then looks for a device at a
     known host. Meanwhile an action, sent with the old token, gets rejected,
-    and its retry with the new token is rejected too, so the list becomes
-    unknown and the action fails. The update has already used its fetch, so the
-    next update gets the token the device accepts.
+    and its retry with the new token is rejected too, so the action fails, and the
+    device waits a minute from the start of that fetch. The update has already used
+    its fetch, so the next update once the wait is over gets the token the device
+    accepts.
     """
 
     async def until_new_token(token: str) -> None:
@@ -354,7 +359,7 @@ def test_fetch_once_in_update_after_action_rejects_new_token(clock: Mock) -> Non
         OLD_TOKEN,
         LOCAL_AUTH_TOKEN,
     ]
-    assert (kitchen.available, client.google_devices_fetched) == (False, False)
+    assert (kitchen.available, client.google_devices_fetched) == (False, True)
 
     glocaltokens.get_google_devices.return_value = [
         found("device0", "10.0.0.2", token=NEWER_TOKEN),
@@ -451,10 +456,6 @@ def test_wait_starts_over_once_fetch_works(clock: Mock) -> None:
     session = accepting(NEWER_TOKEN)
     client, glocaltokens = make_client("10.0.0.2", session=session)
     [kitchen] = client.google_devices
-    # The device rejects its token, and the one Google gives
-    asyncio.run(update_round(client))
-    assert glocaltokens.get_google_devices.call_count == 1
-    assert not client.google_devices_fetched
 
     def fetches_at(seconds: int) -> int:
         clock.return_value = seconds
@@ -464,17 +465,20 @@ def test_wait_starts_over_once_fetch_works(clock: Mock) -> None:
     glocaltokens.get_google_devices.side_effect = answered(
         HTTPStatus.SERVICE_UNAVAILABLE
     )
-    # Fetches that fail 1 and 2 minutes apart; the next one waits 5 minutes
-    assert [fetches_at(seconds) for seconds in (15, 75, 195)] == [2, 3, 4]
+    # The device rejects its token, and the fetch for a new one fails, so the list
+    # is unknown. Fetches that fail 1 and 2 minutes apart; the next one waits 5
+    # minutes.
+    assert [fetches_at(seconds) for seconds in (0, 60, 180)] == [1, 2, 3]
+    assert not client.google_devices_fetched
 
     # Google gives the token the device accepts, which it gets after those 5 minutes
     glocaltokens.get_google_devices.side_effect = None
     glocaltokens.get_google_devices.return_value = [
         found("device0", "10.0.0.2", token=NEWER_TOKEN)
     ]
-    assert fetches_at(195 + 5 * MINUTE - 15) == 4
+    assert fetches_at(180 + 5 * MINUTE - 15) == 3
     assert (kitchen.available, client.google_devices_fetched) == (False, False)
-    assert fetches_at(195 + 5 * MINUTE) == 5
+    assert fetches_at(180 + 5 * MINUTE) == 4
     assert (kitchen.available, client.google_devices_fetched) == (True, True)
 
     # The device's token changes again while Google fails: the list was known, so
@@ -484,11 +488,11 @@ def test_wait_starts_over_once_fetch_works(clock: Mock) -> None:
     glocaltokens.get_google_devices.side_effect = answered(
         HTTPStatus.SERVICE_UNAVAILABLE
     )
-    failed_at = 195 + 5 * MINUTE + 15
-    assert fetches_at(failed_at) == 6
+    failed_at = 180 + 5 * MINUTE + 15
+    assert fetches_at(failed_at) == 5
     assert not client.google_devices_fetched
-    assert fetches_at(failed_at + MINUTE - 15) == 6
-    assert fetches_at(failed_at + MINUTE) == 7
+    assert fetches_at(failed_at + MINUTE - 15) == 5
+    assert fetches_at(failed_at + MINUTE) == 6
 
 
 def test_action_fetches_once_wait_is_over(clock: Mock) -> None:
@@ -501,18 +505,16 @@ def test_action_fetches_once_wait_is_over(clock: Mock) -> None:
     session = accepting(NEWER_TOKEN)
     client, glocaltokens = make_client("10.0.0.2", session=session)
     [kitchen] = client.google_devices
-    # The device rejects its token, and the one Google gives
-    asyncio.run(update_round(client))
     glocaltokens.get_google_devices.side_effect = answered(
         HTTPStatus.SERVICE_UNAVAILABLE
     )
+    # The device rejects its token, and the fetch for a new one fails
+    asyncio.run(update_round(client))
+    assert glocaltokens.get_google_devices.call_count == 1
+    # An update that waits
     clock.return_value = 15
     asyncio.run(update_round(client))
-    assert glocaltokens.get_google_devices.call_count == 2
-    # An update that waits
-    clock.return_value = 30
-    asyncio.run(update_round(client))
-    assert glocaltokens.get_google_devices.call_count == 2
+    assert glocaltokens.get_google_devices.call_count == 1
 
     def turn_on_do_not_disturb_at(seconds: int) -> int:
         clock.return_value = seconds
@@ -523,8 +525,8 @@ def test_action_fetches_once_wait_is_over(clock: Mock) -> None:
         return int(glocaltokens.get_google_devices.call_count)
 
     # 1 minute after the failed fetch started, before the next update
-    assert turn_on_do_not_disturb_at(15 + MINUTE - 5) == 2
-    assert turn_on_do_not_disturb_at(15 + MINUTE + 5) == 3
+    assert turn_on_do_not_disturb_at(MINUTE - 5) == 1
+    assert turn_on_do_not_disturb_at(MINUTE + 5) == 2
 
 
 def two_devices_one_rejecting(kitchen_reply: dict[str, object]) -> Mock:
@@ -587,8 +589,10 @@ def test_update_devices_while_google_unreachable(
                 for coordinator in entry.runtime_data.devices.values():
                     await coordinator.async_refresh()
 
-            # Google gives the device at 10.0.0.3 a token that it rejects too, so
-            # the list becomes unknown
+            # Google can't be reached when the device at 10.0.0.3 rejects its
+            # token, so the list becomes unknown. The fetch is tried again 1 minute
+            # later.
+            glocaltokens.get_google_devices.side_effect = ClientConnectionError
             await update(0)
             sensors = [
                 GoogleHomeAlarmsSensor(
@@ -611,11 +615,9 @@ def test_update_devices_while_google_unreachable(
             assert glocaltokens.get_google_devices.call_count == 1
             assert not client.google_devices_fetched
 
-            glocaltokens.get_google_devices.side_effect = ClientConnectionError
             # The alarm on the device that answers is dismissed
             kitchen_reply["alarm"] = []
-            # The fetch at 15 seconds fails, and is tried again 1 minute later
-            for seconds, fetches in ((15, 2), (30, 2), (60, 2), (75, 3)):
+            for seconds, fetches in ((15, 1), (45, 1), (60, 2), (75, 2)):
                 requests = session.request.call_count
                 await update(seconds)
                 assert glocaltokens.get_google_devices.call_count == fetches
@@ -634,8 +636,8 @@ def test_update_devices_while_google_unreachable(
 
             # Google answers again at the next try, 2 minutes after the last
             glocaltokens.get_google_devices.side_effect = None
-            await update(195)
-            assert glocaltokens.get_google_devices.call_count == 4
+            await update(180)
+            assert glocaltokens.get_google_devices.call_count == 3
             assert shown() == (True, [True, True])
 
     asyncio.run(run())

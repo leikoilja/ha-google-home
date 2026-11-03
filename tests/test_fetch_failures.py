@@ -19,6 +19,7 @@ from homeassistant.exceptions import ConfigEntryAuthFailed
 
 from .test_missing_devices import (
     FETCH_ERRORS,
+    HASS,
     MINUTE,
     NOT_REJECTED,
     REJECTED,
@@ -86,8 +87,8 @@ def test_log_sign_in_rejected_after_setup(
 ) -> None:
     """Log why Google rejects the master token once setup is done.
 
-    Only setup leaves that to Home Assistant: later it asks to sign in again
-    without saying why.
+    Only setup's own fetch leaves that to Home Assistant: later it asks to sign in
+    again without saying why.
     """
     # A device without an address, which no update asks
     google = Mock(return_value=[found("device0", None)])
@@ -175,6 +176,43 @@ def test_keep_list_when_scheduled_fetch_during_setup_fails(
     assert [line for line in logged(caplog) if line[0] != "DEBUG"] == [
         failure_logged("ClientConnectionError", 20)
     ]
+
+
+def test_log_sign_in_rejected_at_scheduled_fetch_during_setup(
+    clock: Mock, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Log why Google rejects the master token at a fetch that is due while setup still runs, once.
+
+    Only setup's own fetch leaves that to Home Assistant. A scheduled fetch, such as
+    for a device that mDNS found, keeps the list, so the update goes on and Home
+    Assistant only asks to sign in again, without saying why.
+    """
+    caplog.set_level(logging.DEBUG, logger="custom_components.google_home")
+    client, glocaltokens = make_client("10.0.0.2")
+    devices = list(client.google_devices)
+    client.setting_up = True
+    entry = Mock()
+    glocaltokens.get_google_devices.side_effect = rejected()
+    # The scheduled fetch is due
+    clock.return_value = 20 * MINUTE
+    assert list(update_entry(client, entry).values()) == devices
+
+    assert client.google_devices_fetched
+    assert client.sign_in_error is not None
+    entry.async_start_reauth.assert_called_with(HASS)
+    errors = [failure_logged(REJECTED, 20)]
+    assert [line for line in logged(caplog) if line[0] != "DEBUG"] == errors
+
+    # Once setup is done, Google rejects the next scheduled fetch too
+    client.setting_up = False
+    clock.return_value = 40 * MINUTE
+    update_entry(client, entry)
+
+    assert glocaltokens.get_google_devices.call_count == 2
+    lines = logged(caplog)
+    assert [line for line in lines if line[0] != "DEBUG"] == errors
+    failed = ("DEBUG", f"Failed to fetch Google's device list: {REJECTED}")
+    assert lines.count(failed) == 1
 
 
 @pytest.mark.parametrize("error", FETCH_ERRORS)
@@ -267,6 +305,42 @@ def test_log_outage_once_however_fetches_fail(
             "TimeoutError",
             str(deadline),
         )
+    ]
+
+
+def test_log_scheduled_fetch_outage_once_across_a_timeout(
+    clock: Mock, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Log an outage of scheduled fetches once, although a timeout comes between two fetches that get 503.
+
+    The list is known, so the fetches are 20 minutes apart and keep it. Only the
+    first 503 is an error; the timeout and the second 503 are logged for debugging,
+    and the fourth fetch, which works, once at info level.
+    """
+    caplog.set_level(logging.DEBUG, logger="custom_components.google_home")
+    client, glocaltokens = make_client("10.0.0.2")
+    listed = glocaltokens.get_google_devices.return_value
+    unavailable = answered(HTTPStatus.SERVICE_UNAVAILABLE)
+    glocaltokens.get_google_devices.side_effect = [
+        unavailable,
+        TimeoutError(),
+        unavailable,
+        listed,
+    ]
+    for minutes in (20, 40, 60, 80):
+        clock.return_value = minutes * MINUTE
+        update(client)
+
+    assert glocaltokens.get_google_devices.call_count == 4
+    lines = logged(caplog)
+    assert [line for line in lines if line[0] != "DEBUG"] == [
+        failure_logged(unavailable, 20),
+        ("INFO", "Fetching Google's device list works again"),
+    ]
+    failed = "Failed to fetch Google's device list: "
+    assert [line for line in lines if line[1].startswith(failed)] == [
+        ("DEBUG", failed + "TimeoutError"),
+        ("DEBUG", failed + str(unavailable)),
     ]
 
 

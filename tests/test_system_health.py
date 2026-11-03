@@ -399,15 +399,28 @@ async def test_disabled_device_not_counted_as_not_answering(
 
 
 @pytest.mark.usefixtures("google")
+@pytest.mark.parametrize(
+    ("polling_off", "device_list"),
+    [(False, "fetched"), (True, "not fetched")],
+    ids=["polling", "polling-off"],
+)
 async def test_rejected_token_answers_and_keeps_counts(
-    hass: HomeAssistant, config_entry: MockConfigEntry, replies: Replies
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    replies: Replies,
+    polling_off: bool,
+    device_list: str,
 ) -> None:
     """Count a device that rejects its token as answering, and keep counting the list.
 
-    Google gives it the same token again, so the list is to be fetched again, and
-    until then isn't the one of a fetch that worked.
+    Google gives it the same token again. With polling on, the device then waits
+    before it asks Google again, and the list stays the one of the fetch that
+    worked. With polling off, the list is to be fetched again, and until then isn't.
     """
-    await set_up(hass, config_entry)
+    if polling_off:
+        await set_up_without_polling(hass, config_entry)
+    else:
+        await set_up(hass, config_entry)
     replies[SPEAKER] = dict(SILENT)
     await refresh(hass, config_entry, times=5)
 
@@ -416,8 +429,9 @@ async def test_rejected_token_answers_and_keeps_counts(
 
     assert await section(hass) == {
         **REACHABLE,
-        "device_list": "not fetched",
+        "device_list": device_list,
         **DEFAULT_OPTIONS,
+        "polling": not polling_off,
         "devices_listed": 1,
         "devices_not_answering": 0,
     }
