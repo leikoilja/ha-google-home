@@ -38,7 +38,7 @@ EXPECTED_ERRORS = {
     ]
 }
 
-type Rules = dict[str, object]
+type Document = dict[str, object]
 
 
 def status_of(value: object) -> object:
@@ -66,14 +66,16 @@ class Hassfest:
             rule.name for rule in self.quality_scale.ALL_RULES
         ]
 
-    def check(self, rules: Rules) -> list[str]:
-        """Return each way the rules fail core's quality scale."""
+    def check(self, document: Document) -> list[str]:
+        """Return each way quality_scale.yaml fails core's quality scale."""
         errors: list[str] = []
-        data = {"rules": rules}
         try:
-            self.quality_scale.SCHEMA(data)
+            self.quality_scale.SCHEMA(document)
         except probatio.Invalid as err:
-            errors.extend(humanize_error(data, err).splitlines())
+            errors.extend(humanize_error(document, err).splitlines())
+        rules = document.get("rules")
+        if not isinstance(rules, dict):
+            return errors
 
         # Missing and unknown rules are the schema's errors, so compare only
         # the order of the rules both lists have.
@@ -104,11 +106,13 @@ class Hassfest:
                 errors.extend(f"{name}: {error}" for error in found)
         return errors
 
-    def self_check(self, rules: Rules) -> dict[str, bool]:
-        """Return whether check() rejects each faulty copy of passing rules.
+    def self_check(self, document: Document) -> dict[str, bool]:
+        """Return whether check() rejects each faulty copy of a passing file.
 
-        Each copy changes one rule, so the expected error comes from that change.
+        Each copy has one change, so the expected error comes from that change.
         """
+        rules = document["rules"]
+        assert isinstance(rules, dict)  # The schema passed
         first, second, *rest = self.rule_names
         missing = {name: value for name, value in rules.items() if name != first}
         swapped = {name: rules[name] for name in (second, first, *rest)}
@@ -139,9 +143,21 @@ class Hassfest:
                 "reconfiguration-flow: ",
             ),
         ]
+        documents = [
+            (case, {**document, "rules": changed}, error)
+            for case, changed, error in cases
+        ]
+        # Such as a rule that lost its indentation
+        documents.append(
+            (
+                "a key outside rules",
+                {**document, first: "done"},
+                f"not a valid option at '{first}'",
+            )
+        )
         return {
             case: any(error in found for found in self.check(changed))
-            for case, changed, error in cases
+            for case, changed, error in documents
         }
 
 
@@ -165,16 +181,13 @@ def extract_core(version: str, destination: Path) -> None:
 def main() -> int:
     """Check the file and that the check rejects faulty copies of it."""
     path = INTEGRATION / "quality_scale.yaml"
-    rules = load_yaml_dict(str(path)).get("rules")
-    if not isinstance(rules, dict):
-        print(f"{path.name} has no rules", file=sys.stderr)
-        return 1
+    document = load_yaml_dict(str(path))
     with tempfile.TemporaryDirectory() as core:
         extract_core(ha_version, Path(core))
         try:
             hassfest = Hassfest(Path(core))
-            errors = hassfest.check(rules)
-            rejected = {} if errors else hassfest.self_check(rules)
+            errors = hassfest.check(document)
+            rejected = {} if errors else hassfest.self_check(document)
         except Exception as err:
             err.add_note(
                 f"Home Assistant {ha_version}'s hassfest may have changed:"
@@ -188,7 +201,7 @@ def main() -> int:
     if missed := [case for case, caught in rejected.items() if not caught]:
         print(f"Self-check: the check accepted {', '.join(missed)}", file=sys.stderr)
         return 1
-    statuses = [status_of(value) for value in rules.values()]
+    statuses = [status_of(value) for value in document["rules"].values()]
     print(
         f"{path.name} meets Home Assistant {ha_version}'s quality scale:"
         f" {statuses.count('done')} rules done, {statuses.count('exempt')} exempt"

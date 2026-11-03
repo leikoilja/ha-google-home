@@ -95,7 +95,7 @@ uvx prek install
 
 [`quality_scale.yaml`](https://github.com/leikoilja/ha-google-home/blob/master/custom_components/google_home/quality_scale.yaml) records each rule of Home Assistant's [integration quality scale](https://contributors.home-assistant.io/core/quality-scale/) as done or exempt, with the reason for each exemption. Changes must keep meeting the rules marked done, and update the file when they affect a rule: adding a trigger, for example, makes `docs-triggers` apply, so document the trigger and mark the rule done.
 
-Hassfest skips this file for custom integrations, even when you run it yourself, so the **Pre-commit** check on your pull request checks it with Home Assistant's quality scale code instead. To run the check locally:
+Hassfest skips this file for custom integrations, even when you run it yourself, so the **Pre-commit** check on your pull request runs it through Home Assistant's quality scale code instead. To run the check locally:
 
 ```shell
 uv run python script/check_quality_scale.py
@@ -103,7 +103,7 @@ uv run python script/check_quality_scale.py
 
 The script downloads Home Assistant's source code from GitHub (about 34 MB), at the version `pyproject.toml` pins, and checks that:
 
-- The file lists every rule of that version, in the order of Home Assistant's [list of rules](https://github.com/home-assistant/core/blob/dev/script/hassfest/quality_scale.py), and no other rule. The order is the script's own check.
+- The file lists every rule of that version, in the order of Home Assistant's [list of rules](https://github.com/home-assistant/core/blob/dev/script/hassfest/quality_scale.py), and nothing else. The order is the script's own check.
 - Each rule is done, or exempt with a comment. None is `todo`, which Home Assistant allows but the script doesn't.
 - The rules marked done pass Home Assistant's validators. Only a few rules have one, such as `config-flow` and `runtime-data`, so for the rest the check can't confirm that the integration meets them.
 
@@ -111,7 +111,7 @@ If the check reports `required key not provided` for a rule after you bump `home
 
 The `strict-typing` validator always fails, because a custom integration can't be on Home Assistant's own `.strict-typing` list. The script expects that error; the mypy check in prek runs in strict mode, which covers the rule.
 
-After the file passes, the script checks copies of it with one mistake each: a rule marked `todo`, a missing rule, two rules out of order, an exemption without a comment and `reconfiguration-flow` marked done, which fails because the integration has no reconfigure step. If it accepts any of them, it fails with "Self-check: the check accepted" and the copies it accepted. After a bump, that means Home Assistant's checks changed, and the script needs updating. If you add a reconfigure step and mark `reconfiguration-flow` done, that copy no longer has a mistake: replace it in the script with another rule whose validator fails.
+After the file passes, the script checks copies of it with one mistake each: a rule marked `todo`, a missing rule, two rules out of order, an exemption without a comment, a key outside `rules`, and `reconfiguration-flow` marked done, which fails because the integration has no reconfigure step. If it accepts any of them, it fails with "Self-check: the check accepted" and the copies it accepted. After a bump, that means Home Assistant's checks changed, and the script needs updating. If you add a reconfigure step and mark `reconfiguration-flow` done, that copy no longer has a mistake: replace it in the script with another rule whose validator fails.
 
 ### Edit the docs
 
