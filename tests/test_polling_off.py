@@ -55,7 +55,7 @@ from .conftest import (
     Replies,
     kitchen_speaker,
 )
-from .test_coordinators import BEDROOM_ALARMS
+from .test_coordinators import BEDROOM_ALARMS, REJECTING
 from .test_diagnostics import TV, TV_CLOUD_ID, TV_NAME
 from .test_missing_devices import ALARM_ID, found
 from .test_sensor import error_message
@@ -409,6 +409,34 @@ async def test_refresh_renews_token_while_polling_off(
     assert last_tokens == dict.fromkeys(speakers, NEW_TOKEN)
 
 
+async def test_each_refresh_asks_google_for_rejected_token_while_polling_off(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    google: Mock,
+    replies: Replies,
+    clock: Mock,
+    freezer: FrozenDateTimeFactory,
+) -> None:
+    """Ask Google at each refresh for a speaker that rejects every token Google gives, while polling is off.
+
+    The errors tell the user to run Refresh devices, so the speaker doesn't wait
+    between refreshes as it does while polling: a refresh 15 seconds after another
+    still asks Google.
+    """
+    await set_up_without_polling(hass, config_entry)
+    replies[SPEAKER] = dict(REJECTING)
+    fetched = google.call_count
+
+    for refreshes in (1, 2):
+        await refresh_devices(hass)
+        await hass.async_block_till_done(wait_background_tasks=True)
+        assert google.call_count == fetched + refreshes
+        # Past the cooldown of Home Assistant's requested refreshes
+        clock.return_value += 15
+        freezer.tick(timedelta(seconds=15))
+        async_fire_time_changed(hass)
+
+
 @pytest.mark.usefixtures("replies")
 async def test_refresh_fetches_list_only_when_due_while_polling_off(
     hass: HomeAssistant,
@@ -560,14 +588,16 @@ async def test_token_rejected_says_how_to_get_new_one(
 ) -> None:
     """Say how a speaker that rejects its token gets a new one, and get it that way.
 
-    With polling on, the next update asks Google again by itself. With polling off,
-    nothing does until a refresh, so the error says to run Refresh devices.
+    With polling on, the first update a minute after Google gave the rejected token
+    asks Google again by itself. With polling off, nothing does until a refresh, so
+    the error says to run Refresh devices.
     """
     hass.config_entries.async_update_entry(
         config_entry, pref_disable_polling=not polling
     )
     await set_up(hass, config_entry)
     # The speaker's token changed, and Google doesn't have the new one yet
+    replies[SPEAKER][ALARMS] = ForToken(NEW_TOKEN, SUPPORTED[ALARMS])
     replies[SPEAKER][REBOOT] = ForToken(NEW_TOKEN, (HTTPStatus.OK, {}))
 
     with pytest.raises(DeviceRequestFailed) as err:
@@ -591,8 +621,12 @@ async def test_token_rejected_says_how_to_get_new_one(
         )
     ]
     if polling:
-        freezer.tick(timedelta(seconds=UPDATE_INTERVAL))
-        async_fire_time_changed(hass)
+        # The speaker waits a minute after rejecting the token from Google, and its
+        # first update after that asks Google again
+        for _ in range(4):
+            freezer.tick(timedelta(seconds=UPDATE_INTERVAL))
+            async_fire_time_changed(hass)
+            await hass.async_block_till_done(wait_background_tasks=True)
     else:
         await refresh_devices(hass)
     await hass.async_block_till_done(wait_background_tasks=True)
@@ -689,8 +723,12 @@ async def test_delete_fails_to_fetch_for_rejected_token(
         )
     ]
     if polling:
-        freezer.tick(timedelta(seconds=UPDATE_INTERVAL))
-        async_fire_time_changed(hass)
+        # The speaker waits a minute after rejecting the token from Google, and its
+        # first update after that asks Google again
+        for _ in range(4):
+            freezer.tick(timedelta(seconds=UPDATE_INTERVAL))
+            async_fire_time_changed(hass)
+            await hass.async_block_till_done(wait_background_tasks=True)
     else:
         await refresh_devices(hass)
     await hass.async_block_till_done(wait_background_tasks=True)
