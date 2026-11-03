@@ -100,8 +100,15 @@ type Replies = dict[str, dict[str, Reply | Held | ForToken]]
 
 
 @pytest.fixture(name="clock")
-def fixture_clock() -> Iterator[Mock]:
-    """Set the time the client reads, in seconds since setup fetched Google's list."""
+def fixture_clock(request: pytest.FixtureRequest) -> Iterator[Mock]:
+    """Set the time the client reads, in seconds since setup fetched Google's list.
+
+    In a test that also freezes time, the freezer starts first. Each time freezegun
+    starts, it puts its frozen monotonic in every module where an earlier start in the
+    process found the real one, even over this patch.
+    """
+    if "freezer" in request.fixturenames:
+        request.getfixturevalue("freezer")
     with (
         patch(
             "custom_components.google_home.api.monotonic", return_value=0.0

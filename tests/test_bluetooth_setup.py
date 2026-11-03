@@ -311,9 +311,8 @@ async def test_disabled_speaker_not_asked(
     scans.started.clear()
     disabled_scanner = runtime(config_entry).bluetooth
     await set_disabled(hass, device_registry, kitchen.id, disabled=False)
-    # Not with the freezer: once freezegun has seen the integration's real clocks, its
-    # later starts put its own clock over the clock fixture's, and this module runs
-    # before tests that use both
+    # Not with the freezer: once freezegun has seen the scanner's real clock, its later
+    # starts put its own clock over the scans fixture's
     async_fire_time_changed(
         hass, dt_util.utcnow() + timedelta(seconds=RELOAD_AFTER_UPDATE_DELAY + 1)
     )
