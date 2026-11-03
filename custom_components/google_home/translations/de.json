@@ -126,14 +126,23 @@
     "alarms_and_timers_not_fetched": {
       "message": "Die aktuellen Wecker und Timer konnten nicht von {device} abgerufen werden. Daher wurde auf diesem Gerät nichts gelöscht. Prüfe, ob es online ist, und versuche es später erneut."
     },
+    "alarms_and_timers_not_fetched_token_rejected_polling_off": {
+      "message": "Die aktuellen Wecker und Timer konnten nicht von {device} abgerufen werden. Daher wurde auf diesem Gerät nichts gelöscht. Es hat sein Token abgelehnt, und das Anfordern eines neuen bei Google hat nicht geholfen. Die Abfrage von Änderungen ist deaktiviert, daher fragt die Integration nicht selbstständig erneut bei Google an: Führe die Aktion „Geräte aktualisieren“ aus und versuche es dann erneut."
+    },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Die aktuellen Wecker und Timer konnten von den folgenden Geräten nicht abgerufen werden: {devices}. Daher wurde auf diesen Geräten nichts gelöscht. Prüfe, ob sie online sind, und versuche es später erneut."
     },
     "alarms_and_timers_not_deleted": {
       "message": "Das Gerät {device} hat das Löschen der Wecker oder Timer nicht bestätigt, daher sind sie möglicherweise noch eingestellt. Prüfe, ob es online ist, und versuche es später erneut."
     },
+    "alarms_and_timers_not_deleted_token_rejected_polling_off": {
+      "message": "Das Gerät {device} hat das Löschen der Wecker oder Timer nicht bestätigt, daher sind sie möglicherweise noch eingestellt. Es hat sein Token abgelehnt, und das Anfordern eines neuen bei Google hat nicht geholfen. Die Abfrage von Änderungen ist deaktiviert, daher fragt die Integration nicht selbstständig erneut bei Google an: Führe die Aktion „Geräte aktualisieren“ aus und versuche es dann erneut."
+    },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "Wecker oder Timer konnten auf den folgenden Geräten nicht gelöscht werden, oder das Löschen konnte nicht bestätigt werden: {devices}. Prüfe, ob sie online sind, und versuche es später erneut."
+    },
+    "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
+      "message": "Wecker oder Timer konnten auf den folgenden Geräten nicht gelöscht werden, oder das Löschen konnte nicht bestätigt werden: {devices}. Mindestens eines davon hat sein Token abgelehnt, und das Anfordern eines neuen bei Google hat nicht geholfen. Die Abfrage von Änderungen ist deaktiviert, daher fragt die Integration nicht selbstständig erneut bei Google an: Führe die Aktion „Geräte aktualisieren“ aus, prüfe, ob die Geräte online sind, und versuche es dann erneut."
     },
     "invalid_alarm_id": {
       "message": "„{alarm_id}“ ist keine Wecker-ID. Kopiere die ID, die mit alarm/ beginnt, aus dem Attribut alarms des Weckersensors des Geräts."

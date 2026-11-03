@@ -126,14 +126,23 @@
     "alarms_and_timers_not_fetched": {
       "message": "無法從 {device} 取得目前的鬧鐘和計時器，因此未從該裝置刪除任何項目。請確認裝置已連線，並稍後再試。"
     },
+    "alarms_and_timers_not_fetched_token_rejected_polling_off": {
+      "message": "無法從 {device} 取得目前的鬧鐘和計時器，因此未從該裝置刪除任何項目。該裝置拒絕了它的存取權杖，而向 Google 取得新的權杖也沒有幫助。輪詢變更已關閉，因此整合不會自動再向 Google 要求新的權杖：請執行「更新裝置」操作，然後再試一次。"
+    },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "無法從下列裝置取得目前的鬧鐘和計時器，因此未從這些裝置刪除任何項目：{devices}。請確認這些裝置已連線，並稍後再試。"
     },
     "alarms_and_timers_not_deleted": {
       "message": "{device} 未確認已刪除鬧鐘或計時器，因此這些項目可能仍處於已設定狀態。請確認裝置已連線，並稍後再試。"
     },
+    "alarms_and_timers_not_deleted_token_rejected_polling_off": {
+      "message": "{device} 未確認已刪除鬧鐘或計時器，因此這些項目可能仍處於已設定狀態。該裝置拒絕了它的存取權杖，而向 Google 取得新的權杖也沒有幫助。輪詢變更已關閉，因此整合不會自動再向 Google 要求新的權杖：請執行「更新裝置」操作，然後再試一次。"
+    },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "無法從下列裝置刪除鬧鐘或計時器，或無法確認是否已刪除：{devices}。請確認這些裝置已連線，並稍後再試。"
+    },
+    "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
+      "message": "無法從下列裝置刪除鬧鐘或計時器，或無法確認是否已刪除：{devices}。其中至少一個裝置拒絕了它的存取權杖，而向 Google 取得新的權杖也沒有幫助。輪詢變更已關閉，因此整合不會自動再向 Google 要求新的權杖：請執行「更新裝置」操作，確認這些裝置已連線，然後再試一次。"
     },
     "invalid_alarm_id": {
       "message": "「{alarm_id}」不是鬧鐘 ID。請從裝置的鬧鐘感測器的 alarms 屬性複製以 alarm/ 開頭的 ID。"

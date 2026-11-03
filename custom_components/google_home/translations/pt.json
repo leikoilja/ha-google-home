@@ -126,14 +126,23 @@
     "alarms_and_timers_not_fetched": {
       "message": "Não foi possível obter os alarmes e temporizadores atuais do dispositivo {device}, pelo que nada foi eliminado desse dispositivo. Verifique se está online e tente novamente mais tarde."
     },
+    "alarms_and_timers_not_fetched_token_rejected_polling_off": {
+      "message": "Não foi possível obter os alarmes e temporizadores atuais do dispositivo {device}, pelo que nada foi eliminado desse dispositivo. O dispositivo rejeitou o seu token, e obter um novo junto da Google não ajudou. A procura por alterações está desativada, pelo que a integração não volta a pedir um novo à Google por iniciativa própria: execute a ação «Atualizar dispositivos» e tente novamente."
+    },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Não foi possível obter os alarmes e temporizadores atuais dos seguintes dispositivos, pelo que nada foi eliminado desses dispositivos: {devices}. Verifique se estão online e tente novamente mais tarde."
     },
     "alarms_and_timers_not_deleted": {
       "message": "O dispositivo {device} não confirmou a eliminação dos alarmes ou temporizadores, pelo que poderão continuar definidos. Verifique se está online e tente novamente mais tarde."
     },
+    "alarms_and_timers_not_deleted_token_rejected_polling_off": {
+      "message": "O dispositivo {device} não confirmou a eliminação dos alarmes ou temporizadores, pelo que poderão continuar definidos. O dispositivo rejeitou o seu token, e obter um novo junto da Google não ajudou. A procura por alterações está desativada, pelo que a integração não volta a pedir um novo à Google por iniciativa própria: execute a ação «Atualizar dispositivos» e tente novamente."
+    },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "Não foi possível eliminar os alarmes ou temporizadores dos seguintes dispositivos, ou confirmar a sua eliminação: {devices}. Verifique se estão online e tente novamente mais tarde."
+    },
+    "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
+      "message": "Não foi possível eliminar os alarmes ou temporizadores dos seguintes dispositivos, ou confirmar a sua eliminação: {devices}. Pelo menos um deles rejeitou o seu token, e obter um novo junto da Google não ajudou. A procura por alterações está desativada, pelo que a integração não volta a pedir um novo à Google por iniciativa própria: execute a ação «Atualizar dispositivos», verifique se os dispositivos estão online e tente novamente."
     },
     "invalid_alarm_id": {
       "message": "«{alarm_id}» não é um ID de alarme. Copie o ID, que começa por alarm/, do atributo alarms do sensor de alarmes do dispositivo."

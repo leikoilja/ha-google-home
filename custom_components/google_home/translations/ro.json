@@ -126,14 +126,23 @@
     "alarms_and_timers_not_fetched": {
       "message": "Nu s-au putut prelua alarmele și temporizatoarele curente de pe dispozitivul {device}, așa că nu s-a șters nimic de pe acesta. Verifică dacă dispozitivul este online și încearcă din nou mai târziu."
     },
+    "alarms_and_timers_not_fetched_token_rejected_polling_off": {
+      "message": "Nu s-au putut prelua alarmele și temporizatoarele curente de pe dispozitivul {device}, așa că nu s-a șters nimic de pe acesta. Dispozitivul a respins tokenul, iar obținerea unuia nou de la Google nu a ajutat. Interogarea pentru modificări este dezactivată, așa că integrarea nu cere singură din nou un token de la Google: rulează acțiunea „Actualizează starea dispozitivelor”, apoi încearcă din nou."
+    },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Nu s-au putut prelua alarmele și temporizatoarele curente de pe următoarele dispozitive, așa că nu s-a șters nimic de pe acestea: {devices}. Verifică dacă dispozitivele sunt online și încearcă din nou mai târziu."
     },
     "alarms_and_timers_not_deleted": {
       "message": "Dispozitivul {device} nu a confirmat ștergerea alarmelor sau a temporizatoarelor, așa că acestea pot fi încă setate. Verifică dacă dispozitivul este online și încearcă din nou mai târziu."
     },
+    "alarms_and_timers_not_deleted_token_rejected_polling_off": {
+      "message": "Dispozitivul {device} nu a confirmat ștergerea alarmelor sau a temporizatoarelor, așa că acestea pot fi încă setate. Dispozitivul a respins tokenul, iar obținerea unuia nou de la Google nu a ajutat. Interogarea pentru modificări este dezactivată, așa că integrarea nu cere singură din nou un token de la Google: rulează acțiunea „Actualizează starea dispozitivelor”, apoi încearcă din nou."
+    },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "Nu s-au putut șterge alarmele sau temporizatoarele de pe următoarele dispozitive ori nu s-a putut confirma ștergerea lor: {devices}. Verifică dacă dispozitivele sunt online și încearcă din nou mai târziu."
+    },
+    "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
+      "message": "Nu s-au putut șterge alarmele sau temporizatoarele de pe următoarele dispozitive ori nu s-a putut confirma ștergerea lor: {devices}. Cel puțin unul dintre ele a respins tokenul, iar obținerea unuia nou de la Google nu a ajutat. Interogarea pentru modificări este dezactivată, așa că integrarea nu cere singură din nou un token de la Google: rulează acțiunea „Actualizează starea dispozitivelor”, verifică dacă dispozitivele sunt online, apoi încearcă din nou."
     },
     "invalid_alarm_id": {
       "message": "„{alarm_id}” nu este un ID de alarmă. Copiază ID-ul, care începe cu alarm/, din atributul alarms al senzorului de alarme al dispozitivului."

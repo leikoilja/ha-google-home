@@ -20,6 +20,7 @@ from pytest_homeassistant.typing import WebSocketGenerator
 
 from custom_components.google_home.account import KNOWN_HOSTS_INTERVAL
 from custom_components.google_home.const import (
+    API_ENDPOINT_ALARM_DELETE,
     API_ENDPOINT_ALARMS,
     CONF_KNOWN_HOSTS,
     DOMAIN,
@@ -37,6 +38,7 @@ from homeassistant.config_entries import ConfigEntryState
 from homeassistant.const import ATTR_ENTITY_ID
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import issue_registry as ir
 from homeassistant.helpers.registry import SAVE_DELAY
 from homeassistant.helpers.translation import async_get_translations
@@ -45,6 +47,7 @@ from homeassistant.setup import async_setup_component
 from .conftest import (
     BEDROOM,
     BEDROOM_ID,
+    DELETE,
     SPEAKER_CLOUD_ID,
     SPEAKER_ID,
     SPEAKER_NAME,
@@ -54,7 +57,7 @@ from .conftest import (
 )
 from .test_coordinators import BEDROOM_ALARMS
 from .test_diagnostics import TV, TV_CLOUD_ID, TV_NAME
-from .test_missing_devices import found
+from .test_missing_devices import ALARM_ID, found
 from .test_sensor import error_message
 from .test_setup import (
     ALARMS_SENSOR,
@@ -601,3 +604,234 @@ async def test_token_rejected_says_how_to_get_new_one(
         headers[HEADER_CAST_LOCAL_AUTH]
         for _, _, _, headers in aioclient_mock.mock_calls
     ] == [NEW_TOKEN]
+
+
+# How a delete's error for one device ends: as before, or, when the device rejected
+# its token while polling is off, with what to do instead
+TRY_LATER = "Check that it's online and try again later."
+RUN_REFRESH = (
+    "It rejected its token, and getting a new one from Google didn't help. "
+    "Polling is turned off, so the integration doesn't ask Google again by "
+    "itself: run the Refresh devices action, then try again."
+)
+NOT_FETCHED = (
+    f"Couldn't get the current alarms and timers from {SPEAKER_NAME}, so nothing "
+    "was deleted from it."
+)
+NOT_DELETED = (
+    f"{SPEAKER_NAME} didn't confirm deleting the alarms or timers, so they may "
+    "still be set."
+)
+
+
+async def delete_all_alarms(
+    hass: HomeAssistant, *entity_ids: str, skip_refresh: bool = False
+) -> None:
+    """Run the action that deletes all alarms of these alarms sensors."""
+    await hass.services.async_call(
+        DOMAIN,
+        "delete_all_alarms",
+        {ATTR_ENTITY_ID: list(entity_ids), "skip_refresh": skip_refresh},
+        blocking=True,
+    )
+
+
+def alarm_ids(hass: HomeAssistant, entity_id: str) -> list[str]:
+    """Return the IDs of the alarms that the alarms sensor shows."""
+    alarms = hass.states.get(entity_id)
+    assert alarms is not None
+    return [alarm["alarm_id"] for alarm in alarms.attributes["alarms"]]
+
+
+@pytest.mark.parametrize("polling", [True, False], ids=["polling on", "polling off"])
+async def test_delete_fails_to_fetch_for_rejected_token(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    google: Mock,
+    replies: Replies,
+    aioclient_mock: AiohttpClientMocker,
+    freezer: FrozenDateTimeFactory,
+    polling: bool,
+) -> None:
+    """Say how to get a new token when a delete can't fetch the alarms, then delete once Google has it.
+
+    The speaker got no delete request, so the action doesn't refresh it, and doesn't
+    ask Google again. With polling off, nothing else does until a refresh.
+    """
+    hass.config_entries.async_update_entry(
+        config_entry, pref_disable_polling=not polling
+    )
+    await set_up(hass, config_entry)
+    # The speaker's token changed, and Google doesn't have the new one yet
+    replies[SPEAKER][ALARMS] = ForToken(NEW_TOKEN, SUPPORTED[ALARMS])
+    replies[SPEAKER][DELETE] = ForToken(NEW_TOKEN, (HTTPStatus.OK, {"success": True}))
+    fetched = google.call_count
+    aioclient_mock.mock_calls.clear()
+
+    with pytest.raises(HomeAssistantError) as err:
+        await delete_all_alarms(hass, ALARMS_SENSOR)
+    await hass.async_block_till_done(wait_background_tasks=True)
+
+    assert (
+        error_message(err.value)
+        == f"{NOT_FETCHED} {TRY_LATER if polling else RUN_REFRESH}"
+    )
+    assert requests(aioclient_mock) == [("GET", API_ENDPOINT_ALARMS, None)]
+    assert google.call_count == fetched
+
+    google.return_value = [
+        found(
+            SPEAKER_ID,
+            SPEAKER,
+            NEW_TOKEN,
+            name=SPEAKER_NAME,
+            cloud_device_id=SPEAKER_CLOUD_ID,
+        )
+    ]
+    if polling:
+        freezer.tick(timedelta(seconds=UPDATE_INTERVAL))
+        async_fire_time_changed(hass)
+    else:
+        await refresh_devices(hass)
+    await hass.async_block_till_done(wait_background_tasks=True)
+    aioclient_mock.mock_calls.clear()
+
+    # Without it, the action updates the speaker again, whose fake answer still lists
+    # the alarm
+    await delete_all_alarms(hass, ALARMS_SENSOR, skip_refresh=True)
+
+    assert [
+        (method.upper(), headers[HEADER_CAST_LOCAL_AUTH])
+        for method, _, _, headers in aioclient_mock.mock_calls
+    ] == [("GET", NEW_TOKEN), ("POST", NEW_TOKEN)]
+    assert alarm_ids(hass, ALARMS_SENSOR) == []
+
+
+@pytest.mark.parametrize(
+    ("polling", "skip_refresh", "fetches"),
+    [
+        pytest.param(True, False, 0, id="polling on"),
+        pytest.param(False, True, 0, id="polling off, skip refresh"),
+        # The refresh updates the account, as nothing else does while polling is off
+        pytest.param(False, False, 1, id="polling off, refresh"),
+    ],
+)
+async def test_delete_rejected_for_token(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    google: Mock,
+    replies: Replies,
+    aioclient_mock: AiohttpClientMocker,
+    polling: bool,
+    skip_refresh: bool,
+    fetches: int,
+) -> None:
+    """Say how to get a new token when the speaker rejects only the delete, and keep its alarm.
+
+    Google's list was fetched at setup, which is in the same round, so the rejection
+    gets no new token. With polling off, the action's refresh fetches the list, but
+    Google still has the token that the speaker rejects.
+    """
+    hass.config_entries.async_update_entry(
+        config_entry, pref_disable_polling=not polling
+    )
+    await set_up(hass, config_entry)
+    replies[SPEAKER][DELETE] = ForToken(NEW_TOKEN, (HTTPStatus.OK, {"success": True}))
+    fetched = google.call_count
+    aioclient_mock.mock_calls.clear()
+
+    with pytest.raises(HomeAssistantError) as err:
+        await delete_all_alarms(hass, ALARMS_SENSOR, skip_refresh=skip_refresh)
+    await hass.async_block_till_done(wait_background_tasks=True)
+
+    assert (
+        error_message(err.value)
+        == f"{NOT_DELETED} {TRY_LATER if polling else RUN_REFRESH}"
+    )
+    assert requests(aioclient_mock)[:2] == [
+        ("GET", API_ENDPOINT_ALARMS, None),
+        ("POST", API_ENDPOINT_ALARM_DELETE, {"ids": [ALARM_ID]}),
+    ]
+    assert google.call_count - fetched == fetches
+    assert alarm_ids(hass, ALARMS_SENSOR) == [ALARM_ID]
+
+
+@pytest.mark.usefixtures("google")
+@pytest.mark.parametrize(
+    ("endpoint", "first_sentence"),
+    [(ALARMS, NOT_FETCHED), (DELETE, NOT_DELETED)],
+    ids=["fetch", "delete"],
+)
+async def test_delete_fails_another_way_while_polling_off(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    replies: Replies,
+    endpoint: str,
+    first_sentence: str,
+) -> None:
+    """Keep the advice to try again later when the speaker fails for another reason than its token."""
+    await set_up_without_polling(hass, config_entry)
+    replies[SPEAKER][DELETE] = (HTTPStatus.OK, {"success": True})
+    replies[SPEAKER][endpoint] = HTTPStatus.INTERNAL_SERVER_ERROR
+
+    with pytest.raises(HomeAssistantError) as err:
+        await delete_all_alarms(hass, ALARMS_SENSOR, skip_refresh=True)
+
+    assert error_message(err.value) == f"{first_sentence} {TRY_LATER}"
+
+
+@pytest.mark.usefixtures("two_speakers")
+@pytest.mark.parametrize("polling", [True, False], ids=["polling on", "polling off"])
+@pytest.mark.parametrize(
+    ("bedroom", "polling_on_error"),
+    [
+        pytest.param(
+            {ALARMS: HTTPStatus.INTERNAL_SERVER_ERROR},
+            "Couldn't get the current alarms and timers from these devices, so "
+            "nothing was deleted from them: Bedroom speaker, Kitchen speaker. Check "
+            "that they're online and try again later.",
+            id="bedroom fetch fails",
+        ),
+        pytest.param(
+            {DELETE: (HTTPStatus.OK, {"success": False})},
+            "Couldn't delete alarms or timers from these devices, or confirm that "
+            "they were deleted: Bedroom speaker, Kitchen speaker. Check that they're "
+            "online and try again later.",
+            id="bedroom delete unconfirmed",
+        ),
+    ],
+)
+async def test_delete_from_speakers_one_rejecting_token(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    replies: Replies,
+    polling: bool,
+    bedroom: dict[str, HTTPStatus | tuple[HTTPStatus, object]],
+    polling_on_error: str,
+) -> None:
+    """Say to refresh when one of the speakers that failed rejected its token while polling is off.
+
+    The other speaker fails another way: its fetch, or its delete, which may have
+    happened. The error is the same for both, so it doesn't say that nothing was
+    deleted.
+    """
+    hass.config_entries.async_update_entry(
+        config_entry, pref_disable_polling=not polling
+    )
+    await set_up(hass, config_entry)
+    replies[SPEAKER][ALARMS] = ForToken(NEW_TOKEN, SUPPORTED[ALARMS])
+    replies[BEDROOM].update(bedroom)
+
+    with pytest.raises(HomeAssistantError) as err:
+        await delete_all_alarms(hass, ALARMS_SENSOR, BEDROOM_ALARMS)
+
+    assert error_message(err.value) == (
+        polling_on_error
+        if polling
+        else "Couldn't delete alarms or timers from these devices, or confirm that "
+        "they were deleted: Bedroom speaker, Kitchen speaker. At least one of them "
+        "rejected its token, and getting a new one from Google didn't help. Polling "
+        "is turned off, so the integration doesn't ask Google again by itself: run "
+        "the Refresh devices action, check that the devices are online, then try "
+        "again."
+    )

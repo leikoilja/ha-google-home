@@ -126,14 +126,23 @@
     "alarms_and_timers_not_fetched": {
       "message": "Impossibile recuperare le sveglie e i timer attualmente impostati su {device}, quindi non è stato eliminato nulla da questo dispositivo. Verifica che sia online e riprova più tardi."
     },
+    "alarms_and_timers_not_fetched_token_rejected_polling_off": {
+      "message": "Impossibile recuperare le sveglie e i timer attualmente impostati su {device}, quindi non è stato eliminato nulla da questo dispositivo. Il dispositivo ha rifiutato il suo token e ottenerne uno nuovo da Google non è servito. Il rilevamento delle variazioni è disabilitato, quindi l'integrazione non ne richiede uno nuovo a Google di propria iniziativa: esegui l'azione «Aggiorna i dispositivi», poi riprova."
+    },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Impossibile recuperare le sveglie e i timer attualmente impostati sui seguenti dispositivi: {devices}. Non è stato quindi eliminato nulla da questi dispositivi. Verifica che siano online e riprova più tardi."
     },
     "alarms_and_timers_not_deleted": {
       "message": "{device} non ha confermato l'eliminazione delle sveglie o dei timer, quindi potrebbero essere ancora impostati. Verifica che sia online e riprova più tardi."
     },
+    "alarms_and_timers_not_deleted_token_rejected_polling_off": {
+      "message": "{device} non ha confermato l'eliminazione delle sveglie o dei timer, quindi potrebbero essere ancora impostati. Il dispositivo ha rifiutato il suo token e ottenerne uno nuovo da Google non è servito. Il rilevamento delle variazioni è disabilitato, quindi l'integrazione non ne richiede uno nuovo a Google di propria iniziativa: esegui l'azione «Aggiorna i dispositivi», poi riprova."
+    },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "Impossibile eliminare le sveglie o i timer dai seguenti dispositivi, o confermarne l'eliminazione: {devices}. Verifica che siano online e riprova più tardi."
+    },
+    "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
+      "message": "Impossibile eliminare le sveglie o i timer dai seguenti dispositivi, o confermarne l'eliminazione: {devices}. Almeno uno di questi ha rifiutato il suo token e ottenerne uno nuovo da Google non è servito. Il rilevamento delle variazioni è disabilitato, quindi l'integrazione non ne richiede uno nuovo a Google di propria iniziativa: esegui l'azione «Aggiorna i dispositivi», verifica che i dispositivi siano online, poi riprova."
     },
     "invalid_alarm_id": {
       "message": "«{alarm_id}» non è un ID di sveglia. Copia l'ID, che inizia con alarm/, dall'attributo alarms del sensore delle sveglie del dispositivo."

@@ -346,7 +346,7 @@ class GlocaltokensApiClient(GoogleAccountClient):
                 polling=polling,
             )
         except DeviceRequestFailed as error:
-            raise AlarmsAndTimersNotFetched(device.name) from error
+            raise AlarmsAndTimersNotFetched(device.name, error) from error
 
         if response is not None:
             device.alarms_reply = response
@@ -415,7 +415,7 @@ class GlocaltokensApiClient(GoogleAccountClient):
             )
             raise AlarmsAndTimersNotDeleted(device.name) from error
         except DeviceRequestFailed as error:
-            raise AlarmsAndTimersNotDeleted(device.name) from error
+            raise AlarmsAndTimersNotDeleted(device.name, error) from error
 
         # Only this reply is known to confirm a delete
         if isinstance(response, dict) and response.get("success") is True:
