@@ -213,7 +213,8 @@ class GoogleAccountClient:
         for, or the update's own lookup, gave devices: their info answered then, so
         their next update needn't ask for it.
 
-        Raise ClientError or TimeoutError if Google can't be reached at setup.
+        Raise ClientError or TimeoutError if Google can't be reached at setup's own
+        fetch, while the list is unknown.
         """
         self._fetches_before_update = self._fetches
         known_hosts = await self.async_fetch_devices_when_due()
