@@ -25,7 +25,7 @@ You can submit a partial translation. Remove entries you have not translated: co
 
 Keep placeholders in their original form: `{docs_url}` is allowed, but `{docs_url!r}` and `{{docs_url}}` are rejected. Added formatting inside the braces is also rejected. Don't use curly brackets except around placeholders. Don't put a Latin letter (A–Z or a–z) or `/` directly after `<`. Quotation marks around a placeholder are fine, such as `“{device}”`, `„{device}“` or `«{device}»`. Use `’` instead of a straight apostrophe before `{`, `}`, `<` or `>`, as in `l’{device}`. Don't double apostrophes: write `L'aide`, not `L''aide`.
 
-Home Assistant shows a link placeholder such as `{docs_url}` as a link, and text right after it, such as `을` or `。`, can become part of that link. Leave a space or line break after the placeholder, rephrase, or write a Markdown link such as `[documentation]({docs_url})`. Outside a Markdown link, only these characters can follow the placeholder directly, and only before a space, line break or the end of the text: `.` `,` `:` `;` `!` `?` `'` `"` `)` `*` `_` `~`, such as a full stop or a closing `**`.
+Home Assistant shows a link placeholder such as `{docs_url}` as a link, and text right after it, such as a word or a full-width full stop, can become part of that link. Put a space, a line break or the end of the text right after the placeholder, or after punctuation that safely follows it: `.` `,` `:` `;` `!` `?` `'` `"` `)` `*` `_` `~`, such as a full stop or a closing `**`. You can also rephrase, or write a Markdown link with only the placeholder inside the parentheses, such as `[documentation]({docs_url})`.
 
 ## Develop
 

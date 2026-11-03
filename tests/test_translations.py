@@ -327,6 +327,7 @@ def test_plain_placeholders_with_punctuation(catalogs: Path, value: str) -> None
         ("``{docs_url}`을", "docs_url", "`을"),
         ("`{docs_url}``을", "docs_url", "``을"),
         ("`a\nb`{docs_url}`을", "docs_url", "`을"),
+        ("`a\rb`{docs_url}`을", "docs_url", "`을"),
         # A blank line, written with LF or CR, ends a code span or link text
         ("`a\n\n{docs_url}을 `", "docs_url", "을"),
         ("`a\r\r{docs_url}을 `", "docs_url", "을"),
@@ -350,9 +351,53 @@ def test_text_glued_to_url_placeholder_fails(
     assert report.issues[0].file.name == f"{language}.json"
     assert report.issues[0].message.startswith(
         f"config.help: Text right after {{{name}}} can become part of its link: "
-        f"{suffix!r}. Add a space after the placeholder, rephrase, or write a "
-        f"Markdown link such as [text]({{{name}}})"
+        f"{suffix!r}. "
     )
+
+
+@pytest.mark.parametrize(
+    ("value", "advice", "fixed"),
+    [
+        (
+            "Hilfe: {docs_url}.Danach",
+            (
+                "Put a space or line break right after the placeholder, or after "
+                "ASCII punctuation such as '.' that follows it; rephrase; or write "
+                "a Markdown link such as [text]({docs_url})"
+            ),
+            "Hilfe: {docs_url}. Danach",
+        ),
+        (
+            "[Hilfe]({docs_url}.)",
+            (
+                "Keep only the placeholder inside the link's parentheses, as in "
+                "[text]({docs_url})"
+            ),
+            "[Hilfe]({docs_url}).",
+        ),
+        (
+            "<{docs_url}(>",
+            "Keep only the placeholder inside <>, as in <{docs_url}>",
+            "<{docs_url}>(",
+        ),
+    ],
+)
+def test_advice_fits_where_the_text_is(
+    catalogs: Path, value: str, advice: str, fixed: str
+) -> None:
+    """Suggest a fix that keeps the Markdown valid: a space can't fix a link target."""
+
+    def check(text: str) -> translations.Report:
+        (catalogs / "de.json").write_text(
+            json.dumps({"config": {"help": text}}), encoding="utf-8"
+        )
+        return translations.check_translations(catalogs)
+
+    report = check(value)
+    assert report.failed
+    assert report.issues[0].message.endswith(f". {advice}")
+    # Following the advice passes
+    assert not check(fixed).failed
 
 
 def test_text_after_closing_emphasis_fails_by_policy(catalogs: Path) -> None:
@@ -398,6 +443,11 @@ def test_text_after_closing_emphasis_fails_by_policy(catalogs: Path) -> None:
         "**[문서]({docs_url})**。",
         "<{docs_url}>을",
         "`See {docs_url}`을",
+        # A blank line ends a paragraph, and unpaired backticks with it
+        "Literal `.\n\nSee `{docs_url}`.",
+        "Literal `.\r\rSee `{docs_url}`.",
+        "Literal `.\r\n\r\nSee `{docs_url}`.",
+        "```\ncode\n```\n\nSee `{docs_url}`.",
         # Only URL placeholders are checked
         "{device}을 확인하세요",
     ],
