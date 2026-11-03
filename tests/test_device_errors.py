@@ -124,6 +124,29 @@ def test_log_each_type_of_failure_once(
     ]
 
 
+def test_log_failure_once_across_a_timeout(
+    clock: Mock, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Log a failure once, although a timeout comes between two updates that get it, and log once that an update works again.
+
+    A timeout is logged only for debugging and doesn't make the update work, so the
+    second 500 is logged for debugging too.
+    """
+    caplog.set_level(logging.DEBUG, logger="custom_components.google_home")
+    client, _, network = setup(SUPPORTED)
+    for seconds, reply in (
+        (at(0), SERVER_ERROR),
+        (at(0, 15), TimeoutError()),
+        (at(0, 30), SERVER_ERROR),
+        (at(0, 45), SUPPORTED[ALARMS]),
+    ):
+        network.replies[SPEAKER][ALARMS] = reply
+        poll(client, clock, seconds)
+
+    assert above_debug(caplog) == [("ERROR", FAILED_500), ("INFO", WORKS_AGAIN)]
+    assert lines(caplog).count(("DEBUG", FAILED_500)) == 1
+
+
 def test_log_failures_of_each_device(
     clock: Mock, caplog: pytest.LogCaptureFixture
 ) -> None:
