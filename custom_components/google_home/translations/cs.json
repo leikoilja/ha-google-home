@@ -126,14 +126,23 @@
     "alarms_and_timers_not_fetched": {
       "message": "Nepodařilo se načíst aktuální budíky a časovače ze zařízení {device}, proto z něj nebylo nic smazáno. Zkontrolujte, zda je zařízení online, a zkuste to znovu později."
     },
+    "alarms_and_timers_not_fetched_token_rejected_polling_off": {
+      "message": "Nepodařilo se načíst aktuální budíky a časovače ze zařízení {device}, proto z něj nebylo nic smazáno. Zařízení odmítlo svůj token a získání nového od Googlu nepomohlo. Dotazování na změny je vypnuté, takže integrace sama znovu nežádá Google o nový token: spusťte akci „Aktualizovat stav zařízení“ a pak to zkuste znovu."
+    },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Nepodařilo se načíst aktuální budíky a časovače z následujících zařízení, proto z nich nebylo nic smazáno: {devices}. Zkontrolujte, zda jsou zařízení online, a zkuste to znovu později."
     },
     "alarms_and_timers_not_deleted": {
       "message": "Zařízení {device} nepotvrdilo smazání budíků nebo časovačů, takže mohou být stále nastavené. Zkontrolujte, zda je zařízení online, a zkuste to znovu později."
     },
+    "alarms_and_timers_not_deleted_token_rejected_polling_off": {
+      "message": "Zařízení {device} nepotvrdilo smazání budíků nebo časovačů, takže mohou být stále nastavené. Zařízení odmítlo svůj token a získání nového od Googlu nepomohlo. Dotazování na změny je vypnuté, takže integrace sama znovu nežádá Google o nový token: spusťte akci „Aktualizovat stav zařízení“ a pak to zkuste znovu."
+    },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "Nepodařilo se smazat budíky nebo časovače z následujících zařízení nebo potvrdit jejich smazání: {devices}. Zkontrolujte, zda jsou zařízení online, a zkuste to znovu později."
+    },
+    "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
+      "message": "Nepodařilo se smazat budíky nebo časovače z následujících zařízení nebo potvrdit jejich smazání: {devices}. Alespoň jedno z nich odmítlo svůj token a získání nového od Googlu nepomohlo. Dotazování na změny je vypnuté, takže integrace sama znovu nežádá Google o nový token: spusťte akci „Aktualizovat stav zařízení“, zkontrolujte, zda jsou zařízení online, a pak to zkuste znovu."
     },
     "invalid_alarm_id": {
       "message": "„{alarm_id}“ není ID budíku. Zkopírujte ID začínající na alarm/ z atributu alarms senzoru budíků daného zařízení."

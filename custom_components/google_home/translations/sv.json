@@ -126,14 +126,23 @@
     "alarms_and_timers_not_fetched": {
       "message": "Det gick inte att hämta aktuella alarm och timers från {device}, så inget raderades från den enheten. Kontrollera att enheten är online och försök igen senare."
     },
+    "alarms_and_timers_not_fetched_token_rejected_polling_off": {
+      "message": "Det gick inte att hämta aktuella alarm och timers från {device}, så inget raderades från den enheten. Enheten avvisade sin token, och det hjälpte inte att hämta en ny från Google. Pollning för ändringar är inaktiverad, så integrationen ber inte Google om en ny igen på egen hand: kör åtgärden ”Uppdatera enheter” och försök sedan igen."
+    },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Det gick inte att hämta aktuella alarm och timers från följande enheter, så inget raderades från dem: {devices}. Kontrollera att enheterna är online och försök igen senare."
     },
     "alarms_and_timers_not_deleted": {
       "message": "{device} bekräftade inte att alarm eller timers raderades, så de kan fortfarande vara inställda. Kontrollera att enheten är online och försök igen senare."
     },
+    "alarms_and_timers_not_deleted_token_rejected_polling_off": {
+      "message": "{device} bekräftade inte att alarm eller timers raderades, så de kan fortfarande vara inställda. Enheten avvisade sin token, och det hjälpte inte att hämta en ny från Google. Pollning för ändringar är inaktiverad, så integrationen ber inte Google om en ny igen på egen hand: kör åtgärden ”Uppdatera enheter” och försök sedan igen."
+    },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "Det gick inte att radera alarm eller timers från följande enheter eller bekräfta att de raderades: {devices}. Kontrollera att enheterna är online och försök igen senare."
+    },
+    "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
+      "message": "Det gick inte att radera alarm eller timers från följande enheter eller bekräfta att de raderades: {devices}. Minst en av dem avvisade sin token, och det hjälpte inte att hämta en ny från Google. Pollning för ändringar är inaktiverad, så integrationen ber inte Google om en ny igen på egen hand: kör åtgärden ”Uppdatera enheter”, kontrollera att enheterna är online och försök sedan igen."
     },
     "invalid_alarm_id": {
       "message": "”{alarm_id}” är inte ett alarm-ID. Kopiera ID:t, som börjar med alarm/, från attributet alarms på enhetens alarmsensor."
