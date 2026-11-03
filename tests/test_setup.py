@@ -753,3 +753,19 @@ async def test_alarm_volume_icon(
 
     assert state(hass, VOLUME_NUMBER) == str(volume)
     assert (await shown_icons(hass, entity_registry))[VOLUME_NUMBER] == icon
+
+
+async def test_action_icons(hass: HomeAssistant) -> None:
+    """Give every action an icon for the action picker, the same for one item or all."""
+    assert await async_setup_component(hass, DOMAIN, {})
+
+    icons = (await async_get_icons(hass, "services", [DOMAIN]))[DOMAIN]
+    assert icons.keys() == hass.services.async_services_for_domain(DOMAIN).keys()
+    assert icons == {
+        "reboot_device": {"service": "mdi:restart"},
+        "delete_alarm": {"service": "mdi:alarm-off"},
+        "delete_all_alarms": {"service": "mdi:alarm-off"},
+        "delete_timer": {"service": "mdi:timer-cancel"},
+        "delete_all_timers": {"service": "mdi:timer-cancel"},
+        "refresh_devices": {"service": "mdi:refresh"},
+    }
