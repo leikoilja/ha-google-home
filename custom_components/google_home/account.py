@@ -32,6 +32,15 @@ _LOGGER: logging.Logger = logging.getLogger(__package__)
 KNOWN_HOSTS_INTERVAL: Final = 5 * 60  # sec
 
 
+def first_update_after(wait: float) -> str:
+    """Say which update comes first once this many seconds have passed.
+
+    Rounded up to minutes, so the next update is said only once the wait has passed.
+    """
+    minutes = math.ceil(wait / 60)
+    return f"the first update after {minutes} min" if minutes > 0 else "the next update"
+
+
 class FetchBackoff:
     """When Google's device list may be fetched again after fetches fail.
 
@@ -61,6 +70,11 @@ class FetchBackoff:
         self._failures = 0
         self._retry_at = 0.0
 
+    @property
+    def failing(self) -> bool:
+        """Return whether the last fetch that started failed, or hasn't ended yet."""
+        return self._failures > 0
+
     def waiting(self, now: float) -> bool:
         """Return whether it's too soon after a failed fetch to fetch again."""
         return now < self._retry_at
@@ -68,6 +82,28 @@ class FetchBackoff:
     def wait_left(self, now: float) -> float:
         """Return how many seconds are left until the list may be fetched again, or 0."""
         return max(0.0, self._retry_at - now)
+
+
+class TokenWait(FetchBackoff):
+    """When a device's rejected token may fetch Google's list again, while polling.
+
+    For a device that rejected the token from a fetch that worked, until it accepts
+    one: for it, each such fetch counts as failed. Each fetch counts at most once,
+    and only after the wait from the last one is over, so a rejection while the
+    device waits, or of a token from a fetch it already counted, doesn't make it wait
+    longer.
+    """
+
+    def __init__(self) -> None:
+        """Start with no fetches counted."""
+        super().__init__()
+        # How many fetches had ended when it last counted one
+        self.fetches = -1
+
+    @property
+    def repeated(self) -> bool:
+        """Return whether the device rejected the tokens from more than one fetch in a row."""
+        return self._failures > 1
 
 
 class GoogleAccountClient:
@@ -103,7 +139,8 @@ class GoogleAccountClient:
         self.google_devices: list[GoogleHomeDevice] = []
         # Whether google_devices is the list of the last successful fetch, which can
         # be empty. It isn't until a fetch succeeds, or once a device rejects its
-        # token and gets no new token that it accepts.
+        # token and gets no new token that it accepts, while polling is off or after
+        # a fetch that failed.
         self.google_devices_fetched = False
         # Why Google last rejected the master token, until a fetch succeeds
         self.sign_in_error: AuthenticationError | None = None
@@ -149,6 +186,10 @@ class GoogleAccountClient:
         self._last_home_graph_with: dict[str, int] = {}
         # While the list is unknown, a fetch after a failed one waits a while
         self._fetch_backoff = FetchBackoff()
+        # When the last fetch started, and by device ID the wait of each device that
+        # rejected the token from a fetch that worked, until it accepts one
+        self._last_fetch_started = 0.0
+        self._token_waits: dict[str, TokenWait] = {}
         # Whether a failed fetch was logged as an error, until a fetch works. Only the
         # first failure of an outage is, however each fetch fails.
         self._fetch_error_logged = False
@@ -244,7 +285,8 @@ class GoogleAccountClient:
         tokens rather than asking Google again. While the list is unknown, nothing
         fetches it until the backoff after a failed fetch has passed: neither the
         update nor a device that rejects its token. With a known list, a rejected
-        token still gets a fetch straight away.
+        token still gets a fetch straight away, unless its device waits after
+        rejecting the token from a fetch that worked.
 
         A scheduled fetch is one that's due while the list is known; if it fails, the
         list stays known. Any other failed fetch leaves the list unknown, including one
@@ -286,7 +328,7 @@ class GoogleAccountClient:
 
         Return the known hosts that this fetch gave devices, by device ID.
         """
-        started = monotonic()
+        started = self._last_fetch_started = monotonic()
         # Whether this works or not, the next scheduled fetch waits a full interval
         self.next_scheduled_fetch = started + FETCH_DEVICES_INTERVAL
         retry_at = self._fetch_backoff.fetch_started(started)
@@ -369,13 +411,10 @@ class GoogleAccountClient:
         # account again until signing in again reloads the integration
         if isinstance(error, AuthenticationError) and not self.google_devices:
             return "sign in again to fetch it"
-        # From now, as the fetch that failed took a while. Rounded up, so the next update
-        # is said only once the wait has passed.
-        wait = math.ceil((due - monotonic()) / 60)
-        when = f"the first update after {wait} min" if wait > 0 else "the next update"
+        # From now, as the fetch that failed took a while
         return (
-            f"next try at {when}; further failures are logged at debug level until a "
-            "fetch works"
+            f"next try at {first_update_after(due - monotonic())}; further failures "
+            "are logged at debug level until a fetch works"
         )
 
     @property

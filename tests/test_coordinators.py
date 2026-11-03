@@ -647,11 +647,14 @@ async def test_rejected_token_at_setup(
     google: Mock,
     replies: Replies,
     entity_registry: er.EntityRegistry,
+    clock: Mock,
 ) -> None:
-    """Set up with every speaker when one rejects its token, and get it a new one at the next update.
+    """Set up with every speaker when one rejects its token, and get it a new one a minute later.
 
     Setup's fetch is the one of its update, so the speaker gets no fetch of its own,
-    and nothing asks to sign in again. The next update of the list fetches it.
+    and nothing asks to sign in again. The list stays known, so the next update of
+    the list doesn't fetch it. The speaker waits a minute after setup's fetch, then
+    its update fetches it.
     """
     replies[BEDROOM] = dict(REJECTING)
 
@@ -666,17 +669,22 @@ async def test_rejected_token_at_setup(
         entity_registry.async_get_entity_id("sensor", DOMAIN, "bedroom/alarms") is None
     )
     data = runtime(config_entry)
-    assert not data.client.google_devices_fetched
+    assert data.client.google_devices_fetched
 
     # The token in the list fetched next is one the speaker accepts
     def new_token(*_args: object, **_kwargs: object) -> list[Device]:
         replies[BEDROOM] = dict(SUPPORTED)
-        return [kitchen_speaker(), bedroom_speaker()]
+        return [
+            kitchen_speaker(),
+            found(BEDROOM_ID, BEDROOM, "y" * 108, name="Bedroom speaker"),
+        ]
 
     google.side_effect = new_token
     await update_account(hass, config_entry)
-    assert google.call_count == 2
+    assert google.call_count == 1
+    clock.return_value = 60
     await data.devices[BEDROOM_ID].async_refresh()
+    assert google.call_count == 2
     await hass.async_block_till_done()
 
     assert state(hass, BEDROOM_ALARMS) == "2023-11-14T14:13:20-08:00"

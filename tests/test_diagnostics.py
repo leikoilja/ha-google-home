@@ -361,8 +361,8 @@ async def test_diagnostics_mdns_reports_by_speaker(
 
     The kitchen and bedroom speakers are in mDNS's cache, which the browser replays
     after each fetch; the office speaker isn't. The bedroom speaker rejects every
-    token, which leaves Google's list to fetch again, but the list and so the count
-    are still known.
+    token, so it waits before it asks Google again, and the list and so the count
+    stay known.
     """
     hall = found("hall", None, name="Hall speaker")
     hall.cloud_device_id = None
@@ -395,7 +395,7 @@ async def test_diagnostics_mdns_reports_by_speaker(
         account["google_devices_fetched"],
         diagnostics["mdns_reported_not_listed"],
     ) == (
-        False,
+        True,
         1,
     )
 
@@ -410,8 +410,9 @@ async def test_diagnostics_after_google_drops_last_speaker(
     """Keep the count known when the fetch for the last speaker's token finds no devices.
 
     Google already lists none, which the fetch for a new token finds out. It worked,
-    though the rejected token marks the list to fetch again.
+    though with polling off the rejected token marks the list to fetch again.
     """
+    hass.config_entries.async_update_entry(config_entry, pref_disable_polling=True)
     await set_up(hass, config_entry)
     runtime(config_entry).client.found_devices.async_device_found(
         TV_CLOUD_ID, TV_NAME, TV
