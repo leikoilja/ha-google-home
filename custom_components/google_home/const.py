@@ -54,6 +54,12 @@ ISSUE_POLLING_DISABLED: Final = "polling_disabled"
 POLLING_DOCS_URL: Final = (
     "https://ha-google-home.pages.dev/configuration/#turn-off-polling"
 )
+# The repair shown while the update interval saved in the options is below 1 second,
+# which earlier versions accepted, and the docs that its fix links to
+ISSUE_INVALID_INTERVAL: Final = "invalid_update_interval"
+INTERVAL_DOCS_URL: Final = (
+    "https://ha-google-home.pages.dev/configuration/#change-the-update-interval"
+)
 # The repair shown while Google's home graph has no home whose devices are added: the
 # account's homes are all deselected, or Google reports none. Its text links to the
 # integration's page, where the entry's Configure and Reload are. When Google reports

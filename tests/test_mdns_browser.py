@@ -503,8 +503,9 @@ def test_setup_browses_before_first_fetch() -> None:
     with (
         patch("custom_components.google_home.zeroconf.async_get_instance"),
         patch("custom_components.google_home.async_get_clientsession"),
-        # It needs Home Assistant's issue registry
+        # They need Home Assistant's issue registry
         patch("custom_components.google_home.async_show_polling_disabled"),
+        patch("custom_components.google_home.async_show_invalid_interval"),
         patch(
             "custom_components.google_home.GoogleAccountCoordinator",
             return_value=account,

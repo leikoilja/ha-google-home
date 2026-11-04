@@ -200,6 +200,21 @@
         }
       }
     },
+    "invalid_update_interval": {
+      "title": "Det gemte opdateringsinterval er under 1 sekund",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Det gemte opdateringsinterval er under 1 sekund",
+            "description": "Opdateringsintervallet, der er gemt i integrationens indstillinger, er {interval} s, hvilket er under minimum på 1 sekund. Integrationen bruger i stedet standardværdien og tjekker dine enheder hvert 15. sekund.\n\nHvis du gemte 0 for at stoppe disse faste tjek, så slå automatisk hentning fra i stedet. I modsætning til 0 stopper det også søgningen efter Bluetooth-enheder og tilføjelsen af nye enheder, som mDNS finder. Se flere detaljer her: {docs_url}.\n\nHvis du vil bruge et andet interval, skal du åbne [Google Home-integrationen]({integration_url}), vælge **Konfigurér**, indtaste det og derefter vælge **Indsend**.",
+            "menu_options": {
+              "use_default": "Brug standardværdien på 15 sekunder",
+              "turn_off_polling": "Slå automatisk hentning fra i stedet"
+            }
+          }
+        }
+      }
+    },
     "homes_deselected": {
       "title": "Ingen af din Google-kontos hjem er valgt",
       "description": "Din Google-konto er kun medlem af hjem, som du har fravalgt i integrationens indstillinger, så integrationen tilføjer ikke højttalerne og skærmene i dem. Hvis du vil tilføje et hjems enheder, skal du åbne [Google Home-integrationen]({integration_url}), vælge **Konfigurér**, vælge hjemmet under **Hjem** og derefter vælge **Indsend**.\n\nHvis du vil beholde disse hjem fravalgt, skal du vælge **Ignorér**."
