@@ -86,7 +86,7 @@ Set a timer on one speaker and check that Home Assistant shows it:
 If it doesn't work:
 
 - If the Google Home integration shows no devices in Home Assistant, see [No devices appear](troubleshooting.md#no-devices-appear).
-- If the speaker has only a device sensor, a reboot button and an update sensor, Home Assistant hasn't reached it yet, or it has no alarms and timers. See [No alarms or timers sensors](troubleshooting.md#no-alarms-or-timers-sensors).
+- If the speaker has only a device sensor, a reboot button, an update sensor and two Wi-Fi sensors that are disabled by default, Home Assistant hasn't reached it yet, or it has no alarms and timers. See [No alarms or timers sensors](troubleshooting.md#no-alarms-or-timers-sensors).
 - If **Timers** still shows **Unavailable** after the update, check that you asked the speaker whose page you opened, and that it's on and connected to your network. Then see [A device stops updating](troubleshooting.md#a-device-stops-updating).
 
 ## Use it in an automation

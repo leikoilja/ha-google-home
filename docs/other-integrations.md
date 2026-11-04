@@ -1,6 +1,6 @@
 # Other integrations
 
-This integration handles the alarms, timers, Do Not Disturb, alarm volume and reboots of your Google speakers and displays. This page lists what to use for media, spoken messages, Google Assistant commands and the other devices in your Google Home app.
+This integration handles the alarms, timers, Do Not Disturb, alarm volume and reboots of your Google speakers and displays, and can use them for [Bluetooth tracking](bluetooth.md). This page lists what to use for media, spoken messages, Google Assistant commands and the other devices in your Google Home app.
 
 ## Other integrations for the same devices
 
@@ -11,9 +11,11 @@ Integrations that come with Home Assistant do more with your speakers and displa
 - **Speak a message:** use the [Speak](https://www.home-assistant.io/actions/tts.speak/) action with a text-to-speech entity, such as one from [Google Translate text-to-speech](https://www.home-assistant.io/integrations/google_translate/), to play the message on the Google Cast media player. If nothing plays, see [Troubleshooting](https://www.home-assistant.io/integrations/tts/#troubleshooting) in the text-to-speech docs.
 - **Send Google Assistant commands and broadcasts:** use the [Google Assistant SDK integration](https://www.home-assistant.io/integrations/google_assistant_sdk/). Its [Send text command](https://www.home-assistant.io/actions/google_assistant_sdk.send_text_command/) action works as if you'd said the command, and [`notify.google_assistant_sdk`](https://www.home-assistant.io/integrations/google_assistant_sdk/#broadcast-message) broadcasts a message to your speakers and displays. You set it up with your own Google Cloud credentials. It can't set alarms or timers (see [Actions](actions.md)), and some other commands, such as routines, don't work either; see its [known issues](https://www.home-assistant.io/integrations/google_assistant_sdk/#limitationsknown-issues).
 
+Google Cast adds its own Home Assistant device for each speaker and display, so each one appears twice in **Settings** > **Devices & services** > **Devices**: once for Google Cast and once for Google Home. Home Assistant can't merge them. To keep them together, put both in the same area.
+
 ## Other Google Home devices
 
-The Google Home app lists every device you've linked to it, including lights, plugs and thermostats from other brands. This integration doesn't read that list. It works only with Google Cast devices, which it talks to directly over your network. To bring your other devices into Home Assistant:
+The Google Home app lists every device you've linked to it, including lights, plugs and thermostats from other brands. This integration gets that list from Google, but adds only the Google Cast devices in it, such as speakers and displays, which it talks to directly over your network. To bring your other devices into Home Assistant:
 
 - **Most devices:** add them with the integration for their brand or platform, such as [Philips Hue](https://www.home-assistant.io/integrations/hue/) for bulbs on a Hue Bridge, [Philips Hue BLE](https://www.home-assistant.io/integrations/hue_ble/) for Bluetooth bulbs without one, or [Tuya](https://www.home-assistant.io/integrations/tuya/) for devices in the Smart Life app. Go to **Settings** > **Devices & services** > **Add integration** and search for the brand or platform.
 - **Matter devices:** share them from Google Home, so they work in both. In the Home Assistant app on your phone, go to **Settings** > **Connectivity** > **Matter** > **Add device**, select **Yes. It's already in use.**, and choose **Google Home**. See the [Matter integration](https://www.home-assistant.io/integrations/matter/) for what you need.

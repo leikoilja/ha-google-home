@@ -1,6 +1,6 @@
 # Actions
 
-The integration adds these actions, which older Home Assistant versions called services. Use them in automations and scripts, or try them in [**Settings** > **Tools** > **Actions**](https://my.home-assistant.io/redirect/tools_actions/).
+The integration adds these actions, which older Home Assistant versions called services. Use them in automations and scripts, or try them in [**Settings** > **Tools** > **Actions**](https://my.home-assistant.io/redirect/tools_actions/). The examples use a device named _Kitchen_ that isn't in an area, with Home Assistant in English. Replace their entity IDs with your own; [Entities](entities.md) explains how Home Assistant names them.
 
 | Action                                                | What it does                    |
 | ----------------------------------------------------- | ------------------------------- |
@@ -10,6 +10,8 @@ The integration adds these actions, which older Home Assistant versions called s
 | [`google_home.delete_all_timers`](#delete-all-timers) | Deletes all timers from devices |
 | [`google_home.reboot_device`](#reboot-device)         | Reboots a device                |
 | [`google_home.refresh_devices`](#refresh-devices)     | Updates all devices immediately |
+
+The actions don't return data. To read alarms and timers, use the attributes of the [alarms](entities.md#alarms-sensor) and [timers](entities.md#timers-sensor) sensors.
 
 There are no actions to create, change or snooze alarms and timers, or to turn alarms on or off. The local API that the integration uses can only read and delete them. Set them by voice or on a display's screen. The [alarms](entities.md#alarms-sensor) and [timers](entities.md#timers-sensor) sensors show them after the next [scheduled update](configuration.md#change-the-update-interval), or straight away when you run [`google_home.refresh_devices`](#refresh-devices).
 
@@ -28,19 +30,21 @@ data:
   alarm_id: alarm/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51
 ```
 
-| Field          | Description                                                                                                                                                                                                                                                                                                                                                                     |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `entity_id`    | Alarms sensor of the device, such as `sensor.kitchen_alarms`. Leave it out when you [target the device](#targets) instead.                                                                                                                                                                                                                                                      |
-| `alarm_id`     | ID of the alarm to delete. Find it in the `alarms` attribute of the [alarms sensor](entities.md#alarms-sensor). It starts with `alarm/`.                                                                                                                                                                                                                                        |
-| `skip_refresh` | Optional. The sensor shows the device's current alarms straight away, without the deleted one once the device confirms. By default (`false`), the action then also asks each device it sent a delete to for an update. `true` leaves that to the next scheduled update. To update all devices, use [Refresh devices](#refresh-devices). |
+| Field          | Description                                                                                                                                                                                                                                                                                                                                                                                                          |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `entity_id`    | Alarms sensor of the device, such as `sensor.kitchen_alarms`. Leave it out when you [target the device](#targets) instead.                                                                                                                                                                                                                                                                                           |
+| `alarm_id`     | Required. ID of the alarm to delete. Find it in the `alarms` attribute of the [alarms sensor](entities.md#alarms-sensor). It starts with `alarm/`.                                                                                                                                                                                                                                                                   |
+| `skip_refresh` | Optional. The sensor shows the device's current alarms straight away, without the deleted one once the device confirms. By default (`false`), the action then also asks each device it sent a delete to for an update, which can wait up to 10 seconds, as for [Refresh devices](#refresh-devices). `true` leaves that to the next scheduled update. To update all devices, use [Refresh devices](#refresh-devices). |
 
-To delete the next alarm, use a template:
+To delete the next alarm from an automation or script, use a template, with a condition before it. Without the condition, the template fails when there are no alarms, and deletes an inactive or missed alarm when no alarm is coming up:
 
 ```yaml
-action: google_home.delete_alarm
-data:
-  entity_id: sensor.kitchen_alarms
-  alarm_id: "{{ state_attr('sensor.kitchen_alarms', 'alarms')[0].alarm_id }}"
+- condition: template
+  value_template: "{{ has_value('sensor.kitchen_alarms') }}"
+- action: google_home.delete_alarm
+  data:
+    entity_id: sensor.kitchen_alarms
+    alarm_id: "{{ state_attr('sensor.kitchen_alarms', 'alarms')[0].alarm_id }}"
 ```
 
 The action asks the device for its current alarms first, and sends the delete only if the device still has the alarm. Otherwise it fails. This can happen with the template above if the sensor hasn't updated since the alarm was cancelled by voice. See [If a delete fails](#if-a-delete-fails).
@@ -56,11 +60,11 @@ data:
   timer_id: timer/47dc1fa0-5ec0-2cc7-9ead-a94b85e22769
 ```
 
-| Field          | Description                                                                                                                              |
-| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `entity_id`    | Timers sensor of the device, such as `sensor.kitchen_timers`. Leave it out when you [target the device](#targets) instead.               |
-| `timer_id`     | ID of the timer to delete. Find it in the `timers` attribute of the [timers sensor](entities.md#timers-sensor). It starts with `timer/`. |
-| `skip_refresh` | Optional. Same as for [Delete alarm](#delete-alarm).                                                                                     |
+| Field          | Description                                                                                                                                        |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `entity_id`    | Timers sensor of the device, such as `sensor.kitchen_timers`. Leave it out when you [target the device](#targets) instead.                         |
+| `timer_id`     | Required. ID of the timer to delete. Find it in the `timers` attribute of the [timers sensor](entities.md#timers-sensor). It starts with `timer/`. |
+| `skip_refresh` | Optional. Same as for [Delete alarm](#delete-alarm).                                                                                               |
 
 As for [Delete alarm](#delete-alarm), the action fails if the device no longer has the timer. See [If a delete fails](#if-a-delete-fails).
 
@@ -124,7 +128,7 @@ Not every device supports rebooting, even when there's no error; see the [reboot
 
 ## Refresh devices
 
-Updates alarms, timers and settings for all devices now, except [disabled ones](configuration.md#stop-checking-some-devices), instead of waiting for the next scheduled update. It also restarts the countdown to the next update. While [polling is turned off](configuration.md#turn-off-polling), it's how your devices update, and it also gets new tokens for devices that rejected theirs.
+Updates alarms, timers and settings for all devices now, except [disabled ones](configuration.md#stop-checking-some-devices), instead of waiting for the next scheduled update. It also restarts the countdown to the next update. Home Assistant may wait up to 10 seconds to update a device that was asked for an update shortly before, for example by another Refresh devices. While [polling is turned off](configuration.md#turn-off-polling), it's how your devices update, and it also gets new tokens for devices that rejected theirs.
 
 ```yaml
 action: google_home.refresh_devices
@@ -132,7 +136,7 @@ target:
   entity_id: sensor.kitchen_alarms
 ```
 
-Target an alarms or timers sensor, or a device that has [alarms and timers sensors](troubleshooting.md#no-alarms-or-timers-sensors). All devices are updated once, however many sensors the target covers. The action needs a target.
+Target a Google Home sensor, such as an alarms, timers or device sensor, or a device that has [alarms and timers sensors](troubleshooting.md#no-alarms-or-timers-sensors). The [update sensor](entities.md#update-sensor) doesn't work: it's a binary sensor. All devices are updated once, however many sensors the target covers. The action needs a target.
 
 The action also runs when the sensors you target are [unavailable](#unavailable-sensors), for example while a device doesn't answer, so it can bring that device back: once the device answers, its entities are available again. A target that covers no Google Home sensor, such as only a light, updates nothing.
 
