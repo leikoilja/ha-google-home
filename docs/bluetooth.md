@@ -78,7 +78,7 @@ A tracker shows `not_home` only when every speaker has answered for the last 90 
 
 While it can't tell, the tracker keeps its last state for 5 minutes from when the speakers last confirmed it, so a speaker that misses a scan or comes online doesn't make it flap. If you arrive in that time and only the silent speaker can hear you, `home` waits until another speaker hears you. After the 5 minutes, the tracker shows `unavailable` until the speakers can tell again.
 
-Once a speaker has kept trackers from showing `not_home` for 5 minutes, the integration logs a warning that names it, such as "Kitchen hasn't answered Bluetooth scans for 5 minutes, so Bluetooth trackers can't show away". The 5 minutes start when the speaker misses a scan, and start over only once it has answered every scan for 90 seconds. So a speaker that answers some scans but misses others gets the warning too. They're the speaker's own 5 minutes, so the warning can come before or after a tracker shows `unavailable`, and also while another speaker hears the device and the tracker shows `home`.
+Once a speaker has kept trackers from showing `not_home` for 5 minutes, the integration logs a warning that names it, such as "Kitchen hasn't answered Bluetooth scans for 5 minutes, so Bluetooth trackers can't show away". Those 5 minutes count how long the speaker has gone without 90 seconds of unbroken scans, and start over once it manages them. So a speaker that answers some scans but misses others gets the warning too. They're the speaker's own 5 minutes, so the warning can come before or after a tracker shows `unavailable`, and also while another speaker hears the device and the tracker shows `home`.
 
 If that speaker is unplugged or out of service, tell the integration not to use it:
 
