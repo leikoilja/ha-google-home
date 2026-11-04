@@ -91,13 +91,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -
     password = cast(str, entry.data.get(CONF_PASSWORD))
     android_id = cast(str, entry.data.get(CONF_ANDROID_ID))
     master_token = cast(str, entry.data.get(CONF_MASTER_TOKEN))
-    update_interval = cast(
-        int, entry.options.get(CONF_UPDATE_INTERVAL, UPDATE_INTERVAL)
-    )
+    update_interval = configured_interval(entry)
 
-    _LOGGER.debug(
-        "Coordinator update interval is: %s", timedelta(seconds=update_interval)
-    )
+    _LOGGER.debug("Coordinator update interval is: %s", update_interval)
 
     session = async_get_clientsession(hass, verify_ssl=False)
 
@@ -114,10 +110,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -
     )
 
     account = GoogleAccountCoordinator(
-        hass, entry, glocaltokens_client, timedelta(seconds=update_interval)
+        hass, entry, glocaltokens_client, update_interval
     )
     # Before the first refresh, which adds the device coordinators
-    entry.runtime_data = GoogleHomeData(glocaltokens_client, account, {})
+    entry.runtime_data = GoogleHomeData(
+        glocaltokens_client, account, {}, saved_interval=saved_interval(entry)
+    )
     found_devices = glocaltokens_client.found_devices
     # Not async_request_refresh(), which drops the request when an update that
     # started too early to fetch for found devices runs longer than its cooldown
@@ -348,6 +346,53 @@ async def async_remove_config_entry_device(
     return not device_entry.identifiers & google_ids
 
 
+def saved_interval(entry: GoogleHomeConfigEntry) -> int:
+    """Return the update interval in the options, in seconds."""
+    return cast(int, entry.options.get(CONF_UPDATE_INTERVAL, UPDATE_INTERVAL))
+
+
+def configured_interval(
+    entry: GoogleHomeConfigEntry, previous: int | None = None
+) -> timedelta:
+    """Return the update interval in the options, or the default for one that isn't positive.
+
+    The options form refuses such an interval, but earlier versions saved it: zero
+    stopped scheduled updates and a negative one ran them without a pause.
+
+    Warn about it unless it equals previous, the saved interval that the
+    coordinators last took theirs from. Setup passes none, so each load warns once.
+    A change to the entry that keeps it, such as a rename, doesn't warn again.
+    While polling is off, nothing is scheduled until it's back on, so the warning
+    says the default applies then and doesn't suggest turning polling off.
+    """
+    seconds = saved_interval(entry)
+    if seconds > 0:
+        return timedelta(seconds=seconds)
+    default = timedelta(seconds=UPDATE_INTERVAL)
+    if seconds == previous:
+        return default
+    if entry.pref_disable_polling:
+        _LOGGER.warning(
+            "The update interval saved in the options of %s is %d seconds, so once "
+            "polling is back on in its system options, the integration updates every "
+            "%d seconds instead. Enter at least 1 second in its options",
+            entry.title,
+            seconds,
+            UPDATE_INTERVAL,
+        )
+    else:
+        _LOGGER.warning(
+            "The update interval saved in the options of %s is %d seconds, so the "
+            "integration updates every %d seconds instead. Enter at least 1 second "
+            "in its options, or turn off polling in its system options to stop "
+            "scheduled updates",
+            entry.title,
+            seconds,
+            UPDATE_INTERVAL,
+        )
+    return default
+
+
 async def async_update_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -> None:
     """Apply changed options."""
     client = entry.runtime_data.client
@@ -365,10 +410,10 @@ async def async_update_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) 
         hass.config_entries.async_schedule_reload(entry.entry_id)
         return
     _LOGGER.debug("Options updated, updating coordinator interval...")
-    update_interval = timedelta(
-        seconds=entry.options.get(CONF_UPDATE_INTERVAL, UPDATE_INTERVAL)
-    )
-    entry.runtime_data.account.update_interval = update_interval
-    for coordinator in entry.runtime_data.devices.values():
+    data = entry.runtime_data
+    update_interval = configured_interval(entry, data.saved_interval)
+    data.saved_interval = saved_interval(entry)
+    data.account.update_interval = update_interval
+    for coordinator in data.devices.values():
         coordinator.update_interval = update_interval
     _LOGGER.debug("Coordinator update interval is: %s", update_interval)
