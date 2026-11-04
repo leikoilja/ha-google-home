@@ -12,6 +12,7 @@ from unittest.mock import Mock
 from freezegun.api import FrozenDateTimeFactory
 import pytest
 from pytest_homeassistant.common import MockConfigEntry, async_fire_time_changed
+from pytest_homeassistant.typing import WebSocketGenerator
 
 from custom_components.google_home.const import (
     CONF_BLUETOOTH_TRACKING,
@@ -32,6 +33,7 @@ from homeassistant.helpers.translation import async_get_translations
 from homeassistant.setup import async_setup_component
 from script.check_translations import placeholders
 
+from .test_polling_off import set_polling_in_system_options
 from .test_setup import set_up
 
 # pylint: enable=wrong-import-order
@@ -167,21 +169,31 @@ async def test_repair_text(hass: HomeAssistant) -> None:
 
 @pytest.mark.usefixtures("google", "replies")
 async def test_no_repair_while_polling_off(
-    hass: HomeAssistant, config_entry: MockConfigEntry, issue_registry: ir.IssueRegistry
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    issue_registry: ir.IssueRegistry,
+    hass_ws_client: WebSocketGenerator,
 ) -> None:
-    """Show no repair while polling is off, as nothing uses the interval then.
+    """Remove the repair while polling is off, as nothing uses the interval then.
 
-    Turning polling back on reloads the entry, which shows the repair.
+    Turning polling off in the system options reloads the entry, which removes the
+    repair and so forgets that the user hid it. Turning polling back on reloads it
+    again, which shows the repair, no longer hidden.
     """
-    await set_up_with(hass, config_entry, 0, polling_off=True)
+    await set_up_with(hass, config_entry, 0)
+    ir.async_ignore_issue(hass, DOMAIN, ISSUE_INVALID_INTERVAL, True)
 
+    await set_polling_in_system_options(
+        hass, config_entry, hass_ws_client, enabled=False
+    )
+    assert config_entry.state is ConfigEntryState.LOADED
     assert repair(issue_registry) is None
 
-    hass.config_entries.async_update_entry(config_entry, pref_disable_polling=False)
-    assert await hass.config_entries.async_reload(config_entry.entry_id)
-    await hass.async_block_till_done()
-
-    assert repair(issue_registry) is not None
+    await set_polling_in_system_options(
+        hass, config_entry, hass_ws_client, enabled=True
+    )
+    issue = repair(issue_registry)
+    assert issue is not None and issue.dismissed_version is None
 
 
 @pytest.mark.usefixtures("replies")
