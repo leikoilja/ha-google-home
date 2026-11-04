@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
-# Start a local Home Assistant on port 8123 with this integration loaded.
+# Start a local Home Assistant on port 8123 with this integration available.
+# The integration isn't set up yet: on the first start, create a Home Assistant
+# user, then go to Settings > Devices & services > Add integration, choose
+# Google Home and sign in. Home Assistant keeps the user and the integration in
+# config/, so you do this once.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."

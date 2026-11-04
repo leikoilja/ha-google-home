@@ -13,7 +13,7 @@ import logging
 from types import MappingProxyType
 from unittest.mock import AsyncMock, MagicMock, Mock, patch
 
-from aiohttp import ClientError
+from aiohttp import ClientError, ContentTypeError
 from bluetooth_data_tools import get_cipher_for_irk
 import pytest
 
@@ -88,6 +88,7 @@ class Speakers:
         # What each speaker's scan results hold, by device ID
         self.results: dict[str, list[BluetoothJsonDict]] = {}
         self.failing: set[str] = set()
+        self.failing_read: set[str] = set()
         self.failing_start: set[str] = set()
         self.unsupported: set[str] = set()
         self.reads: list[str] = []
@@ -100,6 +101,8 @@ class Speakers:
     ) -> list[BluetoothJsonDict]:
         """Return what the speaker heard."""
         self._raise_if_failing(device)
+        if device.device_id in self.failing_read:
+            raise BluetoothScanError("timeout")
         self.reads.append(device.device_id)
         return self.results.get(device.device_id, [])
 
@@ -334,6 +337,29 @@ def test_recover_after_failed_scan_start() -> None:
     ]
 
 
+def test_failed_read_keeps_home() -> None:
+    """Keep home when reading a scan fails, and read the scan started after it.
+
+    The scan that wasn't read may have heard the phone, so away waits for 90 seconds
+    of scans from the next one.
+    """
+    speakers = Speakers("Kitchen")
+    speakers.results["kitchen"] = [heard(rpa(IRK))]
+    scanner = make_scanner(speakers)
+    assert states(scanner, speakers, range(0, 90, 30)) == [UNKNOWN, HOME, HOME]
+
+    # The scan that started at 30 was the last to hear it, so the update at 120
+    # would confirm away, but reading the scan started at 90 fails then
+    speakers.results["kitchen"] = []
+    assert update(scanner, speakers, 90) == HOME
+    speakers.failing_read.add("kitchen")
+    assert update(scanner, speakers, 120) == HOME
+    speakers.failing_read.clear()
+
+    # The scan started at 120 is read, so away is confirmed at 120 + 90
+    assert states(scanner, speakers, range(150, 240, 30)) == [HOME, HOME, NOT_HOME]
+
+
 def test_discard_delayed_results() -> None:
     """Discard results read more than 45 seconds after their scan started."""
     speakers = Speakers("Kitchen")
@@ -389,13 +415,16 @@ def test_late_scan_never_shows_away() -> None:
     assert update(scanner, speakers, 135.5) == HOME
 
 
-def test_new_token_skips_next_read() -> None:
-    """Don't read a scan started with a token the speaker no longer has."""
+@pytest.mark.parametrize(
+    ("field", "value"), [("ip_address", "10.0.0.9"), ("auth_token", "new-token")]
+)
+def test_new_address_or_token_skips_next_read(field: str, value: str) -> None:
+    """Don't read a scan started at an address or with a token the speaker no longer has."""
     speakers = Speakers("Kitchen")
     scanner = make_scanner(speakers)
     update(scanner, speakers, 0)
 
-    speakers.devices[0].auth_token = "new-token"
+    setattr(speakers.devices[0], field, value)
     speakers.reads.clear()
     update(scanner, speakers, 30)
 
@@ -501,7 +530,7 @@ def test_excluded_speaker_not_used() -> None:
 
 
 def test_warn_about_speaker_that_blocks_away(caplog: pytest.LogCaptureFixture) -> None:
-    """Warn once when a speaker has kept trackers from showing away for 5 minutes."""
+    """Warn once each time a speaker has kept trackers from showing away for 5 minutes."""
     speakers = Speakers("Kitchen", "Garage")
     scanner = make_scanner(speakers)
     states(scanner, speakers, range(0, 60, 30))
@@ -520,6 +549,24 @@ def test_warn_about_speaker_that_blocks_away(caplog: pytest.LogCaptureFixture) -
 
     (warning,) = warnings()
     assert warning.startswith("Garage hasn't answered Bluetooth scans for 5 minutes")
+
+    # Garage answers again but stops at 690, before it has scanned for the whole
+    # window, so it still keeps trackers from showing away and doesn't warn again
+    speakers.failing.clear()
+    states(scanner, speakers, range(600, 690, 30))
+    speakers.failing.add("garage")
+    states(scanner, speakers, range(690, 1020, 30))
+    assert warnings() == [warning]
+
+    # Garage answers again and has scanned for the whole window at 1110, then stops
+    # answering at 1140, so it warns again 5 minutes later
+    speakers.failing.clear()
+    states(scanner, speakers, range(1020, 1140, 30))
+    speakers.failing.add("garage")
+    states(scanner, speakers, range(1140, 1440, 30))
+    assert warnings() == [warning]
+    update(scanner, speakers, 1440)
+    assert warnings() == [warning, warning]
 
 
 def test_speakers_show_median_rssi_over_window() -> None:
@@ -882,6 +929,16 @@ def test_scan_results_errors(
 
     with pytest.raises(error):
         asyncio.run(async_get_bluetooth_scan_results(session, KITCHEN))
+
+
+def test_start_scan_answered_without_json() -> None:
+    """Count a scan as started when the device answers 200 with a non-JSON content type."""
+    session = mock_session()
+    response = session.request.return_value.__aenter__.return_value
+    response.json.side_effect = ContentTypeError(Mock(), ())
+
+    # Returning instead of raising is how the scanner knows the scan started
+    asyncio.run(async_start_bluetooth_scan(session, KITCHEN))
 
 
 def test_request_failure_leaves_device_available() -> None:
