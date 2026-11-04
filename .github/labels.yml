@@ -4,12 +4,15 @@
 #
 # The repository labels will be automatically configured using this file and
 # the GitHub Action https://github.com/marketplace/actions/github-labeler.
+# It runs on every push to master and deletes any label missing from this
+# file, including labels created on GitHub. Deleting a label also removes it
+# from every issue and pull request.
 - name: automerge
-  description: Automatically merge by Kodiak
+  description: Kodiak merges the pull request once checks pass and review threads are resolved
   color: d4c5f9
 
 - name: breaking
-  description: Breaking change. Used for major release bump
+  description: Breaking change. Release Drafter bumps the major version
   color: b60205
 
 - name: bug
@@ -24,29 +27,17 @@
   description: Improvements or additions to documentation
   color: 0075ca
 
-- name: duplicate
-  description: This issue or pull request already exists
-  color: cfd3d7
-
 - name: feature
   description: New feature or request
   color: a2eeef
 
 - name: github structure
-  description: Pull requests that update Github actions/workflow code
+  description: Changes to CI, issue forms, scripts or other repository tooling
   color: "000000"
 
-- name: good first issue
-  description: Good for newcomers
-  color: 7057ff
-
 - name: help wanted
-  description: Extra attention is needed
+  description: Maintainers would welcome help with this
   color: 008672
-
-- name: invalid
-  description: This doesn't seem right
-  color: e4e669
 
 # major/minor/patch describe the dependency's version jump on Dependabot PRs.
 # They do not affect this project's version: release bumps are driven by the
@@ -64,32 +55,31 @@
   color: 16970B
 
 - name: performance
-  description: Performance
+  description: Makes the integration faster or use fewer resources
   color: "016175"
 
-# Leaves a pull request out of the release notes
 - name: skip-release
-  description: Skip release
+  description: Leaves the pull request out of the release notes
   color: "000000"
 
 - name: question
-  description: Further information is requested
+  description: Asks how to set up or use the integration. The Question form adds it
   color: d876e3
 
 - name: glocaltokens
-  description: For fixes related with the glocaltokens dependency
+  description: Involves glocaltokens, the library that gets tokens and devices from Google
   color: 0118f0
 
 - name: refactoring
-  description: Refactoring
+  description: Restructures code without changing what it does
   color: ef67c4
 
 - name: removal
-  description: Removals and Deprecations
+  description: Removes or deprecates a feature or unused code
   color: 9ae7ea
 
 - name: testing
-  description: Testing
+  description: Changes tests or test tooling only
   color: b1fc6f
 
 - name: wontfix
@@ -97,9 +87,5 @@
   color: ffffff
 
 - name: translation
-  description: Translations
+  description: Adds or updates translations
   color: eb9234
-
-- name: wip
-  description: This issue is being addressed and will be fixed ASAP. May have a linked PR.
-  color: 0e8a16
