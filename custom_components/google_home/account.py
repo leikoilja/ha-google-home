@@ -122,10 +122,7 @@ class GoogleAccountClient:
     ):
         """Create the client of a Google account."""
         self.hass = hass
-        self._username = username
-        self._password = password
         self._session = session
-        self._android_id = android_id
         self._client = GLocalAuthenticationTokens(
             username=username,
             password=password,

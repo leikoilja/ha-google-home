@@ -11,7 +11,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import LABEL_FIRMWARE_UPDATE
-from .entity import GoogleHomeBaseEntity, async_add_device_entities
+from .entity import GoogleHomeAddressedEntity, async_add_device_entities
 from .types import GoogleHomeConfigEntry
 
 # The coordinator does the updates, and the sensor has no actions
@@ -31,7 +31,7 @@ async def async_setup_entry(
     return True
 
 
-class FirmwareUpdateBinarySensor(GoogleHomeBaseEntity, BinarySensorEntity):
+class FirmwareUpdateBinarySensor(GoogleHomeAddressedEntity, BinarySensorEntity):
     """Whether the device says that a firmware update is waiting to be installed.
 
     Only the device's own flag: nothing compares its version with Google's. Without a
@@ -46,15 +46,6 @@ class FirmwareUpdateBinarySensor(GoogleHomeBaseEntity, BinarySensorEntity):
     def label(self) -> str:
         """Label to use for unique id."""
         return LABEL_FIRMWARE_UPDATE
-
-    @property
-    @override
-    def available(self) -> bool:
-        """Return whether the device was found on the network, as for its device sensor."""
-        device = self.get_device()
-        return (
-            super().available and device is not None and device.ip_address is not None
-        )
 
     @property
     @override

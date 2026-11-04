@@ -101,6 +101,19 @@ class GoogleHomeBaseEntity(CoordinatorEntity[GoogleHomeDeviceCoordinator], ABC):
         await self.client.reboot_google_device(device)
 
 
+class GoogleHomeAddressedEntity(GoogleHomeBaseEntity):
+    """Base entity for the device sensor, Wi-Fi, firmware and reboot, which need the device's address."""
+
+    @property
+    @override
+    def available(self) -> bool:
+        """Return whether Google still lists the device, it answers and it was found on the network."""
+        device = self.get_device()
+        return (
+            super().available and device is not None and device.ip_address is not None
+        )
+
+
 class GoogleHomeFeatureEntity(GoogleHomeBaseEntity):
     """Base entity for alarms, timers and their settings, which some devices don't have."""
 

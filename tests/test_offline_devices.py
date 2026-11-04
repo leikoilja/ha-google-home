@@ -30,7 +30,7 @@ from custom_components.google_home.switch import DoNotDisturbSwitch
 # pylint: disable-next=wrong-import-order
 from homeassistant.helpers.aiohttp_client import SSRFRedirectError
 
-from .test_missing_devices import ALARM_ID, found
+from .test_missing_devices import ALARM_ID, available_attribute, found
 from .test_unsupported_devices import (
     ALARMS,
     ALWAYS_LABELS,
@@ -844,12 +844,12 @@ def test_available_attribute_from_alarms_or_info(
     client, _, network = setup(SILENT if shown else SUPPORTED)
     coordinator = Mock(data=poll(client, clock, at(0)))
     sensor = device_sensor(client, coordinator)
-    attribute = [sensor.extra_state_attributes["available"]]
+    attribute = [available_attribute(sensor)]
     network.asked(SPEAKER)
 
     network.replies[SPEAKER] = dict(replies)
     poll(client, clock, at(0, 15))
-    attribute.append(sensor.extra_state_attributes["available"])
+    attribute.append(available_attribute(sensor))
 
     assert network.asked(SPEAKER) == asked
     assert attribute == [not shown, shown]
@@ -895,12 +895,12 @@ def test_available_attribute_when_alarm_check_asks_info(
     )
     coordinator = Mock(data=poll(client, clock, at(0)))
     sensor = device_sensor(client, coordinator)
-    attribute = [sensor.extra_state_attributes["available"]]
+    attribute = [available_attribute(sensor)]
     network.asked(SPEAKER)
 
     network.replies[SPEAKER][INFO] = reply
     poll(client, clock, at(10))
-    attribute.append(sensor.extra_state_attributes["available"])
+    attribute.append(available_attribute(sensor))
 
     assert network.asked(SPEAKER) == asked
     assert attribute == [not shown, shown]
@@ -929,14 +929,14 @@ def test_available_attribute_of_device_without_alarms(
     client, _, network, chromecast = without_alarms(clock)
     sensor = chromecast["device"]
     assert isinstance(sensor, GoogleHomeDeviceSensor)
-    attribute = [sensor.extra_state_attributes["available"]]
+    attribute = [available_attribute(sensor)]
 
     network.replies[SPEAKER][INFO] = TimeoutError() if shown else info()
     poll(client, clock, at(10, 15))
-    attribute.append(sensor.extra_state_attributes["available"])
+    attribute.append(available_attribute(sensor))
     network.replies[SPEAKER][INFO] = reply
     poll(client, clock, at(10, 30))
-    attribute.append(sensor.extra_state_attributes["available"])
+    attribute.append(available_attribute(sensor))
 
     assert network.asked(SPEAKER) == [INFO] * 2
     assert attribute == [True, not shown, shown]
