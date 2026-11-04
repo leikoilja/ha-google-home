@@ -550,14 +550,22 @@ def test_warn_about_speaker_that_blocks_away(caplog: pytest.LogCaptureFixture) -
     (warning,) = warnings()
     assert warning.startswith("Garage hasn't answered Bluetooth scans for 5 minutes")
 
-    # Garage answers again and has scanned for the whole window at 690, then stops
-    # answering at 720, so it warns again 5 minutes later
+    # Garage answers again but stops at 690, before it has scanned for the whole
+    # window, so it still keeps trackers from showing away and doesn't warn again
     speakers.failing.clear()
-    states(scanner, speakers, range(600, 720, 30))
+    states(scanner, speakers, range(600, 690, 30))
     speakers.failing.add("garage")
-    states(scanner, speakers, range(720, 1020, 30))
+    states(scanner, speakers, range(690, 1020, 30))
     assert warnings() == [warning]
-    update(scanner, speakers, 1020)
+
+    # Garage answers again and has scanned for the whole window at 1110, then stops
+    # answering at 1140, so it warns again 5 minutes later
+    speakers.failing.clear()
+    states(scanner, speakers, range(1020, 1140, 30))
+    speakers.failing.add("garage")
+    states(scanner, speakers, range(1140, 1440, 30))
+    assert warnings() == [warning]
+    update(scanner, speakers, 1440)
     assert warnings() == [warning, warning]
 
 
