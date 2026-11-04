@@ -20,14 +20,16 @@ If you turn Bluetooth tracking off again, the devices you added stay, and their 
 
 Give the device a name, such as _Alex's phone_, and under **IRK or MAC address** enter one of these. The integration tells them apart by their format:
 
-- **IRK** (Identity Resolving Key): use this for phones. Phones change their Bluetooth address every few minutes, and the IRK lets the integration recognize every address the phone uses. To find the IRK of your phone, follow [Getting your Identity Resolving Key](https://www.home-assistant.io/integrations/private_ble_device/#getting-your-identity-resolving-key-irk) in the Private BLE Device documentation. You can paste it as 32 hex digits or in base64, as you find it there.
-- **MAC address**: use this for devices whose address never changes, such as some watches, tags and headphones, in the form `AA:BB:CC:DD:EE:FF` or `AA-BB-CC-DD-EE-FF`. A phone's MAC address stops matching within minutes.
+- **IRK** (Identity Resolving Key): use this for phones. Phones change their Bluetooth address from time to time, and the IRK lets the integration recognize every address the phone uses. To find the IRK of your phone, follow [Getting your Identity Resolving Key](https://www.home-assistant.io/integrations/private_ble_device/#getting-your-identity-resolving-key-irk) in the Private BLE Device documentation. You can paste it as 32 hex digits or in base64, as you find it there.
+- **MAC address**: use this for devices whose address never changes, such as some watches, tags and headphones, in the form `AA:BB:CC:DD:EE:FF` or `AA-BB-CC-DD-EE-FF`. A phone's MAC address stops matching once the phone changes it.
 
 The tracker is named after the device, such as `device_tracker.alex_s_phone`. Home Assistant lists it under **Diagnostic** on the device's page, as it does for its own Bluetooth trackers.
 
 Once you track a device, the **Google Home** page lists each tracked device on its own, and your speakers and displays under **Devices that don't belong to a sub-entry**. That's how Home Assistant shows every integration with sub-entries: your speakers and displays are still there.
 
-To stop tracking a device, delete it: open it on the **Google Home** page, open the **⋮** menu and select **Delete**. Deleting it from its device page does the same. To change its name, IRK or MAC address, delete it and add it again.
+To stop tracking a device, delete it: open it on the **Google Home** page, open the **⋮** menu and select **Delete**. Deleting it from its device page does the same.
+
+To rename a tracked device, open its device page, select the pencil icon (**Edit settings**), change **Name** and select **Update**. The tracker takes the new name straight away and keeps its entity ID. The **Google Home** page still lists the device under the name you first gave it: to change that too, open its **⋮** menu there and select **Rename**. To change its IRK or MAC address, delete it and add it again.
 
 ## How the tracker works
 
@@ -42,7 +44,7 @@ About every 30 seconds, whatever the [update interval](configuration.md#change-t
 
 In the best case, a phone shows `home` within about a minute of arriving, and `not_home` about 60 to 90 seconds after it leaves.
 
-Starting as `unknown` after a restart keeps automations from seeing you leave and come back each time Home Assistant restarts. Any reload does the same, such as after you add or delete a tracked device or change an option under **Bluetooth**. If Bluetooth tracking is on afterwards, every tracker starts as `unknown` again.
+Starting as `unknown` after a restart keeps automations from seeing you leave and come back each time Home Assistant restarts. While Bluetooth tracking is on, trackers also start as `unknown` again after any reload, such as after you add or delete a tracked device or change an option under **Bluetooth**.
 
 While [polling is turned off](configuration.md#turn-off-polling) in the integration's system options, the speakers don't scan on their own, and [Refresh devices](actions.md#refresh-devices) doesn't make them scan, so trackers usually stay `unknown`.
 
@@ -76,7 +78,7 @@ A tracker shows `not_home` only when every speaker has answered for the last 90 
 
 While it can't tell, the tracker keeps its last state for 5 minutes from when the speakers last confirmed it, so a speaker that misses a scan or comes online doesn't make it flap. If you arrive in that time and only the silent speaker can hear you, `home` waits until another speaker hears you. After the 5 minutes, the tracker shows `unavailable` until the speakers can tell again.
 
-Once a speaker hasn't answered for 5 minutes, the integration logs a warning that names it, such as "Kitchen hasn't answered Bluetooth scans for 5 minutes, so Bluetooth trackers can't show away". Those 5 minutes run from when that speaker stopped answering, so the warning can come before or after a tracker shows `unavailable`. It also comes while another speaker hears the device and the tracker shows `home`.
+Once a speaker has kept trackers from showing `not_home` for 5 minutes, the integration logs a warning that names it, such as "Kitchen hasn't answered Bluetooth scans for 5 minutes, so Bluetooth trackers can't show away". The 5 minutes start when the speaker misses a scan, and start over only once it has answered every scan for 90 seconds. So a speaker that answers some scans but misses others gets the warning too. They're the speaker's own 5 minutes, so the warning can come before or after a tracker shows `unavailable`, and also while another speaker hears the device and the tracker shows `home`.
 
 If that speaker is unplugged or out of service, tell the integration not to use it:
 
@@ -93,7 +95,7 @@ Devices that don't support Bluetooth scans, such as a Chromecast Audio or an And
 
 ## Tracker doesn't show `home` or stays `unknown`
 
-A tracker shows `unknown` until the speakers first confirm `home` or `not_home` after Home Assistant starts or the integration reloads. While Bluetooth tracking is on, only a tracker they've confirmed can become `unavailable`. If a speaker stops answering before then, the tracker stays `unknown` until a speaker hears the device, the silent speaker answers again, or you [exclude or disable it](#tracker-is-unavailable). After 5 minutes, the integration logs the warning described in [Tracker is unavailable](#tracker-is-unavailable).
+A tracker shows `unknown` until the speakers first confirm `home` or `not_home` after Home Assistant starts or the integration reloads. While Bluetooth tracking is on, only a tracker they've confirmed can become `unavailable`. If a speaker stops answering before then, the tracker stays `unknown` until a speaker hears the device or the silent speaker answers again. To stop the silent speaker from blocking it, reload the integration, which leaves the speaker out until it answers, or [exclude or disable it](#tracker-is-unavailable). After 5 minutes, the integration logs the warning described in [Tracker is unavailable](#tracker-is-unavailable).
 
 The speakers can't confirm either state while none of them scans, for example while:
 
@@ -102,10 +104,11 @@ The speakers can't confirm either state while none of them scans, for example wh
 - Home Assistant [can't reach your speakers](troubleshooting.md#device-offline-or-not-compatible).
 - [Polling is turned off](configuration.md#turn-off-polling).
 
-If a tracker shows `not_home` while the device is near a speaker, the speakers are scanning but don't find the device:
+If a tracker shows `not_home` while the device is near a speaker, the speakers that scan don't find the device:
 
-- Its signal is weaker than -80 dBm at every speaker. Try it right next to a speaker.
-- The IRK or MAC address you entered doesn't match the device. Track a phone by its IRK, as its MAC address stops matching within minutes.
+- The speaker it's near doesn't scan: it's excluded or disabled, doesn't support Bluetooth scans, or hasn't answered since the integration loaded. The debug lines below show which speakers scan.
+- Its signal is weaker than -80 dBm at every speaker that scans. Try it right next to one.
+- The IRK or MAC address you entered doesn't match the device. Track a phone by its IRK, as its MAC address stops matching once the phone changes it.
 - The speakers don't pick the device up in their scans. Which devices they pick up, and when, for example while a phone is asleep or connected to headphones, hasn't been tested.
 
 To see what each speaker does:
