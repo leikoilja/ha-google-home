@@ -594,21 +594,27 @@ async def test_saved_update_interval_below_one_second_renamed(
 
 
 @pytest.mark.usefixtures("google", "replies")
+@pytest.mark.parametrize(
+    ("options", "updates"),
+    [({CONF_UPDATE_INTERVAL: 60}, range(60, 181, 15)), ({}, range(15, 181, 15))],
+    ids=["from-60", "from-default"],
+)
 async def test_update_interval_changed_below_one_second(
     hass: HomeAssistant,
     config_entry: MockConfigEntry,
     aioclient_mock: AiohttpClientMocker,
     freezer: FrozenDateTimeFactory,
     caplog: pytest.LogCaptureFixture,
+    options: dict[str, object],
+    updates: range,
 ) -> None:
     """Update the speaker every 15 seconds once the options change to an interval of 0.
 
     The form refuses it, but the options can still change without it. The update
-    already scheduled, 60 seconds after setup, keeps its time. One warning says why.
+    already scheduled keeps its time. One warning says why, also when the interval
+    was the default 15 seconds, which the fallback leaves unchanged.
     """
-    hass.config_entries.async_update_entry(
-        config_entry, options={CONF_UPDATE_INTERVAL: 60}
-    )
+    hass.config_entries.async_update_entry(config_entry, options=options)
     await set_up(hass, config_entry)
 
     hass.config_entries.async_update_entry(
@@ -616,7 +622,7 @@ async def test_update_interval_changed_below_one_second(
     )
     await hass.async_block_till_done()
 
-    assert await updated_at(hass, aioclient_mock, freezer) == list(range(60, 181, 15))
+    assert await updated_at(hass, aioclient_mock, freezer) == list(updates)
     [warning] = logged(caplog)
     assert "is 0 seconds" in warning
 
