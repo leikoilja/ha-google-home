@@ -5,7 +5,7 @@
 You need:
 
 - Home Assistant 2026.11.0 or later.
-- Google speakers or displays, such as a Nest Mini, Nest Audio or Nest Hub. The integration doesn't add the other devices in your Google Home app, such as lights or thermostats. See [Other Google Home devices](other-integrations.md#other-google-home-devices).
+- Google speakers or displays. The integration is known to work with the original Google Home, Google Home Mini, Nest Mini, Nest Audio and Nest Hub. It doesn't add the other devices in your Google Home app, such as lights or thermostats. See [Other Google Home devices](other-integrations.md#other-google-home-devices).
 - A Google account that is a member of your home in the Google Home app, or of each home if your devices are in several. Open the Google Home app with that account and check that your devices are listed.
 - Home Assistant on the same local network as your devices, so the integration finds them automatically. If you run Home Assistant in Docker, set the container's network mode to `host`, as the [official installation guide](https://www.home-assistant.io/installation/linux) does. If your devices are on another network, or the container can't use `host` mode, [add them as known hosts](configuration.md#add-devices-on-another-network) instead.
 
@@ -39,15 +39,19 @@ You need:
 
     To update, repeat these steps with the new release. Delete the old `google_home` folder first.
 
+To see which version you have, open [**Settings** > **Devices & services** > **Google Home**](https://my.home-assistant.io/redirect/integration/?domain=google_home). The version is under the title.
+
 ## Add the integration
 
-1. [Add the Google Home integration](https://my.home-assistant.io/redirect/config_flow_start?domain=google_home), or go to **Settings** > **Devices & services** > **Add integration** and search for **Google Home**.
+1. [Add the Google Home integration](https://my.home-assistant.io/redirect/config_flow_start?domain=google_home), or go to **Settings** > **Devices & services** > **Add integration** and search for **Google Home**. If that page shows a **Google Home** card under **Discovered**, you can select **Add** on it instead.
 2. Choose how to sign in, and follow its steps below:
     - **Browser sign-in (recommended):** you sign in to Google in a desktop browser and copy a cookie from it.
     - **Master token:** if you already have one, for example from another tool.
-3. If your Google account is a member of several homes, choose the homes whose speakers and displays to add, and select **Submit**. All homes are selected at first. You can change this later; see [Choose homes](configuration.md#choose-homes).
+3. If your Google account is a member of several homes, choose the homes whose speakers and displays to add, and select **Submit**. All homes are selected at first. If Google doesn't give the integration your homes at that moment, Home Assistant skips this step and adds every home's devices. Either way, you can change this later; see [Choose homes](configuration.md#choose-homes).
 
-Home Assistant then adds a device for each Google Cast device in the homes you chose, with the [entities](entities.md) for it. Devices that have no alarms or timers, such as an NVIDIA Shield, get fewer entities.
+Home Assistant then adds a device for each Google Cast device in the homes you chose, with the [entities](entities.md) for it. Devices that have no alarms or timers, such as an NVIDIA Shield, get fewer entities. A speaker pair is added once, as one device with the pair's name from the Google Home app.
+
+Home Assistant shows the **Google Home** card under **Discovered** when it finds a Google Cast device on your network and the integration isn't set up. The card doesn't mean that your account or devices were found: you still sign in. If you don't want to set up the integration, select **Ignore**. If you delete the integration but keep it installed, the card can come back.
 
 !!! warning "Keep your sign-in details secret"
 
@@ -55,7 +59,7 @@ Home Assistant then adds a device for each Google Cast device in the homes you c
 
 ### Browser sign-in
 
-You need a computer with a desktop browser, such as Chrome, Edge or Firefox. Phones don't show the cookies you need.
+You need a computer with a desktop browser, such as Chrome, Edge or Firefox. Phones don't show the cookies you need. You sign in on Google's own page, so you don't need an app password, a script or any change to 2-Step Verification.
 
 1. In a private browser window, open [accounts.google.com/EmbeddedSetup](https://accounts.google.com/EmbeddedSetup) and sign in with the Google account you want to use.
 2. Accept the prompt. The page may then keep loading forever; that is expected.
@@ -63,7 +67,7 @@ You need a computer with a desktop browser, such as Chrome, Edge or Firefox. Pho
     - Chrome or Edge: **Application** > **Cookies**. If you can't see the **Application** tab, select `>>` to show more tabs.
     - Firefox: **Storage** > **Cookies**.
 4. Find the `oauth_token` row, double-click its value to select all of it, and copy it. It starts with `oauth2_4/`.
-5. In Home Assistant, select **Browser sign-in (recommended)**, paste the cookie into **oauth_token cookie**, and select **Submit**.
+5. In Home Assistant, on the **Browser sign-in** form, paste the cookie into **oauth_token cookie** and select **Submit**.
 
 The cookie expires within minutes and works only once, so paste it straight away. If setup says "Google didn't accept the cookie", close the private window and repeat from step 1.
 
@@ -107,22 +111,36 @@ The examples use entity IDs such as `sensor.kitchen_timers`. Replace them with y
 
 ## Try a fix before it's released
 
-A fix merged into `master` reaches the Home Assistant Marketplace with the next release. To try it sooner, install `master` in place of your current version:
+A fix merged into `master` reaches the Home Assistant Marketplace with the next release. To try it sooner, install `master` in place of your current version. Only `master` is supported, not other branches or pull requests.
 
-1. Find the entity ID of the Google Home update entity: in [**Settings** > **Devices & services** > **Entities**](https://my.home-assistant.io/redirect/entities/), search for `update.google_home`. It's usually `update.google_home` or `update.google_home_update`.
-2. Open [**Settings** > **Tools** > **Actions**](https://my.home-assistant.io/redirect/tools_perform_action/?service=update.install) and switch to **YAML mode**.
-3. Enter this action, with your entity ID in place of `update.google_home`:
+While you run `master`, **Settings** > **Devices & services** > **Google Home** still shows the version number of the latest release, so if you report a problem, say that you run `master`.
 
-    ```yaml
-    action: update.install
-    target:
-      entity_id: update.google_home
-    data:
-      version: master
-    ```
+=== "Marketplace"
 
-4. Select **Perform action**, then restart Home Assistant.
+    These steps work only if you installed the integration from the Marketplace, or with HACS before Home Assistant moved it to the Marketplace. Otherwise, use the **Manual** steps.
 
-To go back, run the action again with the latest release as the version, such as `version: v1.17.0`, and restart.
+    1. Find the entity ID of the Google Home update entity: in [**Settings** > **Devices & services** > **Entities**](https://my.home-assistant.io/redirect/entities/), search for `update.google_home`. It's usually `update.google_home` or `update.google_home_update`.
+    2. Open [**Settings** > **Tools** > **Actions**](https://my.home-assistant.io/redirect/tools_perform_action/?service=update.install) and switch to **YAML mode**.
+    3. Enter this action, with your entity ID in place of `update.google_home`:
 
-This installs `master` as it is at that moment. It doesn't follow newer commits, so run the action again to get them. Only `master` is supported, not other branches or pull requests.
+        ```yaml
+        action: update.install
+        target:
+          entity_id: update.google_home
+        data:
+          version: master
+        ```
+
+    4. Select **Perform action**, then restart Home Assistant.
+
+    This installs `master` as it is at that moment. To get newer commits, run the action again.
+
+    !!! warning "An update replaces `master`"
+
+        While you run `master`, Home Assistant may offer the latest release as an update, in **Settings** or on the integration's Marketplace page. Installing it replaces `master` with that release, so a fix that isn't released yet is gone. Install it only when you want to go back, then restart Home Assistant. While you test, you can open the update in **Settings** and select **Skip**: this hides only that release, and Home Assistant offers the next one as usual.
+
+    To go back when **Settings** offers no update, or the update can't be installed, [open Google Home in the Marketplace](https://my.home-assistant.io/redirect/marketplace_repository/?owner=leikoilja&repository=ha-google-home&category=integration) and select **⋮** > **Install another version**. Under **Version**, choose the release marked **Latest**, then select **Update**. Restart Home Assistant afterwards.
+
+=== "Manual"
+
+    Follow the **Manual** steps under [Install the integration](#install-the-integration), but download [`master` as a ZIP](https://github.com/leikoilja/ha-google-home/archive/refs/heads/master.zip) instead of the release, and delete the old `google_home` folder first. To get newer commits, repeat them. To go back, repeat them with the latest release.
