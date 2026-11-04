@@ -404,7 +404,7 @@ class GoogleHomeOptionsFlowHandler(OptionsFlow):
             probatio.Optional(
                 CONF_UPDATE_INTERVAL,
                 default=options.get(CONF_UPDATE_INTERVAL, UPDATE_INTERVAL),
-            ): int,
+            ): probatio.All(int, probatio.Range(min=1)),
             probatio.Optional(
                 CONF_KNOWN_HOSTS,
                 default=options.get(CONF_KNOWN_HOSTS, []),
