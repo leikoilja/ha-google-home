@@ -4,7 +4,6 @@ Home Assistant sets up the entry, runs its updates and calls its actions. Only
 glocaltokens, mDNS and the speaker's answers are faked, by the fixtures in conftest.py.
 """
 
-import asyncio
 from collections.abc import Awaitable, Callable, Iterable
 from datetime import timedelta
 from http import HTTPStatus
@@ -37,7 +36,6 @@ from custom_components.google_home.const import (
     DEVICE_TRACKER,
     DOMAIN,
     MANUFACTURER,
-    MASTER_TOKEN_TITLE,
     PLATFORMS,
 )
 
@@ -508,13 +506,12 @@ async def test_saved_update_interval_below_one_second(
     config_entry: MockConfigEntry,
     aioclient_mock: AiohttpClientMocker,
     freezer: FrozenDateTimeFactory,
-    caplog: pytest.LogCaptureFixture,
     interval: int,
 ) -> None:
     """Update the speaker every 15 seconds, the default, for a saved interval below 1 second.
 
     Earlier versions saved one: zero stopped scheduled updates and a negative
-    interval ran them without a pause. One warning says why and how to fix it.
+    interval ran them without a pause. A repair says why and offers to fix it.
     """
     hass.config_entries.async_update_entry(
         config_entry, options={CONF_UPDATE_INTERVAL: interval}
@@ -527,70 +524,6 @@ async def test_saved_update_interval_below_one_second(
         *(coordinator.update_interval for coordinator in data.devices.values()),
     ] == [timedelta(seconds=15)] * 2
     assert await updated_at(hass, aioclient_mock, freezer) == list(range(15, 181, 15))
-    [warning] = logged(caplog)
-    assert f"options of test@example.com is {interval} seconds" in warning
-    assert "every 15 seconds instead" in warning
-
-
-@pytest.mark.usefixtures("google", "replies")
-async def test_saved_update_interval_below_one_second_polling_off(
-    hass: HomeAssistant, config_entry: MockConfigEntry, caplog: pytest.LogCaptureFixture
-) -> None:
-    """Warn once for a saved interval of 0 while polling is off, and once it's back on.
-
-    Nothing is scheduled while polling is off, so the warning says when 15 seconds
-    applies and doesn't tell the user to turn off polling. Turning polling back on in
-    the system options changes the entry, then reloads it: only the reload warns.
-    """
-    hass.config_entries.async_update_entry(
-        config_entry, options={CONF_UPDATE_INTERVAL: 0}, pref_disable_polling=True
-    )
-    await set_up(hass, config_entry)
-
-    assert config_entry.state is ConfigEntryState.LOADED
-    [warning] = logged(caplog)
-    assert "options of test@example.com is 0 seconds" in warning
-    assert "once polling is back on" in warning
-    assert "turn off polling" not in warning
-
-    caplog.clear()
-    hass.config_entries.async_update_entry(config_entry, pref_disable_polling=False)
-    assert await hass.config_entries.async_reload(config_entry.entry_id)
-    await hass.async_block_till_done()
-
-    [warning] = logged(caplog)
-    assert "every 15 seconds instead" in warning
-    assert "turn off polling" in warning
-
-
-@pytest.mark.usefixtures("google", "replies")
-async def test_saved_update_interval_below_one_second_renamed(
-    hass: HomeAssistant, config_entry: MockConfigEntry, caplog: pytest.LogCaptureFixture
-) -> None:
-    """Warn once at setup for a saved interval of 0, also when setup renames the entry.
-
-    An entry with a generic title is named after its Google account once Google
-    answers, after setup. That changes the entry, which doesn't warn again.
-    """
-    hass.config_entries.async_update_entry(
-        config_entry, title=MASTER_TOKEN_TITLE, options={CONF_UPDATE_INTERVAL: 0}
-    )
-
-    async def email(_client: object) -> str:
-        # Google answers after setup, as over the network
-        await asyncio.sleep(0)
-        return "named@example.com"
-
-    with patch(
-        "glocaltokens.client.GLocalAuthenticationTokens.async_get_email",
-        autospec=True,
-        side_effect=email,
-    ):
-        await set_up(hass, config_entry)
-
-    assert config_entry.title == "named@example.com"
-    [warning] = logged(caplog)
-    assert f"options of {MASTER_TOKEN_TITLE} is 0 seconds" in warning
 
 
 @pytest.mark.usefixtures("google", "replies")
@@ -604,16 +537,14 @@ async def test_update_interval_changed_below_one_second(
     config_entry: MockConfigEntry,
     aioclient_mock: AiohttpClientMocker,
     freezer: FrozenDateTimeFactory,
-    caplog: pytest.LogCaptureFixture,
     options: dict[str, object],
     updates: range,
 ) -> None:
     """Update the speaker every 15 seconds once the options change to an interval of 0.
 
     The form refuses it, but the options can still change without it. The update
-    already scheduled keeps its time. One warning says why, also when the interval
-    was the default 15 seconds, which the fallback leaves unchanged. Renaming the
-    entry afterwards keeps the interval of 0, so it doesn't warn again.
+    already scheduled keeps its time, also when the interval was the default 15
+    seconds, which the fallback leaves unchanged.
     """
     hass.config_entries.async_update_entry(config_entry, options=options)
     await set_up(hass, config_entry)
@@ -622,12 +553,8 @@ async def test_update_interval_changed_below_one_second(
         config_entry, options={CONF_UPDATE_INTERVAL: 0}
     )
     await hass.async_block_till_done()
-    hass.config_entries.async_update_entry(config_entry, title="Renamed")
-    await hass.async_block_till_done()
 
     assert await updated_at(hass, aioclient_mock, freezer) == list(updates)
-    [warning] = logged(caplog)
-    assert "is 0 seconds" in warning
 
 
 @pytest.mark.usefixtures("google")

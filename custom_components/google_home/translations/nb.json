@@ -200,6 +200,21 @@
         }
       }
     },
+    "invalid_update_interval": {
+      "title": "Det lagrede oppdateringsintervallet er under 1 sekund",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Det lagrede oppdateringsintervallet er under 1 sekund",
+            "description": "Oppdateringsintervallet som er lagret i alternativene for integrasjonen, er {interval} s, som er under minimumsverdien på 1 sekund. Integrasjonen bruker i stedet standardverdien og sjekker enhetene dine hvert 15. sekund.\n\nHvis du lagret 0 for å stoppe disse faste sjekkene, bør du heller slå av polling. I motsetning til 0 stopper det også søket etter Bluetooth-enheter og at nye enheter som mDNS finner, legges til. Se flere detaljer her: {docs_url}.\n\nFor å bruke et annet intervall åpner du [Google Home-integrasjonen]({integration_url}), velger **Konfigurer**, skriver det inn og velger deretter **Send inn**.",
+            "menu_options": {
+              "use_default": "Bruk standardverdien på 15 sekunder",
+              "turn_off_polling": "Slå av polling i stedet"
+            }
+          }
+        }
+      }
+    },
     "homes_deselected": {
       "title": "Ingen av hjemmene til Google-kontoen din er valgt",
       "description": "Google-kontoen din er bare medlem av hjem du har valgt bort i alternativene for integrasjonen, så integrasjonen legger ikke til høyttalerne og skjermene i dem. For å legge til enhetene i et hjem åpner du [Google Home-integrasjonen]({integration_url}), velger **Konfigurer**, velger hjemmet under **Hjem** og velger deretter **Send inn**.\n\nHvis du vil la disse hjemmene være valgt bort, velger du **Ignorer**."
