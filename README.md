@@ -65,7 +65,7 @@ Ask questions, report bugs or suggest features in [issues](https://github.com/le
 
 [community-discussion]: https://community.home-assistant.io/t/solution-to-track-your-google-home-alarms-and-timers-and-trigger-different-home-assistant-events/61534/74
 [integration_blueprint]: https://github.com/custom-components/integration_blueprint
-[marketplace-shield]: https://img.shields.io/badge/Marketplace-Install-orange.svg?style=for-the-badge
+[marketplace-shield]: https://img.shields.io/badge/Marketplace-Install-7C4DFF.svg?style=for-the-badge&logo=data:image/svg%2Bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0xMiwxOEg2VjE0SDEyTTIxLDE0VjEyTDIwLDdINEwzLDEyVjE0SDRWMjBIMTRWMTRIMThWMjBIMjBWMTRNMjAsNEg0VjZIMjBWNFoiLz48L3N2Zz4=
 [marketplace]: https://my.home-assistant.io/redirect/marketplace_repository/?owner=leikoilja&repository=ha-google-home&category=integration
 [quality-scale-shield]: https://img.shields.io/badge/quality%20scale-%F0%9F%8F%86%20platinum-e5e4e2.svg?style=for-the-badge
 [quality-scale]: https://ha-google-home.pages.dev/#quality-scale
