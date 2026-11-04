@@ -1073,7 +1073,9 @@ async def test_sensors_show_nearest_alarm_and_timer_that_will_ring(
 
 @pytest.mark.usefixtures("google")
 @pytest.mark.parametrize(
-    ("status", "shown"), [(ALARM_INACTIVE, "inactive"), (ALARM_MISSED, "missed")]
+    ("status", "shown"),
+    [(ALARM_INACTIVE, "inactive"), (ALARM_MISSED, "missed")],
+    ids=["inactive", "missed"],
 )
 async def test_sensor_states_unavailable_when_nothing_will_ring(
     hass: HomeAssistant,
