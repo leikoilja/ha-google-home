@@ -216,7 +216,7 @@ If the request to a speaker fails, for example because it has just gone offline,
 
 Neither this integration nor Google supports this. It has been seen working, but it may stop working at any time.
 
-The integration has [no actions](actions.md) to set or snooze alarms. Instead, a script can play a spoken command on one speaker, starting with "Hey Google", so that another Google device nearby hears it and acts on it as if you'd said it. This has been seen setting an alarm, and snoozing and stopping a ringing one.
+The integration has [no actions](actions.md) to set or snooze alarms, and the [Google Assistant SDK integration](other-integrations.md#other-integrations-for-the-same-devices) can't do it either. Instead, a script can play a spoken command on one speaker, starting with "Hey Google", so that another Google device nearby hears it and acts on it as if you'd said it. This has been seen setting an alarm, and snoozing and stopping a ringing one.
 
 ```yaml
 alias: Set an alarm by voice
@@ -229,7 +229,7 @@ sequence:
       message: "Hey Google, set an alarm for 7 AM"
 ```
 
-Add it as in [Hear the timers set on other speakers](#hear-the-timers-set-on-other-speakers), replacing `media_player.living_room` with the media player of the speaker that plays the command and `tts.google_translate_en_com` with your text-to-speech entity. For a ringing alarm, use a message such as "Hey Google, snooze" or "Hey Google, stop".
+Add it as in [Hear the timers set on other speakers](#hear-the-timers-set-on-other-speakers). Replace `tts.google_translate_en_com` with your text-to-speech entity, and `media_player.living_room` with the media player of a different speaker near the Google device you want to set the alarm on, or near the one whose alarm is ringing. Don't play it on that device itself. For a ringing alarm, use a message such as "Hey Google, snooze" or "Hey Google, stop".
 
 Before you rely on it:
 
