@@ -72,8 +72,6 @@ async def set_up_with(
     hass: HomeAssistant,
     entry: MockConfigEntry,
     interval: int,
-    *,
-    polling_off: bool = False,
 ) -> None:
     """Set up the entry with the update interval saved by an earlier version.
 
@@ -82,7 +80,6 @@ async def set_up_with(
     hass.config_entries.async_update_entry(
         entry,
         options={CONF_UPDATE_INTERVAL: interval, CONF_BLUETOOTH_TRACKING: False},
-        pref_disable_polling=polling_off,
     )
     # Not set_up(), as setup may fail
     await hass.config_entries.async_setup(entry.entry_id)
