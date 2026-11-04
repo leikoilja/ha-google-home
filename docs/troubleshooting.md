@@ -166,6 +166,8 @@ The integration then doesn't ask Google for that device at every update: it asks
 
 Once the cause is fixed, you can reload the integration to ask Google straight away: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**.
 
+If the log instead has an error such as `Failed to parse fetched alarms and timers for device Kitchen - API returned unknown json structure`, `Kitchen sent a reply to setup/assistant/alarms that isn't valid JSON` or `Kitchen sent an alarm volume that isn't a number`, the device answered with something the integration can't read. Its entities keep the values they had, which may be out of date, until a reply can be read again. If the error keeps coming back, [get help](#still-stuck) and attach [diagnostics](#download-diagnostics).
+
 ## An action or setting fails
 
 Deleting alarms or timers, rebooting, turning Do Not Disturb on or off and setting the alarm volume fail with an error, rather than look successful, when a device may not have done what you asked. Most errors name the device and say why. To let your automation or script carry on after an error, see [Continue after an error](actions.md#continue-after-an-error).

@@ -126,7 +126,7 @@ A time trigger follows the time that the integration last saw. The integration [
 
 - An alarm or timer that the integration has seen triggers on time, even between checks. One that goes off before the integration sees it, which can happen to a timer shorter than the update interval, doesn't trigger anything.
 - If you pause, cancel or change an alarm or timer, the automation follows the change only after the next check, so it can still run at the old time if that comes first.
-- Inactive and missed alarms and paused timers don't trigger anything. A timer you resume triggers at its new end time, once the integration has seen it.
+- Inactive and missed alarms, paused timers, and alarms or timers with an [unknown status](entities.md#alarm-and-timer-status) don't trigger anything. A timer you resume triggers at its new end time, once the integration has seen it.
 - You can also trigger on the `next_alarm_status` or `next_timer_status` attribute changing to `ringing`, or from `ringing` when you stop or snooze it, as in [When an alarm stops ringing](#when-an-alarm-stops-ringing). The integration checks the speaker more often around that time; see [How quickly ringing shows](#how-quickly-ringing-shows).
 
 ## How quickly ringing shows

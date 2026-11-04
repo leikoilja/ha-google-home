@@ -48,6 +48,7 @@ from .conftest import (
     DELETE,
     SPEAKER_CLOUD_ID,
     SPEAKER_ID,
+    UNEXPECTED,
     Held,
     Replies,
     bedroom_speaker,
@@ -463,14 +464,12 @@ async def test_failing_speaker_found_later_updates_on_its_own(
 ) -> None:
     """Ask a speaker found after setup straight away, but not again at each update of the list while its update fails.
 
-    Its timer comes without its fields, so it never gets data.
+    Its alarms request raises an error the update doesn't expect, as a bug would, so
+    it never gets data.
     """
     await set_up(hass, config_entry)
     google.return_value = [kitchen_speaker(), bedroom_speaker()]
-    replies[BEDROOM] = {
-        **SUPPORTED,
-        ALARMS: (HTTPStatus.OK, {"alarm": [], "timer": [{}]}),
-    }
+    replies[BEDROOM] = {**SUPPORTED, ALARMS: UNEXPECTED}
     clock.return_value = FETCH_DEVICES_INTERVAL
     await update_account(hass, config_entry)
     assert asked_by(asked(aioclient_mock), BEDROOM) == [ALARMS]
@@ -577,10 +576,11 @@ async def test_one_speaker_failing_leaves_the_others(
 ) -> None:
     """Make only a speaker's entities unavailable when its update fails unexpectedly.
 
-    Here its timer comes without its fields. The other speaker keeps updating.
+    Here its alarms request raises an error the update doesn't expect, as a bug
+    would. The other speaker keeps updating.
     """
     await set_up(hass, config_entry)
-    replies[BEDROOM][ALARMS] = (HTTPStatus.OK, {"alarm": [], "timer": [{}]})
+    replies[BEDROOM][ALARMS] = UNEXPECTED
     data = runtime(config_entry)
 
     await data.devices[BEDROOM_ID].async_refresh()
@@ -602,7 +602,8 @@ async def test_speaker_failing_at_setup_gets_entities_once_it_answers(
 ) -> None:
     """Set up the other speakers when one's first update fails unexpectedly, and add its entities at its first update that works.
 
-    Here its timer comes without its fields. It keeps updating on its own: the
+    Here its alarms request raises an error the update doesn't expect, as a bug
+    would. It keeps updating on its own: the
     account's next update asks it once, and only its own update asks it after that.
     It then gets the same entities as the speaker that answered at setup, without a
     reload.
@@ -618,7 +619,7 @@ async def test_speaker_failing_at_setup_gets_entities_once_it_answers(
             if registered.unique_id.startswith(f"{device_id}/")
         }
 
-    replies[BEDROOM][ALARMS] = (HTTPStatus.OK, {"alarm": [], "timer": [{}]})
+    replies[BEDROOM][ALARMS] = UNEXPECTED
 
     await set_up(hass, config_entry)
 

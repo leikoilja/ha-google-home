@@ -37,6 +37,7 @@ from .conftest import (
     SPEAKER_CLOUD_ID,
     SPEAKER_ID,
     SPEAKER_NAME,
+    UNEXPECTED,
     Replies,
     bedroom_speaker,
     kitchen_speaker,
@@ -44,7 +45,7 @@ from .conftest import (
 from .test_coordinators import REJECTING, runtime, update_account
 from .test_missing_devices import ALARM_ID, answered, found
 from .test_setup import set_up
-from .test_unsupported_devices import ALARMS, SPEAKER, SUPPORTED, UPDATE
+from .test_unsupported_devices import ALARMS, SPEAKER, SUPPORTED, UPDATE, VOLUME, Reply
 
 # pylint: enable=wrong-import-order
 
@@ -309,17 +310,30 @@ async def test_diagnostics_of_speaker_google_stops_listing(
     assert (removed["devices"], removed["mdns_reported_not_listed"]) == ({}, 1)
 
 
-async def test_diagnostics_of_speaker_whose_first_update_fails(
+@pytest.mark.parametrize(
+    ("volume", "update_success", "exception"),
+    [
+        # The update keeps going without the alarms, and works
+        pytest.param(SUPPORTED[VOLUME], True, None, id="unread-reply"),
+        # Then a request raises an error the update doesn't expect, as a bug would
+        pytest.param(UNEXPECTED, False, "RuntimeError", id="update-fails"),
+    ],
+)
+async def test_diagnostics_of_speaker_whose_alarms_cant_be_read(
     hass: HomeAssistant,
     hass_client: ClientSessionGenerator,
     config_entry: MockConfigEntry,
     google: Mock,
     replies: Replies,
     clock: Mock,
+    volume: Reply,
+    update_success: bool,
+    exception: str | None,
 ) -> None:
-    """Show the reply that makes a newly listed speaker's first update fail.
+    """Show the alarms reply that a newly listed speaker's first update couldn't read.
 
-    Its coordinator has no data until one of its updates works, but Google lists it.
+    Also when that update fails, so its coordinator has no data until one of its
+    updates works, but Google lists it.
     """
     await set_up(hass, config_entry)
     google.return_value = [
@@ -328,7 +342,11 @@ async def test_diagnostics_of_speaker_whose_first_update_fails(
     ]
     # Without its fire time, the alarm can't be read
     malformed = {"alarm": [{"id": ALARM_ID, "status": 1}], "timer": []}
-    replies[BEDROOM] = {**SUPPORTED, ALARMS: (HTTPStatus.OK, malformed)}
+    replies[BEDROOM] = {
+        **SUPPORTED,
+        ALARMS: (HTTPStatus.OK, malformed),
+        VOLUME: volume,
+    }
     clock.return_value = FETCH_DEVICES_INTERVAL
     await update_account(hass, config_entry)
 
@@ -337,10 +355,13 @@ async def test_diagnostics_of_speaker_whose_first_update_fails(
     )
 
     bedroom = cast(dict[str, dict[str, object]], diagnostics["devices"])[BEDROOM_ID]
+    # Only an update that works gives its coordinator data
+    has_data = runtime(config_entry).devices[BEDROOM_ID].data is not None
+    assert has_data is update_success
     expected = {
         "name": "Bedroom speaker",
-        "last_update_success": False,
-        "last_exception": "KeyError",
+        "last_update_success": update_success,
+        "last_exception": exception,
         "ip_address": REDACTED,
         "auth_token": REDACTED,
         "alarms_reply": malformed,

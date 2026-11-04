@@ -186,6 +186,23 @@ def test_setting_fails_when_answer_doesnt_arrive(
     assert network.asked(SPEAKER) == [control]
 
 
+@pytest.mark.parametrize(("control", "act"), SETTINGS)
+def test_setting_raises_reply_that_isnt_valid_json(control: str, act: Act) -> None:
+    """Raise the decoding error of a setting whose 200 isn't valid JSON, as it is.
+
+    Only an update handles that error.
+    """
+    invalid = JSONDecodeError("Expecting value", "<html>", 0)
+    client, _, network = setup({**SUPPORTED, control: (HTTPStatus.OK, invalid)})
+    coordinator = Mock(data={"device0": client.google_devices[0]})
+
+    with pytest.raises(JSONDecodeError) as err:
+        asyncio.run(act(entities(client, coordinator, "device0")[control]))
+
+    assert err.value is invalid
+    assert network.asked(SPEAKER) == [control]
+
+
 @pytest.mark.parametrize(
     "body",
     [
