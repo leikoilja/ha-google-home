@@ -15,6 +15,8 @@ repos:
     hooks:
       - id: check-dependabot
       - id: check-github-actions
+      - id: check-github-issue-config
+      - id: check-github-issue-forms
       - id: check-github-workflows
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
     rev: v1.31.1
