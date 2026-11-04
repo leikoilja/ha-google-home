@@ -17,6 +17,7 @@ from custom_components.google_home.const import (
     DOMAIN,
     MASTER_TOKEN_TITLE,
 )
+from custom_components.google_home.coordinator import GoogleAccountCoordinator
 from custom_components.google_home.models import GoogleHomeDevice
 from custom_components.google_home.types import GoogleHomeData
 
@@ -120,7 +121,12 @@ def loaded_entry(
     return Mock(
         state=ConfigEntryState.LOADED,
         runtime_data=GoogleHomeData(
-            client, Mock(data={device.device_id: device for device in devices}), {}
+            client,
+            Mock(
+                GoogleAccountCoordinator,
+                data={device.device_id: device for device in devices},
+            ),
+            {},
         ),
     )
 
@@ -143,8 +149,9 @@ def can_delete(entry: Mock, device_id: str) -> bool:
 
 
 def test_keep_device_google_returns(entry: Mock) -> None:
-    """Keep a device Google still returns."""
+    """Keep a device Google still returns, and leave its updates running."""
     assert not can_delete(entry, "online")
+    entry.runtime_data.account.async_forget_device.assert_not_awaited()
 
 
 def test_keep_unavailable_device_google_returns(entry: Mock) -> None:
