@@ -1,5 +1,7 @@
 """Tests for asking a speaker around its alarms' and timers' fire times.
 
+Also for which alarm and timer the sensors show next.
+
 As in test_setup, the integration runs inside Home Assistant, and only glocaltokens,
 mDNS and the speakers' answers are faked. The clock moves a second at a time. Home
 Assistant starts each update a fixed fraction of a second after a whole second, which
@@ -67,7 +69,9 @@ TIMER_SET, TIMER_PAUSED, TIMER_RINGING = 1, 2, 3
 INTERVAL = 180
 OTHER_ALARM_ID = "alarm/" + "1" * 36
 MISSED_ALARM_ID = "alarm/" + "2" * 36
+LATER_ALARM_ID = "alarm/" + "3" * 36
 PAUSED_TIMER_ID = "timer/" + "1" * 36
+LATER_TIMER_ID = "timer/" + "2" * 36
 
 
 def alarm(status: int, at: float = 0, alarm_id: str = ALARM_ID) -> dict[str, int | str]:
@@ -1005,6 +1009,102 @@ async def test_nearest_fire_time(
         11,
         101,
     ]
+
+
+@pytest.mark.usefixtures("google")
+async def test_sensors_show_nearest_alarm_and_timer_that_will_ring(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    replies: Replies,
+    freezer: FrozenDateTimeFactory,
+) -> None:
+    """Show the nearest set alarm and running timer, and list each sensor's items in order.
+
+    Set alarms come first by fire time, then the missed and inactive ones by theirs,
+    although those are earlier. Running timers come first by fire time, then the
+    paused one. The speaker lists them in another order.
+    """
+    await start(
+        hass,
+        config_entry,
+        replies,
+        freezer,
+        -60,
+        answer(
+            alarm(ALARM_INACTIVE, 50, OTHER_ALARM_ID),
+            alarm(ALARM_SET, 200, LATER_ALARM_ID),
+            alarm(ALARM_MISSED, -120, MISSED_ALARM_ID),
+            alarm(ALARM_SET, 100),
+            timers=(
+                timer(TIMER_PAUSED, None, PAUSED_TIMER_ID),
+                timer(TIMER_SET, 300, LATER_TIMER_ID),
+                timer(TIMER_SET, 30),
+            ),
+        ),
+    )
+    alarms, timers = hass.states.get(ALARMS_SENSOR), hass.states.get(TIMERS_SENSOR)
+    assert alarms is not None
+    assert timers is not None
+
+    assert datetime.fromisoformat(alarms.state) == datetime.fromtimestamp(
+        FIRE + 100, UTC
+    )
+    assert alarms.attributes["next_alarm_status"] == "set"
+    assert [
+        (item["alarm_id"], item["status"]) for item in alarms.attributes["alarms"]
+    ] == [
+        (ALARM_ID, "set"),
+        (LATER_ALARM_ID, "set"),
+        (MISSED_ALARM_ID, "missed"),
+        (OTHER_ALARM_ID, "inactive"),
+    ]
+    assert datetime.fromisoformat(timers.state) == datetime.fromtimestamp(
+        FIRE + 30, UTC
+    )
+    assert timers.attributes["next_timer_status"] == "set"
+    assert [
+        (item["timer_id"], item["status"]) for item in timers.attributes["timers"]
+    ] == [
+        (TIMER_ID, "set"),
+        (LATER_TIMER_ID, "set"),
+        (PAUSED_TIMER_ID, "paused"),
+    ]
+
+
+@pytest.mark.usefixtures("google")
+@pytest.mark.parametrize(
+    ("status", "shown"), [(ALARM_INACTIVE, "inactive"), (ALARM_MISSED, "missed")]
+)
+async def test_sensor_states_unavailable_when_nothing_will_ring(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    replies: Replies,
+    freezer: FrozenDateTimeFactory,
+    status: int,
+    shown: str,
+) -> None:
+    """Show both sensors' states as unavailable with only an inactive or missed alarm and a paused timer.
+
+    As with no alarm or timer at all. The sensors themselves are available, with the
+    status of the alarm and timer they list.
+    """
+    await start(
+        hass,
+        config_entry,
+        replies,
+        freezer,
+        -60,
+        answer(alarm(status, 50), timers=(timer(TIMER_PAUSED, None),)),
+    )
+    alarms, timers = hass.states.get(ALARMS_SENSOR), hass.states.get(TIMERS_SENSOR)
+    assert alarms is not None
+    assert timers is not None
+
+    assert (alarms.state, timers.state) == (STATE_UNAVAILABLE, STATE_UNAVAILABLE)
+    # Only their states: Home Assistant leaves out these attributes when the sensor
+    # itself is unavailable
+    assert alarms.attributes["next_alarm_status"] == shown
+    assert timers.attributes["next_timer_status"] == "paused"
 
 
 @pytest.mark.usefixtures("google")
