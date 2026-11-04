@@ -17,7 +17,14 @@
 
 ## About
 
-This integration brings your Google Home and Nest speakers and displays into Home Assistant. You can see and delete their alarms and timers, turn Do Not Disturb on or off, change the alarm volume, reboot them, and see their firmware version, whether an update is waiting, and their Wi-Fi network and signal strength. With Bluetooth tracking turned on, they can also tell whether your phone or another Bluetooth device is home.
+This integration brings your Google Home and Nest speakers and displays into Home Assistant. You can:
+
+- See and delete [alarms](https://ha-google-home.pages.dev/entities/#alarms-sensor) and [timers](https://ha-google-home.pages.dev/entities/#timers-sensor).
+- Turn [Do Not Disturb](https://ha-google-home.pages.dev/entities/#do-not-disturb-switch) on or off and change the [alarm volume](https://ha-google-home.pages.dev/entities/#alarm-volume).
+- [Reboot](https://ha-google-home.pages.dev/entities/#reboot-button) a device.
+- See each device's [firmware version](https://ha-google-home.pages.dev/entities/#firmware-version) and whether it says [a firmware update is waiting](https://ha-google-home.pages.dev/entities/#update-sensor).
+- See each device's [Wi-Fi network and signal strength](https://ha-google-home.pages.dev/entities/#wi-fi-sensors).
+- Tell whether your phone or another Bluetooth device is home, with [Bluetooth tracking](https://ha-google-home.pages.dev/bluetooth/).
 
 Use the alarms and timers in automations, for example to:
 
@@ -39,7 +46,7 @@ Install the integration from the Marketplace, which replaced HACS in Home Assist
 
 ## Documentation
 
-Read the full documentation at **[ha-google-home.pages.dev](https://ha-google-home.pages.dev/)**:
+The **[documentation site](https://ha-google-home.pages.dev/)** has these pages:
 
 - [Getting Started](https://ha-google-home.pages.dev/installation/): prerequisites, installation, sign-in and a first check with a timer
 - [Configuration and management](https://ha-google-home.pages.dev/configuration/): update interval, polling, adding and removing devices, devices on another network, homes and removing the integration

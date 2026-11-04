@@ -17,11 +17,12 @@ To start, follow **[Getting Started](installation.md)** to install the integrati
 
 ## What you can automate
 
-The alarms and timers sensors show the time of the next alarm or timer, so an automation can start at that time or a set time before it. For example, you can:
+The alarms and timers sensors show the time of the next alarm or timer, so an automation can start at that time or a set time before it. The timers sensors also list each timer, so a script can read out the running ones. For example, you can:
 
 - [Turn on the bedroom lights 10 minutes before the next alarm](automations.md#before-the-next-alarm).
 - [Open the bedroom blinds when the alarm goes off](automations.md#when-an-alarm-goes-off).
 - [Send a notification to your phone when the kitchen timer finishes](automations.md#when-a-timer-finishes).
+- [Have one speaker read out the timers running on all your speakers when you run a script](automations.md#hear-the-timers-set-on-other-speakers).
 
 [Automation examples](automations.md) has the YAML for each one. The full list of what the integration adds is on the [Entities](entities.md) and [Actions](actions.md) pages.
 

@@ -9,19 +9,32 @@ from typing import Literal, override
 
 import probatio
 
+from homeassistant.auth.permissions.const import POLICY_CONTROL
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
     SensorStateClass,
 )
 from homeassistant.const import (
+    ATTR_ENTITY_ID,
+    ENTITY_MATCH_ALL,
     SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
     STATE_UNAVAILABLE,
     EntityCategory,
 )
 from homeassistant.core import HomeAssistant, ServiceCall, callback
-from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
-from homeassistant.helpers import config_validation as cv, service
+from homeassistant.exceptions import (
+    HomeAssistantError,
+    ServiceValidationError,
+    Unauthorized,
+    UnknownUser,
+)
+from homeassistant.helpers import (
+    config_validation as cv,
+    entity_registry as er,
+    service,
+    target,
+)
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import VolDictType, VolSchemaType
 
@@ -224,24 +237,62 @@ def async_setup_actions(hass: HomeAssistant) -> None:
         func=async_reboot_devices,
     )
 
-    service.async_register_batched_platform_entity_service(
-        hass,
-        DOMAIN,
-        SERVICE_REFRESH,
-        entity_domain=SENSOR,
-        schema=when_loaded({}),
-        func=async_refresh_devices,
+    # A plain action: Home Assistant doesn't run entity actions on unavailable sensors
+    hass.services.async_register(
+        DOMAIN, SERVICE_REFRESH, async_refresh_devices, schema=when_loaded({})
     )
 
 
-async def async_refresh_devices(
-    entities: list[GoogleHomeBaseEntity], _call: ServiceCall
-) -> None:
-    """Refresh all devices once, however many sensors are targeted."""
-    # The integration allows one config entry, so all sensors share its devices
-    devices = entities[0].coordinator.config_entry.runtime_data.devices
+async def async_refresh_devices(call: ServiceCall) -> None:
+    """Refresh all devices once if the target covers a Google Home sensor, even an unavailable one.
+
+    Like Home Assistant's entity actions, a user who isn't an admin needs control
+    of every entity the target covers, and with entity_id: all only the sensors
+    they control count.
+    """
+    hass = call.hass
+    may_control: Callable[[str, str], bool] | None = None
+    if call.context.user_id:
+        user = await hass.auth.async_get_user(call.context.user_id)
+        if user is None:
+            raise UnknownUser(context=call.context)
+        if not user.is_admin:
+            may_control = user.permissions.check_entity
+    entry: GoogleHomeConfigEntry = service.async_get_config_entry(hass, DOMAIN, None)
+    # Also the sensors of a device that hasn't answered since setup, which aren't
+    # added until it does
+    sensors = {
+        registered.entity_id
+        for registered in er.async_entries_for_config_entry(
+            er.async_get(hass), entry.entry_id
+        )
+        if registered.domain == SENSOR and not registered.disabled
+    }
+    selection = target.TargetSelection(call.data)
+    if call.data.get(ATTR_ENTITY_ID) == ENTITY_MATCH_ALL:
+        targeted = sensors - target.async_extract_excluded_entity_ids(hass, selection)
+        if may_control is not None:
+            targeted = {e for e in targeted if may_control(e, POLICY_CONTROL)}
+    else:
+        selected = target.async_extract_referenced_entity_ids(hass, selection)
+        referenced = selected.referenced | selected.indirectly_referenced
+        if may_control is not None:
+            for entity_id in referenced:
+                if not may_control(entity_id, POLICY_CONTROL):
+                    raise Unauthorized(
+                        context=call.context,
+                        entity_id=entity_id,
+                        permission=POLICY_CONTROL,
+                    )
+        targeted = referenced & sensors
+        selected.log_missing(selected.referenced - targeted, _LOGGER)
+    if not targeted:
+        return
     await asyncio.gather(
-        *(coordinator.async_request_refresh() for coordinator in devices.values())
+        *(
+            coordinator.async_request_refresh()
+            for coordinator in entry.runtime_data.devices.values()
+        )
     )
 
 

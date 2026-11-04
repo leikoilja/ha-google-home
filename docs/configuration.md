@@ -14,7 +14,12 @@ If a speaker or display with alarms and timers often shows `false` in the `avail
 
 **Configure** shows the interval in use. If you saved these options in version 1.15 or older, for example to add known hosts, it's the interval you saved, which was 180 seconds unless you changed it. To use the new default, enter 15 and select **Submit**.
 
-The interval must be at least 1 second. If you saved 0 or less in an earlier version, **Configure** shows that saved value, not the interval in use: until you enter a valid interval, the integration logs a warning each time it loads and, while polling is on, checks every 15 seconds. An interval of 0 stopped only these regular checks. To stop them now, [turn off polling](#turn-off-polling); unlike 0, it also stops Bluetooth scans and the adding of new devices that mDNS finds.
+The interval must be at least 1 second. If you saved 0 or less in an earlier version, the integration checks every 15 seconds while polling is on, and **Configure** shows the saved value, not the interval in use. Until you save a valid interval, **Settings** > **System** > **Repairs** shows **The saved update interval is below 1 second**. Select it, then choose:
+
+- **Use the default of 15 seconds**: saves 15 seconds, and the repair goes away.
+- **Turn off polling instead**: saves 15 seconds, [turns off polling](#turn-off-polling) and reloads the integration. An interval of 0 stopped only the regular checks; turning off polling also stops Bluetooth scans and the adding of new devices that mDNS finds. The **Polling for changes is turned off** repair starts hidden, as if you had chosen **Keep polling off and hide this repair** in it.
+
+To use another interval instead, enter it in **Configure**; the repair goes away once you save it. While polling is off, the interval isn't used, so the repair shows only once you turn polling back on.
 
 To update immediately, use the [Refresh devices](actions.md#refresh-devices) action.
 
@@ -46,7 +51,7 @@ actions:
         - sensor.living_room_device
 ```
 
-It uses `homeassistant.update_entity` because Home Assistant doesn't run Refresh devices on unavailable sensors: once a device misses 5 updates in a row, for example while it's unplugged, a Refresh devices automation that targets its sensors never updates it again. `homeassistant.update_entity` updates the device of each entity you list, even one that's unavailable.
+`homeassistant.update_entity` updates only the devices you list, even one whose sensors are unavailable. To update all your devices instead, use [Refresh devices](actions.md#refresh-devices) with any Google Home sensor as its target. It also runs when that sensor is unavailable, for example after its device missed 5 updates in a row.
 
 While polling is off, **Settings** > **System** > **Repairs** shows **Polling for changes is turned off**. Select it, then choose:
 
