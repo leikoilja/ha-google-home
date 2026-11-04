@@ -134,7 +134,7 @@ target:
 
 Target an alarms or timers sensor, or a device that has [alarms and timers sensors](troubleshooting.md#no-alarms-or-timers-sensors). All devices are updated once, however many sensors the target covers. The action needs a target.
 
-If the sensors you target are [unavailable](#unavailable-sensors), Home Assistant doesn't run the action. Run [`homeassistant.update_entity`](https://www.home-assistant.io/actions/homeassistant.update_entity/) instead, on a Google Home sensor of each device to update: it updates only that sensor's device.
+The action also runs when the sensors you target are [unavailable](#unavailable-sensors), for example while a device doesn't answer, so it can bring that device back: once the device answers, its entities are available again. A target that covers no Google Home sensor, such as only a light, updates nothing.
 
 ## Targets
 
@@ -158,7 +158,7 @@ data:
 
 ## Unavailable sensors
 
-Home Assistant runs these actions only on available sensors, and skips the others without an error. If all the sensors you target are unavailable, nothing happens and the action doesn't fail. If you name an unavailable sensor directly, the log shows "Referenced entities sensor.kitchen_alarms are missing or not currently available", even if another sensor you named ran the action.
+Except for [Refresh devices](#refresh-devices), Home Assistant runs these actions only on available sensors, and skips the others without an error. If all the sensors you target are unavailable, nothing happens and the action doesn't fail. If you name an unavailable sensor directly, the log shows "Referenced entities sensor.kitchen_alarms are missing or not currently available", even if another sensor you named ran the action.
 
 While the integration itself isn't loaded, for example because its setup failed, its sensors are unavailable too, but the actions fail instead of doing nothing. See [An action fails while the integration isn't loaded](troubleshooting.md#an-action-fails-while-the-integration-isnt-loaded).
 
