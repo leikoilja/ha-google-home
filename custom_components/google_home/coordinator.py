@@ -185,9 +185,18 @@ class GoogleAccountCoordinator(DataUpdateCoordinator[dict[str, GoogleHomeDevice]
                     device.name_by_user or device.name,
                 )
                 registry.async_remove_device(device.id)
-            self._asked.pop(device_id, None)
-            if (coordinator := coordinators.pop(device_id, None)) is not None:
-                await coordinator.async_shutdown()
+            await self.async_forget_device(device_id)
+
+    async def async_forget_device(self, device_id: str) -> None:
+        """Stop and drop the coordinator of a device that is removed.
+
+        If Google lists the device again, it gets a new coordinator, which is asked
+        straight away, and new entities.
+        """
+        self._asked.pop(device_id, None)
+        coordinators = self.config_entry.runtime_data.devices
+        if (coordinator := coordinators.pop(device_id, None)) is not None:
+            await coordinator.async_shutdown()
 
     @callback
     def async_ask_to_sign_in_if_rejected(self) -> None:

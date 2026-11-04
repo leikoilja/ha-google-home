@@ -331,6 +331,9 @@ async def async_remove_config_entry_device(
     fetch has succeeded yet, or a device rejected its token, got no new token
     that it accepts, and the list hasn't been fetched again.
 
+    A deleted device stops updating, as one that the integration removes does, so if
+    Google lists it again, it gets its entities back.
+
     Deleting a tracked Bluetooth device stops tracking it, as deleting it from the
     integration's page does: its subentry goes, with the device and its tracker.
     """
@@ -342,8 +345,15 @@ async def async_remove_config_entry_device(
         or not entry.runtime_data.client.google_devices_fetched
     ):
         return False
-    google_ids = {(DOMAIN, device_id) for device_id in entry.runtime_data.account.data}
-    return not device_entry.identifiers & google_ids
+    account = entry.runtime_data.account
+    device_ids = {
+        device_id for domain, device_id in device_entry.identifiers if domain == DOMAIN
+    }
+    if device_ids & account.data.keys():
+        return False
+    for device_id in device_ids:
+        await account.async_forget_device(device_id)
+    return True
 
 
 def saved_interval(entry: GoogleHomeConfigEntry) -> int:
