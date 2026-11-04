@@ -3,6 +3,8 @@
 Find what you see, then start with the first check in its section:
 
 - [Adding the integration shows an error](#setup-fails)
+- [The integration doesn't load after you update Home Assistant or the integration](#the-integration-doesnt-load-after-an-update)
+- [The Google Home card shows **1 entry failed to set up, retrying**](#failed-setup-will-retry)
 - [Home Assistant says that authentication expired](#sign-in-again), or [signing in again fails](#signing-in-again-fails)
 - [The integration shows no devices](#no-devices-appear)
 - [A device has only a device sensor, a reboot button and an update sensor](#no-alarms-or-timers-sensors)
@@ -16,9 +18,9 @@ If that doesn't help, see [Still stuck](#still-stuck). Some sections ask you to 
 
 ## Setup fails
 
-When you [sign in again](#sign-in-again), the form shows these errors too.
+When you [sign in again](#sign-in-again), the form shows the same sign-in errors.
 
-### "Username or password is incorrect"
+### "Username/Password is incorrect" {#username-or-password-is-incorrect}
 
 [Update the integration](https://github.com/leikoilja/ha-google-home/releases/latest) and use [browser sign-in](installation.md#browser-sign-in). Older versions of the integration signed in with an app password, which Google rejects for many accounts.
 
@@ -36,13 +38,34 @@ Google refused the cookie or master token for a reason that the integration does
 
 ### "Couldn't reach Google"
 
-Home Assistant couldn't connect to Google, or Google didn't answer in time. Check that Home Assistant is connected to the internet. The integration signs in at `android.clients.google.com`, and after setup gets your devices from `googlehomefoyer-pa.googleapis.com`. If a DNS filter or firewall, such as Pi-hole or AdGuard Home, blocks either, allow it. Then try again. With browser sign-in, get a new cookie if a few minutes have passed.
+Home Assistant couldn't connect to Google, or Google didn't answer in time. Check that Home Assistant is connected to the internet. The integration signs in at `android.clients.google.com`, and gets your homes and devices from `googlehomefoyer-pa.googleapis.com`. If a DNS filter or firewall, such as Pi-hole or AdGuard Home, blocks either, allow it. Then try again. With browser sign-in, get a new cookie if a few minutes have passed.
+
+If only `googlehomefoyer-pa.googleapis.com` is blocked, adding the integration shows no error, but doesn't ask you to [choose homes](configuration.md#choose-homes), and the integration starts without devices; see [No devices appear](#no-devices-appear). Once you allow it, reload the integration, and choose homes in its options if you want only some of them.
 
 Once the integration is added, [System information](#check-system-information) shows whether Home Assistant reaches both.
 
 ### "Google is busy or is limiting sign-ins"
 
 Google answered with a server error, or asked the integration to slow down. This doesn't mean that your cookie or master token is wrong. Wait a few minutes, then sign in again. With browser sign-in, get a new cookie, as the old one expires within minutes.
+
+### "This integration allows only one configuration"
+
+You can add the integration only once, so it works with one Google account. Adding it again shows this message, or "Already configured. Only a single configuration is possible." To add devices from several homes, [invite the account](https://support.google.com/googlenest/answer/9155535) you signed in with to each home: the integration adds the devices of every home that account is a member of. To use another account instead, see [Remove the integration](configuration.md#remove-the-integration).
+
+### "Failed setup, will retry"
+
+When Home Assistant couldn't connect to Google as the integration started, or Google didn't answer in time, the Google Home card in **Settings** > **Devices & services** shows **1 entry failed to set up, retrying**, and the integration's page shows **Failed setup, will retry**. Home Assistant tries again by itself, after a wait that grows up to 10 minutes. The log shows nothing about it unless [debug logging](#collect-debug-logs) is on, so **Check the logs** on that page finds nothing. Until the integration starts, its entities are unavailable and its [actions fail](#an-action-fails-while-the-integration-isnt-loaded).
+
+Check that Home Assistant can reach Google; see ["Couldn't reach Google"](#couldnt-reach-google). [System information](#check-system-information) shows whether Google's servers answer, though `ok` doesn't show that Google accepts the sign-in. Once Google answers, the next try starts the integration. To try straight away, reload it: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**.
+
+### The integration doesn't load after an update
+
+An update can stop the integration from loading: a new Home Assistant version may not be able to install the libraries that an older version of the integration needs, and a new release of the integration needs a recent Home Assistant. **Settings** > **Devices & services** > **Google Home** then shows **Not loaded**. After a restart, an **Invalid config** notification lists `google_home` under "The following integrations and platforms could not be set up". The [log](https://my.home-assistant.io/redirect/logs/) shows an error such as `Setup failed for custom integration 'google_home': Requirements for google_home not found`, and adding the integration can show "Config flow could not be loaded".
+
+1. Check that your Home Assistant version is supported; see [Before you start](installation.md#before-you-start). If it's older, update Home Assistant first.
+2. [Update the integration](installation.md#install-the-integration) to the latest release, then restart Home Assistant.
+
+If the latest release doesn't load either, search the [issues](https://github.com/leikoilja/ha-google-home/issues?q=is%3Aissue) for the error, or [open an issue](https://github.com/leikoilja/ha-google-home/issues/new/choose) with the error from the log.
 
 ## Sign in again
 
@@ -53,7 +76,7 @@ Google can stop accepting the integration's sign-in, for example after you chang
 
 Home Assistant then reloads the integration with the new sign-in.
 
-Sign in again soon. Until you do, your devices can stop updating one by one, so what Home Assistant shows for them can be out of date, and new devices don't appear. After Home Assistant restarts, the integration doesn't start until you sign in again, and its card shows a message such as "Google didn't accept the sign-in (BadAuthentication). Sign in again."
+Sign in again soon. Until you do, your devices can stop updating one by one, so what Home Assistant shows for them can be out of date, and new devices don't appear. After Home Assistant restarts, the integration doesn't start until you sign in again, and **Settings** > **Devices & services** > **Google Home** shows a message such as "Google didn't accept the sign-in (BadAuthentication). Sign in again."
 
 - If you closed the sign-in window, select **Reconfigure** again to continue where you left off.
 - To choose another way to sign in after you picked one, reload the integration: go to **Settings** > **Devices & services** > **Google Home**, open the **⋮** menu and select **Reload**. Sign-in starts again from the choice, but the integration stops until you finish, and its entities are unavailable.
@@ -79,11 +102,19 @@ The integration adds only Google Cast devices, such as Google speakers and displ
 
 The Google account you signed in with must be a member of the home your devices belong to. Open the Google Home app with that account and check that the devices are listed. If not, [invite the account](https://support.google.com/googlenest/answer/9155535) to your home and reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. If the devices are in a home that you deselected, select it again; see [Choose homes](configuration.md#choose-homes).
 
-If Google reports that the account isn't a member of any home when you add the integration, setup stops and says so: invite the account to your home, then add the integration again. If Google reports this later, **Settings** > **System** > **Repairs** shows **Google reports no home for your account**. If the account is a member only of homes that you deselected, it shows **None of your Google account's homes is selected**. Each repair says how to fix it.
+If Google reports that the account isn't a member of any home when you add the integration, setup stops with "Google reports that this account isn't a member of any home, so there are no speakers or displays to add": invite the account to your home, then add the integration again. If Google reports this later, **Settings** > **System** > **Repairs** shows **Google reports no home for your account**. If the account is a member only of homes that you deselected, it shows **None of your Google account's homes is selected**. Each repair says how to fix it.
 
 If you signed in with a Google Workspace account, such as many work and school accounts, it can't be a member of your home: [Google doesn't allow inviting Workspace accounts](https://support.google.com/googlehome/answer/9155535). Sign in with a Gmail account, one ending in `@gmail.com`, that is a member of your home instead. Some users with personal Google accounts using non-Gmail addresses have also reported missing devices; [switching to a Gmail account resolved the problem](https://github.com/leikoilja/ha-google-home/issues/1014#issuecomment-4466736100).
 
-If Google didn't give the integration your devices when it started, for example because Google was busy, the integration starts without devices, and the log shows `Failed to fetch Google's device list` with the reason the attempt failed at the end. The integration keeps asking Google by itself: after a wait of up to 20 minutes, it asks again at the next [update](configuration.md#change-the-update-interval), so a long update interval makes the wait longer. The error says when it asks next, or to [sign in again](#sign-in-again). Only the first failure is logged; later ones show in [debug logs](#collect-debug-logs) until one works.
+To see what Google lists for the account, [collect debug logs](#collect-debug-logs) while you reload the integration. These lines come from `glocaltokens`, the library the integration uses to sign in and get your devices:
+
+- `Iterating in 12 homegraph devices`: how many devices Google lists in all the account's homes, including lights and other devices that the integration doesn't add. With `0`, Google gave no devices for the account: check that it's a member of your home, as described above.
+- `'Hallway light' local_auth_token is not found in Homegraph, skipping`: Google has no local token for the device, as for lights, plugs and thermostats, so the integration can't add it.
+- A line that ends with `local_auth_token isn't 108 characters as expected for a Cast device, skipping it`: the device's token isn't a Cast device's, as for Google and Nest Wifi routers, so the integration can't add it.
+
+If a skipped device is a speaker or display that you expected, that's why it's missing: [get help](#still-stuck) with the debug logs.
+
+If Google didn't give the integration your devices when it started, for example because Google was busy, the integration starts without devices, and the log shows `Failed to fetch Google's device list` with the reason the attempt failed at the end. The integration keeps asking Google by itself: after a wait of up to 20 minutes, it asks again at the next [update](configuration.md#change-the-update-interval), so a long update interval makes the wait longer. The error says when it asks next, or to [sign in again](#sign-in-again). While [polling is turned off](configuration.md#turn-off-polling), it doesn't ask again by itself, so you need to reload it, as described below. Only the first failure is logged; later ones show in [debug logs](#collect-debug-logs) until one works.
 
 - If the reason is 429, a 5xx code such as 503, `RESOURCE_EXHAUSTED` or `UNAVAILABLE`, Google is busy, has a temporary problem or is limiting requests: wait.
 - If the reason is `DEADLINE_EXCEEDED`, or if `UNAVAILABLE` doesn't go away, check that Home Assistant can reach Google; see ["Couldn't reach Google"](#couldnt-reach-google).
@@ -96,7 +127,7 @@ The integration adds the alarms sensor, timers sensor, Do Not Disturb switch and
 
 - **It shows an IP address:** the entities appear at the next update the device answers successfully. If they don't, the device may have [no alarms and timers](#devices-without-alarms-and-timers).
 - **It's unavailable on all your devices:** first check that Home Assistant can reach them on your network; see [Home Assistant can't reach your devices](#device-offline-or-not-compatible). For other causes, see [When entities are unavailable](entities.md#when-entities-are-unavailable).
-- **It's unavailable on this device:** make sure the device is on and connected to your network. The entities appear at the first update it answers successfully. If the integration doesn't know the device's IP address, it gets it from the device's mDNS announcements, from your [known hosts](configuration.md#add-devices-on-another-network), or when it next asks Google for your devices, about every 20 minutes.
+- **It's unavailable on this device:** make sure the device is on and connected to your network. The entities appear at the first update it answers successfully. If the integration doesn't know the device's IP address, it gets it from the device's mDNS announcements or from your [known hosts](configuration.md#add-devices-on-another-network), which it asks again about every 5 minutes. It also looks for the device again each time it asks Google for your devices, about every 20 minutes.
 
 If you don't want to wait, make sure the device is online, then reload the integration: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. If that doesn't help, restart the Google Home device and then Home Assistant.
 
@@ -143,7 +174,7 @@ Check that the device is on and connected to your network. The entities become u
 - An alarms or timers sensor on its own also shows `unavailable` when nothing is coming up; see [Alarms sensor](entities.md#alarms-sensor).
 - If the entities of all your devices are unavailable, check that Home Assistant can still reach them on your network; see [Home Assistant can't reach your devices](#device-offline-or-not-compatible).
 
-To check that the device doesn't answer, [collect debug logs](#collect-debug-logs) for a few updates while the entities are unavailable. For a device that doesn't answer, each update logs a line such as `Failed to connect to Kitchen device. The device is probably offline.` or `Kitchen device timed out while performing a request to it`. For a [device without alarms and timers](#devices-without-alarms-and-timers), which is asked only for its information, the line is `Kitchen didn't answer when asked for its info`, and there are no lines that start with `Requesting endpoint` for the device. If debug logging was already on when the entities became unavailable, the log also has this line, which appears only once:
+To check that the device doesn't answer, [collect debug logs](#collect-debug-logs) for a few updates while the entities are unavailable. For a device that doesn't answer, each update logs a line such as `Failed to connect to Kitchen device. The device is probably offline.` or `Kitchen device timed out while performing a request to it`, usually followed by `Kitchen didn't answer when asked for its info`. A [device without alarms and timers](#devices-without-alarms-and-timers) is asked only for its information, so it logs only that last line, and no lines that start with `Requesting endpoint`. If debug logging was already on when the entities became unavailable, the log also has this line, which appears only once:
 
 ```
 Kitchen didn't answer 5 updates in a row. Its entities are unavailable until it answers with something other than "not found".
@@ -254,7 +285,7 @@ Debug logs show what the integration is doing. Attach them when you [open an iss
 3. Reproduce the problem.
 4. Open the **⋮** menu again and select **Disable debug logging**. Your browser downloads the log file.
 
-If setup fails, the integration has no **⋮** menu yet. Instead, run this action in [**Settings** > **Tools** > **Actions**](https://my.home-assistant.io/redirect/tools_actions/), then try to add the integration again and open the [log](https://my.home-assistant.io/redirect/logs/). The action also logs `glocaltokens`, the library the integration uses to sign in:
+While you add the integration for the first time, it has no **⋮** menu yet. Instead, run this action in [**Settings** > **Tools** > **Actions**](https://my.home-assistant.io/redirect/tools_actions/), then try to add the integration again. The action also logs `glocaltokens`, the library the integration uses to sign in:
 
 ```yaml
 action: logger.set_level
@@ -262,6 +293,8 @@ data:
   custom_components.google_home: debug
   glocaltokens: debug
 ```
+
+Then open the [log](https://my.home-assistant.io/redirect/logs/). It first shows only warnings and errors: select **Download logs** to save the whole log, or open its **⋮** menu and select **Show raw logs**.
 
 !!! warning "Remove secrets before sharing logs"
 
