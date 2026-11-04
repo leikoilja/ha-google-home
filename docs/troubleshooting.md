@@ -4,7 +4,7 @@ Find what you see, then start with the first check in its section:
 
 - [Adding the integration shows an error](#setup-fails)
 - [The integration doesn't load after you update Home Assistant or the integration](#the-integration-doesnt-load-after-an-update)
-- [The Google Home card shows **Failed setup, will retry**](#failed-setup-will-retry)
+- [The Google Home card shows **1 entry failed to set up, retrying**](#failed-setup-will-retry)
 - [Home Assistant says that authentication expired](#sign-in-again), or [signing in again fails](#signing-in-again-fails)
 - [The integration shows no devices](#no-devices-appear)
 - [A device has only a device sensor, a reboot button and an update sensor](#no-alarms-or-timers-sensors)
@@ -54,15 +54,15 @@ You can add the integration only once, so it works with one Google account. Addi
 
 ### "Failed setup, will retry"
 
-The Google Home card in **Settings** > **Devices & services** shows this when Home Assistant couldn't connect to Google as the integration started, or Google didn't answer in time. Home Assistant tries again by itself, after a wait that grows up to 10 minutes, and the log shows nothing about it unless [debug logging](#collect-debug-logs) is on: **Check the logs** finds nothing. Until the integration starts, its entities are unavailable and its [actions fail](#an-action-fails-while-the-integration-isnt-loaded).
+When Home Assistant couldn't connect to Google as the integration started, or Google didn't answer in time, the Google Home card in **Settings** > **Devices & services** shows **1 entry failed to set up, retrying**, and the integration's page shows **Failed setup, will retry**. Home Assistant tries again by itself, after a wait that grows up to 10 minutes. The log shows nothing about it unless [debug logging](#collect-debug-logs) is on, so **Check the logs** on that page finds nothing. Until the integration starts, its entities are unavailable and its [actions fail](#an-action-fails-while-the-integration-isnt-loaded).
 
 Check that Home Assistant can reach Google; see ["Couldn't reach Google"](#couldnt-reach-google). [System information](#check-system-information) shows whether Google's servers answer, though `ok` doesn't show that Google accepts the sign-in. Once Google answers, the next try starts the integration. To try straight away, reload it: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**.
 
 ### The integration doesn't load after an update
 
-An update can stop the integration from loading: a new Home Assistant version may not be able to install the libraries that an older version of the integration needs, and a new release of the integration needs a recent Home Assistant. **Settings** > **Devices & services** > **Google Home** then shows **Not loaded**, the [log](https://my.home-assistant.io/redirect/logs/) shows an error such as `Setup failed for custom integration 'google_home': Requirements for google_home not found`, and adding the integration can show "Config flow could not be loaded".
+An update can stop the integration from loading: a new Home Assistant version may not be able to install the libraries that an older version of the integration needs, and a new release of the integration needs a recent Home Assistant. **Settings** > **Devices & services** > **Google Home** then shows **Not loaded**. After a restart, an **Invalid config** notification lists `google_home` under "The following integrations and platforms could not be set up". The [log](https://my.home-assistant.io/redirect/logs/) shows an error such as `Setup failed for custom integration 'google_home': Requirements for google_home not found`, and adding the integration can show "Config flow could not be loaded".
 
-1. Check that your Home Assistant version is supported; see [Before you start](installation.md#before-you-start).
+1. Check that your Home Assistant version is supported; see [Before you start](installation.md#before-you-start). If it's older, update Home Assistant first.
 2. [Update the integration](installation.md#install-the-integration) to the latest release, then restart Home Assistant.
 
 If the latest release doesn't load either, search the [issues](https://github.com/leikoilja/ha-google-home/issues?q=is%3Aissue) for the error, or [open an issue](https://github.com/leikoilja/ha-google-home/issues/new/choose) with the error from the log.
@@ -76,7 +76,7 @@ Google can stop accepting the integration's sign-in, for example after you chang
 
 Home Assistant then reloads the integration with the new sign-in.
 
-Sign in again soon. Until you do, your devices can stop updating one by one, so what Home Assistant shows for them can be out of date, and new devices don't appear. After Home Assistant restarts, the integration doesn't start until you sign in again, and its card shows a message such as "Google didn't accept the sign-in (BadAuthentication). Sign in again."
+Sign in again soon. Until you do, your devices can stop updating one by one, so what Home Assistant shows for them can be out of date, and new devices don't appear. After Home Assistant restarts, the integration doesn't start until you sign in again, and **Settings** > **Devices & services** > **Google Home** shows a message such as "Google didn't accept the sign-in (BadAuthentication). Sign in again."
 
 - If you closed the sign-in window, select **Reconfigure** again to continue where you left off.
 - To choose another way to sign in after you picked one, reload the integration: go to **Settings** > **Devices & services** > **Google Home**, open the **⋮** menu and select **Reload**. Sign-in starts again from the choice, but the integration stops until you finish, and its entities are unavailable.
