@@ -353,14 +353,25 @@ def configured_interval(
     stopped scheduled updates and a negative one ran them without a pause. Warn
     when the default replaces another interval in use, or none at setup, so each
     load warns once. A change to the entry that keeps the default, such as a rename,
-    doesn't warn again. While polling is off, nothing is scheduled, so there's
-    nothing to warn about.
+    doesn't warn again. While polling is off, nothing is scheduled until it's back
+    on, so the warning doesn't suggest turning it off.
     """
     seconds = cast(int, entry.options.get(CONF_UPDATE_INTERVAL, UPDATE_INTERVAL))
     if seconds > 0:
         return timedelta(seconds=seconds)
     default = timedelta(seconds=UPDATE_INTERVAL)
-    if in_use != default and not entry.pref_disable_polling:
+    if in_use == default:
+        return default
+    if entry.pref_disable_polling:
+        _LOGGER.warning(
+            "The update interval saved in the options of %s is %d seconds, so once "
+            "polling is back on in its system options, the integration updates every "
+            "%d seconds instead. Enter at least 1 second in its options",
+            entry.title,
+            seconds,
+            UPDATE_INTERVAL,
+        )
+    else:
         _LOGGER.warning(
             "The update interval saved in the options of %s is %d seconds, so the "
             "integration updates every %d seconds instead. Enter at least 1 second "

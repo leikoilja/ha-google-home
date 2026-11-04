@@ -14,7 +14,7 @@ If a speaker or display with alarms and timers often shows `false` in the `avail
 
 **Configure** shows the interval in use. If you saved these options in version 1.15 or older, for example to add known hosts, it's the interval you saved, which was 180 seconds unless you changed it. To use the new default, enter 15 and select **Submit**.
 
-The interval must be at least 1 second. If you saved 0 or less in an earlier version, **Configure** shows that saved value, not the interval in use: unless polling is off, the integration checks every 15 seconds and logs a warning each time it loads, until you enter a valid interval. An interval of 0 stopped only these regular checks. To stop them now, [turn off polling](#turn-off-polling); unlike 0, it also stops Bluetooth scans and the adding of new devices that mDNS finds.
+The interval must be at least 1 second. If you saved 0 or less in an earlier version, **Configure** shows that saved value, not the interval in use: until you enter a valid interval, the integration logs a warning each time it loads and, while polling is on, checks every 15 seconds. An interval of 0 stopped only these regular checks. To stop them now, [turn off polling](#turn-off-polling); unlike 0, it also stops Bluetooth scans and the adding of new devices that mDNS finds.
 
 To update immediately, use the [Refresh devices](actions.md#refresh-devices) action.
 

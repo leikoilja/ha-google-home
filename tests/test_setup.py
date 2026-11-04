@@ -536,12 +536,11 @@ async def test_saved_update_interval_below_one_second(
 async def test_saved_update_interval_below_one_second_polling_off(
     hass: HomeAssistant, config_entry: MockConfigEntry, caplog: pytest.LogCaptureFixture
 ) -> None:
-    """Log nothing for a saved interval of 0 while polling is off, and warn once it's on.
+    """Warn once for a saved interval of 0 while polling is off, and once it's back on.
 
-    Nothing is scheduled while polling is off, so a warning that updates run every
-    15 seconds would be wrong, and it would tell the user to turn off polling. Turning
-    polling back on in the system options changes the entry, then reloads it: only
-    the reload warns.
+    Nothing is scheduled while polling is off, so the warning says when 15 seconds
+    applies and doesn't tell the user to turn off polling. Turning polling back on in
+    the system options changes the entry, then reloads it: only the reload warns.
     """
     hass.config_entries.async_update_entry(
         config_entry, options={CONF_UPDATE_INTERVAL: 0}, pref_disable_polling=True
@@ -549,14 +548,19 @@ async def test_saved_update_interval_below_one_second_polling_off(
     await set_up(hass, config_entry)
 
     assert config_entry.state is ConfigEntryState.LOADED
-    assert logged(caplog) == []
+    [warning] = logged(caplog)
+    assert "options of test@example.com is 0 seconds" in warning
+    assert "once polling is back on" in warning
+    assert "turn off polling" not in warning
 
+    caplog.clear()
     hass.config_entries.async_update_entry(config_entry, pref_disable_polling=False)
     assert await hass.config_entries.async_reload(config_entry.entry_id)
     await hass.async_block_till_done()
 
     [warning] = logged(caplog)
-    assert "is 0 seconds" in warning
+    assert "every 15 seconds instead" in warning
+    assert "turn off polling" in warning
 
 
 @pytest.mark.usefixtures("google", "replies")
