@@ -206,7 +206,7 @@
         "step": {
           "init": {
             "title": "O intervalo de atualização guardado é inferior a 1 segundo",
-            "description": "O intervalo de atualização guardado nas opções da integração é de {interval} segundos. Agora tem de ser de pelo menos 1 segundo, pelo que a integração passa a verificar os seus dispositivos a cada 15 segundos, o valor predefinido.\n\nSe guardou 0 para parar estas verificações regulares, desative antes a procura. Ao contrário de 0, isto também interrompe a pesquisa de dispositivos Bluetooth e a adição de novos dispositivos encontrados pelo mDNS. Para mais detalhes, consulte {docs_url}.\n\nPara usar outro intervalo, abra a [integração Google Home]({integration_url}), selecione **Configurar**, introduza-o e depois selecione **Enviar**.",
+            "description": "O intervalo de atualização guardado nas opções da integração é de {interval} s. Agora tem de ser de pelo menos 1 segundo, pelo que a integração passa a verificar os seus dispositivos a cada 15 segundos, o valor predefinido.\n\nSe guardou 0 para parar estas verificações regulares, desative antes a procura. Ao contrário de 0, isto também interrompe a pesquisa de dispositivos Bluetooth e a adição de novos dispositivos encontrados pelo mDNS. Para mais detalhes, consulte {docs_url}.\n\nPara usar outro intervalo, abra a [integração Google Home]({integration_url}), selecione **Configurar**, introduza-o e depois selecione **Enviar**.",
             "menu_options": {
               "use_default": "Usar o valor predefinido de 15 segundos",
               "turn_off_polling": "Desativar a procura em vez disso"
@@ -221,7 +221,7 @@
         "step": {
           "init": {
             "title": "O intervalo de atualização guardado é inferior a 1 segundo",
-            "description": "O intervalo de atualização guardado nas opções da integração é de {interval} segundos. Agora tem de ser de pelo menos 1 segundo, pelo que, quando voltar a ativar a procura, a integração vai verificar os seus dispositivos a cada 15 segundos, o valor predefinido. Para mais detalhes, consulte {docs_url}.\n\nPara usar outro intervalo, abra a [integração Google Home]({integration_url}), selecione **Configurar**, introduza-o e depois selecione **Enviar**.",
+            "description": "O intervalo de atualização guardado nas opções da integração é de {interval} s. Agora tem de ser de pelo menos 1 segundo, pelo que, quando voltar a ativar a procura, a integração vai verificar os seus dispositivos a cada 15 segundos, o valor predefinido. Para mais detalhes, consulte {docs_url}.\n\nPara usar outro intervalo, abra a [integração Google Home]({integration_url}), selecione **Configurar**, introduza-o e depois selecione **Enviar**.",
             "menu_options": {
               "use_default": "Usar o valor predefinido de 15 segundos"
             }

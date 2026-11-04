@@ -206,7 +206,7 @@
         "step": {
           "init": {
             "title": "O intervalo de atualização salvo é menor que 1 segundo",
-            "description": "O intervalo de atualização salvo nas opções da integração é de {interval} segundos. Agora ele precisa ser de pelo menos 1 segundo, então a integração verifica seus dispositivos a cada 15 segundos, o valor padrão.\n\nSe você salvou 0 para parar essas verificações regulares, desabilite a sondagem em vez disso. Diferente de 0, isso também interrompe a procura por dispositivos Bluetooth e a adição de novos dispositivos encontrados pelo mDNS. Para mais detalhes, consulte {docs_url}.\n\nPara usar outro intervalo, abra a [integração Google Home]({integration_url}), selecione **Configurar**, digite o intervalo e depois selecione **Enviar**.",
+            "description": "O intervalo de atualização salvo nas opções da integração é de {interval} s. Agora ele precisa ser de pelo menos 1 segundo, então a integração verifica seus dispositivos a cada 15 segundos, o valor padrão.\n\nSe você salvou 0 para parar essas verificações regulares, desabilite a sondagem em vez disso. Diferente de 0, isso também interrompe a procura por dispositivos Bluetooth e a adição de novos dispositivos encontrados pelo mDNS. Para mais detalhes, consulte {docs_url}.\n\nPara usar outro intervalo, abra a [integração Google Home]({integration_url}), selecione **Configurar**, digite o intervalo e depois selecione **Enviar**.",
             "menu_options": {
               "use_default": "Usar o valor padrão de 15 segundos",
               "turn_off_polling": "Desabilitar a sondagem em vez disso"
@@ -221,7 +221,7 @@
         "step": {
           "init": {
             "title": "O intervalo de atualização salvo é menor que 1 segundo",
-            "description": "O intervalo de atualização salvo nas opções da integração é de {interval} segundos. Agora ele precisa ser de pelo menos 1 segundo, então, quando você habilitar a sondagem de novo, a integração vai verificar seus dispositivos a cada 15 segundos, o valor padrão. Para mais detalhes, consulte {docs_url}.\n\nPara usar outro intervalo, abra a [integração Google Home]({integration_url}), selecione **Configurar**, digite o intervalo e depois selecione **Enviar**.",
+            "description": "O intervalo de atualização salvo nas opções da integração é de {interval} s. Agora ele precisa ser de pelo menos 1 segundo, então, quando você habilitar a sondagem de novo, a integração vai verificar seus dispositivos a cada 15 segundos, o valor padrão. Para mais detalhes, consulte {docs_url}.\n\nPara usar outro intervalo, abra a [integração Google Home]({integration_url}), selecione **Configurar**, digite o intervalo e depois selecione **Enviar**.",
             "menu_options": {
               "use_default": "Usar o valor padrão de 15 segundos"
             }

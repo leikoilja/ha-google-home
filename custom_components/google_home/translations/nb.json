@@ -206,7 +206,7 @@
         "step": {
           "init": {
             "title": "Det lagrede oppdateringsintervallet er under 1 sekund",
-            "description": "Oppdateringsintervallet som er lagret i alternativene for integrasjonen, er {interval} sekunder. Det må nå være minst 1 sekund, så integrasjonen sjekker i stedet enhetene dine hvert 15. sekund, som er standard.\n\nHvis du lagret 0 for å stoppe disse faste sjekkene, bør du heller slå av polling. I motsetning til 0 stopper det også søket etter Bluetooth-enheter og at nye enheter som mDNS finner, legges til. Se flere detaljer her: {docs_url}.\n\nFor å bruke et annet intervall åpner du [Google Home-integrasjonen]({integration_url}), velger **Konfigurer**, skriver det inn og velger deretter **Send inn**.",
+            "description": "Oppdateringsintervallet som er lagret i alternativene for integrasjonen, er {interval} s. Det må nå være minst 1 sekund, så integrasjonen sjekker i stedet enhetene dine hvert 15. sekund, som er standard.\n\nHvis du lagret 0 for å stoppe disse faste sjekkene, bør du heller slå av polling. I motsetning til 0 stopper det også søket etter Bluetooth-enheter og at nye enheter som mDNS finner, legges til. Se flere detaljer her: {docs_url}.\n\nFor å bruke et annet intervall åpner du [Google Home-integrasjonen]({integration_url}), velger **Konfigurer**, skriver det inn og velger deretter **Send inn**.",
             "menu_options": {
               "use_default": "Bruk standardverdien på 15 sekunder",
               "turn_off_polling": "Slå av polling i stedet"
@@ -221,7 +221,7 @@
         "step": {
           "init": {
             "title": "Det lagrede oppdateringsintervallet er under 1 sekund",
-            "description": "Oppdateringsintervallet som er lagret i alternativene for integrasjonen, er {interval} sekunder. Det må nå være minst 1 sekund, så når polling er slått på igjen, sjekker integrasjonen i stedet enhetene dine hvert 15. sekund, som er standard. Se flere detaljer her: {docs_url}.\n\nFor å bruke et annet intervall åpner du [Google Home-integrasjonen]({integration_url}), velger **Konfigurer**, skriver det inn og velger deretter **Send inn**.",
+            "description": "Oppdateringsintervallet som er lagret i alternativene for integrasjonen, er {interval} s. Det må nå være minst 1 sekund, så når polling er slått på igjen, sjekker integrasjonen i stedet enhetene dine hvert 15. sekund, som er standard. Se flere detaljer her: {docs_url}.\n\nFor å bruke et annet intervall åpner du [Google Home-integrasjonen]({integration_url}), velger **Konfigurer**, skriver det inn og velger deretter **Send inn**.",
             "menu_options": {
               "use_default": "Bruk standardverdien på 15 sekunder"
             }

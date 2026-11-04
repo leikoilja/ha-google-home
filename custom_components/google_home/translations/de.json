@@ -206,7 +206,7 @@
         "step": {
           "init": {
             "title": "Das gespeicherte Aktualisierungsintervall ist kürzer als 1 Sekunde",
-            "description": "Das in den Optionen der Integration gespeicherte Aktualisierungsintervall beträgt {interval} Sekunden. Es muss jetzt mindestens 1 Sekunde betragen, daher fragt die Integration deine Geräte stattdessen alle 15 Sekunden ab, dem Standardwert.\n\nWenn du 0 gespeichert hast, um diese regelmäßigen Abfragen zu stoppen, deaktiviere stattdessen die Abfrage von Änderungen. Anders als 0 stoppt das auch die Suche nach Bluetooth-Geräten und das Hinzufügen neuer Geräte, die mDNS findet. Details erfährst du unter {docs_url}.\n\nUm ein anderes Intervall zu verwenden, öffne die [Google Home-Integration]({integration_url}), wähle **Konfigurieren**, gib es ein und wähle dann **OK**.",
+            "description": "Das in den Optionen der Integration gespeicherte Aktualisierungsintervall beträgt {interval} s. Es muss jetzt mindestens 1 Sekunde betragen. Daher verwendet die Integration stattdessen den Standardwert von 15 Sekunden und fragt deine Geräte in diesem Abstand ab.\n\nWenn du 0 gespeichert hast, um diese regelmäßigen Abfragen zu stoppen, deaktiviere stattdessen die Abfrage von Änderungen. Anders als 0 stoppt das auch die Suche nach Bluetooth-Geräten und das Hinzufügen neuer Geräte, die mDNS findet. Details erfährst du unter {docs_url}.\n\nUm ein anderes Intervall zu verwenden, öffne die [Google Home-Integration]({integration_url}), wähle **Konfigurieren**, gib es ein und wähle dann **OK**.",
             "menu_options": {
               "use_default": "Standardwert von 15 Sekunden verwenden",
               "turn_off_polling": "Stattdessen Abfrage deaktivieren"
@@ -221,7 +221,7 @@
         "step": {
           "init": {
             "title": "Das gespeicherte Aktualisierungsintervall ist kürzer als 1 Sekunde",
-            "description": "Das in den Optionen der Integration gespeicherte Aktualisierungsintervall beträgt {interval} Sekunden. Es muss jetzt mindestens 1 Sekunde betragen, daher fragt die Integration deine Geräte, sobald die Abfrage wieder aktiviert ist, stattdessen alle 15 Sekunden ab, dem Standardwert. Details erfährst du unter {docs_url}.\n\nUm ein anderes Intervall zu verwenden, öffne die [Google Home-Integration]({integration_url}), wähle **Konfigurieren**, gib es ein und wähle dann **OK**.",
+            "description": "Das in den Optionen der Integration gespeicherte Aktualisierungsintervall beträgt {interval} s. Es muss jetzt mindestens 1 Sekunde betragen. Sobald die Abfrage wieder aktiviert ist, verwendet die Integration stattdessen den Standardwert von 15 Sekunden und fragt deine Geräte in diesem Abstand ab. Details erfährst du unter {docs_url}.\n\nUm ein anderes Intervall zu verwenden, öffne die [Google Home-Integration]({integration_url}), wähle **Konfigurieren**, gib es ein und wähle dann **OK**.",
             "menu_options": {
               "use_default": "Standardwert von 15 Sekunden verwenden"
             }

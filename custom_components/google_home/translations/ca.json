@@ -206,7 +206,7 @@
         "step": {
           "init": {
             "title": "L'interval d'actualització desat és inferior a 1 segon",
-            "description": "L'interval d'actualització desat a les opcions de la integració és de {interval} segons. Ara ha de ser d'almenys 1 segon, de manera que la integració utilitza el valor per defecte i consulta els teus dispositius cada 15 segons.\n\nSi vas desar 0 per aturar aquestes consultes periòdiques, desactiva el sondeig en lloc d'això. A diferència del 0, desactivar el sondeig també atura les cerques de dispositius Bluetooth i l'addició dels dispositius nous que troba mDNS. Per a més detalls, consulta {docs_url} (en anglès).\n\nPer utilitzar un altre interval, obre la [integració Google Home]({integration_url}), selecciona **Configura**, introdueix-lo i després selecciona **Envia**.",
+            "description": "L'interval d'actualització desat a les opcions de la integració és de {interval} s. Ara ha de ser d'almenys 1 segon, de manera que la integració utilitza el valor per defecte i consulta els teus dispositius cada 15 segons.\n\nSi vas desar 0 per aturar aquestes consultes periòdiques, desactiva el sondeig en lloc d'això. A diferència del 0, desactivar el sondeig també atura les cerques de dispositius Bluetooth i l'addició dels dispositius nous que troba mDNS. Per a més detalls, consulta {docs_url} (en anglès).\n\nPer utilitzar un altre interval, obre la [integració Google Home]({integration_url}), selecciona **Configura**, introdueix-lo i després selecciona **Envia**.",
             "menu_options": {
               "use_default": "Utilitza el valor per defecte de 15 segons",
               "turn_off_polling": "Desactiva el sondeig en lloc d'això"
@@ -221,7 +221,7 @@
         "step": {
           "init": {
             "title": "L'interval d'actualització desat és inferior a 1 segon",
-            "description": "L'interval d'actualització desat a les opcions de la integració és de {interval} segons. Ara ha de ser d'almenys 1 segon, de manera que, quan tornis a activar el sondeig, la integració utilitzarà el valor per defecte i consultarà els teus dispositius cada 15 segons. Per a més detalls, consulta {docs_url} (en anglès).\n\nPer utilitzar un altre interval, obre la [integració Google Home]({integration_url}), selecciona **Configura**, introdueix-lo i després selecciona **Envia**.",
+            "description": "L'interval d'actualització desat a les opcions de la integració és de {interval} s. Ara ha de ser d'almenys 1 segon, de manera que, quan tornis a activar el sondeig, la integració utilitzarà el valor per defecte i consultarà els teus dispositius cada 15 segons. Per a més detalls, consulta {docs_url} (en anglès).\n\nPer utilitzar un altre interval, obre la [integració Google Home]({integration_url}), selecciona **Configura**, introdueix-lo i després selecciona **Envia**.",
             "menu_options": {
               "use_default": "Utilitza el valor per defecte de 15 segons"
             }
