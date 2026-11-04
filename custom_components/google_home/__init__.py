@@ -36,6 +36,7 @@ from .const import (
     CONF_UPDATE_INTERVAL,
     DOMAIN,
     INTEGRATION_PAGE_URL,
+    ISSUE_INVALID_INTERVAL,
     ISSUE_NO_ADDED_HOME,
     ISSUE_POLLING_DISABLED,
     MASTER_TOKEN_TITLE,
@@ -113,16 +114,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -
         hass, entry, glocaltokens_client, update_interval
     )
     # Before the first refresh, which adds the device coordinators
-    entry.runtime_data = GoogleHomeData(
-        glocaltokens_client, account, {}, saved_interval=saved_interval(entry)
-    )
+    entry.runtime_data = GoogleHomeData(glocaltokens_client, account, {})
     found_devices = glocaltokens_client.found_devices
     # Not async_request_refresh(), which drops the request when an update that
     # started too early to fetch for found devices runs longer than its cooldown
     found_devices.request_update = account.async_refresh
     entry.async_on_unload(found_devices.async_stop)
-    # Before the first refresh, so it also shows while setup is retried
+    # Before the first refresh, so they also show while setup is retried
     async_show_polling_disabled(hass, entry)
+    async_show_invalid_interval(hass, entry)
     # Before the first refresh, whose home graph decides it, so that a failed setup
     # also removes it
     async_show_no_added_home(hass, entry, glocaltokens_client)
@@ -256,6 +256,35 @@ def async_show_polling_disabled(
 
 
 @callback
+def async_show_invalid_interval(
+    hass: HomeAssistant, entry: GoogleHomeConfigEntry
+) -> None:
+    """Show a repair while the saved update interval is below 1 second.
+
+    Setup shows or removes it, and so do changed options, which apply without a
+    reload. Unloading keeps it, so it stays hidden over reloads and setup retries if
+    the user hid it. Home Assistant hides it while the entry is disabled and deletes
+    it with the entry. While polling is off, its text says the default applies once
+    polling is back on; changing polling reloads the entry.
+    """
+    if saved_interval(entry) > 0:
+        ir.async_delete_issue(hass, DOMAIN, ISSUE_INVALID_INTERVAL)
+        return
+    ir.async_create_issue(
+        hass,
+        DOMAIN,
+        ISSUE_INVALID_INTERVAL,
+        config_entry_id=entry.entry_id,
+        data={"entry_id": entry.entry_id},
+        is_fixable=True,
+        severity=ir.IssueSeverity.WARNING,
+        translation_key=f"{ISSUE_INVALID_INTERVAL}_polling_off"
+        if entry.pref_disable_polling
+        else ISSUE_INVALID_INTERVAL,
+    )
+
+
+@callback
 def async_show_no_added_home(
     hass: HomeAssistant, entry: GoogleHomeConfigEntry, client: GlocaltokensApiClient
 ) -> None:
@@ -361,46 +390,15 @@ def saved_interval(entry: GoogleHomeConfigEntry) -> int:
     return cast(int, entry.options.get(CONF_UPDATE_INTERVAL, UPDATE_INTERVAL))
 
 
-def configured_interval(
-    entry: GoogleHomeConfigEntry, previous: int | None = None
-) -> timedelta:
+def configured_interval(entry: GoogleHomeConfigEntry) -> timedelta:
     """Return the update interval in the options, or the default for one that isn't positive.
 
     The options form refuses such an interval, but earlier versions saved it: zero
-    stopped scheduled updates and a negative one ran them without a pause.
-
-    Warn about it unless it equals previous, the saved interval that the
-    coordinators last took theirs from. Setup passes none, so each load warns once.
-    A change to the entry that keeps it, such as a rename, doesn't warn again.
-    While polling is off, nothing is scheduled until it's back on, so the warning
-    says the default applies then and doesn't suggest turning polling off.
+    stopped scheduled updates and a negative one ran them without a pause. A repair
+    says so and offers to fix it.
     """
     seconds = saved_interval(entry)
-    if seconds > 0:
-        return timedelta(seconds=seconds)
-    default = timedelta(seconds=UPDATE_INTERVAL)
-    if seconds == previous:
-        return default
-    if entry.pref_disable_polling:
-        _LOGGER.warning(
-            "The update interval saved in the options of %s is %d seconds, so once "
-            "polling is back on in its system options, the integration updates every "
-            "%d seconds instead. Enter at least 1 second in its options",
-            entry.title,
-            seconds,
-            UPDATE_INTERVAL,
-        )
-    else:
-        _LOGGER.warning(
-            "The update interval saved in the options of %s is %d seconds, so the "
-            "integration updates every %d seconds instead. Enter at least 1 second "
-            "in its options, or turn off polling in its system options to stop "
-            "scheduled updates",
-            entry.title,
-            seconds,
-            UPDATE_INTERVAL,
-        )
-    return default
+    return timedelta(seconds=seconds if seconds > 0 else UPDATE_INTERVAL)
 
 
 async def async_update_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -> None:
@@ -420,9 +418,9 @@ async def async_update_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) 
         hass.config_entries.async_schedule_reload(entry.entry_id)
         return
     _LOGGER.debug("Options updated, updating coordinator interval...")
+    async_show_invalid_interval(hass, entry)
     data = entry.runtime_data
-    update_interval = configured_interval(entry, data.saved_interval)
-    data.saved_interval = saved_interval(entry)
+    update_interval = configured_interval(entry)
     data.account.update_interval = update_interval
     for coordinator in data.devices.values():
         coordinator.update_interval = update_interval
