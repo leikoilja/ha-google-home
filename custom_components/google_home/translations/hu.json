@@ -206,24 +206,10 @@
         "step": {
           "init": {
             "title": "A mentett frissítési időköz rövidebb 1 másodpercnél",
-            "description": "Az integráció opcióiban mentett frissítési időköz {interval} másodperc. Ennek most már legalább 1 másodpercnek kell lennie, ezért az integráció helyette az alapértelmezett 15 másodpercenként ellenőrzi az eszközeit.\n\nHa azért mentett 0-t, hogy leállítsa ezeket a rendszeres ellenőrzéseket, inkább tiltsa le a lekérdezést. A 0-val ellentétben ez a Bluetooth-eszközök keresését és az mDNS által talált új eszközök hozzáadását is leállítja. A részleteket itt találja: {docs_url}.\n\nMásik időköz használatához nyissa meg a [Google Home-integrációt]({integration_url}), válassza a **Konfigurálás** lehetőséget, adja meg az időközt, majd válassza a **Mehet** lehetőséget.",
+            "description": "Az integráció opcióiban mentett frissítési időköz {interval} másodperc, ami kevesebb az 1 másodperces minimumnál. Az integráció helyette az alapértelmezett értéket használja, és 15 másodpercenként ellenőrzi az eszközeit.\n\nHa azért mentett 0-t, hogy leállítsa ezeket a rendszeres ellenőrzéseket, inkább tiltsa le a lekérdezést. A 0-val ellentétben ez a Bluetooth-eszközök keresését és az mDNS által talált új eszközök hozzáadását is leállítja. A részleteket itt találja: {docs_url}.\n\nMásik időköz használatához nyissa meg a [Google Home-integrációt]({integration_url}), válassza a **Konfigurálás** lehetőséget, adja meg az időközt, majd válassza a **Mehet** lehetőséget.",
             "menu_options": {
               "use_default": "Az alapértelmezett 15 másodperc használata",
               "turn_off_polling": "Inkább a lekérdezés letiltása"
-            }
-          }
-        }
-      }
-    },
-    "invalid_update_interval_polling_off": {
-      "title": "A mentett frissítési időköz rövidebb 1 másodpercnél",
-      "fix_flow": {
-        "step": {
-          "init": {
-            "title": "A mentett frissítési időköz rövidebb 1 másodpercnél",
-            "description": "Az integráció opcióiban mentett frissítési időköz {interval} másodperc. Ennek most már legalább 1 másodpercnek kell lennie, ezért amint újra engedélyezi a lekérdezést, az integráció helyette az alapértelmezett 15 másodpercenként fogja ellenőrizni az eszközeit. A részleteket itt találja: {docs_url}.\n\nMásik időköz használatához nyissa meg a [Google Home-integrációt]({integration_url}), válassza a **Konfigurálás** lehetőséget, adja meg az időközt, majd válassza a **Mehet** lehetőséget.",
-            "menu_options": {
-              "use_default": "Az alapértelmezett 15 másodperc használata"
             }
           }
         }

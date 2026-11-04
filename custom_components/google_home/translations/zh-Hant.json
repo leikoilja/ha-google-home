@@ -206,24 +206,10 @@
         "step": {
           "init": {
             "title": "儲存的更新間隔小於 1 秒",
-            "description": "整合選項中儲存的更新間隔為 {interval} 秒。更新間隔現在必須至少為 1 秒，因此整合會改用預設值，每 15 秒檢查一次你的裝置。\n\n如果你儲存 0 是為了停止這些定期檢查，請改為關閉輪詢。與 0 不同，關閉輪詢也會停止掃描藍牙裝置，以及停止加入 mDNS 找到的新裝置。詳情請參閱 {docs_url}\n\n如要使用其他間隔，請開啟 [Google Home 整合]({integration_url})，選擇「**設定**」，輸入間隔，然後選擇「**傳送**」。",
+            "description": "整合選項中儲存的更新間隔為 {interval} 秒，低於最小值 1 秒。整合會改用預設值，每 15 秒檢查一次你的裝置。\n\n如果你儲存 0 是為了停止這些定期檢查，請改為關閉輪詢。與 0 不同，關閉輪詢也會停止掃描藍牙裝置，以及停止加入 mDNS 找到的新裝置。詳情請參閱 {docs_url}\n\n如要使用其他間隔，請開啟 [Google Home 整合]({integration_url})，選擇「**設定**」，輸入間隔，然後選擇「**傳送**」。",
             "menu_options": {
               "use_default": "使用預設值 15 秒",
               "turn_off_polling": "改為關閉輪詢"
-            }
-          }
-        }
-      }
-    },
-    "invalid_update_interval_polling_off": {
-      "title": "儲存的更新間隔小於 1 秒",
-      "fix_flow": {
-        "step": {
-          "init": {
-            "title": "儲存的更新間隔小於 1 秒",
-            "description": "整合選項中儲存的更新間隔為 {interval} 秒。更新間隔現在必須至少為 1 秒，因此重新開啟輪詢後，整合會改用預設值，每 15 秒檢查一次你的裝置。詳情請參閱 {docs_url}\n\n如要使用其他間隔，請開啟 [Google Home 整合]({integration_url})，選擇「**設定**」，輸入間隔，然後選擇「**傳送**」。",
-            "menu_options": {
-              "use_default": "使用預設值 15 秒"
             }
           }
         }

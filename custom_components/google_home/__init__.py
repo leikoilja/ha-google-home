@@ -259,15 +259,15 @@ def async_show_polling_disabled(
 def async_show_invalid_interval(
     hass: HomeAssistant, entry: GoogleHomeConfigEntry
 ) -> None:
-    """Show a repair while the saved update interval is below 1 second.
+    """Show a repair while the saved update interval is below 1 second and polling is on.
 
-    Setup shows or removes it, and so do changed options, which apply without a
-    reload. Unloading keeps it, so it stays hidden over reloads and setup retries if
-    the user hid it. Home Assistant hides it while the entry is disabled and deletes
-    it with the entry. While polling is off, its text says the default applies once
-    polling is back on; changing polling reloads the entry.
+    While polling is off, nothing uses the interval. Turning polling back on reloads
+    the entry, whose setup then shows the repair. Setup shows or removes it, and so do
+    changed options, which apply without a reload. Unloading keeps it, so it stays
+    hidden over reloads and setup retries if the user hid it. Home Assistant hides it
+    while the entry is disabled and deletes it with the entry.
     """
-    if saved_interval(entry) > 0:
+    if saved_interval(entry) > 0 or entry.pref_disable_polling:
         ir.async_delete_issue(hass, DOMAIN, ISSUE_INVALID_INTERVAL)
         return
     ir.async_create_issue(
@@ -278,9 +278,7 @@ def async_show_invalid_interval(
         data={"entry_id": entry.entry_id},
         is_fixable=True,
         severity=ir.IssueSeverity.WARNING,
-        translation_key=f"{ISSUE_INVALID_INTERVAL}_polling_off"
-        if entry.pref_disable_polling
-        else ISSUE_INVALID_INTERVAL,
+        translation_key=ISSUE_INVALID_INTERVAL,
     )
 
 

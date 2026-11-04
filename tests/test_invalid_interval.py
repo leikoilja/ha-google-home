@@ -38,7 +38,6 @@ from .test_setup import set_up
 
 DOCS_URL = "https://ha-google-home.pages.dev/configuration/#change-the-update-interval"
 INTEGRATION_URL = "/config/integrations/integration/google_home"
-POLLING_OFF_KEY = "invalid_update_interval_polling_off"
 
 
 def repair(issue_registry: ir.IssueRegistry) -> ir.IssueEntry | None:
@@ -152,100 +151,54 @@ async def test_no_repair_for_valid_interval(
 
 
 async def test_repair_text(hass: HomeAssistant) -> None:
-    """Name the saved interval and link to the docs and the integration in each text.
+    """Name the saved interval and link to the docs and the integration.
 
-    While polling is off, the repair has its own text. Each menu option's text is
-    checked as the fix shows it.
+    Each menu option's text is checked as the fix shows it.
     """
     text = await async_get_translations(hass, "en", "issues", [DOMAIN])
+    prefix = f"component.{DOMAIN}.issues.{ISSUE_INVALID_INTERVAL}"
+    step = f"{prefix}.fix_flow.step.init"
 
-    for key in (ISSUE_INVALID_INTERVAL, POLLING_OFF_KEY):
-        prefix = f"component.{DOMAIN}.issues.{key}"
-        step = f"{prefix}.fix_flow.step.init"
-        assert placeholders(text[f"{prefix}.title"]) == set()
-        assert placeholders(text[f"{step}.title"]) == set()
-        assert placeholders(text[f"{step}.description"]) == {
-            "interval",
-            "docs_url",
-            "integration_url",
-        }
+    assert placeholders(text[f"{prefix}.title"]) == set()
+    assert placeholders(text[f"{step}.title"]) == set()
+    assert placeholders(text[f"{step}.description"]) == {
+        "interval",
+        "docs_url",
+        "integration_url",
+    }
 
 
 @pytest.mark.usefixtures("google", "replies")
-async def test_repair_while_polling_off(
+async def test_no_repair_while_polling_off(
     hass: HomeAssistant, config_entry: MockConfigEntry, issue_registry: ir.IssueRegistry
 ) -> None:
-    """Say when the default applies, and offer only to save it, as polling is off.
+    """Show no repair while polling is off, as nothing uses the interval then.
 
-    Turning polling on reloads the entry, which changes the text and the choices.
+    Turning polling back on reloads the entry, which shows the repair.
     """
     await set_up_with(hass, config_entry, 0, polling_off=True)
 
-    issue = repair(issue_registry)
-    assert issue is not None and issue.translation_key == POLLING_OFF_KEY
-    result = await open_fix(hass)
-    assert (result["type"], result.get("menu_options")) == (
-        FlowResultType.MENU,
-        ["use_default"],
-    )
-    assert result.get("description_placeholders") == {
-        "interval": "0",
-        "docs_url": DOCS_URL,
-        "integration_url": INTEGRATION_URL,
-    }
+    assert repair(issue_registry) is None
 
     hass.config_entries.async_update_entry(config_entry, pref_disable_polling=False)
     assert await hass.config_entries.async_reload(config_entry.entry_id)
     await hass.async_block_till_done()
 
-    issue = repair(issue_registry)
-    assert issue is not None and issue.translation_key == ISSUE_INVALID_INTERVAL
-    result = await open_fix(hass)
-    assert result.get("menu_options") == ["use_default", "turn_off_polling"]
+    assert repair(issue_registry) is not None
 
 
 @pytest.mark.usefixtures("replies")
-async def test_menu_follows_text_while_setup_retried(
-    hass: HomeAssistant,
-    config_entry: MockConfigEntry,
-    issue_registry: ir.IssueRegistry,
-    google: Mock,
-) -> None:
-    """Keep the polling-off text and its menu if polling is turned on while setup fails.
-
-    The entry isn't loaded, so Home Assistant doesn't reload it, and the text that
-    setup chose stays until setup runs again. The menu matches it.
-    """
-    google.side_effect = RuntimeError()
-    await set_up_with(hass, config_entry, 0, polling_off=True)
-    assert config_entry.state is ConfigEntryState.SETUP_RETRY
-    hass.config_entries.async_update_entry(config_entry, pref_disable_polling=False)
-    await hass.async_block_till_done()
-
-    issue = repair(issue_registry)
-    assert issue is not None and issue.translation_key == POLLING_OFF_KEY
-    result = await open_fix(hass)
-    assert result.get("menu_options") == ["use_default"]
-
-
-@pytest.mark.usefixtures("replies")
-@pytest.mark.parametrize(
-    "polling_off", [False, True], ids=["polling on", "polling off"]
-)
 async def test_use_default(
     hass: HomeAssistant,
     config_entry: MockConfigEntry,
     issue_registry: ir.IssueRegistry,
     google: Mock,
-    polling_off: bool,
 ) -> None:
     """Save 15 seconds and keep the other options, without loading the entry again.
 
-    Home Assistant removes the repair. Polling stays as it was, and so does its own
-    repair.
+    Home Assistant removes the repair. Polling stays on.
     """
-    await set_up_with(hass, config_entry, 0, polling_off=polling_off)
-    polling_repair = issue_registry.async_get_issue(DOMAIN, ISSUE_POLLING_DISABLED)
+    await set_up_with(hass, config_entry, 0)
 
     result = await choose(hass, await open_fix(hass), "use_default")
 
@@ -254,12 +207,9 @@ async def test_use_default(
         CONF_UPDATE_INTERVAL: 15,
         CONF_BLUETOOTH_TRACKING: False,
     }
-    assert config_entry.pref_disable_polling is polling_off
+    assert not config_entry.pref_disable_polling
     assert repair(issue_registry) is None
-    assert issue_registry.async_get_issue(DOMAIN, ISSUE_POLLING_DISABLED) == (
-        polling_repair
-    )
-    assert (polling_repair is not None) is polling_off
+    assert issue_registry.async_get_issue(DOMAIN, ISSUE_POLLING_DISABLED) is None
     assert config_entry.state is ConfigEntryState.LOADED
     assert google.call_count == 1
 
@@ -403,30 +353,40 @@ async def test_fix_keeps_interval_saved_meanwhile(
 
 
 @pytest.mark.usefixtures("replies")
-async def test_fix_finishes_once_options_corrected_while_setup_retried(
+@pytest.mark.parametrize(
+    "polling_off", [False, True], ids=["interval corrected", "polling turned off"]
+)
+async def test_fix_finishes_once_fixed_while_setup_retried(
     hass: HomeAssistant,
     config_entry: MockConfigEntry,
     issue_registry: ir.IssueRegistry,
     google: Mock,
+    polling_off: bool,
 ) -> None:
-    """Finish the fix straight away for an interval corrected before setup ran again.
+    """Finish the fix without changes once the repair no longer applies.
 
-    While setup is retried, changed options don't apply until it runs again, so the
-    repair stays until then. Home Assistant removes it when the fix finishes.
+    While setup is retried, correcting the interval or turning polling off doesn't
+    reload the entry, so the repair stays until setup runs again. Home Assistant
+    removes it when the fix finishes.
     """
     google.side_effect = RuntimeError()
     await set_up_with(hass, config_entry, 0)
     assert config_entry.state is ConfigEntryState.SETUP_RETRY
-    hass.config_entries.async_update_entry(
-        config_entry, options={CONF_UPDATE_INTERVAL: 30}
-    )
+    if polling_off:
+        hass.config_entries.async_update_entry(config_entry, pref_disable_polling=True)
+    else:
+        hass.config_entries.async_update_entry(
+            config_entry, options={CONF_UPDATE_INTERVAL: 30}
+        )
     await hass.async_block_till_done()
+    options = dict(config_entry.options)
     assert repair(issue_registry) is not None
 
     result = await open_fix(hass)
 
     assert result["type"] is FlowResultType.CREATE_ENTRY
-    assert config_entry.options == {CONF_UPDATE_INTERVAL: 30}
+    assert config_entry.options == options
+    assert config_entry.pref_disable_polling is polling_off
     assert repair(issue_registry) is None
 
 

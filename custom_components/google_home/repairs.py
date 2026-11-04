@@ -74,26 +74,20 @@ class InvalidIntervalFlow(RepairsFlow):
     async def async_step_init(
         self, _user_input: dict[str, str] | None = None
     ) -> RepairsFlowResult:
-        """Name the saved interval, and offer what polling's state leaves to choose.
+        """Name the saved interval, and offer to save the default or turn polling off.
 
-        If the options were corrected while the entry wasn't loaded, setup hasn't
-        removed the repair yet, so the fix just finishes.
-
-        With polling off, setup gave the repair the text that says when the default
-        applies, which doesn't offer turning polling off. The menu follows the text,
-        not the entry: while the entry isn't loaded, changing polling doesn't reload
-        it, so the text stays until setup runs again.
+        If the options were corrected or polling was turned off while the entry wasn't
+        loaded, setup hasn't removed the repair yet, so the fix just finishes.
         """
-        if (entry := self._entry()) is None or (seconds := saved_interval(entry)) > 0:
+        if (
+            (entry := self._entry()) is None
+            or (seconds := saved_interval(entry)) > 0
+            or entry.pref_disable_polling
+        ):
             return self.async_create_entry(data={})
-        issue = ir.async_get(self.hass).async_get_issue(DOMAIN, ISSUE_INVALID_INTERVAL)
         return self.async_show_menu(
             step_id="init",
-            menu_options=(
-                ["use_default", "turn_off_polling"]
-                if issue is not None and issue.translation_key == ISSUE_INVALID_INTERVAL
-                else ["use_default"]
-            ),
+            menu_options=["use_default", "turn_off_polling"],
             description_placeholders={
                 "interval": str(seconds),
                 "docs_url": INTERVAL_DOCS_URL,

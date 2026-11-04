@@ -206,24 +206,10 @@
         "step": {
           "init": {
             "title": "Zapisany interwał aktualizacji jest krótszy niż 1 sekunda",
-            "description": "Interwał aktualizacji zapisany w opcjach integracji wynosi {interval} s. Musi on teraz wynosić co najmniej 1 sekundę, więc integracja sprawdza Twoje urządzenia co 15 sekund, czyli z domyślnym interwałem.\n\nJeśli wartość 0 została zapisana po to, żeby zatrzymać te regularne sprawdzenia, wyłącz zamiast tego odpytywanie. W przeciwieństwie do 0 wyłączenie odpytywania zatrzymuje też wyszukiwanie urządzeń Bluetooth i dodawanie nowych urządzeń znalezionych przez mDNS. Szczegóły znajdziesz tutaj: {docs_url}.\n\nAby użyć innego interwału, otwórz [integrację Google Home]({integration_url}), wybierz **Konfiguruj**, wpisz go, a następnie wybierz **Zatwierdź**.",
+            "description": "Interwał aktualizacji zapisany w opcjach integracji wynosi {interval} s, czyli mniej niż minimalna wartość 1 sekundy. Integracja używa zamiast tego wartości domyślnej i sprawdza Twoje urządzenia co 15 sekund.\n\nJeśli wartość 0 została zapisana po to, żeby zatrzymać te regularne sprawdzenia, wyłącz zamiast tego odpytywanie. W przeciwieństwie do 0 wyłączenie odpytywania zatrzymuje też wyszukiwanie urządzeń Bluetooth i dodawanie nowych urządzeń znalezionych przez mDNS. Szczegóły znajdziesz tutaj: {docs_url}.\n\nAby użyć innego interwału, otwórz [integrację Google Home]({integration_url}), wybierz **Konfiguruj**, wpisz go, a następnie wybierz **Zatwierdź**.",
             "menu_options": {
               "use_default": "Użyj domyślnych 15 sekund",
               "turn_off_polling": "Zamiast tego wyłącz odpytywanie"
-            }
-          }
-        }
-      }
-    },
-    "invalid_update_interval_polling_off": {
-      "title": "Zapisany interwał aktualizacji jest krótszy niż 1 sekunda",
-      "fix_flow": {
-        "step": {
-          "init": {
-            "title": "Zapisany interwał aktualizacji jest krótszy niż 1 sekunda",
-            "description": "Interwał aktualizacji zapisany w opcjach integracji wynosi {interval} s. Musi on teraz wynosić co najmniej 1 sekundę, więc gdy odpytywanie zostanie ponownie włączone, integracja będzie sprawdzać Twoje urządzenia co 15 sekund, czyli z domyślnym interwałem. Szczegóły znajdziesz tutaj: {docs_url}.\n\nAby użyć innego interwału, otwórz [integrację Google Home]({integration_url}), wybierz **Konfiguruj**, wpisz go, a następnie wybierz **Zatwierdź**.",
-            "menu_options": {
-              "use_default": "Użyj domyślnych 15 sekund"
             }
           }
         }

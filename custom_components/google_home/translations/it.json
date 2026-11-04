@@ -206,24 +206,10 @@
         "step": {
           "init": {
             "title": "L'intervallo di aggiornamento salvato è inferiore a 1 secondo",
-            "description": "L'intervallo di aggiornamento salvato nelle opzioni dell'integrazione è di {interval} s. Ora deve essere di almeno 1 secondo, quindi l'integrazione controlla i tuoi dispositivi ogni 15 secondi, il valore predefinito.\n\nSe avevi salvato 0 per interrompere questi controlli periodici, disabilita invece il rilevamento delle variazioni. A differenza di 0, disabilitarlo interrompe anche la ricerca di dispositivi Bluetooth e l'aggiunta dei nuovi dispositivi trovati da mDNS. Per i dettagli, consulta {docs_url}.\n\nPer usare un altro intervallo, apri l'[integrazione Google Home]({integration_url}), seleziona **Configura**, inseriscilo, quindi seleziona **Invia**.",
+            "description": "L'intervallo di aggiornamento salvato nelle opzioni dell'integrazione è di {interval} s, inferiore al minimo di 1 secondo. L'integrazione usa invece il valore predefinito e controlla i tuoi dispositivi ogni 15 secondi.\n\nSe avevi salvato 0 per interrompere questi controlli periodici, disabilita invece il rilevamento delle variazioni. A differenza di 0, disabilitarlo interrompe anche la ricerca di dispositivi Bluetooth e l'aggiunta dei nuovi dispositivi trovati da mDNS. Per i dettagli, consulta {docs_url}.\n\nPer usare un altro intervallo, apri l'[integrazione Google Home]({integration_url}), seleziona **Configura**, inseriscilo, quindi seleziona **Invia**.",
             "menu_options": {
               "use_default": "Usa il valore predefinito di 15 secondi",
               "turn_off_polling": "Disabilita invece il rilevamento delle variazioni"
-            }
-          }
-        }
-      }
-    },
-    "invalid_update_interval_polling_off": {
-      "title": "L'intervallo di aggiornamento salvato è inferiore a 1 secondo",
-      "fix_flow": {
-        "step": {
-          "init": {
-            "title": "L'intervallo di aggiornamento salvato è inferiore a 1 secondo",
-            "description": "L'intervallo di aggiornamento salvato nelle opzioni dell'integrazione è di {interval} s. Ora deve essere di almeno 1 secondo, quindi, quando riabiliterai il rilevamento delle variazioni, l'integrazione controllerà i tuoi dispositivi ogni 15 secondi, il valore predefinito. Per i dettagli, consulta {docs_url}.\n\nPer usare un altro intervallo, apri l'[integrazione Google Home]({integration_url}), seleziona **Configura**, inseriscilo, quindi seleziona **Invia**.",
-            "menu_options": {
-              "use_default": "Usa il valore predefinito di 15 secondi"
             }
           }
         }

@@ -206,24 +206,10 @@
         "step": {
           "init": {
             "title": "L'intervalle de mise à jour enregistré est inférieur à 1 seconde",
-            "description": "L'intervalle de mise à jour enregistré dans les options de l'intégration est de {interval} s. Il doit désormais être d'au moins 1 seconde, donc l'intégration interroge vos appareils toutes les 15 secondes, la valeur par défaut.\n\nSi vous aviez enregistré 0 pour arrêter ces interrogations régulières, désactivez plutôt l'interrogation périodique. Contrairement à 0, cela arrête aussi la recherche d'appareils Bluetooth et l'ajout des nouveaux appareils trouvés par mDNS. Pour plus de détails, consultez {docs_url}.\n\nPour utiliser un autre intervalle, ouvrez l'[intégration Google Home]({integration_url}), sélectionnez **Configurer**, saisissez-le, puis sélectionnez **Valider**.",
+            "description": "L'intervalle de mise à jour enregistré dans les options de l'intégration est de {interval} s, ce qui est inférieur au minimum de 1 seconde. L'intégration utilise donc la valeur par défaut et interroge vos appareils toutes les 15 secondes.\n\nSi vous aviez enregistré 0 pour arrêter ces interrogations régulières, désactivez plutôt l'interrogation périodique. Contrairement à 0, cela arrête aussi la recherche d'appareils Bluetooth et l'ajout des nouveaux appareils trouvés par mDNS. Pour plus de détails, consultez {docs_url}.\n\nPour utiliser un autre intervalle, ouvrez l'[intégration Google Home]({integration_url}), sélectionnez **Configurer**, saisissez-le, puis sélectionnez **Valider**.",
             "menu_options": {
               "use_default": "Utiliser la valeur par défaut de 15 secondes",
               "turn_off_polling": "Désactiver plutôt l'interrogation périodique"
-            }
-          }
-        }
-      }
-    },
-    "invalid_update_interval_polling_off": {
-      "title": "L'intervalle de mise à jour enregistré est inférieur à 1 seconde",
-      "fix_flow": {
-        "step": {
-          "init": {
-            "title": "L'intervalle de mise à jour enregistré est inférieur à 1 seconde",
-            "description": "L'intervalle de mise à jour enregistré dans les options de l'intégration est de {interval} s. Il doit désormais être d'au moins 1 seconde, donc, une fois l'interrogation périodique réactivée, l'intégration interrogera vos appareils toutes les 15 secondes, la valeur par défaut. Pour plus de détails, consultez {docs_url}.\n\nPour utiliser un autre intervalle, ouvrez l'[intégration Google Home]({integration_url}), sélectionnez **Configurer**, saisissez-le, puis sélectionnez **Valider**.",
-            "menu_options": {
-              "use_default": "Utiliser la valeur par défaut de 15 secondes"
             }
           }
         }

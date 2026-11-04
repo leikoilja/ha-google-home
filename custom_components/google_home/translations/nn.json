@@ -206,24 +206,10 @@
         "step": {
           "init": {
             "title": "Det lagra oppdateringsintervallet er under 1 sekund",
-            "description": "Oppdateringsintervallet som er lagra i vala for integrasjonen, er {interval} sekund. Det må no vere minst 1 sekund, så integrasjonen sjekkar i staden einingane dine kvart 15. sekund, som er standard.\n\nOm du lagra 0 for å stoppe desse faste sjekkane, bør du heller slå av polling. I motsetnad til 0 stoppar det også søket etter Bluetooth-einingar og at nye einingar som mDNS finn, blir lagde til. Sjå fleire detaljar her: {docs_url}.\n\nFor å bruke eit anna intervall opnar du [Google Home-integrasjonen]({integration_url}), vel **Konfigurer**, skriv det inn og vel deretter **Send inn**.",
+            "description": "Oppdateringsintervallet som er lagra i vala for integrasjonen, er {interval} sekund, som er under minimumsverdien på 1 sekund. Integrasjonen brukar i staden standardverdien og sjekkar einingane dine kvart 15. sekund.\n\nOm du lagra 0 for å stoppe desse faste sjekkane, bør du heller slå av polling. I motsetnad til 0 stoppar det også søket etter Bluetooth-einingar og at nye einingar som mDNS finn, blir lagde til. Sjå fleire detaljar her: {docs_url}.\n\nFor å bruke eit anna intervall opnar du [Google Home-integrasjonen]({integration_url}), vel **Konfigurer**, skriv det inn og vel deretter **Send inn**.",
             "menu_options": {
               "use_default": "Bruk standardverdien på 15 sekund",
               "turn_off_polling": "Slå av polling i staden"
-            }
-          }
-        }
-      }
-    },
-    "invalid_update_interval_polling_off": {
-      "title": "Det lagra oppdateringsintervallet er under 1 sekund",
-      "fix_flow": {
-        "step": {
-          "init": {
-            "title": "Det lagra oppdateringsintervallet er under 1 sekund",
-            "description": "Oppdateringsintervallet som er lagra i vala for integrasjonen, er {interval} sekund. Det må no vere minst 1 sekund, så når polling er slått på igjen, sjekkar integrasjonen i staden einingane dine kvart 15. sekund, som er standard. Sjå fleire detaljar her: {docs_url}.\n\nFor å bruke eit anna intervall opnar du [Google Home-integrasjonen]({integration_url}), vel **Konfigurer**, skriv det inn og vel deretter **Send inn**.",
-            "menu_options": {
-              "use_default": "Bruk standardverdien på 15 sekund"
             }
           }
         }

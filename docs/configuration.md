@@ -19,7 +19,7 @@ The interval must be at least 1 second. If you saved 0 or less in an earlier ver
 - **Use the default of 15 seconds**: saves 15 seconds, and the repair goes away.
 - **Turn off polling instead**: saves 15 seconds, [turns off polling](#turn-off-polling) and reloads the integration. An interval of 0 stopped only the regular checks; turning off polling also stops Bluetooth scans and the adding of new devices that mDNS finds. The **Polling for changes is turned off** repair starts hidden, as if you had chosen **Keep polling off and hide this repair** in it.
 
-While polling is off, the repair offers only the first choice. To use another interval instead, enter it in **Configure**; the repair goes away once you save it.
+To use another interval instead, enter it in **Configure**; the repair goes away once you save it. While polling is off, the interval isn't used, so the repair shows only once you turn polling back on.
 
 To update immediately, use the [Refresh devices](actions.md#refresh-devices) action.
 
