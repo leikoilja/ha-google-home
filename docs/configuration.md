@@ -6,7 +6,7 @@ After you [set up the integration](installation.md), use this page to change how
 
 The integration checks your devices for changes every 15 seconds by default.
 
-To change the interval, go to **Settings** > **Devices & services** > **Google Home** and select **Configure**. Shorter intervals update alarms and timers sooner but send more requests to your devices.
+To change the interval, go to **Settings** > **Devices & services** > **Google Home** and select **Configure**. Enter the number of seconds under **Update interval (seconds)** and select **Submit**. Shorter intervals update alarms and timers sooner but send more requests to your devices.
 
 Around an alarm's or timer's time, and while it rings, the integration checks that speaker more often than the interval, so that ringing shows within seconds and its end within about 10 seconds even with a long interval. These checks add requests while an alarm or timer is due or ringing. See [How quickly ringing shows](automations.md#how-quickly-ringing-shows).
 
@@ -90,7 +90,7 @@ If an automation, script or manually configured dashboard card uses an old entit
 
 ## Add devices on another network
 
-The integration finds your devices on your network with multicast DNS (mDNS). mDNS usually doesn't reach other networks, such as a separate VLAN for smart home devices, or a Home Assistant container that doesn't use `host` network mode. Those devices then have only a [device sensor](entities.md#device-sensor), a [reboot button](entities.md#reboot-button) and an [update sensor](entities.md#update-sensor), and all three are unavailable.
+The integration finds your devices on your network with multicast DNS (mDNS). mDNS usually doesn't reach other networks, such as a separate VLAN for smart home devices, or a Home Assistant container that doesn't use `host` network mode. Those devices then have only a [device sensor](entities.md#device-sensor), a [reboot button](entities.md#reboot-button), an [update sensor](entities.md#update-sensor) and two [Wi-Fi sensors](entities.md#wi-fi-sensors) that are disabled by default, and all of them are unavailable.
 
 For devices on another network, Home Assistant needs:
 
@@ -104,7 +104,7 @@ For devices on another network, Home Assistant needs:
 To add devices as known hosts:
 
 1. Go to **Settings** > **Devices & services** > **Google Home** and select **Configure**.
-2. Under **Known hosts**, add the IP address of each device that the integration can't find.
+2. Under **Known hosts**, add the IP address of each device that the integration can't find. Hostnames aren't accepted.
 3. Select **Submit**. The integration reloads, asks each address which device it is, and uses the address for that device.
 
 A device that was offline when the integration loaded is found at its known host within about 5 minutes of coming back online, or at the first [update](#change-the-update-interval) after that with a longer interval. While [polling is off](#turn-off-polling), the integration asks known hosts only at the updates you ask for, so with an automation that updates your devices every 5 minutes it can take up to about 10 minutes. With a network interface on the devices' network or an mDNS reflector, the integration gets a device's address as soon as the device announces itself, as on the same network.
@@ -124,7 +124,7 @@ Homes are listed by the names they have in the Google Home app. If two of your h
 To change the homes:
 
 1. Go to **Settings** > **Devices & services** > **Google Home** and select **Configure**.
-2. Under **Homes**, select the homes whose devices to add.
+2. Under **Homes**, select the homes whose devices to add. At least one home must stay selected; otherwise the form shows "Choose at least one home."
 3. Select **Submit**. If you changed the homes, the integration reloads.
 
 When you deselect a home, the integration removes its devices from Home Assistant, with their entities, as it reloads. Automations, scripts and dashboards that use them stop working. If Google doesn't give the integration your device list as it reloads, the devices stay, unavailable, until it next gets the list.
@@ -149,7 +149,7 @@ As soon as Google's device list first lacks the device, its entities are unavail
 
 To remove a device sooner, delete it yourself. First reload the integration so that it notices straight away: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**. Then open the device's page in Home Assistant, open the **⋮** menu and select **Delete**.
 
-Home Assistant offers **Delete** for every device of the integration, but you can't delete one that Google still lists in your home, even if it shows as unavailable: it would come back the next time the integration loads. Until the integration has noticed that Google no longer lists a device, you can't delete that one either. Home Assistant then shows "Failed to remove device entry, rejected by integration". A [tracked Bluetooth device](bluetooth.md#add-a-device-to-track) isn't in Google's list: the integration never removes it, and deleting it stops tracking it.
+Home Assistant offers **Delete** for every device of the integration, but you can't delete one that Google still lists in your home, even if it shows as unavailable: it would come back the next time the integration loads. Until the integration has noticed that Google no longer lists a device, you can't delete that one either. You also can't delete a speaker or display while the integration isn't loaded, or until it gets your device list from Google after it loads. Home Assistant then shows "Failed to remove device entry, rejected by integration". You can delete a [tracked Bluetooth device](bluetooth.md#add-a-device-to-track) at any time: it isn't in Google's list, the integration never removes it, and deleting it stops tracking it.
 
 If Google briefly leaves a working device out of your home in two lists in a row, the integration removes it and adds it back the next time Google lists it. A device you deleted yourself also comes back the next time Google lists it. In both cases, Home Assistant restores the settings you changed, such as its area and its entities' names and IDs, as long as no other entity has taken those entity IDs meanwhile.
 
@@ -172,7 +172,7 @@ If you installed manually:
 2. Delete the `custom_components/google_home` folder.
 3. Restart Home Assistant.
 
-To use another Google account, delete the integration in **Settings** > **Devices & services**, select **Keep** if Home Assistant asks whether to also uninstall it, and add it again.
+To use another Google account, delete the integration in **Settings** > **Devices & services**, select **Keep** if Home Assistant asks whether to also uninstall it, and add it again. Deleting it also deletes its settings: the update interval, known hosts, deselected homes and Bluetooth options in **Configure**, the Bluetooth devices you track, and whether polling is turned off. Note them first, and set them again after you add the integration.
 
 Deleting the integration doesn't stop the master token from working, and the integration can't revoke it. If the token might have been copied, for example from a Home Assistant backup:
 

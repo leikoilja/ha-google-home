@@ -10,7 +10,7 @@ This custom integration brings your Google Home and Nest speakers and displays i
 - Change the alarm volume.
 - Reboot a device.
 - See each device's firmware version and whether it says a firmware update is waiting.
-- See each device's Wi-Fi network and signal strength.
+- See each device's Wi-Fi network and signal strength, once you [enable the Wi-Fi sensors](entities.md#wi-fi-sensors).
 - Tell whether your phone or another Bluetooth device is home, with [Bluetooth tracking](bluetooth.md).
 
 To start, follow **[Getting Started](installation.md)** to install the integration and sign in.
@@ -47,7 +47,7 @@ It doesn't add the other devices in your Google Home app, such as lights, plugs,
 
 The integration uses your Google account to get access tokens for your devices from Google, and renews them regularly. Everything else, such as reading alarms or changing the alarm volume, goes directly to the devices over your local network.
 
-You can add the integration only once, so it works with one Google account. To use devices from several homes, [invite that account](https://support.google.com/googlenest/answer/9155535) to each home: the integration adds the devices of every home the account is a member of, unless you [choose homes](configuration.md#choose-homes). Devices that Home Assistant can't reach, for example in a home at another address, are added, but their entities stay unavailable.
+You can add the integration only once, so it works with one Google account. To use devices from several homes, [invite that account](https://support.google.com/googlenest/answer/9155535) to each home: the integration adds the devices of every home the account is a member of, unless you [choose homes](configuration.md#choose-homes). Devices that Home Assistant can't reach, for example in a home at another address, are added with only a device sensor, a reboot button, an update sensor and two Wi-Fi sensors that are disabled by default, and all of them are unavailable.
 
 ## Quality scale
 

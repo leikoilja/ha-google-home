@@ -7,7 +7,7 @@ Find what you see, then start with the first check in its section:
 - [The Google Home card shows **1 entry failed to set up, retrying**](#failed-setup-will-retry)
 - [Home Assistant says that authentication expired](#sign-in-again), or [signing in again fails](#signing-in-again-fails)
 - [The integration shows no devices](#no-devices-appear)
-- [A device has only a device sensor, a reboot button and an update sensor](#no-alarms-or-timers-sensors)
+- [A device has only a device sensor, a reboot button, an update sensor and two Wi-Fi sensors that are disabled by default](#no-alarms-or-timers-sensors)
 - [All entities of a device are unavailable](#all-entities-of-a-device-are-unavailable)
 - [A device's alarms, timers or settings stop changing](#alarms-timers-or-settings-stop-changing)
 - [Deleting an alarm or timer, rebooting or changing a setting shows an error](#an-action-or-setting-fails)
@@ -123,7 +123,7 @@ Once the cause is fixed, you can reload the integration to ask Google straight a
 
 ### No alarms or timers sensors
 
-The integration adds the alarms sensor, timers sensor, Do Not Disturb switch and alarm volume for a device once the device answers successfully. Until then, a device that is offline, or that doesn't support these features, has only a device sensor, a reboot button and an update sensor. Check the device sensor:
+The integration adds the alarms sensor, timers sensor, Do Not Disturb switch and alarm volume for a device once the device answers successfully. Until then, a device that is offline, or that doesn't support these features, has only a device sensor, a reboot button, an update sensor and two Wi-Fi sensors that are disabled by default. Check the device sensor:
 
 - **It shows an IP address:** the entities appear at the next update the device answers successfully. If they don't, the device may have [no alarms and timers](#devices-without-alarms-and-timers).
 - **It's unavailable on all your devices:** first check that Home Assistant can reach them on your network; see [Home Assistant can't reach your devices](#device-offline-or-not-compatible). For other causes, see [When entities are unavailable](entities.md#when-entities-are-unavailable).
@@ -147,7 +147,7 @@ If this happens to a device that has alarms and timers, or a device gains these 
 
 ### Home Assistant can't reach your devices {#device-offline-or-not-compatible}
 
-If all your devices have only a device sensor, a reboot button and an update sensor, and all three are unavailable, or all their entities became unavailable after they worked, first check that Home Assistant can find and reach the devices on your network. Entities can also be unavailable for other reasons, for example once Google no longer lists a device; see [When entities are unavailable](entities.md#when-entities-are-unavailable).
+If all your devices have only a device sensor, a reboot button, an update sensor and two Wi-Fi sensors that are disabled by default, and all of them are unavailable, or all their entities became unavailable after they worked, first check that Home Assistant can find and reach the devices on your network. Entities can also be unavailable for other reasons, for example once Google no longer lists a device; see [When entities are unavailable](entities.md#when-entities-are-unavailable).
 
 Check that:
 

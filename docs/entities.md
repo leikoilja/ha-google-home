@@ -18,7 +18,7 @@ The device page also shows the device's [firmware version](#firmware-version).
 
 If you turn on [Bluetooth tracking](bluetooth.md), each phone or other Bluetooth device you track also gets a tracker entity.
 
-The alarms sensor, timers sensor, switch and alarm volume are added once the device answers successfully. If a device has only a device sensor, a reboot button and an update sensor, see [No alarms or timers sensors](troubleshooting.md#no-alarms-or-timers-sensors). A device without alarms and timers, such as a Chromecast Audio, doesn't get these four entities.
+The alarms sensor, timers sensor, switch and alarm volume are added once the device answers successfully. If a device has only a device sensor, a reboot button, an update sensor and two Wi-Fi sensors that are disabled by default, see [No alarms or timers sensors](troubleshooting.md#no-alarms-or-timers-sensors). A device without alarms and timers, such as a Chromecast Audio, doesn't get these four entities.
 
 Entities become unavailable, for example, while a device is unplugged or after you remove it from the Google Home app. See [When entities are unavailable](#when-entities-are-unavailable).
 
@@ -28,7 +28,7 @@ The state is the time of the next alarm, such as `2026-03-07T15:26:17+01:00`. It
 
 To start automations at the time of the next alarm or timer, see [Automation examples](automations.md).
 
-The state uses the same format as the [next alarm sensor](https://companion.home-assistant.io/docs/core/sensors/#next-alarm-sensor) of the Home Assistant mobile app, such as `sensor.phone_next_alarm`. You can use both in the same automations.
+The state is an ISO 8601 timestamp, as is the state of the Home Assistant mobile app's [next alarm sensor](https://companion.home-assistant.io/docs/core/sensors/#next-alarm-sensor), such as `sensor.phone_next_alarm`. You can use both in the same automations.
 
 | Attribute           | Description                                                                                 |
 | ------------------- | ------------------------------------------------------------------------------------------- |
@@ -38,15 +38,15 @@ The state uses the same format as the [next alarm sensor](https://companion.home
 
 Each alarm in `alarms` has these keys:
 
-| Key              | Example                                              | Description                                                                                                                                         |
-| ---------------- | ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `alarm_id`       | `alarm/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51`{.break} | ID of the alarm. Use it to [delete the alarm](actions.md#delete-alarm).                                                                             |
-| `fire_time`      | `1772893577`                                         | When the alarm goes off, as a Unix timestamp in seconds                                                                                             |
-| `local_time`     | `2026-03-07 15:26:17`                                | When the alarm goes off, in Home Assistant's time zone                                                                                              |
-| `local_time_iso` | `2026-03-07T15:26:17+01:00`                          | The same time in ISO 8601 format, convenient for automations                                                                                        |
-| `status`         | `set`                                                | [Status](#alarm-and-timer-status) of the alarm                                                                                                      |
-| `label`          | `Wake up`                                            | Name of the alarm, if you gave it one                                                                                                               |
-| `recurrence`     | `[1, 2, 3, 4, 5]`                                    | Days of the week the alarm repeats on. Following Google's convention, the week starts on Sunday: `0` is Sunday, `1` is Monday, and `6` is Saturday. |
+| Key              | Example                                              | Description                                                                                                                                                                             |
+| ---------------- | ---------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `alarm_id`       | `alarm/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51`{.break} | ID of the alarm. Use it to [delete the alarm](actions.md#delete-alarm).                                                                                                                 |
+| `fire_time`      | `1772893577`                                         | When the alarm goes off, as a Unix timestamp in seconds                                                                                                                                 |
+| `local_time`     | `2026-03-07 15:26:17`                                | When the alarm goes off, in Home Assistant's time zone                                                                                                                                  |
+| `local_time_iso` | `2026-03-07T15:26:17+01:00`                          | The same time in ISO 8601 format, convenient for automations                                                                                                                            |
+| `status`         | `set`                                                | [Status](#alarm-and-timer-status) of the alarm                                                                                                                                          |
+| `label`          | `Wake up`                                            | Name of the alarm, if you gave it one. `None` if the device leaves it out.                                                                                                              |
+| `recurrence`     | `[1, 2, 3, 4, 5]`                                    | Days of the week the alarm repeats on. Following Google's convention, the week starts on Sunday: `0` is Sunday, `1` is Monday, and `6` is Saturday. `None` if the device leaves it out. |
 
 ## Timers sensor
 
@@ -68,7 +68,7 @@ Each timer in `timers` has these keys:
 | `duration`       | `0:10:00`                                            | Length the timer was set for, as hours:minutes:seconds                                                                                               |
 | `remaining`      | `0:07:45`                                            | Time left on a paused timer, as hours:minutes:seconds. `None` for other timers, which have `fire_time` instead, or if the speaker doesn't report it. |
 | `status`         | `set`                                                | [Status](#alarm-and-timer-status) of the timer                                                                                                       |
-| `label`          | `Pasta`                                              | Name of the timer, if you gave it one                                                                                                                |
+| `label`          | `Pasta`                                              | Name of the timer, if you gave it one. `None` if the device leaves it out.                                                                           |
 
 To use the time left in a template or automation, convert `remaining` to seconds with `as_timedelta`. For example, `{{ as_timedelta('0:07:45').total_seconds() }}` gives 465 seconds. `remaining` is `None` unless the timer is paused, and `as_timedelta` fails on `None`, so check first, for example with `timer.remaining is not none`.
 
@@ -91,14 +91,14 @@ Timers have no `snoozed` status. If you snooze a ringing timer, it restarts and 
 
 The state is the device's IP address on your network. If no IP address is available for the device, or the device hasn't answered 5 updates in a row, the sensor is unavailable and the device details listed below are hidden. The sensor appears under **Diagnostic** on the device page.
 
-| Attribute     | Description                                                                                                                                                                                                          |
-| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `device_id`   | Google's ID for the device                                                                                                                                                                                           |
-| `device_name` | Name of the device in the Google Home app                                                                                                                                                                            |
-| `home`        | Name of the device's home in the Google Home app. `None` if the home has no name. A renamed home's new name shows once the integration next gets your device list from Google, usually within about 20 minutes.      |
-| `ip_address`  | IP address of the device                                                                                                                                                                                             |
-| `available`   | `true` if the device answered at the last update, even if it rejected its token or is still starting. `false` otherwise, for example while the device is offline.                                                    |
-| `auth_token`  | Token Home Assistant uses to talk to the device                                                                                                                                                                      |
+| Attribute     | Description                                                                                                                                                                                                                          |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `device_id`   | Google's ID for the device                                                                                                                                                                                                           |
+| `device_name` | Name of the device in the Google Home app                                                                                                                                                                                            |
+| `home`        | Name of the device's home in the Google Home app. `None` if the home has no name. A renamed home's new name shows once the integration next gets your device list from Google, usually within about 20 minutes.                      |
+| `ip_address`  | IP address of the device                                                                                                                                                                                                             |
+| `available`   | `true` if the device answered its alarms or information request without an error at the last update, which it does even while it rejects its token or is still starting. `false` otherwise, for example while the device is offline. |
+| `auth_token`  | Token Home Assistant uses to talk to the device                                                                                                                                                                                      |
 
 !!! warning
 
@@ -124,7 +124,7 @@ target:
 
 The button is unavailable until Home Assistant finds the device on your network, and once the device hasn't answered 5 updates in a row. If the device goes offline, pressing the button before then fails with an error; see [If a setting or reboot fails](#if-a-setting-or-reboot-fails).
 
-Not every device supports rebooting. A device can accept the request, so there's no error and the log shows "Successfully asked Living Room to reboot.", even when it doesn't restart. If that happens, [reboot it from the Google Home app or unplug it for a minute](https://support.google.com/googlehome/answer/7072490).
+Not every device supports rebooting. A device can accept the request, so there's no error, even when it doesn't restart. With [debug logging](troubleshooting.md#collect-debug-logs) on, the log then shows "Successfully asked Living Room to reboot." If the device doesn't restart, [reboot it from the Google Home app or unplug it for a minute](https://support.google.com/googlehome/answer/7072490).
 
 The button's state is the time it was last pressed in Home Assistant, even a press that failed, not when the device last restarted. The [Reboot device](actions.md#reboot-device) action and the Google Home app don't set it. Home Assistant keeps it when it restarts, unless the button is unavailable when Home Assistant stops.
 
@@ -178,7 +178,7 @@ All entities of a device are unavailable:
 - Once the device hasn't answered 5 [updates](configuration.md#change-the-update-interval) in a row, for example while it's unplugged. At the default 15-second interval, that's usually after one to two minutes. With a shorter interval, a speaker that restarts can miss 5 updates and become unavailable for a moment; with a longer one, it takes longer to notice.
 - After the device's update fails unexpectedly, until its next update that works. This affects only that device, also when Home Assistant starts: a device that fails then gets its entities at its first update that works. With [polling off](configuration.md#turn-off-polling), run [Refresh devices](actions.md#refresh-devices), or reload the integration.
 
-When the integration can't get your device list from Google, the devices keep updating and their entities stay available.
+When the integration can't get your device list from Google, the devices it already has keep updating and their entities stay available. As the integration starts, it has no devices yet, so this doesn't apply: depending on the cause, Home Assistant [tries the setup again](troubleshooting.md#failed-setup-will-retry), the integration [starts without devices](troubleshooting.md#no-devices-appear), or Home Assistant asks you to [sign in again](troubleshooting.md#sign-in-again). Until the integration gets the list, the entities are unavailable.
 
 Some entities are also unavailable on their own:
 
@@ -204,7 +204,7 @@ To avoid this for entities added later, do one of the following:
 - Rename the device in Home Assistant without the room, such as _Speaker_. The device keeps its name in the Google Home app.
 - Remove **Area** in **Settings** > **System** > **Entity ID format** and select **Save**. This is a global setting for new entity IDs, not just Google Home ones. Integrations that suggest their own entity IDs don't use it.
 
-Entities you already have keep their entity IDs. Changing them is optional. Go to **Settings** > **Devices & services** > **Google Home** and select the device, such as _Kitchen display_. Open the **⋮** menu and select **Recreate entity IDs**. This:
+Entities you already have keep their entity IDs. Changing them is optional. Go to **Settings** > **Devices & services** > **Google Home** and select the device, such as _Living Room speaker_. Open the **⋮** menu and select **Recreate entity IDs**. This:
 
 - Builds the entity IDs from the current device name and entity ID format. Do one of the steps above first. Otherwise a device whose name contains its room gets the room twice in all its entity IDs.
 - Uses each entity's name and doesn't change it: the name you gave it, otherwise its default name in the language Home Assistant uses for entity IDs. See [Entity names in other languages](#entity-names-in-other-languages).
@@ -218,6 +218,6 @@ After you confirm, update the automations, scripts and manually configured dashb
 
 Home Assistant shows these entities' names in its language, such as _Wecker_ for the alarms sensor in German, or in English where a translation is missing. To correct a translation, see [Translate the integration](contributing.md#translate-the-integration). The update and signal strength sensors' names are Home Assistant's own names for those kinds of sensors, which Home Assistant translates itself.
 
-In Catalan, Czech, Danish, Dutch, Finnish, French, German, Hungarian, Indonesian, Italian, Norwegian, Polish, Portuguese, Romanian, Slovak, Spanish and Swedish, Home Assistant also builds new entity IDs from the translated names. In German, the alarms sensor of a new device named _Living Room_ gets `sensor.living_room_wecker`. In other languages, such as Russian or Japanese, entity IDs use the English names, as in the table at the top of this page. The update and signal strength sensors follow Home Assistant's own translations instead, so in some other languages, such as Lithuanian, their entity IDs are translated while the others are in English. What counts is the language set for Home Assistant itself, not the language in your user profile.
+In Catalan, Czech, Danish, Dutch, Finnish, French, German, Hungarian, Indonesian, Italian, Norwegian Bokmål, Norwegian Nynorsk, Polish, Portuguese, Romanian, Slovak, Spanish and Swedish, Home Assistant also builds new entity IDs from the translated names. In German, the alarms sensor of a new device named _Living Room_ gets `sensor.living_room_wecker`. In other languages, such as Russian or Japanese, entity IDs use the English names, as in the table at the top of this page. The update and signal strength sensors follow Home Assistant's own translations instead, so in some other languages, such as Lithuanian, their entity IDs are translated while the others are in English. What counts is the language set for Home Assistant itself, not the language in your user profile.
 
 Entities you already have keep their entity IDs in every language. In the languages listed above, a new device's entity IDs can then differ from those of your other devices, and [Recreate entity IDs](#room-name-twice-in-entity-ids) changes the existing ones to the translated names too, unless you gave an entity a name of your own. Check the list of changes before you confirm.
