@@ -40,7 +40,7 @@ It doesn't add the other devices in your Google Home app, such as lights, plugs,
 - A Google account that is a member of the home your devices belong to in the Google Home app.
 - Home Assistant on the same local network as your devices, so it finds them automatically. For devices on another network, see [Add devices on another network](configuration.md#add-devices-on-another-network).
 
-[Before you start](installation.md#before-you-start) has the full list, including the minimum Home Assistant version. If something doesn't work, check [Troubleshooting](troubleshooting.md) or ask in [GitHub Discussions](https://github.com/leikoilja/ha-google-home/discussions).
+[Before you start](installation.md#before-you-start) has the full list, including the minimum Home Assistant version. If something doesn't work, check [Troubleshooting](troubleshooting.md) or [open an issue](https://github.com/leikoilja/ha-google-home/issues/new/choose).
 
 ## How it works
 
