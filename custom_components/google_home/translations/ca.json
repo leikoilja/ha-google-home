@@ -200,6 +200,35 @@
         }
       }
     },
+    "invalid_update_interval": {
+      "title": "L'interval d'actualització desat és inferior a 1 segon",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "L'interval d'actualització desat és inferior a 1 segon",
+            "description": "L'interval d'actualització desat a les opcions de la integració és de {interval} segons. Ara ha de ser d'almenys 1 segon, de manera que la integració utilitza el valor per defecte i consulta els teus dispositius cada 15 segons.\n\nSi vas desar 0 per aturar aquestes consultes periòdiques, desactiva el sondeig en lloc d'això. A diferència del 0, desactivar el sondeig també atura les cerques de dispositius Bluetooth i l'addició dels dispositius nous que troba mDNS. Per a més detalls, consulta {docs_url} (en anglès).\n\nPer utilitzar un altre interval, obre la [integració Google Home]({integration_url}), selecciona **Configura**, introdueix-lo i després selecciona **Envia**.",
+            "menu_options": {
+              "use_default": "Utilitza el valor per defecte de 15 segons",
+              "turn_off_polling": "Desactiva el sondeig en lloc d'això"
+            }
+          }
+        }
+      }
+    },
+    "invalid_update_interval_polling_off": {
+      "title": "L'interval d'actualització desat és inferior a 1 segon",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "L'interval d'actualització desat és inferior a 1 segon",
+            "description": "L'interval d'actualització desat a les opcions de la integració és de {interval} segons. Ara ha de ser d'almenys 1 segon, de manera que, quan tornis a activar el sondeig, la integració utilitzarà el valor per defecte i consultarà els teus dispositius cada 15 segons. Per a més detalls, consulta {docs_url} (en anglès).\n\nPer utilitzar un altre interval, obre la [integració Google Home]({integration_url}), selecciona **Configura**, introdueix-lo i després selecciona **Envia**.",
+            "menu_options": {
+              "use_default": "Utilitza el valor per defecte de 15 segons"
+            }
+          }
+        }
+      }
+    },
     "homes_deselected": {
       "title": "Cap llar del teu compte de Google no està seleccionada",
       "description": "El teu compte de Google només és membre de llars que has desmarcat a les opcions de la integració, de manera que la integració no n'afegeix els altaveus ni les pantalles. Per afegir els dispositius d'una llar, obre la [integració Google Home]({integration_url}), selecciona **Configura**, marca la llar a **Llars** i després selecciona **Envia**.\n\nSi vols mantenir aquestes llars desmarcades, selecciona **Ignora**."

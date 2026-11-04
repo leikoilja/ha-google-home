@@ -200,6 +200,35 @@
         }
       }
     },
+    "invalid_update_interval": {
+      "title": "Tallennettu päivitysväli on alle 1 sekunti",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Tallennettu päivitysväli on alle 1 sekunti",
+            "description": "Integraation asetuksiin tallennettu päivitysväli on {interval} sekuntia. Sen on nyt oltava vähintään 1 sekunti, joten integraatio tarkistaa laitteesi sen sijaan oletusarvon mukaan 15 sekunnin välein.\n\nJos tallensit arvon 0 pysäyttääksesi nämä säännölliset tarkistukset, poista sen sijaan kysely käytöstä. Toisin kuin 0, se pysäyttää myös Bluetooth-laitteiden etsinnän ja mDNS:n löytämien uusien laitteiden lisäämisen. Lisätietoja: {docs_url}.\n\nJos haluat käyttää muuta päivitysväliä, avaa [Google Home ‑integraatio]({integration_url}), valitse **Määrittele**, syötä väli ja valitse sitten **Lähetä**.",
+            "menu_options": {
+              "use_default": "Käytä oletusarvoa 15 sekuntia",
+              "turn_off_polling": "Poista kysely käytöstä sen sijaan"
+            }
+          }
+        }
+      }
+    },
+    "invalid_update_interval_polling_off": {
+      "title": "Tallennettu päivitysväli on alle 1 sekunti",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Tallennettu päivitysväli on alle 1 sekunti",
+            "description": "Integraation asetuksiin tallennettu päivitysväli on {interval} sekuntia. Sen on nyt oltava vähintään 1 sekunti, joten kun kysely on taas käytössä, integraatio tarkistaa laitteesi sen sijaan oletusarvon mukaan 15 sekunnin välein. Lisätietoja: {docs_url}.\n\nJos haluat käyttää muuta päivitysväliä, avaa [Google Home ‑integraatio]({integration_url}), valitse **Määrittele**, syötä väli ja valitse sitten **Lähetä**.",
+            "menu_options": {
+              "use_default": "Käytä oletusarvoa 15 sekuntia"
+            }
+          }
+        }
+      }
+    },
     "homes_deselected": {
       "title": "Yhtäkään Google-tilisi kodeista ei ole valittu",
       "description": "Google-tilisi on vain sellaisten kotien jäsen, joiden valinnan olet poistanut integraation asetuksissa, joten integraatio ei lisää niiden kaiuttimia eikä näyttöjä. Jos haluat lisätä kodin laitteet, avaa [Google Home ‑integraatio]({integration_url}), valitse **Määrittele**, valitse koti kohdassa **Kodit** ja valitse sitten **Lähetä**.\n\nJos haluat pitää näiden kotien valinnan poistettuna, valitse **Sivuta**."

@@ -200,6 +200,35 @@
         }
       }
     },
+    "invalid_update_interval": {
+      "title": "儲存的更新間隔小於 1 秒",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "儲存的更新間隔小於 1 秒",
+            "description": "整合選項中儲存的更新間隔為 {interval} 秒。更新間隔現在必須至少為 1 秒，因此整合會改用預設值，每 15 秒檢查一次你的裝置。\n\n如果你儲存 0 是為了停止這些定期檢查，請改為關閉輪詢。與 0 不同，關閉輪詢也會停止掃描藍牙裝置，以及停止加入 mDNS 找到的新裝置。詳情請參閱 {docs_url}\n\n如要使用其他間隔，請開啟 [Google Home 整合]({integration_url})，選擇「**設定**」，輸入間隔，然後選擇「**傳送**」。",
+            "menu_options": {
+              "use_default": "使用預設值 15 秒",
+              "turn_off_polling": "改為關閉輪詢"
+            }
+          }
+        }
+      }
+    },
+    "invalid_update_interval_polling_off": {
+      "title": "儲存的更新間隔小於 1 秒",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "儲存的更新間隔小於 1 秒",
+            "description": "整合選項中儲存的更新間隔為 {interval} 秒。更新間隔現在必須至少為 1 秒，因此重新開啟輪詢後，整合會改用預設值，每 15 秒檢查一次你的裝置。詳情請參閱 {docs_url}\n\n如要使用其他間隔，請開啟 [Google Home 整合]({integration_url})，選擇「**設定**」，輸入間隔，然後選擇「**傳送**」。",
+            "menu_options": {
+              "use_default": "使用預設值 15 秒"
+            }
+          }
+        }
+      }
+    },
     "homes_deselected": {
       "title": "你的 Google 帳號沒有選取任何住家",
       "description": "你的 Google 帳號只是你在整合的選項中取消選取的住家的成員，因此整合不會加入這些住家中的音箱和螢幕。如要加入某個住家的裝置，請開啟 [Google Home 整合]({integration_url})，選擇「**設定**」，在「**住家**」下選取該住家，然後選擇「**傳送**」。\n\n如果你想讓這些住家保持取消選取，請選擇「**忽略**」。"

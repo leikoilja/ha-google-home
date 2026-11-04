@@ -200,6 +200,35 @@
         }
       }
     },
+    "invalid_update_interval": {
+      "title": "Intervalul de actualizare salvat este sub 1 secundă",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Intervalul de actualizare salvat este sub 1 secundă",
+            "description": "Intervalul de actualizare salvat în opțiunile integrării este de {interval} secunde. Acum trebuie să fie de cel puțin 1 secundă, așa că integrarea îți verifică dispozitivele la fiecare 15 secunde, valoarea implicită.\n\nDacă ai salvat 0 ca să oprești aceste verificări regulate, dezactivează în schimb interogarea. Spre deosebire de 0, asta oprește și căutarea dispozitivelor Bluetooth și adăugarea dispozitivelor noi găsite de mDNS. Pentru detalii, consultă {docs_url}.\n\nCa să folosești alt interval, deschide [integrarea Google Home]({integration_url}), selectează **Configurare**, introdu-l, apoi selectează **Trimite**.",
+            "menu_options": {
+              "use_default": "Folosește valoarea implicită de 15 secunde",
+              "turn_off_polling": "Dezactivează în schimb interogarea"
+            }
+          }
+        }
+      }
+    },
+    "invalid_update_interval_polling_off": {
+      "title": "Intervalul de actualizare salvat este sub 1 secundă",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Intervalul de actualizare salvat este sub 1 secundă",
+            "description": "Intervalul de actualizare salvat în opțiunile integrării este de {interval} secunde. Acum trebuie să fie de cel puțin 1 secundă, așa că, după ce reactivezi interogarea, integrarea îți va verifica dispozitivele la fiecare 15 secunde, valoarea implicită. Pentru detalii, consultă {docs_url}.\n\nCa să folosești alt interval, deschide [integrarea Google Home]({integration_url}), selectează **Configurare**, introdu-l, apoi selectează **Trimite**.",
+            "menu_options": {
+              "use_default": "Folosește valoarea implicită de 15 secunde"
+            }
+          }
+        }
+      }
+    },
     "homes_deselected": {
       "title": "Nicio casă a contului tău Google nu este selectată",
       "description": "Contul tău Google este membru doar al unor case pe care le-ai debifat în opțiunile integrării, așa că integrarea nu adaugă difuzoarele și ecranele din ele. Ca să adaugi dispozitivele unei case, deschide [integrarea Google Home]({integration_url}), selectează **Configurare**, bifează casa la **Case**, apoi selectează **Trimite**.\n\nDacă vrei să lași aceste case debifate, selectează **Ignoră**."

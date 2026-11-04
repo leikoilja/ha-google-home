@@ -200,6 +200,35 @@
         }
       }
     },
+    "invalid_update_interval": {
+      "title": "Det sparade uppdateringsintervallet är kortare än 1 sekund",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Det sparade uppdateringsintervallet är kortare än 1 sekund",
+            "description": "Uppdateringsintervallet som sparats i integrationens alternativ är {interval} sekunder. Det måste nu vara minst 1 sekund, så integrationen kontrollerar i stället dina enheter var 15:e sekund, som är standard.\n\nOm du sparade 0 för att stoppa de här regelbundna kontrollerna kan du inaktivera pollning i stället. Till skillnad från 0 stoppar det även sökningen efter Bluetooth-enheter och att nya enheter som mDNS hittar läggs till. Läs mer på {docs_url}.\n\nOm du vill använda ett annat intervall öppnar du [Google Home-integrationen]({integration_url}), väljer **Konfigurera**, anger det och väljer sedan **Bekräfta**.",
+            "menu_options": {
+              "use_default": "Använd standardvärdet 15 sekunder",
+              "turn_off_polling": "Inaktivera pollning i stället"
+            }
+          }
+        }
+      }
+    },
+    "invalid_update_interval_polling_off": {
+      "title": "Det sparade uppdateringsintervallet är kortare än 1 sekund",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Det sparade uppdateringsintervallet är kortare än 1 sekund",
+            "description": "Uppdateringsintervallet som sparats i integrationens alternativ är {interval} sekunder. Det måste nu vara minst 1 sekund, så när pollning är aktiverad igen kontrollerar integrationen i stället dina enheter var 15:e sekund, som är standard. Läs mer på {docs_url}.\n\nOm du vill använda ett annat intervall öppnar du [Google Home-integrationen]({integration_url}), väljer **Konfigurera**, anger det och väljer sedan **Bekräfta**.",
+            "menu_options": {
+              "use_default": "Använd standardvärdet 15 sekunder"
+            }
+          }
+        }
+      }
+    },
     "homes_deselected": {
       "title": "Inget av Google-kontots hem är valt",
       "description": "Ditt Google-konto är bara medlem i hem som du har avmarkerat i integrationens alternativ, så integrationen lägger inte till högtalarna och skärmarna i dem. Om du vill lägga till ett hems enheter öppnar du [Google Home-integrationen]({integration_url}), väljer **Konfigurera**, markerar hemmet under **Hem** och väljer sedan **Bekräfta**.\n\nOm du vill att de här hemmen ska förbli avmarkerade väljer du **Ignorera**."

@@ -200,6 +200,35 @@
         }
       }
     },
+    "invalid_update_interval": {
+      "title": "L'intervalle de mise à jour enregistré est inférieur à 1 seconde",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "L'intervalle de mise à jour enregistré est inférieur à 1 seconde",
+            "description": "L'intervalle de mise à jour enregistré dans les options de l'intégration est de {interval} secondes. Il doit désormais être d'au moins 1 seconde, donc l'intégration interroge vos appareils toutes les 15 secondes, la valeur par défaut.\n\nSi vous aviez enregistré 0 pour arrêter ces interrogations régulières, désactivez plutôt l'interrogation périodique. Contrairement à 0, cela arrête aussi la recherche d'appareils Bluetooth et l'ajout des nouveaux appareils trouvés par mDNS. Pour plus de détails, consultez {docs_url}.\n\nPour utiliser un autre intervalle, ouvrez l'[intégration Google Home]({integration_url}), sélectionnez **Configurer**, saisissez-le, puis sélectionnez **Valider**.",
+            "menu_options": {
+              "use_default": "Utiliser la valeur par défaut de 15 secondes",
+              "turn_off_polling": "Désactiver plutôt l'interrogation périodique"
+            }
+          }
+        }
+      }
+    },
+    "invalid_update_interval_polling_off": {
+      "title": "L'intervalle de mise à jour enregistré est inférieur à 1 seconde",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "L'intervalle de mise à jour enregistré est inférieur à 1 seconde",
+            "description": "L'intervalle de mise à jour enregistré dans les options de l'intégration est de {interval} secondes. Il doit désormais être d'au moins 1 seconde, donc, une fois l'interrogation périodique réactivée, l'intégration interrogera vos appareils toutes les 15 secondes, la valeur par défaut. Pour plus de détails, consultez {docs_url}.\n\nPour utiliser un autre intervalle, ouvrez l'[intégration Google Home]({integration_url}), sélectionnez **Configurer**, saisissez-le, puis sélectionnez **Valider**.",
+            "menu_options": {
+              "use_default": "Utiliser la valeur par défaut de 15 secondes"
+            }
+          }
+        }
+      }
+    },
     "homes_deselected": {
       "title": "Aucune maison de votre compte Google n'est sélectionnée",
       "description": "Votre compte Google n'est membre que de maisons que vous avez désélectionnées dans les options de l'intégration, donc l'intégration n'ajoute pas leurs enceintes et écrans. Pour ajouter les appareils d'une maison, ouvrez l'[intégration Google Home]({integration_url}), sélectionnez **Configurer**, sélectionnez la maison sous **Maisons**, puis sélectionnez **Valider**.\n\nSi vous voulez garder ces maisons désélectionnées, sélectionnez **Ignorer**."

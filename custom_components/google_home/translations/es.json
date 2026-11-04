@@ -200,6 +200,35 @@
         }
       }
     },
+    "invalid_update_interval": {
+      "title": "El intervalo de actualización guardado es inferior a 1 segundo",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "El intervalo de actualización guardado es inferior a 1 segundo",
+            "description": "El intervalo de actualización guardado en las opciones de la integración es de {interval} segundos. Ahora debe ser de al menos 1 segundo, así que la integración consulta tus dispositivos cada 15 segundos, el valor por defecto.\n\nSi guardaste 0 para detener estas consultas periódicas, deshabilita el sondeo en su lugar. A diferencia de 0, deshabilitar el sondeo también detiene la búsqueda de dispositivos Bluetooth y la adición de los dispositivos nuevos que encuentra mDNS. Para más detalles, consulta {docs_url} (en inglés).\n\nPara usar otro intervalo, abre la [integración Google Home]({integration_url}), selecciona **Configurar**, introdúcelo y luego selecciona **Enviar**.",
+            "menu_options": {
+              "use_default": "Usar el valor por defecto de 15 segundos",
+              "turn_off_polling": "Deshabilitar el sondeo en su lugar"
+            }
+          }
+        }
+      }
+    },
+    "invalid_update_interval_polling_off": {
+      "title": "El intervalo de actualización guardado es inferior a 1 segundo",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "El intervalo de actualización guardado es inferior a 1 segundo",
+            "description": "El intervalo de actualización guardado en las opciones de la integración es de {interval} segundos. Ahora debe ser de al menos 1 segundo, así que, cuando vuelvas a habilitar el sondeo, la integración consultará tus dispositivos cada 15 segundos, el valor por defecto. Para más detalles, consulta {docs_url} (en inglés).\n\nPara usar otro intervalo, abre la [integración Google Home]({integration_url}), selecciona **Configurar**, introdúcelo y luego selecciona **Enviar**.",
+            "menu_options": {
+              "use_default": "Usar el valor por defecto de 15 segundos"
+            }
+          }
+        }
+      }
+    },
     "homes_deselected": {
       "title": "No hay ninguna casa de tu cuenta de Google seleccionada",
       "description": "Tu cuenta de Google solo es miembro de casas que desmarcaste en las opciones de la integración, así que la integración no añade sus altavoces ni sus pantallas. Para añadir los dispositivos de una casa, abre la [integración Google Home]({integration_url}), selecciona **Configurar**, marca la casa en **Casas** y luego selecciona **Enviar**.\n\nSi quieres mantener estas casas desmarcadas, selecciona **Ignorar**."

@@ -200,6 +200,35 @@
         }
       }
     },
+    "invalid_update_interval": {
+      "title": "Das gespeicherte Aktualisierungsintervall ist kürzer als 1 Sekunde",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Das gespeicherte Aktualisierungsintervall ist kürzer als 1 Sekunde",
+            "description": "Das in den Optionen der Integration gespeicherte Aktualisierungsintervall beträgt {interval} Sekunden. Es muss jetzt mindestens 1 Sekunde betragen, daher fragt die Integration deine Geräte stattdessen alle 15 Sekunden ab, dem Standardwert.\n\nWenn du 0 gespeichert hast, um diese regelmäßigen Abfragen zu stoppen, deaktiviere stattdessen die Abfrage von Änderungen. Anders als 0 stoppt das auch die Suche nach Bluetooth-Geräten und das Hinzufügen neuer Geräte, die mDNS findet. Details erfährst du unter {docs_url}.\n\nUm ein anderes Intervall zu verwenden, öffne die [Google Home-Integration]({integration_url}), wähle **Konfigurieren**, gib es ein und wähle dann **OK**.",
+            "menu_options": {
+              "use_default": "Standardwert von 15 Sekunden verwenden",
+              "turn_off_polling": "Stattdessen Abfrage deaktivieren"
+            }
+          }
+        }
+      }
+    },
+    "invalid_update_interval_polling_off": {
+      "title": "Das gespeicherte Aktualisierungsintervall ist kürzer als 1 Sekunde",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Das gespeicherte Aktualisierungsintervall ist kürzer als 1 Sekunde",
+            "description": "Das in den Optionen der Integration gespeicherte Aktualisierungsintervall beträgt {interval} Sekunden. Es muss jetzt mindestens 1 Sekunde betragen, daher fragt die Integration deine Geräte, sobald die Abfrage wieder aktiviert ist, stattdessen alle 15 Sekunden ab, dem Standardwert. Details erfährst du unter {docs_url}.\n\nUm ein anderes Intervall zu verwenden, öffne die [Google Home-Integration]({integration_url}), wähle **Konfigurieren**, gib es ein und wähle dann **OK**.",
+            "menu_options": {
+              "use_default": "Standardwert von 15 Sekunden verwenden"
+            }
+          }
+        }
+      }
+    },
     "homes_deselected": {
       "title": "Keines der Zuhause deines Google-Kontos ist ausgewählt",
       "description": "Dein Google-Konto ist nur Mitglied von Zuhause, die du in den Optionen der Integration abgewählt hast, daher fügt die Integration deren Lautsprecher und Displays nicht hinzu. Um die Geräte eines Zuhauses hinzuzufügen, öffne die [Google Home-Integration]({integration_url}), wähle **Konfigurieren**, wähle das Zuhause unter **Zuhause** aus und wähle dann **OK**.\n\nWenn du diese Zuhause abgewählt lassen möchtest, wähle **Ignorieren**."

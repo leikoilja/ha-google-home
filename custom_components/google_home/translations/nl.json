@@ -200,6 +200,35 @@
         }
       }
     },
+    "invalid_update_interval": {
+      "title": "Het opgeslagen update-interval is korter dan 1 seconde",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Het opgeslagen update-interval is korter dan 1 seconde",
+            "description": "Het update-interval dat in de instellingen van de integratie is opgeslagen, is {interval} seconden. Het moet nu minstens 1 seconde zijn, dus controleert de integratie je apparaten in plaats daarvan elke 15 seconden, de standaardwaarde.\n\nAls je 0 hebt opgeslagen om deze regelmatige controles te stoppen, schakel dan in plaats daarvan polling uit. Anders dan 0 stopt dat ook het zoeken naar Bluetooth-apparaten en het toevoegen van nieuwe apparaten die mDNS vindt. Raadpleeg {docs_url} voor meer informatie.\n\nOm een ander interval te gebruiken, open je de [Google Home-integratie]({integration_url}), selecteer je **Configureer**, vul je het in en selecteer je daarna **Verzend**.",
+            "menu_options": {
+              "use_default": "Standaardwaarde van 15 seconden gebruiken",
+              "turn_off_polling": "In plaats daarvan polling uitschakelen"
+            }
+          }
+        }
+      }
+    },
+    "invalid_update_interval_polling_off": {
+      "title": "Het opgeslagen update-interval is korter dan 1 seconde",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Het opgeslagen update-interval is korter dan 1 seconde",
+            "description": "Het update-interval dat in de instellingen van de integratie is opgeslagen, is {interval} seconden. Het moet nu minstens 1 seconde zijn, dus zodra polling weer is ingeschakeld, controleert de integratie je apparaten in plaats daarvan elke 15 seconden, de standaardwaarde. Raadpleeg {docs_url} voor meer informatie.\n\nOm een ander interval te gebruiken, open je de [Google Home-integratie]({integration_url}), selecteer je **Configureer**, vul je het in en selecteer je daarna **Verzend**.",
+            "menu_options": {
+              "use_default": "Standaardwaarde van 15 seconden gebruiken"
+            }
+          }
+        }
+      }
+    },
     "homes_deselected": {
       "title": "Geen van de huizen van je Google-account is geselecteerd",
       "description": "Je Google-account is alleen lid van huizen die je hebt gedeselecteerd in de instellingen van de integratie, dus de integratie voegt de speakers en schermen in die huizen niet toe. Om de apparaten van een huis toe te voegen, open je de [Google Home-integratie]({integration_url}), selecteer je **Configureer**, selecteer je het huis onder **Huizen** en selecteer je daarna **Verzend**.\n\nAls je deze huizen gedeselecteerd wilt laten, selecteer je **Negeer**."
