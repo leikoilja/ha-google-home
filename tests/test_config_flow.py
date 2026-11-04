@@ -51,8 +51,9 @@ from homeassistant.config_entries import (
     ConfigEntryState,
     ConfigFlowResult,
 )
-from homeassistant.core import HomeAssistant
+from homeassistant.core import DOMAIN as HOMEASSISTANT_DOMAIN, HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
+from homeassistant.helpers import issue_registry as ir
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.service_info.zeroconf import ZeroconfServiceInfo
 
@@ -1031,3 +1032,56 @@ async def test_reauth_other_account(
     assert result["reason"] == "reauth_successful"
     assert config_entry.data["master_token"] == NEW_MASTER_TOKEN
     assert config_entry.data["username"] == EMAIL
+
+
+@pytest.mark.usefixtures("replies", "sign_in")
+async def test_reauth_loaded_entry(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    google: Mock,
+    issue_registry: ir.IssueRegistry,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Reload a loaded entry once after signing in again, so it uses the new token.
+
+    The entry is set up for real, so it has its update listener, which reloads it
+    only when known hosts, homes or Bluetooth tracking change. Home Assistant warns
+    when a flow reloads an entry with such a listener through its own helper, which
+    it says stops working in 2026.12. The sign-in flow and its repair are gone
+    afterwards.
+    """
+    assert await hass.config_entries.async_setup(config_entry.entry_id)
+    await hass.async_block_till_done()
+    # As the integration does when Google rejects the token of a loaded entry
+    config_entry.async_start_reauth(hass)
+    await hass.async_block_till_done()
+    [flow] = hass.config_entries.flow.async_progress_by_handler(DOMAIN)
+    issue_id = f"config_entry_reauth_{DOMAIN}_{config_entry.entry_id}"
+    assert issue_registry.async_get_issue(HOMEASSISTANT_DOMAIN, issue_id) is not None
+    caplog.clear()
+
+    with patch.object(
+        hass.config_entries, "async_reload", wraps=hass.config_entries.async_reload
+    ) as reload:
+        result = await hass.config_entries.flow.async_configure(
+            flow["flow_id"], {"next_step_id": "master_token"}
+        )
+        result = await submit(hass, result, SIGN_IN_INPUT["master_token"])
+        await hass.async_block_till_done()
+
+    assert result["reason"] == "reauth_successful"
+    assert config_entry.data["master_token"] == NEW_MASTER_TOKEN
+    reload.assert_awaited_once_with(config_entry.entry_id)
+    assert config_entry.state is ConfigEntryState.LOADED
+    # Setup's fetch, then the reloaded entry's with the new token
+    assert [call.args[0].master_token for call in google.call_args_list] == [
+        MASTER_TOKEN,
+        NEW_MASTER_TOKEN,
+    ]
+    assert hass.config_entries.flow.async_progress_by_handler(DOMAIN) == []
+    assert issue_registry.async_get_issue(HOMEASSISTANT_DOMAIN, issue_id) is None
+    assert [
+        record.getMessage()
+        for record in caplog.records
+        if record.levelno >= logging.WARNING
+    ] == []
