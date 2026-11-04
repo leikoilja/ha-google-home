@@ -10,6 +10,9 @@ The times are in seconds after the alarm's or timer's fire time. The speaker ans
 the alarms request with the reply of the latest change at or before that second.
 """
 
+# Each test of fire-time polling shares the clock and the speaker's replies
+# pylint: disable=too-many-lines
+
 from collections.abc import Iterator, Mapping
 from datetime import UTC, datetime, timedelta
 from http import HTTPStatus
@@ -38,7 +41,9 @@ from homeassistant.helpers import event
 from .conftest import (
     BEDROOM,
     DELETE,
+    INVALID_JSON,
     SPEAKER_ID,
+    UNEXPECTED,
     Held,
     Replies,
     bedroom_speaker,
@@ -308,6 +313,92 @@ async def test_ringing_window(
 
     assert await run(hass, aioclient_mock, freezer, replies, 481, changes) == asked
     assert next_alarm_status(hass) == status
+
+
+# Alarms replies that can't be read
+UNREADABLE = [
+    # Without its fire time, the alarm can't be read
+    pytest.param(
+        (HTTPStatus.OK, {"alarm": [{"id": ALARM_ID, "status": 2}], "timer": []}),
+        id="malformed",
+    ),
+    pytest.param((HTTPStatus.OK, INVALID_JSON), id="invalid-json"),
+]
+
+
+@pytest.mark.usefixtures("google")
+@pytest.mark.parametrize("unreadable", UNREADABLE)
+async def test_alarms_reply_that_cant_be_read_updates_at_interval(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    replies: Replies,
+    aioclient_mock: AiohttpClientMocker,
+    freezer: FrozenDateTimeFactory,
+    unreadable: Reply,
+) -> None:
+    """Update at the interval after an alarms reply that can't be read, showing the ringing alarm it had.
+
+    The next reply that can be read, while the alarm still rings, brings back the
+    updates every 10 s.
+    """
+    await start(hass, config_entry, replies, freezer, -60, SET)
+    changes = {0: RINGING, 15: unreadable, 200: RINGING}
+
+    assert await run(hass, aioclient_mock, freezer, replies, 21, changes) == [1, 11, 21]
+    assert next_alarm_status(hass) == "ringing"
+    assert await run(hass, aioclient_mock, freezer, replies, 221, changes) == [
+        21 + INTERVAL,
+        31 + INTERVAL,
+        41 + INTERVAL,
+    ]
+
+
+@pytest.mark.usefixtures("google", "window")
+@pytest.mark.parametrize("unreadable", UNREADABLE)
+async def test_alarms_reply_that_cant_be_read_keeps_ringing_window(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    replies: Replies,
+    aioclient_mock: AiohttpClientMocker,
+    freezer: FrozenDateTimeFactory,
+    unreadable: Reply,
+) -> None:
+    """Time the updates after an alarms reply that can't be read from when the alarm started ringing.
+
+    Also though the next reply that can be read gives a later fire time. Here that
+    window has ended, so the updates stay at the interval.
+    """
+    await start(hass, config_entry, replies, freezer, -60, SET)
+    changes = {0: RINGING, 15: unreadable, 200: answer(alarm(ALARM_RINGING, 200))}
+
+    assert await run(hass, aioclient_mock, freezer, replies, 21, changes) == [1, 11, 21]
+    assert next_alarm_status(hass) == "ringing"
+    assert await run(hass, aioclient_mock, freezer, replies, 381, changes) == [
+        21 + INTERVAL,
+        21 + 2 * INTERVAL,
+    ]
+    assert next_alarm_status(hass) == "ringing"
+
+
+@pytest.mark.usefixtures("google")
+async def test_alarm_of_unknown_status_isnt_followed(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    replies: Replies,
+    aioclient_mock: AiohttpClientMocker,
+    freezer: FrozenDateTimeFactory,
+) -> None:
+    """Update at the interval around an alarm whose status the integration doesn't know.
+
+    Its reply still counts as one the update got, and the alarm is listed as unknown.
+    """
+    await start(hass, config_entry, replies, freezer, -60, answer(alarm(6)))
+    device = runtime(config_entry).devices[SPEAKER_ID]
+
+    assert await run(hass, aioclient_mock, freezer, replies, 120) == [120]
+    assert next_alarm_status(hass) == "unknown"
+    assert device.data is not None
+    assert device.data.polled_snapshots == 2
 
 
 async def hold_dnd(
@@ -630,13 +721,18 @@ async def test_action_answer_during_unanswered_update(
     [
         # Not answered, which the update handles: it still got the alarms
         pytest.param(DND, TimeoutError(), [1, 11, 21, 31], id="handled"),
-        # An answer the update can't read, which fails it
+        # Answers the update can't read, which it handles too
         pytest.param(
-            VOLUME,
-            (HTTPStatus.OK, {"volume": "loud"}),
-            [1, 11, 11 + INTERVAL],
-            id="failed",
+            VOLUME, (HTTPStatus.OK, {"volume": "loud"}), [1, 11, 21, 31], id="volume"
         ),
+        pytest.param(
+            VOLUME, (HTTPStatus.OK, INVALID_JSON), [1, 11, 21, 31], id="volume-json"
+        ),
+        pytest.param(
+            DND, (HTTPStatus.OK, INVALID_JSON), [1, 11, 21, 31], id="dnd-json"
+        ),
+        # An error the update doesn't expect, which fails it
+        pytest.param(VOLUME, UNEXPECTED, [1, 11, 11 + INTERVAL], id="failed"),
     ],
 )
 async def test_later_request_fails(
@@ -663,13 +759,8 @@ async def test_later_request_fails(
     [
         # The update gets no answer for the alarms, which it handles
         pytest.param(ALARMS, TimeoutError(), RINGING, id="not-answered"),
-        # The update gets the ringing alarm, then fails on the alarm volume's answer
-        pytest.param(
-            VOLUME,
-            (HTTPStatus.OK, {"volume": "loud"}),
-            SUPPORTED[VOLUME],
-            id="failed",
-        ),
+        # The update gets the ringing alarm, then fails on the alarm volume request
+        pytest.param(VOLUME, UNEXPECTED, SUPPORTED[VOLUME], id="failed"),
     ],
 )
 async def test_listener_added_during_update_without_alarms(

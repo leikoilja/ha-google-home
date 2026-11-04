@@ -63,6 +63,10 @@ SPEAKER_NAME = "Kitchen speaker"
 BEDROOM = "10.0.0.3"
 BEDROOM_ID = "bedroom"
 DELETE = "delete"
+# A body that isn't valid JSON, although its content type says it is
+INVALID_JSON = b"<html>"
+# An error that no request expects, as a bug would raise, which fails the update
+UNEXPECTED = RuntimeError("unexpected")
 
 
 def kitchen_speaker(ip_address: str | None = SPEAKER) -> Device:
@@ -413,6 +417,9 @@ def fixture_replies(aioclient_mock: AiohttpClientMocker) -> Replies:
         if isinstance(reply, Exception):
             return AiohttpClientMockResponse(method, url, exc=reply)
         status, body = reply if isinstance(reply, tuple) else (reply, None)
+        # Bytes are the body as it comes, such as one that isn't valid JSON
+        if isinstance(body, bytes):
+            return AiohttpClientMockResponse(method, url, status=status, response=body)
         return AiohttpClientMockResponse(method, url, status=status, json=body)
 
     for method in ("get", "post"):

@@ -4,7 +4,7 @@ from http import HTTPStatus
 import json
 import logging
 from time import monotonic
-from typing import Literal, cast
+from typing import Literal
 
 from aiohttp import (
     ClientConnectionError,
@@ -27,10 +27,8 @@ from .const import (
     FIRMWARE_CHECK_INTERVAL,
     HEADER_CAST_LOCAL_AUTH,
     HEADER_CONTENT_TYPE,
-    JSON_ALARM,
     JSON_ALARM_VOLUME,
     JSON_NOTIFICATIONS_ENABLED,
-    JSON_TIMER,
     PORT,
     SUPPORT_CHECK_DELAY,
     TIMEOUT,
@@ -48,7 +46,7 @@ from .exceptions import (
     RequestFailure,
 )
 from .models import GoogleHomeDevice
-from .types import AlarmJsonDict, JsonDict, TimerJsonDict
+from .types import JsonDict
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -336,7 +334,8 @@ class GlocaltokensApiClient(GoogleAccountClient):
         """Fetch timers and alarms from google device.
 
         Unless polling, raise if they can't be fetched, so an action doesn't
-        work from the alarms and timers of the last update.
+        work from the alarms and timers of the last update. A reply that can't be
+        read replaces neither, and an update doesn't count it as having got them.
         """
         try:
             response = await self.request(
@@ -347,12 +346,20 @@ class GlocaltokensApiClient(GoogleAccountClient):
             )
         except DeviceRequestFailed as error:
             raise AlarmsAndTimersNotFetched(device.name, error) from error
+        # Only an action's: an update's request logs it
+        except (json.JSONDecodeError, UnicodeDecodeError) as error:
+            _LOGGER.error(
+                "%s sent a reply that isn't valid JSON: %s", device.name, error
+            )
+            raise AlarmsAndTimersNotFetched(device.name) from error
 
-        if response is not None:
-            device.alarms_reply = response
-        if response is not None and JSON_TIMER in response and JSON_ALARM in response:
-            device.set_timers(cast(list[TimerJsonDict], response[JSON_TIMER]))
-            device.set_alarms(cast(list[AlarmJsonDict], response[JSON_ALARM]))
+        # An update's request that failed: request() logged it and marked the update
+        # as failed, which it wasn't before, as this is the update's first request.
+        # Any other None is a reply of JSON null or an empty body.
+        if response is None and polling and device.update_failed:
+            return device
+        device.alarms_reply = response
+        if isinstance(response, dict) and device.set_alarms_and_timers(response):
             if polling:
                 device.polled_snapshots += 1
             _LOGGER.debug(
@@ -361,19 +368,18 @@ class GlocaltokensApiClient(GoogleAccountClient):
                 response,
             )
             return device
-        if response is not None:
-            log_failure(
-                device,
-                polling,
-                "unknown alarms reply",
-                (
-                    "Failed to parse fetched alarms and timers for device %s - "
-                    "API returned unknown json structure. "
-                    "Received = %s"
-                ),
-                device.name,
-                response,
-            )
+        log_failure(
+            device,
+            polling,
+            "unknown alarms reply",
+            (
+                "Failed to parse fetched alarms and timers for device %s - "
+                "API returned unknown json structure. "
+                "Received = %s"
+            ),
+            device.name,
+            response,
+        )
         if not polling:
             raise AlarmsAndTimersNotFetched(device.name)
         return device
@@ -533,7 +539,20 @@ class GlocaltokensApiClient(GoogleAccountClient):
         )
         if response and JSON_ALARM_VOLUME in response:
             volume_raw = str(response[JSON_ALARM_VOLUME])
-            device.alarm_volume = round(float(volume_raw) * 100)
+            try:
+                volume = round(float(volume_raw) * 100)
+            # Not a number, such as "loud": keep the volume it had
+            except ValueError, OverflowError:
+                log_failure(
+                    device,
+                    True,
+                    "invalid alarm volume",
+                    "%s sent an alarm volume that isn't a number: %s",
+                    device.name,
+                    volume_raw,
+                )
+                return device
+            device.alarm_volume = volume
             _LOGGER.debug(
                 "Received alarm volume from Google Home device %s - Volume: %d(raw=%s)",
                 device.name,
@@ -599,9 +618,10 @@ class GlocaltokensApiClient(GoogleAccountClient):
         """Shared request method.
 
         Unless polling, raise DeviceRequestFailed when the device doesn't answer
-        200 or its answer can't be read. An update only logs it, and gets None.
-        Without read_reply, the 200 is the whole answer: the rest isn't read, and
-        {} is returned.
+        200 or its answer can't be read, and JSONDecodeError or UnicodeDecodeError
+        when it answers 200 with a reply that isn't valid JSON. An update only logs
+        it, and gets None. Without read_reply, the 200 is the whole answer: the rest
+        isn't read, and {} is returned.
         """
         try:
             return await self._send(
@@ -612,6 +632,19 @@ class GlocaltokensApiClient(GoogleAccountClient):
                 device.update_failed = True
                 return None
             raise
+        except (json.JSONDecodeError, UnicodeDecodeError) as error:
+            if not polling:
+                raise
+            log_failure(
+                device,
+                polling,
+                "invalid JSON",
+                "%s sent a reply to %s that isn't valid JSON: %s",
+                device.name,
+                endpoint,
+                error,
+            )
+            return None
 
     async def _send(
         self,
@@ -665,15 +698,9 @@ class GlocaltokensApiClient(GoogleAccountClient):
             ) as response:
                 status = response.status
                 if response.status == HTTPStatus.OK:
-                    # It accepts its token, so its next rejection fetches straight away
-                    self._token_waits.pop(device.device_id, None)
-                    try:
-                        # Without read_reply, what comes after the status, or
-                        # doesn't, can't undo it
-                        resp = await response.json() if read_reply else {}
-                    except ContentTypeError:
-                        resp = {}
-                    device.available = True
+                    resp = await self._read_answer(
+                        response, device, endpoint, polling, read_reply=read_reply
+                    )
                 else:
                     failure = answer_failure(device, response, polling=polling)
             # Only once the answer has been read, if it's read: a 200 whose body
@@ -732,6 +759,35 @@ class GlocaltokensApiClient(GoogleAccountClient):
                 device.name, failure, polling_off=self.polling_off
             )
         return resp
+
+    async def _read_answer(
+        self,
+        response: ClientResponse,
+        device: GoogleHomeDevice,
+        endpoint: str,
+        polling: bool,
+        *,
+        read_reply: bool,
+    ) -> JsonDict | None:
+        """Return the reply of the device's 200, and make the device available once it's read.
+
+        Without read_reply, what comes after the status, or doesn't, can't undo it, and
+        {} is returned, as for a reply that isn't JSON. Raise JSONDecodeError or
+        UnicodeDecodeError for one that says it is but isn't valid, which still counts
+        as an answer.
+        """
+        # It accepts its token, so its next rejection fetches straight away
+        self._token_waits.pop(device.device_id, None)
+        try:
+            reply = await response.json() if read_reply else {}
+        except ContentTypeError:
+            reply = {}
+        except json.JSONDecodeError, UnicodeDecodeError:
+            device.available = True
+            device.statuses[endpoint, polling] = response.status
+            raise
+        device.available = True
+        return reply
 
     def _mark_token_rejected(self, device: GoogleHomeDevice, *, polling: bool) -> None:
         """Mark a device that rejected its token, with no new one to try.

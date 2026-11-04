@@ -14,6 +14,7 @@ from ghome_foyer_api.api_pb2 import HomeGraph  # pylint: disable=no-name-in-modu
 import pytest
 from pytest_homeassistant.common import MockConfigEntry, async_fire_time_changed
 from pytest_homeassistant.test_util.aiohttp import AiohttpClientMocker
+from pytest_homeassistant.typing import WebSocketGenerator
 
 from custom_components.google_home.const import DOMAIN, FETCH_DEVICES_INTERVAL
 
@@ -26,6 +27,7 @@ from homeassistant.helpers import (
     device_registry as dr,
     entity_registry as er,
 )
+from homeassistant.setup import async_setup_component
 
 from .conftest import (
     BEDROOM,
@@ -473,3 +475,69 @@ async def test_speaker_glocaltokens_leaves_out_stays(
     await fetch_list(hass, config_entry, clock, 5)
 
     assert bedroom_device(device_registry, config_entry) is None
+
+
+@pytest.mark.parametrize(
+    "without_bedroom",
+    [
+        pytest.param(home_graph_with(KITCHEN_IN_HOME_GRAPH), id="google-dropped-it"),
+        pytest.param(
+            home_graph_with(
+                KITCHEN_IN_HOME_GRAPH,
+                in_home_graph(
+                    BEDROOM_ID, BEDROOM_CLOUD_ID, "Bedroom speaker", token=""
+                ),
+            ),
+            id="glocaltokens-leaves-it-out",
+        ),
+    ],
+)
+async def test_speaker_deleted_by_user_gets_entities_when_listed_again(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    home_graph: Mock,
+    clock: Mock,
+    device_registry: dr.DeviceRegistry,
+    entity_registry: er.EntityRegistry,
+    hass_ws_client: WebSocketGenerator,
+    aioclient_mock: AiohttpClientMocker,
+    freezer: FrozenDateTimeFactory,
+    without_bedroom: HomeGraph,
+) -> None:
+    """Give a speaker that the user deleted its entities back when Google lists it again.
+
+    Once the list lacks the speaker, the user can delete it from its device page:
+    before the integration removes it, or while glocaltokens leaves it out of the
+    list and the home graph still has it, so it's never removed. Listed again, it
+    gets its entities back, and only one coordinator asks it.
+    """
+    await set_up(hass, config_entry)
+    entities = entity_ids(entity_registry, config_entry)
+    home_graph.return_value = without_bedroom
+    await fetch_list(hass, config_entry, clock, 1)
+    bedroom = bedroom_device(device_registry, config_entry)
+    assert bedroom is not None
+
+    assert await async_setup_component(hass, "config", {})
+    client = await hass_ws_client(hass)
+    await client.send_json_auto_id(
+        {"type": "config/device_registry/remove", "device_id": bedroom.id}
+    )
+    response = await client.receive_json()
+    await hass.async_block_till_done(wait_background_tasks=True)
+    assert response["success"]
+    assert BEDROOM_ALARMS not in entity_ids(entity_registry, config_entry)
+
+    home_graph.return_value = home_graph_with(
+        KITCHEN_IN_HOME_GRAPH,
+        in_home_graph(BEDROOM_ID, BEDROOM_CLOUD_ID, "Bedroom speaker"),
+    )
+    await fetch_list(hass, config_entry, clock, 2)
+
+    assert entity_ids(entity_registry, config_entry) == entities
+    assert state(hass, BEDROOM_ALARMS) == "2023-11-14T14:13:20-08:00"
+    asked(aioclient_mock)
+    freezer.tick(timedelta(seconds=15))
+    async_fire_time_changed(hass)
+    await hass.async_block_till_done(wait_background_tasks=True)
+    assert asked_by(asked(aioclient_mock), BEDROOM) == EVERYTHING

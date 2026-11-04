@@ -358,14 +358,14 @@ def test_delete_all_fails_when_fetch_fails(
 
 def set_up_devices(
     sensor_class: type[GoogleHomeBaseEntity],
-    replies: dict[str, JsonDict | None],
+    replies: dict[str, JsonDict | Exception | None],
     delete_replies: dict[str, JsonDict | None] | None = None,
 ) -> tuple[list[GoogleHomeBaseEntity], AsyncMock, dict[str, Mock]]:
     """Return a sensor for each device named in replies, the delete, as a mock, and each device's coordinator by name.
 
-    Each device sends its reply when asked for its alarms and timers. The last
-    poll saw other IDs, which the delete actions must not use. A device
-    confirms a delete unless delete_replies gives its reply.
+    Each device sends its reply when asked for its alarms and timers, or raises it
+    if it's an exception. The last poll saw other IDs, which the delete actions must
+    not use. A device confirms a delete unless delete_replies gives its reply.
     """
     devices = [
         set_alarms_and_timers(
@@ -385,6 +385,8 @@ def set_up_devices(
         # must wait for it before raising
         if (reply := replies[device.name]) is not None:
             await asyncio.sleep(0.01)
+        if isinstance(reply, Exception):
+            raise reply
         return reply
 
     client = GlocaltokensApiClient(Mock(), Mock(), master_token=MASTER_TOKEN)
@@ -485,19 +487,18 @@ def test_delete_all_names_every_device_it_cant_fetch(
 def test_delete_all_raises_unexpected_error(
     action: str, sensor_class: type[GoogleHomeBaseEntity]
 ) -> None:
-    """Raise an unexpected error, such as from a malformed reply, rather than hide it."""
+    """Raise an unexpected error, as a bug would, rather than hide it."""
     func, _ = get_registered_action(action)
     sensors, delete, coordinators = set_up_devices(
         sensor_class,
-        # A timer without its fields
         {
             "Kitchen": None,
             "Bedroom": REPLY,
-            "Office": {"alarm": [], "timer": [TimerJsonDict()]},
+            "Office": RuntimeError("unexpected"),
         },
     )
 
-    with pytest.raises(KeyError):
+    with pytest.raises(RuntimeError, match="unexpected"):
         asyncio.run(func(sensors, Mock(data={})))
 
     assert [c.kwargs["device"].name for c in delete.await_args_list] == ["Bedroom"]
