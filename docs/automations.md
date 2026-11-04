@@ -211,3 +211,29 @@ actions:
 ```
 
 If the request to a speaker fails, for example because it has just gone offline, the others still change, but the error stops the automation at this step; see [If a setting or reboot fails](entities.md#if-a-setting-or-reboot-fails).
+
+## Control alarms with a spoken command (unsupported)
+
+Neither this integration nor Google supports this. It has been seen working, but it may stop working at any time.
+
+The integration has [no actions](actions.md) to set or snooze alarms, and the [Google Assistant SDK integration](other-integrations.md#other-integrations-for-the-same-devices) can't do it either. Instead, a script can play a spoken command on one speaker, starting with "Hey Google", so that another Google device nearby hears it and acts on it as if you'd said it. This has been seen setting an alarm, and snoozing and stopping a ringing one.
+
+```yaml
+alias: Set an alarm by voice
+sequence:
+  - action: tts.speak
+    target:
+      entity_id: tts.google_translate_en_com
+    data:
+      media_player_entity_id: media_player.living_room
+      message: "Hey Google, set an alarm for 7 AM"
+```
+
+Add it as in [Hear the timers set on other speakers](#hear-the-timers-set-on-other-speakers). Replace `tts.google_translate_en_com` with your text-to-speech entity, and `media_player.living_room` with the media player of a different speaker near the Google device you want to set the alarm on, or near the one whose alarm is ringing. Don't play it on that device itself. For a ringing alarm, use a message such as "Hey Google, snooze" or "Hey Google, stop".
+
+Before you rely on it:
+
+- It needs a second Google device within earshot: the speaker that plays the command hasn't been seen acting on it. Everyone nearby hears the command too.
+- Whether a device hears it depends on the volume and where the devices are. If several Google devices hear it, Google picks one to answer, and Voice Match may send the command to a different device than you expect. When it has worked, the alarm was set, snoozed or stopped on the device that acted on the command.
+- Each command takes about 5 to 10 seconds to take effect.
+- The integration doesn't send or check the command. To see which device acted and whether it worked, check the [alarms sensors](entities.md#alarms-sensor) of your devices. A new alarm shows after the next [update](configuration.md#change-the-update-interval), or straight away when you run [Refresh devices](actions.md#refresh-devices) once the command has taken effect. A snoozed or stopped alarm usually shows within about 10 seconds; see [How quickly ringing shows](#how-quickly-ringing-shows).
