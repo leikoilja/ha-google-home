@@ -54,7 +54,7 @@ Read the full documentation at **[ha-google-home.pages.dev](https://ha-google-ho
 
 ## Contribution
 
-Ask questions in [GitHub Discussions](https://github.com/leikoilja/ha-google-home/discussions), and report bugs or suggest features in [issues](https://github.com/leikoilja/ha-google-home/issues/new/choose). To translate the integration or change its code, see [Contributing](https://ha-google-home.pages.dev/contributing/).
+Ask questions, report bugs or suggest features in [issues](https://github.com/leikoilja/ha-google-home/issues/new/choose). To translate the integration or change its code, see [Contributing](https://ha-google-home.pages.dev/contributing/).
 
 ## Credits
 

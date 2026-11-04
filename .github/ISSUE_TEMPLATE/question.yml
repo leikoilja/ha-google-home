@@ -1,8 +1,12 @@
+name: Question
+description: Get help with setup or usage.
+labels:
+  - question
 body:
   - type: markdown
     attributes:
       value: |
-        Check the [documentation](https://ha-google-home.pages.dev/) and search the [existing discussions](https://github.com/leikoilja/ha-google-home/discussions) first. To report a bug, [open an issue](https://github.com/leikoilja/ha-google-home/issues/new/choose) instead.
+        Check the [documentation](https://ha-google-home.pages.dev/) and search the [existing issues](https://github.com/leikoilja/ha-google-home/issues?q=is%3Aissue) first. To report a bug, use the [bug report form](https://github.com/leikoilja/ha-google-home/issues/new?template=bug_report.yml) instead.
 
         **Don't paste or attach your master token, the `oauth_token` cookie or any other token or cookie.** The master token and the cookie give access to your Google account.
   - type: textarea
