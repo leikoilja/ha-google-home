@@ -137,7 +137,7 @@ While you run `master`, **Settings** > **Devices & services** > **Google Home** 
 
     !!! warning "An update replaces `master`"
 
-        While you run `master`, Home Assistant may offer the latest release as an update, in **Settings** or on the integration's Marketplace page. Installing it replaces `master` with that release, so a fix that isn't released yet is gone. Install it only when you want to go back, then restart Home Assistant.
+        While you run `master`, Home Assistant may offer the latest release as an update, in **Settings** or on the integration's Marketplace page. Installing it replaces `master` with that release, so a fix that isn't released yet is gone. Install it only when you want to go back, then restart Home Assistant. While you test, you can open the update in **Settings** and select **Skip**: this hides only that release, and Home Assistant offers the next one as usual.
 
     To go back when **Settings** offers no update, or the update can't be installed, [open Google Home in the Marketplace](https://my.home-assistant.io/redirect/marketplace_repository/?owner=leikoilja&repository=ha-google-home&category=integration) and select **⋮** > **Install another version**. Under **Version**, choose the release marked **Latest**, then select **Update**. Restart Home Assistant afterwards.
 
