@@ -22,7 +22,7 @@ When you [sign in again](#sign-in-again), the form shows the same sign-in errors
 
 ### "Username/Password is incorrect" {#username-or-password-is-incorrect}
 
-[Update the integration](https://github.com/leikoilja/ha-google-home/releases/latest) and use [browser sign-in](installation.md#browser-sign-in). Older versions of the integration signed in with an app password, which Google rejects for many accounts.
+[Update the integration](installation.md#install-the-integration), from the Marketplace or manually, and use [browser sign-in](installation.md#browser-sign-in). Older versions of the integration signed in with an app password, which Google rejects for many accounts.
 
 ### "Google didn't accept the cookie"
 
