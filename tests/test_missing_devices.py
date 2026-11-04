@@ -140,6 +140,13 @@ def found(
     return device
 
 
+def available_attribute(sensor: GoogleHomeDeviceSensor) -> bool:
+    """Return the device sensor's available attribute now."""
+    attributes = sensor.extra_state_attributes
+    assert attributes is not None
+    return attributes["available"]
+
+
 async def until(condition: Callable[[], bool]) -> None:
     """Let the other tasks run until the condition holds.
 

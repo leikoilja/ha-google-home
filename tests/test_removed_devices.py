@@ -42,6 +42,7 @@ from .conftest import (
 )
 from .test_coordinators import (
     BEDROOM_ALARMS,
+    BEDROOM_DEVICE,
     BEDROOM_DND,
     EVERYTHING,
     KITCHEN_ALARMS,
@@ -51,6 +52,7 @@ from .test_coordinators import (
     runtime,
     update_account,
 )
+from .test_malformed_replies import BEDROOM_VOLUME
 from .test_missing_devices import (
     FETCH_ERRORS,
     LOCAL_AUTH_TOKEN,
@@ -246,6 +248,48 @@ async def test_speaker_listed_again_between_lists_without_it_stays(
 
     assert bedroom_device(device_registry, config_entry) == bedroom
     assert entity_ids(entity_registry, config_entry) == entities
+
+
+@pytest.mark.usefixtures("two_speakers")
+async def test_speaker_listed_again_without_address(
+    hass: HomeAssistant, config_entry: MockConfigEntry, google: Mock, clock: Mock
+) -> None:
+    """Show only the entities that need its address as unavailable when a speaker is listed again without one.
+
+    A list that lacks the speaker makes mDNS forget its address, so the next list
+    gives a new device object without one. Its alarms, timers and settings entities
+    stay available with what that object has until the speaker answers. This pins
+    which entities need the address, not that those values are right.
+    """
+    await set_up(hass, config_entry)
+    assert state(hass, BEDROOM_DEVICE) == BEDROOM
+    assert state(hass, BEDROOM_DND) == "on"
+
+    google.return_value = [kitchen_speaker()]
+    await fetch_list(hass, config_entry, clock, 1)
+    device = hass.states.get(BEDROOM_DEVICE)
+    assert device is not None
+    assert device.state == STATE_UNAVAILABLE
+    assert "ip_address" not in device.attributes
+
+    google.return_value = [kitchen_speaker(), bedroom_speaker(None)]
+    await fetch_list(hass, config_entry, clock, 2)
+
+    device = hass.states.get(BEDROOM_DEVICE)
+    assert device is not None
+    assert device.state == STATE_UNAVAILABLE
+    assert "ip_address" not in device.attributes
+    assert state(hass, "button.bedroom_speaker_reboot") == STATE_UNAVAILABLE
+    assert state(hass, "binary_sensor.bedroom_speaker_update") == STATE_UNAVAILABLE
+    assert state(hass, BEDROOM_DND) == "off"
+    assert state(hass, BEDROOM_VOLUME) == "0"
+    # Their state reads unavailable when nothing will ring, but Home Assistant
+    # writes their attributes only while they're available
+    alarms = hass.states.get(BEDROOM_ALARMS)
+    timers = hass.states.get("sensor.bedroom_speaker_timers")
+    assert alarms is not None
+    assert timers is not None
+    assert (alarms.attributes["alarms"], timers.attributes["timers"]) == ([], [])
 
 
 @pytest.mark.usefixtures("two_speakers")

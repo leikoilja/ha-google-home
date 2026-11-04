@@ -59,6 +59,7 @@ from .const import (
     SERVICE_REFRESH,
 )
 from .entity import (
+    GoogleHomeAddressedEntity,
     GoogleHomeBaseEntity,
     GoogleHomeFeatureEntity,
     async_add_device_entities,
@@ -424,7 +425,7 @@ async def async_reboot_devices(
         raise failed[0]
 
 
-class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
+class GoogleHomeDeviceSensor(GoogleHomeAddressedEntity):
     """Google Home Device sensor."""
 
     _attr_translation_key = "device"
@@ -438,15 +439,6 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
 
     @property
     @override
-    def available(self) -> bool:
-        """Return whether the device was found on the network."""
-        device = self.get_device()
-        return (
-            super().available and device is not None and device.ip_address is not None
-        )
-
-    @property
-    @override
     def state(self) -> str | None:
         """Return device IP address if any."""
         device = self.get_device()
@@ -454,18 +446,10 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
 
     @property
     @override
-    def extra_state_attributes(self) -> DeviceAttributes:
-        """Return the state attributes."""
+    def extra_state_attributes(self) -> DeviceAttributes | None:
+        """Return the state attributes, or None while Google doesn't list the device."""
         device = self.get_device()
-        attributes: DeviceAttributes = {
-            "device_id": None,
-            "device_name": self.device_name,
-            "home": None,
-            "auth_token": None,
-            "ip_address": None,
-            "available": False,
-        }
-        return self.get_device_attributes(device) if device else attributes
+        return self.get_device_attributes(device) if device else None
 
     @staticmethod
     def get_device_attributes(device: GoogleHomeDevice) -> DeviceAttributes:
@@ -480,7 +464,7 @@ class GoogleHomeDeviceSensor(GoogleHomeBaseEntity):
         }
 
 
-class WifiSensor(GoogleHomeBaseEntity, SensorEntity):
+class WifiSensor(GoogleHomeAddressedEntity, SensorEntity):
     """What the device's info said about its Wi-Fi at the last firmware check.
 
     Disabled by default, as few users need it. Every device gets it, also one that
@@ -489,15 +473,6 @@ class WifiSensor(GoogleHomeBaseEntity, SensorEntity):
 
     _attr_entity_category = EntityCategory.DIAGNOSTIC
     _attr_entity_registry_enabled_default = False
-
-    @property
-    @override
-    def available(self) -> bool:
-        """Return whether the device was found on the network, as for its device sensor."""
-        device = self.get_device()
-        return (
-            super().available and device is not None and device.ip_address is not None
-        )
 
 
 class WifiNetworkSensor(WifiSensor):
