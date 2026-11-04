@@ -1,17 +1,21 @@
 """Models for Google Home."""
 
+from collections.abc import Mapping
 from datetime import timedelta
 from enum import Enum
 from http import HTTPStatus
 import logging
 import math
 import sys
+from typing import Self, override
 
 from homeassistant.util.dt import as_local, utc_from_timestamp
 
 from .const import (
     DATETIME_STR_FORMAT,
     GOOGLE_HOME_ALARM_DEFAULT_VALUE,
+    JSON_ALARM,
+    JSON_TIMER,
     UNANSWERED_UPDATES,
 )
 from .types import (
@@ -28,6 +32,36 @@ _LOGGER: logging.Logger = logging.getLogger(__package__)
 def convert_from_ms_to_s(timestamp: int) -> int:
     """Convert from milliseconds to seconds."""
     return round(timestamp / 1000)
+
+
+def is_number(value: object) -> bool:
+    """Return whether a JSON value is a whole number or a finite one.
+
+    True and false aren't numbers. A whole number isn't turned into a float to check
+    it, so one too large to convert is left for its conversion to reject.
+    """
+    if isinstance(value, float):
+        return math.isfinite(value)
+    return isinstance(value, int) and not isinstance(value, bool)
+
+
+def is_item(
+    item: object, numbers: tuple[str, ...], optional_numbers: tuple[str, ...] = ()
+) -> bool:
+    """Return whether an alarm or timer has its ID, its status and these numbers.
+
+    The status must be a whole number, and an optional number may be missing or null.
+    """
+    return (
+        isinstance(item, dict)
+        and isinstance(item.get("id"), str)
+        and isinstance(status := item.get("status"), int)
+        and not isinstance(status, bool)
+        and all(is_number(item.get(key)) for key in numbers)
+        and all(
+            item.get(key) is None or is_number(item[key]) for key in optional_numbers
+        )
+    )
 
 
 class GoogleHomeDevice:
@@ -53,7 +87,8 @@ class GoogleHomeDevice:
         self.cloud_device_id = cloud_device_id.lower() if cloud_device_id else None
         # The name of its home in the Google Home app, if Google gives one
         self.home_name = home_name
-        # Whether the last request for alarms, settings or a reboot succeeded. Its
+        # Whether the last request for alarms, settings or a reboot was answered 200,
+        # even with a reply that isn't valid JSON or isn't in the expected form. Its
         # alarms, timers and settings entities are added only then.
         self.available = True
         # Whether its alarms, or else its info, answered 200 at the last update: the
@@ -151,32 +186,43 @@ class GoogleHomeDevice:
         self.unanswered_updates = 0
         return True
 
+    def set_alarms_and_timers(self, reply: Mapping[str, object]) -> bool:
+        """Store the alarms and timers of a reply to the alarms request, if it can be read.
+
+        Return whether it could. Otherwise keep the ones the device has, so the reply
+        doesn't leave new timers next to old alarms: it needs a list of each, whose
+        items all have the fields that GoogleHomeAlarm and GoogleHomeTimer read, with
+        times that can be converted. Their labels and recurrences are kept as they come.
+        """
+        alarms, timers = reply.get(JSON_ALARM), reply.get(JSON_TIMER)
+        if not (
+            isinstance(alarms, list)
+            and isinstance(timers, list)
+            and all(is_item(alarm, ("fire_time",)) for alarm in alarms)
+            and all(
+                is_item(
+                    timer, ("original_duration",), ("fire_time", "remaining_duration")
+                )
+                for timer in timers
+            )
+        ):
+            return False
+        try:
+            new_alarms = [GoogleHomeAlarm.from_json(alarm) for alarm in alarms]
+            new_timers = [GoogleHomeTimer.from_json(timer) for timer in timers]
+        # A time too far off to convert, such as a year after 9999
+        except ValueError, OverflowError, OSError:
+            return False
+        self._alarms, self._timers = new_alarms, new_timers
+        return True
+
     def set_alarms(self, alarms: list[AlarmJsonDict]) -> None:
         """Store alarms as GoogleHomeAlarm objects."""
-        self._alarms = [
-            GoogleHomeAlarm(
-                alarm_id=alarm["id"],
-                fire_time=alarm["fire_time"],
-                status=alarm["status"],
-                label=alarm.get("label"),
-                recurrence=alarm.get("recurrence"),
-            )
-            for alarm in alarms
-        ]
+        self._alarms = [GoogleHomeAlarm.from_json(alarm) for alarm in alarms]
 
     def set_timers(self, timers: list[TimerJsonDict]) -> None:
         """Store timers as GoogleHomeTimer objects."""
-        self._timers = [
-            GoogleHomeTimer(
-                timer_id=timer["id"],
-                fire_time=timer.get("fire_time"),
-                duration=timer["original_duration"],
-                remaining=timer.get("remaining_duration"),
-                status=timer["status"],
-                label=timer.get("label"),
-            )
-            for timer in timers
-        ]
+        self._timers = [GoogleHomeTimer.from_json(timer) for timer in timers]
 
     def remove_alarms_and_timers(self, ids: list[str]) -> None:
         """Remove the alarms and timers with these IDs."""
@@ -184,13 +230,12 @@ class GoogleHomeDevice:
         self._timers = [timer for timer in self._timers if timer.timer_id not in ids]
 
     def get_sorted_alarms(self) -> list[GoogleHomeAlarm]:
-        """Return alarms in a sorted order. Inactive & missed alarms are at the end."""
+        """Return alarms in a sorted order. Inactive, missed and unknown alarms are at the end."""
         return sorted(
             self._alarms,
             key=lambda k: (
                 k.fire_time
-                if k.status
-                not in {GoogleHomeAlarmStatus.INACTIVE, GoogleHomeAlarmStatus.MISSED}
+                if k.status not in LAST_ALARM_STATUSES
                 else k.fire_time + sys.maxsize
             ),
         )
@@ -201,10 +246,15 @@ class GoogleHomeDevice:
         return alarms[0] if alarms else None
 
     def get_sorted_timers(self) -> list[GoogleHomeTimer]:
-        """Return timers in a sorted order. If timer is paused, put it in the end."""
+        """Return timers in a sorted order. Paused timers and unknown statuses are at the end."""
         return sorted(
             self._timers,
-            key=lambda k: k.fire_time if k.fire_time is not None else sys.maxsize,
+            key=lambda k: (
+                k.fire_time
+                if k.fire_time is not None
+                and k.status is not GoogleHomeTimerStatus.UNKNOWN
+                else sys.maxsize
+            ),
         )
 
     def get_next_timer(self) -> GoogleHomeTimer | None:
@@ -249,6 +299,18 @@ class GoogleHomeTimer:
             self.local_time = dt_local.strftime(DATETIME_STR_FORMAT)
             self.local_time_iso = dt_local.isoformat()
 
+    @classmethod
+    def from_json(cls, timer: TimerJsonDict) -> Self:
+        """Create a timer from its JSON, as the device sends it."""
+        return cls(
+            timer_id=timer["id"],
+            fire_time=timer.get("fire_time"),
+            duration=timer["original_duration"],
+            remaining=timer.get("remaining_duration"),
+            status=timer["status"],
+            label=timer.get("label"),
+        )
+
     def as_dict(self) -> GoogleHomeTimerDict:
         """Return typed dict representation."""
         return {
@@ -286,6 +348,17 @@ class GoogleHomeAlarm:
         self.local_time = dt_local.strftime(DATETIME_STR_FORMAT)
         self.local_time_iso = dt_local.isoformat()
 
+    @classmethod
+    def from_json(cls, alarm: AlarmJsonDict) -> Self:
+        """Create an alarm from its JSON, as the device sends it."""
+        return cls(
+            alarm_id=alarm["id"],
+            fire_time=alarm["fire_time"],
+            status=alarm["status"],
+            label=alarm.get("label"),
+            recurrence=alarm.get("recurrence"),
+        )
+
     def as_dict(self) -> GoogleHomeAlarmDict:
         """Return typed dict representation."""
         return {
@@ -308,6 +381,14 @@ class GoogleHomeAlarmStatus(Enum):
     SNOOZED = 3
     INACTIVE = 4
     MISSED = 5
+    # A status the integration doesn't know, such as one that newer firmware adds
+    UNKNOWN = -1
+
+    @classmethod
+    @override
+    def _missing_(cls, value: object) -> Self:
+        """Return UNKNOWN for a status the integration doesn't know."""
+        return cls.UNKNOWN
 
 
 class GoogleHomeTimerStatus(Enum):
@@ -317,3 +398,22 @@ class GoogleHomeTimerStatus(Enum):
     SET = 1
     PAUSED = 2
     RINGING = 3
+    # A status the integration doesn't know, such as one that newer firmware adds
+    UNKNOWN = -1
+
+    @classmethod
+    @override
+    def _missing_(cls, value: object) -> Self:
+        """Return UNKNOWN for a status the integration doesn't know."""
+        return cls.UNKNOWN
+
+
+# The statuses of the alarms that come last, and whose time the alarms sensor never
+# shows
+LAST_ALARM_STATUSES = frozenset(
+    {
+        GoogleHomeAlarmStatus.INACTIVE,
+        GoogleHomeAlarmStatus.MISSED,
+        GoogleHomeAlarmStatus.UNKNOWN,
+    }
+)

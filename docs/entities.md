@@ -24,17 +24,17 @@ Entities become unavailable, for example, while a device is unplugged or after y
 
 ## Alarms sensor
 
-The state is the time of the next alarm, such as `2026-03-07T15:26:17+01:00`. It is `unavailable` when no alarm is set, or when all alarms are inactive or missed. That is only its state: the sensor keeps its attributes, and actions still run on it.
+The state is the time of the next alarm, such as `2026-03-07T15:26:17+01:00`. It is `unavailable` when no alarm is set, or when all alarms are inactive, missed or of unknown status. That is only its state: the sensor keeps its attributes, and actions still run on it.
 
 To start automations at the time of the next alarm or timer, see [Automation examples](automations.md).
 
 The state uses the same format as the [next alarm sensor](https://companion.home-assistant.io/docs/core/sensors/#next-alarm-sensor) of the Home Assistant mobile app, such as `sensor.phone_next_alarm`. You can use both in the same automations.
 
-| Attribute           | Description                                                                           |
-| ------------------- | ------------------------------------------------------------------------------------- |
-| `next_alarm_status` | [Status](#alarm-and-timer-status) of the next alarm, or `none` if there are no alarms |
-| `alarm_volume`      | Alarm volume in percent, the same value as the alarm volume entity                    |
-| `alarms`            | List of all alarms, with the next one first. Inactive and missed alarms come last.    |
+| Attribute           | Description                                                                                 |
+| ------------------- | ------------------------------------------------------------------------------------------- |
+| `next_alarm_status` | [Status](#alarm-and-timer-status) of the next alarm, or `none` if there are no alarms       |
+| `alarm_volume`      | Alarm volume in percent, the same value as the alarm volume entity                          |
+| `alarms`            | List of all alarms, with the next one first. Inactive, missed and unknown alarms come last. |
 
 Each alarm in `alarms` has these keys:
 
@@ -50,12 +50,12 @@ Each alarm in `alarms` has these keys:
 
 ## Timers sensor
 
-The state is the time the next timer goes off, such as `2026-03-07T15:26:17+01:00`. It is `unavailable` when no timer is set, or when all timers are paused. That is only its state: the sensor keeps its attributes, and actions still run on it.
+The state is the time the next timer goes off, such as `2026-03-07T15:26:17+01:00`. It is `unavailable` when no timer is set, or when all timers are paused or of unknown status. That is only its state: the sensor keeps its attributes, and actions still run on it.
 
-| Attribute           | Description                                                                           |
-| ------------------- | ------------------------------------------------------------------------------------- |
-| `next_timer_status` | [Status](#alarm-and-timer-status) of the next timer, or `none` if there are no timers |
-| `timers`            | List of all timers, with the one that goes off next first. Paused timers come last.   |
+| Attribute           | Description                                                                                     |
+| ------------------- | ----------------------------------------------------------------------------------------------- |
+| `next_timer_status` | [Status](#alarm-and-timer-status) of the next timer, or `none` if there are no timers           |
+| `timers`            | List of all timers, with the one that goes off next first. Paused and unknown timers come last. |
 
 Each timer in `timers` has these keys:
 
@@ -74,15 +74,16 @@ To use the time left in a template or automation, convert `remaining` to seconds
 
 ## Alarm and timer status
 
-| Status     | Meaning                                      |
-| ---------- | -------------------------------------------- |
-| `none`     | There is no alarm or timer                   |
-| `set`      | The alarm or timer is set                    |
-| `ringing`  | The alarm or timer is ringing right now      |
-| `snoozed`  | The alarm rang and was snoozed. Alarms only. |
-| `inactive` | The alarm is inactive. Alarms only.          |
-| `missed`   | The alarm was missed. Alarms only.           |
-| `paused`   | The timer is paused. Timers only.            |
+| Status     | Meaning                                                                                                                                     |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `none`     | There is no alarm or timer                                                                                                                  |
+| `set`      | The alarm or timer is set                                                                                                                   |
+| `ringing`  | The alarm or timer is ringing right now                                                                                                     |
+| `snoozed`  | The alarm rang and was snoozed. Alarms only.                                                                                                |
+| `inactive` | The alarm is inactive. Alarms only.                                                                                                         |
+| `missed`   | The alarm was missed. Alarms only.                                                                                                          |
+| `paused`   | The timer is paused. Timers only.                                                                                                           |
+| `unknown`  | A status the integration doesn't know yet, such as one newer firmware adds. These come last, and the sensor's state never shows their time. |
 
 Timers have no `snoozed` status. If you snooze a ringing timer, it restarts and its status goes back to `set`.
 

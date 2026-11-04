@@ -55,7 +55,12 @@ from .exceptions import (
     AlarmsAndTimersNotFetched,
     DeviceRequestFailed,
 )
-from .models import GoogleHomeAlarmStatus, GoogleHomeDevice, GoogleHomeTimerStatus
+from .models import (
+    LAST_ALARM_STATUSES,
+    GoogleHomeAlarmStatus,
+    GoogleHomeDevice,
+    GoogleHomeTimerStatus,
+)
 from .types import (
     AlarmsAttributes,
     DeviceAttributes,
@@ -304,7 +309,7 @@ async def async_delete_from_devices[_SensorT: GoogleHomeBaseEntity](
     for result in results:
         if isinstance(result, AlarmsAndTimersNotFetched | AlarmsAndTimersNotDeleted):
             failed.append(result)
-        # Don't hide an unexpected error, such as from a malformed reply
+        # Don't hide an unexpected error
         elif isinstance(result, BaseException):
             raise result
     if len(failed) > 1:
@@ -511,9 +516,7 @@ class GoogleHomeAlarmsSensor(GoogleHomeFeatureEntity):
         next_alarm = device.get_next_alarm()
         return (
             next_alarm.local_time_iso
-            if next_alarm
-            and next_alarm.status
-            not in {GoogleHomeAlarmStatus.INACTIVE, GoogleHomeAlarmStatus.MISSED}
+            if next_alarm and next_alarm.status not in LAST_ALARM_STATUSES
             else STATE_UNAVAILABLE
         )
 
@@ -587,7 +590,9 @@ class GoogleHomeTimersSensor(GoogleHomeFeatureEntity):
         timer = device.get_next_timer()
         return (
             timer.local_time_iso
-            if timer and timer.local_time_iso
+            if timer
+            and timer.local_time_iso
+            and timer.status is not GoogleHomeTimerStatus.UNKNOWN
             else STATE_UNAVAILABLE
         )
 
