@@ -612,7 +612,8 @@ async def test_update_interval_changed_below_one_second(
 
     The form refuses it, but the options can still change without it. The update
     already scheduled keeps its time. One warning says why, also when the interval
-    was the default 15 seconds, which the fallback leaves unchanged.
+    was the default 15 seconds, which the fallback leaves unchanged. Renaming the
+    entry afterwards keeps the interval of 0, so it doesn't warn again.
     """
     hass.config_entries.async_update_entry(config_entry, options=options)
     await set_up(hass, config_entry)
@@ -620,6 +621,8 @@ async def test_update_interval_changed_below_one_second(
     hass.config_entries.async_update_entry(
         config_entry, options={CONF_UPDATE_INTERVAL: 0}
     )
+    await hass.async_block_till_done()
+    hass.config_entries.async_update_entry(config_entry, title="Renamed")
     await hass.async_block_till_done()
 
     assert await updated_at(hass, aioclient_mock, freezer) == list(updates)

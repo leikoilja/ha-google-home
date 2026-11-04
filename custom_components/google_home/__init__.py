@@ -358,9 +358,9 @@ def configured_interval(
 
     The options form refuses such an interval, but earlier versions saved it: zero
     stopped scheduled updates and a negative one ran them without a pause. Warn
-    about it unless it's previous, the interval in the options when the coordinators
-    last took theirs, so each load warns once, and a change to the entry that keeps
-    it, such as a rename, doesn't warn again. While polling is off, nothing is
+    about it unless it equals previous, the interval in the options when the
+    coordinators last took theirs, so each load warns once, and a change to the
+    entry that keeps it, such as a rename, doesn't warn again. While polling is off, nothing is
     scheduled until it's back on, so the warning doesn't suggest turning it off.
     """
     seconds = saved_interval(entry)
