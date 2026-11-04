@@ -151,10 +151,7 @@ async def test_no_repair_for_valid_interval(
 
 
 async def test_repair_text(hass: HomeAssistant) -> None:
-    """Name the saved interval and link to the docs and the integration.
-
-    Each menu option's text is checked as the fix shows it.
-    """
+    """Name the saved interval and link to the docs and the integration."""
     text = await async_get_translations(hass, "en", "issues", [DOMAIN])
     prefix = f"component.{DOMAIN}.issues.{ISSUE_INVALID_INTERVAL}"
     step = f"{prefix}.fix_flow.step.init"

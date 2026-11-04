@@ -264,7 +264,8 @@ def async_show_invalid_interval(
     While polling is off, nothing uses the interval. Turning polling back on reloads
     the entry, whose setup then shows the repair. Setup shows or removes it, and so do
     changed options, which apply without a reload. Unloading keeps it, so it stays
-    hidden over reloads and setup retries if the user hid it. Home Assistant hides it
+    hidden over reloads and setup retries if the user hid it. Removing it, as setup
+    does once polling is off, forgets that the user hid it. Home Assistant hides it
     while the entry is disabled and deletes it with the entry.
     """
     if saved_interval(entry) > 0 or entry.pref_disable_polling:
