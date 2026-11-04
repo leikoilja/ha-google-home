@@ -176,7 +176,7 @@ All entities of a device are unavailable:
 
 - Once Google no longer lists the device, for example after you remove it from the Google Home app, until the integration removes the device. See [Remove a device](configuration.md#remove-a-device).
 - Once the device hasn't answered 5 [updates](configuration.md#change-the-update-interval) in a row, for example while it's unplugged. At the default 15-second interval, that's usually after one to two minutes. With a shorter interval, a speaker that restarts can miss 5 updates and become unavailable for a moment; with a longer one, it takes longer to notice.
-- After the device's update fails unexpectedly, until its next update that works. This affects only that device, also when Home Assistant starts: a device that fails then gets its entities at its first update that works. With [polling off](configuration.md#turn-off-polling), run [Refresh devices](actions.md#refresh-devices) on another device's sensor, or reload the integration.
+- After the device's update fails unexpectedly, until its next update that works. This affects only that device, also when Home Assistant starts: a device that fails then gets its entities at its first update that works. With [polling off](configuration.md#turn-off-polling), run [Refresh devices](actions.md#refresh-devices), or reload the integration.
 
 When the integration can't get your device list from Google, the devices keep updating and their entities stay available.
 
@@ -187,7 +187,7 @@ Some entities are also unavailable on their own:
 
 Entities that became unavailable because the device didn't answer are available again at the next update the device answers, after it finishes starting. Being available again doesn't always mean new values; see [Alarms, timers or settings stop changing](troubleshooting.md#alarms-timers-or-settings-stop-changing).
 
-Home Assistant skips an unavailable entity without an error, so an action on it does nothing and doesn't fail. For the integration's own actions, see [Unavailable sensors](actions.md#unavailable-sensors).
+Home Assistant usually skips an unavailable entity without an error, so an action on it does nothing and doesn't fail. [Refresh devices](actions.md#refresh-devices) is an exception: it still runs, so it can bring the device back. For the integration's other actions, see [Unavailable sensors](actions.md#unavailable-sensors).
 
 ## If a setting or reboot fails
 
