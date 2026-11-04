@@ -123,7 +123,7 @@ The integration isn't set up yet. On the first start, create a Home Assistant us
 To test with real speakers, Home Assistant must reach them on your network over HTTPS port 8443:
 
 - **GitHub Codespaces** runs in the cloud and can't reach them. Use a local checkout or dev container instead.
-- **A local dev container** may not receive mDNS from your network. If your speakers' entities are unavailable, add the speakers as [known hosts](configuration.md#add-devices-on-another-network).
+- **A local dev container** may not receive mDNS from your network. If your speakers then have only a device sensor, a reboot button and an update sensor, all unavailable, add the speakers as [known hosts](configuration.md#add-devices-on-another-network).
 
 ### Run the checks
 
@@ -253,7 +253,7 @@ The pull request also shows the **Coverage** status, with the tests' total cover
 The tests and the quality scale check use the Home Assistant version that `pyproject.toml` pins. Dependabot leaves it alone, so update it by hand:
 
 1. Set `homeassistant` and `pytest-homeassistant` in `pyproject.toml` to the same version, and run `uv lock`. It fails if the versions differ.
-2. Compare the ruff rules in `pyproject.toml` with those in Home Assistant's `pyproject.toml` at that version.
+2. Update the ruff rules in `pyproject.toml` to match Home Assistant's `pyproject.toml` at that version. Keep the rules listed under `# Beyond Home Assistant core`.
 3. Change the version in the link to [Home Assistant's language list](#translate-the-integration).
 4. Run the tests and checks. The [quality scale check](#keep-the-quality-scale-up-to-date) reports rules the new version added, and the snapshots may need updating.
 5. Set the minimum version in `hacs.json` and under [Before you start](installation.md#before-you-start) to match. For a beta, use its stable version, such as 2026.11.0 for 2026.11.0b4. HACS reads `hacs.json` at the version it installs, including `master`, and each release sets it to the pinned version; see [Publish a release](#publish-a-release).
