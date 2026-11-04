@@ -6,7 +6,7 @@ For help with setup or usage, search the [issues](https://github.com/leikoilja/h
 
 ## Report a bug or suggest a feature
 
-[Open an issue](https://github.com/leikoilja/ha-google-home/issues/new/choose). For a bug, include the integration version, the [diagnostics file](troubleshooting.md#download-diagnostics), the **Google Home** section of [System information](troubleshooting.md#check-system-information) and [debug logs](troubleshooting.md#collect-debug-logs). Versions 1.16.0 and earlier have neither the diagnostics file nor that section.
+[Open an issue](https://github.com/leikoilja/ha-google-home/issues/new/choose). The bug report form requires what happened, the steps to reproduce it, and the integration and Home Assistant versions. Fill in its other fields too: the [diagnostics file](troubleshooting.md#download-diagnostics), the **Google Home** section of [System information](troubleshooting.md#check-system-information) and [debug logs](troubleshooting.md#collect-debug-logs). Versions 1.16.0 and earlier have neither the diagnostics file nor that section.
 
 ## Translate the integration
 
@@ -116,7 +116,14 @@ flowchart TB
 script/develop
 ```
 
-This starts Home Assistant at <http://localhost:8123> with the integration loaded and its debug logging turned on. It uses [`config/configuration.yaml`](https://github.com/leikoilja/ha-google-home/blob/master/config/configuration.yaml); everything else Home Assistant writes to `config/` is ignored by git.
+This starts Home Assistant at <http://localhost:8123> with the integration available and its debug logging turned on. It uses [`config/configuration.yaml`](https://github.com/leikoilja/ha-google-home/blob/master/config/configuration.yaml); everything else Home Assistant writes to `config/` is ignored by git.
+
+The integration isn't set up yet. On the first start, create a Home Assistant user, then [add the integration](installation.md#add-the-integration) and sign in, as in a normal install. Home Assistant keeps the user and the integration in `config/`, so you do this once.
+
+To test with real speakers, Home Assistant must reach them on your network over HTTPS port 8443:
+
+- **GitHub Codespaces** runs in the cloud and can't reach them. Use a local checkout or dev container instead.
+- **A local dev container** may not receive mDNS from your network. If your speakers' entities are unavailable, add the speakers as [known hosts](configuration.md#add-devices-on-another-network).
 
 ### Run the checks
 
@@ -126,9 +133,9 @@ Run the tests:
 uv run pytest
 ```
 
-Some tests run the integration inside Home Assistant, with fixtures from Home Assistant's [pytest-homeassistant](https://github.com/home-assistant/core/tree/dev/packages/pytest-homeassistant). Each Home Assistant release publishes it with the same version, and it requires that exact `homeassistant`: when you change `homeassistant` in `pyproject.toml`, change `pytest-homeassistant` to the same version, or `uv lock` fails.
+Some tests run the integration inside Home Assistant, with fixtures from Home Assistant's [pytest-homeassistant](https://github.com/home-assistant/core/tree/dev/packages/pytest-homeassistant). Each Home Assistant release publishes it with the same version, and it requires that exact `homeassistant`; see [Update Home Assistant](#update-home-assistant). The tests' shared fixtures are in [`tests/conftest.py`](https://github.com/leikoilja/ha-google-home/blob/master/tests/conftest.py), such as `google`, which fakes Google's device list, and `replies`, which answers the requests to each speaker.
 
-If you change an entity's name, state, attributes or registry entry on purpose, update the snapshots with `uv run pytest --snapshot-update`, and review the changes under `tests/snapshots/` before you commit. Entity icons are in `icons.json`, which the snapshots don't cover: if you change one, update the expected icons in `tests/test_setup.py`.
+If you change an entity's name, state, attributes or registry entry, or the diagnostics file, on purpose, update the snapshots with `uv run pytest --snapshot-update`, and review the changes under `tests/snapshots/` before you commit. Entity icons are in `icons.json`, which the snapshots don't cover: if you change one, update the expected icons in `tests/test_setup.py`.
 
 Every file in `custom_components/google_home` needs 90% or more branch coverage, which counts the lines the tests run and whether they take each way through every `if` statement and loop. To check, run the tests with coverage, then the same check CI runs:
 
@@ -159,6 +166,8 @@ CI adds translation coverage and all diagnostics to the workflow summary. These 
 ```shell
 uvx prek run --all-files
 ```
+
+The formatters and some linters fix files in place, so review their changes and stage them. prek gives most hooks only the files git tracks, so `git add` a new file before you run it.
 
 To run them on every commit, install the git hook once:
 
@@ -206,13 +215,54 @@ The docs are in `docs/` and built with [Zensical](https://zensical.org/). Previe
 uv run --only-group docs zensical serve
 ```
 
+Before you push, build the site as CI does. It fails on warnings, such as a link to a page or heading that doesn't exist:
+
+```shell
+uv run --only-group docs zensical build --clean --strict
+```
+
 A pull request that changes the docs gets a preview link in a comment.
+
+### Open a pull request
+
+Push your branch to your fork and open a pull request against `master`. Its title becomes a line in the release notes, so say what the change does for users, such as "Reject translated text that would become part of a link". In the description, say what was wrong or what the change adds, and how you tested it. Pull requests are squash-merged, and the commit on `master` keeps your commit messages, so describe your changes in them too.
+
+The pull request runs these checks. On your first pull request, they may wait for a maintainer to approve the run.
+
+- **Pre-commit:** prek, the [quality scale check](#keep-the-quality-scale-up-to-date), the tests and the coverage check.
+- **Translations:** the translation check.
+- **HACS** and **Hassfest:** the validators of HACS and Home Assistant. They use the latest versions, so a rule added upstream can fail them without your change causing it.
+- **Build site:** the docs build, when your pull request changes `docs/`, `zensical.toml`, `pyproject.toml` or `uv.lock`.
+
+To run the Pre-commit check's steps yourself, in its order:
+
+```shell
+uvx prek run --all-files
+uvx prek run --hook-stage manual python-typing-update --all-files
+uv run python script/check_quality_scale.py
+uv run pytest --cov
+script/check_coverage
+```
+
+The second command runs the `python-typing-update` hook, which updates old typing syntax. It's set to run only when asked, so the first command skips it. The commands for the translation check and the docs build are in [Run the checks](#run-the-checks) and [Edit the docs](#edit-the-docs). HACS and Hassfest run on GitHub.
+
+The pull request also shows the **Coverage** status, with the tests' total coverage, and **Translation coverage**, with how many translations are complete.
+
+### Update Home Assistant
+
+The tests and the quality scale check use the Home Assistant version that `pyproject.toml` pins. Dependabot leaves it alone, so update it by hand:
+
+1. Set `homeassistant` and `pytest-homeassistant` in `pyproject.toml` to the same version, and run `uv lock`. It fails if the versions differ.
+2. Compare the ruff rules in `pyproject.toml` with those in Home Assistant's `pyproject.toml` at that version.
+3. Change the version in the link to [Home Assistant's language list](#translate-the-integration).
+4. Run the tests and checks. The [quality scale check](#keep-the-quality-scale-up-to-date) reports rules the new version added, and the snapshots may need updating.
+5. Set the minimum version in `hacs.json` and under [Before you start](installation.md#before-you-start) to match. For a beta, use its stable version, such as 2026.11.0 for 2026.11.0b4. HACS reads `hacs.json` at the version it installs, including `master`, and each release sets it to the pinned version; see [Publish a release](#publish-a-release).
 
 ### Publish a release
 
 Maintainers publish the draft release that Release Drafter keeps up to date: run the **Publish new release** workflow on GitHub, leaving the tag empty. The workflow:
 
-1. Commits the release's version in `manifest.json` and the minimum Home Assistant version in `hacs.json` to `master`, as **Release v1.2.3**. This commit also sets `zip_release` and `filename` in `hacs.json`. A second commit removes them again, so installs of `master` keep using the source code.
+1. Commits the release's version in `manifest.json` and the minimum Home Assistant version in `hacs.json` to `master`, as **Release v1.2.3**. The minimum is the `homeassistant` version that `pyproject.toml` pins, so pin a stable release before you publish. This commit also sets `zip_release` and `filename` in `hacs.json`. A second commit removes them again, so installs of `master` keep using the source code.
 2. Builds `google_home.zip` from the release commit, with the integration's files at its root, and attaches it to the draft.
 3. Downloads the attached zip and checks that its `manifest.json` has the release's version.
 4. Publishes the release, with its tag on the release commit.
