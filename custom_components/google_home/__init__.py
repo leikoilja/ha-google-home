@@ -91,13 +91,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -
     password = cast(str, entry.data.get(CONF_PASSWORD))
     android_id = cast(str, entry.data.get(CONF_ANDROID_ID))
     master_token = cast(str, entry.data.get(CONF_MASTER_TOKEN))
-    update_interval = cast(
-        int, entry.options.get(CONF_UPDATE_INTERVAL, UPDATE_INTERVAL)
-    )
+    update_interval = configured_interval(entry)
 
-    _LOGGER.debug(
-        "Coordinator update interval is: %s", timedelta(seconds=update_interval)
-    )
+    _LOGGER.debug("Coordinator update interval is: %s", update_interval)
 
     session = async_get_clientsession(hass, verify_ssl=False)
 
@@ -114,7 +110,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -
     )
 
     account = GoogleAccountCoordinator(
-        hass, entry, glocaltokens_client, timedelta(seconds=update_interval)
+        hass, entry, glocaltokens_client, update_interval
     )
     # Before the first refresh, which adds the device coordinators
     entry.runtime_data = GoogleHomeData(glocaltokens_client, account, {})
@@ -348,6 +344,29 @@ async def async_remove_config_entry_device(
     return not device_entry.identifiers & google_ids
 
 
+def configured_interval(entry: GoogleHomeConfigEntry) -> timedelta:
+    """Return the update interval in the options, or the default for one that isn't positive.
+
+    The options form refuses such an interval, but earlier versions saved it: zero
+    stopped scheduled updates and a negative one ran them without a pause. While
+    polling is off, nothing is scheduled, so there's nothing to warn about.
+    """
+    seconds = cast(int, entry.options.get(CONF_UPDATE_INTERVAL, UPDATE_INTERVAL))
+    if seconds > 0:
+        return timedelta(seconds=seconds)
+    if not entry.pref_disable_polling:
+        _LOGGER.warning(
+            "The update interval saved in the options of %s is %d seconds, so the "
+            "integration updates every %d seconds instead. Enter at least 1 second "
+            "in its options, or turn off polling in its system options to stop "
+            "scheduled updates",
+            entry.title,
+            seconds,
+            UPDATE_INTERVAL,
+        )
+    return timedelta(seconds=UPDATE_INTERVAL)
+
+
 async def async_update_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -> None:
     """Apply changed options."""
     client = entry.runtime_data.client
@@ -365,9 +384,7 @@ async def async_update_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) 
         hass.config_entries.async_schedule_reload(entry.entry_id)
         return
     _LOGGER.debug("Options updated, updating coordinator interval...")
-    update_interval = timedelta(
-        seconds=entry.options.get(CONF_UPDATE_INTERVAL, UPDATE_INTERVAL)
-    )
+    update_interval = configured_interval(entry)
     entry.runtime_data.account.update_interval = update_interval
     for coordinator in entry.runtime_data.devices.values():
         coordinator.update_interval = update_interval

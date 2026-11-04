@@ -163,6 +163,16 @@ async def updated_at(
     return times
 
 
+def logged(caplog: pytest.LogCaptureFixture) -> list[str]:
+    """Return the messages that the integration logged above debug level."""
+    return [
+        record.getMessage()
+        for record in caplog.records
+        if record.name == "custom_components.google_home"
+        and record.levelno > logging.DEBUG
+    ]
+
+
 async def reload(hass: HomeAssistant, entry: MockConfigEntry) -> None:
     """Set up the entry, then reload it, which unloads it and sets it up again."""
     await set_up(hass, entry)
@@ -408,12 +418,7 @@ async def test_setup_retried_while_google_unreachable(
     assert not await hass.config_entries.async_setup(config_entry.entry_id)
     await hass.async_block_till_done()
     states = [config_entry.state]
-    assert [
-        record.getMessage()
-        for record in caplog.records
-        if record.name == "custom_components.google_home"
-        and record.levelno > logging.DEBUG
-    ] == []
+    assert logged(caplog) == []
 
     google.side_effect = None
     await hass.config_entries.async_reload(config_entry.entry_id)
@@ -482,6 +487,7 @@ async def test_saved_update_interval(
     config_entry: MockConfigEntry,
     aioclient_mock: AiohttpClientMocker,
     freezer: FrozenDateTimeFactory,
+    caplog: pytest.LogCaptureFixture,
 ) -> None:
     """Update the speaker at the interval saved in the options, as after a restart."""
     hass.config_entries.async_update_entry(
@@ -490,6 +496,84 @@ async def test_saved_update_interval(
     await set_up(hass, config_entry)
 
     assert await updated_at(hass, aioclient_mock, freezer) == [60, 120, 180]
+    assert logged(caplog) == []
+
+
+@pytest.mark.usefixtures("google", "replies")
+@pytest.mark.parametrize("interval", [0, -5])
+async def test_saved_update_interval_below_one_second(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    aioclient_mock: AiohttpClientMocker,
+    freezer: FrozenDateTimeFactory,
+    caplog: pytest.LogCaptureFixture,
+    interval: int,
+) -> None:
+    """Update the speaker every 15 seconds, the default, for a saved interval below 1 second.
+
+    Earlier versions saved one: zero stopped scheduled updates and a negative
+    interval ran them without a pause. One warning says why and how to fix it.
+    """
+    hass.config_entries.async_update_entry(
+        config_entry, options={CONF_UPDATE_INTERVAL: interval}
+    )
+    await set_up(hass, config_entry)
+
+    data = config_entry.runtime_data
+    assert [
+        data.account.update_interval,
+        *(coordinator.update_interval for coordinator in data.devices.values()),
+    ] == [timedelta(seconds=15)] * 2
+    assert await updated_at(hass, aioclient_mock, freezer) == list(range(15, 181, 15))
+    [warning] = logged(caplog)
+    assert f"options of test@example.com is {interval} seconds" in warning
+    assert "every 15 seconds instead" in warning
+
+
+@pytest.mark.usefixtures("google", "replies")
+async def test_saved_update_interval_below_one_second_polling_off(
+    hass: HomeAssistant, config_entry: MockConfigEntry, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Log nothing for a saved interval of 0 while polling is off.
+
+    Nothing is scheduled then, so a warning that updates run every 15 seconds would
+    be wrong, and it would tell the user to turn off polling.
+    """
+    hass.config_entries.async_update_entry(
+        config_entry, options={CONF_UPDATE_INTERVAL: 0}, pref_disable_polling=True
+    )
+    await set_up(hass, config_entry)
+
+    assert config_entry.state is ConfigEntryState.LOADED
+    assert logged(caplog) == []
+
+
+@pytest.mark.usefixtures("google", "replies")
+async def test_update_interval_changed_below_one_second(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    aioclient_mock: AiohttpClientMocker,
+    freezer: FrozenDateTimeFactory,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Update the speaker every 15 seconds once the options change to an interval of 0.
+
+    The form refuses it, but the options can still change without it. The update
+    already scheduled, 60 seconds after setup, keeps its time. One warning says why.
+    """
+    hass.config_entries.async_update_entry(
+        config_entry, options={CONF_UPDATE_INTERVAL: 60}
+    )
+    await set_up(hass, config_entry)
+
+    hass.config_entries.async_update_entry(
+        config_entry, options={CONF_UPDATE_INTERVAL: 0}
+    )
+    await hass.async_block_till_done()
+
+    assert await updated_at(hass, aioclient_mock, freezer) == list(range(60, 181, 15))
+    [warning] = logged(caplog)
+    assert "is 0 seconds" in warning
 
 
 @pytest.mark.usefixtures("google")
