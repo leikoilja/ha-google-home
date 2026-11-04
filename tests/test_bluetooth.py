@@ -790,7 +790,9 @@ def run_update_listener(entry: Mock, setup_entry: Mock) -> Mock:
         devices={},
         bluetooth_config=bluetooth_config(setup_entry),
     )
-    asyncio.run(async_update_entry(hass, entry))
+    # It needs Home Assistant's issue registry
+    with patch("custom_components.google_home.async_show_invalid_interval"):
+        asyncio.run(async_update_entry(hass, entry))
     return hass
 
 

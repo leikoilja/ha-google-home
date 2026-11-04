@@ -200,6 +200,21 @@
         }
       }
     },
+    "invalid_update_interval": {
+      "title": "Interval pembaruan yang disimpan kurang dari 1 detik",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Interval pembaruan yang disimpan kurang dari 1 detik",
+            "description": "Interval pembaruan yang disimpan di opsi integrasi adalah {interval} detik, di bawah batas minimum 1 detik. Integrasi menggunakan nilai default sebagai gantinya dan memeriksa perangkat Anda setiap 15 detik.\n\nJika Anda menyimpan 0 untuk menghentikan pemeriksaan rutin ini, nonaktifkan polling sebagai gantinya. Berbeda dengan 0, cara ini juga menghentikan pemindaian perangkat Bluetooth dan penambahan perangkat baru yang ditemukan mDNS. Untuk detailnya, lihat {docs_url}.\n\nUntuk menggunakan interval lain, buka [integrasi Google Home]({integration_url}), pilih **Konfigurasikan**, masukkan intervalnya, lalu pilih **Kirimkan**.",
+            "menu_options": {
+              "use_default": "Gunakan nilai default 15 detik",
+              "turn_off_polling": "Nonaktifkan polling sebagai gantinya"
+            }
+          }
+        }
+      }
+    },
     "homes_deselected": {
       "title": "Tidak ada rumah akun Google Anda yang dipilih",
       "description": "Akun Google Anda hanya menjadi anggota rumah yang pilihannya Anda batalkan di opsi integrasi, sehingga integrasi tidak menambahkan speaker dan layar di rumah tersebut. Untuk menambahkan perangkat suatu rumah, buka [integrasi Google Home]({integration_url}), pilih **Konfigurasikan**, pilih rumah tersebut di **Rumah**, lalu pilih **Kirimkan**.\n\nJika Anda ingin rumah-rumah ini tetap tidak dipilih, pilih **Abaikan**."

@@ -200,6 +200,21 @@
         }
       }
     },
+    "invalid_update_interval": {
+      "title": "Uložený interval aktualizace je kratší než 1 sekunda",
+      "fix_flow": {
+        "step": {
+          "init": {
+            "title": "Uložený interval aktualizace je kratší než 1 sekunda",
+            "description": "Interval aktualizace uložený ve volbách integrace je {interval} s, což je méně než minimum 1 sekunda. Integrace proto používá výchozí hodnotu a kontroluje vaše zařízení každých 15 sekund.\n\nPokud jste uložili 0, abyste tyto pravidelné kontroly zastavili, vypněte místo toho dotazování. Na rozdíl od 0 vypnuté dotazování zastaví i vyhledávání zařízení Bluetooth a přidávání nových zařízení, která najde mDNS. Podrobnosti najdete na {docs_url}.\n\nPokud chcete použít jiný interval, otevřete [integraci Google Home]({integration_url}), vyberte **Nastavit**, zadejte ho a pak vyberte **Odeslat**.",
+            "menu_options": {
+              "use_default": "Použít výchozích 15 sekund",
+              "turn_off_polling": "Místo toho vypnout dotazování"
+            }
+          }
+        }
+      }
+    },
     "homes_deselected": {
       "title": "Není vybrána žádná domácnost vašeho účtu Google",
       "description": "Váš účet Google je členem jen domácností, které jste odznačili ve volbách integrace, takže integrace jejich reproduktory a displeje nepřidává. Pokud chcete přidat zařízení některé domácnosti, otevřete [integraci Google Home]({integration_url}), vyberte **Nastavit**, v části **Domácnosti** označte danou domácnost a pak vyberte **Odeslat**.\n\nPokud chcete tyto domácnosti nechat odznačené, vyberte **Ignorovat**."
