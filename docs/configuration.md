@@ -83,8 +83,6 @@ Google gives the device a new ID, so the integration adds it as a new device wit
 
 If an automation, script or manually configured dashboard card uses an old entity ID that the new device doesn't have, update it. You can also give the new entity the old ID once the old device is gone: on the device page, select the entity, then the settings (gear) icon, change **Entity ID** and select **Update**.
 
-If you deleted a device in Home Assistant yourself and it doesn't come back when the Google Home app lists it again, reload the integration.
-
 ## Add devices on another network
 
 The integration finds your devices on your network with multicast DNS (mDNS). mDNS usually doesn't reach other networks, such as a separate VLAN for smart home devices, or a Home Assistant container that doesn't use `host` network mode. Those devices then have only a [device sensor](entities.md#device-sensor), a [reboot button](entities.md#reboot-button) and an [update sensor](entities.md#update-sensor), and all three are unavailable.
@@ -148,7 +146,7 @@ To remove a device sooner, delete it yourself. First reload the integration so t
 
 Home Assistant offers **Delete** for every device of the integration, but you can't delete one that Google still lists in your home, even if it shows as unavailable: it would come back the next time the integration loads. Until the integration has noticed that Google no longer lists a device, you can't delete that one either. Home Assistant then shows "Failed to remove device entry, rejected by integration". A [tracked Bluetooth device](bluetooth.md#add-a-device-to-track) isn't in Google's list: the integration never removes it, and deleting it stops tracking it.
 
-If Google briefly leaves a working device out of your home in two lists in a row, the integration removes it and adds it back the next time Google lists it. Home Assistant then restores the settings you changed, such as its area and its entities' names and IDs, as long as no other entity has taken those entity IDs meanwhile.
+If Google briefly leaves a working device out of your home in two lists in a row, the integration removes it and adds it back the next time Google lists it. A device you deleted yourself also comes back the next time Google lists it. In both cases, Home Assistant restores the settings you changed, such as its area and its entities' names and IDs, as long as no other entity has taken those entity IDs meanwhile.
 
 To use a device again that you removed from the Google Home app, factory reset it first; see [Add a device](#add-a-device).
 

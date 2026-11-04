@@ -305,16 +305,19 @@ def can_delete(
     """Ask the integration whether the device with this ID can be deleted."""
     entry = Mock(
         state=ConfigEntryState.LOADED,
-        runtime_data=GoogleHomeData(client, Mock(data=devices), {}),
+        runtime_data=GoogleHomeData(
+            client, Mock(GoogleAccountCoordinator, data=devices), {}
+        ),
     )
     device = Mock(identifiers={(DOMAIN, device_id)}, config_subentry_id=None)
     return asyncio.run(async_remove_config_entry_device(Mock(), entry, device))
 
 
 def test_device_google_stops_listing(clock: Mock) -> None:
-    """Show a device removed in the Google Home app as unavailable, and let it be deleted.
+    """Show a device removed in the Google Home app as unavailable, and allow deleting it.
 
-    If Google lists it again, its entities work again without being added twice.
+    If Google lists it again before it's deleted, its entities work again without
+    being added twice.
     """
     client, glocaltokens = make_client("10.0.0.2", "10.0.0.3")
     coordinator = Mock(data=update(client), last_update_success=True)
