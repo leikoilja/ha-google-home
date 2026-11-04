@@ -23,7 +23,6 @@ from custom_components.google_home.const import (
     SERVICE_DELETE_ALL_TIMERS,
     SERVICE_DELETE_TIMER,
     SERVICE_REBOOT,
-    SERVICE_REFRESH,
 )
 from custom_components.google_home.entity import GoogleHomeBaseEntity
 from custom_components.google_home.exceptions import AlarmsAndTimersNotDeleted
@@ -35,7 +34,6 @@ from custom_components.google_home.sensor import (
     GoogleHomeTimersSensor,
     async_delete_from_devices,
     async_reboot_devices,
-    async_refresh_devices,
     async_setup_actions,
 )
 from custom_components.google_home.types import AlarmJsonDict, JsonDict, TimerJsonDict
@@ -130,7 +128,10 @@ def register_actions() -> Mock:
 
 
 def test_batched_actions_registered() -> None:
-    """Batch every action, so Home Assistant calls each once with every targeted sensor."""
+    """Batch every action, so Home Assistant calls each once with every targeted sensor.
+
+    Except refresh_devices, which also runs on unavailable sensors.
+    """
     register_batched = register_actions()
 
     # The delete tests run each delete action as registered
@@ -147,7 +148,6 @@ def test_batched_actions_registered() -> None:
         SERVICE_DELETE_ALL_ALARMS: delete,
         SERVICE_DELETE_ALL_TIMERS: delete,
         SERVICE_REBOOT: (SENSOR, async_reboot_devices),
-        SERVICE_REFRESH: (SENSOR, async_refresh_devices),
     }
 
 

@@ -46,7 +46,7 @@ actions:
         - sensor.living_room_device
 ```
 
-It uses `homeassistant.update_entity` because Home Assistant doesn't run Refresh devices on unavailable sensors: once a device misses 5 updates in a row, for example while it's unplugged, a Refresh devices automation that targets its sensors never updates it again. `homeassistant.update_entity` updates the device of each entity you list, even one that's unavailable.
+`homeassistant.update_entity` updates only the devices you list, even one whose sensors are unavailable. To update all your devices instead, use [Refresh devices](actions.md#refresh-devices) with any Google Home sensor as its target. It also runs when that sensor is unavailable, for example after its device missed 5 updates in a row.
 
 While polling is off, **Settings** > **System** > **Repairs** shows **Polling for changes is turned off**. Select it, then choose:
 
