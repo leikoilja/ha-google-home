@@ -267,4 +267,4 @@ data:
 
 ## Still stuck
 
-Search [GitHub Discussions](https://github.com/leikoilja/ha-google-home/discussions) and the [issues](https://github.com/leikoilja/ha-google-home/issues?q=is%3Aissue) for your problem. If nobody has reported it, ask in [Q&A](https://github.com/leikoilja/ha-google-home/discussions/categories/q-a), or [open an issue](https://github.com/leikoilja/ha-google-home/issues/new/choose) with your [diagnostics](#download-diagnostics), the Google Home section of [System information](#check-system-information) and [debug logs](#collect-debug-logs). Versions 1.16.0 and earlier have neither the diagnostics file nor that section.
+Search the [issues](https://github.com/leikoilja/ha-google-home/issues?q=is%3Aissue) for your problem. If nobody has reported it, [open an issue](https://github.com/leikoilja/ha-google-home/issues/new/choose) with your [diagnostics](#download-diagnostics), the Google Home section of [System information](#check-system-information) and [debug logs](#collect-debug-logs). Versions 1.16.0 and earlier have neither the diagnostics file nor that section.

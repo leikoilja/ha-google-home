@@ -2,7 +2,7 @@
 
 ## Ask a question
 
-For help with setup or usage, search [GitHub Discussions](https://github.com/leikoilja/ha-google-home/discussions) and the [issues](https://github.com/leikoilja/ha-google-home/issues?q=is%3Aissue). If nobody has asked yet, start a discussion in [Q&A](https://github.com/leikoilja/ha-google-home/discussions/categories/q-a).
+For help with setup or usage, search the [issues](https://github.com/leikoilja/ha-google-home/issues?q=is%3Aissue). If nobody has asked yet, open an issue with the [Question form](https://github.com/leikoilja/ha-google-home/issues/new?template=question.yml).
 
 ## Report a bug or suggest a feature
 
