@@ -129,9 +129,6 @@ class GoogleHomeData:
     bluetooth: DataUpdateCoordinator[dict[str, TrackerUpdate]] | None = None
     # The Bluetooth settings the entry was set up with, to reload when they change
     bluetooth_config: tuple[bool, frozenset[str], frozenset[str]] | None = None
-    # The update interval in the options when the coordinators last took theirs, so
-    # an interval below 1 second is warned about once, not at every entry change
-    saved_interval: int | None = None
 
 
 type GoogleHomeConfigEntry = ConfigEntry[GoogleHomeData]
