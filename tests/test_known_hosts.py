@@ -11,7 +11,7 @@ import pytest
 from custom_components.google_home.api import GlocaltokensApiClient
 from custom_components.google_home.models import GoogleHomeDevice
 
-from .test_missing_devices import fetching, found, make_client
+from .test_missing_devices import available_attribute, fetching, found, make_client
 from .test_offline_devices import STARTING, device_sensor
 from .test_unsupported_devices import (
     ALARMS,
@@ -278,11 +278,11 @@ def test_available_attribute_of_device_found_at_known_host(
     assert client.google_devices[0].ip_address == SPEAKER
 
     assert network.asked(SPEAKER) == [INFO, *asked]
-    assert sensor.extra_state_attributes["available"] is True
+    assert available_attribute(sensor) is True
 
     network.replies[SPEAKER][INFO] = HTTPStatus.NOT_FOUND
     poll(client, clock, at(0, 15))
     assert network.asked(SPEAKER) == (
         [INFO] if no_alarms else [ALARMS, INFO, VOLUME, DND]
     )
-    assert sensor.extra_state_attributes["available"] is False
+    assert available_attribute(sensor) is False
