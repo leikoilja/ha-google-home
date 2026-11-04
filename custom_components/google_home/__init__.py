@@ -357,11 +357,13 @@ def configured_interval(
     """Return the update interval in the options, or the default for one that isn't positive.
 
     The options form refuses such an interval, but earlier versions saved it: zero
-    stopped scheduled updates and a negative one ran them without a pause. Warn
-    about it unless it equals previous, the interval in the options when the
-    coordinators last took theirs, so each load warns once, and a change to the
-    entry that keeps it, such as a rename, doesn't warn again. While polling is off, nothing is
-    scheduled until it's back on, so the warning doesn't suggest turning it off.
+    stopped scheduled updates and a negative one ran them without a pause.
+
+    Warn about it unless it equals previous, the saved interval that the
+    coordinators last took theirs from. Setup passes none, so each load warns once.
+    A change to the entry that keeps it, such as a rename, doesn't warn again.
+    While polling is off, nothing is scheduled until it's back on, so the warning
+    says the default applies then and doesn't suggest turning polling off.
     """
     seconds = saved_interval(entry)
     if seconds > 0:
