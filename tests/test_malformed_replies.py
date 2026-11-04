@@ -18,6 +18,7 @@ from unittest.mock import Mock
 from aiohttp import ClientPayloadError
 import pytest
 from pytest_homeassistant.common import MockConfigEntry
+from pytest_homeassistant.test_util.aiohttp import AiohttpClientMocker
 
 from custom_components.google_home.const import (
     API_ENDPOINT_ALARM_VOLUME,
@@ -43,11 +44,19 @@ from .conftest import (
     BEDROOM,
     BEDROOM_ID,
     INVALID_JSON,
+    SPEAKER_ID,
     Replies,
     bedroom_speaker,
     kitchen_speaker,
 )
-from .test_coordinators import BEDROOM_ALARMS, BEDROOM_DND, runtime, update_account
+from .test_coordinators import (
+    BEDROOM_ALARMS,
+    BEDROOM_DND,
+    asked,
+    asked_by,
+    runtime,
+    update_account,
+)
 from .test_device_errors import above_debug
 from .test_missing_devices import ALARM_ID, TIMER_ID
 from .test_sensor import (
@@ -80,6 +89,7 @@ from .test_unsupported_devices import (
 # pylint: enable=wrong-import-order
 
 BEDROOM_VOLUME = "number.bedroom_speaker_alarm_volume"
+KITCHEN_VOLUME = "number.kitchen_speaker_alarm_volume"
 OTHER_ALARM_ID = "alarm/" + "1" * 36
 OTHER_TIMER_ID = "timer/" + "1" * 36
 # 2023-11-14 22:13:20 UTC, in milliseconds as the speaker sends it
@@ -238,7 +248,7 @@ def test_reply_that_cant_be_read_keeps_alarms_and_timers(
 
 
 @pytest.mark.parametrize(
-    ("first", "then"),
+    "first",
     [
         # The alarms can be read, and change; a timer can't be converted
         pytest.param(
@@ -246,7 +256,6 @@ def test_reply_that_cant_be_read_keeps_alarms_and_timers(
                 "alarm": [alarm(OTHER_ALARM_ID)],
                 "timer": [timer(original_duration=1e20)],
             },
-            ([ALARM_ID], [TIMER_ID]),
             id="duration-too-long",
         ),
         # A paused timer, whose time left is shown
@@ -255,30 +264,26 @@ def test_reply_that_cant_be_read_keeps_alarms_and_timers(
                 "alarm": [alarm(OTHER_ALARM_ID)],
                 "timer": [timer(fire_time=None, status=2, remaining_duration=1e20)],
             },
-            ([ALARM_ID], [TIMER_ID]),
             id="time-left-too-long",
         ),
         # The timers can be read, and change; an alarm's fire time is after year 9999
         pytest.param(
             {"alarm": [alarm(fire_time=1e17)], "timer": [timer(OTHER_TIMER_ID)]},
-            ([ALARM_ID], [TIMER_ID]),
             id="fire-time-too-late",
         ),
         # A whole number too large for a float, which isn't converted to check it
         pytest.param(
             {"alarm": [alarm(fire_time=10**400)], "timer": []},
-            ([ALARM_ID], [TIMER_ID]),
             id="huge-fire-time",
         ),
         pytest.param(
             {"alarm": [], "timer": [timer(original_duration=10**400)]},
-            ([ALARM_ID], [TIMER_ID]),
             id="huge-duration",
         ),
     ],
 )
 def test_reply_whose_times_cant_be_converted_keeps_both_lists(
-    first: dict[str, object], then: tuple[list[str], list[str]]
+    first: dict[str, object],
 ) -> None:
     """Keep both lists when a number in the reply is too large to convert, whichever list it's in."""
     device = GoogleHomeDevice("device-id", "Kitchen", "token")
@@ -286,7 +291,7 @@ def test_reply_whose_times_cant_be_converted_keeps_both_lists(
 
     assert not device.set_alarms_and_timers(first)
 
-    assert ids(device) == then
+    assert ids(device) == ([ALARM_ID], [TIMER_ID])
 
 
 def test_unknown_statuses_are_kept_and_sorted_last(clock: Mock) -> None:
@@ -417,6 +422,43 @@ def test_reply_that_isnt_valid_json(
         ("INFO", "Updating Device 0 works again"),
         ("ERROR", invalid),
     ]
+
+
+@pytest.mark.usefixtures("google")
+async def test_reply_that_isnt_valid_utf8(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    replies: Replies,
+    aioclient_mock: AiohttpClientMocker,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Keep the alarm volume when the speaker's reply isn't valid UTF-8, and log it once.
+
+    Its bytes are decoded before the JSON is, so this is a reply that isn't valid
+    JSON too. The speaker counts as having answered, and it's still asked for Do Not
+    Disturb.
+    """
+    await set_up(hass, config_entry)
+    coordinator = runtime(config_entry).devices[SPEAKER_ID]
+    replies[SPEAKER][VOLUME] = (HTTPStatus.OK, b"\xff")
+    asked(aioclient_mock)
+
+    for _ in range(2):
+        await coordinator.async_refresh()
+    await hass.async_block_till_done()
+
+    assert asked_by(asked(aioclient_mock), SPEAKER) == EVERYTHING * 2
+    assert coordinator.last_update_success
+    assert coordinator.data is not None
+    assert coordinator.data.statuses[API_ENDPOINT_ALARM_VOLUME, True] == HTTPStatus.OK
+    # The volume that SUPPORTED gave at setup
+    assert state(hass, KITCHEN_VOLUME) == "70"
+    invalid = (
+        "Kitchen speaker sent a reply to setup/assistant/alarms/volume that isn't "
+        "valid JSON: 'utf-8' codec can't decode byte 0xff in position 0: invalid "
+        "start byte"
+    )
+    assert errors(caplog) == [invalid]
 
 
 @pytest.mark.parametrize(
@@ -650,6 +692,9 @@ def test_delete_fails_when_reply_cant_be_read(
     sensors, delete, coordinators = set_up_devices(
         sensor_class, {"Kitchen": reply, "Bedroom": LAST_POLL}
     )
+    # As after an update whose request failed, which an action's reply of JSON null
+    # mustn't be taken for: the action would then delete what the last poll saw
+    coordinators["Kitchen"].data.update_failed = True
 
     with pytest.raises(HomeAssistantError) as err:
         asyncio.run(func(sensors, Mock(data=data)))
