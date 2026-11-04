@@ -4,6 +4,7 @@ Home Assistant sets up the entry, runs its updates and calls its actions. Only
 glocaltokens, mDNS and the speaker's answers are faked, by the fixtures in conftest.py.
 """
 
+import asyncio
 from collections.abc import Awaitable, Callable, Iterable
 from datetime import timedelta
 from http import HTTPStatus
@@ -36,6 +37,7 @@ from custom_components.google_home.const import (
     DEVICE_TRACKER,
     DOMAIN,
     MANUFACTURER,
+    MASTER_TOKEN_TITLE,
     PLATFORMS,
 )
 
@@ -534,10 +536,12 @@ async def test_saved_update_interval_below_one_second(
 async def test_saved_update_interval_below_one_second_polling_off(
     hass: HomeAssistant, config_entry: MockConfigEntry, caplog: pytest.LogCaptureFixture
 ) -> None:
-    """Log nothing for a saved interval of 0 while polling is off.
+    """Log nothing for a saved interval of 0 while polling is off, and warn once it's on.
 
-    Nothing is scheduled then, so a warning that updates run every 15 seconds would
-    be wrong, and it would tell the user to turn off polling.
+    Nothing is scheduled while polling is off, so a warning that updates run every
+    15 seconds would be wrong, and it would tell the user to turn off polling. Turning
+    polling back on in the system options changes the entry, then reloads it: only
+    the reload warns.
     """
     hass.config_entries.async_update_entry(
         config_entry, options={CONF_UPDATE_INTERVAL: 0}, pref_disable_polling=True
@@ -546,6 +550,43 @@ async def test_saved_update_interval_below_one_second_polling_off(
 
     assert config_entry.state is ConfigEntryState.LOADED
     assert logged(caplog) == []
+
+    hass.config_entries.async_update_entry(config_entry, pref_disable_polling=False)
+    assert await hass.config_entries.async_reload(config_entry.entry_id)
+    await hass.async_block_till_done()
+
+    [warning] = logged(caplog)
+    assert "is 0 seconds" in warning
+
+
+@pytest.mark.usefixtures("google", "replies")
+async def test_saved_update_interval_below_one_second_renamed(
+    hass: HomeAssistant, config_entry: MockConfigEntry, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Warn once at setup for a saved interval of 0, also when setup renames the entry.
+
+    An entry with a generic title is named after its Google account once Google
+    answers, after setup. That changes the entry, which doesn't warn again.
+    """
+    hass.config_entries.async_update_entry(
+        config_entry, title=MASTER_TOKEN_TITLE, options={CONF_UPDATE_INTERVAL: 0}
+    )
+
+    async def email(_client: object) -> str:
+        # Google answers after setup, as over the network
+        await asyncio.sleep(0)
+        return "named@example.com"
+
+    with patch(
+        "glocaltokens.client.GLocalAuthenticationTokens.async_get_email",
+        autospec=True,
+        side_effect=email,
+    ):
+        await set_up(hass, config_entry)
+
+    assert config_entry.title == "named@example.com"
+    [warning] = logged(caplog)
+    assert f"options of {MASTER_TOKEN_TITLE} is 0 seconds" in warning
 
 
 @pytest.mark.usefixtures("google", "replies")

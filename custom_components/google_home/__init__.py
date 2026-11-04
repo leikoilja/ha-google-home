@@ -344,17 +344,23 @@ async def async_remove_config_entry_device(
     return not device_entry.identifiers & google_ids
 
 
-def configured_interval(entry: GoogleHomeConfigEntry) -> timedelta:
+def configured_interval(
+    entry: GoogleHomeConfigEntry, in_use: timedelta | None = None
+) -> timedelta:
     """Return the update interval in the options, or the default for one that isn't positive.
 
     The options form refuses such an interval, but earlier versions saved it: zero
-    stopped scheduled updates and a negative one ran them without a pause. While
-    polling is off, nothing is scheduled, so there's nothing to warn about.
+    stopped scheduled updates and a negative one ran them without a pause. Warn
+    when the default replaces another interval in use, or none at setup, so each
+    load warns once. A change to the entry that keeps the default, such as a rename,
+    doesn't warn again. While polling is off, nothing is scheduled, so there's
+    nothing to warn about.
     """
     seconds = cast(int, entry.options.get(CONF_UPDATE_INTERVAL, UPDATE_INTERVAL))
     if seconds > 0:
         return timedelta(seconds=seconds)
-    if not entry.pref_disable_polling:
+    default = timedelta(seconds=UPDATE_INTERVAL)
+    if in_use != default and not entry.pref_disable_polling:
         _LOGGER.warning(
             "The update interval saved in the options of %s is %d seconds, so the "
             "integration updates every %d seconds instead. Enter at least 1 second "
@@ -364,7 +370,7 @@ def configured_interval(entry: GoogleHomeConfigEntry) -> timedelta:
             seconds,
             UPDATE_INTERVAL,
         )
-    return timedelta(seconds=UPDATE_INTERVAL)
+    return default
 
 
 async def async_update_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -> None:
@@ -384,7 +390,9 @@ async def async_update_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) 
         hass.config_entries.async_schedule_reload(entry.entry_id)
         return
     _LOGGER.debug("Options updated, updating coordinator interval...")
-    update_interval = configured_interval(entry)
+    update_interval = configured_interval(
+        entry, entry.runtime_data.account.update_interval
+    )
     entry.runtime_data.account.update_interval = update_interval
     for coordinator in entry.runtime_data.devices.values():
         coordinator.update_interval = update_interval
