@@ -212,6 +212,7 @@ def async_create_bluetooth_coordinator(
 ) -> DataUpdateCoordinator[dict[str, TrackerUpdate]] | None:
     """Create the Bluetooth coordinator, if tracking is on and has devices to track."""
     tracking, excluded, subentry_ids = bluetooth_config(entry)
+    entry.runtime_data.bluetooth_scanner = None
     if not tracking or not subentry_ids:
         return None
     scanner = BluetoothScanner(
@@ -220,6 +221,7 @@ def async_create_bluetooth_coordinator(
         entry.get_subentries_of_type(SUBENTRY_BLUETOOTH_DEVICE),
         excluded,
     )
+    entry.runtime_data.bluetooth_scanner = scanner
     return DataUpdateCoordinator(
         hass,
         _LOGGER,

@@ -127,6 +127,17 @@ async def async_get_config_entry_diagnostics(
             },
             "mdns_reported_not_listed": not_listed,
             "devices": devices,
+            "bluetooth": (
+                {
+                    "speakers": data.bluetooth_scanner.diagnostics(),
+                    "trackers": {
+                        subentry_id: {"state": update.state}
+                        for subentry_id, update in (data.bluetooth.data or {}).items()
+                    },
+                }
+                if data.bluetooth_scanner is not None and data.bluetooth is not None
+                else None
+            ),
         },
         TO_REDACT,
     )

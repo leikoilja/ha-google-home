@@ -20,6 +20,7 @@ import asyncio
 import base64
 from collections.abc import Iterable
 from dataclasses import dataclass
+from datetime import timedelta
 from enum import StrEnum
 from http import HTTPStatus
 import logging
@@ -34,6 +35,7 @@ from bluetooth_data_tools import get_cipher_for_irk, resolve_private_address
 
 from homeassistant.config_entries import ConfigSubentry
 from homeassistant.const import CONF_MAC
+from homeassistant.util import dt as dt_util
 
 from .const import (
     API_ENDPOINT_BLUETOOTH_RESULTS,
@@ -286,6 +288,37 @@ class BluetoothScanner:
         # Speakers that scan, by device ID
         self._speakers: dict[str, SpeakerScan] = {}
         self._unsupported: set[str] = set()
+        # Diagnostic history survives a speaker becoming unsupported or disabled.
+        self._answered: set[str] = set()
+
+    def diagnostics(self) -> dict[str, object]:
+        """Return only speaker scan facts, without credentials or scan contents.
+
+        Coverage is evaluated at download time. Its endpoint is the end of the
+        covered scan interval, not when results were read. Convert the monotonic
+        endpoint to a wall-clock timestamp using the clocks at download time.
+        """
+        now = monotonic()
+        wall_now = dt_util.now()
+        speakers: dict[str, object] = {}
+        for device_id in self._account.data or {}:
+            excluded = device_id in self._excluded or async_device_disabled(
+                self._account.hass, self._account.config_entry, device_id
+            )
+            speaker = self._speakers.get(device_id) if not excluded else None
+            covered_until = speaker.covered_until if speaker is not None else None
+            speakers[device_id] = {
+                "excluded": excluded,
+                "unsupported": device_id in self._unsupported,
+                "answered": device_id in self._answered,
+                "covers_presence_window": speaker.covers(now) if speaker else False,
+                "covered_until": (
+                    (wall_now + timedelta(seconds=covered_until - now)).isoformat()
+                    if covered_until is not None
+                    else None
+                ),
+            }
+        return speakers
 
     async def async_update(self) -> dict[str, TrackerUpdate]:
         """Read the scans of the previous update, start new ones, and return the updates."""
@@ -370,6 +403,7 @@ class BluetoothScanner:
                 speaker.run_start = None
             else:
                 speaker.answered = True
+                self._answered.add(device_id)
                 self._read_scan(device_id, speaker, start, results)
         start = monotonic()
         try:
