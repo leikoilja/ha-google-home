@@ -251,6 +251,25 @@ def test_phone_in_range_after_setup() -> None:
     assert states(scanner, speakers, range(0, 60, 30)) == [UNKNOWN, HOME]
 
 
+def test_multiple_tracked_devices_in_one_scan() -> None:
+    """Hear both phones even when an address doesn't match the first tracked IRK."""
+    second_irk = bytes(range(16, 32))
+    speakers = Speakers("Kitchen")
+    speakers.results["kitchen"] = [heard(rpa(IRK)), heard(rpa(second_irk))]
+    scanner = make_scanner(
+        speakers,
+        [
+            subentry({"irk": IRK.hex()}),
+            subentry({"irk": second_irk.hex()}, "second_phone", "Second phone"),
+        ],
+    )
+    assert update(scanner, speakers, 0) == UNKNOWN
+    with faked(speakers, lambda: 30):
+        scanned = asyncio.run(scanner.async_update())
+    assert scanned[PHONE].state == HOME
+    assert scanned["second_phone"].state == HOME
+
+
 def test_phone_away_after_setup() -> None:
     """Show a phone as away once the speaker scanned for the whole window."""
     speakers = Speakers("Kitchen")
