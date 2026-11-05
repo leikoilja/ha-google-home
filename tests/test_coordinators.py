@@ -300,8 +300,8 @@ async def test_speaker_added_in_google_home_app(
 ) -> None:
     """Ask a speaker that a scheduled fetch finds straight away, and add its entities without a reload.
 
-    A speaker that doesn't answer gets only its device and Wi-Fi sensors and reboot
-    button.
+    A speaker that doesn't answer still gets its device, Wi-Fi, uptime and update
+    sensors and reboot button.
     """
     await set_up(hass, config_entry)
     asked(aioclient_mock)
@@ -332,6 +332,7 @@ async def test_speaker_added_in_google_home_app(
         "sensor.office_speaker_device",
         "sensor.office_speaker_wi_fi_network",
         "sensor.office_speaker_signal_strength",
+        "sensor.office_speaker_uptime",
         "button.office_speaker_reboot",
     }
 

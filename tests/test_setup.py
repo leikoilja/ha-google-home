@@ -79,8 +79,9 @@ VOLUME_NUMBER = "number.kitchen_speaker_alarm_volume"
 UPDATE_SENSOR = "binary_sensor.kitchen_speaker_update"
 WIFI_NETWORK_SENSOR = "sensor.kitchen_speaker_wi_fi_network"
 WIFI_SIGNAL_SENSOR = "sensor.kitchen_speaker_signal_strength"
+UPTIME_SENSOR = "sensor.kitchen_speaker_uptime"
 # The speaker's entities that are disabled by default, so they have no state
-DISABLED = [WIFI_NETWORK_SENSOR, WIFI_SIGNAL_SENSOR]
+DISABLED = [WIFI_NETWORK_SENSOR, WIFI_SIGNAL_SENSOR, UPTIME_SENSOR]
 # The speaker's entities and their states, as it answers in SUPPORTED: an alarm at
 # 1700000000 s, 22:13:20 UTC, shown in the tests' time zone US/Pacific, no timer,
 # which the timers sensor shows as unavailable, alarm volume 0.7, and notifications
@@ -279,7 +280,7 @@ async def test_setup(
 ) -> None:
     """Add the speaker, its entities on every platform, and the actions.
 
-    Its Wi-Fi sensors are disabled until the user enables them.
+    Its Wi-Fi and uptime sensors are disabled until the user enables them.
     """
     await set_up(hass, config_entry)
 
@@ -303,7 +304,7 @@ async def test_setup(
         **dict.fromkeys(STATES, (device.id, None)),
         **dict.fromkeys(DISABLED, (device.id, er.RegistryEntryDisabler.INTEGRATION)),
     }
-    assert [hass.states.get(entity_id) for entity_id in DISABLED] == [None, None]
+    assert all(hass.states.get(entity_id) is None for entity_id in DISABLED)
     assert {entity_id: state(hass, entity_id) for entity_id in STATES} == STATES
     assert hass.services.async_services_for_domain(DOMAIN).keys() == ACTIONS.keys()
 
@@ -757,6 +758,7 @@ async def test_script_stops_at_action_when_setup_fails(
 @pytest.mark.usefixtures("google", "replies", "entity_registry_enabled_by_default")
 # Bluetooth trackers need Bluetooth tracking on: see test_bluetooth_setup.py
 @pytest.mark.parametrize("platform", [p for p in PLATFORMS if p != DEVICE_TRACKER])
+@pytest.mark.freeze_time("2026-10-15 12:00:00+00:00")
 async def test_entities(
     hass: HomeAssistant,
     config_entry: MockConfigEntry,

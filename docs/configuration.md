@@ -90,7 +90,7 @@ If an automation, script or manually configured dashboard card uses an old entit
 
 ## Add devices on another network
 
-The integration finds your devices on your network with multicast DNS (mDNS). mDNS usually doesn't reach other networks, such as a separate VLAN for smart home devices, or a Home Assistant container that doesn't use `host` network mode. Those devices then have only a [device sensor](entities.md#device-sensor), a [reboot button](entities.md#reboot-button), an [update sensor](entities.md#update-sensor) and two [Wi-Fi sensors](entities.md#wi-fi-sensors) that are disabled by default, and all of them are unavailable.
+The integration finds your devices on your network with multicast DNS (mDNS). mDNS usually doesn't reach other networks, such as a separate VLAN for smart home devices, or a Home Assistant container that doesn't use `host` network mode. Those devices then have only a [device sensor](entities.md#device-sensor), a [reboot button](entities.md#reboot-button), an [update sensor](entities.md#update-sensor), and disabled [Wi-Fi sensors](entities.md#wi-fi-sensors) and an [uptime sensor](entities.md#uptime-sensor), and all of them are unavailable.
 
 For devices on another network, Home Assistant needs:
 

@@ -88,6 +88,8 @@ async def async_get_config_entry_diagnostics(
                 # Redacted when known, to show whether the device gave it
                 "ssid": device.wifi_ssid,
                 "signal_level": device.wifi_signal,
+                # Latest estimate, which can differ from HA's drift-normalized state
+                "booted_at": device.booted_at.isoformat() if device.booted_at else None,
                 # Whether mDNS reported it since the integration loaded, or since a fetch
                 # last dropped it from Google's list. None without Google's ID to match
                 # a report to.

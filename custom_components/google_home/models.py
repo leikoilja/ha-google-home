@@ -1,7 +1,7 @@
 """Models for Google Home."""
 
 from collections.abc import Mapping
-from datetime import timedelta
+from datetime import datetime, timedelta
 from enum import Enum
 from http import HTTPStatus
 import logging
@@ -133,6 +133,8 @@ class GoogleHomeDevice:
         # check, or None if it didn't give them. A Nest Hub gives no signal.
         self.wifi_ssid: str | None = None
         self.wifi_signal: float | None = None
+        # Estimated last boot from the latest info reply, before HA suppresses drift
+        self.booted_at: datetime | None = None
         # When the last check of its firmware started
         self.firmware_checked_at: float | None = None
 

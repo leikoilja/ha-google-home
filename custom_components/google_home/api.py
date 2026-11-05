@@ -1,5 +1,7 @@
 """The requests to each device that use its token, and the polling built on them."""
 
+from contextlib import suppress
+from datetime import timedelta
 from http import HTTPStatus
 import json
 import logging
@@ -14,6 +16,8 @@ from aiohttp import (
     ClientTimeout,
 )
 from aiohttp.client_exceptions import ClientConnectorError, ContentTypeError
+
+from homeassistant.util import dt as dt_util
 
 from .account import GoogleAccountClient, TokenWait, first_update_after
 from .const import (
@@ -45,7 +49,7 @@ from .exceptions import (
     DeviceRequestFailed,
     RequestFailure,
 )
-from .models import GoogleHomeDevice
+from .models import GoogleHomeDevice, is_number
 from .types import JsonDict
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
@@ -272,9 +276,9 @@ class GlocaltokensApiClient(GoogleAccountClient):
         that fails isn't asked again until then. Its build info has its versions,
         and its info without params whether an update is waiting; neither needs a
         token. A device that doesn't answer the first isn't asked the second. Only
-        the version and release channel fields, the flag, and the Wi-Fi network and
-        signal strength are kept: a field that its info leaves out is unknown, and an
-        answer other than its info keeps what it said before.
+        the version and release channel fields, the flag, the Wi-Fi network and
+        signal strength, and estimated boot time are kept. A field that its info
+        leaves out is unknown; an answer other than its info keeps what it said before.
         """
         now = monotonic()
         if not device.reachable or (
@@ -312,6 +316,12 @@ class GlocaltokensApiClient(GoogleAccountClient):
             )
             return
         if info is not None:
+            uptime = info.get("uptime")
+            device.booted_at = None
+            if isinstance(uptime, int | float) and is_number(uptime) and uptime >= 0:
+                # Either the duration or the resulting date can be too large.
+                with suppress(OverflowError):
+                    device.booted_at = dt_util.utcnow() - timedelta(seconds=uptime)
             has_update = info.get("has_update")
             # Only the JSON true or false
             device.has_update = has_update if isinstance(has_update, bool) else None
