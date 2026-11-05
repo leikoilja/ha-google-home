@@ -20,8 +20,9 @@ from custom_components.google_home.const import DOMAIN, FETCH_DEVICES_INTERVAL
 
 # ruff sorts homeassistant as first-party, pylint as third-party
 # pylint: disable=wrong-import-order
-from homeassistant.const import STATE_UNAVAILABLE
+from homeassistant.const import ATTR_ENTITY_ID, STATE_UNAVAILABLE
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import (
     area_registry as ar,
     device_registry as dr,
@@ -46,7 +47,9 @@ from .test_coordinators import (
     BEDROOM_DND,
     EVERYTHING,
     KITCHEN_ALARMS,
+    KITCHEN_DEVICE,
     REJECTING,
+    STARTING,
     asked,
     asked_by,
     runtime,
@@ -54,15 +57,18 @@ from .test_coordinators import (
 )
 from .test_malformed_replies import BEDROOM_VOLUME
 from .test_missing_devices import (
+    ALARM_ID,
     FETCH_ERRORS,
     LOCAL_AUTH_TOKEN,
+    TIMER_ID,
     UNREACHABLE,
     answered,
     found,
     logged,
 )
+from .test_offline_devices import SILENT
 from .test_setup import set_up, state
-from .test_unsupported_devices import SPEAKER, SUPPORTED
+from .test_unsupported_devices import SPEAKER, SUPPORTED, Reply
 
 # pylint: enable=wrong-import-order
 
@@ -250,16 +256,64 @@ async def test_speaker_listed_again_between_lists_without_it_stays(
     assert entity_ids(entity_registry, config_entry) == entities
 
 
+BEDROOM_TIMERS = "sensor.bedroom_speaker_timers"
+BEDROOM_ADDRESSED = [
+    BEDROOM_DEVICE,
+    "button.bedroom_speaker_reboot",
+    "binary_sensor.bedroom_speaker_update",
+]
+
+
+def lists_shown(hass: HomeAssistant) -> tuple[object, object]:
+    """Return the bedroom speaker's alarms and timers as its sensors show them, each None while unavailable.
+
+    Their state reads unavailable when nothing will ring, but Home Assistant writes
+    their attributes only while they're available.
+    """
+    alarms = hass.states.get(BEDROOM_ALARMS)
+    timers = hass.states.get(BEDROOM_TIMERS)
+    assert alarms is not None
+    assert timers is not None
+    return alarms.attributes.get("alarms"), timers.attributes.get("timers")
+
+
+async def next_update(hass: HomeAssistant, freezer: FrozenDateTimeFactory) -> None:
+    """Run the speakers' next scheduled update, 15 seconds after the last."""
+    freezer.tick(timedelta(seconds=15))
+    async_fire_time_changed(hass)
+    await hass.async_block_till_done(wait_background_tasks=True)
+
+
 @pytest.mark.usefixtures("two_speakers")
+@pytest.mark.parametrize(
+    ("reply", "fifth"),
+    [
+        # "Not found" ends each run of updates that it doesn't answer
+        pytest.param(STARTING, (BEDROOM, "off", "0"), id="not-found"),
+        pytest.param(SILENT, (STATE_UNAVAILABLE,) * 3, id="silent"),
+    ],
+)
 async def test_speaker_listed_again_without_address(
-    hass: HomeAssistant, config_entry: MockConfigEntry, google: Mock, clock: Mock
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    google: Mock,
+    clock: Mock,
+    replies: Replies,
+    aioclient_mock: AiohttpClientMocker,
+    freezer: FrozenDateTimeFactory,
+    reply: dict[str, Reply],
+    fifth: tuple[str, str, str],
 ) -> None:
-    """Show only the entities that need its address as unavailable when a speaker is listed again without one.
+    """Show what a speaker listed again without an address has for 4 updates, then its alarms, timers and settings as unavailable until it has one.
 
     A list that lacks the speaker makes mDNS forget its address, so the next list
-    gives a new device object without one. Its alarms, timers and settings entities
-    stay available with what that object has until the speaker answers. This pins
-    which entities need the address, not that those values are right.
+    gives a new device object without one. The entities that need the address are
+    unavailable at once. Its alarms, timers and settings entities show what that
+    object has, and their actions fail, as the speaker can't be reached. At the
+    fifth update without an address, they're unavailable too. From the first update
+    with the address they show that object's values again, even while the speaker
+    answers "not found" or doesn't answer, until it doesn't answer 5 updates in a
+    row there. The kitchen speaker stays available.
     """
     await set_up(hass, config_entry)
     assert state(hass, BEDROOM_DEVICE) == BEDROOM
@@ -273,23 +327,83 @@ async def test_speaker_listed_again_without_address(
     assert "ip_address" not in device.attributes
 
     google.return_value = [kitchen_speaker(), bedroom_speaker(None)]
+    # Its first update, as the fetch that lists it again asks it
     await fetch_list(hass, config_entry, clock, 2)
 
     device = hass.states.get(BEDROOM_DEVICE)
     assert device is not None
-    assert device.state == STATE_UNAVAILABLE
     assert "ip_address" not in device.attributes
-    assert state(hass, "button.bedroom_speaker_reboot") == STATE_UNAVAILABLE
-    assert state(hass, "binary_sensor.bedroom_speaker_update") == STATE_UNAVAILABLE
-    assert state(hass, BEDROOM_DND) == "off"
-    assert state(hass, BEDROOM_VOLUME) == "0"
-    # Their state reads unavailable when nothing will ring, but Home Assistant
-    # writes their attributes only while they're available
+    for update in range(1, 5):
+        if update > 1:
+            await next_update(hass, freezer)
+        assert [state(hass, entity_id) for entity_id in BEDROOM_ADDRESSED] == [
+            STATE_UNAVAILABLE
+        ] * 3
+        assert (state(hass, BEDROOM_DND), state(hass, BEDROOM_VOLUME)) == ("off", "0")
+        assert lists_shown(hass) == ([], [])
+
+    asked(aioclient_mock)
+    actions: list[tuple[str, str, dict[str, object], str]] = [
+        ("switch", "turn_on", {ATTR_ENTITY_ID: BEDROOM_DND}, "device_offline"),
+        (
+            "number",
+            "set_value",
+            {ATTR_ENTITY_ID: BEDROOM_VOLUME, "value": 50},
+            "device_offline",
+        ),
+        (
+            DOMAIN,
+            "delete_alarm",
+            {ATTR_ENTITY_ID: BEDROOM_ALARMS, "alarm_id": ALARM_ID},
+            "alarms_and_timers_not_fetched",
+        ),
+        (
+            DOMAIN,
+            "delete_timer",
+            {ATTR_ENTITY_ID: BEDROOM_TIMERS, "timer_id": TIMER_ID},
+            "alarms_and_timers_not_fetched",
+        ),
+    ]
+    for domain, action, data, error in actions:
+        with pytest.raises(HomeAssistantError) as err:
+            await hass.services.async_call(domain, action, data, blocking=True)
+        assert err.value.translation_key == error
+        assert err.value.translation_placeholders == {"device": "Bedroom speaker"}
+    assert asked(aioclient_mock) == []
+
+    await next_update(hass, freezer)
+    assert [
+        state(hass, entity_id)
+        for entity_id in [*BEDROOM_ADDRESSED, BEDROOM_DND, BEDROOM_VOLUME]
+    ] == [STATE_UNAVAILABLE] * 5
+    assert lists_shown(hass) == (None, None)
+    assert state(hass, KITCHEN_DEVICE) == SPEAKER
+
+    replies[BEDROOM] = dict(reply)
+    runtime(config_entry).client.found_devices.async_device_found(
+        BEDROOM_ID, "Bedroom speaker", BEDROOM
+    )
+    for _ in range(4):
+        await next_update(hass, freezer)
+        assert [
+            state(hass, entity_id)
+            for entity_id in [BEDROOM_DEVICE, BEDROOM_DND, BEDROOM_VOLUME]
+        ] == [BEDROOM, "off", "0"]
+        assert lists_shown(hass) == ([], [])
+    await next_update(hass, freezer)
+    assert (
+        state(hass, BEDROOM_DEVICE),
+        state(hass, BEDROOM_DND),
+        state(hass, BEDROOM_VOLUME),
+    ) == fifth
+
+    replies[BEDROOM] = dict(SUPPORTED)
+    await next_update(hass, freezer)
+    assert (state(hass, BEDROOM_DND), state(hass, BEDROOM_VOLUME)) == ("on", "70")
     alarms = hass.states.get(BEDROOM_ALARMS)
-    timers = hass.states.get("sensor.bedroom_speaker_timers")
     assert alarms is not None
-    assert timers is not None
-    assert (alarms.attributes["alarms"], timers.attributes["timers"]) == ([], [])
+    assert [alarm["alarm_id"] for alarm in alarms.attributes["alarms"]] == [ALARM_ID]
+    assert state(hass, KITCHEN_DEVICE) == SPEAKER
 
 
 @pytest.mark.usefixtures("two_speakers")

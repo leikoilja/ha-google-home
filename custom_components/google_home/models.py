@@ -107,6 +107,9 @@ class GoogleHomeDevice:
         # Updates in a row whose alarms request, or info request if it has no alarms,
         # the device didn't answer
         self.unanswered_updates = 0
+        # Updates that couldn't ask the device, as it had no address. Its alarms,
+        # timers and settings entities read them only while it still has none.
+        self.addressless_updates = 0
         # The failures of its updates' requests that were logged as errors, by type,
         # until an update works, and whether a request of the running update failed
         self.logged_failures: set[str] = set()

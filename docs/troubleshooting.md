@@ -180,6 +180,8 @@ To check that the device doesn't answer, [collect debug logs](#collect-debug-log
 Kitchen didn't answer 5 updates in a row. Its entities are unavailable until it answers with something other than "not found".
 ```
 
+A device whose IP address Home Assistant doesn't know isn't asked, so it logs none of these lines; see [Home Assistant can't reach your devices](#device-offline-or-not-compatible).
+
 ### Alarms, timers or settings stop changing
 
 If a device's alarms, timers and settings stop changing in Home Assistant while its entities stay available, [collect debug logs](#collect-debug-logs) for a few updates. A line such as `Kitchen rejected its token` means that the device refuses the token the integration has for it.

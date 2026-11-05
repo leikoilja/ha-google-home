@@ -1,5 +1,8 @@
 """Tests for updates and actions when a device doesn't answer."""
 
+# Devices that don't answer, or have no address to ask, share these helpers
+# pylint: disable=too-many-lines
+
 import asyncio
 from collections.abc import Awaitable, Callable
 from http import HTTPStatus
@@ -416,6 +419,95 @@ def test_address_from_mdns_isnt_an_answer(clock: Mock) -> None:
 
     network.replies[MOVED] = dict(SUPPORTED)
     poll(client, clock, at(1, 45))
+    assert available(speaker) == EVERY_LABEL
+
+
+def without_address(client: GlocaltokensApiClient) -> GoogleHomeDevice:
+    """Return the device at SPEAKER without its address, as if mDNS hadn't found it yet.
+
+    mDNS can report it with Google's ID for it; see found_by_mdns. These tests build
+    the entities directly: Home Assistant adds the alarms, timers and settings
+    entities only once the device answers, as test_power_cut and test_removed_devices
+    show.
+    """
+    device = client.google_devices[0]
+    device.cloud_device_id = "device0"
+    device.ip_address = None
+    return device
+
+
+def found_by_mdns(client: GlocaltokensApiClient) -> None:
+    """Report the device of without_address in mDNS, at MOVED."""
+    client.found_devices.async_device_found("device0", "Device 0", MOVED)
+
+
+@pytest.mark.parametrize(
+    ("found_at", "shown", "asked_at_moved"),
+    [
+        pytest.param(None, [FEATURE_LABELS] * 4 + [set()], [], id="no-address"),
+        # mDNS reports its address before update 4, but it doesn't answer there. The
+        # updates without an address don't add to those it doesn't answer.
+        pytest.param(
+            4,
+            [FEATURE_LABELS] * 3 + [EVERY_LABEL] * 2,
+            [ALARMS, INFO] * 2,
+            id="address-ends-it",
+        ),
+    ],
+)
+def test_unavailable_after_5_updates_without_address(
+    clock: Mock, found_at: int | None, shown: list[set[str]], asked_at_moved: list[str]
+) -> None:
+    """Make a device's alarms, timers and settings unavailable once it has had no address for 5 updates.
+
+    The entities that need its address are unavailable without one. Once it has an
+    address, the updates without one no longer count. The other device stays
+    available, and the device is asked nothing while it has no address.
+    """
+    client, _, network = setup(SUPPORTED, SUPPORTED)
+    without_address(client)
+    network.replies[MOVED] = dict(SILENT)
+    coordinator = Mock()
+    speaker = entities(client, coordinator, "device0")
+    other = entities(client, coordinator, "device1")
+
+    for update, labels in enumerate(shown, start=1):
+        if update == found_at:
+            found_by_mdns(client)
+        coordinator.data = poll(client, clock, at(0, 15 * (update - 1)))
+        assert available(speaker) == labels
+        assert available(other) == EVERY_LABEL
+    assert network.asked(SPEAKER) == []
+    assert network.asked(MOVED) == asked_at_moved
+
+
+@pytest.mark.parametrize(
+    "replies",
+    [
+        pytest.param(STARTING, id="starting"),
+        pytest.param(NO_ALARMS, id="no-alarms"),
+    ],
+)
+def test_address_ends_unavailability_without_address(
+    clock: Mock, replies: dict[str, Reply]
+) -> None:
+    """Make a device that had no address for 5 updates available at its first update with one.
+
+    Even when it answers "not found", as a speaker that is starting does, and as a
+    device without alarms does until the integration finds it has none: the updates
+    without an address aren't updates it didn't answer.
+    """
+    client, _, network = setup(SUPPORTED)
+    without_address(client)
+    coordinator = Mock()
+    speaker = entities(client, coordinator, "device0")
+    for update in range(5):
+        coordinator.data = poll(client, clock, at(0, 15 * update))
+    assert available(speaker) == set()
+
+    network.replies[MOVED] = dict(replies)
+    found_by_mdns(client)
+    coordinator.data = poll(client, clock, at(1, 15))
     assert available(speaker) == EVERY_LABEL
 
 
@@ -998,3 +1090,23 @@ def test_log_device_without_alarms_unavailable_and_back(
             "available; it has no alarms, timers or settings."
         ),
     ]
+
+
+def test_no_log_for_updates_without_address(
+    clock: Mock, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Log nothing at info level or above for a device without an address since setup, nor when it's found.
+
+    Its updates don't ask it, so it didn't fail to answer them.
+    """
+    caplog.set_level(logging.INFO)
+    client, _, network = setup(SUPPORTED)
+    without_address(client)
+    network.replies[MOVED] = dict(SUPPORTED)
+    times = iter(range(at(0), at(10), 15))
+    for _ in range(7):
+        poll(client, clock, next(times))
+    found_by_mdns(client)
+    poll(client, clock, next(times))
+
+    assert info_messages(caplog) == []
