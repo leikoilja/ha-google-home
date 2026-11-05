@@ -2,6 +2,8 @@
 
 The [alarms and timers sensors](entities.md) show the time of the next alarm or timer. Home Assistant's [time trigger](https://www.home-assistant.io/docs/automation/trigger/#time-trigger) can start an automation at that time, or a set time before or after it.
 
+**For the most precise timing at an alarm's or timer's scheduled due time, use a time trigger on its sensor.** Once the integration has seen the due time, Home Assistant schedules the trigger for that time without waiting for another device check. A `ringing` event waits until a successful check reports ringing, so it can arrive later. The due time must be known beforehand, and changes are only picked up at the next check; see [When the trigger runs](#when-the-trigger-runs).
+
 To use an example, go to **Settings** > **Automations & scenes** > **Create automation** > **Create new automation**, open the **⋮** menu, select **Edit in YAML**, and paste it. The examples use Google Home devices, such as _Bedroom_ and _Kitchen_, that aren't in an area. Replace the entity IDs with your own. If yours repeat the room, see [Room name twice in entity IDs](entities.md#room-name-twice-in-entity-ids).
 
 ## Before the next alarm
@@ -37,7 +39,7 @@ actions:
 
 ## When an alarm goes off
 
-Open the bedroom blinds when the alarm goes off:
+Open the bedroom blinds at the alarm's reported due time, without waiting for the integration to observe ringing:
 
 ```yaml
 alias: Open the blinds with the alarm
@@ -51,6 +53,8 @@ actions:
 ```
 
 ## React to observed alarm and timer events
+
+For precise timing at a known due time, keep using the sensor's **time trigger**, as in [When an alarm goes off](#when-an-alarm-goes-off) and [When a timer finishes](#when-a-timer-finishes). Events react to what a poll observes, so they are less precise for starting an automation at that scheduled time.
 
 Use **Event received** to react to ringing, snoozing or stopping that the integration sees, including an item that isn't the speaker's next alarm or timer. In the automation editor, add a trigger, select an entity, device, area or label under **By target**, choose **Event received**, then select the event types:
 
@@ -95,7 +99,7 @@ This covers each observed alarm ID, even when another alarm becomes the next one
 
 ## When a timer finishes
 
-Send a notification to your phone when the kitchen timer finishes. Replace `notify.mobile_app_your_phone` with the notify action of your phone, which you can find in [**Settings** > **Tools** > **Actions**](https://my.home-assistant.io/redirect/tools_actions/):
+Send a notification to your phone at the kitchen timer's reported due time. This time trigger is scheduled beforehand, giving more precise timing than waiting for a `ringing` event. Replace `notify.mobile_app_your_phone` with the notify action of your phone, which you can find in [**Settings** > **Tools** > **Actions**](https://my.home-assistant.io/redirect/tools_actions/):
 
 ```yaml
 alias: Kitchen timer finished

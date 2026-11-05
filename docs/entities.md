@@ -94,6 +94,8 @@ Timers have no `snoozed` status. If you snooze a ringing timer, it restarts and 
 
 Use these entities with Home Assistant's **Event received** trigger to react to each observed alarm or timer, including those that aren't next by fire time. See [React to observed alarm and timer events](automations.md#react-to-observed-alarm-and-timer-events) for setup, examples and limits.
 
+**For precise timing at the reported due time, use a time trigger on the alarms or timers sensor.** Home Assistant schedules it from the known due time; a `ringing` event waits for a successful poll and can arrive later. See [When the trigger runs](automations.md#when-the-trigger-runs) for the time trigger's requirements and limits.
+
 Each entity's state is the timestamp when Home Assistant published its latest event. Until an event is seen it is `unknown`; after a restart it may show the restored last event. That history is not a new event. The entities remain available when their lists are empty, subject to the device's [availability](#when-entities-are-unavailable).
 
 Alarm event types are `ringing`, `snoozed` and `stopped`; timer types are `ringing` and `stopped`. Stopped describes the observed end of ringing tracked under a reported ID, including its removal, rather than proof of dismissal. A changed ID can produce stopped for the old ID and ringing or snoozed for the new one without proving physical cessation or identity. A same-ID ringing-to-snoozed alarm produces snoozed only. Polling can miss an entire ring, and startup, reload, recovery from a failed update and reappearance start with a silent baseline.
