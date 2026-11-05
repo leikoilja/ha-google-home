@@ -115,6 +115,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -
     )
     # Before the first refresh, which adds the device coordinators
     entry.runtime_data = GoogleHomeData(glocaltokens_client, account, {})
+    glocaltokens_client.can_refresh_devices = account.async_can_refresh_devices
     found_devices = glocaltokens_client.found_devices
     # Not async_request_refresh(), which drops the request when an update that
     # started too early to fetch for found devices runs longer than its cooldown
