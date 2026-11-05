@@ -52,7 +52,11 @@ PHONE = "phone"
 
 
 def rpa(irk: bytes, prand: bytes = b"\x52\x34\x56") -> str:
-    """Return a resolvable private address that the IRK resolves."""
+    """Return prand followed by the IRK's hash of it.
+
+    The IRK resolves it when prand's top two bits are 01, as the default's are.
+    Otherwise it isn't a resolvable private address.
+    """
     encryptor = get_cipher_for_irk(irk).encryptor()
     digest = (encryptor.update(bytes(13) + prand) + encryptor.finalize())[13:]
     return ":".join(f"{byte:02X}" for byte in prand + digest)
@@ -299,7 +303,7 @@ def test_ignore_weak_sightings(rssi: int, state: TrackerState) -> None:
 
 
 def test_ignore_other_addresses() -> None:
-    """Ignore addresses that aren't the phone's, and show away on time."""
+    """Ignore addresses that aren't the phone's, and still hear the phone after them."""
     speakers = Speakers("Kitchen")
     speakers.results["kitchen"] = [
         # Another phone's resolvable private address
@@ -317,6 +321,10 @@ def test_ignore_other_addresses() -> None:
         UNKNOWN,
         NOT_HOME,
     ]
+
+    # Heard after the addresses that the scanner skips
+    speakers.results["kitchen"].append(heard(rpa(IRK)))
+    assert update(scanner, speakers, 120) == HOME
 
 
 def test_failed_scan_start_skips_next_read() -> None:
