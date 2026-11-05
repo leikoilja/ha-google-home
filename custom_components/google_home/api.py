@@ -124,7 +124,9 @@ class GlocaltokensApiClient(GoogleAccountClient):
 
         With found_at_known_host, the device was just found at a known host, which
         answered with its info. Return whether the device was asked, which sets
-        whether it's reachable.
+        whether it's reachable. An update of a device without an address can't ask
+        it: it counts toward the updates without an address, not toward those the
+        device didn't answer.
         """
         # Gives the user a warning if the device is offline
         if not device.ip_address:
@@ -139,6 +141,7 @@ class GlocaltokensApiClient(GoogleAccountClient):
                     ),
                     device.name,
                 )
+            device.addressless_updates += 1
             return False
         if not device.auth_token and not device.alarms_unsupported:
             return False
