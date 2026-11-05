@@ -264,6 +264,7 @@ The diagnostics file shows:
 
 - The integration's options.
 - For each device: its model, whether it answers, whether Home Assistant has received its mDNS announcements since the integration loaded, its last reply about alarms and timers, as the device sent it, its firmware versions and release channel, whether it says a firmware update is waiting, its Wi-Fi signal strength, and its estimated last boot time (`booted_at`, before Home Assistant smooths it).
+- Bluetooth tracking (`bluetooth`): whether each speaker is `excluded` (including disabled speakers) or `unsupported`, whether it has ever returned scan results since the integration last loaded (`answered`), whether its scans currently cover the presence window (`covers_presence_window`), and the end of its covered scan interval (`covered_until`, not the time results were read). Each tracker shows its latest `state`, including `unavailable`. The summary is `null` when Bluetooth tracking is off or no devices are tracked.
 - How many other Cast devices on your network have announced themselves since the integration loaded but aren't in Google's device list, such as TVs with Chromecast built in, or speakers in another Google account. Only the number, not their names or addresses. Devices in homes that you [deselected](configuration.md#choose-homes) don't count.
 - When you downloaded it.
 

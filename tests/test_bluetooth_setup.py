@@ -28,6 +28,10 @@ from pytest_homeassistant.components.recorder.common import async_wait_recording
 from pytest_homeassistant.typing import ClientSessionGenerator, WebSocketGenerator
 
 from custom_components.google_home import bluetooth as scanner_module
+from custom_components.google_home.bluetooth import (
+    BluetoothScanError,
+    BluetoothScanUnsupported,
+)
 from custom_components.google_home.models import GoogleHomeDevice
 from custom_components.google_home.types import BluetoothJsonDict
 
@@ -76,15 +80,20 @@ class Scans:
         self.now = 0.0
         # The speakers asked to start a scan, in order
         self.started: list[str] = []
+        self.errors: dict[str, BluetoothScanError] = {}
 
     async def results(
         self, _session: object, device: GoogleHomeDevice
     ) -> list[BluetoothJsonDict]:
         """Return what the speaker heard."""
+        if error := self.errors.get(str(device.ip_address)):
+            raise error
         return self.heard.get(str(device.ip_address), [])
 
     async def start(self, _session: object, device: GoogleHomeDevice) -> None:
         """Start a scan."""
+        if error := self.errors.get(str(device.ip_address)):
+            raise error
         self.started.append(device.name)
 
 
@@ -717,22 +726,248 @@ async def test_options_offer_speakers_by_name(
     assert selector.config["options"] == offered
 
 
-@pytest.mark.usefixtures("google", "replies", "scans")
+@pytest.mark.usefixtures("google", "replies")
 async def test_diagnostics_leave_out_tracked_devices(
     hass: HomeAssistant,
     config_entry: MockConfigEntry,
     hass_client: ClientSessionGenerator,
+    scans: Scans,
 ) -> None:
-    """Never show a tracked device's IRK or MAC address in the diagnostics."""
+    """Leave out subentry contents, credentials and all heard addresses, including untracked ones."""
+    mac = "AA:BB:CC:DD:EE:FF"
+    address = rpa(IRK)
+    unrelated = "02:00:5E:10:20:30"
+    title = "Private tracker title"
+    credentials = {
+        "username": "bluetooth-diagnostics@example.com",
+        "password": "invented-bluetooth-password",
+        "master_token": "aas_et/" + "s" * 216,
+        "android_id": "a9b8c7d6e5f40312",
+    }
+    hass.config_entries.async_update_entry(config_entry, data=credentials)
     hass.config_entries.async_add_subentry(
         config_entry,
-        subentry({"mac": "AA:BB:CC:DD:EE:FF"}, subentry_id="watch", title="Watch"),
+        subentry(
+            {"mac": mac, "private": "invented-subentry-secret"},
+            subentry_id="watch",
+            title=title,
+        ),
     )
     await track_phone(hass, config_entry)
+    scans.heard[SPEAKER] = [heard(address), heard(mac), heard(unrelated)]
+    assert await scan(hass, config_entry, scans, 30) == STATE_HOME
 
-    diagnostics = json.dumps(
-        await get_diagnostics_for_config_entry(hass, hass_client, config_entry)
-    ).upper()
+    downloaded = await get_diagnostics_for_config_entry(hass, hass_client, config_entry)
+    diagnostics = json.dumps(downloaded).upper()
 
-    assert IRK.hex().upper() not in diagnostics
-    assert "AA:BB:CC:DD:EE:FF" not in diagnostics
+    secrets = [
+        IRK.hex(),
+        base64.b64encode(IRK[::-1]).decode(),
+        mac,
+        address,
+        unrelated,
+        title,
+        "invented-subentry-secret",
+        *credentials.values(),
+        *[
+            device.auth_token
+            for device in runtime(config_entry).client.google_devices
+            if device.auth_token
+        ],
+    ]
+    assert [value for value in secrets if value.upper() in diagnostics] == []
+    bluetooth = cast(dict[str, object], downloaded["bluetooth"])
+    assert bluetooth["trackers"] == {
+        PHONE: {"state": "home"},
+        "watch": {"state": "home"},
+    }
+
+
+@pytest.mark.usefixtures("google", "replies", "scans")
+@pytest.mark.parametrize("tracking", [False, True])
+async def test_diagnostics_without_active_bluetooth(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    hass_client: ClientSessionGenerator,
+    tracking: bool,
+) -> None:
+    """No active summary when tracking is off, or on without devices to track."""
+    hass.config_entries.async_update_entry(
+        config_entry, options={"bluetooth_tracking": tracking}
+    )
+    if not tracking:
+        hass.config_entries.async_add_subentry(
+            config_entry, subentry({"irk": IRK.hex()})
+        )
+    await set_up(hass, config_entry)
+
+    diagnostics = await get_diagnostics_for_config_entry(
+        hass, hass_client, config_entry
+    )
+
+    assert diagnostics["bluetooth"] is None
+
+
+@pytest.mark.usefixtures("google", "replies")
+@pytest.mark.freeze_time("2026-10-15 12:00:00+00:00")
+@pytest.mark.parametrize(
+    (
+        "status",
+        "excluded",
+        "unsupported",
+        "answered",
+        "covers",
+        "covered_until",
+        "state",
+    ),
+    [
+        ("excluded", True, False, False, False, None, "unknown"),
+        ("unsupported", False, True, False, False, None, "unknown"),
+        ("never-answered", False, False, False, False, None, "unknown"),
+        ("starting", False, False, False, False, None, "unknown"),
+        ("covering", False, False, True, True, "2026-10-15T05:00:00-07:00", "not_home"),
+        (
+            "blocking",
+            False,
+            False,
+            True,
+            False,
+            "2026-10-15T04:59:30-07:00",
+            "not_home",
+        ),
+        ("became-unsupported", False, True, True, False, None, "not_home"),
+        ("disabled", True, False, True, False, None, "not_home"),
+    ],
+)
+async def test_diagnostics_bluetooth_speakers(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    hass_client: ClientSessionGenerator,
+    scans: Scans,
+    device_registry: dr.DeviceRegistry,
+    status: str,
+    excluded: bool,
+    unsupported: bool,
+    answered: bool,
+    covers: bool,
+    covered_until: str | None,
+    state: str,
+) -> None:
+    """Show allowlisted scan facts, preserving answered-ever after failures or a 404."""
+    error_text = f"private error at {SPEAKER} with invented-token"
+    if status == "unsupported":
+        scans.errors[SPEAKER] = BluetoothScanUnsupported(error_text)
+    elif status == "never-answered":
+        scans.errors[SPEAKER] = BluetoothScanError(error_text)
+    hass.config_entries.async_update_entry(
+        config_entry,
+        options={
+            "bluetooth_tracking": True,
+            "bluetooth_excluded_speakers": [SPEAKER_ID] if status == "excluded" else [],
+        },
+    )
+    hass.config_entries.async_add_subentry(config_entry, subentry({"irk": IRK.hex()}))
+    await set_up(hass, config_entry)
+    if status != "starting":
+        for now in range(30, 121, 30):
+            await scan(hass, config_entry, scans, now)
+    if status in {"blocking", "became-unsupported"}:
+        scans.errors[SPEAKER] = (
+            BluetoothScanUnsupported(error_text)
+            if unsupported
+            else BluetoothScanError(error_text)
+        )
+        await scan(hass, config_entry, scans, 150)
+    if status == "disabled":
+        device = kitchen_device(device_registry, config_entry)
+        await set_disabled(hass, device_registry, device.id, disabled=True)
+        await scan(hass, config_entry, scans, 150)
+
+    diagnostics = await get_diagnostics_for_config_entry(
+        hass, hass_client, config_entry
+    )
+
+    assert diagnostics["bluetooth"] == {
+        "speakers": {
+            SPEAKER_ID: {
+                "excluded": excluded,
+                "unsupported": unsupported,
+                "answered": answered,
+                "covers_presence_window": covers,
+                "covered_until": covered_until,
+            }
+        },
+        "trackers": {PHONE: {"state": state}},
+    }
+    assert error_text not in json.dumps(diagnostics)
+
+
+@pytest.mark.usefixtures("google", "replies")
+@pytest.mark.parametrize(
+    "covered_until",
+    [
+        pytest.param(
+            "2026-10-15T04:59:55-07:00",
+            marks=pytest.mark.freeze_time("2026-10-15 12:00:00+00:00"),
+            id="ordinary-time",
+        ),
+        pytest.param(
+            "2026-11-01T01:59:58-07:00",
+            marks=pytest.mark.freeze_time("2026-11-01 09:00:03+00:00"),
+            id="daylight-saving-fallback",
+        ),
+    ],
+)
+async def test_diagnostics_coverage_expires_between_updates(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    hass_client: ClientSessionGenerator,
+    scans: Scans,
+    covered_until: str,
+) -> None:
+    """Coverage uses download time, and its endpoint is the scan end, not the later read."""
+    await track_phone(hass, config_entry)
+    for now in (35, 65, 95, 125):
+        await scan(hass, config_entry, scans, now)
+    # Read the next scan late: it covers only 30 seconds from 125, not until 160.
+    await scan(hass, config_entry, scans, 160)
+    delayed = await get_diagnostics_for_config_entry(hass, hass_client, config_entry)
+    bluetooth = cast(dict[str, dict[str, dict[str, object]]], delayed["bluetooth"])
+    assert bluetooth["speakers"][SPEAKER_ID]["covered_until"] == covered_until
+    # Coverage through 155 stays fresh for 45s, even without another refresh.
+    scans.now = 200
+    fresh = await get_diagnostics_for_config_entry(hass, hass_client, config_entry)
+    scans.now = 200.001
+    expired = await get_diagnostics_for_config_entry(hass, hass_client, config_entry)
+
+    fresh_bluetooth = cast(dict[str, dict[str, dict[str, object]]], fresh["bluetooth"])
+    expired_bluetooth = cast(
+        dict[str, dict[str, dict[str, object]]], expired["bluetooth"]
+    )
+    assert fresh_bluetooth["speakers"][SPEAKER_ID]["covers_presence_window"] is True
+    assert expired_bluetooth["speakers"][SPEAKER_ID]["covers_presence_window"] is False
+
+
+@pytest.mark.usefixtures("google", "replies")
+async def test_diagnostics_use_latest_tracker_update(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    hass_client: ClientSessionGenerator,
+    scans: Scans,
+) -> None:
+    """Show unavailable from the latest update even while the scanner remembers away."""
+    await track_phone(hass, config_entry)
+    for now in range(30, 121, 30):
+        assert await scan(hass, config_entry, scans, now) in {
+            STATE_UNKNOWN,
+            STATE_NOT_HOME,
+        }
+    scans.errors[SPEAKER] = BluetoothScanError("invented private error")
+    assert await scan(hass, config_entry, scans, 420) == "unavailable"
+
+    diagnostics = await get_diagnostics_for_config_entry(
+        hass, hass_client, config_entry
+    )
+
+    bluetooth = cast(dict[str, object], diagnostics["bluetooth"])
+    assert bluetooth["trackers"] == {PHONE: {"state": "unavailable"}}
