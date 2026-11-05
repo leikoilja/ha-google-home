@@ -120,6 +120,31 @@
       "do_not_disturb": {
         "name": "Stör ej"
       }
+    },
+    "event": {
+      "alarm_events": {
+        "name": "Alarmhändelser",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "Ringer",
+              "snoozed": "Snoozat",
+              "stopped": "Stoppat"
+            }
+          }
+        }
+      },
+      "timer_events": {
+        "name": "Timerhändelser",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "Ringer",
+              "stopped": "Stoppat"
+            }
+          }
+        }
+      }
     }
   },
   "exceptions": {

@@ -29,6 +29,14 @@
       "do_not_disturb": {
         "default": "mdi:minus-circle"
       }
+    },
+    "event": {
+      "alarm_events": {
+        "default": "mdi:alarm-bell"
+      },
+      "timer_events": {
+        "default": "mdi:timer-alert-outline"
+      }
     }
   },
   "services": {

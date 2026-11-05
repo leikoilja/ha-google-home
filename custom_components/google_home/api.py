@@ -50,6 +50,7 @@ from .exceptions import (
     RequestFailure,
 )
 from .models import GoogleHomeDevice, is_number
+from .observations import observe_poll
 from .types import JsonDict
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
@@ -375,6 +376,7 @@ class GlocaltokensApiClient(GoogleAccountClient):
         if isinstance(response, dict) and device.set_alarms_and_timers(response):
             if polling:
                 device.polled_snapshots += 1
+                device.poll_observation = observe_poll(device)
             _LOGGER.debug(
                 "Successfully retrieved alarms and timers from %s. Response: %s",
                 device.name,

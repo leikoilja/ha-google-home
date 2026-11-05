@@ -120,6 +120,31 @@
       "do_not_disturb": {
         "name": "サイレント モード"
       }
+    },
+    "event": {
+      "alarm_events": {
+        "name": "アラームのイベント",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "鳴動中",
+              "snoozed": "スヌーズ中",
+              "stopped": "停止"
+            }
+          }
+        }
+      },
+      "timer_events": {
+        "name": "タイマーのイベント",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "鳴動中",
+              "stopped": "停止"
+            }
+          }
+        }
+      }
     }
   },
   "exceptions": {

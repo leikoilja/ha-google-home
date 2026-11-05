@@ -120,6 +120,31 @@
       "do_not_disturb": {
         "name": "Не беспокоить"
       }
+    },
+    "event": {
+      "alarm_events": {
+        "name": "События будильников",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "Звонит",
+              "snoozed": "Отложен",
+              "stopped": "Остановлен"
+            }
+          }
+        }
+      },
+      "timer_events": {
+        "name": "События таймеров",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "Звонит",
+              "stopped": "Остановлен"
+            }
+          }
+        }
+      }
     }
   },
   "exceptions": {

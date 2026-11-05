@@ -120,6 +120,31 @@
       "do_not_disturb": {
         "name": "방해 금지"
       }
+    },
+    "event": {
+      "alarm_events": {
+        "name": "알람 이벤트",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "울리는 중",
+              "snoozed": "다시 알림",
+              "stopped": "중지됨"
+            }
+          }
+        }
+      },
+      "timer_events": {
+        "name": "타이머 이벤트",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "울리는 중",
+              "stopped": "중지됨"
+            }
+          }
+        }
+      }
     }
   },
   "exceptions": {

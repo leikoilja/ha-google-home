@@ -95,6 +95,8 @@ STATES = {
     "button.kitchen_speaker_reboot": STATE_UNKNOWN,
     # Its info says no update is waiting
     UPDATE_SENSOR: STATE_OFF,
+    "event.kitchen_speaker_alarm_events": STATE_UNKNOWN,
+    "event.kitchen_speaker_timer_events": STATE_UNKNOWN,
 }
 # The icon that each entity has shown since before icons.json, in the states above.
 # The reboot button and update sensor have none of their own: the frontend shows its
@@ -107,6 +109,8 @@ ICONS = {
     VOLUME_NUMBER: "mdi:volume-high",
     "button.kitchen_speaker_reboot": None,
     UPDATE_SENSOR: None,
+    "event.kitchen_speaker_alarm_events": "mdi:alarm-bell",
+    "event.kitchen_speaker_timer_events": "mdi:timer-alert-outline",
 }
 # The actions, each with data that it accepts
 ACTIONS: dict[str, dict[str, object]] = {

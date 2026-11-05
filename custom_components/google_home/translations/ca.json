@@ -120,6 +120,31 @@
       "do_not_disturb": {
         "name": "No molestis"
       }
+    },
+    "event": {
+      "alarm_events": {
+        "name": "Esdeveniments d’alarmes",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "Sonant",
+              "snoozed": "Ajornada",
+              "stopped": "Aturada"
+            }
+          }
+        }
+      },
+      "timer_events": {
+        "name": "Esdeveniments de temporitzadors",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "Sonant",
+              "stopped": "Aturat"
+            }
+          }
+        }
+      }
     }
   },
   "exceptions": {

@@ -120,6 +120,31 @@
       "do_not_disturb": {
         "name": "Niet storen"
       }
+    },
+    "event": {
+      "alarm_events": {
+        "name": "Alarmgebeurtenissen",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "Gaat af",
+              "snoozed": "Gesnoozed",
+              "stopped": "Gestopt"
+            }
+          }
+        }
+      },
+      "timer_events": {
+        "name": "Timergebeurtenissen",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "Gaat af",
+              "stopped": "Gestopt"
+            }
+          }
+        }
+      }
     }
   },
   "exceptions": {

@@ -120,6 +120,31 @@
       "do_not_disturb": {
         "name": "Не турбувати"
       }
+    },
+    "event": {
+      "alarm_events": {
+        "name": "Події будильників",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "Дзвонить",
+              "snoozed": "Відкладено",
+              "stopped": "Зупинено"
+            }
+          }
+        }
+      },
+      "timer_events": {
+        "name": "Події таймерів",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "Дзвонить",
+              "stopped": "Зупинено"
+            }
+          }
+        }
+      }
     }
   },
   "exceptions": {

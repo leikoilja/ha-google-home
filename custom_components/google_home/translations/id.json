@@ -120,6 +120,31 @@
       "do_not_disturb": {
         "name": "Jangan ganggu"
       }
+    },
+    "event": {
+      "alarm_events": {
+        "name": "Peristiwa alarm",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "Berdering",
+              "snoozed": "Ditunda",
+              "stopped": "Berhenti"
+            }
+          }
+        }
+      },
+      "timer_events": {
+        "name": "Peristiwa timer",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "Berdering",
+              "stopped": "Berhenti"
+            }
+          }
+        }
+      }
     }
   },
   "exceptions": {

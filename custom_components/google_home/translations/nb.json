@@ -120,6 +120,31 @@
       "do_not_disturb": {
         "name": "Ikke forstyrr"
       }
+    },
+    "event": {
+      "alarm_events": {
+        "name": "Alarmhendelser",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "Ringer",
+              "snoozed": "Slumret",
+              "stopped": "Stoppet"
+            }
+          }
+        }
+      },
+      "timer_events": {
+        "name": "Timerhendelser",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "Ringer",
+              "stopped": "Stoppet"
+            }
+          }
+        }
+      }
     }
   },
   "exceptions": {
