@@ -92,6 +92,7 @@ LABEL_DEVICE: Final = "device"
 LABEL_DO_NOT_DISTURB: Final = "Do Not Disturb"
 LABEL_REBOOT: Final = "reboot"
 LABEL_FIRMWARE_UPDATE: Final = "firmware update"
+LABEL_UPTIME: Final = "uptime"
 LABEL_WIFI_NETWORK: Final = "Wi-Fi network"
 LABEL_WIFI_SIGNAL: Final = "Wi-Fi signal"
 

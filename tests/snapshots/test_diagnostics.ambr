@@ -39,6 +39,7 @@
         'alarms_unsupported': False,
         'auth_token': '**REDACTED**',
         'available': True,
+        'booted_at': '2026-10-15T11:39:25.500000+00:00',
         'build_info': dict({
           'cast_build_revision': '3.77.512345',
           'preview_channel_state': 0,

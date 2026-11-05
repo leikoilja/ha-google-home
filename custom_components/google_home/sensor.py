@@ -2,6 +2,7 @@
 
 import asyncio
 from collections.abc import Awaitable, Callable
+from datetime import datetime
 from enum import IntFlag
 from functools import partial
 import logging
@@ -45,6 +46,7 @@ from .const import (
     LABEL_ALARMS,
     LABEL_DEVICE,
     LABEL_TIMERS,
+    LABEL_UPTIME,
     LABEL_WIFI_NETWORK,
     LABEL_WIFI_SIGNAL,
     SENSOR,
@@ -126,13 +128,14 @@ async def async_setup_entry(
     async_add_devices: AddEntitiesCallback,
 ) -> bool:
     """Set up sensor platform."""
-    # Devices without alarms have Wi-Fi too
+    # Devices without alarms have diagnostic info too
     async_add_device_entities(
         entry,
         async_add_devices,
         GoogleHomeDeviceSensor,
         WifiNetworkSensor,
         WifiSignalSensor,
+        UptimeSensor,
         needs_answer=False,
     )
     async_add_device_entities(
@@ -464,8 +467,8 @@ class GoogleHomeDeviceSensor(GoogleHomeAddressedEntity):
         }
 
 
-class WifiSensor(GoogleHomeAddressedEntity, SensorEntity):
-    """What the device's info said about its Wi-Fi at the last firmware check.
+class InfoSensor(GoogleHomeAddressedEntity, SensorEntity):
+    """What the device's info said at the last firmware check.
 
     Disabled by default, as few users need it. Every device gets it, also one that
     doesn't report the value, whose sensor stays unknown.
@@ -475,7 +478,7 @@ class WifiSensor(GoogleHomeAddressedEntity, SensorEntity):
     _attr_entity_registry_enabled_default = False
 
 
-class WifiNetworkSensor(WifiSensor):
+class WifiNetworkSensor(InfoSensor):
     """The name (SSID) of the Wi-Fi network that the device uses."""
 
     _attr_translation_key = "wifi_network"
@@ -494,7 +497,7 @@ class WifiNetworkSensor(WifiSensor):
         return device.wifi_ssid if device else None
 
 
-class WifiSignalSensor(WifiSensor):
+class WifiSignalSensor(InfoSensor):
     """The device's Wi-Fi signal strength, which a Nest Hub doesn't report.
 
     Without a translation key, Home Assistant names it after its device class, in its
@@ -517,6 +520,25 @@ class WifiSignalSensor(WifiSensor):
         """Return the signal strength in dBm, or None until the device gives it."""
         device = self.get_device()
         return device.wifi_signal if device else None
+
+
+class UptimeSensor(InfoSensor):
+    """Estimated last boot, with Home Assistant's localized name and drift tolerance."""
+
+    _attr_device_class = SensorDeviceClass.UPTIME
+
+    @property
+    @override
+    def label(self) -> str:
+        """Label to use for unique id."""
+        return LABEL_UPTIME
+
+    @property
+    @override
+    def native_value(self) -> datetime | None:
+        """Return the stored estimate, or None until the device reports valid uptime."""
+        device = self.get_device()
+        return device.booted_at if device else None
 
 
 class GoogleHomeAlarmsSensor(GoogleHomeFeatureEntity):
