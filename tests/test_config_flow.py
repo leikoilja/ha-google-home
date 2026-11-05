@@ -870,7 +870,7 @@ SOURCES = [
 ]
 
 
-@pytest.mark.usefixtures("enable_custom_integrations", "mock_setup_entry", "sign_in")
+@pytest.mark.usefixtures("mock_setup_entry", "sign_in")
 async def test_discovery(hass: HomeAssistant) -> None:
     """Offer the same sign-in as adding the integration when a speaker is found."""
     result = await discover(hass, "Kitchen", "192.168.1.10")
@@ -889,7 +889,6 @@ async def test_discovery(hass: HomeAssistant) -> None:
     assert entry.data["master_token"] == NEW_MASTER_TOKEN
 
 
-@pytest.mark.usefixtures("enable_custom_integrations")
 @pytest.mark.parametrize(("source", "data"), SOURCES)
 async def test_discovery_in_progress(
     hass: HomeAssistant, source: str, data: ZeroconfServiceInfo | None
