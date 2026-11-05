@@ -7,10 +7,15 @@ from time import time
 from typing import override
 
 from homeassistant.config_entries import ConfigEntryState
+from homeassistant.const import Platform
 from homeassistant.core import CALLBACK_TYPE, HomeAssistant, callback
 from homeassistant.exceptions import ConfigEntryAuthFailed
-from homeassistant.helpers import device_registry as dr
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+from homeassistant.helpers import device_registry as dr, entity_registry as er
+from homeassistant.helpers.entity_platform import async_get_platforms
+from homeassistant.helpers.update_coordinator import (
+    CoordinatorEntity,
+    DataUpdateCoordinator,
+)
 
 from .api import GlocaltokensApiClient
 from .const import (
@@ -93,13 +98,32 @@ class GoogleAccountCoordinator(DataUpdateCoordinator[dict[str, GoogleHomeDevice]
 
     @callback
     def async_can_refresh_devices(self) -> bool:
-        """Return whether an enabled device can request an account refresh.
+        """Return whether an entity can request an account refresh.
 
-        An unlisted device keeps its entities until removed, so it can ask too.
+        Refresh devices needs an enabled registered sensor, even one not yet added.
+        Home Assistant's update_entity can use any enabled, added device entity,
+        including an unavailable one. An unlisted device keeps its entities too.
         """
+        coordinators = {
+            coordinator
+            for device_id, coordinator in self.config_entry.runtime_data.devices.items()
+            if not async_device_disabled(self.hass, self.config_entry, device_id)
+        }
+        if not coordinators:
+            return False
+        if any(
+            entity.domain == Platform.SENSOR and not entity.disabled
+            for entity in er.async_entries_for_config_entry(
+                er.async_get(self.hass), self.config_entry.entry_id
+            )
+        ):
+            return True
         return any(
-            not async_device_disabled(self.hass, self.config_entry, device_id)
-            for device_id in self.config_entry.runtime_data.devices
+            isinstance(entity, CoordinatorEntity)
+            and entity.coordinator in coordinators
+            and entity.enabled
+            for platform in async_get_platforms(self.hass, DOMAIN)
+            for entity in platform.entities.values()
         )
 
     @override
