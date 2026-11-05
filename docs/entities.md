@@ -13,12 +13,13 @@ Each Google Home device gets the entities below. The examples use a device named
 | Update sensor          | `binary_sensor.living_room_update`   | Whether the device says a firmware update is waiting            |
 | Wi-Fi network sensor   | `sensor.living_room_wi_fi_network`   | Name of the Wi-Fi network the device uses. Disabled by default. |
 | Signal strength sensor | `sensor.living_room_signal_strength` | The device's Wi-Fi signal strength. Disabled by default.        |
+| Uptime sensor | `sensor.living_room_uptime` | Estimated time of the device's last boot. Disabled by default. |
 
 The device page also shows the device's [firmware version](#firmware-version).
 
 If you turn on [Bluetooth tracking](bluetooth.md), each phone or other Bluetooth device you track also gets a tracker entity.
 
-The alarms sensor, timers sensor, switch and alarm volume are added once the device answers successfully. If a device has only a device sensor, a reboot button, an update sensor and two Wi-Fi sensors that are disabled by default, see [No alarms or timers sensors](troubleshooting.md#no-alarms-or-timers-sensors). A device without alarms and timers, such as a Chromecast Audio, doesn't get these four entities.
+The alarms sensor, timers sensor, switch and alarm volume are added once the device answers successfully. If a device has only a device sensor, a reboot button, an update sensor, and disabled Wi-Fi and uptime sensors, see [No alarms or timers sensors](troubleshooting.md#no-alarms-or-timers-sensors). A device without alarms and timers, such as a Chromecast Audio, doesn't get these four entities.
 
 Entities become unavailable, for example, while a device is unplugged or after you remove it from the Google Home app. See [When entities are unavailable](#when-entities-are-unavailable).
 
@@ -164,11 +165,25 @@ As a rough guide to what the signal strength means:
 
 These ranges are a rough guide from [Understanding RSSI](https://www.oscium.com/training/understanding-rssi/), not figures from Google. If a device's signal is weak, try moving it or your router, or adding a mesh Wi-Fi point.
 
-Every device gets both sensors, including a device without alarms and timers, but they're disabled by default. To enable one, go to **Settings** > **Devices & services** > **Google Home** and select the device. In the **Diagnostic** card, select the disabled entities, such as **+2 disabled entities**, then the sensor. In its settings, turn on **Enabled** and select **Update**. Home Assistant adds it about 30 seconds later.
+Every device gets both sensors, including a device without alarms and timers, but they're disabled by default. To enable one, go to **Settings** > **Devices & services** > **Google Home** and select the device. In the **Diagnostic** card, select the disabled entities, such as **+3 disabled entities**, then the sensor. In its settings, turn on **Enabled** and select **Update**. Home Assistant adds it about 30 seconds later.
 
 A Nest Hub reports its Wi-Fi network but not its signal strength, so its signal strength sensor stays unknown. Other displays may not report a signal either. What a device connected by Ethernet reports isn't known, as none has been checked.
 
 The integration reads both values when it checks the [update sensor](#update-sensor), so a value is usually up to 20 minutes old, and a short drop in the signal between checks doesn't show. A sensor is unknown until the device reports its value, and becomes unknown again if an answer leaves it out. A check that fails keeps the last values. Like the device sensor, both sensors are unavailable while Home Assistant doesn't know the device's IP address.
+
+## Uptime sensor
+
+Enable the uptime sensor to compare the estimated time of a device's last boot with periods when it was [unavailable](#when-entities-are-unavailable). It shows a timestamp, rather than a running duration, and doesn't confirm that a reboot happened. Its name comes from Home Assistant's own localized name for this kind of sensor; no integration translation string is added.
+
+Every device gets the sensor under **Diagnostic**, including devices without alarms and timers. It's disabled by default; [enable it in the device's settings](#wi-fi-sensors), as with the Wi-Fi sensors. It's unknown until the device reports valid uptime, and becomes unknown if an answer omits it or gives an invalid value. Uptime has been observed on a speaker and a display using current Cast firmware; older models, other displays and Chromecast Audio are unverified and may leave the sensor unknown.
+
+The estimate is the time Home Assistant received the device's answer minus how long the device said it had been running. It's sampled with the [update sensor](#update-sensor), using an existing request, normally every 20 minutes. After a reboot, the previous boot time stays until the next due check, normally up to 20 minutes and longer while the device doesn't answer or [polling is off](configuration.md#turn-off-polling). A failed check keeps the previous estimate. The downloaded [diagnostics](troubleshooting.md#download-diagnostics) include `booted_at`, the latest estimate before Home Assistant smooths it, even while the sensor is disabled.
+
+Home Assistant ignores differences of less than 60 seconds between estimates, keeping the displayed time steady through ordinary sampling jitter and a restart of the device's local connection without a reboot. Keep these limits in mind when comparing its history:
+
+- Two boots less than a minute apart can appear as one if a check sees the first boot.
+- Changes or drift in the clocks can move the estimate without a reboot. Restarting Home Assistant, reloading the integration or recovering from unknown starts a new baseline, which can shift the displayed time slightly too.
+- Becoming unavailable and available again appears in the sensor's history even when the underlying boot time stays the same.
 
 ## When entities are unavailable
 
@@ -183,7 +198,7 @@ When the integration can't get your device list from Google, the devices it alre
 Some entities are also unavailable on their own:
 
 - On a [device without alarms and timers](troubleshooting.md#devices-without-alarms-and-timers), such as a Chromecast Audio, the alarms sensor, timers sensor, switch and alarm volume, if it had them. Reloading the integration or restarting Home Assistant brings them back only if the device then answers for these features.
-- The device sensor, reboot button, update sensor and Wi-Fi sensors, while Home Assistant doesn't know the device's IP address.
+- The device sensor, reboot button, update sensor, Wi-Fi sensors and uptime sensor, while Home Assistant doesn't know the device's IP address.
 - The alarms sensor, timers sensor, Do Not Disturb switch and alarm volume, once Home Assistant hasn't known the device's IP address for 5 updates in a row. This happens when Google's list misses the device once and lists it again before Home Assistant finds it; until then, they show no alarms and default settings. From the first update with the address, only the other conditions apply: they show those values until the device sends its own, and become unavailable once it hasn't answered 5 updates in a row.
 
 Entities that became unavailable because the device didn't answer are available again at the next update the device answers, after it finishes starting. Being available again doesn't always mean new values; see [Alarms, timers or settings stop changing](troubleshooting.md#alarms-timers-or-settings-stop-changing).
@@ -217,8 +232,8 @@ After you confirm, update the automations, scripts and manually configured dashb
 
 ## Entity names in other languages
 
-Home Assistant shows these entities' names in its language, such as _Wecker_ for the alarms sensor in German, or in English where a translation is missing. To correct a translation, see [Translate the integration](contributing.md#translate-the-integration). The update and signal strength sensors' names are Home Assistant's own names for those kinds of sensors, which Home Assistant translates itself.
+Home Assistant shows these entities' names in its language, such as _Wecker_ for the alarms sensor in German, or in English where a translation is missing. To correct a translation, see [Translate the integration](contributing.md#translate-the-integration). The update, signal strength and uptime sensors' names are Home Assistant's own names for those kinds of sensors, which Home Assistant translates itself.
 
-In Catalan, Czech, Danish, Dutch, Finnish, French, German, Hungarian, Indonesian, Italian, Norwegian Bokmål, Norwegian Nynorsk, Polish, Portuguese, Romanian, Slovak, Spanish and Swedish, Home Assistant also builds new entity IDs from the translated names. In German, the alarms sensor of a new device named _Living Room_ gets `sensor.living_room_wecker`. In other languages, such as Russian or Japanese, entity IDs use the English names, as in the table at the top of this page. The update and signal strength sensors follow Home Assistant's own translations instead, so in some other languages, such as Lithuanian, their entity IDs are translated while the others are in English. What counts is the language set for Home Assistant itself, not the language in your user profile.
+In Catalan, Czech, Danish, Dutch, Finnish, French, German, Hungarian, Indonesian, Italian, Norwegian Bokmål, Norwegian Nynorsk, Polish, Portuguese, Romanian, Slovak, Spanish and Swedish, Home Assistant also builds new entity IDs from the translated names. In German, the alarms sensor of a new device named _Living Room_ gets `sensor.living_room_wecker`. In other languages, such as Russian or Japanese, entity IDs use the English names, as in the table at the top of this page. The update, signal strength and uptime sensors follow Home Assistant's own translations instead, so in some other languages, such as Lithuanian, their entity IDs are translated while the others are in English. What counts is the language set for Home Assistant itself, not the language in your user profile.
 
 Entities you already have keep their entity IDs in every language. In the languages listed above, a new device's entity IDs can then differ from those of your other devices, and [Recreate entity IDs](#room-name-twice-in-entity-ids) changes the existing ones to the translated names too, unless you gave an entity a name of your own. Check the list of changes before you confirm.

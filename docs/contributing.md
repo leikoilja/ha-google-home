@@ -123,7 +123,7 @@ The integration isn't set up yet. On the first start, create a Home Assistant us
 To test with real speakers, Home Assistant must reach them on your network over HTTPS port 8443:
 
 - **GitHub Codespaces** runs in the cloud and can't reach them. Use a local checkout or dev container instead.
-- **A local dev container** may not receive mDNS from your network. If your speakers then have only a device sensor, a reboot button, an update sensor and two Wi-Fi sensors that are disabled by default, all unavailable, add the speakers as [known hosts](configuration.md#add-devices-on-another-network).
+- **A local dev container** may not receive mDNS from your network. If your speakers then have only a device sensor, a reboot button, an update sensor, and disabled Wi-Fi and uptime sensors, all unavailable, add the speakers as [known hosts](configuration.md#add-devices-on-another-network).
 
 ### Run the checks
 
