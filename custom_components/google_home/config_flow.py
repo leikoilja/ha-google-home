@@ -229,10 +229,11 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
         # Keep the saved address when Google doesn't give one
         data[CONF_USERNAME] = username or entry.data.get(CONF_USERNAME, "")
         result = self.async_update_and_abort(entry, data_updates=data)
-        # Not async_update_reload_and_abort(), which Home Assistant refuses from
-        # 2026.12 for an entry with an update listener. This entry's listener reloads
-        # it only when known hosts or homes change, and an entry that failed setup has
-        # none.
+        # Not async_update_reload_and_abort(), which Home Assistant warns will stop
+        # working in 2026.12 for an entry with an update listener. This entry's
+        # listener reloads it only when known hosts, homes, Bluetooth options or
+        # tracked Bluetooth devices change, never for new sign-in details. An entry
+        # that failed setup has no listener at all.
         self.hass.config_entries.async_schedule_reload(entry.entry_id)
         return result
 
