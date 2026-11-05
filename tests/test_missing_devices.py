@@ -538,12 +538,13 @@ def test_sign_in_rejected_at_setup() -> None:
 
 @contextlib.asynccontextmanager
 async def set_up(
-    tmp_path: Path, google: Mock
+    tmp_path: Path, google: Mock, *, polling_off: bool = False
 ) -> AsyncIterator[tuple[HomeAssistant, GoogleHomeConfigEntry]]:
     """Set up the integration as Home Assistant does, with google as glocaltokens' fetch of the list.
 
     Raise what setup raises, or yield Home Assistant and the entry. Home Assistant's
-    first update of the devices is real; loading the platforms is left out.
+    first update of the devices is real; loading the platforms is left out. With
+    polling_off, the entry's system options turn polling off.
     """
     async with home_assistant(tmp_path) as (hass, _):
         entry: GoogleHomeConfigEntry = ConfigEntry(
@@ -552,6 +553,7 @@ async def set_up(
             domain=DOMAIN,
             minor_version=2,
             options={},
+            pref_disable_polling=polling_off,
             source=SOURCE_USER,
             subentries_data=None,
             title="test@example.com",
@@ -560,6 +562,9 @@ async def set_up(
             # The first update checks that it runs during setup
             state=ConfigEntryState.SETUP_IN_PROGRESS,
         )
+        # Registered as home_assistant() registers its entry, for the repairs that
+        # setup links to it
+        hass.config_entries._entries[entry.entry_id] = entry  # noqa: SLF001  # pylint: disable=protected-access
         with (
             patch("custom_components.google_home.zeroconf.async_get_instance"),
             # Browsing needs a real zeroconf instance

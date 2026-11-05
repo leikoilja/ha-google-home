@@ -82,6 +82,49 @@ def test_setup_logs_other_fetch_errors(
     assert failure_logged(error, 1) in logged(caplog)
 
 
+@pytest.mark.parametrize("error", NOT_REJECTED)
+def test_setup_without_polling_says_to_reload(
+    tmp_path: Path, caplog: pytest.LogCaptureFixture, error: Exception
+) -> None:
+    """Say to reload when setup goes on without devices while polling is off.
+
+    Home Assistant then schedules no update of the account, and without devices
+    nothing asks for one, so the list isn't fetched again until a reload.
+    """
+
+    async def run() -> None:
+        async with set_up(tmp_path, Mock(side_effect=error), polling_off=True):
+            pass
+
+    asyncio.run(run())
+
+    later = "polling is off, so reload the integration to fetch it"
+    assert [line for line in logged(caplog) if line[0] != "DEBUG"] == [
+        ("ERROR", f"Failed to fetch Google's device list ({later}): {error}")
+    ]
+
+
+def test_polling_off_with_devices_says_when_fetched_again(
+    clock: Mock, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Still say when the list is fetched again while polling is off and there are devices.
+
+    Refreshing a device, such as with Refresh devices, asks for the account's update
+    that fetches it.
+    """
+    client, glocaltokens = make_client("10.0.0.2")
+    client.polling_off = True
+    unavailable = answered(HTTPStatus.SERVICE_UNAVAILABLE)
+    glocaltokens.get_google_devices.side_effect = unavailable
+    # The scheduled fetch is due
+    clock.return_value = FETCH_DEVICES_INTERVAL
+    update(client)
+
+    assert [line for line in logged(caplog) if line[0] != "DEBUG"] == [
+        failure_logged(unavailable, 20)
+    ]
+
+
 def test_log_sign_in_rejected_after_setup(
     clock: Mock, tmp_path: Path, caplog: pytest.LogCaptureFixture
 ) -> None:
