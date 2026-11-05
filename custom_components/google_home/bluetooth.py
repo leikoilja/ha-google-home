@@ -299,7 +299,7 @@ class BluetoothScanner:
         endpoint to a wall-clock timestamp using the clocks at download time.
         """
         now = monotonic()
-        wall_now = dt_util.now()
+        wall_now = dt_util.utcnow()
         speakers: dict[str, object] = {}
         for device_id in self._account.data or {}:
             excluded = device_id in self._excluded or async_device_disabled(
@@ -313,7 +313,9 @@ class BluetoothScanner:
                 "answered": device_id in self._answered,
                 "covers_presence_window": speaker.covers(now) if speaker else False,
                 "covered_until": (
-                    (wall_now + timedelta(seconds=covered_until - now)).isoformat()
+                    dt_util.as_local(
+                        wall_now + timedelta(seconds=covered_until - now)
+                    ).isoformat()
                     if covered_until is not None
                     else None
                 ),

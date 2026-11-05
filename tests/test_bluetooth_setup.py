@@ -903,12 +903,27 @@ async def test_diagnostics_bluetooth_speakers(
 
 
 @pytest.mark.usefixtures("google", "replies")
-@pytest.mark.freeze_time("2026-10-15 12:00:00+00:00")
+@pytest.mark.parametrize(
+    "covered_until",
+    [
+        pytest.param(
+            "2026-10-15T04:59:55-07:00",
+            marks=pytest.mark.freeze_time("2026-10-15 12:00:00+00:00"),
+            id="ordinary-time",
+        ),
+        pytest.param(
+            "2026-11-01T01:59:58-07:00",
+            marks=pytest.mark.freeze_time("2026-11-01 09:00:03+00:00"),
+            id="daylight-saving-fallback",
+        ),
+    ],
+)
 async def test_diagnostics_coverage_expires_between_updates(
     hass: HomeAssistant,
     config_entry: MockConfigEntry,
     hass_client: ClientSessionGenerator,
     scans: Scans,
+    covered_until: str,
 ) -> None:
     """Coverage uses download time, and its endpoint is the scan end, not the later read."""
     await track_phone(hass, config_entry)
@@ -918,10 +933,7 @@ async def test_diagnostics_coverage_expires_between_updates(
     await scan(hass, config_entry, scans, 160)
     delayed = await get_diagnostics_for_config_entry(hass, hass_client, config_entry)
     bluetooth = cast(dict[str, dict[str, dict[str, object]]], delayed["bluetooth"])
-    assert (
-        bluetooth["speakers"][SPEAKER_ID]["covered_until"]
-        == "2026-10-15T04:59:55-07:00"
-    )
+    assert bluetooth["speakers"][SPEAKER_ID]["covered_until"] == covered_until
     # Coverage through 155 stays fresh for 45s, even without another refresh.
     scans.now = 200
     fresh = await get_diagnostics_for_config_entry(hass, hass_client, config_entry)
