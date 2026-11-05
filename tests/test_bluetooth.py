@@ -298,6 +298,27 @@ def test_ignore_weak_sightings(rssi: int, state: TrackerState) -> None:
     assert update(scanner, speakers, 120) == state
 
 
+def test_ignore_other_addresses() -> None:
+    """Ignore addresses that aren't the phone's, and show away on time."""
+    speakers = Speakers("Kitchen")
+    speakers.results["kitchen"] = [
+        # Another phone's resolvable private address
+        heard(rpa(bytes(range(16, 32)))),
+        # A public address, though it ends with the phone's hash
+        heard(rpa(IRK, b"\x12\x34\x56")),
+        # Too short to be a MAC address
+        heard("AA:BB:CC:DD:EE"),
+    ]
+    scanner = make_scanner(speakers)
+
+    assert states(scanner, speakers, range(0, 120, 30)) == [
+        UNKNOWN,
+        UNKNOWN,
+        UNKNOWN,
+        NOT_HOME,
+    ]
+
+
 def test_failed_scan_start_skips_next_read() -> None:
     """Never read results after a scan failed to start, as they may be old."""
     speakers = Speakers("Kitchen")
