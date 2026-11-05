@@ -120,10 +120,21 @@ class GoogleHomeFeatureEntity(GoogleHomeBaseEntity):
     @property
     @override
     def available(self) -> bool:
-        """Return whether Google still lists the device, it answers and it has these features."""
+        """Return whether Google still lists the device, it answers and it has these features.
+
+        They don't need its address until it has had none for UNANSWERED_UPDATES
+        updates: before then they show what the device object has. Once it has an
+        address, only the other conditions apply.
+        """
         device = self.get_device()
         return (
-            super().available and device is not None and not device.alarms_unsupported
+            super().available
+            and device is not None
+            and not device.alarms_unsupported
+            and (
+                device.ip_address is not None
+                or device.addressless_updates < UNANSWERED_UPDATES
+            )
         )
 
 

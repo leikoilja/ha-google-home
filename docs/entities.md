@@ -184,6 +184,7 @@ Some entities are also unavailable on their own:
 
 - On a [device without alarms and timers](troubleshooting.md#devices-without-alarms-and-timers), such as a Chromecast Audio, the alarms sensor, timers sensor, switch and alarm volume, if it had them. Reloading the integration or restarting Home Assistant brings them back only if the device then answers for these features.
 - The device sensor, reboot button, update sensor and Wi-Fi sensors, while Home Assistant doesn't know the device's IP address.
+- The alarms sensor, timers sensor, Do Not Disturb switch and alarm volume, once Home Assistant hasn't known the device's IP address for 5 updates in a row. This happens when Google's list misses the device once and lists it again before Home Assistant finds it; until then, they show no alarms and default settings. From the first update with the address, only the other conditions apply: they show those values until the device sends its own, and become unavailable once it hasn't answered 5 updates in a row.
 
 Entities that became unavailable because the device didn't answer are available again at the next update the device answers, after it finishes starting. Being available again doesn't always mean new values; see [Alarms, timers or settings stop changing](troubleshooting.md#alarms-timers-or-settings-stop-changing).
 
