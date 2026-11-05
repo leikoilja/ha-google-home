@@ -91,6 +91,17 @@ class GoogleAccountCoordinator(DataUpdateCoordinator[dict[str, GoogleHomeDevice]
         # straight away to update
         self._asked: dict[str, GoogleHomeDevice] = {}
 
+    @callback
+    def async_can_refresh_devices(self) -> bool:
+        """Return whether an enabled device can request an account refresh.
+
+        An unlisted device keeps its entities until removed, so it can ask too.
+        """
+        return any(
+            not async_device_disabled(self.hass, self.config_entry, device_id)
+            for device_id in self.config_entry.runtime_data.devices
+        )
+
     @override
     async def _async_update_data(self) -> dict[str, GoogleHomeDevice]:
         """Fetch Google's list when due, and make the device coordinators follow it.

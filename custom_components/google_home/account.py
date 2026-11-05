@@ -146,6 +146,9 @@ class GoogleAccountClient:
         # Whether polling is turned off in the entry's system options, so no update
         # comes unless asked for. Home Assistant reloads the entry when it changes.
         self.polling_off = False
+        # Setup supplies the account coordinator's view, including retained devices
+        # that Google no longer lists but whose entities can still request a refresh.
+        self.can_refresh_devices: Callable[[], bool] = lambda: bool(self.google_devices)
         self.known_hosts = known_hosts or []
         # When known hosts were last asked, and those that said which device they are
         # when they were last asked
@@ -410,8 +413,8 @@ class GoogleAccountClient:
         # account again until signing in again reloads the integration
         if isinstance(error, AuthenticationError) and not self.google_devices:
             return "sign in again to fetch it"
-        # Home Assistant schedules no update, and without devices nothing asks for one
-        if self.polling_off and not self.google_devices:
+        # Home Assistant schedules no update, and disabled devices can't ask for one
+        if self.polling_off and not self.can_refresh_devices():
             return "polling is off, so reload the integration to fetch it"
         # From now, as the fetch that failed took a while
         return (
