@@ -120,6 +120,31 @@
       "do_not_disturb": {
         "name": "Μην ενοχλείτε"
       }
+    },
+    "event": {
+      "alarm_events": {
+        "name": "Συμβάντα ξυπνητηριών",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "Κουδουνίζει",
+              "snoozed": "Σε αναβολή",
+              "stopped": "Σταμάτησε"
+            }
+          }
+        }
+      },
+      "timer_events": {
+        "name": "Συμβάντα χρονομέτρων",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "Κουδουνίζει",
+              "stopped": "Σταμάτησε"
+            }
+          }
+        }
+      }
     }
   },
   "exceptions": {

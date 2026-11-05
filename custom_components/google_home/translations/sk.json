@@ -120,6 +120,31 @@
       "do_not_disturb": {
         "name": "Nerušiť"
       }
+    },
+    "event": {
+      "alarm_events": {
+        "name": "Udalosti budíkov",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "Zvoní",
+              "snoozed": "Odložené",
+              "stopped": "Zastavené"
+            }
+          }
+        }
+      },
+      "timer_events": {
+        "name": "Udalosti časovačov",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "Zvoní",
+              "stopped": "Zastavené"
+            }
+          }
+        }
+      }
     }
   },
   "exceptions": {

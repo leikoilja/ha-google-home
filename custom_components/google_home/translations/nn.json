@@ -120,6 +120,31 @@
       "do_not_disturb": {
         "name": "Ikkje forstyrr"
       }
+    },
+    "event": {
+      "alarm_events": {
+        "name": "Alarmhendingar",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "Ringjer",
+              "snoozed": "Utsett",
+              "stopped": "Stoppa"
+            }
+          }
+        }
+      },
+      "timer_events": {
+        "name": "Tidtakarhendingar",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "Ringjer",
+              "stopped": "Stoppa"
+            }
+          }
+        }
+      }
     }
   },
   "exceptions": {

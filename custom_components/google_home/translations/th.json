@@ -120,6 +120,31 @@
       "do_not_disturb": {
         "name": "ห้ามรบกวน"
       }
+    },
+    "event": {
+      "alarm_events": {
+        "name": "เหตุการณ์การปลุก",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "กำลังส่งเสียง",
+              "snoozed": "เลื่อนปลุก",
+              "stopped": "หยุดแล้ว"
+            }
+          }
+        }
+      },
+      "timer_events": {
+        "name": "เหตุการณ์ตัวจับเวลา",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "กำลังส่งเสียง",
+              "stopped": "หยุดแล้ว"
+            }
+          }
+        }
+      }
     }
   },
   "exceptions": {

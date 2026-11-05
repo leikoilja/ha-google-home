@@ -120,6 +120,31 @@
       "do_not_disturb": {
         "name": "Bitte nicht stören"
       }
+    },
+    "event": {
+      "alarm_events": {
+        "name": "Weckerereignisse",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "Klingelt",
+              "snoozed": "Schlummern",
+              "stopped": "Gestoppt"
+            }
+          }
+        }
+      },
+      "timer_events": {
+        "name": "Timerereignisse",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "Klingelt",
+              "stopped": "Gestoppt"
+            }
+          }
+        }
+      }
     }
   },
   "exceptions": {

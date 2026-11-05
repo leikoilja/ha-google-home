@@ -120,6 +120,31 @@
       "do_not_disturb": {
         "name": "Nu deranja"
       }
+    },
+    "event": {
+      "alarm_events": {
+        "name": "Evenimente de alarmă",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "Sună",
+              "snoozed": "Amânată",
+              "stopped": "Oprită"
+            }
+          }
+        }
+      },
+      "timer_events": {
+        "name": "Evenimente de temporizator",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "Sună",
+              "stopped": "Oprit"
+            }
+          }
+        }
+      }
     }
   },
   "exceptions": {

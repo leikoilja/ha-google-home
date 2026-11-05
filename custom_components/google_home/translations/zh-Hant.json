@@ -120,6 +120,31 @@
       "do_not_disturb": {
         "name": "勿擾"
       }
+    },
+    "event": {
+      "alarm_events": {
+        "name": "鬧鐘事件",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "響鈴中",
+              "snoozed": "已延後",
+              "stopped": "已停止"
+            }
+          }
+        }
+      },
+      "timer_events": {
+        "name": "計時器事件",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "響鈴中",
+              "stopped": "已停止"
+            }
+          }
+        }
+      }
     }
   },
   "exceptions": {

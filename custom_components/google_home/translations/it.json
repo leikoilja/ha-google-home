@@ -120,6 +120,31 @@
       "do_not_disturb": {
         "name": "Non disturbare"
       }
+    },
+    "event": {
+      "alarm_events": {
+        "name": "Eventi sveglia",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "Suona",
+              "snoozed": "Posticipata",
+              "stopped": "Interrotta"
+            }
+          }
+        }
+      },
+      "timer_events": {
+        "name": "Eventi timer",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "Suona",
+              "stopped": "Interrotto"
+            }
+          }
+        }
+      }
     }
   },
   "exceptions": {

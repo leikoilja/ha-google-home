@@ -120,6 +120,31 @@
       "do_not_disturb": {
         "name": "Älä häiritse"
       }
+    },
+    "event": {
+      "alarm_events": {
+        "name": "Herätystapahtumat",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "Soi",
+              "snoozed": "Torkutettu",
+              "stopped": "Pysäytetty"
+            }
+          }
+        }
+      },
+      "timer_events": {
+        "name": "Ajastintapahtumat",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "Soi",
+              "stopped": "Pysäytetty"
+            }
+          }
+        }
+      }
     }
   },
   "exceptions": {

@@ -34,7 +34,16 @@ NUMBER: Final = "number"
 BUTTON: Final = "button"
 BINARY_SENSOR: Final = "binary_sensor"
 DEVICE_TRACKER: Final = "device_tracker"
-PLATFORMS: Final = [SENSOR, SWITCH, NUMBER, BUTTON, BINARY_SENSOR, DEVICE_TRACKER]
+EVENT: Final = "event"
+PLATFORMS: Final = [
+    SENSOR,
+    SWITCH,
+    NUMBER,
+    BUTTON,
+    BINARY_SENSOR,
+    DEVICE_TRACKER,
+    EVENT,
+]
 
 # Services
 SERVICE_REBOOT: Final = "reboot_device"

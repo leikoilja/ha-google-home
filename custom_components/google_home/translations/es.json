@@ -120,6 +120,31 @@
       "do_not_disturb": {
         "name": "No molestar"
       }
+    },
+    "event": {
+      "alarm_events": {
+        "name": "Eventos de alarmas",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "Sonando",
+              "snoozed": "Pospuesta",
+              "stopped": "Detenida"
+            }
+          }
+        }
+      },
+      "timer_events": {
+        "name": "Eventos de temporizadores",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "Sonando",
+              "stopped": "Detenido"
+            }
+          }
+        }
+      }
     }
   },
   "exceptions": {

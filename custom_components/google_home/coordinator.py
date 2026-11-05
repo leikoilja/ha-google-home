@@ -23,6 +23,7 @@ from .const import (
     RINGING_WINDOW,
 )
 from .models import GoogleHomeAlarmStatus, GoogleHomeDevice, GoogleHomeTimerStatus
+from .observations import ItemEvent, PollObservation, observed_events
 from .types import GoogleHomeConfigEntry
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
@@ -263,6 +264,25 @@ class GoogleHomeDeviceCoordinator(DataUpdateCoordinator[GoogleHomeDevice | None]
         # the loop time at which it started, before it asked for them
         self._timed = False
         self._sampled_at = 0.0
+        self.event_sequence = 0
+        self.events: tuple[ItemEvent, ...] = ()
+        self._event_baseline: tuple[GoogleHomeDevice, PollObservation] | None = None
+        self._event_generation = 0
+        self._events_shutdown = False
+
+    @callback
+    def _invalidate_events(self) -> None:
+        """Break continuity, including for a poll still awaiting a later endpoint."""
+        self._event_generation += 1
+        self._event_baseline = None
+        self.events = ()
+
+    @override
+    async def async_shutdown(self) -> None:
+        """Discard pending observations before stopping scheduled updates."""
+        self._events_shutdown = True
+        self._invalidate_events()
+        await super().async_shutdown()
 
     def _configured_interval(self) -> timedelta | None:
         """Return the update interval in the options, as the account's coordinator has it."""
@@ -357,6 +377,9 @@ class GoogleHomeDeviceCoordinator(DataUpdateCoordinator[GoogleHomeDevice | None]
         Nothing is asked while the device is disabled in Home Assistant, and no update
         is scheduled: Home Assistant reloads the entry once it's enabled again.
         """
+        previous, self._event_baseline = self._event_baseline, None
+        generation = self._event_generation
+        self.events = ()
         if async_device_disabled(self.hass, self.config_entry, self.device_id):
             self.update_interval = None
             return self.data
@@ -386,6 +409,26 @@ class GoogleHomeDeviceCoordinator(DataUpdateCoordinator[GoogleHomeDevice | None]
         # update interval, as it was set above or since by the options.
         if device.polled_snapshots != snapshots:
             self._follow_due(device, started)
+            observation = device.poll_observation
+            device_ready = (
+                not device.update_failed
+                and not device.alarms_unsupported
+                and device.ip_address is not None
+                and device.auth_token is not None
+            )
+            if (
+                observation is not None
+                and device_ready
+                and generation == self._event_generation
+                and not self._events_shutdown
+                and not async_device_disabled(
+                    self.hass, self.config_entry, self.device_id
+                )
+            ):
+                self.event_sequence += 1
+                if previous is not None and previous[0] is device:
+                    self.events = observed_events(previous[1], observation)
+                self._event_baseline = device, observation
         return device
 
     @callback
@@ -425,6 +468,7 @@ class GoogleHomeDeviceCoordinator(DataUpdateCoordinator[GoogleHomeDevice | None]
     @callback
     def async_unlisted(self) -> None:
         """Show that Google no longer lists the device."""
+        self._invalidate_events()
         self.info_answered = None
         self._timed = False
         if self.data is not None:

@@ -120,6 +120,31 @@
       "do_not_disturb": {
         "name": "Ne zavarjanak"
       }
+    },
+    "event": {
+      "alarm_events": {
+        "name": "Ébresztési események",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "Cseng",
+              "snoozed": "Szundi",
+              "stopped": "Leállt"
+            }
+          }
+        }
+      },
+      "timer_events": {
+        "name": "Időzítőesemények",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "Cseng",
+              "stopped": "Leállt"
+            }
+          }
+        }
+      }
     }
   },
   "exceptions": {

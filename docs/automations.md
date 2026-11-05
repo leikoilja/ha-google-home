@@ -50,31 +50,48 @@ actions:
       entity_id: cover.bedroom_blinds
 ```
 
+## React to observed alarm and timer events
+
+Use **Event received** to react to ringing, snoozing or stopping that the integration sees, including an item that isn't the speaker's next alarm or timer. In the automation editor, add a trigger, select an entity, device, area or label under **By target**, choose **Event received**, then select the event types:
+
+- **Alarm events:** `ringing`, `snoozed` or `stopped`.
+- **Timer events:** `ringing` or `stopped`. A timer returning from ringing to set produces `stopped`; it has no separate snoozed status.
+
+Each detected transition produces its own event. If several items change at the same update, use an automation mode such as `queued` or `parallel` so its actions can handle each event. You can read that event's ID, label and time from `trigger.to_state.attributes`; see [Alarm and timer events](entities.md#alarm-and-timer-events). The entity itself shows only the latest event.
+
+### What these events mean
+
+The integration compares the IDs and statuses reported by successful updates:
+
+- `ringing`: a reported item ID is newly seen ringing.
+- `snoozed`: an alarm ID is newly seen snoozed. A change from ringing to snoozed under the same ID produces only snoozed.
+- `stopped`: ringing tracked under an ID ended, including when the item disappears or a recurring alarm returns to set. It does not prove that someone dismissed it. If the speaker changes an item's ID, the old ID can produce stopped while the new one produces ringing or snoozed, even if the physical sound continues. Events do not identify an alarm across different IDs.
+
+Events can be delayed until the next successful update, and a complete ring between updates can be missed; see [How quickly ringing shows](#how-quickly-ringing-shows). Nothing is inferred from a due time alone. The first successful update after startup, reload, a failed update or a device returning establishes a baseline and produces no events. Missing data, unrecognized item statuses and unavailable devices produce no events either. With [polling off](configuration.md#turn-off-polling), events depend on updates you request yourself.
+
+Existing next-item attribute triggers follow only the next item. More elaborate templates can compare the sensors' full lists; event entities provide type and target selection without you maintaining that comparison.
+
 ## When an alarm stops ringing
 
-Turn on the kitchen lights when the bedroom alarm stops ringing. The trigger follows the status of the speaker's next alarm, and skips a change to `snoozed`:
+Turn on the kitchen lights when the integration observes the end of ringing under an alarm ID on the bedroom speaker:
 
 ```yaml
 alias: Kitchen lights after the alarm
 triggers:
-  - trigger: state
-    entity_id: sensor.bedroom_alarms
-    attribute: next_alarm_status
-    from: ringing
-    not_to: snoozed
+  - trigger: event.received
+    target:
+      entity_id: event.bedroom_alarm_events
+    options:
+      event_type:
+        - stopped
 actions:
   - action: light.turn_on
     target:
       entity_id: light.kitchen
+mode: queued
 ```
 
-It runs once the integration sees that the alarm has stopped, usually within about 10 seconds; see [How quickly ringing shows](#how-quickly-ringing-shows). There are some exceptions:
-
-- It doesn't run if you stop the alarm before the integration sees it ringing, for example within a few seconds, or if you stop a snoozed alarm before it rings again.
-- It runs when you snooze the alarm if another alarm on that speaker is due before the snoozed one rings again, because that alarm becomes the next one.
-- It runs if the speaker's entities become [unavailable](entities.md#when-entities-are-unavailable) while the alarm rings.
-
-To run it when you snooze the alarm instead, replace `not_to: snoozed` with `to: snoozed`. That version misses a snooze that makes another alarm the next one. Both work for alarms only: a snoozed timer goes back to `set`, so a trigger on `next_timer_status` changing from `ringing` also runs when you snooze a timer.
+This covers each observed alarm ID, even when another alarm becomes the next one. It follows the [event meanings and limits](#what-these-events-mean) above. To react to snoozing instead, select `snoozed`. To react to a timer ending its ringing interval, target `event.bedroom_timer_events` with `stopped`.
 
 ## When a timer finishes
 
@@ -127,7 +144,7 @@ A time trigger follows the time that the integration last saw. The integration [
 - An alarm or timer that the integration has seen triggers on time, even between checks. One that goes off before the integration sees it, which can happen to a timer shorter than the update interval, doesn't trigger anything.
 - If you pause, cancel or change an alarm or timer, the automation follows the change only after the next check, so it can still run at the old time if that comes first.
 - Inactive and missed alarms, paused timers, and alarms or timers with an [unknown status](entities.md#alarm-and-timer-status) don't trigger anything. A timer you resume triggers at its new end time, once the integration has seen it.
-- You can also trigger on the `next_alarm_status` or `next_timer_status` attribute changing to `ringing`, or from `ringing` when you stop or snooze it, as in [When an alarm stops ringing](#when-an-alarm-stops-ringing). The integration checks the speaker more often around that time; see [How quickly ringing shows](#how-quickly-ringing-shows).
+- To react to an observed status change for any item, use [alarm and timer events](#react-to-observed-alarm-and-timer-events). You can also trigger on the `next_alarm_status` or `next_timer_status` attribute, which follows only the next item. The integration checks the speaker more often around that time; see [How quickly ringing shows](#how-quickly-ringing-shows).
 
 ## How quickly ringing shows
 

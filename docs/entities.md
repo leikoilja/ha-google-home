@@ -6,6 +6,8 @@ Each Google Home device gets the entities below. The examples use a device named
 | ---------------------- | ------------------------------------ | --------------------------------------------------------------- |
 | Alarms sensor          | `sensor.living_room_alarms`          | Time of the next alarm, with all alarms in its attributes       |
 | Timers sensor          | `sensor.living_room_timers`          | Time of the next timer, with all timers in its attributes       |
+| Alarm events | `event.living_room_alarm_events` | Last observed alarm event: ringing, snoozed or stopped |
+| Timer events | `event.living_room_timer_events` | Last observed timer event: ringing or stopped |
 | Device sensor          | `sensor.living_room_device`          | The device's IP address and connection details                  |
 | Do Not Disturb switch  | `switch.living_room_do_not_disturb`  | Turns Do Not Disturb on or off                                  |
 | Alarm volume           | `number.living_room_alarm_volume`    | Sets the alarm volume, from 0 to 100%                           |
@@ -19,7 +21,7 @@ The device page also shows the device's [firmware version](#firmware-version).
 
 If you turn on [Bluetooth tracking](bluetooth.md), each phone or other Bluetooth device you track also gets a tracker entity.
 
-The alarms sensor, timers sensor, switch and alarm volume are added once the device answers successfully. If a device has only a device sensor, a reboot button, an update sensor, and disabled Wi-Fi and uptime sensors, see [No alarms or timers sensors](troubleshooting.md#no-alarms-or-timers-sensors). A device without alarms and timers, such as a Chromecast Audio, doesn't get these four entities.
+The alarms sensor, timers sensor, event entities, switch and alarm volume are added once the device answers successfully. If a device has only a device sensor, a reboot button, an update sensor, and disabled Wi-Fi and uptime sensors, see [No alarms or timers sensors](troubleshooting.md#no-alarms-or-timers-sensors). A device without alarms and timers, such as a Chromecast Audio, doesn't get these entities.
 
 Entities become unavailable, for example, while a device is unplugged or after you remove it from the Google Home app. See [When entities are unavailable](#when-entities-are-unavailable).
 
@@ -87,6 +89,28 @@ To use the time left in a template or automation, convert `remaining` to seconds
 | `unknown`  | A status the integration doesn't know yet, such as one newer firmware adds. These come last, and the sensor's state never shows their time. |
 
 Timers have no `snoozed` status. If you snooze a ringing timer, it restarts and its status goes back to `set`.
+
+## Alarm and timer events
+
+Use these entities with Home Assistant's **Event received** trigger to react to each observed alarm or timer, including those that aren't next by fire time. See [React to observed alarm and timer events](automations.md#react-to-observed-alarm-and-timer-events) for setup, examples and limits.
+
+Each entity's state is the timestamp when Home Assistant published its latest event. Until an event is seen it is `unknown`; after a restart it may show the restored last event. That history is not a new event. The entities remain available when their lists are empty, subject to the device's [availability](#when-entities-are-unavailable).
+
+Alarm event types are `ringing`, `snoozed` and `stopped`; timer types are `ringing` and `stopped`. Stopped describes the observed end of ringing tracked under a reported ID, including its removal, rather than proof of dismissal. A changed ID can produce stopped for the old ID and ringing or snoozed for the new one without proving physical cessation or identity. A same-ID ringing-to-snoozed alarm produces snoozed only. Polling can miss an entire ring, and startup, reload, recovery from a failed update and reappearance start with a silent baseline.
+
+Every event includes these attributes. In an automation, read them from `trigger.to_state.attributes` to retain that event's values when several items change together:
+
+| Attribute | Meaning |
+| --- | --- |
+| `event_type` | `ringing`, `snoozed` or `stopped` |
+| `item_id` | The ID reported by the speaker, such as `alarm/…` or `timer/…` |
+| `label` | The item's label, or `null` when it has none |
+| `fire_time` | The item's fire time in Unix seconds, or `null` if a timer has none |
+| `observed_at` | ISO 8601 time when the poll response was received, not the exact physical transition time |
+| `previous_status` | The status in the preceding successful observation, or `null` for a new ID |
+| `status` | The newly observed status, or `removed` when that ID left a complete list |
+
+Ringing and snoozed use the current item's label and fire time. Stopped keeps the last ringing item's label and fire time, so a recurring alarm advancing to tomorrow still identifies the occurrence that ended. A poll's event values are kept even if an action changes the sensor's lists before the event is published. Each item produces a separate event, while the entity's current state holds only the latest one.
 
 ## Device sensor
 
@@ -197,9 +221,9 @@ When the integration can't get your device list from Google, the devices it alre
 
 Some entities are also unavailable on their own:
 
-- On a [device without alarms and timers](troubleshooting.md#devices-without-alarms-and-timers), such as a Chromecast Audio, the alarms sensor, timers sensor, switch and alarm volume, if it had them. Reloading the integration or restarting Home Assistant brings them back only if the device then answers for these features.
+- On a [device without alarms and timers](troubleshooting.md#devices-without-alarms-and-timers), such as a Chromecast Audio, the alarms sensor, timers sensor, event entities, switch and alarm volume, if it had them. Reloading the integration or restarting Home Assistant brings them back only if the device then answers for these features.
 - The device sensor, reboot button, update sensor, Wi-Fi sensors and uptime sensor, while Home Assistant doesn't know the device's IP address.
-- The alarms sensor, timers sensor, Do Not Disturb switch and alarm volume, once Home Assistant hasn't known the device's IP address for 5 updates in a row. This happens when Google's list misses the device once and lists it again before Home Assistant finds it; until then, they show no alarms and default settings. From the first update with the address, only the other conditions apply: they show those values until the device sends its own, and become unavailable once it hasn't answered 5 updates in a row.
+- The alarms sensor, timers sensor, event entities, Do Not Disturb switch and alarm volume, once Home Assistant hasn't known the device's IP address for 5 updates in a row. This happens when Google's list misses the device once and lists it again before Home Assistant finds it; until then, the sensors show no alarms and the settings have default values; event entities retain their last-event history. From the first update with the address, only the other conditions apply: they show those values until the device sends its own, and become unavailable once it hasn't answered 5 updates in a row.
 
 Entities that became unavailable because the device didn't answer are available again at the next update the device answers, after it finishes starting. Being available again doesn't always mean new values; see [Alarms, timers or settings stop changing](troubleshooting.md#alarms-timers-or-settings-stop-changing).
 

@@ -18,6 +18,7 @@ from .const import (
     JSON_TIMER,
     UNANSWERED_UPDATES,
 )
+from .observations import PollObservation
 from .types import (
     AlarmJsonDict,
     GoogleHomeAlarmDict,
@@ -124,6 +125,8 @@ class GoogleHomeDevice:
         # Updates whose request for alarms and timers got both lists. Actions' requests
         # don't count, so an update can tell whether it got the lists itself.
         self.polled_snapshots = 0
+        # Only a successful poll assigns this immutable projection; actions never do.
+        self.poll_observation: PollObservation | None = None
         # The firmware fields of its last build info, as it sent them
         self.build_info: dict[str, object] | None = None
         # Whether its info said at the last check that a firmware update is waiting,

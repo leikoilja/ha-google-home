@@ -120,6 +120,31 @@
       "do_not_disturb": {
         "name": "Forstyr ikke"
       }
+    },
+    "event": {
+      "alarm_events": {
+        "name": "Alarmhændelser",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "Ringer",
+              "snoozed": "Udsat",
+              "stopped": "Stoppet"
+            }
+          }
+        }
+      },
+      "timer_events": {
+        "name": "Timerhændelser",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "ringing": "Ringer",
+              "stopped": "Stoppet"
+            }
+          }
+        }
+      }
     }
   },
   "exceptions": {
