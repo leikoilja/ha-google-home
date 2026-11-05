@@ -413,7 +413,7 @@ class GoogleAccountClient:
         # account again until signing in again reloads the integration
         if isinstance(error, AuthenticationError) and not self.google_devices:
             return "sign in again to fetch it"
-        # Home Assistant schedules no update, and disabled devices can't ask for one
+        # Home Assistant schedules no update, and no entity can ask for one
         if self.polling_off and not self.can_refresh_devices():
             return "polling is off, so reload the integration to fetch it"
         # From now, as the fetch that failed took a while
