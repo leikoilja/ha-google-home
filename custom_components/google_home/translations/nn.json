@@ -405,5 +405,16 @@
       "devices_listed": "Einingar i lista til Google",
       "devices_not_answering": "Einingar som ikkje svarar"
     }
+  },
+  "selector": {
+    "departure_delay": {
+      "options": {
+        "0": "0 sekund (vanleg tidsinnstilling)",
+        "30": "30 sekund",
+        "60": "60 sekund",
+        "90": "90 sekund",
+        "120": "120 sekund"
+      }
+    }
   }
 }

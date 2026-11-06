@@ -410,7 +410,7 @@ async def reconfigure_delay(
         context={"source": "reconfigure", "subentry_id": PHONE},
     )
     await hass.config_entries.subentries.async_configure(
-        result["flow_id"], {"additional_departure_delay": delay}
+        result["flow_id"], {"additional_departure_delay": str(delay)}
     )
     await hass.async_block_till_done()
 

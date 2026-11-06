@@ -405,5 +405,16 @@
       "devices_listed": "Dispositius a la llista de Google",
       "devices_not_answering": "Dispositius que no responen"
     }
+  },
+  "selector": {
+    "departure_delay": {
+      "options": {
+        "0": "0 segons (temps normals)",
+        "30": "30 segons",
+        "60": "60 segons",
+        "90": "90 segons",
+        "120": "120 segons"
+      }
+    }
   }
 }

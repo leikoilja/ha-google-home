@@ -405,5 +405,16 @@
       "devices_listed": "Perangkat di daftar Google",
       "devices_not_answering": "Perangkat yang tidak merespons"
     }
+  },
+  "selector": {
+    "departure_delay": {
+      "options": {
+        "0": "0 detik (waktu normal)",
+        "30": "30 detik",
+        "60": "60 detik",
+        "90": "90 detik",
+        "120": "120 detik"
+      }
+    }
   }
 }

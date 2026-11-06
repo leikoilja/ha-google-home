@@ -405,5 +405,16 @@
       "devices_listed": "Google 清單中的裝置",
       "devices_not_answering": "未回應的裝置"
     }
+  },
+  "selector": {
+    "departure_delay": {
+      "options": {
+        "0": "0 秒（一般判定時間）",
+        "30": "30 秒",
+        "60": "60 秒",
+        "90": "90 秒",
+        "120": "120 秒"
+      }
+    }
   }
 }

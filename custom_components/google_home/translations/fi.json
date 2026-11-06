@@ -405,5 +405,16 @@
       "devices_listed": "Laitteet Googlen luettelossa",
       "devices_not_answering": "Laitteet, jotka eivät vastaa"
     }
+  },
+  "selector": {
+    "departure_delay": {
+      "options": {
+        "0": "0 sekuntia (tavallinen ajoitus)",
+        "30": "30 sekuntia",
+        "60": "60 sekuntia",
+        "90": "90 sekuntia",
+        "120": "120 sekuntia"
+      }
+    }
   }
 }

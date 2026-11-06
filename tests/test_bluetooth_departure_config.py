@@ -11,10 +11,22 @@ from pytest_homeassistant.common import MockConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType, InvalidData
 from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers.translation import async_get_translations
 
 from .test_bluetooth import IRK, PHONE, subentry
 
 # pylint: enable=wrong-import-order
+
+RADIO_SELECTOR = {
+    "select": {
+        "options": ["0", "30", "60", "90", "120"],
+        "multiple": False,
+        "custom_value": False,
+        "mode": "list",
+        "translation_key": "departure_delay",
+        "sort": False,
+    }
+}
 
 
 @pytest.mark.parametrize("delay", [0, 30, 60, 90, 120])
@@ -34,33 +46,34 @@ async def test_add_device_departure_delay(
             result["data_schema"], custom_serializer=cv.custom_serializer
         ),
     )
-    assert fields[-1]["selector"] == {
-        "number": {
-            "min": 0,
-            "max": 120,
-            "step": 30,
-            "mode": "box",
-            "unit_of_measurement": "s",
-        }
-    }
+    assert fields[-1]["selector"] == RADIO_SELECTOR
+    assert fields[-1]["default"] == "0"
     await hass.config_entries.subentries.async_configure(
         result["flow_id"],
         {
             "name": "Tag",
             "irk_or_mac": "aa-bb-cc-dd-ee-ff",
-            "additional_departure_delay": delay,
+            "additional_departure_delay": str(delay),
         },
     )
     (added,) = config_entry.subentries.values()
     assert added.data["mac"] == "AA:BB:CC:DD:EE:FF"
     assert added.data.get("additional_departure_delay", 0) == delay
+    if delay:
+        assert isinstance(added.data["additional_departure_delay"], int)
+    else:
+        assert "additional_departure_delay" not in added.data
 
 
+@pytest.mark.parametrize("stored_delay", [None, 0, 30, 60, 90, 120])
 async def test_reconfigure_only_departure_delay(
-    hass: HomeAssistant, config_entry: MockConfigEntry
+    hass: HomeAssistant, config_entry: MockConfigEntry, stored_delay: int | None
 ) -> None:
     """Editing timing while tracking is off retains identity and other data."""
-    tracked = subentry({"irk": IRK.hex(), "other": "keep"})
+    data: dict[str, str | int] = {"irk": IRK.hex(), "other": "keep"}
+    if stored_delay is not None:
+        data["additional_departure_delay"] = stored_delay
+    tracked = subentry(data)
     hass.config_entries.async_add_subentry(config_entry, tracked)
     options = dict(config_entry.options)
     result = await hass.config_entries.subentries.async_init(
@@ -74,9 +87,10 @@ async def test_reconfigure_only_departure_delay(
         ),
     )
     assert [field["name"] for field in fields] == ["additional_departure_delay"]
-    assert fields[0]["default"] == 0
+    assert fields[0]["selector"] == RADIO_SELECTOR
+    assert fields[0]["default"] == str(stored_delay or 0)
     saved = await hass.config_entries.subentries.async_configure(
-        result["flow_id"], {"additional_departure_delay": 30.0}
+        result["flow_id"], {"additional_departure_delay": "30"}
     )
     assert saved["type"] is FlowResultType.ABORT
     assert saved["reason"] == "reconfigure_successful"
@@ -92,12 +106,30 @@ async def test_reconfigure_only_departure_delay(
 
 @pytest.mark.parametrize("source", ["user", "reconfigure"])
 @pytest.mark.parametrize(
-    "value", [False, True, None, "30", -30, 150, math.nan, math.inf]
+    "value",
+    [
+        False,
+        True,
+        None,
+        30,
+        30.0,
+        -30,
+        150,
+        math.nan,
+        math.inf,
+        "15",
+        "30.5",
+        "150",
+        "",
+        "030",
+        [],
+        {},
+    ],
 )
 async def test_departure_delay_schema_refusal(
     hass: HomeAssistant, config_entry: MockConfigEntry, source: str, value: object
 ) -> None:
-    """The real flow rejects raw booleans before the number selector loses their type."""
+    """Only the five string selections can pass either real HA form's schema."""
     hass.config_entries.async_update_entry(
         config_entry, options={"bluetooth_tracking": True}
     )
@@ -122,32 +154,16 @@ async def test_departure_delay_schema_refusal(
     } == before
 
 
-@pytest.mark.parametrize("source", ["user", "reconfigure"])
-@pytest.mark.parametrize("value", [15, 30.5])
-async def test_departure_delay_increment_error(
-    hass: HomeAssistant, config_entry: MockConfigEntry, source: str, value: float
-) -> None:
-    """In-range disallowed steps reach the integration's translated field error."""
-    hass.config_entries.async_update_entry(
-        config_entry, options={"bluetooth_tracking": True}
-    )
-    hass.config_entries.async_add_subentry(config_entry, subentry({"irk": IRK.hex()}))
-    result = await hass.config_entries.subentries.async_init(
-        (config_entry.entry_id, "bluetooth_device"),
-        context={"source": source, "subentry_id": PHONE},
-    )
-    submitted: dict[str, object] = {"additional_departure_delay": value}
-    if source == "user":
-        submitted |= {"name": "Tag", "irk_or_mac": "AA:BB:CC:DD:EE:FF"}
-    refused = await hass.config_entries.subentries.async_configure(
-        result["flow_id"], submitted
-    )
-    assert refused["type"] is FlowResultType.FORM
-    assert refused["errors"] == {
-        "additional_departure_delay": "departure-delay-invalid"
+async def test_departure_radio_labels(hass: HomeAssistant) -> None:
+    """HA loads translated option labels, including zero's normal-timing meaning."""
+    text = await async_get_translations(hass, "en", "selector", ["google_home"])
+    assert text == {
+        "component.google_home.selector.departure_delay.options.0": "0 seconds (normal timing)",
+        "component.google_home.selector.departure_delay.options.30": "30 seconds",
+        "component.google_home.selector.departure_delay.options.60": "60 seconds",
+        "component.google_home.selector.departure_delay.options.90": "90 seconds",
+        "component.google_home.selector.departure_delay.options.120": "120 seconds",
     }
-    assert "additional_departure_delay" not in config_entry.subentries[PHONE].data
-    assert list(config_entry.subentries) == [PHONE]
 
 
 @pytest.mark.parametrize("data", [{"irk": IRK.hex()}, {"mac": "AA:BB:CC:DD:EE:FF"}])
@@ -169,7 +185,7 @@ async def test_duplicate_identity_ignores_departure_delay(
         {
             "name": "Duplicate",
             "irk_or_mac": next(iter(data.values())),
-            "additional_departure_delay": 120,
+            "additional_departure_delay": "120",
         },
     )
     assert refused["errors"] == {"base": "already-tracked"}
@@ -187,7 +203,7 @@ async def test_reconfigure_removed_tracker(
     )
     hass.config_entries.async_remove_subentry(config_entry, PHONE)
     refused = await hass.config_entries.subentries.async_configure(
-        result["flow_id"], {"additional_departure_delay": 30}
+        result["flow_id"], {"additional_departure_delay": "30"}
     )
     assert refused["type"] is FlowResultType.ABORT
     assert refused["reason"] == "device-removed"

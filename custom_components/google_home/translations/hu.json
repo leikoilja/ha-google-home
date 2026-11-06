@@ -405,5 +405,16 @@
       "devices_listed": "Eszközök a Google listáján",
       "devices_not_answering": "Nem válaszoló eszközök"
     }
+  },
+  "selector": {
+    "departure_delay": {
+      "options": {
+        "0": "0 másodperc (szokásos időzítés)",
+        "30": "30 másodperc",
+        "60": "60 másodperc",
+        "90": "90 másodperc",
+        "120": "120 másodperc"
+      }
+    }
   }
 }

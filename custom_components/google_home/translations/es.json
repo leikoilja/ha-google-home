@@ -405,5 +405,16 @@
       "devices_listed": "Dispositivos en la lista de Google",
       "devices_not_answering": "Dispositivos que no responden"
     }
+  },
+  "selector": {
+    "departure_delay": {
+      "options": {
+        "0": "0 segundos (tiempos normales)",
+        "30": "30 segundos",
+        "60": "60 segundos",
+        "90": "90 segundos",
+        "120": "120 segundos"
+      }
+    }
   }
 }

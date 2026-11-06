@@ -405,5 +405,16 @@
       "devices_listed": "Google のリストにあるデバイス",
       "devices_not_answering": "応答しないデバイス"
     }
+  },
+  "selector": {
+    "departure_delay": {
+      "options": {
+        "0": "0秒（通常の判定時間）",
+        "30": "30秒",
+        "60": "60秒",
+        "90": "90秒",
+        "120": "120秒"
+      }
+    }
   }
 }

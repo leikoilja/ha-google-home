@@ -26,9 +26,6 @@ from homeassistant.core import callback
 from homeassistant.data_entry_flow import section
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.selector import (
-    NumberSelector,
-    NumberSelectorConfig,
-    NumberSelectorMode,
     SelectOptionDict,
     SelectSelector,
     SelectSelectorConfig,
@@ -488,32 +485,27 @@ class BluetoothDeviceInput(TypedDict):
 
     name: str
     irk_or_mac: str
-    additional_departure_delay: NotRequired[float]
+    additional_departure_delay: NotRequired[str]
 
 
-class DepartureDelaySelector(NumberSelector):
-    """Keep the number box while rejecting booleans before float coercion."""
+class DepartureDelaySelector(SelectSelector):
+    """Translate invalid selections from either Bluetooth device form."""
 
     @override
-    def __call__(self, data: object) -> float:
-        if (
-            isinstance(data, bool)
-            or not isinstance(data, int | float)
-            or not 0 <= data <= DEPARTURE_DELAY_VALUES[-1]
-        ):
-            raise probatio.Invalid("departure-delay-invalid")
-        return super().__call__(data)
+    def __call__(self, data: object) -> str:
+        try:
+            return cast(str, super().__call__(data))
+        except probatio.Invalid as err:
+            raise probatio.Invalid("departure-delay-invalid") from err
 
 
 def _departure_delay_selector() -> DepartureDelaySelector:
-    """Use the same serialized number control in add and reconfigure."""
+    """Show the five translated choices as radio buttons in both forms."""
     return DepartureDelaySelector(
-        NumberSelectorConfig(
-            min=0,
-            max=DEPARTURE_DELAY_VALUES[-1],
-            step=30,
-            mode=NumberSelectorMode.BOX,
-            unit_of_measurement="s",
+        SelectSelectorConfig(
+            options=[str(seconds) for seconds in DEPARTURE_DELAY_VALUES],
+            mode=SelectSelectorMode.LIST,
+            translation_key="departure_delay",
         )
     )
 
@@ -537,7 +529,7 @@ class BluetoothDeviceSubentryFlow(ConfigSubentryFlow):
         if user_input is not None:
             name = user_input[CONF_NAME].strip()
             value = user_input[CONF_IRK_OR_MAC].strip()
-            delay = user_input.get(CONF_ADDITIONAL_DEPARTURE_DELAY, 0)
+            delay = int(user_input.get(CONF_ADDITIONAL_DEPARTURE_DELAY, "0"))
             data: dict[str, str | int] = {}
             if not name:
                 errors[CONF_NAME] = "name-empty"
@@ -553,8 +545,6 @@ class BluetoothDeviceSubentryFlow(ConfigSubentryFlow):
                 errors[CONF_IRK_OR_MAC] = (
                     "mac-invalid" if len(value) <= 17 else "irk-invalid"
                 )
-            if delay not in DEPARTURE_DELAY_VALUES:
-                errors[CONF_ADDITIONAL_DEPARTURE_DELAY] = "departure-delay-invalid"
             if data and any(
                 (subentry.data.get(CONF_IRK), subentry.data.get(CONF_MAC))
                 == (data.get(CONF_IRK), data.get(CONF_MAC))
@@ -563,7 +553,7 @@ class BluetoothDeviceSubentryFlow(ConfigSubentryFlow):
                 errors["base"] = "already-tracked"
             elif data and not errors:
                 if delay:
-                    data[CONF_ADDITIONAL_DEPARTURE_DELAY] = int(delay)
+                    data[CONF_ADDITIONAL_DEPARTURE_DELAY] = delay
                 return self.async_create_entry(title=name, data=data)
         return self.async_show_form(
             step_id="user",
@@ -573,7 +563,7 @@ class BluetoothDeviceSubentryFlow(ConfigSubentryFlow):
                         probatio.Required(CONF_NAME): str,
                         probatio.Required(CONF_IRK_OR_MAC): str,
                         probatio.Optional(
-                            CONF_ADDITIONAL_DEPARTURE_DELAY, default=0
+                            CONF_ADDITIONAL_DEPARTURE_DELAY, default="0"
                         ): _departure_delay_selector(),
                     }
                 ),
@@ -584,7 +574,7 @@ class BluetoothDeviceSubentryFlow(ConfigSubentryFlow):
         )
 
     async def async_step_reconfigure(
-        self, user_input: dict[str, float] | None = None
+        self, user_input: dict[str, str] | None = None
     ) -> SubentryFlowResult:
         """Change only timing, retaining the current identity and subentry."""
         entry = self._get_entry()
@@ -592,17 +582,16 @@ class BluetoothDeviceSubentryFlow(ConfigSubentryFlow):
             subentry = self._get_reconfigure_subentry()
         except UnknownSubEntry:
             return self.async_abort(reason="device-removed")
-        errors: dict[str, str] = {}
         if user_input is not None:
-            delay = user_input[CONF_ADDITIONAL_DEPARTURE_DELAY]
-            if delay not in DEPARTURE_DELAY_VALUES:
-                errors[CONF_ADDITIONAL_DEPARTURE_DELAY] = "departure-delay-invalid"
-            else:
-                return self.async_update_and_abort(
-                    entry,
-                    subentry,
-                    data_updates={CONF_ADDITIONAL_DEPARTURE_DELAY: int(delay)},
-                )
+            return self.async_update_and_abort(
+                entry,
+                subentry,
+                data_updates={
+                    CONF_ADDITIONAL_DEPARTURE_DELAY: int(
+                        user_input[CONF_ADDITIONAL_DEPARTURE_DELAY]
+                    )
+                },
+            )
         return self.async_show_form(
             step_id="reconfigure",
             data_schema=self.add_suggested_values_to_schema(
@@ -610,15 +599,14 @@ class BluetoothDeviceSubentryFlow(ConfigSubentryFlow):
                     {
                         probatio.Required(
                             CONF_ADDITIONAL_DEPARTURE_DELAY,
-                            default=subentry.data.get(
-                                CONF_ADDITIONAL_DEPARTURE_DELAY, 0
+                            default=str(
+                                subentry.data.get(CONF_ADDITIONAL_DEPARTURE_DELAY, 0)
                             ),
                         ): _departure_delay_selector(),
                     }
                 ),
                 user_input,
             ),
-            errors=errors,
         )
 
 

@@ -405,5 +405,16 @@
       "devices_listed": "Dispozitive din lista Google",
       "devices_not_answering": "Dispozitive care nu răspund"
     }
+  },
+  "selector": {
+    "departure_delay": {
+      "options": {
+        "0": "0 secunde (timpi normali)",
+        "30": "30 de secunde",
+        "60": "60 de secunde",
+        "90": "90 de secunde",
+        "120": "120 de secunde"
+      }
+    }
   }
 }

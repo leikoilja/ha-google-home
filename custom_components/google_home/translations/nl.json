@@ -405,5 +405,16 @@
       "devices_listed": "Apparaten in de lijst van Google",
       "devices_not_answering": "Apparaten die niet reageren"
     }
+  },
+  "selector": {
+    "departure_delay": {
+      "options": {
+        "0": "0 seconden (normale timing)",
+        "30": "30 seconden",
+        "60": "60 seconden",
+        "90": "90 seconden",
+        "120": "120 seconden"
+      }
+    }
   }
 }

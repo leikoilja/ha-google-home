@@ -405,5 +405,16 @@
       "devices_listed": "Enheter i Googles liste",
       "devices_not_answering": "Enheter som ikke svarer"
     }
+  },
+  "selector": {
+    "departure_delay": {
+      "options": {
+        "0": "0 sekunder (vanlig tidsinnstilling)",
+        "30": "30 sekunder",
+        "60": "60 sekunder",
+        "90": "90 sekunder",
+        "120": "120 sekunder"
+      }
+    }
   }
 }
