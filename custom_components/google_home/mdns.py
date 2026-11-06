@@ -6,7 +6,7 @@ from datetime import datetime
 import ipaddress
 import logging
 from time import monotonic
-from typing import TYPE_CHECKING, NamedTuple
+from typing import TYPE_CHECKING, Final, NamedTuple
 
 from zeroconf import BadTypeInNameException, ServiceStateChange, Zeroconf
 from zeroconf.asyncio import AsyncServiceBrowser, AsyncServiceInfo
@@ -15,8 +15,6 @@ from homeassistant.core import CALLBACK_TYPE, HomeAssistant, callback
 from homeassistant.helpers.event import async_call_later
 
 from .const import (
-    CAST_GROUP_MODEL,
-    CAST_LOOKUP_TIMEOUT,
     CAST_SERVICE_TYPE,
     CAST_SETUP_WAIT,
     FOUND_DEVICE_FETCH_DELAY,
@@ -28,6 +26,11 @@ if TYPE_CHECKING:
     from .account import GoogleAccountClient
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
+
+# The model that a speaker group announces, which isn't a device of its own
+CAST_GROUP_MODEL: Final = "Google Cast Group"
+# How long to wait for an mDNS lookup of a Cast device that isn't cached
+CAST_LOOKUP_TIMEOUT: Final = 3000  # ms
 
 
 class FoundDevice(NamedTuple):
