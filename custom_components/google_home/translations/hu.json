@@ -261,23 +261,37 @@
           "description": "Adja meg egy telefon IRK-ját, vagy egy olyan eszköz MAC-címét, amelynek címe soha nem változik, például egyes órákét és nyomkövető címkékét. A telefonok néhány percenként megváltoztatják a címüket, ezért IRK alapján kövesse őket. Az IRK megkeresésének módját lásd itt: {docs_url}.",
           "data": {
             "name": "Név",
-            "irk_or_mac": "IRK vagy MAC-cím"
+            "irk_or_mac": "IRK vagy MAC-cím",
+            "additional_departure_delay": "További távozási késleltetés"
           },
           "data_description": {
             "name": "A követő neve, például Alex telefonja.",
-            "irk_or_mac": "Egy telefon Identity Resolving Key-e (identitásfeloldó kulcsa) 32 hexadecimális számjegyként vagy base64 formátumban, vagy egy MAC-cím, például AA:BB:CC:DD:EE:FF. Az integráció felismeri, melyiket adta meg."
+            "irk_or_mac": "Egy telefon Identity Resolving Key-e (identitásfeloldó kulcsa) {irk_hex_length} hexadecimális számjegyként vagy base64 formátumban, vagy egy MAC-cím, például AA:BB:CC:DD:EE:FF.",
+            "additional_departure_delay": "További idő a szokásos {presence_window} másodperces jelenléti időszak után, mielőtt az állapot „Otthon” értékről „Távol” értékre vált. A szokásos időzítés nem ad hozzá késleltetést. A hosszabb késleltetés a tényleges távozás észlelését is késlelteti. Ha a keresések nem tudják megerősíteni a távollétet, a követő elérhetetlenné válhat."
+          }
+        },
+        "reconfigure": {
+          "title": "Bluetooth-eszköz beállításai",
+          "description": "Módosítsa a követő további távozási késleltetését.",
+          "data": {
+            "additional_departure_delay": "További távozási késleltetés"
+          },
+          "data_description": {
+            "additional_departure_delay": "További idő a szokásos {presence_window} másodperces jelenléti időszak után, mielőtt az állapot „Otthon” értékről „Távol” értékre vált. A szokásos időzítés nem ad hozzá késleltetést. A hosszabb késleltetés a tényleges távozás észlelését is késlelteti. Ha a keresések nem tudják megerősíteni a távollétet, a követő elérhetetlenné válhat."
           }
         }
       },
       "error": {
         "name-empty": "Adjon meg egy nevet.",
         "irk-or-mac": "Adjon meg egy IRK-t vagy egy MAC-címet.",
-        "irk-invalid": "Ez nem IRK. Az IRK 16 bájt: 32 hexadecimális számjegy vagy 24 base64-karakter, amely ==-re végződik.",
+        "irk-invalid": "Ez nem IRK. Adjon meg {irk_bytes} bájtot {irk_hex_length} hexadecimális számjegyként vagy base64 formátumban.",
         "mac-invalid": "Ez nem MAC-cím. Adjon meg hat hexadecimális számjegypárt kettősponttal vagy kötőjellel elválasztva, például AA:BB:CC:DD:EE:FF.",
-        "already-tracked": "Ezt az eszközt már követi az integráció."
+        "already-tracked": "Ezt az eszközt már követi az integráció.",
+        "departure-delay-invalid": "Válasszon egyet a felsorolt távozási késleltetések közül."
       },
       "abort": {
-        "bluetooth-tracking-off": "A Bluetooth-követés ki van kapcsolva. Először kapcsolja be az integráció opcióiban: válassza a „Konfigurálás” lehetőséget az integráció oldalán."
+        "bluetooth-tracking-off": "A Bluetooth-követés ki van kapcsolva. Először kapcsolja be az integráció opcióiban: válassza a „Konfigurálás” lehetőséget az integráció oldalán.",
+        "device-removed": "Ezt a Bluetooth-eszközt eltávolították. A követéséhez adja hozzá újra."
       }
     }
   },
@@ -390,6 +404,17 @@
       "bluetooth_tracking": "Bluetooth-követés",
       "devices_listed": "Eszközök a Google listáján",
       "devices_not_answering": "Nem válaszoló eszközök"
+    }
+  },
+  "selector": {
+    "departure_delay": {
+      "options": {
+        "0": "0 másodperc (szokásos időzítés)",
+        "30": "30 másodperc",
+        "60": "60 másodperc",
+        "90": "90 másodperc",
+        "120": "120 másodperc"
+      }
     }
   }
 }

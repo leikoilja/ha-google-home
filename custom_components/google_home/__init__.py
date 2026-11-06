@@ -5,6 +5,7 @@ https://github.com/leikoilja/ha-google-home
 """
 
 import asyncio
+from collections.abc import Coroutine
 from datetime import timedelta
 import logging
 from typing import cast
@@ -412,7 +413,19 @@ def configured_interval(entry: GoogleHomeConfigEntry) -> timedelta:
     return timedelta(seconds=seconds if seconds > 0 else UPDATE_INTERVAL)
 
 
-async def async_update_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -> None:
+@callback
+def async_update_entry(
+    hass: HomeAssistant, entry: GoogleHomeConfigEntry
+) -> Coroutine[object, object, None]:
+    """Capture timing edits inline before HA schedules the options coroutine."""
+    if isinstance(coordinator := entry.runtime_data.bluetooth, BluetoothCoordinator):
+        coordinator.update_departure_delays()
+    return _async_update_options(hass, entry)
+
+
+async def _async_update_options(
+    hass: HomeAssistant, entry: GoogleHomeConfigEntry
+) -> None:
     """Apply changed options."""
     client = entry.runtime_data.client
     # Known hosts are looked up when Google's device list is fetched, at setup. The

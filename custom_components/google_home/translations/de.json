@@ -261,23 +261,37 @@
           "description": "Gib den IRK eines Smartphones ein oder die MAC-Adresse eines Geräts, dessen Adresse sich nie ändert, etwa mancher Uhren und Bluetooth-Tags. Smartphones ändern ihre Adresse alle paar Minuten, verfolge sie daher per IRK. Wie du den IRK findest, steht unter {docs_url}.",
           "data": {
             "name": "Name",
-            "irk_or_mac": "IRK oder MAC-Adresse"
+            "irk_or_mac": "IRK oder MAC-Adresse",
+            "additional_departure_delay": "Zusätzliche Abwesenheitsverzögerung"
           },
           "data_description": {
             "name": "Name des Trackers, etwa Smartphone von Alex.",
-            "irk_or_mac": "Der Identity Resolving Key eines Smartphones als 32 Hexadezimalziffern oder in Base64, oder eine MAC-Adresse wie AA:BB:CC:DD:EE:FF. Die Integration erkennt selbst, was du eingegeben hast."
+            "irk_or_mac": "Der Identity Resolving Key eines Smartphones als {irk_hex_length} Hexadezimalziffern oder in Base64, oder eine MAC-Adresse wie AA:BB:CC:DD:EE:FF.",
+            "additional_departure_delay": "Zusätzliche Zeit nach dem normalen Anwesenheitszeitraum von {presence_window} Sekunden, bevor der Status von „Zuhause“ zu „Abwesend“ wechselt. Die normale Zeitsteuerung fügt keine Verzögerung hinzu. Eine längere Verzögerung verzögert auch die Erkennung eines tatsächlichen Verlassens des Hauses. Wenn die Scans die Abwesenheit nicht bestätigen können, kann der Tracker als „Nicht verfügbar“ angezeigt werden."
+          }
+        },
+        "reconfigure": {
+          "title": "Einstellungen des Bluetooth-Geräts",
+          "description": "Ändere die zusätzliche Abwesenheitsverzögerung für diesen Tracker.",
+          "data": {
+            "additional_departure_delay": "Zusätzliche Abwesenheitsverzögerung"
+          },
+          "data_description": {
+            "additional_departure_delay": "Zusätzliche Zeit nach dem normalen Anwesenheitszeitraum von {presence_window} Sekunden, bevor der Status von „Zuhause“ zu „Abwesend“ wechselt. Die normale Zeitsteuerung fügt keine Verzögerung hinzu. Eine längere Verzögerung verzögert auch die Erkennung eines tatsächlichen Verlassens des Hauses. Wenn die Scans die Abwesenheit nicht bestätigen können, kann der Tracker als „Nicht verfügbar“ angezeigt werden."
           }
         }
       },
       "error": {
         "name-empty": "Gib einen Namen ein.",
         "irk-or-mac": "Gib einen IRK oder eine MAC-Adresse ein.",
-        "irk-invalid": "Das ist kein IRK. Ein IRK hat 16 Bytes: 32 Hexadezimalziffern oder 24 Base64-Zeichen, die auf == enden.",
+        "irk-invalid": "Das ist kein IRK. Gib {irk_bytes} Bytes als {irk_hex_length} Hexadezimalziffern oder in Base64 ein.",
         "mac-invalid": "Das ist keine MAC-Adresse. Gib sechs Paare von Hexadezimalziffern ein, getrennt durch Doppelpunkte oder Bindestriche, etwa AA:BB:CC:DD:EE:FF.",
-        "already-tracked": "Dieses Gerät wird bereits verfolgt."
+        "already-tracked": "Dieses Gerät wird bereits verfolgt.",
+        "departure-delay-invalid": "Wähle eine der aufgeführten Abwesenheitsverzögerungen."
       },
       "abort": {
-        "bluetooth-tracking-off": "Bluetooth-Tracking ist ausgeschaltet. Schalte es zuerst in den Optionen der Integration ein: Wähle „Konfigurieren“ auf der Seite der Integration."
+        "bluetooth-tracking-off": "Bluetooth-Tracking ist ausgeschaltet. Schalte es zuerst in den Optionen der Integration ein: Wähle „Konfigurieren“ auf der Seite der Integration.",
+        "device-removed": "Dieses Bluetooth-Gerät wurde entfernt. Füge es erneut hinzu, um es zu verfolgen."
       }
     }
   },
@@ -390,6 +404,17 @@
       "bluetooth_tracking": "Bluetooth-Tracking",
       "devices_listed": "Geräte in Googles Liste",
       "devices_not_answering": "Geräte, die nicht antworten"
+    }
+  },
+  "selector": {
+    "departure_delay": {
+      "options": {
+        "0": "0 Sekunden (normale Zeitsteuerung)",
+        "30": "30 Sekunden",
+        "60": "60 Sekunden",
+        "90": "90 Sekunden",
+        "120": "120 Sekunden"
+      }
     }
   }
 }

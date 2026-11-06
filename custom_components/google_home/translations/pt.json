@@ -261,23 +261,37 @@
           "description": "Introduza a IRK de um telemóvel ou o endereço MAC de um dispositivo cujo endereço nunca muda, como alguns relógios e etiquetas. Os telemóveis mudam de endereço a cada poucos minutos, por isso localize-os pela IRK. Para saber como encontrar a IRK, consulte {docs_url}.",
           "data": {
             "name": "Nome",
-            "irk_or_mac": "IRK ou endereço MAC"
+            "irk_or_mac": "IRK ou endereço MAC",
+            "additional_departure_delay": "Atraso adicional de saída"
           },
           "data_description": {
             "name": "Nome do localizador, por exemplo Telemóvel do Alex.",
-            "irk_or_mac": "A Identity Resolving Key de um telemóvel, como 32 dígitos hexadecimais ou em base64, ou um endereço MAC como AA:BB:CC:DD:EE:FF. A integração identifica qual dos dois introduziu."
+            "irk_or_mac": "A Identity Resolving Key de um telemóvel, como {irk_hex_length} dígitos hexadecimais ou em base64, ou um endereço MAC como AA:BB:CC:DD:EE:FF.",
+            "additional_departure_delay": "Tempo adicional após o período normal de presença de {presence_window} segundos antes de passar de «Casa» para «Ausente». Os tempos normais não adicionam atraso. Um atraso maior também atrasa a deteção de uma saída real. Se as pesquisas não conseguirem confirmar a ausência, o localizador poderá ficar indisponível."
+          }
+        },
+        "reconfigure": {
+          "title": "Definições do dispositivo Bluetooth",
+          "description": "Altere o atraso adicional de saída deste localizador.",
+          "data": {
+            "additional_departure_delay": "Atraso adicional de saída"
+          },
+          "data_description": {
+            "additional_departure_delay": "Tempo adicional após o período normal de presença de {presence_window} segundos antes de passar de «Casa» para «Ausente». Os tempos normais não adicionam atraso. Um atraso maior também atrasa a deteção de uma saída real. Se as pesquisas não conseguirem confirmar a ausência, o localizador poderá ficar indisponível."
           }
         }
       },
       "error": {
         "name-empty": "Introduza um nome.",
         "irk-or-mac": "Introduza uma IRK ou um endereço MAC.",
-        "irk-invalid": "Isto não é uma IRK. Uma IRK tem 16 bytes: 32 dígitos hexadecimais ou 24 caracteres base64 terminados em ==.",
+        "irk-invalid": "Isto não é uma IRK. Introduza {irk_bytes} bytes como {irk_hex_length} dígitos hexadecimais ou em base64.",
         "mac-invalid": "Isto não é um endereço MAC. Introduza seis pares de dígitos hexadecimais separados por dois pontos ou hífenes, por exemplo AA:BB:CC:DD:EE:FF.",
-        "already-tracked": "Este dispositivo já está a ser localizado."
+        "already-tracked": "Este dispositivo já está a ser localizado.",
+        "departure-delay-invalid": "Escolha um dos atrasos de saída apresentados."
       },
       "abort": {
-        "bluetooth-tracking-off": "A localização por Bluetooth está desativada. Ative-a primeiro nas opções da integração: selecione «Configurar» na página da integração."
+        "bluetooth-tracking-off": "A localização por Bluetooth está desativada. Ative-a primeiro nas opções da integração: selecione «Configurar» na página da integração.",
+        "device-removed": "Este dispositivo Bluetooth foi removido. Adicione-o novamente para o localizar."
       }
     }
   },
@@ -390,6 +404,17 @@
       "bluetooth_tracking": "Localização por Bluetooth",
       "devices_listed": "Dispositivos na lista da Google",
       "devices_not_answering": "Dispositivos que não respondem"
+    }
+  },
+  "selector": {
+    "departure_delay": {
+      "options": {
+        "0": "0 segundos (tempos normais)",
+        "30": "30 segundos",
+        "60": "60 segundos",
+        "90": "90 segundos",
+        "120": "120 segundos"
+      }
     }
   }
 }

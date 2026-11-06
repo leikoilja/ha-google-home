@@ -19,7 +19,7 @@ restarts whenever the tracker's state changes.
 
 import asyncio
 import base64
-from collections.abc import Callable, Iterable
+from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass
 from datetime import timedelta
 from enum import StrEnum
@@ -53,7 +53,9 @@ from .const import (
     BLUETOOTH_RSSI_WINDOW,
     BLUETOOTH_SCAN_INTERVAL,
     BLUETOOTH_TIMEOUT,
+    CONF_ADDITIONAL_DEPARTURE_DELAY,
     CONF_IRK,
+    DEPARTURE_DELAY_VALUES,
     HEADER_CAST_LOCAL_AUTH,
     HEADER_CONTENT_TYPE,
     PORT,
@@ -216,6 +218,27 @@ def parse_mac(value: str) -> str | None:
     return value.replace("-", ":").upper()
 
 
+@dataclass(frozen=True)
+class DepartureToken:
+    """A single pending transition, not persisted absence evidence."""
+
+    policy_generation: int
+    sighted: float
+    deadline: float
+
+
+def configured_departure_delay(subentry: ConfigSubentry) -> int:
+    """Missing or invalid legacy metadata leaves the normal timing in place."""
+    value = subentry.data.get(CONF_ADDITIONAL_DEPARTURE_DELAY, 0)
+    if (
+        not isinstance(value, bool)
+        and isinstance(value, int | float)
+        and value in DEPARTURE_DELAY_VALUES
+    ):
+        return int(value)
+    return 0
+
+
 class TrackedDevice:
     """A Bluetooth device that the user tracks, identified by its IRK or MAC address."""
 
@@ -226,6 +249,10 @@ class TrackedDevice:
         # The subentry flow saves the IRK as hex, in the order the cipher takes
         self._cipher = get_cipher_for_irk(bytes.fromhex(irk)) if irk else None
         self._mac: str | None = subentry.data.get(CONF_MAC)
+        self.identity = (irk, self._mac)
+        self.departure_delay = configured_departure_delay(subentry)
+        self.policy_generation = 0
+        self.pending_departure: DepartureToken | None = None
         # Start of the latest scan that heard the device
         self.last_sighted: float | None = None
         # The latest home or away state, and when the speakers last confirmed it
@@ -341,6 +368,8 @@ class BluetoothScanner:
             device.last_sighted = device.confirmed_at = device.last_sighted_utc = None
             device.state = TrackerState.UNKNOWN
             device.live_sighting = False
+            device.pending_departure = None
+            device.policy_generation += 1
 
     def current(self) -> bool:
         """An obsolete scanner must not apply late replies or timer decisions."""
@@ -351,6 +380,43 @@ class BluetoothScanner:
                 and self._generation == self._history.generation
             )
         )
+
+    @property
+    def generation(self) -> int:
+        """Expose the current scanner epoch for queued callback ownership."""
+        return self._generation
+
+    def sync_departure_delays(self) -> bool:
+        """Reconcile current non-identity policy without touching evidence."""
+        if self._history is None:
+            return False
+        changed = False
+        for subentry in self._history.entry.get_subentries_of_type("bluetooth_device"):
+            for device in self.tracked:
+                if device.subentry_id == subentry.subentry_id and device.identity == (
+                    subentry.data.get(CONF_IRK),
+                    subentry.data.get(CONF_MAC),
+                ):
+                    changed |= self.update_departure_delay(
+                        device, configured_departure_delay(subentry)
+                    )
+        return changed
+
+    @staticmethod
+    def update_departure_delay(device: TrackedDevice, seconds: int) -> bool:
+        """Change one runtime policy/token, never a history or scanner epoch."""
+        if device.departure_delay == seconds:
+            return False
+        device.departure_delay = seconds
+        device.policy_generation += 1
+        if device.pending_departure is not None:
+            sighted = device.pending_departure.sighted
+            device.pending_departure = DepartureToken(
+                device.policy_generation,
+                sighted,
+                sighted + BLUETOOTH_PRESENCE_WINDOW + seconds,
+            )
+        return True
 
     def _eligible(self, source_id: str) -> bool:
         account = self._account
@@ -378,11 +444,16 @@ class BluetoothScanner:
         return expired
 
     def evaluate(
-        self, *, healthy: bool = True, scan: bool = False
+        self,
+        *,
+        healthy: bool = True,
+        scan: bool = False,
+        departures: Mapping[str, DepartureToken] | None = None,
     ) -> dict[str, TrackerUpdate]:
         """One owner decides at actual time, processing source D before tracker E."""
         if not self.current():
             return self._updates
+        self.sync_departure_delays()
         now = monotonic()
         self._expire_sources(now)
         self._update_speakers()
@@ -402,21 +473,30 @@ class BluetoothScanner:
         self._membership_changed = False
         updates = {}
         for device in self.tracked:
+            token = (departures or {}).get(device.subentry_id)
+            delayed = (
+                token is not None
+                and token == device.pending_departure
+                and self.current()
+                and now >= token.deadline
+            )
+            if delayed:
+                device.pending_departure = None
             state = self._state(
                 device,
                 now,
                 covered,
-                confirm=decision,
+                confirm=decision or (healthy and delayed),
                 home_confirm=scan and self._accepted and device.live_sighting,
             )
             if device.confirmed_now and self._history:
-                device.provenance = provenance
+                device.provenance = "departure_delay" if delayed else provenance
                 self._history.confirm(
                     device.subentry_id,
                     str(device.state),
                     device.last_sighted,
                     now,
-                    provenance,
+                    device.provenance,
                     device.last_sighted_utc,
                 )
             updates[device.subentry_id] = self._tracker_update(device, state, now)
@@ -686,6 +766,7 @@ class BluetoothScanner:
             for device in self.tracked:
                 if not device.matches(address):
                     continue
+                device.pending_departure = None
                 if device.last_sighted is None or device.last_sighted < start:
                     # The scan's start, as the device may have been heard then
                     device.last_sighted = start
@@ -760,12 +841,33 @@ class BluetoothScanner:
             device.last_sighted is not None
             and device.last_sighted > now - BLUETOOTH_PRESENCE_WINDOW
         )
+        if home:
+            device.pending_departure = None
+        delay_until = (
+            device.last_sighted + BLUETOOTH_PRESENCE_WINDOW + device.departure_delay
+            if device.last_sighted is not None
+            else None
+        )
+        postponing = (
+            device.state == TrackerState.HOME
+            and device.confirmed_at is not None
+            and now < device.confirmed_at + BLUETOOTH_CONFIRMATION_LEASE
+            and delay_until is not None
+            and now < delay_until
+        )
         if confirm and home and home_confirm:
             device.state, device.confirmed_at = TrackerState.HOME, now
             device.confirmed_now = True
         elif confirm and not home and covered:
-            device.state, device.confirmed_at = TrackerState.NOT_HOME, now
-            device.confirmed_now = True
+            if postponing:
+                assert device.last_sighted is not None and delay_until is not None
+                device.pending_departure = DepartureToken(
+                    device.policy_generation, device.last_sighted, delay_until
+                )
+            else:
+                device.pending_departure = None
+                device.state, device.confirmed_at = TrackerState.NOT_HOME, now
+                device.confirmed_now = True
         elif device.confirmed_at is None:
             return TrackerState.UNKNOWN
         elif now - device.confirmed_at >= BLUETOOTH_CONFIRMATION_LEASE:

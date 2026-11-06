@@ -261,23 +261,37 @@
           "description": "Masukkan IRK ponsel, atau alamat MAC perangkat yang alamatnya tidak pernah berubah, seperti beberapa jam tangan dan tag pelacak. Ponsel mengganti alamatnya setiap beberapa menit, jadi lacak ponsel dengan IRK. Untuk cara menemukan IRK, lihat {docs_url}.",
           "data": {
             "name": "Nama",
-            "irk_or_mac": "IRK atau alamat MAC"
+            "irk_or_mac": "IRK atau alamat MAC",
+            "additional_departure_delay": "Penundaan tambahan saat pergi"
           },
           "data_description": {
             "name": "Nama pelacak, misalnya Ponsel Alex.",
-            "irk_or_mac": "Identity Resolving Key ponsel, sebagai 32 digit heksadesimal atau dalam base64, atau alamat MAC seperti AA:BB:CC:DD:EE:FF. Integrasi akan mengenali mana yang Anda masukkan."
+            "irk_or_mac": "Identity Resolving Key ponsel, sebagai {irk_hex_length} digit heksadesimal atau dalam base64, atau alamat MAC seperti AA:BB:CC:DD:EE:FF.",
+            "additional_departure_delay": "Waktu tambahan setelah periode kehadiran normal selama {presence_window} detik sebelum berubah dari “Di Rumah” menjadi “Keluar”. Waktu normal tidak menambahkan penundaan. Penundaan yang lebih lama juga menunda deteksi kepergian yang sebenarnya. Jika pemindaian tidak dapat memastikan ketidakhadiran, pelacak dapat menjadi tidak tersedia."
+          }
+        },
+        "reconfigure": {
+          "title": "Pengaturan perangkat Bluetooth",
+          "description": "Ubah penundaan tambahan saat pergi untuk pelacak ini.",
+          "data": {
+            "additional_departure_delay": "Penundaan tambahan saat pergi"
+          },
+          "data_description": {
+            "additional_departure_delay": "Waktu tambahan setelah periode kehadiran normal selama {presence_window} detik sebelum berubah dari “Di Rumah” menjadi “Keluar”. Waktu normal tidak menambahkan penundaan. Penundaan yang lebih lama juga menunda deteksi kepergian yang sebenarnya. Jika pemindaian tidak dapat memastikan ketidakhadiran, pelacak dapat menjadi tidak tersedia."
           }
         }
       },
       "error": {
         "name-empty": "Masukkan nama.",
         "irk-or-mac": "Masukkan IRK atau alamat MAC.",
-        "irk-invalid": "Ini bukan IRK. IRK berukuran 16 byte: 32 digit heksadesimal, atau 24 karakter base64 yang diakhiri dengan ==.",
+        "irk-invalid": "Ini bukan IRK. Masukkan {irk_bytes} byte sebagai {irk_hex_length} digit heksadesimal atau dalam base64.",
         "mac-invalid": "Ini bukan alamat MAC. Masukkan enam pasang digit heksadesimal yang dipisahkan titik dua atau tanda hubung, misalnya AA:BB:CC:DD:EE:FF.",
-        "already-tracked": "Perangkat ini sudah dilacak."
+        "already-tracked": "Perangkat ini sudah dilacak.",
+        "departure-delay-invalid": "Pilih salah satu penundaan saat pergi yang tercantum."
       },
       "abort": {
-        "bluetooth-tracking-off": "Pelacakan Bluetooth nonaktif. Aktifkan terlebih dahulu di opsi integrasi: pilih “Konfigurasikan” di halaman integrasi."
+        "bluetooth-tracking-off": "Pelacakan Bluetooth nonaktif. Aktifkan terlebih dahulu di opsi integrasi: pilih “Konfigurasikan” di halaman integrasi.",
+        "device-removed": "Perangkat Bluetooth ini telah dihapus. Tambahkan lagi untuk melacaknya."
       }
     }
   },
@@ -390,6 +404,17 @@
       "bluetooth_tracking": "Pelacakan Bluetooth",
       "devices_listed": "Perangkat di daftar Google",
       "devices_not_answering": "Perangkat yang tidak merespons"
+    }
+  },
+  "selector": {
+    "departure_delay": {
+      "options": {
+        "0": "0 detik (waktu normal)",
+        "30": "30 detik",
+        "60": "60 detik",
+        "90": "90 detik",
+        "120": "120 detik"
+      }
     }
   }
 }

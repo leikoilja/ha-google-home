@@ -259,11 +259,15 @@ async def assert_flow_text(
         category = "issues"
         prefix = f"component.{domain}.issues.{key}.fix_flow"
     # The manager's type parameters differ, so check it as an object
-    elif isinstance(cast(object, manager), ConfigSubentryFlowManager):
+    elif (
+        isinstance(cast(object, manager), ConfigSubentryFlowManager)
+        and domain != "homeassistant"
+    ):
         # The handler is the entry's ID and the subentry type
         category = "config_subentries"
         prefix = f"component.{domain}.{category}.{result['handler'][1]}"
     else:
+        # Core's standard subentry completion uses its config-flow abort text.
         category = "options" if isinstance(manager, OptionsFlowManager) else "config"
         prefix = f"component.{domain}.{category}"
     text = await async_get_translations(manager.hass, "en", category, [domain])

@@ -261,23 +261,37 @@
           "description": "Saisissez l'IRK d'un téléphone, ou l'adresse MAC d'un appareil dont l'adresse ne change jamais, comme certaines montres et balises. Les téléphones changent d'adresse toutes les quelques minutes : suivez-les donc par leur IRK. Pour savoir comment trouver l'IRK, consultez {docs_url}.",
           "data": {
             "name": "Nom",
-            "irk_or_mac": "IRK ou adresse MAC"
+            "irk_or_mac": "IRK ou adresse MAC",
+            "additional_departure_delay": "Délai de départ supplémentaire"
           },
           "data_description": {
             "name": "Nom du traceur, par exemple Téléphone d'Alex.",
-            "irk_or_mac": "L'Identity Resolving Key d'un téléphone, sous forme de 32 chiffres hexadécimaux ou en base64, ou une adresse MAC comme AA:BB:CC:DD:EE:FF. L'intégration reconnaît lequel des deux vous avez saisi."
+            "irk_or_mac": "L'Identity Resolving Key d'un téléphone, sous forme de {irk_hex_length} chiffres hexadécimaux ou en base64, ou une adresse MAC comme AA:BB:CC:DD:EE:FF.",
+            "additional_departure_delay": "Temps supplémentaire après la période normale de présence de {presence_window} secondes avant de passer de « Maison » à « Absent ». Les délais habituels n’ajoutent aucun délai. Un délai plus long retarde aussi la détection d’un départ réel. Si les analyses ne peuvent pas confirmer l’absence, le traceur peut devenir indisponible."
+          }
+        },
+        "reconfigure": {
+          "title": "Paramètres de l’appareil Bluetooth",
+          "description": "Modifiez le délai de départ supplémentaire de ce traceur.",
+          "data": {
+            "additional_departure_delay": "Délai de départ supplémentaire"
+          },
+          "data_description": {
+            "additional_departure_delay": "Temps supplémentaire après la période normale de présence de {presence_window} secondes avant de passer de « Maison » à « Absent ». Les délais habituels n’ajoutent aucun délai. Un délai plus long retarde aussi la détection d’un départ réel. Si les analyses ne peuvent pas confirmer l’absence, le traceur peut devenir indisponible."
           }
         }
       },
       "error": {
         "name-empty": "Saisissez un nom.",
         "irk-or-mac": "Saisissez un IRK ou une adresse MAC.",
-        "irk-invalid": "Ce n'est pas un IRK. Un IRK fait 16 octets : 32 chiffres hexadécimaux, ou 24 caractères base64 se terminant par ==.",
+        "irk-invalid": "Ce n’est pas un IRK. Saisissez {irk_bytes} octets sous forme de {irk_hex_length} chiffres hexadécimaux ou en base64.",
         "mac-invalid": "Ce n'est pas une adresse MAC. Saisissez six paires de chiffres hexadécimaux séparées par des deux-points ou des tirets, par exemple AA:BB:CC:DD:EE:FF.",
-        "already-tracked": "Cet appareil est déjà suivi."
+        "already-tracked": "Cet appareil est déjà suivi.",
+        "departure-delay-invalid": "Choisissez l’un des délais de départ proposés."
       },
       "abort": {
-        "bluetooth-tracking-off": "Le suivi Bluetooth est désactivé. Activez-le d'abord dans les options de l'intégration : sélectionnez « Configurer » sur la page de l'intégration."
+        "bluetooth-tracking-off": "Le suivi Bluetooth est désactivé. Activez-le d'abord dans les options de l'intégration : sélectionnez « Configurer » sur la page de l'intégration.",
+        "device-removed": "Cet appareil Bluetooth a été supprimé. Ajoutez-le à nouveau pour le suivre."
       }
     }
   },
@@ -390,6 +404,17 @@
       "bluetooth_tracking": "Suivi Bluetooth",
       "devices_listed": "Appareils dans la liste de Google",
       "devices_not_answering": "Appareils qui ne répondent pas"
+    }
+  },
+  "selector": {
+    "departure_delay": {
+      "options": {
+        "0": "0 seconde (délais habituels)",
+        "30": "30 secondes",
+        "60": "60 secondes",
+        "90": "90 secondes",
+        "120": "120 secondes"
+      }
     }
   }
 }

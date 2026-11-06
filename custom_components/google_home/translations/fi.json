@@ -261,23 +261,37 @@
           "description": "Anna puhelimen IRK tai sellaisen laitteen MAC-osoite, jonka osoite ei koskaan muutu, kuten jotkin kellot ja paikannustagit. Puhelimet vaihtavat osoitettaan muutaman minuutin välein, joten seuraa niitä IRK:n avulla. Ohjeet IRK:n löytämiseen: {docs_url}.",
           "data": {
             "name": "Nimi",
-            "irk_or_mac": "IRK tai MAC-osoite"
+            "irk_or_mac": "IRK tai MAC-osoite",
+            "additional_departure_delay": "Poistumisen lisäviive"
           },
           "data_description": {
             "name": "Seurannan nimi, esimerkiksi Alexin puhelin.",
-            "irk_or_mac": "Puhelimen Identity Resolving Key 32 heksadesimaalinumerona tai base64-muodossa tai MAC-osoite, kuten AA:BB:CC:DD:EE:FF. Integraatio tunnistaa, kumman annoit."
+            "irk_or_mac": "Puhelimen Identity Resolving Key {irk_hex_length} heksadesimaalinumerona tai base64-muodossa tai MAC-osoite, kuten AA:BB:CC:DD:EE:FF.",
+            "additional_departure_delay": "Lisäaika tavallisen {presence_window} sekunnin läsnäolojakson jälkeen ennen tilan vaihtumista Kotona-tilasta Poissa-tilaan. Tavallinen ajoitus ei lisää viivettä. Pidempi viive viivästyttää myös todellisen poistumisen havaitsemista. Jos skannaukset eivät pysty vahvistamaan poissaoloa, seuranta voi muuttua tilaan Ei saatavissa."
+          }
+        },
+        "reconfigure": {
+          "title": "Bluetooth-laitteen asetukset",
+          "description": "Muuta tämän seurannan poistumisen lisäviivettä.",
+          "data": {
+            "additional_departure_delay": "Poistumisen lisäviive"
+          },
+          "data_description": {
+            "additional_departure_delay": "Lisäaika tavallisen {presence_window} sekunnin läsnäolojakson jälkeen ennen tilan vaihtumista Kotona-tilasta Poissa-tilaan. Tavallinen ajoitus ei lisää viivettä. Pidempi viive viivästyttää myös todellisen poistumisen havaitsemista. Jos skannaukset eivät pysty vahvistamaan poissaoloa, seuranta voi muuttua tilaan Ei saatavissa."
           }
         }
       },
       "error": {
         "name-empty": "Anna nimi.",
         "irk-or-mac": "Anna IRK tai MAC-osoite.",
-        "irk-invalid": "Tämä ei ole IRK. IRK on 16 tavua: 32 heksadesimaalinumeroa tai 24 base64-merkkiä, joiden lopussa on ==.",
+        "irk-invalid": "Tämä ei ole IRK. Anna {irk_bytes} tavua {irk_hex_length} heksadesimaalinumerona tai base64-muodossa.",
         "mac-invalid": "Tämä ei ole MAC-osoite. Anna kuusi heksadesimaalinumeroparia kaksoispisteillä tai yhdysmerkeillä erotettuina, esimerkiksi AA:BB:CC:DD:EE:FF.",
-        "already-tracked": "Tätä laitetta seurataan jo."
+        "already-tracked": "Tätä laitetta seurataan jo.",
+        "departure-delay-invalid": "Valitse jokin luetelluista poistumisviiveistä."
       },
       "abort": {
-        "bluetooth-tracking-off": "Bluetooth-seuranta ei ole käytössä. Ota se ensin käyttöön integraation asetuksissa: valitse integraation sivulla ”Määrittele”."
+        "bluetooth-tracking-off": "Bluetooth-seuranta ei ole käytössä. Ota se ensin käyttöön integraation asetuksissa: valitse integraation sivulla ”Määrittele”.",
+        "device-removed": "Tämä Bluetooth-laite on poistettu. Lisää se uudelleen, jos haluat seurata sitä."
       }
     }
   },
@@ -390,6 +404,17 @@
       "bluetooth_tracking": "Bluetooth-seuranta",
       "devices_listed": "Laitteet Googlen luettelossa",
       "devices_not_answering": "Laitteet, jotka eivät vastaa"
+    }
+  },
+  "selector": {
+    "departure_delay": {
+      "options": {
+        "0": "0 sekuntia (tavallinen ajoitus)",
+        "30": "30 sekuntia",
+        "60": "60 sekuntia",
+        "90": "90 sekuntia",
+        "120": "120 sekuntia"
+      }
     }
   }
 }
