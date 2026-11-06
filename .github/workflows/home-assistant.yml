@@ -6,8 +6,9 @@ on:
       - master
   pull_request:
   # Both checks run images that change upstream: hassfest's with each Home
-  # Assistant beta and release, HACS's from its main branch. A daily run
-  # reports a new rule on master before an unrelated PR runs into it.
+  # Assistant beta and release, the repository validator's from its main
+  # branch. A daily run reports a new rule on master before an unrelated PR
+  # runs into it.
   schedule:
     - cron: "23 5 * * *"
   workflow_dispatch:
@@ -16,9 +17,9 @@ permissions:
   contents: read
 
 jobs:
-  hacs:
+  marketplace:
     runs-on: ubuntu-latest
-    name: HACS
+    name: Marketplace repository
     timeout-minutes: 15
     steps:
       - name: Check out the repository
@@ -26,7 +27,8 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: HACS validation
+      - name: Validate Marketplace repository
+        # The Marketplace still uses hacs.json; keep its existing validator.
         uses: hacs/action@d556e736723344f83838d08488c983a15381059a # 22.5.0
         with:
           category: "integration"

@@ -20,7 +20,11 @@ from script import publish_release
 
 INTEGRATION = "custom_components/google_home"
 MANIFEST = f"{INTEGRATION}/manifest.json"
-HACS_JSON = {"name": "Google Home", "homeassistant": "2026.1.0", "render_readme": True}
+MARKETPLACE_JSON = {
+    "name": "Google Home",
+    "homeassistant": "2026.1.0",
+    "render_readme": True,
+}
 
 
 def git(*args: str) -> str:
@@ -45,7 +49,7 @@ def zip_of(files: dict[str, str]) -> bytes:
 
 
 def test_zip_holds_integration_files_at_root(tmp_path: Path) -> None:
-    """HACS and Home Assistant extract the zip into custom_components/google_home."""
+    """The Marketplace extracts the zip into custom_components/google_home."""
     path = tmp_path / "google_home.zip"
     publish_release.build_zip("HEAD", path)
 
@@ -96,7 +100,7 @@ class FakeRepo:
                     ],
                     "version": "1.15.0",
                 },
-                "hacs.json": HACS_JSON,
+                "hacs.json": MARKETPLACE_JSON,
             }
         }
         self.parents: dict[str, str] = {}
@@ -158,12 +162,14 @@ def test_release_commit_has_zip_settings_and_master_does_not(repo: FakeRepo) -> 
 
     assert repo.parents[tagged] == "base"
     assert repo.parents[repo.master] == tagged
-    hacs_json = HACS_JSON | {"homeassistant": package_version("homeassistant")}
-    assert repo.files[tagged]["hacs.json"] == hacs_json | {
+    marketplace_json = MARKETPLACE_JSON | {
+        "homeassistant": package_version("homeassistant")
+    }
+    assert repo.files[tagged]["hacs.json"] == marketplace_json | {
         "zip_release": True,
         "filename": "google_home.zip",
     }
-    assert repo.files[repo.master]["hacs.json"] == hacs_json
+    assert repo.files[repo.master]["hacs.json"] == marketplace_json
     for sha in (tagged, repo.master):
         assert repo.files[sha][MANIFEST]["version"] == "1.17.0"
 
@@ -348,7 +354,7 @@ def test_does_not_publish_unless_stored_zip_matches(
     store: Callable[[bytes], bytes | None],
     error: str,
 ) -> None:
-    """HACS and Home Assistant would fail to install a release without it."""
+    """The Marketplace would fail to install a release without it."""
     release = FakeRelease(head_tag(), store)
 
     with pytest.raises(

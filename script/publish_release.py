@@ -26,7 +26,7 @@ from homeassistant.util.json import JsonObjectType, json_loads_object
 INTEGRATION_PATH = "custom_components/google_home"
 MANIFEST_PATH = f"{INTEGRATION_PATH}/manifest.json"
 ZIP_NAME = "google_home.zip"
-# HACS and Home Assistant read hacs.json at the version they install
+# The Marketplace reads hacs.json at the version it installs
 ZIP_RELEASE: JsonObjectType = {"zip_release": True, "filename": ZIP_NAME}
 
 
@@ -55,6 +55,8 @@ def main() -> int:
 
 def cleanup_message(version: str) -> str:
     """Return the message of the commit after the release commit."""
+    # Keep this historical wording: update_manifests matches the exact message
+    # to recognize a completed earlier run, including one before the rename.
     return (
         f"Use the source archive for master again after v{version}\n\n"
         f"The v{version} release commit adds zip_release and filename to "
@@ -86,20 +88,20 @@ def update_manifests(repo: Repository, version: str) -> str:
     requirements[names.index("glocaltokens")] = pin
 
     print("Updating hacs.json...")
-    hacs_config = read_json(repo, "hacs.json", head.sha)
-    hacs_config["homeassistant"] = package_version("homeassistant")
+    marketplace_config = read_json(repo, "hacs.json", head.sha)
+    marketplace_config["homeassistant"] = package_version("homeassistant")
 
     release_commit = commit_files(
         repo,
         head.sha,
         f"Release v{version}",
-        {MANIFEST_PATH: manifest, "hacs.json": hacs_config | ZIP_RELEASE},
+        {MANIFEST_PATH: manifest, "hacs.json": marketplace_config | ZIP_RELEASE},
     )
     cleanup_commit = commit_files(
         repo,
         release_commit.sha,
         cleanup_message(version),
-        {"hacs.json": hacs_config},
+        {"hacs.json": marketplace_config},
     )
     repo.get_git_ref("heads/master").edit(sha=cleanup_commit.sha)
     return release_commit.sha
