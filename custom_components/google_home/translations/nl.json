@@ -83,7 +83,7 @@
       "google-unreachable": "Google kon niet worden bereikt. Controleer of Home Assistant met internet is verbonden en probeer het daarna opnieuw.",
       "google-busy": "Google is overbelast of beperkt het aantal inlogpogingen. Wacht een paar minuten en log daarna opnieuw in.",
       "oauth-token-format": "Dit is niet de cookie oauth_token. De waarde begint met oauth2_4/.",
-      "master-token-format": "Een mastertoken begint met aas_et/ en is 223 tekens lang. Kopieer het volledige token.",
+      "master-token-format": "Een mastertoken begint met aas_et/ en is {token_length} tekens lang. Kopieer het volledige token.",
       "other-account": "Je bent ingelogd met een ander Google-account, dus er is niets gewijzigd. Log in met het account dat deze integratie gebruikt. Om in plaats daarvan dat andere account te gebruiken, verwijder je de integratie en voeg je deze opnieuw toe.",
       "no-home-selected": "Kies ten minste één huis."
     },
@@ -226,14 +226,14 @@
       }
     },
     "invalid_update_interval": {
-      "title": "Het opgeslagen update-interval is korter dan 1 seconde",
+      "title": "Het opgeslagen update-interval is korter dan {min_interval} s",
       "fix_flow": {
         "step": {
           "init": {
-            "title": "Het opgeslagen update-interval is korter dan 1 seconde",
-            "description": "Het update-interval dat in de instellingen van de integratie is opgeslagen, is {interval} s, wat onder het minimum van 1 seconde ligt. De integratie gebruikt in plaats daarvan de standaardwaarde en controleert je apparaten elke 15 seconden.\n\nAls je 0 hebt opgeslagen om deze regelmatige controles te stoppen, schakel dan in plaats daarvan polling uit. Anders dan 0 stopt dat ook het zoeken naar Bluetooth-apparaten en het toevoegen van nieuwe apparaten die mDNS vindt. Raadpleeg {docs_url} voor meer informatie.\n\nOm een ander interval te gebruiken, open je de [Google Home-integratie]({integration_url}), selecteer je **Configureer**, vul je het in en selecteer je daarna **Verzend**.",
+            "title": "Het opgeslagen update-interval is korter dan {min_interval} s",
+            "description": "Het update-interval dat in de instellingen van de integratie is opgeslagen, is {interval} s, wat onder het minimum van {min_interval} s ligt. De integratie gebruikt in plaats daarvan de standaardwaarde en controleert je apparaten elke {default_interval} s.\n\nAls je 0 hebt opgeslagen om deze regelmatige controles te stoppen, schakel dan in plaats daarvan polling uit. Anders dan 0 stopt dat ook het zoeken naar Bluetooth-apparaten en het toevoegen van nieuwe apparaten die mDNS vindt. Raadpleeg {docs_url} voor meer informatie.\n\nOm een ander interval te gebruiken, open je de [Google Home-integratie]({integration_url}), selecteer je **Configureer**, vul je het in en selecteer je daarna **Verzend**.",
             "menu_options": {
-              "use_default": "Standaardwaarde van 15 seconden gebruiken",
+              "use_default": "Standaardwaarde van {default_interval} s gebruiken",
               "turn_off_polling": "In plaats daarvan polling uitschakelen"
             }
           }

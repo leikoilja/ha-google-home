@@ -6,6 +6,7 @@ import logging
 from typing import NotRequired, TypedDict, cast, override
 
 from aiohttp import ClientError, ClientResponseError
+from glocaltokens import const as glocaltokens_const
 from glocaltokens.exceptions import AuthenticationError
 from glocaltokens.utils.token import is_aas_et
 import probatio
@@ -32,6 +33,7 @@ from homeassistant.helpers.selector import (
     SelectSelectorMode,
 )
 
+from . import const
 from .api import GlocaltokensApiClient
 from .bluetooth import IRK_LENGTH, parse_irk, parse_mac
 from .const import (
@@ -56,7 +58,6 @@ from .const import (
     MASTER_TOKEN_TITLE,
     NO_DEVICES_DOCS_URL,
     SUBENTRY_BLUETOOTH_DEVICE,
-    UPDATE_INTERVAL,
 )
 from .exceptions import InvalidMasterToken
 from .types import GoogleHomeConfigEntry, OptionsFlowDict
@@ -304,7 +305,12 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
             step_id=step_id,
             data_schema=probatio.Schema(schema),
             errors=errors,
-            description_placeholders=DESCRIPTION_PLACEHOLDERS,
+            description_placeholders={
+                **DESCRIPTION_PLACEHOLDERS,
+                "token_length": str(
+                    len("aas_et/") + glocaltokens_const.MASTER_TOKEN_LENGTH
+                ),
+            },
         )
 
     @staticmethod
@@ -408,8 +414,8 @@ class GoogleHomeOptionsFlowHandler(OptionsFlow):
         schema: dict[probatio.Marker, object] = {
             probatio.Optional(
                 CONF_UPDATE_INTERVAL,
-                default=options.get(CONF_UPDATE_INTERVAL, UPDATE_INTERVAL),
-            ): probatio.All(int, probatio.Range(min=1)),
+                default=options.get(CONF_UPDATE_INTERVAL, const.UPDATE_INTERVAL),
+            ): probatio.All(int, probatio.Range(min=const.MIN_UPDATE_INTERVAL)),
             probatio.Optional(
                 CONF_KNOWN_HOSTS,
                 default=options.get(CONF_KNOWN_HOSTS, []),
@@ -455,7 +461,7 @@ class GoogleHomeOptionsFlowHandler(OptionsFlow):
             step_id="init",
             data_schema=probatio.Schema(schema),
             errors=errors,
-            description_placeholders={"default_interval": str(UPDATE_INTERVAL)},
+            description_placeholders={"default_interval": str(const.UPDATE_INTERVAL)},
         )
 
     def _speaker_options(self, excluded: object) -> list[SelectOptionDict]:

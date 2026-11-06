@@ -83,7 +83,7 @@
       "google-unreachable": "Tidak dapat terhubung ke Google. Pastikan Home Assistant terhubung ke internet, lalu coba lagi.",
       "google-busy": "Google sedang sibuk atau membatasi login. Tunggu beberapa menit, lalu login ulang.",
       "oauth-token-format": "Ini bukan cookie oauth_token. Nilainya diawali dengan oauth2_4/.",
-      "master-token-format": "Token master diawali dengan aas_et/ dan panjangnya 223 karakter. Salin seluruh token.",
+      "master-token-format": "Token master diawali dengan aas_et/ dan panjangnya {token_length} karakter. Salin seluruh token.",
       "other-account": "Anda login ke akun Google yang berbeda, sehingga tidak ada yang diubah. Login dengan akun yang digunakan integrasi ini. Untuk menggunakan akun lain tersebut, hapus integrasi lalu tambahkan kembali.",
       "no-home-selected": "Pilih minimal satu rumah."
     },
@@ -226,14 +226,14 @@
       }
     },
     "invalid_update_interval": {
-      "title": "Interval pembaruan yang disimpan kurang dari 1 detik",
+      "title": "Interval pembaruan yang disimpan kurang dari {min_interval} detik",
       "fix_flow": {
         "step": {
           "init": {
-            "title": "Interval pembaruan yang disimpan kurang dari 1 detik",
-            "description": "Interval pembaruan yang disimpan di opsi integrasi adalah {interval} detik, di bawah batas minimum 1 detik. Integrasi menggunakan nilai default sebagai gantinya dan memeriksa perangkat Anda setiap 15 detik.\n\nJika Anda menyimpan 0 untuk menghentikan pemeriksaan rutin ini, nonaktifkan polling sebagai gantinya. Berbeda dengan 0, cara ini juga menghentikan pemindaian perangkat Bluetooth dan penambahan perangkat baru yang ditemukan mDNS. Untuk detailnya, lihat {docs_url}.\n\nUntuk menggunakan interval lain, buka [integrasi Google Home]({integration_url}), pilih **Konfigurasikan**, masukkan intervalnya, lalu pilih **Kirimkan**.",
+            "title": "Interval pembaruan yang disimpan kurang dari {min_interval} detik",
+            "description": "Interval pembaruan yang disimpan di opsi integrasi adalah {interval} detik, di bawah batas minimum {min_interval} detik. Integrasi menggunakan nilai default sebagai gantinya dan memeriksa perangkat Anda setiap {default_interval} detik.\n\nJika Anda menyimpan 0 untuk menghentikan pemeriksaan rutin ini, nonaktifkan polling sebagai gantinya. Berbeda dengan 0, cara ini juga menghentikan pemindaian perangkat Bluetooth dan penambahan perangkat baru yang ditemukan mDNS. Untuk detailnya, lihat {docs_url}.\n\nUntuk menggunakan interval lain, buka [integrasi Google Home]({integration_url}), pilih **Konfigurasikan**, masukkan intervalnya, lalu pilih **Kirimkan**.",
             "menu_options": {
-              "use_default": "Gunakan nilai default 15 detik",
+              "use_default": "Gunakan nilai default {default_interval} detik",
               "turn_off_polling": "Nonaktifkan polling sebagai gantinya"
             }
           }

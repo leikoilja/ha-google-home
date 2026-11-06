@@ -83,7 +83,7 @@
       "google-unreachable": "Klarte ikkje å nå Google. Kontroller at Home Assistant er kopla til internett, og prøv deretter igjen.",
       "google-busy": "Google har stor pågang eller avgrensar påloggingar. Vent nokre minutt, og logg deretter på igjen.",
       "oauth-token-format": "Dette er ikkje informasjonskapselen oauth_token. Verdien byrjar med oauth2_4/.",
-      "master-token-format": "Eit master token byrjar med aas_et/ og er 223 teikn langt. Kopier heile tokenet.",
+      "master-token-format": "Eit master token byrjar med aas_et/ og er {token_length} teikn langt. Kopier heile tokenet.",
       "other-account": "Du logga på ein annan Google-konto, så ingenting vart endra. Logg på med kontoen som denne integrasjonen brukar. For å bruke den andre kontoen i staden, slett integrasjonen og legg han til på nytt.",
       "no-home-selected": "Vel minst éin heim."
     },
@@ -226,14 +226,14 @@
       }
     },
     "invalid_update_interval": {
-      "title": "Det lagra oppdateringsintervallet er under 1 sekund",
+      "title": "Det lagra oppdateringsintervallet er under {min_interval} s",
       "fix_flow": {
         "step": {
           "init": {
-            "title": "Det lagra oppdateringsintervallet er under 1 sekund",
-            "description": "Oppdateringsintervallet som er lagra i vala for integrasjonen, er {interval} sekund, som er under minimumsverdien på 1 sekund. Integrasjonen brukar i staden standardverdien og sjekkar einingane dine kvart 15. sekund.\n\nOm du lagra 0 for å stoppe desse faste sjekkane, bør du heller slå av polling. I motsetnad til 0 stoppar det også søket etter Bluetooth-einingar og at nye einingar som mDNS finn, blir lagde til. Sjå fleire detaljar her: {docs_url}.\n\nFor å bruke eit anna intervall opnar du [Google Home-integrasjonen]({integration_url}), vel **Konfigurer**, skriv det inn og vel deretter **Send inn**.",
+            "title": "Det lagra oppdateringsintervallet er under {min_interval} s",
+            "description": "Oppdateringsintervallet som er lagra i vala for integrasjonen, er {interval} sekund, som er under minimumsverdien på {min_interval} s. Integrasjonen brukar i staden standardverdien og sjekkar einingane dine med {default_interval} s mellomrom.\n\nOm du lagra 0 for å stoppe desse faste sjekkane, bør du heller slå av polling. I motsetnad til 0 stoppar det også søket etter Bluetooth-einingar og at nye einingar som mDNS finn, blir lagde til. Sjå fleire detaljar her: {docs_url}.\n\nFor å bruke eit anna intervall opnar du [Google Home-integrasjonen]({integration_url}), vel **Konfigurer**, skriv det inn og vel deretter **Send inn**.",
             "menu_options": {
-              "use_default": "Bruk standardverdien på 15 sekund",
+              "use_default": "Bruk standardverdien på {default_interval} s",
               "turn_off_polling": "Slå av polling i staden"
             }
           }

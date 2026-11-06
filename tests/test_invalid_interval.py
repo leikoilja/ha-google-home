@@ -27,7 +27,7 @@ from custom_components.google_home.const import (
 from homeassistant.components.repairs import RepairsFlowResult, repairs_flow_manager
 from homeassistant.config_entries import ConfigEntryDisabler, ConfigEntryState
 from homeassistant.core import HomeAssistant
-from homeassistant.data_entry_flow import FlowResultType
+from homeassistant.data_entry_flow import FlowResultType, InvalidData
 from homeassistant.helpers import issue_registry as ir
 from homeassistant.helpers.translation import async_get_translations
 from homeassistant.setup import async_setup_component
@@ -127,6 +127,8 @@ async def test_repair_for_interval_below_one_second(
     )
     assert result.get("description_placeholders") == {
         "interval": str(interval),
+        "min_interval": "1",
+        "default_interval": "15",
         "docs_url": DOCS_URL,
         "integration_url": INTEGRATION_URL,
     }
@@ -155,13 +157,72 @@ async def test_repair_text(hass: HomeAssistant) -> None:
     prefix = f"component.{DOMAIN}.issues.{ISSUE_INVALID_INTERVAL}"
     step = f"{prefix}.fix_flow.step.init"
 
-    assert placeholders(text[f"{prefix}.title"]) == set()
-    assert placeholders(text[f"{step}.title"]) == set()
+    assert placeholders(text[f"{prefix}.title"]) == {"min_interval"}
+    assert placeholders(text[f"{step}.title"]) == {"min_interval"}
+    assert placeholders(text[f"{step}.menu_options.use_default"]) == {
+        "default_interval"
+    }
     assert placeholders(text[f"{step}.description"]) == {
         "interval",
+        "min_interval",
+        "default_interval",
         "docs_url",
         "integration_url",
     }
+
+
+@pytest.mark.usefixtures("google", "replies")
+async def test_interval_owners_reach_validation_and_repair(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    issue_registry: ir.IssueRegistry,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Keep the displayed bounds and chosen default tied to the actual policy owners."""
+    monkeypatch.setattr("custom_components.google_home.const.MIN_UPDATE_INTERVAL", 3)
+    monkeypatch.setattr("custom_components.google_home.const.UPDATE_INTERVAL", 37)
+
+    await set_up_with(hass, config_entry, 2)
+
+    assert config_entry.runtime_data.account.update_interval == timedelta(seconds=37)
+    issue = repair(issue_registry)
+    assert issue is not None
+    text = await async_get_translations(hass, "en", "issues", [DOMAIN])
+    prefix = f"component.{DOMAIN}.issues.{ISSUE_INVALID_INTERVAL}"
+    assert text[f"{prefix}.title"].format_map(issue.translation_placeholders or {}) == (
+        "The saved update interval is below 3 s"
+    )
+    result = await open_fix(hass)
+    values = result["description_placeholders"] or {}
+    step = f"{prefix}.fix_flow.step.init"
+    assert text[f"{step}.title"].format_map(values) == (
+        "The saved update interval is below 3 s"
+    )
+    assert text[f"{step}.menu_options.use_default"].format_map(values) == (
+        "Use the default of 37 s"
+    )
+    description = text[f"{step}.description"].format_map(values)
+    assert "below the minimum of 3 s" in description
+    assert "checks your devices every 37 s" in description
+    assert "is 2 seconds" in description
+
+    await choose(hass, result, "use_default")
+
+    assert config_entry.options[CONF_UPDATE_INTERVAL] == 37
+    assert repair(issue_registry) is None
+    options = await hass.config_entries.options.async_init(config_entry.entry_id)
+    with pytest.raises(InvalidData) as invalid:
+        await hass.config_entries.options.async_configure(
+            options["flow_id"], {CONF_UPDATE_INTERVAL: 2}
+        )
+    assert invalid.value.schema_errors == {
+        CONF_UPDATE_INTERVAL: "value must be at least 3"
+    }
+    result = await hass.config_entries.options.async_configure(
+        options["flow_id"], {CONF_UPDATE_INTERVAL: 3}
+    )
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert config_entry.options[CONF_UPDATE_INTERVAL] == 3
 
 
 @pytest.mark.usefixtures("google", "replies")

@@ -83,7 +83,7 @@
       "google-unreachable": "Google에 연결하지 못했습니다. Home Assistant가 인터넷에 연결되어 있는지 확인한 후 다시 시도하세요.",
       "google-busy": "Google이 혼잡하거나 로그인을 제한하고 있습니다. 몇 분 기다린 후 다시 로그인하세요.",
       "oauth-token-format": "oauth_token 쿠키가 아닙니다. 이 쿠키의 값은 oauth2_4/로 시작합니다.",
-      "master-token-format": "마스터 토큰은 aas_et/로 시작하며 223자입니다. 토큰 전체를 복사하세요.",
+      "master-token-format": "마스터 토큰은 aas_et/로 시작하며 {token_length}자입니다. 토큰 전체를 복사하세요.",
       "other-account": "다른 Google 계정으로 로그인했기 때문에 아무것도 변경되지 않았습니다. 이 통합 구성 요소가 사용하는 계정으로 로그인하세요. 대신 방금 로그인한 계정을 사용하려면 통합 구성 요소를 삭제한 후 다시 추가하세요.",
       "no-home-selected": "홈을 하나 이상 선택하세요."
     },
@@ -226,14 +226,14 @@
       }
     },
     "invalid_update_interval": {
-      "title": "저장된 업데이트 간격이 1초 미만입니다",
+      "title": "저장된 업데이트 간격이 {min_interval}초 미만입니다",
       "fix_flow": {
         "step": {
           "init": {
-            "title": "저장된 업데이트 간격이 1초 미만입니다",
-            "description": "통합 구성 요소 옵션에 저장된 업데이트 간격은 {interval}초로, 최솟값인 1초보다 짧습니다. 통합 구성 요소는 대신 기본값을 사용해 15초마다 기기를 확인합니다.\n\n이러한 정기 확인을 멈추려고 0을 저장했다면 대신 폴링을 끄세요. 0과 달리 폴링을 끄면 블루투스 기기 검색과 mDNS가 찾은 새 기기 추가도 중지됩니다. 자세한 내용은 {docs_url} 페이지를 참고하세요.\n\n다른 간격을 사용하려면 [Google Home 통합 구성 요소]({integration_url})를 열고 **구성**을 선택한 다음, 간격을 입력하고 **확인**을 선택하세요.",
+            "title": "저장된 업데이트 간격이 {min_interval}초 미만입니다",
+            "description": "통합 구성 요소 옵션에 저장된 업데이트 간격은 {interval}초로, 최솟값인 {min_interval}초보다 짧습니다. 통합 구성 요소는 대신 기본값을 사용해 {default_interval}초마다 기기를 확인합니다.\n\n이러한 정기 확인을 멈추려고 0을 저장했다면 대신 폴링을 끄세요. 0과 달리 폴링을 끄면 블루투스 기기 검색과 mDNS가 찾은 새 기기 추가도 중지됩니다. 자세한 내용은 {docs_url} 페이지를 참고하세요.\n\n다른 간격을 사용하려면 [Google Home 통합 구성 요소]({integration_url})를 열고 **구성**을 선택한 다음, 간격을 입력하고 **확인**을 선택하세요.",
             "menu_options": {
-              "use_default": "기본값 15초 사용",
+              "use_default": "기본값 {default_interval}초 사용",
               "turn_off_polling": "대신 폴링 끄기"
             }
           }

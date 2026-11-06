@@ -245,16 +245,20 @@ async def assert_flow_text(
 
     The frontend fills the placeholders in these texts, and in the step's other
     texts, from the result's description placeholders. It shows an error instead of
-    a text whose placeholder has no value. A menu's title and a form's submit button
-    get no values, so they can't have placeholders.
+    a text whose placeholder has no value. An ordinary menu's title and a form's
+    submit button get no values. Repair menus also receive the issue's placeholders,
+    and their titles support interpolation.
 
     The fix of a repair has its texts under the repair's issue ID, or translation key
     while it has one.
     """
     domain = result.get("translation_domain") or DOMAIN
+    given = set(result.get("description_placeholders") or {})
     if isinstance(manager, RepairsFlowManager):
         # A finished fix removes the repair
         issue = ir.async_get(manager.hass).async_get_issue(domain, cast(str, issue_id))
+        if issue:
+            given.update(issue.translation_placeholders or {})
         key = issue.translation_key if issue and issue.translation_key else issue_id
         category = "issues"
         prefix = f"component.{domain}.issues.{key}.fix_flow"
@@ -284,14 +288,17 @@ async def assert_flow_text(
             for option in cast(list[str], result.get("menu_options", []))
         ]
         keys += [key for key in text if key.startswith(f"{step}.")]
-        valueless = (
-            f"{step}.title"
-            if result["type"] is FlowResultType.MENU
-            else f"{step}.submit"
-        )
-        assert not placeholders(text.get(valueless, "")), f"Placeholder in {valueless}"
+        if result["type"] is FlowResultType.FORM:
+            valueless = f"{step}.submit"
+        elif not isinstance(manager, RepairsFlowManager):
+            valueless = f"{step}.title"
+        else:
+            valueless = ""
+        if valueless:
+            assert not placeholders(text.get(valueless, "")), (
+                f"Placeholder in {valueless}"
+            )
     assert [key for key in keys if key not in text] == []
-    given = set(result.get("description_placeholders") or {})
     unfilled = {key: placeholders(text[key]) - given for key in keys}
     assert {key: missing for key, missing in unfilled.items() if missing} == {}
 

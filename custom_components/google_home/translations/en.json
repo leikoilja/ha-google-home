@@ -83,7 +83,7 @@
       "google-unreachable": "Couldn't reach Google. Check that Home Assistant is connected to the internet, then try again.",
       "google-busy": "Google is busy or is limiting sign-ins. Wait a few minutes, then sign in again.",
       "oauth-token-format": "This isn't the oauth_token cookie. Its value starts with oauth2_4/.",
-      "master-token-format": "A master token starts with aas_et/ and is 223 characters long. Copy the whole token.",
+      "master-token-format": "A master token starts with aas_et/ and is {token_length} characters long. Copy the whole token.",
       "other-account": "You signed in to a different Google account, so nothing was changed. Sign in with the account this integration uses. To use the other account instead, delete the integration and add it again.",
       "no-home-selected": "Choose at least one home."
     },
@@ -226,14 +226,14 @@
       }
     },
     "invalid_update_interval": {
-      "title": "The saved update interval is below 1 second",
+      "title": "The saved update interval is below {min_interval} s",
       "fix_flow": {
         "step": {
           "init": {
-            "title": "The saved update interval is below 1 second",
-            "description": "The update interval saved in the integration's options is {interval} seconds, which is below the minimum of 1 second. The integration uses the default instead and checks your devices every 15 seconds.\n\nIf you saved 0 to stop these regular checks, turn off polling instead. Unlike 0, it also stops Bluetooth scans and the adding of new devices that mDNS finds. For details, see {docs_url}.\n\nTo use another interval, open the [Google Home integration]({integration_url}), select **Configure**, enter it, then select **Submit**.",
+            "title": "The saved update interval is below {min_interval} s",
+            "description": "The update interval saved in the integration's options is {interval} seconds, which is below the minimum of {min_interval} s. The integration uses the default instead and checks your devices every {default_interval} s.\n\nIf you saved 0 to stop these regular checks, turn off polling instead. Unlike 0, it also stops Bluetooth scans and the adding of new devices that mDNS finds. For details, see {docs_url}.\n\nTo use another interval, open the [Google Home integration]({integration_url}), select **Configure**, enter it, then select **Submit**.",
             "menu_options": {
-              "use_default": "Use the default of 15 seconds",
+              "use_default": "Use the default of {default_interval} s",
               "turn_off_polling": "Turn off polling instead"
             }
           }

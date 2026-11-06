@@ -83,7 +83,7 @@
       "google-unreachable": "Nepodařilo se spojit s Googlem. Zkontrolujte, zda je Home Assistant připojen k internetu, a zkuste to znovu.",
       "google-busy": "Google je přetížený nebo omezuje přihlašování. Počkejte několik minut a pak se znovu přihlaste.",
       "oauth-token-format": "Toto není soubor cookie oauth_token. Jeho hodnota začíná na oauth2_4/.",
-      "master-token-format": "Hlavní token začíná na aas_et/ a má 223 znaků. Zkopírujte celý token.",
+      "master-token-format": "Hlavní token začíná na aas_et/ a má {token_length} znaků. Zkopírujte celý token.",
       "other-account": "Přihlásili jste se k jinému účtu Google, proto se nic nezměnilo. Přihlaste se k účtu, který tato integrace používá. Pokud chcete místo toho používat ten druhý účet, integraci smažte a přidejte ji znovu.",
       "no-home-selected": "Vyberte alespoň jednu domácnost."
     },
@@ -226,14 +226,14 @@
       }
     },
     "invalid_update_interval": {
-      "title": "Uložený interval aktualizace je kratší než 1 sekunda",
+      "title": "Uložený interval aktualizace je kratší než {min_interval} s",
       "fix_flow": {
         "step": {
           "init": {
-            "title": "Uložený interval aktualizace je kratší než 1 sekunda",
-            "description": "Interval aktualizace uložený ve volbách integrace je {interval} s, což je méně než minimum 1 sekunda. Integrace proto používá výchozí hodnotu a kontroluje vaše zařízení každých 15 sekund.\n\nPokud jste uložili 0, abyste tyto pravidelné kontroly zastavili, vypněte místo toho dotazování. Na rozdíl od 0 vypnuté dotazování zastaví i vyhledávání zařízení Bluetooth a přidávání nových zařízení, která najde mDNS. Podrobnosti najdete na {docs_url}.\n\nPokud chcete použít jiný interval, otevřete [integraci Google Home]({integration_url}), vyberte **Nastavit**, zadejte ho a pak vyberte **Odeslat**.",
+            "title": "Uložený interval aktualizace je kratší než {min_interval} s",
+            "description": "Interval aktualizace uložený ve volbách integrace je {interval} s, což je méně než minimum {min_interval} s. Integrace proto používá výchozí hodnotu a kontroluje vaše zařízení každých {default_interval} s.\n\nPokud jste uložili 0, abyste tyto pravidelné kontroly zastavili, vypněte místo toho dotazování. Na rozdíl od 0 vypnuté dotazování zastaví i vyhledávání zařízení Bluetooth a přidávání nových zařízení, která najde mDNS. Podrobnosti najdete na {docs_url}.\n\nPokud chcete použít jiný interval, otevřete [integraci Google Home]({integration_url}), vyberte **Nastavit**, zadejte ho a pak vyberte **Odeslat**.",
             "menu_options": {
-              "use_default": "Použít výchozích 15 sekund",
+              "use_default": "Použít výchozích {default_interval} s",
               "turn_off_polling": "Místo toho vypnout dotazování"
             }
           }

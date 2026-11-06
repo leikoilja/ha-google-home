@@ -83,7 +83,7 @@
       "google-unreachable": "Kunne ikke oprette forbindelse til Google. Kontrollér, at Home Assistant har forbindelse til internettet, og prøv derefter igen.",
       "google-busy": "Google er overbelastet eller begrænser loginforsøg. Vent et par minutter, og log derefter ind igen.",
       "oauth-token-format": "Dette er ikke cookien oauth_token. Dens værdi starter med oauth2_4/.",
-      "master-token-format": "Et master token starter med aas_et/ og er 223 tegn langt. Kopiér hele tokenet.",
+      "master-token-format": "Et master token starter med aas_et/ og er {token_length} tegn langt. Kopiér hele tokenet.",
       "other-account": "Du loggede ind på en anden Google-konto, så der blev ikke ændret noget. Log ind med den konto, som denne integration bruger. Hvis du i stedet vil bruge den anden konto, skal du slette integrationen og tilføje den igen.",
       "no-home-selected": "Vælg mindst ét hjem."
     },
@@ -226,14 +226,14 @@
       }
     },
     "invalid_update_interval": {
-      "title": "Det gemte opdateringsinterval er under 1 sekund",
+      "title": "Det gemte opdateringsinterval er under {min_interval} s",
       "fix_flow": {
         "step": {
           "init": {
-            "title": "Det gemte opdateringsinterval er under 1 sekund",
-            "description": "Opdateringsintervallet, der er gemt i integrationens indstillinger, er {interval} s, hvilket er under minimum på 1 sekund. Integrationen bruger i stedet standardværdien og tjekker dine enheder hvert 15. sekund.\n\nHvis du gemte 0 for at stoppe disse faste tjek, så slå automatisk hentning fra i stedet. I modsætning til 0 stopper det også søgningen efter Bluetooth-enheder og tilføjelsen af nye enheder, som mDNS finder. Se flere detaljer her: {docs_url}.\n\nHvis du vil bruge et andet interval, skal du åbne [Google Home-integrationen]({integration_url}), vælge **Konfigurér**, indtaste det og derefter vælge **Indsend**.",
+            "title": "Det gemte opdateringsinterval er under {min_interval} s",
+            "description": "Opdateringsintervallet, der er gemt i integrationens indstillinger, er {interval} s, hvilket er under minimum på {min_interval} s. Integrationen bruger i stedet standardværdien og tjekker dine enheder med {default_interval} s mellemrum.\n\nHvis du gemte 0 for at stoppe disse faste tjek, så slå automatisk hentning fra i stedet. I modsætning til 0 stopper det også søgningen efter Bluetooth-enheder og tilføjelsen af nye enheder, som mDNS finder. Se flere detaljer her: {docs_url}.\n\nHvis du vil bruge et andet interval, skal du åbne [Google Home-integrationen]({integration_url}), vælge **Konfigurér**, indtaste det og derefter vælge **Indsend**.",
             "menu_options": {
-              "use_default": "Brug standardværdien på 15 sekunder",
+              "use_default": "Brug standardværdien på {default_interval} s",
               "turn_off_polling": "Slå automatisk hentning fra i stedet"
             }
           }

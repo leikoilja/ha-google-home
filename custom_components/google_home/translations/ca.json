@@ -83,7 +83,7 @@
       "google-unreachable": "No s'ha pogut connectar amb Google. Comprova que Home Assistant estigui connectat a Internet i torna-ho a provar.",
       "google-busy": "Google està ocupat o està limitant els inicis de sessió. Espera uns minuts i torna a iniciar la sessió.",
       "oauth-token-format": "Aquesta no és la galeta oauth_token. El seu valor comença per oauth2_4/.",
-      "master-token-format": "Un testimoni mestre comença per aas_et/ i té 223 caràcters. Copia el testimoni sencer.",
+      "master-token-format": "Un testimoni mestre comença per aas_et/ i té {token_length} caràcters. Copia el testimoni sencer.",
       "other-account": "Has iniciat la sessió en un altre compte de Google, de manera que no s'ha canviat res. Inicia la sessió amb el compte que fa servir aquesta integració. Per fer servir aquest altre compte, elimina la integració i torna-la a afegir.",
       "no-home-selected": "Tria almenys una llar."
     },
@@ -226,14 +226,14 @@
       }
     },
     "invalid_update_interval": {
-      "title": "L'interval d'actualització desat és inferior a 1 segon",
+      "title": "L'interval d'actualització desat és inferior a {min_interval} s",
       "fix_flow": {
         "step": {
           "init": {
-            "title": "L'interval d'actualització desat és inferior a 1 segon",
-            "description": "L'interval d'actualització desat a les opcions de la integració és de {interval} s, per sota del mínim d'1 segon. La integració utilitza el valor per defecte i consulta els teus dispositius cada 15 segons.\n\nSi vas desar 0 per aturar aquestes consultes periòdiques, desactiva el sondeig en lloc d'això. A diferència del 0, desactivar el sondeig també atura les cerques de dispositius Bluetooth i l'addició dels dispositius nous que troba mDNS. Per a més detalls, consulta {docs_url} (en anglès).\n\nPer utilitzar un altre interval, obre la [integració Google Home]({integration_url}), selecciona **Configura**, introdueix-lo i després selecciona **Envia**.",
+            "title": "L'interval d'actualització desat és inferior a {min_interval} s",
+            "description": "L'interval d'actualització desat a les opcions de la integració és de {interval} s, per sota del mínim de {min_interval} s. La integració utilitza el valor per defecte i consulta els teus dispositius cada {default_interval} s.\n\nSi vas desar 0 per aturar aquestes consultes periòdiques, desactiva el sondeig en lloc d'això. A diferència del 0, desactivar el sondeig també atura les cerques de dispositius Bluetooth i l'addició dels dispositius nous que troba mDNS. Per a més detalls, consulta {docs_url} (en anglès).\n\nPer utilitzar un altre interval, obre la [integració Google Home]({integration_url}), selecciona **Configura**, introdueix-lo i després selecciona **Envia**.",
             "menu_options": {
-              "use_default": "Utilitza el valor per defecte de 15 segons",
+              "use_default": "Utilitza el valor per defecte de {default_interval} s",
               "turn_off_polling": "Desactiva el sondeig en lloc d'això"
             }
           }

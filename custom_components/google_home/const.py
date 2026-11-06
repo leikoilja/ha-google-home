@@ -146,6 +146,7 @@ DATETIME_STR_FORMAT: Final = f"{DATE_STR_FORMAT} {TIME_STR_FORMAT}"
 # Access token only lives about 1 hour
 # Update often to fetch timers in timely manner
 UPDATE_INTERVAL: Final = 15  # sec
+MIN_UPDATE_INTERVAL: Final = 1  # sec
 # Around an alarm's or timer's fire time, its device is updated sooner than the update
 # interval, if that's longer. First this many seconds after its fire time, also after a
 # snooze. An update can start up to a second early. It still starts after the fire time

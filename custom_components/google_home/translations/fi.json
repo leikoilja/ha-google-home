@@ -83,7 +83,7 @@
       "google-unreachable": "Googleen ei saatu yhteyttä. Tarkista, että Home Assistant on yhteydessä internetiin, ja yritä sitten uudelleen.",
       "google-busy": "Google on ruuhkautunut tai rajoittaa kirjautumisia. Odota muutama minuutti ja kirjaudu sitten uudelleen.",
       "oauth-token-format": "Tämä ei ole oauth_token-eväste. Sen arvo alkaa merkkijonolla oauth2_4/.",
-      "master-token-format": "Päätunniste alkaa merkkijonolla aas_et/ ja on 223 merkkiä pitkä. Kopioi koko tunniste.",
+      "master-token-format": "Päätunniste alkaa merkkijonolla aas_et/ ja on {token_length} merkkiä pitkä. Kopioi koko tunniste.",
       "other-account": "Kirjauduit eri Google-tilille, joten mitään ei muutettu. Kirjaudu tilille, jota tämä integraatio käyttää. Jos haluat käyttää sen sijaan toista tiliä, poista integraatio ja lisää se uudelleen.",
       "no-home-selected": "Valitse vähintään yksi koti."
     },
@@ -226,14 +226,14 @@
       }
     },
     "invalid_update_interval": {
-      "title": "Tallennettu päivitysväli on alle 1 sekunti",
+      "title": "Tallennettu päivitysväli on alle {min_interval} s",
       "fix_flow": {
         "step": {
           "init": {
-            "title": "Tallennettu päivitysväli on alle 1 sekunti",
-            "description": "Integraation asetuksiin tallennettu päivitysväli on {interval} s, mikä on alle 1 sekunnin vähimmäisarvon. Integraatio käyttää sen sijaan oletusarvoa ja tarkistaa laitteesi 15 sekunnin välein.\n\nJos tallensit arvon 0 pysäyttääksesi nämä säännölliset tarkistukset, poista sen sijaan kysely käytöstä. Toisin kuin 0, se pysäyttää myös Bluetooth-laitteiden etsinnän ja mDNS:n löytämien uusien laitteiden lisäämisen. Lisätietoja: {docs_url}.\n\nJos haluat käyttää muuta päivitysväliä, avaa [Google Home ‑integraatio]({integration_url}), valitse **Määrittele**, syötä väli ja valitse sitten **Lähetä**.",
+            "title": "Tallennettu päivitysväli on alle {min_interval} s",
+            "description": "Integraation asetuksiin tallennettu päivitysväli on {interval} s, mikä on alle {min_interval} s:n vähimmäisarvon. Integraatio käyttää sen sijaan oletusarvoa ja tarkistaa laitteesi {default_interval} s:n välein.\n\nJos tallensit arvon 0 pysäyttääksesi nämä säännölliset tarkistukset, poista sen sijaan kysely käytöstä. Toisin kuin 0, se pysäyttää myös Bluetooth-laitteiden etsinnän ja mDNS:n löytämien uusien laitteiden lisäämisen. Lisätietoja: {docs_url}.\n\nJos haluat käyttää muuta päivitysväliä, avaa [Google Home ‑integraatio]({integration_url}), valitse **Määrittele**, syötä väli ja valitse sitten **Lähetä**.",
             "menu_options": {
-              "use_default": "Käytä oletusarvoa 15 sekuntia",
+              "use_default": "Käytä oletusarvoa {default_interval} s",
               "turn_off_polling": "Poista kysely käytöstä sen sijaan"
             }
           }
