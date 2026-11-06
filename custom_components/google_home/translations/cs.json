@@ -9,13 +9,13 @@
           "master_token": "Hlavní token"
         },
         "menu_option_descriptions": {
-          "browser": "Přihlaste se ke Googlu v prohlížeči na počítači a poté vložte soubor cookie. Funguje pro většinu účtů.",
+          "browser": "Přihlaste se ke Googlu v prohlížeči na počítači a poté vložte soubor cookie.",
           "master_token": "Vložte hlavní token, který již máte."
         }
       },
       "browser": {
         "title": "Přihlášení přes prohlížeč",
-        "description": "1. Na počítači otevřete {embedded_setup_url} v anonymním okně prohlížeče a přihlaste se. Po potvrzení souhlasu se stránka může stále načítat; to je v pořádku.\n2. Otevřete vývojářské nástroje prohlížeče a najděte soubory cookie pro `accounts.google.com`.\n3. Zkopírujte hodnotu souboru cookie `oauth_token` a ihned ji vložte níže. Její platnost vyprší během několika minut a lze ji použít pouze jednou.\n\nPodrobný návod: {browser_docs_url}\n\nPokud chcete zvolit jiný způsob přihlášení, zavřete toto okno a přidejte integraci znovu.",
+        "description": "1. Na počítači otevřete {embedded_setup_url} v anonymním okně prohlížeče a přihlaste se. Po potvrzení souhlasu se stránka může stále načítat; to je v pořádku.\n2. Otevřete vývojářské nástroje prohlížeče a najděte soubory cookie pro `accounts.google.com`.\n3. Zkopírujte hodnotu souboru cookie `oauth_token` a ihned ji vložte níže. Její platnost může rychle vypršet a lze ji použít pouze jednou.\n\nPodrobný návod: {browser_docs_url}\n\nPokud chcete zvolit jiný způsob přihlášení, zavřete toto okno a přidejte integraci znovu.",
         "data": {
           "oauth_token": "Soubor cookie oauth_token"
         },
@@ -51,13 +51,13 @@
           "master_token": "Hlavní token"
         },
         "menu_option_descriptions": {
-          "browser": "Přihlaste se ke Googlu v prohlížeči na počítači a poté vložte soubor cookie. Funguje pro většinu účtů.",
+          "browser": "Přihlaste se ke Googlu v prohlížeči na počítači a poté vložte soubor cookie.",
           "master_token": "Vložte hlavní token, který již máte."
         }
       },
       "reauth_browser": {
         "title": "Přihlášení přes prohlížeč",
-        "description": "1. Na počítači otevřete {embedded_setup_url} v anonymním okně prohlížeče a přihlaste se ke stejnému účtu Google. Po potvrzení souhlasu se stránka může stále načítat; to je v pořádku.\n2. Otevřete vývojářské nástroje prohlížeče a najděte soubory cookie pro `accounts.google.com`.\n3. Zkopírujte hodnotu souboru cookie `oauth_token` a ihned ji vložte níže. Její platnost vyprší během několika minut a lze ji použít pouze jednou.\n\nPodrobný návod: {browser_docs_url}",
+        "description": "1. Na počítači otevřete {embedded_setup_url} v anonymním okně prohlížeče a přihlaste se ke stejnému účtu Google. Po potvrzení souhlasu se stránka může stále načítat; to je v pořádku.\n2. Otevřete vývojářské nástroje prohlížeče a najděte soubory cookie pro `accounts.google.com`.\n3. Zkopírujte hodnotu souboru cookie `oauth_token` a ihned ji vložte níže. Její platnost může rychle vypršet a lze ji použít pouze jednou.\n\nPodrobný návod: {browser_docs_url}",
         "data": {
           "oauth_token": "Soubor cookie oauth_token"
         },
@@ -77,7 +77,7 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "Google soubor cookie nepřijal. Získejte nový a ihned ho vložte: jeho platnost vyprší během několika minut a lze ho použít pouze jednou. Zkopírujte celou hodnotu začínající na oauth2_4/.",
+      "oauth-token-invalid": "Google přihlášení nepřijal. Získejte nový soubor cookie a ihned ho vložte: jeho platnost může rychle vypršet a lze ho použít pouze jednou. Zkopírujte celou hodnotu začínající na oauth2_4/.",
       "master-token-invalid": "Google hlavní token nepřijal. Zkontrolujte, že jste ho zkopírovali správně. Pokud dříve fungoval, například dokud jste nezměnili heslo k účtu Google, Google ho už nepřijímá: použijte místo toho přihlášení přes prohlížeč.",
       "google-rejected": "Google přihlášení nepřijal. Podrobnosti najdete v protokolech Home Assistanta.",
       "google-unreachable": "Nepodařilo se spojit s Googlem. Zkontrolujte, zda je Home Assistant připojen k internetu, a zkuste to znovu.",

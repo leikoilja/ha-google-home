@@ -9,13 +9,13 @@
           "master_token": "Master token"
         },
         "menu_option_descriptions": {
-          "browser": "Logg på Google i en nettleser på en datamaskin, og lim deretter inn en informasjonskapsel. Fungerer for de fleste kontoer.",
+          "browser": "Logg på Google i en nettleser på en datamaskin, og lim deretter inn en informasjonskapsel.",
           "master_token": "Lim inn et master token du allerede har."
         }
       },
       "browser": {
         "title": "Pålogging i nettleseren",
-        "description": "1. Åpne {embedded_setup_url} i et privat nettleservindu på en datamaskin, og logg på. Etter at du har godtatt, kan siden fortsette å laste; det er forventet.\n2. Åpne utviklerverktøyene i nettleseren, og finn informasjonskapslene for `accounts.google.com`.\n3. Kopier verdien til informasjonskapselen `oauth_token`, og lim den inn nedenfor med en gang. Den utløper i løpet av noen minutter og fungerer bare én gang.\n\nTrinnvis veiledning: {browser_docs_url}\n\nFor å velge en annen påloggingsmåte, lukk dette vinduet og legg til integrasjonen på nytt.",
+        "description": "1. Åpne {embedded_setup_url} i et privat nettleservindu på en datamaskin, og logg på. Etter at du har godtatt, kan siden fortsette å laste; det er forventet.\n2. Åpne utviklerverktøyene i nettleseren, og finn informasjonskapslene for `accounts.google.com`.\n3. Kopier verdien til informasjonskapselen `oauth_token`, og lim den inn nedenfor med en gang. Den kan utløpe raskt og fungerer bare én gang.\n\nTrinnvis veiledning: {browser_docs_url}\n\nFor å velge en annen påloggingsmåte, lukk dette vinduet og legg til integrasjonen på nytt.",
         "data": {
           "oauth_token": "Informasjonskapselen oauth_token"
         },
@@ -51,13 +51,13 @@
           "master_token": "Master token"
         },
         "menu_option_descriptions": {
-          "browser": "Logg på Google i en nettleser på en datamaskin, og lim deretter inn en informasjonskapsel. Fungerer for de fleste kontoer.",
+          "browser": "Logg på Google i en nettleser på en datamaskin, og lim deretter inn en informasjonskapsel.",
           "master_token": "Lim inn et master token du allerede har."
         }
       },
       "reauth_browser": {
         "title": "Pålogging i nettleseren",
-        "description": "1. Åpne {embedded_setup_url} i et privat nettleservindu på en datamaskin, og logg på den samme Google-kontoen. Etter at du har godtatt, kan siden fortsette å laste; det er forventet.\n2. Åpne utviklerverktøyene i nettleseren, og finn informasjonskapslene for `accounts.google.com`.\n3. Kopier verdien til informasjonskapselen `oauth_token`, og lim den inn nedenfor med en gang. Den utløper i løpet av noen minutter og fungerer bare én gang.\n\nTrinnvis veiledning: {browser_docs_url}",
+        "description": "1. Åpne {embedded_setup_url} i et privat nettleservindu på en datamaskin, og logg på den samme Google-kontoen. Etter at du har godtatt, kan siden fortsette å laste; det er forventet.\n2. Åpne utviklerverktøyene i nettleseren, og finn informasjonskapslene for `accounts.google.com`.\n3. Kopier verdien til informasjonskapselen `oauth_token`, og lim den inn nedenfor med en gang. Den kan utløpe raskt og fungerer bare én gang.\n\nTrinnvis veiledning: {browser_docs_url}",
         "data": {
           "oauth_token": "Informasjonskapselen oauth_token"
         },
@@ -77,7 +77,7 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "Google godtok ikke informasjonskapselen. Hent en ny, og lim den inn med en gang: den utløper i løpet av noen minutter og fungerer bare én gang. Kopier hele verdien, som starter med oauth2_4/.",
+      "oauth-token-invalid": "Google godtok ikke påloggingen. Hent en ny informasjonskapsel, og lim den inn med en gang: den kan utløpe raskt og fungerer bare én gang. Kopier hele verdien, som starter med oauth2_4/.",
       "master-token-invalid": "Google godtok ikke master tokenet. Kontroller at du har kopiert det riktig. Hvis det fungerte før, for eksempel frem til du endret Google-passordet ditt, godtar ikke Google det lenger: bruk pålogging i nettleseren i stedet.",
       "google-rejected": "Google godtok ikke påloggingen. Se Home Assistant-loggene for detaljer.",
       "google-unreachable": "Kunne ikke nå Google. Kontroller at Home Assistant er koblet til internett, og prøv deretter igjen.",

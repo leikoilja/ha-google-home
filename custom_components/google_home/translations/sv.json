@@ -9,13 +9,13 @@
           "master_token": "Master token"
         },
         "menu_option_descriptions": {
-          "browser": "Logga in på Google i en webbläsare på en dator och klistra sedan in en cookie. Fungerar för de flesta konton.",
+          "browser": "Logga in på Google i en webbläsare på en dator och klistra sedan in en cookie.",
           "master_token": "Klistra in en master token som du redan har."
         }
       },
       "browser": {
         "title": "Inloggning via webbläsare",
-        "description": "1. Öppna {embedded_setup_url} i ett privat webbläsarfönster på en dator och logga in. När du har godkänt kan sidan fortsätta att laddas. Det är normalt.\n2. Öppna webbläsarens utvecklarverktyg och leta upp cookies för `accounts.google.com`.\n3. Kopiera värdet för cookien `oauth_token` och klistra in det nedan direkt. Det upphör att gälla inom några minuter och kan bara användas en gång.\n\nStegvisa instruktioner: {browser_docs_url}\n\nStäng det här fönstret och lägg till integrationen igen om du vill välja ett annat sätt att logga in.",
+        "description": "1. Öppna {embedded_setup_url} i ett privat webbläsarfönster på en dator och logga in. När du har godkänt kan sidan fortsätta att laddas. Det är normalt.\n2. Öppna webbläsarens utvecklarverktyg och leta upp cookies för `accounts.google.com`.\n3. Kopiera värdet för cookien `oauth_token` och klistra in det nedan direkt. Det kan snabbt upphöra att gälla och kan bara användas en gång.\n\nStegvisa instruktioner: {browser_docs_url}\n\nStäng det här fönstret och lägg till integrationen igen om du vill välja ett annat sätt att logga in.",
         "data": {
           "oauth_token": "Cookien oauth_token"
         },
@@ -51,13 +51,13 @@
           "master_token": "Master token"
         },
         "menu_option_descriptions": {
-          "browser": "Logga in på Google i en webbläsare på en dator och klistra sedan in en cookie. Fungerar för de flesta konton.",
+          "browser": "Logga in på Google i en webbläsare på en dator och klistra sedan in en cookie.",
           "master_token": "Klistra in en master token som du redan har."
         }
       },
       "reauth_browser": {
         "title": "Inloggning via webbläsare",
-        "description": "1. Öppna {embedded_setup_url} i ett privat webbläsarfönster på en dator och logga in på samma Google-konto. När du har godkänt kan sidan fortsätta att laddas. Det är normalt.\n2. Öppna webbläsarens utvecklarverktyg och leta upp cookies för `accounts.google.com`.\n3. Kopiera värdet för cookien `oauth_token` och klistra in det nedan direkt. Det upphör att gälla inom några minuter och kan bara användas en gång.\n\nStegvisa instruktioner: {browser_docs_url}",
+        "description": "1. Öppna {embedded_setup_url} i ett privat webbläsarfönster på en dator och logga in på samma Google-konto. När du har godkänt kan sidan fortsätta att laddas. Det är normalt.\n2. Öppna webbläsarens utvecklarverktyg och leta upp cookies för `accounts.google.com`.\n3. Kopiera värdet för cookien `oauth_token` och klistra in det nedan direkt. Det kan snabbt upphöra att gälla och kan bara användas en gång.\n\nStegvisa instruktioner: {browser_docs_url}",
         "data": {
           "oauth_token": "Cookien oauth_token"
         },
@@ -77,7 +77,7 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "Google godkände inte cookien. Hämta en ny och klistra in den direkt. Den upphör att gälla inom några minuter och kan bara användas en gång. Kopiera hela värdet, som börjar med oauth2_4/.",
+      "oauth-token-invalid": "Google godkände inte inloggningen. Hämta en ny cookie och klistra in den direkt. Den kan snabbt upphöra att gälla och kan bara användas en gång. Kopiera hela värdet, som börjar med oauth2_4/.",
       "master-token-invalid": "Google godkände inte din master token. Kontrollera att du har kopierat den korrekt. Om den fungerade tidigare, till exempel tills du bytte ditt Google-lösenord, godkänner Google den inte längre: använd inloggning via webbläsare i stället.",
       "google-rejected": "Google godkände inte inloggningen. Mer information finns i Home Assistants loggar.",
       "google-unreachable": "Det gick inte att nå Google. Kontrollera att Home Assistant har internetanslutning och försök sedan igen.",

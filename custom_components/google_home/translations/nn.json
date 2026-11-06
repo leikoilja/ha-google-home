@@ -9,13 +9,13 @@
           "master_token": "Master token"
         },
         "menu_option_descriptions": {
-          "browser": "Logg på Google i ein nettlesar på ei datamaskin, og lim deretter inn ein informasjonskapsel. Fungerer for dei fleste kontoane.",
+          "browser": "Logg på Google i ein nettlesar på ei datamaskin, og lim deretter inn ein informasjonskapsel.",
           "master_token": "Lim inn eit master token du allereie har."
         }
       },
       "browser": {
         "title": "Pålogging i nettlesaren",
-        "description": "1. Opne {embedded_setup_url} i eit privat nettlesarvindauge på ei datamaskin, og logg på. Etter at du har godteke, kan sida halde fram med å laste; det er venta.\n2. Opne utviklarverktøya i nettlesaren, og finn informasjonskapslane for `accounts.google.com`.\n3. Kopier verdien til informasjonskapselen `oauth_token`, og lim han inn nedanfor med ein gong. Han er berre gyldig i nokre minutt og fungerer berre éin gong.\n\nRettleiing steg for steg: {browser_docs_url}\n\nFor å velje ein annan påloggingsmåte, lukk dette vindauget og legg til integrasjonen på nytt.",
+        "description": "1. Opne {embedded_setup_url} i eit privat nettlesarvindauge på ei datamaskin, og logg på. Etter at du har godteke, kan sida halde fram med å laste; det er venta.\n2. Opne utviklarverktøya i nettlesaren, og finn informasjonskapslane for `accounts.google.com`.\n3. Kopier verdien til informasjonskapselen `oauth_token`, og lim han inn nedanfor med ein gong. Han kan raskt bli ugyldig og fungerer berre éin gong.\n\nRettleiing steg for steg: {browser_docs_url}\n\nFor å velje ein annan påloggingsmåte, lukk dette vindauget og legg til integrasjonen på nytt.",
         "data": {
           "oauth_token": "Informasjonskapselen oauth_token"
         },
@@ -51,13 +51,13 @@
           "master_token": "Master token"
         },
         "menu_option_descriptions": {
-          "browser": "Logg på Google i ein nettlesar på ei datamaskin, og lim deretter inn ein informasjonskapsel. Fungerer for dei fleste kontoane.",
+          "browser": "Logg på Google i ein nettlesar på ei datamaskin, og lim deretter inn ein informasjonskapsel.",
           "master_token": "Lim inn eit master token du allereie har."
         }
       },
       "reauth_browser": {
         "title": "Pålogging i nettlesaren",
-        "description": "1. Opne {embedded_setup_url} i eit privat nettlesarvindauge på ei datamaskin, og logg på den same Google-kontoen. Etter at du har godteke, kan sida halde fram med å laste; det er venta.\n2. Opne utviklarverktøya i nettlesaren, og finn informasjonskapslane for `accounts.google.com`.\n3. Kopier verdien til informasjonskapselen `oauth_token`, og lim han inn nedanfor med ein gong. Han er berre gyldig i nokre minutt og fungerer berre éin gong.\n\nRettleiing steg for steg: {browser_docs_url}",
+        "description": "1. Opne {embedded_setup_url} i eit privat nettlesarvindauge på ei datamaskin, og logg på den same Google-kontoen. Etter at du har godteke, kan sida halde fram med å laste; det er venta.\n2. Opne utviklarverktøya i nettlesaren, og finn informasjonskapslane for `accounts.google.com`.\n3. Kopier verdien til informasjonskapselen `oauth_token`, og lim han inn nedanfor med ein gong. Han kan raskt bli ugyldig og fungerer berre éin gong.\n\nRettleiing steg for steg: {browser_docs_url}",
         "data": {
           "oauth_token": "Informasjonskapselen oauth_token"
         },
@@ -77,7 +77,7 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "Google godtok ikkje informasjonskapselen. Hent ein ny, og lim han inn med ein gong: han er berre gyldig i nokre minutt og fungerer berre éin gong. Kopier heile verdien, som byrjar med oauth2_4/.",
+      "oauth-token-invalid": "Google godtok ikkje pålogginga. Hent ein ny informasjonskapsel, og lim han inn med ein gong: han kan raskt bli ugyldig og fungerer berre éin gong. Kopier heile verdien, som byrjar med oauth2_4/.",
       "master-token-invalid": "Google godtok ikkje master tokenet. Kontroller at du har kopiert det rett. Om det fungerte før, til dømes fram til du endra Google-passordet ditt, godtek ikkje Google det lenger: bruk pålogging i nettlesaren i staden.",
       "google-rejected": "Google godtok ikkje pålogginga. Sjå Home Assistant-loggane for detaljar.",
       "google-unreachable": "Klarte ikkje å nå Google. Kontroller at Home Assistant er kopla til internett, og prøv deretter igjen.",

@@ -9,13 +9,13 @@
           "master_token": "Token master"
         },
         "menu_option_descriptions": {
-          "browser": "Accedi a Google in un browser desktop, poi incolla un cookie. Funziona con la maggior parte degli account.",
+          "browser": "Accedi a Google in un browser desktop, poi incolla un cookie.",
           "master_token": "Incolla un token master che hai già."
         }
       },
       "browser": {
         "title": "Accesso dal browser",
-        "description": "1. Su un computer, apri {embedded_setup_url} in una finestra di navigazione privata e accedi. Dopo aver accettato, la pagina potrebbe continuare a caricare; è normale.\n2. Apri gli strumenti per sviluppatori del browser e trova i cookie di `accounts.google.com`.\n3. Copia il valore del cookie `oauth_token` e incollalo subito qui sotto. Scade dopo pochi minuti e funziona una sola volta.\n\nIstruzioni passo passo: {browser_docs_url}\n\nPer scegliere un altro modo di accedere, chiudi questa finestra e aggiungi di nuovo l'integrazione.",
+        "description": "1. Su un computer, apri {embedded_setup_url} in una finestra di navigazione privata e accedi. Dopo aver accettato, la pagina potrebbe continuare a caricare; è normale.\n2. Apri gli strumenti per sviluppatori del browser e trova i cookie di `accounts.google.com`.\n3. Copia il valore del cookie `oauth_token` e incollalo subito qui sotto. Può scadere rapidamente e funziona una sola volta.\n\nIstruzioni passo passo: {browser_docs_url}\n\nPer scegliere un altro modo di accedere, chiudi questa finestra e aggiungi di nuovo l'integrazione.",
         "data": {
           "oauth_token": "Cookie oauth_token"
         },
@@ -51,13 +51,13 @@
           "master_token": "Token master"
         },
         "menu_option_descriptions": {
-          "browser": "Accedi a Google in un browser desktop, poi incolla un cookie. Funziona con la maggior parte degli account.",
+          "browser": "Accedi a Google in un browser desktop, poi incolla un cookie.",
           "master_token": "Incolla un token master che hai già."
         }
       },
       "reauth_browser": {
         "title": "Accesso dal browser",
-        "description": "1. Su un computer, apri {embedded_setup_url} in una finestra di navigazione privata e accedi allo stesso account Google. Dopo aver accettato, la pagina potrebbe continuare a caricare; è normale.\n2. Apri gli strumenti per sviluppatori del browser e trova i cookie di `accounts.google.com`.\n3. Copia il valore del cookie `oauth_token` e incollalo subito qui sotto. Scade dopo pochi minuti e funziona una sola volta.\n\nIstruzioni passo passo: {browser_docs_url}",
+        "description": "1. Su un computer, apri {embedded_setup_url} in una finestra di navigazione privata e accedi allo stesso account Google. Dopo aver accettato, la pagina potrebbe continuare a caricare; è normale.\n2. Apri gli strumenti per sviluppatori del browser e trova i cookie di `accounts.google.com`.\n3. Copia il valore del cookie `oauth_token` e incollalo subito qui sotto. Può scadere rapidamente e funziona una sola volta.\n\nIstruzioni passo passo: {browser_docs_url}",
         "data": {
           "oauth_token": "Cookie oauth_token"
         },
@@ -77,7 +77,7 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "Google non ha accettato il cookie. Ottienine uno nuovo e incollalo subito: scade dopo pochi minuti e funziona una sola volta. Copia il valore completo, che inizia con oauth2_4/.",
+      "oauth-token-invalid": "Google non ha accettato l'accesso. Ottieni un nuovo cookie e incollalo subito: può scadere rapidamente e funziona una sola volta. Copia il valore completo, che inizia con oauth2_4/.",
       "master-token-invalid": "Google non ha accettato il token master. Verifica di averlo copiato correttamente. Se prima funzionava, ad esempio finché non hai cambiato la password di Google, Google non lo accetta più: usa invece l'accesso dal browser.",
       "google-rejected": "Google non ha accettato l'accesso. Per i dettagli, consulta i registri di Home Assistant.",
       "google-unreachable": "Impossibile raggiungere Google. Verifica che Home Assistant sia connesso a Internet, poi riprova.",

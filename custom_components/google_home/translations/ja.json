@@ -9,13 +9,13 @@
           "master_token": "マスタートークン"
         },
         "menu_option_descriptions": {
-          "browser": "パソコンのブラウザで Google にログインし、Cookie を貼り付けます。ほとんどのアカウントで利用できます。",
+          "browser": "パソコンのブラウザで Google にログインし、Cookie を貼り付けます。",
           "master_token": "取得済みのマスタートークンを貼り付けます。"
         }
       },
       "browser": {
         "title": "ブラウザでログイン",
-        "description": "1. パソコンのブラウザでプライベート ウィンドウ（シークレット ウィンドウなど）を開き、{embedded_setup_url} にアクセスしてログインします。同意した後もページの読み込みが続く場合がありますが、問題ありません。\n2. ブラウザの開発者ツールを開き、`accounts.google.com` の Cookie を探します。\n3. `oauth_token` Cookie の値をコピーして、すぐに下の欄に貼り付けてください。数分以内に有効期限が切れ、1 回しか使用できません。\n\n詳しい手順: {browser_docs_url}\n\n別のログイン方法を選ぶには、このウィンドウを閉じて統合を追加し直してください。",
+        "description": "1. パソコンのブラウザでプライベート ウィンドウ（シークレット ウィンドウなど）を開き、{embedded_setup_url} にアクセスしてログインします。同意した後もページの読み込みが続く場合がありますが、問題ありません。\n2. ブラウザの開発者ツールを開き、`accounts.google.com` の Cookie を探します。\n3. `oauth_token` Cookie の値をコピーして、すぐに下の欄に貼り付けてください。すぐに有効期限が切れることがあり、1 回しか使用できません。\n\n詳しい手順: {browser_docs_url}\n\n別のログイン方法を選ぶには、このウィンドウを閉じて統合を追加し直してください。",
         "data": {
           "oauth_token": "oauth_token Cookie"
         },
@@ -51,13 +51,13 @@
           "master_token": "マスタートークン"
         },
         "menu_option_descriptions": {
-          "browser": "パソコンのブラウザで Google にログインし、Cookie を貼り付けます。ほとんどのアカウントで利用できます。",
+          "browser": "パソコンのブラウザで Google にログインし、Cookie を貼り付けます。",
           "master_token": "取得済みのマスタートークンを貼り付けます。"
         }
       },
       "reauth_browser": {
         "title": "ブラウザでログイン",
-        "description": "1. パソコンのブラウザでプライベート ウィンドウ（シークレット ウィンドウなど）を開き、{embedded_setup_url} にアクセスして同じ Google アカウントにログインします。同意した後もページの読み込みが続く場合がありますが、問題ありません。\n2. ブラウザの開発者ツールを開き、`accounts.google.com` の Cookie を探します。\n3. `oauth_token` Cookie の値をコピーして、すぐに下の欄に貼り付けてください。数分以内に有効期限が切れ、1 回しか使用できません。\n\n詳しい手順: {browser_docs_url}",
+        "description": "1. パソコンのブラウザでプライベート ウィンドウ（シークレット ウィンドウなど）を開き、{embedded_setup_url} にアクセスして同じ Google アカウントにログインします。同意した後もページの読み込みが続く場合がありますが、問題ありません。\n2. ブラウザの開発者ツールを開き、`accounts.google.com` の Cookie を探します。\n3. `oauth_token` Cookie の値をコピーして、すぐに下の欄に貼り付けてください。すぐに有効期限が切れることがあり、1 回しか使用できません。\n\n詳しい手順: {browser_docs_url}",
         "data": {
           "oauth_token": "oauth_token Cookie"
         },
@@ -77,7 +77,7 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "Google が Cookie を受け付けませんでした。新しい Cookie を取得し、すぐに貼り付けてください。数分以内に有効期限が切れ、1 回しか使用できません。oauth2_4/ で始まる値をすべてコピーしてください。",
+      "oauth-token-invalid": "Google がログインを受け付けませんでした。新しい Cookie を取得し、すぐに貼り付けてください。すぐに有効期限が切れることがあり、1 回しか使用できません。oauth2_4/ で始まる値をすべてコピーしてください。",
       "master-token-invalid": "Google がマスタートークンを受け付けませんでした。正しくコピーしたか確認してください。以前は使えていた場合（たとえば Google のパスワードを変更するまで）、Google はこのトークンを受け付けなくなっています。代わりに「ブラウザでログイン」を使用してください。",
       "google-rejected": "Google がログインを受け付けませんでした。詳細は Home Assistant のログを確認してください。",
       "google-unreachable": "Google に接続できませんでした。Home Assistant がインターネットに接続されていることを確認してから、もう一度お試しください。",

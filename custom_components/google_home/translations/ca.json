@@ -9,13 +9,13 @@
           "master_token": "Testimoni mestre"
         },
         "menu_option_descriptions": {
-          "browser": "Inicia la sessió a Google en un navegador d'ordinador i després enganxa una galeta. Funciona amb la majoria de comptes.",
+          "browser": "Inicia la sessió a Google en un navegador d'ordinador i després enganxa una galeta.",
           "master_token": "Enganxa un testimoni mestre que ja tinguis."
         }
       },
       "browser": {
         "title": "Inici de sessió amb el navegador",
-        "description": "1. En un ordinador, obre {embedded_setup_url} en una finestra de navegació privada i inicia la sessió. Després d'acceptar, és possible que la pàgina continuï carregant; és normal.\n2. Obre les eines per a desenvolupadors del navegador i cerca les galetes de `accounts.google.com`.\n3. Copia el valor de la galeta `oauth_token` i enganxa'l a continuació immediatament. Caduca en pocs minuts i només funciona una vegada.\n\nInstruccions pas a pas (en anglès): {browser_docs_url}\n\nPer triar una altra manera d'iniciar la sessió, tanca aquesta finestra i torna a afegir la integració.",
+        "description": "1. En un ordinador, obre {embedded_setup_url} en una finestra de navegació privada i inicia la sessió. Després d'acceptar, és possible que la pàgina continuï carregant; és normal.\n2. Obre les eines per a desenvolupadors del navegador i cerca les galetes de `accounts.google.com`.\n3. Copia el valor de la galeta `oauth_token` i enganxa'l a continuació immediatament. Pot caducar ràpidament i només funciona una vegada.\n\nInstruccions pas a pas (en anglès): {browser_docs_url}\n\nPer triar una altra manera d'iniciar la sessió, tanca aquesta finestra i torna a afegir la integració.",
         "data": {
           "oauth_token": "Galeta oauth_token"
         },
@@ -51,13 +51,13 @@
           "master_token": "Testimoni mestre"
         },
         "menu_option_descriptions": {
-          "browser": "Inicia la sessió a Google en un navegador d'ordinador i després enganxa una galeta. Funciona amb la majoria de comptes.",
+          "browser": "Inicia la sessió a Google en un navegador d'ordinador i després enganxa una galeta.",
           "master_token": "Enganxa un testimoni mestre que ja tinguis."
         }
       },
       "reauth_browser": {
         "title": "Inici de sessió amb el navegador",
-        "description": "1. En un ordinador, obre {embedded_setup_url} en una finestra de navegació privada i inicia la sessió al mateix compte de Google. Després d'acceptar, és possible que la pàgina continuï carregant; és normal.\n2. Obre les eines per a desenvolupadors del navegador i cerca les galetes de `accounts.google.com`.\n3. Copia el valor de la galeta `oauth_token` i enganxa'l a continuació immediatament. Caduca en pocs minuts i només funciona una vegada.\n\nInstruccions pas a pas (en anglès): {browser_docs_url}",
+        "description": "1. En un ordinador, obre {embedded_setup_url} en una finestra de navegació privada i inicia la sessió al mateix compte de Google. Després d'acceptar, és possible que la pàgina continuï carregant; és normal.\n2. Obre les eines per a desenvolupadors del navegador i cerca les galetes de `accounts.google.com`.\n3. Copia el valor de la galeta `oauth_token` i enganxa'l a continuació immediatament. Pot caducar ràpidament i només funciona una vegada.\n\nInstruccions pas a pas (en anglès): {browser_docs_url}",
         "data": {
           "oauth_token": "Galeta oauth_token"
         },
@@ -77,7 +77,7 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "Google no ha acceptat la galeta. Obtén-ne una de nova i enganxa-la immediatament: caduca en pocs minuts i només funciona una vegada. Copia el valor sencer, que comença per oauth2_4/.",
+      "oauth-token-invalid": "Google no ha acceptat l'inici de sessió. Obtén una galeta nova i enganxa-la immediatament: pot caducar ràpidament i només funciona una vegada. Copia el valor sencer, que comença per oauth2_4/.",
       "master-token-invalid": "Google no ha acceptat el testimoni mestre. Comprova que l'has copiat correctament. Si abans funcionava, per exemple fins que vas canviar la contrasenya de Google, Google ja no l'accepta: en lloc d'això, fes servir l'inici de sessió amb el navegador.",
       "google-rejected": "Google no ha acceptat l'inici de sessió. Per veure'n els detalls, consulta els registres de Home Assistant.",
       "google-unreachable": "No s'ha pogut connectar amb Google. Comprova que Home Assistant estigui connectat a Internet i torna-ho a provar.",

@@ -69,7 +69,7 @@ You need a computer with a desktop browser, such as Chrome, Edge or Firefox. Pho
 4. Find the `oauth_token` row, double-click its value to select all of it, and copy it. It starts with `oauth2_4/`.
 5. In Home Assistant, on the **Browser sign-in** form, paste the cookie into **oauth_token cookie** and select **Submit**.
 
-The cookie expires within minutes and works only once, so paste it straight away. If setup says "Google didn't accept the cookie", close the private window and repeat from step 1.
+The cookie can expire quickly and works only once, so paste it straight away. If setup asks for a new cookie, close the private window and repeat from step 1.
 
 Home Assistant exchanges the cookie for a master token, names the entry after the account Google reports, and keeps only the master token.
 

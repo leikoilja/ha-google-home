@@ -9,13 +9,13 @@
           "master_token": "Jeton maître"
         },
         "menu_option_descriptions": {
-          "browser": "Connectez-vous à Google dans un navigateur sur ordinateur, puis collez un cookie. Fonctionne pour la plupart des comptes.",
+          "browser": "Connectez-vous à Google dans un navigateur sur ordinateur, puis collez un cookie.",
           "master_token": "Collez un jeton maître que vous avez déjà."
         }
       },
       "browser": {
         "title": "Connexion via le navigateur",
-        "description": "1. Sur un ordinateur, ouvrez {embedded_setup_url} dans une fenêtre de navigation privée et connectez-vous. Une fois que vous avez accepté, la page peut continuer à charger ; c'est normal.\n2. Ouvrez les outils de développement du navigateur et trouvez les cookies de `accounts.google.com`.\n3. Copiez la valeur du cookie `oauth_token` et collez-la ci-dessous immédiatement. Il expire en quelques minutes et ne fonctionne qu'une seule fois.\n\nInstructions détaillées : {browser_docs_url}\n\nPour choisir une autre méthode de connexion, fermez cette fenêtre et ajoutez à nouveau l'intégration.",
+        "description": "1. Sur un ordinateur, ouvrez {embedded_setup_url} dans une fenêtre de navigation privée et connectez-vous. Une fois que vous avez accepté, la page peut continuer à charger ; c'est normal.\n2. Ouvrez les outils de développement du navigateur et trouvez les cookies de `accounts.google.com`.\n3. Copiez la valeur du cookie `oauth_token` et collez-la ci-dessous immédiatement. Il peut expirer rapidement et ne fonctionne qu'une seule fois.\n\nInstructions détaillées : {browser_docs_url}\n\nPour choisir une autre méthode de connexion, fermez cette fenêtre et ajoutez à nouveau l'intégration.",
         "data": {
           "oauth_token": "Cookie oauth_token"
         },
@@ -51,13 +51,13 @@
           "master_token": "Jeton maître"
         },
         "menu_option_descriptions": {
-          "browser": "Connectez-vous à Google dans un navigateur sur ordinateur, puis collez un cookie. Fonctionne pour la plupart des comptes.",
+          "browser": "Connectez-vous à Google dans un navigateur sur ordinateur, puis collez un cookie.",
           "master_token": "Collez un jeton maître que vous avez déjà."
         }
       },
       "reauth_browser": {
         "title": "Connexion via le navigateur",
-        "description": "1. Sur un ordinateur, ouvrez {embedded_setup_url} dans une fenêtre de navigation privée et connectez-vous au même compte Google. Une fois que vous avez accepté, la page peut continuer à charger ; c'est normal.\n2. Ouvrez les outils de développement du navigateur et trouvez les cookies de `accounts.google.com`.\n3. Copiez la valeur du cookie `oauth_token` et collez-la ci-dessous immédiatement. Il expire en quelques minutes et ne fonctionne qu'une seule fois.\n\nInstructions détaillées : {browser_docs_url}",
+        "description": "1. Sur un ordinateur, ouvrez {embedded_setup_url} dans une fenêtre de navigation privée et connectez-vous au même compte Google. Une fois que vous avez accepté, la page peut continuer à charger ; c'est normal.\n2. Ouvrez les outils de développement du navigateur et trouvez les cookies de `accounts.google.com`.\n3. Copiez la valeur du cookie `oauth_token` et collez-la ci-dessous immédiatement. Il peut expirer rapidement et ne fonctionne qu'une seule fois.\n\nInstructions détaillées : {browser_docs_url}",
         "data": {
           "oauth_token": "Cookie oauth_token"
         },
@@ -77,7 +77,7 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "Google n'a pas accepté le cookie. Récupérez-en un nouveau et collez-le immédiatement : il expire en quelques minutes et ne fonctionne qu'une seule fois. Copiez la valeur complète, qui commence par oauth2_4/.",
+      "oauth-token-invalid": "Google n'a pas accepté la connexion. Récupérez un nouveau cookie et collez-le immédiatement : il peut expirer rapidement et ne fonctionne qu'une seule fois. Copiez la valeur complète, qui commence par oauth2_4/.",
       "master-token-invalid": "Google n'a pas accepté le jeton maître. Vérifiez que vous l'avez copié correctement. S'il fonctionnait auparavant, par exemple jusqu'à ce que vous changiez votre mot de passe Google, Google ne l'accepte plus : utilisez plutôt la connexion via le navigateur.",
       "google-rejected": "Google n'a pas accepté la connexion. Pour en savoir plus, consultez les journaux de Home Assistant.",
       "google-unreachable": "Impossible de joindre Google. Vérifiez que Home Assistant est connecté à Internet, puis réessayez.",

@@ -9,13 +9,13 @@
           "master_token": "Token główny"
         },
         "menu_option_descriptions": {
-          "browser": "Zaloguj się do Google w przeglądarce na komputerze, a następnie wklej plik cookie. Działa w przypadku większości kont.",
+          "browser": "Zaloguj się do Google w przeglądarce na komputerze, a następnie wklej plik cookie.",
           "master_token": "Wklej token główny, który już masz."
         }
       },
       "browser": {
         "title": "Logowanie w przeglądarce",
-        "description": "1. Na komputerze otwórz {embedded_setup_url} w oknie prywatnym przeglądarki i zaloguj się. Po zaakceptowaniu strona może się dalej ładować; to normalne.\n2. Otwórz narzędzia deweloperskie przeglądarki i znajdź pliki cookie dla `accounts.google.com`.\n3. Skopiuj wartość pliku cookie `oauth_token` i od razu wklej ją poniżej. Wygasa po kilku minutach i działa tylko raz.\n\nInstrukcje krok po kroku: {browser_docs_url}\n\nAby wybrać inny sposób logowania, zamknij to okno i dodaj integrację ponownie.",
+        "description": "1. Na komputerze otwórz {embedded_setup_url} w oknie prywatnym przeglądarki i zaloguj się. Po zaakceptowaniu strona może się dalej ładować; to normalne.\n2. Otwórz narzędzia deweloperskie przeglądarki i znajdź pliki cookie dla `accounts.google.com`.\n3. Skopiuj wartość pliku cookie `oauth_token` i od razu wklej ją poniżej. Może szybko wygasnąć i działa tylko raz.\n\nInstrukcje krok po kroku: {browser_docs_url}\n\nAby wybrać inny sposób logowania, zamknij to okno i dodaj integrację ponownie.",
         "data": {
           "oauth_token": "Plik cookie oauth_token"
         },
@@ -51,13 +51,13 @@
           "master_token": "Token główny"
         },
         "menu_option_descriptions": {
-          "browser": "Zaloguj się do Google w przeglądarce na komputerze, a następnie wklej plik cookie. Działa w przypadku większości kont.",
+          "browser": "Zaloguj się do Google w przeglądarce na komputerze, a następnie wklej plik cookie.",
           "master_token": "Wklej token główny, który już masz."
         }
       },
       "reauth_browser": {
         "title": "Logowanie w przeglądarce",
-        "description": "1. Na komputerze otwórz {embedded_setup_url} w oknie prywatnym przeglądarki i zaloguj się na to samo konto Google. Po zaakceptowaniu strona może się dalej ładować; to normalne.\n2. Otwórz narzędzia deweloperskie przeglądarki i znajdź pliki cookie dla `accounts.google.com`.\n3. Skopiuj wartość pliku cookie `oauth_token` i od razu wklej ją poniżej. Wygasa po kilku minutach i działa tylko raz.\n\nInstrukcje krok po kroku: {browser_docs_url}",
+        "description": "1. Na komputerze otwórz {embedded_setup_url} w oknie prywatnym przeglądarki i zaloguj się na to samo konto Google. Po zaakceptowaniu strona może się dalej ładować; to normalne.\n2. Otwórz narzędzia deweloperskie przeglądarki i znajdź pliki cookie dla `accounts.google.com`.\n3. Skopiuj wartość pliku cookie `oauth_token` i od razu wklej ją poniżej. Może szybko wygasnąć i działa tylko raz.\n\nInstrukcje krok po kroku: {browser_docs_url}",
         "data": {
           "oauth_token": "Plik cookie oauth_token"
         },
@@ -77,7 +77,7 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "Google nie zaakceptowało pliku cookie. Pobierz nowy i od razu go wklej: wygasa po kilku minutach i działa tylko raz. Skopiuj całą wartość, zaczynającą się od oauth2_4/.",
+      "oauth-token-invalid": "Google nie zaakceptowało logowania. Pobierz nowy plik cookie i od razu go wklej: może szybko wygasnąć i działa tylko raz. Skopiuj całą wartość, zaczynającą się od oauth2_4/.",
       "master-token-invalid": "Google nie zaakceptowało tokenu głównego. Sprawdź, czy został poprawnie skopiowany. Jeśli wcześniej działał, na przykład do czasu zmiany hasła do konta Google, Google już go nie akceptuje: zamiast tego użyj logowania w przeglądarce.",
       "google-rejected": "Google nie zaakceptowało logowania. Szczegóły znajdziesz w logach Home Assistanta.",
       "google-unreachable": "Nie udało się połączyć z Google. Sprawdź, czy Home Assistant ma połączenie z internetem, a następnie spróbuj ponownie.",

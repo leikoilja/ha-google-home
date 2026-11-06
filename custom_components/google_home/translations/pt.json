@@ -9,13 +9,13 @@
           "master_token": "Token principal"
         },
         "menu_option_descriptions": {
-          "browser": "Inicie sessão na Google num navegador de computador e, em seguida, cole um cookie. Funciona para a maioria das contas.",
+          "browser": "Inicie sessão na Google num navegador de computador e, em seguida, cole um cookie.",
           "master_token": "Cole um token principal que já tenha."
         }
       },
       "browser": {
         "title": "Início de sessão no navegador",
-        "description": "1. Num computador, abra {embedded_setup_url} numa janela de navegação privada e inicie sessão. Depois de aceitar, a página pode continuar a carregar; isso é esperado.\n2. Abra as ferramentas de programador do navegador e procure os cookies de `accounts.google.com`.\n3. Copie o valor do cookie `oauth_token` e cole-o abaixo de imediato. Expira em poucos minutos e só funciona uma vez.\n\nInstruções passo a passo: {browser_docs_url}\n\nPara escolher outra forma de iniciar sessão, feche esta janela e adicione novamente a integração.",
+        "description": "1. Num computador, abra {embedded_setup_url} numa janela de navegação privada e inicie sessão. Depois de aceitar, a página pode continuar a carregar; isso é esperado.\n2. Abra as ferramentas de programador do navegador e procure os cookies de `accounts.google.com`.\n3. Copie o valor do cookie `oauth_token` e cole-o abaixo de imediato. Pode expirar rapidamente e só funciona uma vez.\n\nInstruções passo a passo: {browser_docs_url}\n\nPara escolher outra forma de iniciar sessão, feche esta janela e adicione novamente a integração.",
         "data": {
           "oauth_token": "Cookie oauth_token"
         },
@@ -51,13 +51,13 @@
           "master_token": "Token principal"
         },
         "menu_option_descriptions": {
-          "browser": "Inicie sessão na Google num navegador de computador e, em seguida, cole um cookie. Funciona para a maioria das contas.",
+          "browser": "Inicie sessão na Google num navegador de computador e, em seguida, cole um cookie.",
           "master_token": "Cole um token principal que já tenha."
         }
       },
       "reauth_browser": {
         "title": "Início de sessão no navegador",
-        "description": "1. Num computador, abra {embedded_setup_url} numa janela de navegação privada e inicie sessão na mesma conta Google. Depois de aceitar, a página pode continuar a carregar; isso é esperado.\n2. Abra as ferramentas de programador do navegador e procure os cookies de `accounts.google.com`.\n3. Copie o valor do cookie `oauth_token` e cole-o abaixo de imediato. Expira em poucos minutos e só funciona uma vez.\n\nInstruções passo a passo: {browser_docs_url}",
+        "description": "1. Num computador, abra {embedded_setup_url} numa janela de navegação privada e inicie sessão na mesma conta Google. Depois de aceitar, a página pode continuar a carregar; isso é esperado.\n2. Abra as ferramentas de programador do navegador e procure os cookies de `accounts.google.com`.\n3. Copie o valor do cookie `oauth_token` e cole-o abaixo de imediato. Pode expirar rapidamente e só funciona uma vez.\n\nInstruções passo a passo: {browser_docs_url}",
         "data": {
           "oauth_token": "Cookie oauth_token"
         },
@@ -77,7 +77,7 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "A Google não aceitou o cookie. Obtenha um novo e cole-o de imediato: expira em poucos minutos e só funciona uma vez. Copie o valor completo, que começa por oauth2_4/.",
+      "oauth-token-invalid": "A Google não aceitou o início de sessão. Obtenha um novo cookie e cole-o de imediato: pode expirar rapidamente e só funciona uma vez. Copie o valor completo, que começa por oauth2_4/.",
       "master-token-invalid": "A Google não aceitou o token principal. Verifique se o copiou corretamente. Se funcionava antes, por exemplo até ter alterado a sua palavra-passe Google, a Google já não o aceita: utilize antes o início de sessão no navegador.",
       "google-rejected": "A Google não aceitou o início de sessão. Para ver os detalhes, consulte os logs do Home Assistant.",
       "google-unreachable": "Não foi possível estabelecer ligação à Google. Verifique se o Home Assistant está ligado à Internet e tente novamente.",

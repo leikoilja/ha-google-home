@@ -9,13 +9,13 @@
           "master_token": "Mestertoken"
         },
         "menu_option_descriptions": {
-          "browser": "Jelentkezzen be a Google-fiókjába egy számítógép böngészőjében, majd illesszen be egy cookie-t. A legtöbb fiókkal működik.",
+          "browser": "Jelentkezzen be a Google-fiókjába egy számítógép böngészőjében, majd illesszen be egy cookie-t.",
           "master_token": "Illesszen be egy már meglévő mestertokent."
         }
       },
       "browser": {
         "title": "Bejelentkezés böngészővel",
-        "description": "1. Számítógépen nyissa meg a {embedded_setup_url} címet a böngésző privát ablakában, például inkognitó ablakban, és jelentkezzen be. Az elfogadás után az oldal tovább töltődhet; ez normális.\n2. Nyissa meg a böngésző fejlesztői eszközeit, és keresse meg az `accounts.google.com` cookie-jait.\n3. Másolja ki az `oauth_token` cookie értékét, és azonnal illessze be alább. Néhány percen belül lejár, és csak egyszer használható.\n\nRészletes útmutató: {browser_docs_url}\n\nMásik bejelentkezési mód választásához zárja be ezt az ablakot, és adja hozzá újra az integrációt.",
+        "description": "1. Számítógépen nyissa meg a {embedded_setup_url} címet a böngésző privát ablakában, például inkognitó ablakban, és jelentkezzen be. Az elfogadás után az oldal tovább töltődhet; ez normális.\n2. Nyissa meg a böngésző fejlesztői eszközeit, és keresse meg az `accounts.google.com` cookie-jait.\n3. Másolja ki az `oauth_token` cookie értékét, és azonnal illessze be alább. Gyorsan lejárhat, és csak egyszer használható.\n\nRészletes útmutató: {browser_docs_url}\n\nMásik bejelentkezési mód választásához zárja be ezt az ablakot, és adja hozzá újra az integrációt.",
         "data": {
           "oauth_token": "oauth_token cookie"
         },
@@ -51,13 +51,13 @@
           "master_token": "Mestertoken"
         },
         "menu_option_descriptions": {
-          "browser": "Jelentkezzen be a Google-fiókjába egy számítógép böngészőjében, majd illesszen be egy cookie-t. A legtöbb fiókkal működik.",
+          "browser": "Jelentkezzen be a Google-fiókjába egy számítógép böngészőjében, majd illesszen be egy cookie-t.",
           "master_token": "Illesszen be egy már meglévő mestertokent."
         }
       },
       "reauth_browser": {
         "title": "Bejelentkezés böngészővel",
-        "description": "1. Számítógépen nyissa meg a {embedded_setup_url} címet a böngésző privát ablakában, például inkognitó ablakban, és jelentkezzen be ugyanabba a Google-fiókba. Az elfogadás után az oldal tovább töltődhet; ez normális.\n2. Nyissa meg a böngésző fejlesztői eszközeit, és keresse meg az `accounts.google.com` cookie-jait.\n3. Másolja ki az `oauth_token` cookie értékét, és azonnal illessze be alább. Néhány percen belül lejár, és csak egyszer használható.\n\nRészletes útmutató: {browser_docs_url}",
+        "description": "1. Számítógépen nyissa meg a {embedded_setup_url} címet a böngésző privát ablakában, például inkognitó ablakban, és jelentkezzen be ugyanabba a Google-fiókba. Az elfogadás után az oldal tovább töltődhet; ez normális.\n2. Nyissa meg a böngésző fejlesztői eszközeit, és keresse meg az `accounts.google.com` cookie-jait.\n3. Másolja ki az `oauth_token` cookie értékét, és azonnal illessze be alább. Gyorsan lejárhat, és csak egyszer használható.\n\nRészletes útmutató: {browser_docs_url}",
         "data": {
           "oauth_token": "oauth_token cookie"
         },
@@ -77,7 +77,7 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "A Google nem fogadta el a cookie-t. Szerezzen be egy újat, és azonnal illessze be: néhány percen belül lejár, és csak egyszer használható. Másolja ki a teljes, oauth2_4/ kezdetű értéket.",
+      "oauth-token-invalid": "A Google nem fogadta el a bejelentkezést. Szerezzen be egy új cookie-t, és azonnal illessze be: gyorsan lejárhat, és csak egyszer használható. Másolja ki a teljes, oauth2_4/ kezdetű értéket.",
       "master-token-invalid": "A Google nem fogadta el a mestertokent. Ellenőrizze, hogy helyesen másolta-e ki. Ha korábban működött, például amíg meg nem változtatta a Google-jelszavát, a Google már nem fogadja el: használja helyette a Bejelentkezés böngészővel lehetőséget.",
       "google-rejected": "A Google nem fogadta el a bejelentkezést. A részletekért tekintse meg a Home Assistant naplóját.",
       "google-unreachable": "Nem sikerült elérni a Google-t. Ellenőrizze, hogy a Home Assistant csatlakozik-e az internethez, majd próbálja újra.",

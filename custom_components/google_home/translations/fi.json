@@ -9,13 +9,13 @@
           "master_token": "Päätunniste"
         },
         "menu_option_descriptions": {
-          "browser": "Kirjaudu Googleen tietokoneen selaimella ja liitä sitten eväste. Toimii useimmilla tileillä.",
+          "browser": "Kirjaudu Googleen tietokoneen selaimella ja liitä sitten eväste.",
           "master_token": "Liitä päätunniste, joka sinulla jo on."
         }
       },
       "browser": {
         "title": "Kirjautuminen selaimella",
-        "description": "1. Avaa tietokoneella {embedded_setup_url} selaimen yksityisessä ikkunassa, esimerkiksi incognito-ikkunassa, ja kirjaudu sisään. Hyväksymisen jälkeen sivu saattaa jatkaa lataamista; tämä on normaalia.\n2. Avaa selaimen kehittäjätyökalut ja etsi sivuston `accounts.google.com` evästeet.\n3. Kopioi `oauth_token`-evästeen arvo ja liitä se heti alle. Se vanhenee muutamassa minuutissa ja toimii vain kerran.\n\nVaiheittaiset ohjeet: {browser_docs_url}\n\nJos haluat valita toisen kirjautumistavan, sulje tämä ikkuna ja lisää integraatio uudelleen.",
+        "description": "1. Avaa tietokoneella {embedded_setup_url} selaimen yksityisessä ikkunassa, esimerkiksi incognito-ikkunassa, ja kirjaudu sisään. Hyväksymisen jälkeen sivu saattaa jatkaa lataamista; tämä on normaalia.\n2. Avaa selaimen kehittäjätyökalut ja etsi sivuston `accounts.google.com` evästeet.\n3. Kopioi `oauth_token`-evästeen arvo ja liitä se heti alle. Se voi vanhentua nopeasti ja toimii vain kerran.\n\nVaiheittaiset ohjeet: {browser_docs_url}\n\nJos haluat valita toisen kirjautumistavan, sulje tämä ikkuna ja lisää integraatio uudelleen.",
         "data": {
           "oauth_token": "oauth_token-eväste"
         },
@@ -51,13 +51,13 @@
           "master_token": "Päätunniste"
         },
         "menu_option_descriptions": {
-          "browser": "Kirjaudu Googleen tietokoneen selaimella ja liitä sitten eväste. Toimii useimmilla tileillä.",
+          "browser": "Kirjaudu Googleen tietokoneen selaimella ja liitä sitten eväste.",
           "master_token": "Liitä päätunniste, joka sinulla jo on."
         }
       },
       "reauth_browser": {
         "title": "Kirjautuminen selaimella",
-        "description": "1. Avaa tietokoneella {embedded_setup_url} selaimen yksityisessä ikkunassa, esimerkiksi incognito-ikkunassa, ja kirjaudu sisään samalle Google-tilille. Hyväksymisen jälkeen sivu saattaa jatkaa lataamista; tämä on normaalia.\n2. Avaa selaimen kehittäjätyökalut ja etsi sivuston `accounts.google.com` evästeet.\n3. Kopioi `oauth_token`-evästeen arvo ja liitä se heti alle. Se vanhenee muutamassa minuutissa ja toimii vain kerran.\n\nVaiheittaiset ohjeet: {browser_docs_url}",
+        "description": "1. Avaa tietokoneella {embedded_setup_url} selaimen yksityisessä ikkunassa, esimerkiksi incognito-ikkunassa, ja kirjaudu sisään samalle Google-tilille. Hyväksymisen jälkeen sivu saattaa jatkaa lataamista; tämä on normaalia.\n2. Avaa selaimen kehittäjätyökalut ja etsi sivuston `accounts.google.com` evästeet.\n3. Kopioi `oauth_token`-evästeen arvo ja liitä se heti alle. Se voi vanhentua nopeasti ja toimii vain kerran.\n\nVaiheittaiset ohjeet: {browser_docs_url}",
         "data": {
           "oauth_token": "oauth_token-eväste"
         },
@@ -77,7 +77,7 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "Google ei hyväksynyt evästettä. Hanki uusi ja liitä se heti: se vanhenee muutamassa minuutissa ja toimii vain kerran. Kopioi koko arvo, joka alkaa merkkijonolla oauth2_4/.",
+      "oauth-token-invalid": "Google ei hyväksynyt kirjautumista. Hanki uusi eväste ja liitä se heti: se voi vanhentua nopeasti ja toimii vain kerran. Kopioi koko arvo, joka alkaa merkkijonolla oauth2_4/.",
       "master-token-invalid": "Google ei hyväksynyt päätunnistetta. Tarkista, että kopioit sen oikein. Jos se toimi aiemmin, esimerkiksi siihen asti, kunnes vaihdoit Google-salasanasi, Google ei enää hyväksy sitä: käytä sen sijaan kirjautumista selaimella.",
       "google-rejected": "Google ei hyväksynyt kirjautumista. Lisätietoja on Home Assistantin lokeissa.",
       "google-unreachable": "Googleen ei saatu yhteyttä. Tarkista, että Home Assistant on yhteydessä internetiin, ja yritä sitten uudelleen.",

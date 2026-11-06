@@ -168,20 +168,47 @@ def test_browser_sign_in_with_glocaltokens(flow: GoogleHomeFlowHandler) -> None:
     assert result["data"]["android_id"] == android_id
 
 
+@pytest.mark.parametrize(
+    ("exchange_reply", "access_reply", "token_stage"),
+    [
+        pytest.param(
+            {"Error": "BadAuthentication"}, {}, "master", id="cookie-rejected"
+        ),
+        pytest.param(
+            {"Token": MASTER_TOKEN, "Email": "test@example.com"},
+            {"Error": "BadAuthentication"},
+            "access",
+            id="cookie-accepted-access-rejected",
+        ),
+    ],
+)
 def test_browser_sign_in_rejected_by_google(
     flow: GoogleHomeFlowHandler,
     create_session: Mock,
     caplog: pytest.LogCaptureFixture,
+    exchange_reply: dict[str, str],
+    access_reply: dict[str, str],
+    token_stage: str,
 ) -> None:
-    """Point out a cookie that Google refuses, logging its reason in one line."""
-    with google_sign_in(Mock(return_value={"Error": "BadAuthentication"}), Mock()):
+    """Report either rejected sign-in stage without blaming an accepted cookie."""
+    exchange = Mock(return_value=exchange_reply)
+    access = Mock(return_value=access_reply)
+    with google_sign_in(exchange, access):
         result = asyncio.run(
             flow.async_step_browser({"oauth_token": "oauth2_4/cookie"})
         )
 
     assert result["errors"] == {"base": "oauth-token-invalid"}
+    assert ENGLISH["config"]["error"][result["errors"]["base"]] == (
+        "Google didn't accept the sign-in. Get a new cookie and paste it straight "
+        "away: it can expire quickly and works only once. Copy the whole value, "
+        "starting with oauth2_4/."
+    )
+    assert exchange.call_count == 1
+    assert access.call_count == (1 if token_stage == "access" else 0)
     assert_logged_without_traceback(
-        caplog, "Failed to sign in: Google gave no master token: BadAuthentication"
+        caplog,
+        f"Failed to sign in: Google gave no {token_stage} token: BadAuthentication",
     )
     create_session.assert_not_called()
 

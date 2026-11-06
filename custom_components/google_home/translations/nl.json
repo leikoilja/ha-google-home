@@ -9,13 +9,13 @@
           "master_token": "Mastertoken"
         },
         "menu_option_descriptions": {
-          "browser": "Log in bij Google in een desktopbrowser en plak daarna een cookie. Werkt voor de meeste accounts.",
+          "browser": "Log in bij Google in een desktopbrowser en plak daarna een cookie.",
           "master_token": "Plak een mastertoken dat je al hebt."
         }
       },
       "browser": {
         "title": "Inloggen via de browser",
-        "description": "1. Open op een computer {embedded_setup_url} in een privévenster en log in. Nadat je hebt geaccepteerd, kan de pagina blijven laden; dat is normaal.\n2. Open de ontwikkelaarstools van de browser en zoek de cookies voor `accounts.google.com`.\n3. Kopieer de waarde van de cookie `oauth_token` en plak deze meteen hieronder. De cookie verloopt binnen een paar minuten en werkt maar één keer.\n\nStapsgewijze instructies: {browser_docs_url}\n\nSluit dit venster en voeg de integratie opnieuw toe om een andere manier van inloggen te kiezen.",
+        "description": "1. Open op een computer {embedded_setup_url} in een privévenster en log in. Nadat je hebt geaccepteerd, kan de pagina blijven laden; dat is normaal.\n2. Open de ontwikkelaarstools van de browser en zoek de cookies voor `accounts.google.com`.\n3. Kopieer de waarde van de cookie `oauth_token` en plak deze meteen hieronder. De cookie kan snel verlopen en werkt maar één keer.\n\nStapsgewijze instructies: {browser_docs_url}\n\nSluit dit venster en voeg de integratie opnieuw toe om een andere manier van inloggen te kiezen.",
         "data": {
           "oauth_token": "Cookie oauth_token"
         },
@@ -51,13 +51,13 @@
           "master_token": "Mastertoken"
         },
         "menu_option_descriptions": {
-          "browser": "Log in bij Google in een desktopbrowser en plak daarna een cookie. Werkt voor de meeste accounts.",
+          "browser": "Log in bij Google in een desktopbrowser en plak daarna een cookie.",
           "master_token": "Plak een mastertoken dat je al hebt."
         }
       },
       "reauth_browser": {
         "title": "Inloggen via de browser",
-        "description": "1. Open op een computer {embedded_setup_url} in een privévenster en log in met hetzelfde Google-account. Nadat je hebt geaccepteerd, kan de pagina blijven laden; dat is normaal.\n2. Open de ontwikkelaarstools van de browser en zoek de cookies voor `accounts.google.com`.\n3. Kopieer de waarde van de cookie `oauth_token` en plak deze meteen hieronder. De cookie verloopt binnen een paar minuten en werkt maar één keer.\n\nStapsgewijze instructies: {browser_docs_url}",
+        "description": "1. Open op een computer {embedded_setup_url} in een privévenster en log in met hetzelfde Google-account. Nadat je hebt geaccepteerd, kan de pagina blijven laden; dat is normaal.\n2. Open de ontwikkelaarstools van de browser en zoek de cookies voor `accounts.google.com`.\n3. Kopieer de waarde van de cookie `oauth_token` en plak deze meteen hieronder. De cookie kan snel verlopen en werkt maar één keer.\n\nStapsgewijze instructies: {browser_docs_url}",
         "data": {
           "oauth_token": "Cookie oauth_token"
         },
@@ -77,7 +77,7 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "Google heeft de cookie niet geaccepteerd. Haal een nieuwe op en plak deze meteen: de cookie verloopt binnen een paar minuten en werkt maar één keer. Kopieer de volledige waarde, die begint met oauth2_4/.",
+      "oauth-token-invalid": "Google heeft de aanmelding niet geaccepteerd. Haal een nieuwe cookie op en plak deze meteen: de cookie kan snel verlopen en werkt maar één keer. Kopieer de volledige waarde, die begint met oauth2_4/.",
       "master-token-invalid": "Google heeft het mastertoken niet geaccepteerd. Controleer of je het goed hebt gekopieerd. Als het eerder werkte, bijvoorbeeld totdat je je Google-wachtwoord hebt gewijzigd, accepteert Google het niet meer: gebruik in plaats daarvan inloggen via de browser.",
       "google-rejected": "Google heeft de inlogpoging niet geaccepteerd. Bekijk de logboeken van Home Assistant voor details.",
       "google-unreachable": "Google kon niet worden bereikt. Controleer of Home Assistant met internet is verbonden en probeer het daarna opnieuw.",

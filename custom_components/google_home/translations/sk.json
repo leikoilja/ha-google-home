@@ -9,13 +9,13 @@
           "master_token": "Hlavný token"
         },
         "menu_option_descriptions": {
-          "browser": "Prihláste sa do Google v prehliadači na počítači a potom vložte súbor cookie. Funguje pre väčšinu účtov.",
+          "browser": "Prihláste sa do Google v prehliadači na počítači a potom vložte súbor cookie.",
           "master_token": "Vložte hlavný token, ktorý už máte."
         }
       },
       "browser": {
         "title": "Prihlásenie v prehliadači",
-        "description": "1. Na počítači otvorte {embedded_setup_url} v súkromnom okne prehliadača a prihláste sa. Po potvrdení sa stránka môže naďalej načítavať; je to očakávané.\n2. Otvorte nástroje pre vývojárov v prehliadači a nájdite súbory cookie pre `accounts.google.com`.\n3. Skopírujte hodnotu súboru cookie `oauth_token` a hneď ju vložte nižšie. Jeho platnosť vyprší o niekoľko minút a funguje len raz.\n\nPodrobný návod: {browser_docs_url}\n\nAk chcete zvoliť iný spôsob prihlásenia, zatvorte toto okno a pridajte integráciu znova.",
+        "description": "1. Na počítači otvorte {embedded_setup_url} v súkromnom okne prehliadača a prihláste sa. Po potvrdení sa stránka môže naďalej načítavať; je to očakávané.\n2. Otvorte nástroje pre vývojárov v prehliadači a nájdite súbory cookie pre `accounts.google.com`.\n3. Skopírujte hodnotu súboru cookie `oauth_token` a hneď ju vložte nižšie. Jeho platnosť môže rýchlo vypršať a funguje len raz.\n\nPodrobný návod: {browser_docs_url}\n\nAk chcete zvoliť iný spôsob prihlásenia, zatvorte toto okno a pridajte integráciu znova.",
         "data": {
           "oauth_token": "Súbor cookie oauth_token"
         },
@@ -51,13 +51,13 @@
           "master_token": "Hlavný token"
         },
         "menu_option_descriptions": {
-          "browser": "Prihláste sa do Google v prehliadači na počítači a potom vložte súbor cookie. Funguje pre väčšinu účtov.",
+          "browser": "Prihláste sa do Google v prehliadači na počítači a potom vložte súbor cookie.",
           "master_token": "Vložte hlavný token, ktorý už máte."
         }
       },
       "reauth_browser": {
         "title": "Prihlásenie v prehliadači",
-        "description": "1. Na počítači otvorte {embedded_setup_url} v súkromnom okne prehliadača a prihláste sa do toho istého účtu Google. Po potvrdení sa stránka môže naďalej načítavať; je to očakávané.\n2. Otvorte nástroje pre vývojárov v prehliadači a nájdite súbory cookie pre `accounts.google.com`.\n3. Skopírujte hodnotu súboru cookie `oauth_token` a hneď ju vložte nižšie. Jeho platnosť vyprší o niekoľko minút a funguje len raz.\n\nPodrobný návod: {browser_docs_url}",
+        "description": "1. Na počítači otvorte {embedded_setup_url} v súkromnom okne prehliadača a prihláste sa do toho istého účtu Google. Po potvrdení sa stránka môže naďalej načítavať; je to očakávané.\n2. Otvorte nástroje pre vývojárov v prehliadači a nájdite súbory cookie pre `accounts.google.com`.\n3. Skopírujte hodnotu súboru cookie `oauth_token` a hneď ju vložte nižšie. Jeho platnosť môže rýchlo vypršať a funguje len raz.\n\nPodrobný návod: {browser_docs_url}",
         "data": {
           "oauth_token": "Súbor cookie oauth_token"
         },
@@ -77,7 +77,7 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "Google súbor cookie neprijal. Získajte nový a hneď ho vložte: jeho platnosť vyprší o niekoľko minút a funguje len raz. Skopírujte celú hodnotu, ktorá sa začína oauth2_4/.",
+      "oauth-token-invalid": "Google prihlásenie neprijal. Získajte nový súbor cookie a hneď ho vložte: jeho platnosť môže rýchlo vypršať a funguje len raz. Skopírujte celú hodnotu, ktorá sa začína oauth2_4/.",
       "master-token-invalid": "Google hlavný token neprijal. Skontrolujte, či ste ho skopírovali správne. Ak predtým fungoval, napríklad kým ste nezmenili heslo k účtu Google, Google ho už neprijíma: namiesto toho použite prihlásenie v prehliadači.",
       "google-rejected": "Google prihlásenie neprijal. Podrobnosti nájdete v protokoloch Home Assistant.",
       "google-unreachable": "Nepodarilo sa pripojiť ku Googlu. Skontrolujte, či je Home Assistant pripojený k internetu, a skúste to znova.",

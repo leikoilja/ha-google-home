@@ -9,13 +9,13 @@
           "master_token": "Token master"
         },
         "menu_option_descriptions": {
-          "browser": "Login ke Google melalui browser di komputer, lalu tempelkan cookie. Berfungsi untuk sebagian besar akun.",
+          "browser": "Login ke Google melalui browser di komputer, lalu tempelkan cookie.",
           "master_token": "Tempelkan token master yang sudah Anda miliki."
         }
       },
       "browser": {
         "title": "Login melalui browser",
-        "description": "1. Di komputer, buka {embedded_setup_url} di jendela penjelajahan pribadi browser, misalnya jendela Samaran, lalu login. Setelah Anda menyetujui, halaman mungkin terus memuat; ini normal.\n2. Buka alat developer browser dan cari cookie untuk `accounts.google.com`.\n3. Salin nilai cookie `oauth_token` dan segera tempelkan di bawah. Nilai ini kedaluwarsa dalam beberapa menit dan hanya dapat digunakan sekali.\n\nPetunjuk langkah demi langkah: {browser_docs_url}\n\nUntuk memilih cara login lain, tutup jendela ini dan tambahkan kembali integrasi.",
+        "description": "1. Di komputer, buka {embedded_setup_url} di jendela penjelajahan pribadi browser, misalnya jendela Samaran, lalu login. Setelah Anda menyetujui, halaman mungkin terus memuat; ini normal.\n2. Buka alat developer browser dan cari cookie untuk `accounts.google.com`.\n3. Salin nilai cookie `oauth_token` dan segera tempelkan di bawah. Nilai ini dapat kedaluwarsa dengan cepat dan hanya dapat digunakan sekali.\n\nPetunjuk langkah demi langkah: {browser_docs_url}\n\nUntuk memilih cara login lain, tutup jendela ini dan tambahkan kembali integrasi.",
         "data": {
           "oauth_token": "Cookie oauth_token"
         },
@@ -51,13 +51,13 @@
           "master_token": "Token master"
         },
         "menu_option_descriptions": {
-          "browser": "Login ke Google melalui browser di komputer, lalu tempelkan cookie. Berfungsi untuk sebagian besar akun.",
+          "browser": "Login ke Google melalui browser di komputer, lalu tempelkan cookie.",
           "master_token": "Tempelkan token master yang sudah Anda miliki."
         }
       },
       "reauth_browser": {
         "title": "Login melalui browser",
-        "description": "1. Di komputer, buka {embedded_setup_url} di jendela penjelajahan pribadi browser, misalnya jendela Samaran, lalu login ke akun Google yang sama. Setelah Anda menyetujui, halaman mungkin terus memuat; ini normal.\n2. Buka alat developer browser dan cari cookie untuk `accounts.google.com`.\n3. Salin nilai cookie `oauth_token` dan segera tempelkan di bawah. Nilai ini kedaluwarsa dalam beberapa menit dan hanya dapat digunakan sekali.\n\nPetunjuk langkah demi langkah: {browser_docs_url}",
+        "description": "1. Di komputer, buka {embedded_setup_url} di jendela penjelajahan pribadi browser, misalnya jendela Samaran, lalu login ke akun Google yang sama. Setelah Anda menyetujui, halaman mungkin terus memuat; ini normal.\n2. Buka alat developer browser dan cari cookie untuk `accounts.google.com`.\n3. Salin nilai cookie `oauth_token` dan segera tempelkan di bawah. Nilai ini dapat kedaluwarsa dengan cepat dan hanya dapat digunakan sekali.\n\nPetunjuk langkah demi langkah: {browser_docs_url}",
         "data": {
           "oauth_token": "Cookie oauth_token"
         },
@@ -77,7 +77,7 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "Google tidak menerima cookie tersebut. Dapatkan cookie baru dan segera tempelkan: cookie kedaluwarsa dalam beberapa menit dan hanya dapat digunakan sekali. Salin seluruh nilai yang diawali dengan oauth2_4/.",
+      "oauth-token-invalid": "Google tidak menerima login tersebut. Dapatkan cookie baru dan segera tempelkan: cookie dapat kedaluwarsa dengan cepat dan hanya dapat digunakan sekali. Salin seluruh nilai yang diawali dengan oauth2_4/.",
       "master-token-invalid": "Google tidak menerima token master tersebut. Pastikan Anda menyalinnya dengan benar. Jika sebelumnya token berfungsi, misalnya hingga Anda mengubah sandi Google, Google tidak lagi menerimanya: gunakan login melalui browser sebagai gantinya.",
       "google-rejected": "Google tidak menerima login tersebut. Untuk detailnya, lihat log Home Assistant.",
       "google-unreachable": "Tidak dapat terhubung ke Google. Pastikan Home Assistant terhubung ke internet, lalu coba lagi.",

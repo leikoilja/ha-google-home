@@ -9,13 +9,13 @@
           "master_token": "Master token"
         },
         "menu_option_descriptions": {
-          "browser": "Log ind på Google i en browser på en computer, og indsæt derefter en cookie. Virker for de fleste konti.",
+          "browser": "Log ind på Google i en browser på en computer, og indsæt derefter en cookie.",
           "master_token": "Indsæt et master token, du allerede har."
         }
       },
       "browser": {
         "title": "Login via browser",
-        "description": "1. Åbn {embedded_setup_url} i et privat browservindue på en computer, og log ind. Når du har accepteret, bliver siden måske ved med at indlæse; det er forventet.\n2. Åbn browserens udviklerværktøjer, og find cookies for `accounts.google.com`.\n3. Kopiér værdien af cookien `oauth_token`, og indsæt den nedenfor med det samme. Den udløber inden for få minutter og virker kun én gang.\n\nTrin-for-trin-vejledning: {browser_docs_url}\n\nHvis du vil vælge en anden måde at logge ind på, så luk dette vindue, og tilføj integrationen igen.",
+        "description": "1. Åbn {embedded_setup_url} i et privat browservindue på en computer, og log ind. Når du har accepteret, bliver siden måske ved med at indlæse; det er forventet.\n2. Åbn browserens udviklerværktøjer, og find cookies for `accounts.google.com`.\n3. Kopiér værdien af cookien `oauth_token`, og indsæt den nedenfor med det samme. Den kan udløbe hurtigt og virker kun én gang.\n\nTrin-for-trin-vejledning: {browser_docs_url}\n\nHvis du vil vælge en anden måde at logge ind på, så luk dette vindue, og tilføj integrationen igen.",
         "data": {
           "oauth_token": "Cookien oauth_token"
         },
@@ -51,13 +51,13 @@
           "master_token": "Master token"
         },
         "menu_option_descriptions": {
-          "browser": "Log ind på Google i en browser på en computer, og indsæt derefter en cookie. Virker for de fleste konti.",
+          "browser": "Log ind på Google i en browser på en computer, og indsæt derefter en cookie.",
           "master_token": "Indsæt et master token, du allerede har."
         }
       },
       "reauth_browser": {
         "title": "Login via browser",
-        "description": "1. Åbn {embedded_setup_url} i et privat browservindue på en computer, og log ind på den samme Google-konto. Når du har accepteret, bliver siden måske ved med at indlæse; det er forventet.\n2. Åbn browserens udviklerværktøjer, og find cookies for `accounts.google.com`.\n3. Kopiér værdien af cookien `oauth_token`, og indsæt den nedenfor med det samme. Den udløber inden for få minutter og virker kun én gang.\n\nTrin-for-trin-vejledning: {browser_docs_url}",
+        "description": "1. Åbn {embedded_setup_url} i et privat browservindue på en computer, og log ind på den samme Google-konto. Når du har accepteret, bliver siden måske ved med at indlæse; det er forventet.\n2. Åbn browserens udviklerværktøjer, og find cookies for `accounts.google.com`.\n3. Kopiér værdien af cookien `oauth_token`, og indsæt den nedenfor med det samme. Den kan udløbe hurtigt og virker kun én gang.\n\nTrin-for-trin-vejledning: {browser_docs_url}",
         "data": {
           "oauth_token": "Cookien oauth_token"
         },
@@ -77,7 +77,7 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "Google accepterede ikke cookien. Hent en ny, og indsæt den med det samme: den udløber inden for få minutter og virker kun én gang. Kopiér hele værdien, der starter med oauth2_4/.",
+      "oauth-token-invalid": "Google accepterede ikke loginforsøget. Hent en ny cookie, og indsæt den med det samme: den kan udløbe hurtigt og virker kun én gang. Kopiér hele værdien, der starter med oauth2_4/.",
       "master-token-invalid": "Google accepterede ikke master tokenet. Kontrollér, at du har kopieret det korrekt. Hvis det virkede før, f.eks. indtil du ændrede din Google-adgangskode, accepterer Google det ikke længere: brug login via browser i stedet.",
       "google-rejected": "Google accepterede ikke loginet. Du kan se detaljerne i logfilerne i Home Assistant.",
       "google-unreachable": "Kunne ikke oprette forbindelse til Google. Kontrollér, at Home Assistant har forbindelse til internettet, og prøv derefter igen.",

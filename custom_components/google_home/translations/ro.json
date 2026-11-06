@@ -9,13 +9,13 @@
           "master_token": "Token principal"
         },
         "menu_option_descriptions": {
-          "browser": "Conectează-te la Google într-un browser de pe computer, apoi lipește un cookie. Funcționează pentru majoritatea conturilor.",
+          "browser": "Conectează-te la Google într-un browser de pe computer, apoi lipește un cookie.",
           "master_token": "Lipește un token principal pe care îl ai deja."
         }
       },
       "browser": {
         "title": "Conectare prin browser",
-        "description": "1. Pe un computer, deschide {embedded_setup_url} într-o fereastră de navigare privată a browserului, de exemplu o fereastră incognito, și conectează-te. După ce accepți, pagina poate continua să se încarce; acest lucru este normal.\n2. Deschide instrumentele pentru dezvoltatori ale browserului și găsește cookie-urile pentru `accounts.google.com`.\n3. Copiază valoarea cookie-ului `oauth_token` și lipește-o imediat mai jos. Expiră în câteva minute și poate fi folosită o singură dată.\n\nInstrucțiuni pas cu pas: {browser_docs_url}\n\nPentru a alege altă metodă de conectare, închide această fereastră și adaugă din nou integrarea.",
+        "description": "1. Pe un computer, deschide {embedded_setup_url} într-o fereastră de navigare privată a browserului, de exemplu o fereastră incognito, și conectează-te. După ce accepți, pagina poate continua să se încarce; acest lucru este normal.\n2. Deschide instrumentele pentru dezvoltatori ale browserului și găsește cookie-urile pentru `accounts.google.com`.\n3. Copiază valoarea cookie-ului `oauth_token` și lipește-o imediat mai jos. Poate expira rapid și poate fi folosită o singură dată.\n\nInstrucțiuni pas cu pas: {browser_docs_url}\n\nPentru a alege altă metodă de conectare, închide această fereastră și adaugă din nou integrarea.",
         "data": {
           "oauth_token": "Cookie oauth_token"
         },
@@ -51,13 +51,13 @@
           "master_token": "Token principal"
         },
         "menu_option_descriptions": {
-          "browser": "Conectează-te la Google într-un browser de pe computer, apoi lipește un cookie. Funcționează pentru majoritatea conturilor.",
+          "browser": "Conectează-te la Google într-un browser de pe computer, apoi lipește un cookie.",
           "master_token": "Lipește un token principal pe care îl ai deja."
         }
       },
       "reauth_browser": {
         "title": "Conectare prin browser",
-        "description": "1. Pe un computer, deschide {embedded_setup_url} într-o fereastră de navigare privată a browserului, de exemplu o fereastră incognito, și conectează-te la același cont Google. După ce accepți, pagina poate continua să se încarce; acest lucru este normal.\n2. Deschide instrumentele pentru dezvoltatori ale browserului și găsește cookie-urile pentru `accounts.google.com`.\n3. Copiază valoarea cookie-ului `oauth_token` și lipește-o imediat mai jos. Expiră în câteva minute și poate fi folosită o singură dată.\n\nInstrucțiuni pas cu pas: {browser_docs_url}",
+        "description": "1. Pe un computer, deschide {embedded_setup_url} într-o fereastră de navigare privată a browserului, de exemplu o fereastră incognito, și conectează-te la același cont Google. După ce accepți, pagina poate continua să se încarce; acest lucru este normal.\n2. Deschide instrumentele pentru dezvoltatori ale browserului și găsește cookie-urile pentru `accounts.google.com`.\n3. Copiază valoarea cookie-ului `oauth_token` și lipește-o imediat mai jos. Poate expira rapid și poate fi folosită o singură dată.\n\nInstrucțiuni pas cu pas: {browser_docs_url}",
         "data": {
           "oauth_token": "Cookie oauth_token"
         },
@@ -77,7 +77,7 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "Google nu a acceptat cookie-ul. Obține unul nou și lipește-l imediat: expiră în câteva minute și poate fi folosit o singură dată. Copiază întreaga valoare, care începe cu oauth2_4/.",
+      "oauth-token-invalid": "Google nu a acceptat conectarea. Obține un cookie nou și lipește-l imediat: poate expira rapid și poate fi folosit o singură dată. Copiază întreaga valoare, care începe cu oauth2_4/.",
       "master-token-invalid": "Google nu a acceptat tokenul principal. Verifică dacă l-ai copiat corect. Dacă a funcționat înainte, de exemplu până când ți-ai schimbat parola Google, Google nu îl mai acceptă: folosește în schimb conectarea prin browser.",
       "google-rejected": "Google nu a acceptat conectarea. Pentru detalii, consultă jurnalele Home Assistant.",
       "google-unreachable": "Nu s-a putut contacta Google. Verifică dacă Home Assistant este conectat la internet, apoi încearcă din nou.",
