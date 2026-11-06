@@ -161,15 +161,6 @@ class Hassfest:
                 {**rules, first: {"status": "exempt"}},
                 f"required key not provided at 'rules.{first}.comment'",
             ),
-            # The integration has no reconfigure step, so core's validator
-            # fails. Without this case, a check that ignored the validators'
-            # errors would go unnoticed. If the integration gets one, use
-            # another rule whose validator fails.
-            (
-                "reconfiguration-flow marked done",
-                {**rules, "reconfiguration-flow": "done"},
-                "reconfiguration-flow: ",
-            ),
         ]
         documents = [
             (case, {**document, "rules": changed}, error)
@@ -187,6 +178,18 @@ class Hassfest:
             case: any(error in found for found in self.check(changed))
             for case, changed, error in documents
         }
+
+        # Exercise a validator with an explicitly invalid manifest rather
+        # than assuming the integration lacks a particular flow method.
+        config_flow = self.integration.manifest["config_flow"]
+        self.integration.manifest["config_flow"] = False
+        try:
+            rejected["config-flow done without its manifest flag"] = any(
+                "config-flow: Integration does not set config_flow" in found
+                for found in self.check(document)
+            )
+        finally:
+            self.integration.manifest["config_flow"] = config_flow
 
         # Without this case, a check that skipped strict-typing's requirement
         # check would go unnoticed

@@ -202,10 +202,10 @@ After the file passes, the script checks copies of it with one mistake each:
 - Two rules out of order.
 - An exemption without a comment.
 - A key outside `rules`.
-- `reconfiguration-flow` marked done, which fails because the integration has no reconfigure step.
+- `config-flow` marked done while its manifest flag is false.
 - A requirement without type hints, from a stand-in package the script creates.
 
-If it accepts any of them, it fails with "Self-check: the check accepted" and the copies it accepted. After a bump, that means Home Assistant's checks changed, and the script needs updating. If you add a reconfigure step and mark `reconfiguration-flow` done, that copy no longer has a mistake: replace it in the script with another rule whose validator fails.
+If it accepts any of them, it fails with "Self-check: the check accepted" and the copies it accepted. After a bump, that means Home Assistant's checks changed, and the script needs updating.
 
 ### Edit the docs
 
