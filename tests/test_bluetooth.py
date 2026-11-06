@@ -7,7 +7,7 @@ that run inside Home Assistant are in test_bluetooth_setup.py.
 
 import asyncio
 import base64
-from collections.abc import Callable, Iterator
+from collections.abc import Callable, Iterator, Mapping
 from contextlib import contextmanager
 import logging
 from types import MappingProxyType
@@ -63,7 +63,7 @@ def rpa(irk: bytes, prand: bytes = b"\x52\x34\x56") -> str:
 
 
 def subentry(
-    data: dict[str, str], subentry_id: str = PHONE, title: str = "Phone"
+    data: Mapping[str, object], subentry_id: str = PHONE, title: str = "Phone"
 ) -> ConfigSubentry:
     """Return a tracked device's subentry as the subentry flow saves it."""
     return ConfigSubentry(

@@ -261,11 +261,23 @@
           "description": "輸入手機的 IRK，或位址永不變更之裝置（例如部分手錶和防丟標籤）的 MAC 位址。手機每隔幾分鐘就會變更位址，因此請以 IRK 追蹤手機。如何找到 IRK，請參閱 {docs_url}",
           "data": {
             "name": "名稱",
-            "irk_or_mac": "IRK 或 MAC 位址"
+            "irk_or_mac": "IRK 或 MAC 位址",
+            "additional_departure_delay": "額外離家判定延遲"
           },
           "data_description": {
             "name": "追蹤器名稱，例如「Alex 的手機」。",
-            "irk_or_mac": "手機的 Identity Resolving Key（32 個十六進位數字或 base64），或 MAC 位址，例如 AA:BB:CC:DD:EE:FF。此整合會自動判斷你輸入的是哪一種。"
+            "irk_or_mac": "手機的 Identity Resolving Key（32 個十六進位數字或 base64），或 MAC 位址，例如 AA:BB:CC:DD:EE:FF。此整合會自動判斷你輸入的是哪一種。",
+            "additional_departure_delay": "一般的 90 秒在家判定時間結束後，從「在家」改為「離家」前額外等待的時間。設為 0 會維持一般的判定時間。延遲越長，實際離家時的判定也會越晚。若掃描無法確認裝置已離開，追蹤器可能會顯示為「不可用」。"
+          }
+        },
+        "reconfigure": {
+          "title": "藍牙裝置設定",
+          "description": "變更此追蹤器的額外離家判定延遲。",
+          "data": {
+            "additional_departure_delay": "額外離家判定延遲"
+          },
+          "data_description": {
+            "additional_departure_delay": "一般的 90 秒在家判定時間結束後，從「在家」改為「離家」前額外等待的時間。設為 0 會維持一般的判定時間。延遲越長，實際離家時的判定也會越晚。若掃描無法確認裝置已離開，追蹤器可能會顯示為「不可用」。"
           }
         }
       },
@@ -274,10 +286,12 @@
         "irk-or-mac": "請輸入 IRK 或 MAC 位址。",
         "irk-invalid": "這不是 IRK。IRK 為 16 位元組：32 個十六進位數字，或以 == 結尾的 24 個 base64 字元。",
         "mac-invalid": "這不是 MAC 位址。請輸入以冒號或連字號分隔的 6 組兩位十六進位數字，例如 AA:BB:CC:DD:EE:FF。",
-        "already-tracked": "此裝置已在追蹤中。"
+        "already-tracked": "此裝置已在追蹤中。",
+        "departure-delay-invalid": "請選擇 0、30、60、90 或 120 秒。"
       },
       "abort": {
-        "bluetooth-tracking-off": "藍牙追蹤已關閉。請先在此整合的選項中開啟：在此整合的頁面上選擇「設定」。"
+        "bluetooth-tracking-off": "藍牙追蹤已關閉。請先在此整合的選項中開啟：在此整合的頁面上選擇「設定」。",
+        "device-removed": "此藍牙裝置已移除。請重新加入以追蹤此裝置。"
       }
     }
   },

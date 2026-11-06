@@ -31,18 +31,32 @@ To stop tracking a device, delete it: open it on the **Google Home** page, open 
 
 To rename a tracked device, open its device page, select the pencil icon (**Edit settings**), change **Name** and select **Update**. The tracker takes the new name straight away and keeps its entity ID. The **Google Home** page still lists the device under the name you first gave it: to change that too, open its **⋮** menu there and select **Rename**. To change its IRK or MAC address, delete it and add it again.
 
+## Change departure timing
+
+If a device briefly shows away while it is still home, you can add a departure delay for that tracker:
+
+1. Open **Settings** > **Devices & services** > **Google Home**.
+2. Open the tracked Bluetooth device's **⋮** menu and select **Reconfigure**.
+3. Set **Additional departure delay** to 0, 30, 60, 90 or 120 seconds, then select **Submit**. You can also set it when adding a device.
+
+The default, **0**, keeps normal timing. A longer delay can suppress brief away transitions, but also slows detection of a real departure. It applies only to this tracker; arrival still shows home as soon as an accepted scan hears the device. Your tracker and its links to people stay in place, and you do not need to enter its IRK or MAC address again.
+
+The delay extends the normal 90-second presence window, measured from the start of the last scan that heard the device. For example, 60 seconds makes the departure threshold 150 seconds from that scan start. The speakers must still provide current, continuous coverage before the tracker can show away. If coverage first becomes adequate after the threshold, it may show away then, without waiting another full delay.
+
+Changes apply without reloading the integration or restarting the absence clock. Increasing the delay does not turn an already-away tracker home. Waiting does not refresh the last confirmed state: if scans cannot confirm absence, the tracker can still become unavailable. A delay does not fix missed Bluetooth advertisements or guarantee that every short away transition will disappear.
+
 ## How the tracker works
 
 About every 30 seconds, whatever the [update interval](configuration.md#change-the-update-interval), each speaker reports what it heard since the last check and starts a new scan. Bluetooth devices that are weaker than -80 dBm are ignored, so a phone heard faintly from outside doesn't count.
 
 | State         | When                                                                                                                                        |
 | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| `home`        | A speaker heard the device in the last 90 seconds.                                                                                          |
+| `home`        | A speaker heard the device in the last 90 seconds, or its previous home state is retained while awaiting a covered departure.                                                                                          |
 | `not_home`    | At least one active speaker, and every other required speaker, has scanned without a break for the last 90 seconds, and none heard the device.                                               |
 | `unknown`     | There is no recent saved confirmation and the speakers haven't confirmed `home` or `not_home` yet. Fresh scans normally take about 30 to 90 seconds. If it takes longer, see [Tracker doesn't show `home` or stays `unknown`](#tracker-doesnt-show-home-or-stays-unknown). |
 | `unavailable` | The tracker showed `home` or `not_home`, but the speakers haven't confirmed either for 5 minutes, for example because a speaker stopped answering. See [Tracker is unavailable](#tracker-is-unavailable). Also while Bluetooth tracking is off. |
 
-In the best case, a phone shows `home` within about a minute of arriving, and `not_home` about 60 to 90 seconds after it leaves.
+With no additional departure delay, in the best case a phone shows `home` within about a minute of arriving, and `not_home` about 60 to 90 seconds after it leaves.
 
 After a successful Home Assistant restart or integration reload, a tracker can start with its recently confirmed `home` or `not_home` state. It keeps only the unused part of the original five minutes since confirmation: restarting repeatedly never makes that evidence newer. Without usable saved evidence, including on first installation or after a long shutdown, it starts `unknown`.
 
@@ -72,7 +86,7 @@ The attribute is empty (`{}`):
 - For the first 5 minutes after the tracker changes to `home`, including after Home Assistant starts.
 - After 5 minutes in which no speaker heard the device in two scans, even if the tracker still shows `home`.
 
-Treat the values as a rough guide. In testing, one speaker's readings varied by about 20 dB with a phone lying still. The median smooths this out, but the strongest speaker isn't necessarily the nearest, so don't rely on the attribute to tell which room you're in. It's useful for checking how well your speakers cover the places where you keep the device: a device that only one speaker hears, at close to -80 dBm, can show `not_home` when its signal stays below that for about 90 seconds.
+Treat the values as a rough guide. In testing, one speaker's readings varied by about 20 dB with a phone lying still. The median smooths this out, but the strongest speaker isn't necessarily the nearest, so don't rely on the attribute to tell which room you're in. It's useful for checking how well your speakers cover the places where you keep the device: a device that only one speaker hears, at close to -80 dBm, can show `not_home` when its signal stays below that for about 90 seconds with no additional departure delay.
 
 Home Assistant doesn't keep the attribute's values in its history, so only the current value is available.
 

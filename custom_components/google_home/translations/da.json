@@ -261,11 +261,23 @@
           "description": "Angiv en telefons IRK eller MAC-adressen på en enhed, hvis adresse aldrig ændres, f.eks. visse ure og tags. Telefoner skifter adresse med få minutters mellemrum, så spor dem via IRK. Se {docs_url} for at finde ud af, hvordan du finder IRK'en.",
           "data": {
             "name": "Navn",
-            "irk_or_mac": "IRK eller MAC-adresse"
+            "irk_or_mac": "IRK eller MAC-adresse",
+            "additional_departure_delay": "Ekstra forsinkelse ved afgang"
           },
           "data_description": {
             "name": "Navnet på trackeren, f.eks. Alex' telefon.",
-            "irk_or_mac": "En telefons Identity Resolving Key som 32 hexcifre eller i base64, eller en MAC-adresse som f.eks. AA:BB:CC:DD:EE:FF. Integrationen kan selv se, hvilken af dem du har angivet."
+            "irk_or_mac": "En telefons Identity Resolving Key som 32 hexcifre eller i base64, eller en MAC-adresse som f.eks. AA:BB:CC:DD:EE:FF. Integrationen kan selv se, hvilken af dem du har angivet.",
+            "additional_departure_delay": "Ekstra tid efter det normale tilstedeværelsesvindue på 90 sekunder, før tilstanden skifter fra »Hjemme« til »Ude«. 0 bevarer den normale timing. En længere forsinkelse forsinker også registreringen af en reel afgang. Hvis scanningerne ikke kan bekræfte fravær, kan trackeren blive utilgængelig."
+          }
+        },
+        "reconfigure": {
+          "title": "Indstillinger for Bluetooth-enhed",
+          "description": "Skift den ekstra forsinkelse ved afgang for denne tracker.",
+          "data": {
+            "additional_departure_delay": "Ekstra forsinkelse ved afgang"
+          },
+          "data_description": {
+            "additional_departure_delay": "Ekstra tid efter det normale tilstedeværelsesvindue på 90 sekunder, før tilstanden skifter fra »Hjemme« til »Ude«. 0 bevarer den normale timing. En længere forsinkelse forsinker også registreringen af en reel afgang. Hvis scanningerne ikke kan bekræfte fravær, kan trackeren blive utilgængelig."
           }
         }
       },
@@ -274,10 +286,12 @@
         "irk-or-mac": "Angiv en IRK eller en MAC-adresse.",
         "irk-invalid": "Dette er ikke en IRK. En IRK er 16 bytes: 32 hexcifre eller 24 base64-tegn, der ender på ==.",
         "mac-invalid": "Dette er ikke en MAC-adresse. Angiv seks par hexcifre adskilt af koloner eller bindestreger, f.eks. AA:BB:CC:DD:EE:FF.",
-        "already-tracked": "Denne enhed spores allerede."
+        "already-tracked": "Denne enhed spores allerede.",
+        "departure-delay-invalid": "Vælg 0, 30, 60, 90 eller 120 sekunder."
       },
       "abort": {
-        "bluetooth-tracking-off": "Bluetooth-sporing er slået fra. Slå den først til i integrationens indstillinger: Vælg »Konfigurér« på integrationens side."
+        "bluetooth-tracking-off": "Bluetooth-sporing er slået fra. Slå den først til i integrationens indstillinger: Vælg »Konfigurér« på integrationens side.",
+        "device-removed": "Denne Bluetooth-enhed er blevet fjernet. Tilføj den igen for at spore den."
       }
     }
   },

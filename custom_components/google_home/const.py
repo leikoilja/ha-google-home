@@ -20,6 +20,8 @@ CONF_BLUETOOTH_TRACKING: Final = "bluetooth_tracking"
 # Device IDs of speakers that don't scan for Bluetooth trackers
 CONF_BLUETOOTH_EXCLUDED: Final = "bluetooth_excluded_speakers"
 CONF_IRK: Final = "irk"
+CONF_ADDITIONAL_DEPARTURE_DELAY: Final = "additional_departure_delay"
+DEPARTURE_DELAY_VALUES: Final = (0, 30, 60, 90, 120)
 # The field that takes a tracked device's IRK or MAC address. It's saved as one of
 # them.
 CONF_IRK_OR_MAC: Final = "irk_or_mac"

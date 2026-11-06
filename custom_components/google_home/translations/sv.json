@@ -261,11 +261,23 @@
           "description": "Ange IRK för en telefon, eller MAC-adressen för en enhet vars adress aldrig ändras, till exempel vissa klockor och taggar. Telefoner byter adress med några minuters mellanrum, så spåra dem med IRK. Se {docs_url} för hur du hittar IRK.",
           "data": {
             "name": "Namn",
-            "irk_or_mac": "IRK eller MAC-adress"
+            "irk_or_mac": "IRK eller MAC-adress",
+            "additional_departure_delay": "Extra fördröjning vid avfärd"
           },
           "data_description": {
             "name": "Namnet på spåraren, till exempel Alex telefon.",
-            "irk_or_mac": "En telefons Identity Resolving Key, som 32 hexadecimala siffror eller i base64, eller en MAC-adress, till exempel AA:BB:CC:DD:EE:FF. Integrationen känner själv igen vilken du har angett."
+            "irk_or_mac": "En telefons Identity Resolving Key, som 32 hexadecimala siffror eller i base64, eller en MAC-adress, till exempel AA:BB:CC:DD:EE:FF. Integrationen känner själv igen vilken du har angett.",
+            "additional_departure_delay": "Extra tid efter det vanliga närvarofönstret på 90 sekunder innan tillståndet ändras från ”Hemma” till ”Borta”. 0 behåller den vanliga tidsinställningen. En längre fördröjning fördröjer också registreringen av en verklig avfärd. Om skanningarna inte kan bekräfta frånvaro kan spåraren bli otillgänglig."
+          }
+        },
+        "reconfigure": {
+          "title": "Inställningar för Bluetooth-enhet",
+          "description": "Ändra den extra fördröjningen vid avfärd för den här spåraren.",
+          "data": {
+            "additional_departure_delay": "Extra fördröjning vid avfärd"
+          },
+          "data_description": {
+            "additional_departure_delay": "Extra tid efter det vanliga närvarofönstret på 90 sekunder innan tillståndet ändras från ”Hemma” till ”Borta”. 0 behåller den vanliga tidsinställningen. En längre fördröjning fördröjer också registreringen av en verklig avfärd. Om skanningarna inte kan bekräfta frånvaro kan spåraren bli otillgänglig."
           }
         }
       },
@@ -274,10 +286,12 @@
         "irk-or-mac": "Ange en IRK eller en MAC-adress.",
         "irk-invalid": "Det här är ingen IRK. En IRK är 16 byte: 32 hexadecimala siffror eller 24 base64-tecken som slutar med ==.",
         "mac-invalid": "Det här är ingen MAC-adress. Ange sex par hexadecimala siffror åtskilda med kolon eller bindestreck, till exempel AA:BB:CC:DD:EE:FF.",
-        "already-tracked": "Den här enheten spåras redan."
+        "already-tracked": "Den här enheten spåras redan.",
+        "departure-delay-invalid": "Välj 0, 30, 60, 90 eller 120 sekunder."
       },
       "abort": {
-        "bluetooth-tracking-off": "Bluetooth-spårning är avaktiverad. Aktivera den först i integrationens alternativ: välj ”Konfigurera” på integrationens sida."
+        "bluetooth-tracking-off": "Bluetooth-spårning är avaktiverad. Aktivera den först i integrationens alternativ: välj ”Konfigurera” på integrationens sida.",
+        "device-removed": "Den här Bluetooth-enheten har tagits bort. Lägg till den igen för att spåra den."
       }
     }
   },

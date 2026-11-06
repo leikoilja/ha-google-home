@@ -261,11 +261,23 @@
           "description": "Voer de IRK van een telefoon in, of het MAC-adres van een apparaat waarvan het adres nooit verandert, zoals sommige horloges en tags. Telefoons wijzigen hun adres om de paar minuten, dus volg ze via de IRK. Zie {docs_url} voor hoe je de IRK vindt.",
           "data": {
             "name": "Naam",
-            "irk_or_mac": "IRK of MAC-adres"
+            "irk_or_mac": "IRK of MAC-adres",
+            "additional_departure_delay": "Extra vertraging bij vertrek"
           },
           "data_description": {
             "name": "Naam van de tracker, bijvoorbeeld Telefoon van Alex.",
-            "irk_or_mac": "De Identity Resolving Key van een telefoon, als 32 hexadecimale cijfers of in base64, of een MAC-adres zoals AA:BB:CC:DD:EE:FF. De integratie herkent zelf welke van de twee je hebt ingevoerd."
+            "irk_or_mac": "De Identity Resolving Key van een telefoon, als 32 hexadecimale cijfers of in base64, of een MAC-adres zoals AA:BB:CC:DD:EE:FF. De integratie herkent zelf welke van de twee je hebt ingevoerd.",
+            "additional_departure_delay": "Extra tijd na het normale aanwezigheidsvenster van 90 seconden voordat de status van ‘Thuis’ naar ‘Afwezig’ verandert. 0 behoudt de normale timing. Een langere vertraging vertraagt ook de detectie van een daadwerkelijk vertrek. Als de scans afwezigheid niet kunnen bevestigen, kan de tracker de status ‘Niet beschikbaar’ krijgen."
+          }
+        },
+        "reconfigure": {
+          "title": "Instellingen van Bluetooth-apparaat",
+          "description": "Wijzig de extra vertraging bij vertrek voor deze tracker.",
+          "data": {
+            "additional_departure_delay": "Extra vertraging bij vertrek"
+          },
+          "data_description": {
+            "additional_departure_delay": "Extra tijd na het normale aanwezigheidsvenster van 90 seconden voordat de status van ‘Thuis’ naar ‘Afwezig’ verandert. 0 behoudt de normale timing. Een langere vertraging vertraagt ook de detectie van een daadwerkelijk vertrek. Als de scans afwezigheid niet kunnen bevestigen, kan de tracker de status ‘Niet beschikbaar’ krijgen."
           }
         }
       },
@@ -274,10 +286,12 @@
         "irk-or-mac": "Voer een IRK of een MAC-adres in.",
         "irk-invalid": "Dit is geen IRK. Een IRK is 16 bytes: 32 hexadecimale cijfers, of 24 base64-tekens die eindigen op ==.",
         "mac-invalid": "Dit is geen MAC-adres. Voer zes paren hexadecimale cijfers in, gescheiden door dubbele punten of koppeltekens, bijvoorbeeld AA:BB:CC:DD:EE:FF.",
-        "already-tracked": "Dit apparaat wordt al gevolgd."
+        "already-tracked": "Dit apparaat wordt al gevolgd.",
+        "departure-delay-invalid": "Kies 0, 30, 60, 90 of 120 seconden."
       },
       "abort": {
-        "bluetooth-tracking-off": "Bluetooth-tracking is uitgeschakeld. Schakel het eerst in bij de instellingen van de integratie: selecteer ‘Configureer’ op de pagina van de integratie."
+        "bluetooth-tracking-off": "Bluetooth-tracking is uitgeschakeld. Schakel het eerst in bij de instellingen van de integratie: selecteer ‘Configureer’ op de pagina van de integratie.",
+        "device-removed": "Dit Bluetooth-apparaat is verwijderd. Voeg het opnieuw toe om het te volgen."
       }
     }
   },

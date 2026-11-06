@@ -261,11 +261,23 @@
           "description": "Zadajte IRK telefónu alebo MAC adresu zariadenia, ktorého adresa sa nikdy nemení, napríklad niektorých hodiniek a lokalizačných štítkov. Telefóny menia adresu každých niekoľko minút, preto ich sledujte podľa IRK. Ako nájsť IRK, sa dozviete na {docs_url}.",
           "data": {
             "name": "Názov",
-            "irk_or_mac": "IRK alebo MAC adresa"
+            "irk_or_mac": "IRK alebo MAC adresa",
+            "additional_departure_delay": "Dodatočné oneskorenie odchodu"
           },
           "data_description": {
             "name": "Názov sledovača, napríklad Alexov telefón.",
-            "irk_or_mac": "Identity Resolving Key telefónu ako 32 šestnástkových číslic alebo v base64, alebo MAC adresa, napríklad AA:BB:CC:DD:EE:FF. Integrácia sama rozpozná, ktorú z nich ste zadali."
+            "irk_or_mac": "Identity Resolving Key telefónu ako 32 šestnástkových číslic alebo v base64, alebo MAC adresa, napríklad AA:BB:CC:DD:EE:FF. Integrácia sama rozpozná, ktorú z nich ste zadali.",
+            "additional_departure_delay": "Dodatočný čas po bežnom 90-sekundovom intervale prítomnosti pred zmenou stavu z „Doma“ na „Neprítomnosť“. Hodnota 0 zachováva bežné načasovanie. Dlhšie oneskorenie oddiali aj rozpoznanie skutočného odchodu. Ak skenovanie nedokáže potvrdiť neprítomnosť, sledovač môže byť nedostupný."
+          }
+        },
+        "reconfigure": {
+          "title": "Nastavenia zariadenia Bluetooth",
+          "description": "Zmeňte dodatočné oneskorenie odchodu tohto sledovača.",
+          "data": {
+            "additional_departure_delay": "Dodatočné oneskorenie odchodu"
+          },
+          "data_description": {
+            "additional_departure_delay": "Dodatočný čas po bežnom 90-sekundovom intervale prítomnosti pred zmenou stavu z „Doma“ na „Neprítomnosť“. Hodnota 0 zachováva bežné načasovanie. Dlhšie oneskorenie oddiali aj rozpoznanie skutočného odchodu. Ak skenovanie nedokáže potvrdiť neprítomnosť, sledovač môže byť nedostupný."
           }
         }
       },
@@ -274,10 +286,12 @@
         "irk-or-mac": "Zadajte IRK alebo MAC adresu.",
         "irk-invalid": "Toto nie je IRK. IRK má 16 bajtov: 32 šestnástkových číslic alebo 24 znakov base64 končiacich ==.",
         "mac-invalid": "Toto nie je MAC adresa. Zadajte šesť dvojíc šestnástkových číslic oddelených dvojbodkami alebo spojovníkmi, napríklad AA:BB:CC:DD:EE:FF.",
-        "already-tracked": "Toto zariadenie sa už sleduje."
+        "already-tracked": "Toto zariadenie sa už sleduje.",
+        "departure-delay-invalid": "Vyberte 0, 30, 60, 90 alebo 120 sekúnd."
       },
       "abort": {
-        "bluetooth-tracking-off": "Sledovanie cez Bluetooth je vypnuté. Najprv ho zapnite v možnostiach integrácie: na stránke integrácie vyberte „Konfigurovať“."
+        "bluetooth-tracking-off": "Sledovanie cez Bluetooth je vypnuté. Najprv ho zapnite v možnostiach integrácie: na stránke integrácie vyberte „Konfigurovať“.",
+        "device-removed": "Toto zariadenie Bluetooth bolo odstránené. Ak ho chcete sledovať, znova ho pridajte."
       }
     }
   },

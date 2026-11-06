@@ -3,7 +3,7 @@
 from collections.abc import Mapping
 import ipaddress
 import logging
-from typing import cast, override
+from typing import NotRequired, TypedDict, cast, override
 
 from aiohttp import ClientError, ClientResponseError
 from glocaltokens.exceptions import AuthenticationError
@@ -19,12 +19,16 @@ from homeassistant.config_entries import (
     ConfigSubentryFlow,
     OptionsFlow,
     SubentryFlowResult,
+    UnknownSubEntry,
 )
 from homeassistant.const import CONF_MAC, CONF_NAME
 from homeassistant.core import callback
 from homeassistant.data_entry_flow import section
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.selector import (
+    NumberSelector,
+    NumberSelectorConfig,
+    NumberSelectorMode,
     SelectOptionDict,
     SelectSelector,
     SelectSelectorConfig,
@@ -35,6 +39,7 @@ from .api import GlocaltokensApiClient
 from .bluetooth import parse_irk, parse_mac
 from .const import (
     BROWSER_TITLE,
+    CONF_ADDITIONAL_DEPARTURE_DELAY,
     CONF_ANDROID_ID,
     CONF_BLUETOOTH_EXCLUDED,
     CONF_BLUETOOTH_TRACKING,
@@ -48,6 +53,7 @@ from .const import (
     CONF_PASSWORD,
     CONF_UPDATE_INTERVAL,
     CONF_USERNAME,
+    DEPARTURE_DELAY_VALUES,
     DOMAIN,
     MASTER_TOKEN_TITLE,
     NO_DEVICES_DOCS_URL,
@@ -477,11 +483,46 @@ class GoogleHomeOptionsFlowHandler(OptionsFlow):
         ]
 
 
+class BluetoothDeviceInput(TypedDict):
+    """Submitted Bluetooth identity and optional departure timing."""
+
+    name: str
+    irk_or_mac: str
+    additional_departure_delay: NotRequired[float]
+
+
+class DepartureDelaySelector(NumberSelector):
+    """Keep the number box while rejecting booleans before float coercion."""
+
+    @override
+    def __call__(self, data: object) -> float:
+        if (
+            isinstance(data, bool)
+            or not isinstance(data, int | float)
+            or not 0 <= data <= DEPARTURE_DELAY_VALUES[-1]
+        ):
+            raise probatio.Invalid("Expected a number between 0 and 120")
+        return super().__call__(data)
+
+
+def _departure_delay_selector() -> DepartureDelaySelector:
+    """Use the same serialized number control in add and reconfigure."""
+    return DepartureDelaySelector(
+        NumberSelectorConfig(
+            min=0,
+            max=DEPARTURE_DELAY_VALUES[-1],
+            step=30,
+            mode=NumberSelectorMode.BOX,
+            unit_of_measurement="s",
+        )
+    )
+
+
 class BluetoothDeviceSubentryFlow(ConfigSubentryFlow):
-    """Add a Bluetooth device for the speakers to track."""
+    """Add a tracked Bluetooth device or adjust its departure timing."""
 
     async def async_step_user(
-        self, user_input: dict[str, str] | None = None
+        self, user_input: BluetoothDeviceInput | None = None
     ) -> SubentryFlowResult:
         """Ask for the device's name, and its IRK or MAC address in one field.
 
@@ -496,7 +537,8 @@ class BluetoothDeviceSubentryFlow(ConfigSubentryFlow):
         if user_input is not None:
             name = user_input[CONF_NAME].strip()
             value = user_input[CONF_IRK_OR_MAC].strip()
-            data: dict[str, str] = {}
+            delay = user_input.get(CONF_ADDITIONAL_DEPARTURE_DELAY, 0)
+            data: dict[str, str | int] = {}
             if not name:
                 errors[CONF_NAME] = "name-empty"
             elif not value:
@@ -511,12 +553,17 @@ class BluetoothDeviceSubentryFlow(ConfigSubentryFlow):
                 errors[CONF_IRK_OR_MAC] = (
                     "mac-invalid" if len(value) <= 17 else "irk-invalid"
                 )
+            if delay not in DEPARTURE_DELAY_VALUES:
+                errors[CONF_ADDITIONAL_DEPARTURE_DELAY] = "departure-delay-invalid"
             if data and any(
-                subentry.data == data
+                (subentry.data.get(CONF_IRK), subentry.data.get(CONF_MAC))
+                == (data.get(CONF_IRK), data.get(CONF_MAC))
                 for subentry in entry.get_subentries_of_type(SUBENTRY_BLUETOOTH_DEVICE)
             ):
                 errors["base"] = "already-tracked"
-            elif data:
+            elif data and not errors:
+                if delay:
+                    data[CONF_ADDITIONAL_DEPARTURE_DELAY] = int(delay)
                 return self.async_create_entry(title=name, data=data)
         return self.async_show_form(
             step_id="user",
@@ -525,12 +572,53 @@ class BluetoothDeviceSubentryFlow(ConfigSubentryFlow):
                     {
                         probatio.Required(CONF_NAME): str,
                         probatio.Required(CONF_IRK_OR_MAC): str,
+                        probatio.Optional(
+                            CONF_ADDITIONAL_DEPARTURE_DELAY, default=0
+                        ): _departure_delay_selector(),
                     }
                 ),
                 user_input,
             ),
             errors=errors,
             description_placeholders={"docs_url": BLUETOOTH_DOCS_URL},
+        )
+
+    async def async_step_reconfigure(
+        self, user_input: dict[str, float] | None = None
+    ) -> SubentryFlowResult:
+        """Change only timing, retaining the current identity and subentry."""
+        entry = self._get_entry()
+        try:
+            subentry = self._get_reconfigure_subentry()
+        except UnknownSubEntry:
+            return self.async_abort(reason="device-removed")
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            delay = user_input[CONF_ADDITIONAL_DEPARTURE_DELAY]
+            if delay not in DEPARTURE_DELAY_VALUES:
+                errors[CONF_ADDITIONAL_DEPARTURE_DELAY] = "departure-delay-invalid"
+            else:
+                return self.async_update_and_abort(
+                    entry,
+                    subentry,
+                    data_updates={CONF_ADDITIONAL_DEPARTURE_DELAY: int(delay)},
+                )
+        return self.async_show_form(
+            step_id="reconfigure",
+            data_schema=self.add_suggested_values_to_schema(
+                probatio.Schema(
+                    {
+                        probatio.Required(
+                            CONF_ADDITIONAL_DEPARTURE_DELAY,
+                            default=subentry.data.get(
+                                CONF_ADDITIONAL_DEPARTURE_DELAY, 0
+                            ),
+                        ): _departure_delay_selector(),
+                    }
+                ),
+                user_input,
+            ),
+            errors=errors,
         )
 
 

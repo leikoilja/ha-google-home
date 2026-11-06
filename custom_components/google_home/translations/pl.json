@@ -261,11 +261,23 @@
           "description": "Wpisz IRK telefonu albo adres MAC urządzenia, którego adres nigdy się nie zmienia, np. niektórych zegarków i lokalizatorów. Telefony zmieniają adres co kilka minut, więc śledź je za pomocą IRK. Jak znaleźć IRK, opisano w {docs_url}.",
           "data": {
             "name": "Nazwa",
-            "irk_or_mac": "IRK lub adres MAC"
+            "irk_or_mac": "IRK lub adres MAC",
+            "additional_departure_delay": "Dodatkowe opóźnienie wyjścia"
           },
           "data_description": {
             "name": "Nazwa trackera, np. Telefon Alexa.",
-            "irk_or_mac": "Identity Resolving Key telefonu jako 32 cyfry szesnastkowe lub w base64 albo adres MAC, np. AA:BB:CC:DD:EE:FF. Integracja sama rozpozna, co zostało wpisane."
+            "irk_or_mac": "Identity Resolving Key telefonu jako 32 cyfry szesnastkowe lub w base64 albo adres MAC, np. AA:BB:CC:DD:EE:FF. Integracja sama rozpozna, co zostało wpisane.",
+            "additional_departure_delay": "Dodatkowy czas po standardowym 90-sekundowym okresie obecności, zanim stan zmieni się z „w domu” na „poza domem”. 0 zachowuje standardowe czasy. Dłuższe opóźnienie opóźnia również wykrycie rzeczywistego wyjścia. Jeśli skanowanie nie może potwierdzić nieobecności, tracker może stać się niedostępny."
+          }
+        },
+        "reconfigure": {
+          "title": "Ustawienia urządzenia Bluetooth",
+          "description": "Zmień dodatkowe opóźnienie wyjścia dla tego trackera.",
+          "data": {
+            "additional_departure_delay": "Dodatkowe opóźnienie wyjścia"
+          },
+          "data_description": {
+            "additional_departure_delay": "Dodatkowy czas po standardowym 90-sekundowym okresie obecności, zanim stan zmieni się z „w domu” na „poza domem”. 0 zachowuje standardowe czasy. Dłuższe opóźnienie opóźnia również wykrycie rzeczywistego wyjścia. Jeśli skanowanie nie może potwierdzić nieobecności, tracker może stać się niedostępny."
           }
         }
       },
@@ -274,10 +286,12 @@
         "irk-or-mac": "Wpisz IRK lub adres MAC.",
         "irk-invalid": "To nie jest IRK. IRK ma 16 bajtów: 32 cyfry szesnastkowe albo 24 znaki base64 zakończone ==.",
         "mac-invalid": "To nie jest adres MAC. Wpisz sześć par cyfr szesnastkowych rozdzielonych dwukropkami lub łącznikami, np. AA:BB:CC:DD:EE:FF.",
-        "already-tracked": "To urządzenie jest już śledzone."
+        "already-tracked": "To urządzenie jest już śledzone.",
+        "departure-delay-invalid": "Wybierz 0, 30, 60, 90 lub 120 sekund."
       },
       "abort": {
-        "bluetooth-tracking-off": "Śledzenie Bluetooth jest wyłączone. Najpierw włącz je w opcjach integracji: wybierz „Konfiguruj” na stronie integracji."
+        "bluetooth-tracking-off": "Śledzenie Bluetooth jest wyłączone. Najpierw włącz je w opcjach integracji: wybierz „Konfiguruj” na stronie integracji.",
+        "device-removed": "To urządzenie Bluetooth zostało usunięte. Dodaj je ponownie, aby je śledzić."
       }
     }
   },

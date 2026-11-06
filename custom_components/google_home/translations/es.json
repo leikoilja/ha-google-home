@@ -261,11 +261,23 @@
           "description": "Introduce la IRK de un teléfono o la dirección MAC de un dispositivo cuya dirección nunca cambia, como algunos relojes y etiquetas localizadoras. Los teléfonos cambian de dirección cada pocos minutos, así que rastréalos por su IRK. Para saber cómo encontrar la IRK, consulta {docs_url}.",
           "data": {
             "name": "Nombre",
-            "irk_or_mac": "IRK o dirección MAC"
+            "irk_or_mac": "IRK o dirección MAC",
+            "additional_departure_delay": "Retardo adicional de salida"
           },
           "data_description": {
             "name": "Nombre del rastreador, por ejemplo Teléfono de Alex.",
-            "irk_or_mac": "La Identity Resolving Key (clave de resolución de identidad) de un teléfono, como 32 dígitos hexadecimales o en base64, o una dirección MAC como AA:BB:CC:DD:EE:FF. La integración detecta cuál de las dos has introducido."
+            "irk_or_mac": "La Identity Resolving Key (clave de resolución de identidad) de un teléfono, como 32 dígitos hexadecimales o en base64, o una dirección MAC como AA:BB:CC:DD:EE:FF. La integración detecta cuál de las dos has introducido.",
+            "additional_departure_delay": "Tiempo adicional después del período normal de presencia de 90 segundos antes de pasar de «En casa» a «Fuera». 0 mantiene los tiempos normales. Un retardo mayor también retrasa la detección de una salida real. Si los escaneos no pueden confirmar la ausencia, el rastreador puede pasar a no disponible."
+          }
+        },
+        "reconfigure": {
+          "title": "Configuración del dispositivo Bluetooth",
+          "description": "Cambia el retardo adicional de salida de este rastreador.",
+          "data": {
+            "additional_departure_delay": "Retardo adicional de salida"
+          },
+          "data_description": {
+            "additional_departure_delay": "Tiempo adicional después del período normal de presencia de 90 segundos antes de pasar de «En casa» a «Fuera». 0 mantiene los tiempos normales. Un retardo mayor también retrasa la detección de una salida real. Si los escaneos no pueden confirmar la ausencia, el rastreador puede pasar a no disponible."
           }
         }
       },
@@ -274,10 +286,12 @@
         "irk-or-mac": "Introduce una IRK o una dirección MAC.",
         "irk-invalid": "Esto no es una IRK. Una IRK tiene 16 bytes: 32 dígitos hexadecimales o 24 caracteres base64 que terminan en ==.",
         "mac-invalid": "Esto no es una dirección MAC. Introduce seis pares de dígitos hexadecimales separados por dos puntos o guiones, por ejemplo AA:BB:CC:DD:EE:FF.",
-        "already-tracked": "Este dispositivo ya se está rastreando."
+        "already-tracked": "Este dispositivo ya se está rastreando.",
+        "departure-delay-invalid": "Elige 0, 30, 60, 90 o 120 segundos."
       },
       "abort": {
-        "bluetooth-tracking-off": "El seguimiento por Bluetooth está desactivado. Actívalo primero en las opciones de la integración: selecciona «Configurar» en la página de la integración."
+        "bluetooth-tracking-off": "El seguimiento por Bluetooth está desactivado. Actívalo primero en las opciones de la integración: selecciona «Configurar» en la página de la integración.",
+        "device-removed": "Este dispositivo Bluetooth se ha eliminado. Añádelo de nuevo para rastrearlo."
       }
     }
   },
