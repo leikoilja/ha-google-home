@@ -132,6 +132,10 @@ class GoogleAccountClient:
             session=session,
         )
         self.google_devices: list[GoogleHomeDevice] = []
+        # Complete successful graph membership, separate from token-filtered devices.
+        self.bluetooth_source_ids: set[str] | None = None
+        self.bluetooth_graph_revision = 0
+        self.bluetooth_graph_answered: Callable[[], None] | None = None
         # Whether google_devices is the list of the last successful fetch, which can
         # be empty. It isn't until a fetch succeeds, or once a device rejects its
         # token and gets no new token that it accepts, while polling is off or after
@@ -450,6 +454,15 @@ class GoogleAccountClient:
         excluded homes, which the list leaves out. Then it tells setup whether a home's
         devices are added, even if a device then finds no new token in the list.
         """
+        self.bluetooth_source_ids = {
+            device.id.device_id
+            for home in home_graph.homes
+            if home.id not in self.excluded_homes
+            for device in home.devices
+        }
+        self.bluetooth_graph_revision += 1
+        if self.bluetooth_graph_answered is not None:
+            self.bluetooth_graph_answered()
         known_devices = {device.device_id: device for device in self.google_devices}
         self.google_devices = []
         self._home_graphs_fetched += 1

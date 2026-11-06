@@ -23,9 +23,10 @@ from homeassistant.helpers.typing import ConfigType
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .api import GlocaltokensApiClient
-from .bluetooth import BluetoothScanner, TrackerUpdate
+from .bluetooth import BluetoothScanner, TrackerUpdate, bluetooth_now
+from .bluetooth_coordinator import BluetoothCoordinator
+from .bluetooth_storage import async_history
 from .const import (
-    BLUETOOTH_SCAN_INTERVAL,
     BROWSER_TITLE,
     CONF_ANDROID_ID,
     CONF_BLUETOOTH_EXCLUDED,
@@ -65,6 +66,8 @@ GENERIC_TITLES = {MASTER_TOKEN_TITLE, BROWSER_TITLE}
 async def async_setup(hass: HomeAssistant, _config: ConfigType) -> bool:
     """Register the actions, which exist whether or not the entry is loaded."""
     async_setup_actions(hass)
+    for entry in hass.config_entries.async_entries(DOMAIN):
+        async_history(hass, entry)
     return True
 
 
@@ -88,6 +91,8 @@ async def async_migrate_entry(
 
 async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -> None:
     """Set up this integration using UI."""
+    history = async_history(hass, entry)
+    await history.async_load(bluetooth_now())
     username = cast(str, entry.data.get(CONF_USERNAME))
     password = cast(str, entry.data.get(CONF_PASSWORD))
     android_id = cast(str, entry.data.get(CONF_ANDROID_ID))
@@ -221,16 +226,10 @@ def async_create_bluetooth_coordinator(
         entry.runtime_data.account,
         entry.get_subentries_of_type(SUBENTRY_BLUETOOTH_DEVICE),
         excluded,
+        async_history(hass, entry),
     )
     entry.runtime_data.bluetooth_scanner = scanner
-    return DataUpdateCoordinator(
-        hass,
-        _LOGGER,
-        name=f"{DOMAIN}_bluetooth",
-        update_method=scanner.async_update,
-        update_interval=timedelta(seconds=BLUETOOTH_SCAN_INTERVAL),
-        config_entry=entry,
-    )
+    return BluetoothCoordinator(hass, entry, scanner, async_history(hass, entry))
 
 
 @callback
@@ -349,6 +348,12 @@ async def async_unload_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) 
     """Handle removal of an entry."""
     _LOGGER.debug("Unloading entry...")
     await hass.config_entries.async_unload_platforms_or_raise(entry, PLATFORMS)
+    await async_history(hass, entry).async_flush()
+
+
+async def async_remove_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -> None:
+    """Remove only this entry's continuity after older writes finish."""
+    await async_history(hass, entry).async_remove()
 
 
 async def async_remove_config_entry_device(

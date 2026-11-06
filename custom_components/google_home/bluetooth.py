@@ -3,9 +3,9 @@
 Each update reads the results of the scan that every speaker started in the
 previous update, then starts the next scan. A tracked device is home while a
 speaker heard it recently. It's away only when every speaker that Google lists
-and that has returned scan results since setup has scanned without a break for
-the whole presence window and none heard it: a speaker that stops answering
-can't confirm that a device is gone. Meanwhile the tracker keeps its last state
+and whose reply lease remains active has scanned without a break for the whole
+presence window and none heard it. A silent source expires after five minutes;
+an unidentifiable saved source expires sooner, from its original reply age. Meanwhile the tracker keeps its last state
 for a few minutes, so a missed scan doesn't make it flap. A device that never
 returned results, such as a TV that refuses the connection instead of answering
 404, can't keep trackers from showing away.
@@ -37,6 +37,8 @@ from homeassistant.config_entries import ConfigSubentry
 from homeassistant.const import CONF_MAC
 from homeassistant.util import dt as dt_util
 
+from . import bluetooth_storage
+from .bluetooth_storage import MATCHED_TIMEOUT, BluetoothHistory, SourceEvidence
 from .const import (
     API_ENDPOINT_BLUETOOTH_RESULTS,
     API_ENDPOINT_BLUETOOTH_SCAN,
@@ -148,6 +150,11 @@ async def _async_bluetooth_request(
         raise BluetoothScanError(f"{device.name} didn't answer: {err!r}") from err
 
 
+def bluetooth_now() -> float:
+    """Use the scanner clock for setup, expiry and accepted replies alike."""
+    return monotonic()
+
+
 class TrackerState(StrEnum):
     """State of a tracked Bluetooth device."""
 
@@ -222,6 +229,10 @@ class TrackedDevice:
         # The latest home or away state, and when the speakers last confirmed it
         self.state = TrackerState.UNKNOWN
         self.confirmed_at: float | None = None
+        self.confirmed_now = False
+        self.last_sighted_utc: float | None = None
+        self.live_sighting = False
+        self.provenance = "live"
         # The strongest RSSI each speaker heard the device at in this update,
         # by the speaker's device ID
         self.heard: dict[str, int] = {}
@@ -279,8 +290,14 @@ class BluetoothScanner:
         account: GoogleAccountCoordinator,
         subentries: Iterable[ConfigSubentry],
         excluded: Iterable[str],
+        history: BluetoothHistory | None = None,
     ) -> None:
         """Create a scanner for the tracked devices, using the devices Google lists."""
+        self._history = history
+        self._generation = history.generation if history else 0
+        self._leases = history.sources if history else {}
+        self._membership_changed = False
+        self._accepted = False
         self._session = session
         self._account = account
         self.tracked = [TrackedDevice(subentry) for subentry in subentries]
@@ -290,6 +307,110 @@ class BluetoothScanner:
         self._unsupported: set[str] = set()
         # Diagnostic history survives a speaker becoming unsupported or disabled.
         self._answered: set[str] = set()
+        if history is not None:
+            now = monotonic()
+            for device in self.tracked:
+                row = history.trackers.get(device.subentry_id)
+                if row is not None and now < row.expires:
+                    device.state = TrackerState(row.state)
+                    device.last_sighted = row.sighted
+                    device.last_sighted_utc = row.sighted_utc
+                    device.confirmed_at = row.confirmed
+                    device.provenance = "restored"
+
+    def reset_clock(self) -> None:
+        """Start fresh after a detected clock discontinuity, retaining identities."""
+        assert self._history is not None
+        self._generation = self._history.generation
+        for speaker in self._speakers.values():
+            speaker.run_start = speaker.covered_until = speaker.pending_start = None
+        for device in self.tracked:
+            device.last_sighted = device.confirmed_at = device.last_sighted_utc = None
+            device.state = TrackerState.UNKNOWN
+            device.live_sighting = False
+
+    def current(self) -> bool:
+        """An obsolete scanner must not apply late replies or timer decisions."""
+        return self._history is None or self._generation == self._history.generation
+
+    def _eligible(self, source_id: str) -> bool:
+        account = self._account
+        roster = getattr(account.client, "bluetooth_source_ids", None)
+        return (
+            self.current()
+            and source_id not in self._excluded
+            and source_id not in self._unsupported
+            and (not isinstance(roster, set) or source_id in roster)
+            and not async_device_disabled(account.hass, account.config_entry, source_id)
+        )
+
+    def _expire_sources(self, now: float) -> bool:
+        expired = False
+        for key, row in list(self._leases.items()):
+            if row.deadline <= now:
+                del self._leases[key]
+                if row.source_id in self._speakers:
+                    speaker = self._speakers[row.source_id]
+                    speaker.run_start = speaker.covered_until = None
+                expired = True
+        if expired and self._history:
+            self._history.schedule_save()
+        self._membership_changed |= expired
+        return expired
+
+    def evaluate(
+        self, *, healthy: bool = True, scan: bool = False
+    ) -> dict[str, TrackerUpdate]:
+        """One owner decides at actual time, processing source D before tracker E."""
+        now = monotonic()
+        self._expire_sources(now)
+        self._update_speakers()
+        required = [
+            self._speakers.get(row.source_id or "") for row in self._leases.values()
+        ]
+        covered = (
+            healthy
+            and bool(required)
+            and all(speaker is not None and speaker.covers(now) for speaker in required)
+        )
+        self._warn_about_blocking_speakers(
+            [speaker for speaker in required if speaker is not None], now
+        )
+        decision = healthy and ((scan and self._accepted) or self._membership_changed)
+        provenance = "live" if scan and self._accepted else "membership_expiry"
+        self._membership_changed = False
+        updates = {}
+        for device in self.tracked:
+            state = self._state(
+                device,
+                now,
+                covered,
+                confirm=decision,
+                home_confirm=scan and self._accepted and device.live_sighting,
+            )
+            if device.confirmed_now and self._history:
+                device.provenance = provenance
+                self._history.confirm(
+                    device.subentry_id,
+                    str(device.state),
+                    device.last_sighted,
+                    now,
+                    provenance,
+                    device.last_sighted_utc,
+                )
+            updates[device.subentry_id] = self._tracker_update(device, state, now)
+            device.heard = {}
+        return updates
+
+    def deadlines(self) -> list[float]:
+        """Return only future deadlines; consumed expiry events cannot renew state."""
+        now = monotonic()
+        return [row.deadline for row in self._leases.values() if row.deadline > now] + [
+            device.confirmed_at + BLUETOOTH_UNCERTAIN_LIMIT
+            for device in self.tracked
+            if device.confirmed_at is not None
+            and device.confirmed_at + BLUETOOTH_UNCERTAIN_LIMIT > now
+        ]
 
     def diagnostics(self) -> dict[str, object]:
         """Return only speaker scan facts, without credentials or scan contents.
@@ -307,7 +428,24 @@ class BluetoothScanner:
             )
             speaker = self._speakers.get(device_id) if not excluded else None
             covered_until = speaker.covered_until if speaker is not None else None
+            lease = next(
+                (row for row in self._leases.values() if row.source_id == device_id),
+                None,
+            )
+            participating = (
+                lease is not None
+                and now < lease.deadline
+                and not excluded
+                and device_id not in self._unsupported
+            )
             speakers[device_id] = {
+                "participating": participating,
+                "last_success_age": round(max(0, now - lease.last_success), 1)
+                if lease is not None
+                else None,
+                "remaining_lease": round(max(0, lease.deadline - now), 1)
+                if lease is not None
+                else None,
                 "excluded": excluded,
                 "unsupported": device_id in self._unsupported,
                 "answered": device_id in self._answered,
@@ -324,6 +462,10 @@ class BluetoothScanner:
 
     async def async_update(self) -> dict[str, TrackerUpdate]:
         """Read the scans of the previous update, start new ones, and return the updates."""
+        if not self.current():
+            raise asyncio.CancelledError
+        self._expire_sources(monotonic())
+        self._accepted = False
         devices = self._update_speakers()
         for device in self.tracked:
             device.heard = {}
@@ -331,19 +473,12 @@ class BluetoothScanner:
             *(
                 self._async_update_speaker(device_id, speaker, devices[device_id])
                 for device_id, speaker in list(self._speakers.items())
+                if device_id in devices
             )
         )
-        now = monotonic()
-        answered = [speaker for speaker in self._speakers.values() if speaker.answered]
-        self._warn_about_blocking_speakers(answered, now)
-        # No speaker to scan with can't confirm that a device is away
-        covered = bool(answered) and all(speaker.covers(now) for speaker in answered)
-        return {
-            device.subentry_id: self._tracker_update(
-                device, self._state(device, now, covered), now
-            )
-            for device in self.tracked
-        }
+        if not self.current():
+            raise asyncio.CancelledError
+        return self.evaluate(scan=True)
 
     def _update_speakers(self) -> dict[str, GoogleHomeDevice]:
         """Update the speakers that scan from Google's device list.
@@ -360,11 +495,16 @@ class BluetoothScanner:
             for device_id, device in (account.data or {}).items()
             if not async_device_disabled(account.hass, account.config_entry, device_id)
         }
+        for key, row in list(self._leases.items()):
+            if row.source_id is not None and not self._eligible(row.source_id):
+                del self._leases[key]
+                if self._history:
+                    self._history.schedule_save()
         for device_id in list(self._speakers):
-            if device_id not in devices:
+            if device_id not in devices or not self._eligible(device_id):
                 del self._speakers[device_id]
         for device_id, device in devices.items():
-            if device_id in self._excluded or device_id in self._unsupported:
+            if not self._eligible(device_id):
                 continue
             speaker = self._speakers.get(device_id)
             if speaker is None:
@@ -404,9 +544,17 @@ class BluetoothScanner:
                 _LOGGER.debug("Failed to read Bluetooth scan: %s", err)
                 speaker.run_start = None
             else:
-                speaker.answered = True
-                self._answered.add(device_id)
+                if (
+                    not self._eligible(device_id)
+                    or self._speakers.get(device_id) is not speaker
+                ):
+                    return
                 self._read_scan(device_id, speaker, start, results)
+        if (
+            not self._eligible(device_id)
+            or self._speakers.get(device_id) is not speaker
+        ):
+            return
         start = monotonic()
         try:
             await async_start_bluetooth_scan(self._session, device)
@@ -416,7 +564,8 @@ class BluetoothScanner:
             # It may have cleared the results or not, so they're never read
             _LOGGER.debug("Failed to start Bluetooth scan: %s", err)
         else:
-            speaker.pending_start = start
+            if self._eligible(device_id) and self._speakers.get(device_id) is speaker:
+                speaker.pending_start = start
 
     def _read_scan(
         self,
@@ -435,6 +584,22 @@ class BluetoothScanner:
             )
             speaker.run_start = None
             return
+        self._expire_sources(read)
+        self._accepted = True
+        speaker.answered = True
+        self._answered.add(device_id)
+        if self._history:
+            self._history.source_reply(device_id, read)
+        else:
+            wall = bluetooth_storage.utc_timestamp()
+            self._leases[device_id] = SourceEvidence(
+                device_id,
+                device_id,
+                read,
+                read + MATCHED_TIMEOUT,
+                wall,
+                wall + MATCHED_TIMEOUT,
+            )
         # Only counts: the results include the neighbours' devices
         _LOGGER.debug("%s heard %d Bluetooth devices", speaker.name, len(results))
         for result in results:
@@ -449,6 +614,10 @@ class BluetoothScanner:
                 if device.last_sighted is None or device.last_sighted < start:
                     # The scan's start, as the device may have been heard then
                     device.last_sighted = start
+                    device.last_sighted_utc = (
+                        bluetooth_storage.utc_timestamp() + start - read
+                    )
+                device.live_sighting = True
                 # One reading per scan, even if it heard several of the
                 # device's addresses
                 device.heard[device_id] = max(
@@ -470,6 +639,11 @@ class BluetoothScanner:
         )
         self._unsupported.add(device_id)
         self._speakers.pop(device_id, None)
+        for key, row in list(self._leases.items()):
+            if row.source_id == device_id:
+                del self._leases[key]
+        if self._history:
+            self._history.schedule_save()
 
     @staticmethod
     def _warn_about_blocking_speakers(answered: list[SpeakerScan], now: float) -> None:
@@ -486,8 +660,8 @@ class BluetoothScanner:
             ):
                 speaker.warned = True
                 _LOGGER.warning(
-                    "%s hasn't answered Bluetooth scans for %d minutes, so Bluetooth "
-                    "trackers can't show away. If it's out of service, add it to "
+                    "%s has not provided continuous Bluetooth coverage for %d minutes, "
+                    "so Bluetooth trackers cannot show away. If it is out of service, add it to "
                     "'Speakers not used for Bluetooth tracking' in the integration's "
                     "options",
                     speaker.name,
@@ -495,19 +669,26 @@ class BluetoothScanner:
                 )
 
     @staticmethod
-    def _state(device: TrackedDevice, now: float, covered: bool) -> TrackerState:
-        """Return the state of a tracked device after an update.
-
-        When the speakers can't tell, the last state stays for a few minutes:
-        a missed scan, or a speaker coming online, doesn't make it flap.
-        """
-        if (
+    def _state(
+        device: TrackedDevice,
+        now: float,
+        covered: bool,
+        *,
+        confirm: bool = True,
+        home_confirm: bool = True,
+    ) -> TrackerState:
+        """Confirm with new evidence; otherwise retain only the original lease."""
+        device.confirmed_now = False
+        home = (
             device.last_sighted is not None
             and device.last_sighted > now - BLUETOOTH_PRESENCE_WINDOW
-        ):
+        )
+        if confirm and home and home_confirm:
             device.state, device.confirmed_at = TrackerState.HOME, now
-        elif covered:
+            device.confirmed_now = True
+        elif confirm and not home and covered:
             device.state, device.confirmed_at = TrackerState.NOT_HOME, now
+            device.confirmed_now = True
         elif device.confirmed_at is None:
             return TrackerState.UNKNOWN
         elif now - device.confirmed_at >= BLUETOOTH_UNCERTAIN_LIMIT:
