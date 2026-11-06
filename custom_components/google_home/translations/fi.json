@@ -152,7 +152,7 @@
       "message": "Laitteen {device} nykyisiä herätyksiä ja ajastimia ei voitu hakea, joten laitteesta ei poistettu mitään. Tarkista, että laite on verkossa, ja yritä myöhemmin uudelleen."
     },
     "alarms_and_timers_not_fetched_token_rejected_polling_off": {
-      "message": "Laitteen {device} nykyisiä herätyksiä ja ajastimia ei voitu hakea, joten laitteesta ei poistettu mitään. Laite hylkäsi tunnisteensa, eikä uuden hakeminen Googlelta auttanut. Muutosten kysely on poistettu käytöstä, joten integraatio ei pyydä Googlelta uutta itsestään: suorita toiminto ”Päivitä laitteiden tila” ja yritä sitten uudelleen."
+      "message": "Laitteen {device} nykyisiä herätyksiä ja ajastimia ei voitu hakea, joten laitteesta ei poistettu mitään. Laite hylkäsi tunnisteensa. Muutosten kysely on poistettu käytöstä, joten integraatio ei pyydä Googlelta uutta itsestään: suorita toiminto ”Päivitä laitteiden tila” ja yritä sitten uudelleen."
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Seuraavien laitteiden nykyisiä herätyksiä ja ajastimia ei voitu hakea: {devices}. Näistä laitteista ei siksi poistettu mitään. Tarkista, että laitteet ovat verkossa, ja yritä myöhemmin uudelleen."
@@ -161,13 +161,13 @@
       "message": "Laite {device} ei vahvistanut herätysten tai ajastimien poistamista, joten ne saattavat edelleen olla asetettuina. Tarkista, että laite on verkossa, ja yritä myöhemmin uudelleen."
     },
     "alarms_and_timers_not_deleted_token_rejected_polling_off": {
-      "message": "Laite {device} ei vahvistanut herätysten tai ajastimien poistamista, joten ne saattavat edelleen olla asetettuina. Laite hylkäsi tunnisteensa, eikä uuden hakeminen Googlelta auttanut. Muutosten kysely on poistettu käytöstä, joten integraatio ei pyydä Googlelta uutta itsestään: suorita toiminto ”Päivitä laitteiden tila” ja yritä sitten uudelleen."
+      "message": "Laite {device} ei vahvistanut herätysten tai ajastimien poistamista, joten ne saattavat edelleen olla asetettuina. Laite hylkäsi tunnisteensa. Muutosten kysely on poistettu käytöstä, joten integraatio ei pyydä Googlelta uutta itsestään: suorita toiminto ”Päivitä laitteiden tila” ja yritä sitten uudelleen."
     },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "Seuraavista laitteista ei voitu poistaa herätyksiä tai ajastimia tai niiden poistamista ei voitu vahvistaa: {devices}. Tarkista, että laitteet ovat verkossa, ja yritä myöhemmin uudelleen."
     },
     "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
-      "message": "Seuraavista laitteista ei voitu poistaa herätyksiä tai ajastimia tai niiden poistamista ei voitu vahvistaa: {devices}. Ainakin yksi niistä hylkäsi tunnisteensa, eikä uuden hakeminen Googlelta auttanut. Muutosten kysely on poistettu käytöstä, joten integraatio ei pyydä Googlelta uutta itsestään: suorita toiminto ”Päivitä laitteiden tila”, tarkista, että laitteet ovat verkossa, ja yritä sitten uudelleen."
+      "message": "Seuraavista laitteista ei voitu poistaa herätyksiä tai ajastimia tai niiden poistamista ei voitu vahvistaa: {devices}. Ainakin yksi niistä hylkäsi tunnisteensa. Muutosten kysely on poistettu käytöstä, joten integraatio ei pyydä Googlelta uutta itsestään: suorita toiminto ”Päivitä laitteiden tila”, tarkista, että laitteet ovat verkossa, ja yritä sitten uudelleen."
     },
     "invalid_alarm_id": {
       "message": "”{alarm_id}” ei ole herätyksen tunnus. Kopioi tunnus, joka alkaa merkkijonolla alarm/, laitteen herätysanturin alarms-attribuutista."
@@ -188,10 +188,10 @@
       "message": "Laite {device} ei vahvistanut suorittaneensa toimintoa: se ei vastannut ajoissa tai sen vastaus katkesi kesken. Tarkista, että laite on verkossa, ja yritä uudelleen."
     },
     "device_token_rejected": {
-      "message": "Laite {device} hylkäsi tunnisteensa, eikä uuden hakeminen Googlelta auttanut. Integraatio jatkaa uuden pyytämistä Googlelta, joten yritä myöhemmin uudelleen."
+      "message": "Laite {device} hylkäsi tunnisteensa. Integraatio jatkaa uuden pyytämistä Googlelta, joten yritä myöhemmin uudelleen."
     },
     "device_token_rejected_polling_off": {
-      "message": "Laite {device} hylkäsi tunnisteensa, eikä uuden hakeminen Googlelta auttanut. Muutosten kysely on poistettu käytöstä, joten integraatio ei pyydä Googlelta uutta itsestään: suorita toiminto ”Päivitä laitteiden tila” ja yritä sitten uudelleen."
+      "message": "Laite {device} hylkäsi tunnisteensa. Muutosten kysely on poistettu käytöstä, joten integraatio ei pyydä Googlelta uutta itsestään: suorita toiminto ”Päivitä laitteiden tila” ja yritä sitten uudelleen."
     },
     "device_not_ready": {
       "message": "Laite {device} vastasi ”ei löytynyt”. Se voi olla vielä käynnistymässä, joten yritä myöhemmin uudelleen, tai se ei ehkä tue tätä."
@@ -317,7 +317,7 @@
             },
             "data_description": {
               "bluetooth_tracking": "Kaiuttimiesi avulla näet, ovatko puhelimesi tai muut Bluetooth-laitteet kotona. Kun olet ottanut seurannan käyttöön, valitse integraation sivulla ”Seuraa Bluetooth-laitetta” jokaiselle laitteelle, jota haluat seurata. Kun seuranta ei ole käytössä, integraatio ei lähetä kaiuttimille Bluetooth-pyyntöjä.",
-              "bluetooth_excluded_speakers": "Kaiuttimet, jotka eivät etsi Bluetooth-laitteita. Lisää tähän kaiutin, joka on irrotettu verkkovirrasta tai poissa käytöstä: niin kauan kuin kaiutin ei vastaa, Bluetooth-seuranta ei voi näyttää tilaa ”Poissa”."
+              "bluetooth_excluded_speakers": "Kaiuttimet, jotka eivät etsi Bluetooth-laitteita. Lisää tähän kaiutin, joka on irrotettu verkkovirrasta tai poissa käytöstä."
             }
           }
         }

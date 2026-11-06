@@ -152,7 +152,7 @@
       "message": "Tidak dapat mengambil alarm dan timer saat ini dari perangkat {device}, sehingga tidak ada yang dihapus dari perangkat tersebut. Pastikan perangkat online dan coba lagi nanti."
     },
     "alarms_and_timers_not_fetched_token_rejected_polling_off": {
-      "message": "Tidak dapat mengambil alarm dan timer saat ini dari perangkat {device}, sehingga tidak ada yang dihapus dari perangkat tersebut. Perangkat tersebut menolak tokennya, dan mendapatkan token baru dari Google tidak membantu. Polling untuk perubahan dinonaktifkan, sehingga integrasi tidak meminta token baru dari Google lagi secara mandiri: jalankan aksi “Perbarui status perangkat”, lalu coba lagi."
+      "message": "Tidak dapat mengambil alarm dan timer saat ini dari perangkat {device}, sehingga tidak ada yang dihapus dari perangkat tersebut. Perangkat tersebut menolak tokennya. Polling untuk perubahan dinonaktifkan, sehingga integrasi tidak meminta token baru dari Google lagi secara mandiri: jalankan aksi “Perbarui status perangkat”, lalu coba lagi."
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Tidak dapat mengambil alarm dan timer saat ini dari perangkat berikut, sehingga tidak ada yang dihapus dari perangkat tersebut: {devices}. Pastikan semuanya online dan coba lagi nanti."
@@ -161,13 +161,13 @@
       "message": "Perangkat {device} tidak mengonfirmasi penghapusan alarm atau timer, sehingga alarm atau timer tersebut mungkin masih disetel. Pastikan perangkat online dan coba lagi nanti."
     },
     "alarms_and_timers_not_deleted_token_rejected_polling_off": {
-      "message": "Perangkat {device} tidak mengonfirmasi penghapusan alarm atau timer, sehingga alarm atau timer tersebut mungkin masih disetel. Perangkat tersebut menolak tokennya, dan mendapatkan token baru dari Google tidak membantu. Polling untuk perubahan dinonaktifkan, sehingga integrasi tidak meminta token baru dari Google lagi secara mandiri: jalankan aksi “Perbarui status perangkat”, lalu coba lagi."
+      "message": "Perangkat {device} tidak mengonfirmasi penghapusan alarm atau timer, sehingga alarm atau timer tersebut mungkin masih disetel. Perangkat tersebut menolak tokennya. Polling untuk perubahan dinonaktifkan, sehingga integrasi tidak meminta token baru dari Google lagi secara mandiri: jalankan aksi “Perbarui status perangkat”, lalu coba lagi."
     },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "Tidak dapat menghapus alarm atau timer dari perangkat berikut, atau mengonfirmasi bahwa alarm atau timer tersebut telah dihapus: {devices}. Pastikan semuanya online dan coba lagi nanti."
     },
     "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
-      "message": "Tidak dapat menghapus alarm atau timer dari perangkat berikut, atau mengonfirmasi bahwa alarm atau timer tersebut telah dihapus: {devices}. Setidaknya salah satu di antaranya menolak tokennya, dan mendapatkan token baru dari Google tidak membantu. Polling untuk perubahan dinonaktifkan, sehingga integrasi tidak meminta token baru dari Google lagi secara mandiri: jalankan aksi “Perbarui status perangkat”, pastikan semua perangkat tersebut online, lalu coba lagi."
+      "message": "Tidak dapat menghapus alarm atau timer dari perangkat berikut, atau mengonfirmasi bahwa alarm atau timer tersebut telah dihapus: {devices}. Setidaknya salah satu di antaranya menolak tokennya. Polling untuk perubahan dinonaktifkan, sehingga integrasi tidak meminta token baru dari Google lagi secara mandiri: jalankan aksi “Perbarui status perangkat”, pastikan semua perangkat tersebut online, lalu coba lagi."
     },
     "invalid_alarm_id": {
       "message": "“{alarm_id}” bukan ID alarm. Salin ID yang diawali dengan alarm/ dari atribut alarms pada sensor alarm perangkat."
@@ -188,10 +188,10 @@
       "message": "Perangkat {device} tidak mengonfirmasi bahwa tindakan ini sudah dilakukan: perangkat tidak merespons tepat waktu, atau responsnya terputus. Pastikan perangkat online dan coba lagi."
     },
     "device_token_rejected": {
-      "message": "Perangkat {device} menolak tokennya, dan mendapatkan token baru dari Google tidak membantu. Integrasi terus meminta token baru dari Google, jadi coba lagi nanti."
+      "message": "Perangkat {device} menolak tokennya. Integrasi terus meminta token baru dari Google, jadi coba lagi nanti."
     },
     "device_token_rejected_polling_off": {
-      "message": "Perangkat {device} menolak tokennya, dan mendapatkan token baru dari Google tidak membantu. Polling untuk perubahan dinonaktifkan, sehingga integrasi tidak meminta token baru dari Google lagi secara mandiri: jalankan aksi “Perbarui status perangkat”, lalu coba lagi."
+      "message": "Perangkat {device} menolak tokennya. Polling untuk perubahan dinonaktifkan, sehingga integrasi tidak meminta token baru dari Google lagi secara mandiri: jalankan aksi “Perbarui status perangkat”, lalu coba lagi."
     },
     "device_not_ready": {
       "message": "Perangkat {device} merespons “tidak ditemukan”. Perangkat mungkin masih dalam proses penyalaan, jadi coba lagi nanti, atau mungkin tidak mendukung tindakan ini."
@@ -317,7 +317,7 @@
             },
             "data_description": {
               "bluetooth_tracking": "Gunakan speaker Anda untuk mengetahui apakah ponsel Anda atau perangkat Bluetooth lain ada di rumah. Setelah mengaktifkannya, pilih “Lacak perangkat Bluetooth” di halaman integrasi untuk setiap perangkat yang ingin dilacak. Selama nonaktif, integrasi tidak mengirim permintaan Bluetooth apa pun ke speaker Anda.",
-              "bluetooth_excluded_speakers": "Speaker yang tidak memindai perangkat Bluetooth. Tambahkan speaker yang dicabut atau tidak berfungsi: selama speaker tidak merespons, pelacak tidak dapat menampilkan “Keluar”."
+              "bluetooth_excluded_speakers": "Speaker yang tidak memindai perangkat Bluetooth. Tambahkan speaker yang dicabut atau tidak berfungsi."
             }
           }
         }

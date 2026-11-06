@@ -29,6 +29,7 @@ from .test_missing_devices import (
     make_client,
     when_fetched,
 )
+from .test_sensor import error_message
 from .test_token_rejected import NEWER_TOKEN, OLD_TOKEN, accepting, tokens_sent
 
 
@@ -199,6 +200,10 @@ def test_action_waits_with_device(clock: Mock) -> None:
         with pytest.raises(DeviceRequestFailed) as err:
             asyncio.run(client.set_do_not_disturb(kitchen, enable=True))
         assert err.value.reason == "token_rejected"
+        assert error_message(err.value) == (
+            "device0 rejected its token. The integration keeps asking Google for "
+            "one, so try again later."
+        )
         return int(glocaltokens.get_google_devices.call_count)
 
     assert turn_on_do_not_disturb_at(MINUTE - 5) == 1

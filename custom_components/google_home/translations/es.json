@@ -152,7 +152,7 @@
       "message": "No se han podido obtener las alarmas y los temporizadores actuales de {device}, por lo que no se ha eliminado nada de ese dispositivo. Comprueba que esté en línea y vuelve a intentarlo más tarde."
     },
     "alarms_and_timers_not_fetched_token_rejected_polling_off": {
-      "message": "No se han podido obtener las alarmas y los temporizadores actuales de {device}, por lo que no se ha eliminado nada de ese dispositivo. El dispositivo ha rechazado su token y obtener uno nuevo de Google no ha servido de nada. El sondeo de cambios está deshabilitado, así que la integración no vuelve a pedir uno a Google por sí misma: ejecuta la acción «Actualizar dispositivos» y vuelve a intentarlo."
+      "message": "No se han podido obtener las alarmas y los temporizadores actuales de {device}, por lo que no se ha eliminado nada de ese dispositivo. El dispositivo ha rechazado su token. El sondeo de cambios está deshabilitado, así que la integración no vuelve a pedir uno a Google por sí misma: ejecuta la acción «Actualizar dispositivos» y vuelve a intentarlo."
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "No se han podido obtener las alarmas y los temporizadores actuales de estos dispositivos, por lo que no se ha eliminado nada de ellos: {devices}. Comprueba que estén en línea y vuelve a intentarlo más tarde."
@@ -161,13 +161,13 @@
       "message": "{device} no ha confirmado la eliminación de las alarmas o los temporizadores, por lo que podrían seguir configurados. Comprueba que esté en línea y vuelve a intentarlo más tarde."
     },
     "alarms_and_timers_not_deleted_token_rejected_polling_off": {
-      "message": "{device} no ha confirmado la eliminación de las alarmas o los temporizadores, por lo que podrían seguir configurados. El dispositivo ha rechazado su token y obtener uno nuevo de Google no ha servido de nada. El sondeo de cambios está deshabilitado, así que la integración no vuelve a pedir uno a Google por sí misma: ejecuta la acción «Actualizar dispositivos» y vuelve a intentarlo."
+      "message": "{device} no ha confirmado la eliminación de las alarmas o los temporizadores, por lo que podrían seguir configurados. El dispositivo ha rechazado su token. El sondeo de cambios está deshabilitado, así que la integración no vuelve a pedir uno a Google por sí misma: ejecuta la acción «Actualizar dispositivos» y vuelve a intentarlo."
     },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "No se han podido eliminar las alarmas o los temporizadores de estos dispositivos, o confirmar que se hayan eliminado: {devices}. Comprueba que estén en línea y vuelve a intentarlo más tarde."
     },
     "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
-      "message": "No se han podido eliminar las alarmas o los temporizadores de estos dispositivos, o confirmar que se hayan eliminado: {devices}. Al menos uno de ellos ha rechazado su token y obtener uno nuevo de Google no ha servido de nada. El sondeo de cambios está deshabilitado, así que la integración no vuelve a pedir uno a Google por sí misma: ejecuta la acción «Actualizar dispositivos», comprueba que los dispositivos estén en línea y vuelve a intentarlo."
+      "message": "No se han podido eliminar las alarmas o los temporizadores de estos dispositivos, o confirmar que se hayan eliminado: {devices}. Al menos uno de ellos ha rechazado su token. El sondeo de cambios está deshabilitado, así que la integración no vuelve a pedir uno a Google por sí misma: ejecuta la acción «Actualizar dispositivos», comprueba que los dispositivos estén en línea y vuelve a intentarlo."
     },
     "invalid_alarm_id": {
       "message": "«{alarm_id}» no es un ID de alarma. Copia el ID, que empieza por alarm/, del atributo alarms del sensor de alarmas del dispositivo."
@@ -188,10 +188,10 @@
       "message": "{device} no ha confirmado que lo haya hecho: no ha respondido a tiempo o su respuesta se ha cortado. Comprueba que esté en línea y vuelve a intentarlo."
     },
     "device_token_rejected": {
-      "message": "{device} ha rechazado su token y obtener uno nuevo de Google no ha servido de nada. La integración sigue pidiendo uno nuevo a Google, así que vuelve a intentarlo más tarde."
+      "message": "{device} ha rechazado su token. La integración sigue pidiendo uno nuevo a Google, así que vuelve a intentarlo más tarde."
     },
     "device_token_rejected_polling_off": {
-      "message": "{device} ha rechazado su token y obtener uno nuevo de Google no ha servido de nada. El sondeo de cambios está deshabilitado, así que la integración no vuelve a pedir uno a Google por sí misma: ejecuta la acción «Actualizar dispositivos» y vuelve a intentarlo."
+      "message": "{device} ha rechazado su token. El sondeo de cambios está deshabilitado, así que la integración no vuelve a pedir uno a Google por sí misma: ejecuta la acción «Actualizar dispositivos» y vuelve a intentarlo."
     },
     "device_not_ready": {
       "message": "{device} ha respondido «no encontrado». Puede que aún se esté iniciando, así que vuelve a intentarlo más tarde, o que no admita esta acción."
@@ -317,7 +317,7 @@
             },
             "data_description": {
               "bluetooth_tracking": "Usa tus altavoces para saber si tu teléfono u otros dispositivos Bluetooth están en casa. Después de activarlo, selecciona «Rastrear un dispositivo Bluetooth» en la página de la integración para cada dispositivo que quieras rastrear. Mientras esté desactivado, la integración no envía ninguna solicitud Bluetooth a tus altavoces.",
-              "bluetooth_excluded_speakers": "Altavoces que no buscan dispositivos Bluetooth. Añade un altavoz que esté desenchufado o fuera de servicio: mientras un altavoz no responda, los rastreadores no pueden mostrar «Fuera»."
+              "bluetooth_excluded_speakers": "Altavoces que no buscan dispositivos Bluetooth. Añade un altavoz que esté desenchufado o fuera de servicio."
             }
           }
         }

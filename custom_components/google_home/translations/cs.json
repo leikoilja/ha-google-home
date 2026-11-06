@@ -152,7 +152,7 @@
       "message": "Nepodařilo se načíst aktuální budíky a časovače ze zařízení {device}, proto z něj nebylo nic smazáno. Zkontrolujte, zda je zařízení online, a zkuste to znovu později."
     },
     "alarms_and_timers_not_fetched_token_rejected_polling_off": {
-      "message": "Nepodařilo se načíst aktuální budíky a časovače ze zařízení {device}, proto z něj nebylo nic smazáno. Zařízení odmítlo svůj token a získání nového od Googlu nepomohlo. Dotazování na změny je vypnuté, takže integrace sama znovu nežádá Google o nový token: spusťte akci „Aktualizovat stav zařízení“ a pak to zkuste znovu."
+      "message": "Nepodařilo se načíst aktuální budíky a časovače ze zařízení {device}, proto z něj nebylo nic smazáno. Zařízení odmítlo svůj token. Dotazování na změny je vypnuté, takže integrace sama znovu nežádá Google o nový token: spusťte akci „Aktualizovat stav zařízení“ a pak to zkuste znovu."
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Nepodařilo se načíst aktuální budíky a časovače z následujících zařízení, proto z nich nebylo nic smazáno: {devices}. Zkontrolujte, zda jsou zařízení online, a zkuste to znovu později."
@@ -161,13 +161,13 @@
       "message": "Zařízení {device} nepotvrdilo smazání budíků nebo časovačů, takže mohou být stále nastavené. Zkontrolujte, zda je zařízení online, a zkuste to znovu později."
     },
     "alarms_and_timers_not_deleted_token_rejected_polling_off": {
-      "message": "Zařízení {device} nepotvrdilo smazání budíků nebo časovačů, takže mohou být stále nastavené. Zařízení odmítlo svůj token a získání nového od Googlu nepomohlo. Dotazování na změny je vypnuté, takže integrace sama znovu nežádá Google o nový token: spusťte akci „Aktualizovat stav zařízení“ a pak to zkuste znovu."
+      "message": "Zařízení {device} nepotvrdilo smazání budíků nebo časovačů, takže mohou být stále nastavené. Zařízení odmítlo svůj token. Dotazování na změny je vypnuté, takže integrace sama znovu nežádá Google o nový token: spusťte akci „Aktualizovat stav zařízení“ a pak to zkuste znovu."
     },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "Nepodařilo se smazat budíky nebo časovače z následujících zařízení nebo potvrdit jejich smazání: {devices}. Zkontrolujte, zda jsou zařízení online, a zkuste to znovu později."
     },
     "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
-      "message": "Nepodařilo se smazat budíky nebo časovače z následujících zařízení nebo potvrdit jejich smazání: {devices}. Alespoň jedno z nich odmítlo svůj token a získání nového od Googlu nepomohlo. Dotazování na změny je vypnuté, takže integrace sama znovu nežádá Google o nový token: spusťte akci „Aktualizovat stav zařízení“, zkontrolujte, zda jsou zařízení online, a pak to zkuste znovu."
+      "message": "Nepodařilo se smazat budíky nebo časovače z následujících zařízení nebo potvrdit jejich smazání: {devices}. Alespoň jedno z nich odmítlo svůj token. Dotazování na změny je vypnuté, takže integrace sama znovu nežádá Google o nový token: spusťte akci „Aktualizovat stav zařízení“, zkontrolujte, zda jsou zařízení online, a pak to zkuste znovu."
     },
     "invalid_alarm_id": {
       "message": "„{alarm_id}“ není ID budíku. Zkopírujte ID začínající na alarm/ z atributu alarms senzoru budíků daného zařízení."
@@ -188,10 +188,10 @@
       "message": "Zařízení {device} nepotvrdilo, že akci provedlo: neodpovědělo včas nebo byla jeho odpověď přerušena. Zkontrolujte, zda je zařízení online, a zkuste to znovu."
     },
     "device_token_rejected": {
-      "message": "Zařízení {device} odmítlo svůj token a získání nového od Googlu nepomohlo. Integrace bude dál žádat Google o nový, takže to zkuste znovu později."
+      "message": "Zařízení {device} odmítlo svůj token. Integrace bude dál žádat Google o nový, takže to zkuste znovu později."
     },
     "device_token_rejected_polling_off": {
-      "message": "Zařízení {device} odmítlo svůj token a získání nového od Googlu nepomohlo. Dotazování na změny je vypnuté, takže integrace sama znovu nežádá Google o nový token: spusťte akci „Aktualizovat stav zařízení“ a pak to zkuste znovu."
+      "message": "Zařízení {device} odmítlo svůj token. Dotazování na změny je vypnuté, takže integrace sama znovu nežádá Google o nový token: spusťte akci „Aktualizovat stav zařízení“ a pak to zkuste znovu."
     },
     "device_not_ready": {
       "message": "Zařízení {device} odpovědělo „nenalezeno“. Možná se ještě spouští, takže to zkuste znovu později, nebo to možná nepodporuje."
@@ -317,7 +317,7 @@
             },
             "data_description": {
               "bluetooth_tracking": "Pomocí reproduktorů zjistíte, zda je váš telefon nebo jiná zařízení Bluetooth doma. Po zapnutí vyberte na stránce integrace „Sledovat zařízení Bluetooth“ pro každé zařízení, které chcete sledovat. Dokud je sledování vypnuté, integrace reproduktorům neposílá žádné požadavky Bluetooth.",
-              "bluetooth_excluded_speakers": "Reproduktory, které nevyhledávají zařízení Bluetooth. Přidejte reproduktor, který je odpojený nebo mimo provoz: dokud reproduktor neodpovídá, sledovače nemohou zobrazit „Pryč“."
+              "bluetooth_excluded_speakers": "Reproduktory, které nevyhledávají zařízení Bluetooth. Přidejte reproduktor, který je odpojený nebo mimo provoz."
             }
           }
         }

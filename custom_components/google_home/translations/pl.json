@@ -152,7 +152,7 @@
       "message": "Nie udało się pobrać aktualnych alarmów i timerów z urządzenia {device}, więc nic z niego nie usunięto. Sprawdź, czy urządzenie jest online, i spróbuj ponownie później."
     },
     "alarms_and_timers_not_fetched_token_rejected_polling_off": {
-      "message": "Nie udało się pobrać aktualnych alarmów i timerów z urządzenia {device}, więc nic z niego nie usunięto. Urządzenie odrzuciło swój token, a pobranie nowego z Google nie pomogło. Cykliczne odpytywanie jest wyłączone, więc integracja sama nie poprosi ponownie Google o nowy token: uruchom akcję „Odśwież urządzenia”, a potem spróbuj ponownie."
+      "message": "Nie udało się pobrać aktualnych alarmów i timerów z urządzenia {device}, więc nic z niego nie usunięto. Urządzenie odrzuciło swój token. Cykliczne odpytywanie jest wyłączone, więc integracja sama nie poprosi ponownie Google o nowy token: uruchom akcję „Odśwież urządzenia”, a potem spróbuj ponownie."
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Nie udało się pobrać aktualnych alarmów i timerów z tych urządzeń, więc nic z nich nie usunięto: {devices}. Sprawdź, czy urządzenia są online, i spróbuj ponownie później."
@@ -161,13 +161,13 @@
       "message": "Urządzenie {device} nie potwierdziło usunięcia alarmów lub timerów, więc mogą one nadal być ustawione. Sprawdź, czy urządzenie jest online, i spróbuj ponownie później."
     },
     "alarms_and_timers_not_deleted_token_rejected_polling_off": {
-      "message": "Urządzenie {device} nie potwierdziło usunięcia alarmów lub timerów, więc mogą one nadal być ustawione. Urządzenie odrzuciło swój token, a pobranie nowego z Google nie pomogło. Cykliczne odpytywanie jest wyłączone, więc integracja sama nie poprosi ponownie Google o nowy token: uruchom akcję „Odśwież urządzenia”, a potem spróbuj ponownie."
+      "message": "Urządzenie {device} nie potwierdziło usunięcia alarmów lub timerów, więc mogą one nadal być ustawione. Urządzenie odrzuciło swój token. Cykliczne odpytywanie jest wyłączone, więc integracja sama nie poprosi ponownie Google o nowy token: uruchom akcję „Odśwież urządzenia”, a potem spróbuj ponownie."
     },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "Nie udało się usunąć alarmów lub timerów z tych urządzeń albo potwierdzić ich usunięcia: {devices}. Sprawdź, czy urządzenia są online, i spróbuj ponownie później."
     },
     "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
-      "message": "Nie udało się usunąć alarmów lub timerów z tych urządzeń albo potwierdzić ich usunięcia: {devices}. Co najmniej jedno z nich odrzuciło swój token, a pobranie nowego z Google nie pomogło. Cykliczne odpytywanie jest wyłączone, więc integracja sama nie poprosi ponownie Google o nowy token: uruchom akcję „Odśwież urządzenia”, sprawdź, czy urządzenia są online, a potem spróbuj ponownie."
+      "message": "Nie udało się usunąć alarmów lub timerów z tych urządzeń albo potwierdzić ich usunięcia: {devices}. Co najmniej jedno z nich odrzuciło swój token. Cykliczne odpytywanie jest wyłączone, więc integracja sama nie poprosi ponownie Google o nowy token: uruchom akcję „Odśwież urządzenia”, sprawdź, czy urządzenia są online, a potem spróbuj ponownie."
     },
     "invalid_alarm_id": {
       "message": "„{alarm_id}” nie jest identyfikatorem alarmu. Skopiuj identyfikator zaczynający się od alarm/ z atrybutu alarms czujnika alarmów urządzenia."
@@ -188,10 +188,10 @@
       "message": "Urządzenie {device} nie potwierdziło, że wykonało akcję: nie odpowiedziało na czas lub jego odpowiedź została przerwana. Sprawdź, czy urządzenie jest online, i spróbuj ponownie."
     },
     "device_token_rejected": {
-      "message": "Urządzenie {device} odrzuciło swój token, a pobranie nowego z Google nie pomogło. Integracja nadal prosi Google o nowy, więc spróbuj ponownie później."
+      "message": "Urządzenie {device} odrzuciło swój token. Integracja nadal prosi Google o nowy, więc spróbuj ponownie później."
     },
     "device_token_rejected_polling_off": {
-      "message": "Urządzenie {device} odrzuciło swój token, a pobranie nowego z Google nie pomogło. Cykliczne odpytywanie jest wyłączone, więc integracja sama nie poprosi ponownie Google o nowy token: uruchom akcję „Odśwież urządzenia”, a potem spróbuj ponownie."
+      "message": "Urządzenie {device} odrzuciło swój token. Cykliczne odpytywanie jest wyłączone, więc integracja sama nie poprosi ponownie Google o nowy token: uruchom akcję „Odśwież urządzenia”, a potem spróbuj ponownie."
     },
     "device_not_ready": {
       "message": "Urządzenie {device} odpowiedziało „nie znaleziono”. Być może nadal się uruchamia, więc spróbuj ponownie później, albo może tego nie obsługiwać."
@@ -317,7 +317,7 @@
             },
             "data_description": {
               "bluetooth_tracking": "Używaj głośników, aby sprawdzać, czy telefon lub inne urządzenia Bluetooth są w domu. Po włączeniu wybierz „Śledź urządzenie Bluetooth” na stronie integracji dla każdego urządzenia, które chcesz śledzić. Gdy śledzenie jest wyłączone, integracja nie wysyła do głośników żadnych żądań Bluetooth.",
-              "bluetooth_excluded_speakers": "Głośniki, które nie wyszukują urządzeń Bluetooth. Dodaj głośnik odłączony od zasilania lub niedziałający: dopóki głośnik nie odpowiada, trackery nie mogą pokazać stanu „poza domem”."
+              "bluetooth_excluded_speakers": "Głośniki, które nie wyszukują urządzeń Bluetooth. Dodaj głośnik odłączony od zasilania lub niedziałający."
             }
           }
         }

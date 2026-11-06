@@ -152,7 +152,7 @@
       "message": "Impossibile recuperare le sveglie e i timer attualmente impostati su {device}, quindi non è stato eliminato nulla da questo dispositivo. Verifica che sia online e riprova più tardi."
     },
     "alarms_and_timers_not_fetched_token_rejected_polling_off": {
-      "message": "Impossibile recuperare le sveglie e i timer attualmente impostati su {device}, quindi non è stato eliminato nulla da questo dispositivo. Il dispositivo ha rifiutato il suo token e ottenerne uno nuovo da Google non è servito. Il rilevamento delle variazioni è disabilitato, quindi l'integrazione non ne richiede uno nuovo a Google di propria iniziativa: esegui l'azione «Aggiorna i dispositivi», poi riprova."
+      "message": "Impossibile recuperare le sveglie e i timer attualmente impostati su {device}, quindi non è stato eliminato nulla da questo dispositivo. Il dispositivo ha rifiutato il suo token. Il rilevamento delle variazioni è disabilitato, quindi l'integrazione non ne richiede uno nuovo a Google di propria iniziativa: esegui l'azione «Aggiorna i dispositivi», poi riprova."
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Impossibile recuperare le sveglie e i timer attualmente impostati sui seguenti dispositivi: {devices}. Non è stato quindi eliminato nulla da questi dispositivi. Verifica che siano online e riprova più tardi."
@@ -161,13 +161,13 @@
       "message": "{device} non ha confermato l'eliminazione delle sveglie o dei timer, quindi potrebbero essere ancora impostati. Verifica che sia online e riprova più tardi."
     },
     "alarms_and_timers_not_deleted_token_rejected_polling_off": {
-      "message": "{device} non ha confermato l'eliminazione delle sveglie o dei timer, quindi potrebbero essere ancora impostati. Il dispositivo ha rifiutato il suo token e ottenerne uno nuovo da Google non è servito. Il rilevamento delle variazioni è disabilitato, quindi l'integrazione non ne richiede uno nuovo a Google di propria iniziativa: esegui l'azione «Aggiorna i dispositivi», poi riprova."
+      "message": "{device} non ha confermato l'eliminazione delle sveglie o dei timer, quindi potrebbero essere ancora impostati. Il dispositivo ha rifiutato il suo token. Il rilevamento delle variazioni è disabilitato, quindi l'integrazione non ne richiede uno nuovo a Google di propria iniziativa: esegui l'azione «Aggiorna i dispositivi», poi riprova."
     },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "Impossibile eliminare le sveglie o i timer dai seguenti dispositivi, o confermarne l'eliminazione: {devices}. Verifica che siano online e riprova più tardi."
     },
     "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
-      "message": "Impossibile eliminare le sveglie o i timer dai seguenti dispositivi, o confermarne l'eliminazione: {devices}. Almeno uno di questi ha rifiutato il suo token e ottenerne uno nuovo da Google non è servito. Il rilevamento delle variazioni è disabilitato, quindi l'integrazione non ne richiede uno nuovo a Google di propria iniziativa: esegui l'azione «Aggiorna i dispositivi», verifica che i dispositivi siano online, poi riprova."
+      "message": "Impossibile eliminare le sveglie o i timer dai seguenti dispositivi, o confermarne l'eliminazione: {devices}. Almeno uno di questi ha rifiutato il suo token. Il rilevamento delle variazioni è disabilitato, quindi l'integrazione non ne richiede uno nuovo a Google di propria iniziativa: esegui l'azione «Aggiorna i dispositivi», verifica che i dispositivi siano online, poi riprova."
     },
     "invalid_alarm_id": {
       "message": "«{alarm_id}» non è un ID di sveglia. Copia l'ID, che inizia con alarm/, dall'attributo alarms del sensore delle sveglie del dispositivo."
@@ -188,10 +188,10 @@
       "message": "{device} non ha confermato di aver eseguito l'azione: non ha risposto in tempo o la sua risposta si è interrotta. Verifica che sia online e riprova."
     },
     "device_token_rejected": {
-      "message": "{device} ha rifiutato il suo token e ottenerne uno nuovo da Google non è servito. L'integrazione continua a chiederne uno nuovo a Google, quindi riprova più tardi."
+      "message": "{device} ha rifiutato il suo token. L'integrazione continua a chiederne uno nuovo a Google, quindi riprova più tardi."
     },
     "device_token_rejected_polling_off": {
-      "message": "{device} ha rifiutato il suo token e ottenerne uno nuovo da Google non è servito. Il rilevamento delle variazioni è disabilitato, quindi l'integrazione non ne richiede uno nuovo a Google di propria iniziativa: esegui l'azione «Aggiorna i dispositivi», poi riprova."
+      "message": "{device} ha rifiutato il suo token. Il rilevamento delle variazioni è disabilitato, quindi l'integrazione non ne richiede uno nuovo a Google di propria iniziativa: esegui l'azione «Aggiorna i dispositivi», poi riprova."
     },
     "device_not_ready": {
       "message": "{device} ha risposto «non trovato». Potrebbe essere ancora in fase di avvio, quindi riprova più tardi, oppure potrebbe non supportare questa azione."
@@ -317,7 +317,7 @@
             },
             "data_description": {
               "bluetooth_tracking": "Usa i tuoi altoparlanti per sapere se il tuo telefono o altri dispositivi Bluetooth sono in casa. Dopo averlo attivato, seleziona «Monitora un dispositivo Bluetooth» nella pagina dell'integrazione per ogni dispositivo da monitorare. Finché è disattivato, l'integrazione non invia alcuna richiesta Bluetooth ai tuoi altoparlanti.",
-              "bluetooth_excluded_speakers": "Altoparlanti che non cercano dispositivi Bluetooth. Aggiungi un altoparlante scollegato o fuori servizio: finché un altoparlante non risponde, i tracker non possono mostrare «Fuori casa»."
+              "bluetooth_excluded_speakers": "Altoparlanti che non cercano dispositivi Bluetooth. Aggiungi un altoparlante scollegato o fuori servizio."
             }
           }
         }

@@ -152,7 +152,7 @@
       "message": "Couldn't get the current alarms and timers from {device}, so nothing was deleted from it. Check that it's online and try again later."
     },
     "alarms_and_timers_not_fetched_token_rejected_polling_off": {
-      "message": "Couldn't get the current alarms and timers from {device}, so nothing was deleted from it. It rejected its token, and getting a new one from Google didn't help. Polling is turned off, so the integration doesn't ask Google again by itself: run the Refresh devices action, then try again."
+      "message": "Couldn't get the current alarms and timers from {device}, so nothing was deleted from it. It rejected its token. Polling is turned off, so the integration doesn't ask Google again by itself: run the Refresh devices action, then try again."
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Couldn't get the current alarms and timers from these devices, so nothing was deleted from them: {devices}. Check that they're online and try again later."
@@ -161,13 +161,13 @@
       "message": "{device} didn't confirm deleting the alarms or timers, so they may still be set. Check that it's online and try again later."
     },
     "alarms_and_timers_not_deleted_token_rejected_polling_off": {
-      "message": "{device} didn't confirm deleting the alarms or timers, so they may still be set. It rejected its token, and getting a new one from Google didn't help. Polling is turned off, so the integration doesn't ask Google again by itself: run the Refresh devices action, then try again."
+      "message": "{device} didn't confirm deleting the alarms or timers, so they may still be set. It rejected its token. Polling is turned off, so the integration doesn't ask Google again by itself: run the Refresh devices action, then try again."
     },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "Couldn't delete alarms or timers from these devices, or confirm that they were deleted: {devices}. Check that they're online and try again later."
     },
     "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
-      "message": "Couldn't delete alarms or timers from these devices, or confirm that they were deleted: {devices}. At least one of them rejected its token, and getting a new one from Google didn't help. Polling is turned off, so the integration doesn't ask Google again by itself: run the Refresh devices action, check that the devices are online, then try again."
+      "message": "Couldn't delete alarms or timers from these devices, or confirm that they were deleted: {devices}. At least one of them rejected its token. Polling is turned off, so the integration doesn't ask Google again by itself: run the Refresh devices action, check that the devices are online, then try again."
     },
     "invalid_alarm_id": {
       "message": "“{alarm_id}” isn't an alarm ID. Copy the ID, which starts with alarm/, from the alarms attribute of the device's alarms sensor."
@@ -188,10 +188,10 @@
       "message": "{device} didn't confirm that it did this: it didn't answer in time, or its answer was cut off. Check that it's online and try again."
     },
     "device_token_rejected": {
-      "message": "{device} rejected its token, and getting a new one from Google didn't help. The integration keeps asking Google for one, so try again later."
+      "message": "{device} rejected its token. The integration keeps asking Google for one, so try again later."
     },
     "device_token_rejected_polling_off": {
-      "message": "{device} rejected its token, and getting a new one from Google didn't help. Polling is turned off, so the integration doesn't ask Google again by itself: run the Refresh devices action, then try again."
+      "message": "{device} rejected its token. Polling is turned off, so the integration doesn't ask Google again by itself: run the Refresh devices action, then try again."
     },
     "device_not_ready": {
       "message": "{device} answered “not found”. It may still be starting up, so try again later, or it may not support this."
@@ -317,7 +317,7 @@
             },
             "data_description": {
               "bluetooth_tracking": "Use your speakers to tell whether your phone or other Bluetooth devices are home. After turning it on, select Track a Bluetooth device on the integration's page for each device to track. While it's off, the integration sends no Bluetooth requests to your speakers.",
-              "bluetooth_excluded_speakers": "Speakers that don't scan for Bluetooth devices. Add a speaker that's unplugged or out of service: while a speaker doesn't answer, trackers can't show away."
+              "bluetooth_excluded_speakers": "Speakers that don't scan for Bluetooth devices. Add a speaker that's unplugged or out of service."
             }
           }
         }

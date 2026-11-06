@@ -152,7 +152,7 @@
       "message": "Nu s-au putut prelua alarmele și temporizatoarele curente de pe dispozitivul {device}, așa că nu s-a șters nimic de pe acesta. Verifică dacă dispozitivul este online și încearcă din nou mai târziu."
     },
     "alarms_and_timers_not_fetched_token_rejected_polling_off": {
-      "message": "Nu s-au putut prelua alarmele și temporizatoarele curente de pe dispozitivul {device}, așa că nu s-a șters nimic de pe acesta. Dispozitivul a respins tokenul, iar obținerea unuia nou de la Google nu a ajutat. Interogarea pentru modificări este dezactivată, așa că integrarea nu cere singură din nou un token de la Google: rulează acțiunea „Actualizează starea dispozitivelor”, apoi încearcă din nou."
+      "message": "Nu s-au putut prelua alarmele și temporizatoarele curente de pe dispozitivul {device}, așa că nu s-a șters nimic de pe acesta. Dispozitivul a respins tokenul. Interogarea pentru modificări este dezactivată, așa că integrarea nu cere singură din nou un token de la Google: rulează acțiunea „Actualizează starea dispozitivelor”, apoi încearcă din nou."
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Nu s-au putut prelua alarmele și temporizatoarele curente de pe următoarele dispozitive, așa că nu s-a șters nimic de pe acestea: {devices}. Verifică dacă dispozitivele sunt online și încearcă din nou mai târziu."
@@ -161,13 +161,13 @@
       "message": "Dispozitivul {device} nu a confirmat ștergerea alarmelor sau a temporizatoarelor, așa că acestea pot fi încă setate. Verifică dacă dispozitivul este online și încearcă din nou mai târziu."
     },
     "alarms_and_timers_not_deleted_token_rejected_polling_off": {
-      "message": "Dispozitivul {device} nu a confirmat ștergerea alarmelor sau a temporizatoarelor, așa că acestea pot fi încă setate. Dispozitivul a respins tokenul, iar obținerea unuia nou de la Google nu a ajutat. Interogarea pentru modificări este dezactivată, așa că integrarea nu cere singură din nou un token de la Google: rulează acțiunea „Actualizează starea dispozitivelor”, apoi încearcă din nou."
+      "message": "Dispozitivul {device} nu a confirmat ștergerea alarmelor sau a temporizatoarelor, așa că acestea pot fi încă setate. Dispozitivul a respins tokenul. Interogarea pentru modificări este dezactivată, așa că integrarea nu cere singură din nou un token de la Google: rulează acțiunea „Actualizează starea dispozitivelor”, apoi încearcă din nou."
     },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "Nu s-au putut șterge alarmele sau temporizatoarele de pe următoarele dispozitive ori nu s-a putut confirma ștergerea lor: {devices}. Verifică dacă dispozitivele sunt online și încearcă din nou mai târziu."
     },
     "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
-      "message": "Nu s-au putut șterge alarmele sau temporizatoarele de pe următoarele dispozitive ori nu s-a putut confirma ștergerea lor: {devices}. Cel puțin unul dintre ele a respins tokenul, iar obținerea unuia nou de la Google nu a ajutat. Interogarea pentru modificări este dezactivată, așa că integrarea nu cere singură din nou un token de la Google: rulează acțiunea „Actualizează starea dispozitivelor”, verifică dacă dispozitivele sunt online, apoi încearcă din nou."
+      "message": "Nu s-au putut șterge alarmele sau temporizatoarele de pe următoarele dispozitive ori nu s-a putut confirma ștergerea lor: {devices}. Cel puțin unul dintre ele a respins tokenul. Interogarea pentru modificări este dezactivată, așa că integrarea nu cere singură din nou un token de la Google: rulează acțiunea „Actualizează starea dispozitivelor”, verifică dacă dispozitivele sunt online, apoi încearcă din nou."
     },
     "invalid_alarm_id": {
       "message": "„{alarm_id}” nu este un ID de alarmă. Copiază ID-ul, care începe cu alarm/, din atributul alarms al senzorului de alarme al dispozitivului."
@@ -188,10 +188,10 @@
       "message": "Dispozitivul {device} nu a confirmat că a executat acțiunea: nu a răspuns la timp sau răspunsul său a fost întrerupt. Verifică dacă dispozitivul este online și încearcă din nou."
     },
     "device_token_rejected": {
-      "message": "Dispozitivul {device} a respins tokenul, iar obținerea unuia nou de la Google nu a ajutat. Integrarea continuă să ceară unul nou de la Google, așa că încearcă din nou mai târziu."
+      "message": "Dispozitivul {device} a respins tokenul. Integrarea continuă să ceară unul nou de la Google, așa că încearcă din nou mai târziu."
     },
     "device_token_rejected_polling_off": {
-      "message": "Dispozitivul {device} a respins tokenul, iar obținerea unuia nou de la Google nu a ajutat. Interogarea pentru modificări este dezactivată, așa că integrarea nu cere singură din nou un token de la Google: rulează acțiunea „Actualizează starea dispozitivelor”, apoi încearcă din nou."
+      "message": "Dispozitivul {device} a respins tokenul. Interogarea pentru modificări este dezactivată, așa că integrarea nu cere singură din nou un token de la Google: rulează acțiunea „Actualizează starea dispozitivelor”, apoi încearcă din nou."
     },
     "device_not_ready": {
       "message": "Dispozitivul {device} a răspuns „negăsit”. Este posibil să fie încă în curs de pornire, așa că încearcă din nou mai târziu, sau să nu accepte acest lucru."
@@ -317,7 +317,7 @@
             },
             "data_description": {
               "bluetooth_tracking": "Folosește difuzoarele ca să afli dacă telefonul tău sau alte dispozitive Bluetooth sunt acasă. După ce o activezi, selectează „Urmărește un dispozitiv Bluetooth” pe pagina integrării pentru fiecare dispozitiv pe care vrei să-l urmărești. Cât timp este dezactivată, integrarea nu trimite nicio solicitare Bluetooth difuzoarelor tale.",
-              "bluetooth_excluded_speakers": "Difuzoare care nu caută dispozitive Bluetooth. Adaugă un difuzor scos din priză sau nefuncțional: cât timp un difuzor nu răspunde, dispozitivele de urmărire nu pot afișa „Plecat”."
+              "bluetooth_excluded_speakers": "Difuzoare care nu caută dispozitive Bluetooth. Adaugă un difuzor scos din priză sau nefuncțional."
             }
           }
         }

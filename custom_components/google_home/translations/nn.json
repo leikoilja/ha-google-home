@@ -152,7 +152,7 @@
       "message": "Klarte ikkje å hente gjeldande alarmar og tidtakarar frå {device}, så ingenting vart sletta frå denne eininga. Kontroller at eininga er på nett, og prøv igjen seinare."
     },
     "alarms_and_timers_not_fetched_token_rejected_polling_off": {
-      "message": "Klarte ikkje å hente gjeldande alarmar og tidtakarar frå {device}, så ingenting vart sletta frå denne eininga. Eininga avviste tokenet sitt, og det hjelpte ikkje å hente eit nytt frå Google. Polling av oppdateringar er slått av, så integrasjonen ber ikkje Google om eit nytt igjen på eiga hand: køyr handlinga «Oppdater einingar», og prøv deretter igjen."
+      "message": "Klarte ikkje å hente gjeldande alarmar og tidtakarar frå {device}, så ingenting vart sletta frå denne eininga. Eininga avviste tokenet sitt. Polling av oppdateringar er slått av, så integrasjonen ber ikkje Google om eit nytt igjen på eiga hand: køyr handlinga «Oppdater einingar», og prøv deretter igjen."
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Klarte ikkje å hente gjeldande alarmar og tidtakarar frå desse einingane, så ingenting vart sletta frå dei: {devices}. Kontroller at einingane er på nett, og prøv igjen seinare."
@@ -161,13 +161,13 @@
       "message": "{device} stadfesta ikkje sletting av alarmane eller tidtakarane, så dei kan framleis vere stilte inn. Kontroller at eininga er på nett, og prøv igjen seinare."
     },
     "alarms_and_timers_not_deleted_token_rejected_polling_off": {
-      "message": "{device} stadfesta ikkje sletting av alarmane eller tidtakarane, så dei kan framleis vere stilte inn. Eininga avviste tokenet sitt, og det hjelpte ikkje å hente eit nytt frå Google. Polling av oppdateringar er slått av, så integrasjonen ber ikkje Google om eit nytt igjen på eiga hand: køyr handlinga «Oppdater einingar», og prøv deretter igjen."
+      "message": "{device} stadfesta ikkje sletting av alarmane eller tidtakarane, så dei kan framleis vere stilte inn. Eininga avviste tokenet sitt. Polling av oppdateringar er slått av, så integrasjonen ber ikkje Google om eit nytt igjen på eiga hand: køyr handlinga «Oppdater einingar», og prøv deretter igjen."
     },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "Klarte ikkje å slette alarmar eller tidtakarar frå desse einingane, eller stadfeste at dei vart sletta: {devices}. Kontroller at einingane er på nett, og prøv igjen seinare."
     },
     "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
-      "message": "Klarte ikkje å slette alarmar eller tidtakarar frå desse einingane, eller stadfeste at dei vart sletta: {devices}. Minst éi av dei avviste tokenet sitt, og det hjelpte ikkje å hente eit nytt frå Google. Polling av oppdateringar er slått av, så integrasjonen ber ikkje Google om eit nytt igjen på eiga hand: køyr handlinga «Oppdater einingar», kontroller at einingane er på nett, og prøv deretter igjen."
+      "message": "Klarte ikkje å slette alarmar eller tidtakarar frå desse einingane, eller stadfeste at dei vart sletta: {devices}. Minst éi av dei avviste tokenet sitt. Polling av oppdateringar er slått av, så integrasjonen ber ikkje Google om eit nytt igjen på eiga hand: køyr handlinga «Oppdater einingar», kontroller at einingane er på nett, og prøv deretter igjen."
     },
     "invalid_alarm_id": {
       "message": "«{alarm_id}» er ikkje ein alarm-ID. Kopier ID-en, som byrjar med alarm/, frå attributtet alarms på alarmsensoren til eininga."
@@ -188,10 +188,10 @@
       "message": "{device} stadfesta ikkje at handlinga vart utført: eininga svarte ikkje i tide, eller svaret vart avbrote. Kontroller at eininga er på nett, og prøv igjen."
     },
     "device_token_rejected": {
-      "message": "{device} avviste tokenet sitt, og det hjelpte ikkje å hente eit nytt frå Google. Integrasjonen held fram med å be Google om eit nytt, så prøv igjen seinare."
+      "message": "{device} avviste tokenet sitt. Integrasjonen held fram med å be Google om eit nytt, så prøv igjen seinare."
     },
     "device_token_rejected_polling_off": {
-      "message": "{device} avviste tokenet sitt, og det hjelpte ikkje å hente eit nytt frå Google. Polling av oppdateringar er slått av, så integrasjonen ber ikkje Google om eit nytt igjen på eiga hand: køyr handlinga «Oppdater einingar», og prøv deretter igjen."
+      "message": "{device} avviste tokenet sitt. Polling av oppdateringar er slått av, så integrasjonen ber ikkje Google om eit nytt igjen på eiga hand: køyr handlinga «Oppdater einingar», og prøv deretter igjen."
     },
     "device_not_ready": {
       "message": "{device} svarte «ikkje funne». Eininga held kanskje framleis på å starte opp, så prøv igjen seinare, eller eininga støttar kanskje ikkje dette."
@@ -317,7 +317,7 @@
             },
             "data_description": {
               "bluetooth_tracking": "Bruk høgtalarane til å sjå om telefonen din eller andre Bluetooth-einingar er heime. Når sporinga er slått på, vel du «Spor ei Bluetooth-eining» på sida til integrasjonen for kvar eining som skal sporast. Når sporinga er slått av, sender ikkje integrasjonen nokon Bluetooth-førespurnader til høgtalarane.",
-              "bluetooth_excluded_speakers": "Høgtalarar som ikkje søkjer etter Bluetooth-einingar. Legg til ein høgtalar som er kopla frå straumen eller ute av drift: Så lenge ein høgtalar ikkje svarar, kan ikkje sporarar vise «Borte»."
+              "bluetooth_excluded_speakers": "Høgtalarar som ikkje søkjer etter Bluetooth-einingar. Legg til ein høgtalar som er kopla frå straumen eller ute av drift."
             }
           }
         }

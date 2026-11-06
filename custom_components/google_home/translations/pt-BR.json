@@ -152,7 +152,7 @@
       "message": "Não foi possível obter os alarmes e temporizadores atuais do dispositivo {device}, por isso nada foi excluído dele. Verifique se o dispositivo está online e tente novamente mais tarde."
     },
     "alarms_and_timers_not_fetched_token_rejected_polling_off": {
-      "message": "Não foi possível obter os alarmes e temporizadores atuais do dispositivo {device}, por isso nada foi excluído dele. O dispositivo rejeitou seu token, e obter um novo do Google não adiantou. A sondagem de alterações está desabilitada, então a integração não volta a pedir um novo ao Google por conta própria: execute a ação “Atualizar dispositivos” e tente novamente."
+      "message": "Não foi possível obter os alarmes e temporizadores atuais do dispositivo {device}, por isso nada foi excluído dele. O dispositivo rejeitou seu token. A sondagem de alterações está desabilitada, então a integração não volta a pedir um novo ao Google por conta própria: execute a ação “Atualizar dispositivos” e tente novamente."
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Não foi possível obter os alarmes e temporizadores atuais dos seguintes dispositivos, por isso nada foi excluído deles: {devices}. Verifique se os dispositivos estão online e tente novamente mais tarde."
@@ -161,13 +161,13 @@
       "message": "O dispositivo {device} não confirmou a exclusão dos alarmes ou temporizadores, por isso eles ainda podem estar definidos. Verifique se o dispositivo está online e tente novamente mais tarde."
     },
     "alarms_and_timers_not_deleted_token_rejected_polling_off": {
-      "message": "O dispositivo {device} não confirmou a exclusão dos alarmes ou temporizadores, por isso eles ainda podem estar definidos. O dispositivo rejeitou seu token, e obter um novo do Google não adiantou. A sondagem de alterações está desabilitada, então a integração não volta a pedir um novo ao Google por conta própria: execute a ação “Atualizar dispositivos” e tente novamente."
+      "message": "O dispositivo {device} não confirmou a exclusão dos alarmes ou temporizadores, por isso eles ainda podem estar definidos. O dispositivo rejeitou seu token. A sondagem de alterações está desabilitada, então a integração não volta a pedir um novo ao Google por conta própria: execute a ação “Atualizar dispositivos” e tente novamente."
     },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "Não foi possível excluir os alarmes ou temporizadores dos seguintes dispositivos, ou confirmar que foram excluídos: {devices}. Verifique se os dispositivos estão online e tente novamente mais tarde."
     },
     "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
-      "message": "Não foi possível excluir os alarmes ou temporizadores dos seguintes dispositivos, ou confirmar que foram excluídos: {devices}. Pelo menos um deles rejeitou seu token, e obter um novo do Google não adiantou. A sondagem de alterações está desabilitada, então a integração não volta a pedir um novo ao Google por conta própria: execute a ação “Atualizar dispositivos”, verifique se os dispositivos estão online e tente novamente."
+      "message": "Não foi possível excluir os alarmes ou temporizadores dos seguintes dispositivos, ou confirmar que foram excluídos: {devices}. Pelo menos um deles rejeitou seu token. A sondagem de alterações está desabilitada, então a integração não volta a pedir um novo ao Google por conta própria: execute a ação “Atualizar dispositivos”, verifique se os dispositivos estão online e tente novamente."
     },
     "invalid_alarm_id": {
       "message": "“{alarm_id}” não é um ID de alarme. Copie o ID, que começa com alarm/, do atributo alarms do sensor de alarmes do dispositivo."
@@ -188,10 +188,10 @@
       "message": "O dispositivo {device} não confirmou que executou a ação: ele não respondeu a tempo ou a resposta foi interrompida. Verifique se o dispositivo está online e tente novamente."
     },
     "device_token_rejected": {
-      "message": "O dispositivo {device} rejeitou seu token, e obter um novo do Google não adiantou. A integração continua solicitando um novo ao Google, então tente novamente mais tarde."
+      "message": "O dispositivo {device} rejeitou seu token. A integração continua solicitando um novo ao Google, então tente novamente mais tarde."
     },
     "device_token_rejected_polling_off": {
-      "message": "O dispositivo {device} rejeitou seu token, e obter um novo do Google não adiantou. A sondagem de alterações está desabilitada, então a integração não volta a pedir um novo ao Google por conta própria: execute a ação “Atualizar dispositivos” e tente novamente."
+      "message": "O dispositivo {device} rejeitou seu token. A sondagem de alterações está desabilitada, então a integração não volta a pedir um novo ao Google por conta própria: execute a ação “Atualizar dispositivos” e tente novamente."
     },
     "device_not_ready": {
       "message": "O dispositivo {device} respondeu “não encontrado”. Ele pode ainda estar iniciando, então tente novamente mais tarde, ou pode não ter suporte para isso."
@@ -317,7 +317,7 @@
             },
             "data_description": {
               "bluetooth_tracking": "Use seus alto-falantes para saber se o seu celular ou outros dispositivos Bluetooth estão em casa. Depois de ativá-lo, selecione “Rastrear um dispositivo Bluetooth” na página da integração para cada dispositivo a rastrear. Enquanto estiver desativado, a integração não envia nenhuma solicitação Bluetooth aos seus alto-falantes.",
-              "bluetooth_excluded_speakers": "Alto-falantes que não procuram dispositivos Bluetooth. Adicione um alto-falante desconectado da tomada ou fora de serviço: enquanto um alto-falante não responder, os rastreadores não conseguem mostrar “Ausente”."
+              "bluetooth_excluded_speakers": "Alto-falantes que não procuram dispositivos Bluetooth. Adicione um alto-falante desconectado da tomada ou fora de serviço."
             }
           }
         }

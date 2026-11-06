@@ -152,7 +152,7 @@
       "message": "Impossible de récupérer les alarmes et les minuteurs actuels de l'appareil {device}. Rien n'a donc été supprimé de cet appareil. Vérifiez qu'il est en ligne et réessayez plus tard."
     },
     "alarms_and_timers_not_fetched_token_rejected_polling_off": {
-      "message": "Impossible de récupérer les alarmes et les minuteurs actuels de l'appareil {device}. Rien n'a donc été supprimé de cet appareil. Il a refusé son jeton, et en obtenir un nouveau auprès de Google n'a rien changé. L'interrogation périodique des changements est désactivée : l'intégration n'en redemande donc pas à Google d'elle-même. Exécutez l'action « Actualiser les appareils », puis réessayez."
+      "message": "Impossible de récupérer les alarmes et les minuteurs actuels de l'appareil {device}. Rien n'a donc été supprimé de cet appareil. Il a refusé son jeton. L'interrogation périodique des changements est désactivée : l'intégration n'en redemande donc pas à Google d'elle-même. Exécutez l'action « Actualiser les appareils », puis réessayez."
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Impossible de récupérer les alarmes et les minuteurs actuels des appareils suivants : {devices}. Rien n'a donc été supprimé de ces appareils. Vérifiez qu'ils sont en ligne et réessayez plus tard."
@@ -161,13 +161,13 @@
       "message": "L'appareil {device} n'a pas confirmé la suppression des alarmes ou des minuteurs ; ils sont donc peut-être encore programmés. Vérifiez qu'il est en ligne et réessayez plus tard."
     },
     "alarms_and_timers_not_deleted_token_rejected_polling_off": {
-      "message": "L'appareil {device} n'a pas confirmé la suppression des alarmes ou des minuteurs ; ils sont donc peut-être encore programmés. Il a refusé son jeton, et en obtenir un nouveau auprès de Google n'a rien changé. L'interrogation périodique des changements est désactivée : l'intégration n'en redemande donc pas à Google d'elle-même. Exécutez l'action « Actualiser les appareils », puis réessayez."
+      "message": "L'appareil {device} n'a pas confirmé la suppression des alarmes ou des minuteurs ; ils sont donc peut-être encore programmés. Il a refusé son jeton. L'interrogation périodique des changements est désactivée : l'intégration n'en redemande donc pas à Google d'elle-même. Exécutez l'action « Actualiser les appareils », puis réessayez."
     },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "Impossible de supprimer les alarmes ou les minuteurs des appareils suivants, ou de confirmer leur suppression : {devices}. Vérifiez qu'ils sont en ligne et réessayez plus tard."
     },
     "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
-      "message": "Impossible de supprimer les alarmes ou les minuteurs des appareils suivants, ou de confirmer leur suppression : {devices}. Au moins l'un d'eux a refusé son jeton, et en obtenir un nouveau auprès de Google n'a rien changé. L'interrogation périodique des changements est désactivée : l'intégration n'en redemande donc pas à Google d'elle-même. Exécutez l'action « Actualiser les appareils », vérifiez que les appareils sont en ligne, puis réessayez."
+      "message": "Impossible de supprimer les alarmes ou les minuteurs des appareils suivants, ou de confirmer leur suppression : {devices}. Au moins l'un d'eux a refusé son jeton. L'interrogation périodique des changements est désactivée : l'intégration n'en redemande donc pas à Google d'elle-même. Exécutez l'action « Actualiser les appareils », vérifiez que les appareils sont en ligne, puis réessayez."
     },
     "invalid_alarm_id": {
       "message": "« {alarm_id} » n'est pas un ID d'alarme. Copiez l'ID, qui commence par alarm/, depuis l'attribut alarms du capteur d'alarmes de l'appareil."
@@ -188,10 +188,10 @@
       "message": "L'appareil {device} n'a pas confirmé avoir effectué l'action : il n'a pas répondu à temps ou sa réponse a été interrompue. Vérifiez qu'il est en ligne et réessayez."
     },
     "device_token_rejected": {
-      "message": "L'appareil {device} a refusé son jeton, et en obtenir un nouveau auprès de Google n'a rien changé. L'intégration continue d'en demander un nouveau à Google ; réessayez plus tard."
+      "message": "L'appareil {device} a refusé son jeton. L'intégration continue d'en demander un nouveau à Google ; réessayez plus tard."
     },
     "device_token_rejected_polling_off": {
-      "message": "L'appareil {device} a refusé son jeton, et en obtenir un nouveau auprès de Google n'a rien changé. L'interrogation périodique des changements est désactivée : l'intégration n'en redemande donc pas à Google d'elle-même. Exécutez l'action « Actualiser les appareils », puis réessayez."
+      "message": "L'appareil {device} a refusé son jeton. L'interrogation périodique des changements est désactivée : l'intégration n'en redemande donc pas à Google d'elle-même. Exécutez l'action « Actualiser les appareils », puis réessayez."
     },
     "device_not_ready": {
       "message": "L'appareil {device} a répondu « introuvable ». Il est peut-être encore en cours de démarrage, auquel cas réessayez plus tard, ou il ne prend peut-être pas en charge cette action."
@@ -317,7 +317,7 @@
             },
             "data_description": {
               "bluetooth_tracking": "Utilisez vos enceintes pour savoir si votre téléphone ou d'autres appareils Bluetooth sont à la maison. Après l'avoir activé, sélectionnez « Suivre un appareil Bluetooth » sur la page de l'intégration pour chaque appareil à suivre. Tant qu'il est désactivé, l'intégration n'envoie aucune requête Bluetooth à vos enceintes.",
-              "bluetooth_excluded_speakers": "Enceintes qui ne recherchent pas d'appareils Bluetooth. Ajoutez une enceinte débranchée ou hors service : tant qu'une enceinte ne répond pas, les traceurs ne peuvent pas afficher « Absent »."
+              "bluetooth_excluded_speakers": "Enceintes qui ne recherchent pas d'appareils Bluetooth. Ajoutez une enceinte débranchée ou hors service."
             }
           }
         }

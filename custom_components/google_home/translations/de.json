@@ -152,7 +152,7 @@
       "message": "Die aktuellen Wecker und Timer konnten nicht von {device} abgerufen werden. Daher wurde auf diesem Gerät nichts gelöscht. Prüfe, ob es online ist, und versuche es später erneut."
     },
     "alarms_and_timers_not_fetched_token_rejected_polling_off": {
-      "message": "Die aktuellen Wecker und Timer konnten nicht von {device} abgerufen werden. Daher wurde auf diesem Gerät nichts gelöscht. Es hat sein Token abgelehnt, und das Anfordern eines neuen bei Google hat nicht geholfen. Die Abfrage von Änderungen ist deaktiviert, daher fragt die Integration nicht selbstständig erneut bei Google an: Führe die Aktion „Geräte aktualisieren“ aus und versuche es dann erneut."
+      "message": "Die aktuellen Wecker und Timer konnten nicht von {device} abgerufen werden. Daher wurde auf diesem Gerät nichts gelöscht. Es hat sein Token abgelehnt. Die Abfrage von Änderungen ist deaktiviert, daher fragt die Integration nicht selbstständig erneut bei Google an: Führe die Aktion „Geräte aktualisieren“ aus und versuche es dann erneut."
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Die aktuellen Wecker und Timer konnten von den folgenden Geräten nicht abgerufen werden: {devices}. Daher wurde auf diesen Geräten nichts gelöscht. Prüfe, ob sie online sind, und versuche es später erneut."
@@ -161,13 +161,13 @@
       "message": "Das Gerät {device} hat das Löschen der Wecker oder Timer nicht bestätigt, daher sind sie möglicherweise noch eingestellt. Prüfe, ob es online ist, und versuche es später erneut."
     },
     "alarms_and_timers_not_deleted_token_rejected_polling_off": {
-      "message": "Das Gerät {device} hat das Löschen der Wecker oder Timer nicht bestätigt, daher sind sie möglicherweise noch eingestellt. Es hat sein Token abgelehnt, und das Anfordern eines neuen bei Google hat nicht geholfen. Die Abfrage von Änderungen ist deaktiviert, daher fragt die Integration nicht selbstständig erneut bei Google an: Führe die Aktion „Geräte aktualisieren“ aus und versuche es dann erneut."
+      "message": "Das Gerät {device} hat das Löschen der Wecker oder Timer nicht bestätigt, daher sind sie möglicherweise noch eingestellt. Es hat sein Token abgelehnt. Die Abfrage von Änderungen ist deaktiviert, daher fragt die Integration nicht selbstständig erneut bei Google an: Führe die Aktion „Geräte aktualisieren“ aus und versuche es dann erneut."
     },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "Wecker oder Timer konnten auf den folgenden Geräten nicht gelöscht werden, oder das Löschen konnte nicht bestätigt werden: {devices}. Prüfe, ob sie online sind, und versuche es später erneut."
     },
     "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
-      "message": "Wecker oder Timer konnten auf den folgenden Geräten nicht gelöscht werden, oder das Löschen konnte nicht bestätigt werden: {devices}. Mindestens eines davon hat sein Token abgelehnt, und das Anfordern eines neuen bei Google hat nicht geholfen. Die Abfrage von Änderungen ist deaktiviert, daher fragt die Integration nicht selbstständig erneut bei Google an: Führe die Aktion „Geräte aktualisieren“ aus, prüfe, ob die Geräte online sind, und versuche es dann erneut."
+      "message": "Wecker oder Timer konnten auf den folgenden Geräten nicht gelöscht werden, oder das Löschen konnte nicht bestätigt werden: {devices}. Mindestens eines davon hat sein Token abgelehnt. Die Abfrage von Änderungen ist deaktiviert, daher fragt die Integration nicht selbstständig erneut bei Google an: Führe die Aktion „Geräte aktualisieren“ aus, prüfe, ob die Geräte online sind, und versuche es dann erneut."
     },
     "invalid_alarm_id": {
       "message": "„{alarm_id}“ ist keine Wecker-ID. Kopiere die ID, die mit alarm/ beginnt, aus dem Attribut alarms des Weckersensors des Geräts."
@@ -188,10 +188,10 @@
       "message": "Das Gerät {device} hat nicht bestätigt, dass es die Aktion ausgeführt hat: Es hat nicht rechtzeitig geantwortet oder seine Antwort wurde unterbrochen. Prüfe, ob es online ist, und versuche es erneut."
     },
     "device_token_rejected": {
-      "message": "Das Gerät {device} hat sein Token abgelehnt, und das Anfordern eines neuen bei Google hat nicht geholfen. Die Integration fordert weiterhin ein neues bei Google an, versuche es also später erneut."
+      "message": "Das Gerät {device} hat sein Token abgelehnt. Die Integration fordert weiterhin ein neues bei Google an, versuche es also später erneut."
     },
     "device_token_rejected_polling_off": {
-      "message": "Das Gerät {device} hat sein Token abgelehnt, und das Anfordern eines neuen bei Google hat nicht geholfen. Die Abfrage von Änderungen ist deaktiviert, daher fragt die Integration nicht selbstständig erneut bei Google an: Führe die Aktion „Geräte aktualisieren“ aus und versuche es dann erneut."
+      "message": "Das Gerät {device} hat sein Token abgelehnt. Die Abfrage von Änderungen ist deaktiviert, daher fragt die Integration nicht selbstständig erneut bei Google an: Führe die Aktion „Geräte aktualisieren“ aus und versuche es dann erneut."
     },
     "device_not_ready": {
       "message": "Das Gerät {device} hat „nicht gefunden“ geantwortet. Möglicherweise startet es noch, versuche es also später erneut, oder es unterstützt dies vielleicht nicht."
@@ -317,7 +317,7 @@
             },
             "data_description": {
               "bluetooth_tracking": "Erkenne mit deinen Lautsprechern, ob dein Smartphone oder andere Bluetooth-Geräte zu Hause sind. Wähle nach dem Einschalten auf der Seite der Integration „Bluetooth-Gerät verfolgen“ für jedes Gerät, das du verfolgen möchtest. Solange es ausgeschaltet ist, sendet die Integration keine Bluetooth-Anfragen an deine Lautsprecher.",
-              "bluetooth_excluded_speakers": "Lautsprecher, die nicht nach Bluetooth-Geräten suchen. Füge einen Lautsprecher hinzu, der vom Strom getrennt oder außer Betrieb ist: Solange ein Lautsprecher nicht antwortet, können Tracker nicht „Abwesend“ anzeigen."
+              "bluetooth_excluded_speakers": "Lautsprecher, die nicht nach Bluetooth-Geräten suchen. Füge einen Lautsprecher hinzu, der vom Strom getrennt oder außer Betrieb ist."
             }
           }
         }

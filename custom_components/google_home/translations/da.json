@@ -152,7 +152,7 @@
       "message": "Kunne ikke hente de aktuelle alarmer og timere fra {device}, så der blev ikke slettet noget fra enheden. Kontrollér, at den er online, og prøv igen senere."
     },
     "alarms_and_timers_not_fetched_token_rejected_polling_off": {
-      "message": "Kunne ikke hente de aktuelle alarmer og timere fra {device}, så der blev ikke slettet noget fra enheden. Den afviste sit token, og det hjalp ikke at hente et nyt fra Google. Automatisk hentning af opdateringer er slået fra, så integrationen beder ikke selv Google om et nyt igen: kør handlingen »Opdater enheder«, og prøv derefter igen."
+      "message": "Kunne ikke hente de aktuelle alarmer og timere fra {device}, så der blev ikke slettet noget fra enheden. Den afviste sit token. Automatisk hentning af opdateringer er slået fra, så integrationen beder ikke selv Google om et nyt igen: kør handlingen »Opdater enheder«, og prøv derefter igen."
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Kunne ikke hente de aktuelle alarmer og timere fra disse enheder, så der blev ikke slettet noget fra dem: {devices}. Kontrollér, at de er online, og prøv igen senere."
@@ -161,13 +161,13 @@
       "message": "{device} bekræftede ikke sletningen af alarmerne eller timerne, så de kan stadig være indstillet. Kontrollér, at den er online, og prøv igen senere."
     },
     "alarms_and_timers_not_deleted_token_rejected_polling_off": {
-      "message": "{device} bekræftede ikke sletningen af alarmerne eller timerne, så de kan stadig være indstillet. Den afviste sit token, og det hjalp ikke at hente et nyt fra Google. Automatisk hentning af opdateringer er slået fra, så integrationen beder ikke selv Google om et nyt igen: kør handlingen »Opdater enheder«, og prøv derefter igen."
+      "message": "{device} bekræftede ikke sletningen af alarmerne eller timerne, så de kan stadig være indstillet. Den afviste sit token. Automatisk hentning af opdateringer er slået fra, så integrationen beder ikke selv Google om et nyt igen: kør handlingen »Opdater enheder«, og prøv derefter igen."
     },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "Kunne ikke slette alarmer eller timere fra disse enheder eller bekræfte, at de blev slettet: {devices}. Kontrollér, at de er online, og prøv igen senere."
     },
     "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
-      "message": "Kunne ikke slette alarmer eller timere fra disse enheder eller bekræfte, at de blev slettet: {devices}. Mindst én af dem afviste sit token, og det hjalp ikke at hente et nyt fra Google. Automatisk hentning af opdateringer er slået fra, så integrationen beder ikke selv Google om et nyt igen: kør handlingen »Opdater enheder«, kontrollér, at enhederne er online, og prøv derefter igen."
+      "message": "Kunne ikke slette alarmer eller timere fra disse enheder eller bekræfte, at de blev slettet: {devices}. Mindst én af dem afviste sit token. Automatisk hentning af opdateringer er slået fra, så integrationen beder ikke selv Google om et nyt igen: kør handlingen »Opdater enheder«, kontrollér, at enhederne er online, og prøv derefter igen."
     },
     "invalid_alarm_id": {
       "message": "»{alarm_id}« er ikke et alarm-ID. Kopiér ID'et, som begynder med alarm/, fra attributten alarms på enhedens alarmsensor."
@@ -188,10 +188,10 @@
       "message": "{device} bekræftede ikke, at den udførte handlingen: den svarede ikke i tide, eller svaret blev afbrudt. Kontrollér, at den er online, og prøv igen."
     },
     "device_token_rejected": {
-      "message": "{device} afviste sit token, og det hjalp ikke at hente et nyt fra Google. Integrationen bliver ved med at bede Google om et nyt, så prøv igen senere."
+      "message": "{device} afviste sit token. Integrationen bliver ved med at bede Google om et nyt, så prøv igen senere."
     },
     "device_token_rejected_polling_off": {
-      "message": "{device} afviste sit token, og det hjalp ikke at hente et nyt fra Google. Automatisk hentning af opdateringer er slået fra, så integrationen beder ikke selv Google om et nyt igen: kør handlingen »Opdater enheder«, og prøv derefter igen."
+      "message": "{device} afviste sit token. Automatisk hentning af opdateringer er slået fra, så integrationen beder ikke selv Google om et nyt igen: kør handlingen »Opdater enheder«, og prøv derefter igen."
     },
     "device_not_ready": {
       "message": "{device} svarede »ikke fundet«. Den er måske stadig ved at starte, så prøv igen senere, eller den understøtter det måske ikke."
@@ -317,7 +317,7 @@
             },
             "data_description": {
               "bluetooth_tracking": "Brug dine højttalere til at se, om din telefon eller andre Bluetooth-enheder er hjemme. Når sporingen er slået til, skal du vælge »Spor en Bluetooth-enhed« på integrationens side for hver enhed, der skal spores. Mens den er slået fra, sender integrationen ingen Bluetooth-forespørgsler til dine højttalere.",
-              "bluetooth_excluded_speakers": "Højttalere, der ikke søger efter Bluetooth-enheder. Tilføj en højttaler, der er taget ud af stikket eller ude af drift: Mens en højttaler ikke svarer, kan trackere ikke vise »Ude«."
+              "bluetooth_excluded_speakers": "Højttalere, der ikke søger efter Bluetooth-enheder. Tilføj en højttaler, der er taget ud af stikket eller ude af drift."
             }
           }
         }
