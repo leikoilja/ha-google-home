@@ -58,6 +58,14 @@ class BluetoothCoordinator(DataUpdateCoordinator[dict[str, TrackerUpdate]]):
         return result
 
     @callback
+    @override
+    def async_update_listeners(self) -> None:
+        """Known coordinator failure cannot become an eligible restore snapshot."""
+        if not self.last_update_success:
+            self.history.invalidate_restore()
+        super().async_update_listeners()
+
+    @callback
     def graph_changed(self) -> None:
         """Apply successful graph removal before a concurrent old reply can land."""
         if not self._stopped and self.scanner.current():

@@ -92,7 +92,7 @@ async def async_migrate_entry(
 async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -> None:
     """Set up this integration using UI."""
     history = async_history(hass, entry)
-    await history.async_load(bluetooth_now())
+    await history.async_load(bluetooth_now)
     username = cast(str, entry.data.get(CONF_USERNAME))
     password = cast(str, entry.data.get(CONF_PASSWORD))
     android_id = cast(str, entry.data.get(CONF_ANDROID_ID))

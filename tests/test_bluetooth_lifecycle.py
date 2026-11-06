@@ -130,3 +130,44 @@ async def test_detected_clock_jump_drops_old_evidence(
         coordinator._expire()  # noqa: SLF001 # pylint: disable=protected-access
     assert coordinator.data[PHONE].state == "unknown"
     assert not coordinator.history.sources and not coordinator.history.trackers
+
+
+@pytest.mark.usefixtures("google", "replies")
+@pytest.mark.parametrize("presence", [STATE_HOME, STATE_NOT_HOME])
+async def test_real_coordinator_failure_closes_reload_eligibility(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    scans: Scans,
+    presence: str,
+) -> None:
+    """Unexpected DUC failure, rather than a handled scan miss, cannot restore home/away."""
+    await track_phone(hass, config_entry)
+    if presence == STATE_HOME:
+        scans.heard[SPEAKER] = [heard(rpa(IRK))]
+    for now in (30, 60, 90):
+        await scan(hass, config_entry, scans, now)
+    coordinator = runtime(config_entry).bluetooth
+    assert isinstance(coordinator, BluetoothCoordinator)
+    original_c = coordinator.scanner.tracked[0].confirmed_at
+    original_leases = [
+        (row.last_success, row.deadline) for row in coordinator.history.sources.values()
+    ]
+    scans.now = 105
+    with patch.object(
+        coordinator.scanner,
+        "async_update",
+        side_effect=RuntimeError("unexpected scanner error"),
+    ):
+        await coordinator.async_refresh()
+    assert coordinator.last_update_success is False
+    failed_state = hass.states.get(TRACKER)
+    assert failed_state is not None and failed_state.state == "unavailable"
+    assert not coordinator.history.trackers
+    assert coordinator.scanner.tracked[0].confirmed_at == original_c
+    assert [
+        (row.last_success, row.deadline) for row in coordinator.history.sources.values()
+    ] == original_leases
+    assert await hass.config_entries.async_reload(config_entry.entry_id)
+    await hass.async_block_till_done(wait_background_tasks=True)
+    state = hass.states.get(TRACKER)
+    assert state is not None and state.state == "unknown"

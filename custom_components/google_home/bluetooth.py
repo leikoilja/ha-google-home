@@ -18,7 +18,7 @@ restarts whenever the tracker's state changes.
 
 import asyncio
 import base64
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 from datetime import timedelta
 from enum import StrEnum
@@ -469,13 +469,21 @@ class BluetoothScanner:
         devices = self._update_speakers()
         for device in self.tracked:
             device.heard = {}
-        await asyncio.gather(
-            *(
+        tasks = [
+            asyncio.create_task(
                 self._async_update_speaker(device_id, speaker, devices[device_id])
-                for device_id, speaker in list(self._speakers.items())
-                if device_id in devices
             )
-        )
+            for device_id, speaker in list(self._speakers.items())
+            if device_id in devices
+        ]
+        try:
+            await asyncio.gather(*tasks)
+        except BaseException:
+            # A failed coordinator cannot leave sibling requests mutating history.
+            for task in tasks:
+                task.cancel()
+            await asyncio.gather(*tasks, return_exceptions=True)
+            raise
         if not self.current():
             raise asyncio.CancelledError
         return self.evaluate(scan=True)
@@ -490,6 +498,8 @@ class BluetoothScanner:
         count until it's enabled again.
         """
         account = self._account
+        if self._history:
+            self._history.promote_bindings()
         devices = {
             device_id: device
             for device_id, device in (account.data or {}).items()
@@ -530,42 +540,78 @@ class BluetoothScanner:
         self, device_id: str, speaker: SpeakerScan, device: GoogleHomeDevice
     ) -> None:
         """Read the speaker's pending scan, if any, then start the next one."""
+        epoch = self._generation
+        endpoint = (speaker.ip_address, speaker.auth_token)
+
+        def owns_request() -> bool:
+            if (
+                epoch != self._generation
+                or not self._eligible(device_id)
+                or self._speakers.get(device_id) is not speaker
+            ):
+                return False
+            current_device = (self._account.data or {}).get(device_id)
+            if (
+                current_device is None
+                or (current_device.ip_address, current_device.auth_token) != endpoint
+                or (device.ip_address, device.auth_token) != endpoint
+            ):
+                self._update_speakers()
+                return False
+            return True
+
+        if not owns_request():
+            return
         start, speaker.pending_start = speaker.pending_start, None
         if start is None:
             # Nothing to read: the first update, or starting the scan failed
             speaker.run_start = None
-        else:
-            try:
-                results = await async_get_bluetooth_scan_results(self._session, device)
-            except BluetoothScanUnsupported:
-                self._mark_unsupported(device_id, speaker)
-                return
-            except BluetoothScanError as err:
-                _LOGGER.debug("Failed to read Bluetooth scan: %s", err)
-                speaker.run_start = None
-            else:
-                if (
-                    not self._eligible(device_id)
-                    or self._speakers.get(device_id) is not speaker
-                ):
-                    return
-                self._read_scan(device_id, speaker, start, results)
-        if (
-            not self._eligible(device_id)
-            or self._speakers.get(device_id) is not speaker
+        elif not await self._async_read_pending(
+            device_id, speaker, device, start, owns_request
         ):
+            return
+        if not owns_request():
             return
         start = monotonic()
         try:
             await async_start_bluetooth_scan(self._session, device)
         except BluetoothScanUnsupported:
-            self._mark_unsupported(device_id, speaker)
+            if owns_request():
+                self._mark_unsupported(device_id, speaker)
         except BluetoothScanError as err:
+            if not owns_request():
+                return
             # It may have cleared the results or not, so they're never read
             _LOGGER.debug("Failed to start Bluetooth scan: %s", err)
         else:
-            if self._eligible(device_id) and self._speakers.get(device_id) is speaker:
+            if owns_request():
                 speaker.pending_start = start
+
+    async def _async_read_pending(
+        self,
+        device_id: str,
+        speaker: SpeakerScan,
+        device: GoogleHomeDevice,
+        start: float,
+        owns_request: Callable[[], bool],
+    ) -> bool:
+        """Apply a completed read/error only while this request still owns it."""
+        try:
+            results = await async_get_bluetooth_scan_results(self._session, device)
+        except BluetoothScanUnsupported:
+            if owns_request():
+                self._mark_unsupported(device_id, speaker)
+            return False
+        except BluetoothScanError as err:
+            if not owns_request():
+                return False
+            _LOGGER.debug("Failed to read Bluetooth scan: %s", err)
+            speaker.run_start = None
+        else:
+            if not owns_request():
+                return False
+            self._read_scan(device_id, speaker, start, results)
+        return True
 
     def _read_scan(
         self,
@@ -633,6 +679,8 @@ class BluetoothScanner:
 
     def _mark_unsupported(self, device_id: str, speaker: SpeakerScan) -> None:
         """Stop scanning with a speaker that has no Bluetooth scan endpoint."""
+        if not self.current() or self._speakers.get(device_id) is not speaker:
+            return
         _LOGGER.debug(
             "%s doesn't support Bluetooth scans, not using it until reload",
             speaker.name,

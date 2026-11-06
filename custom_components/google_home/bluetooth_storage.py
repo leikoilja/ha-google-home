@@ -5,6 +5,7 @@ acknowledgement; memory invalidations win even when disk operations fail.
 """
 
 import asyncio
+from collections.abc import Callable
 from dataclasses import dataclass
 import logging
 from math import isfinite
@@ -148,7 +149,7 @@ class BluetoothHistory:
             self._remove_pending = True
             self.schedule_save()
 
-    async def async_load(self, now: float) -> None:
+    async def async_load(self, clock: Callable[[], float]) -> None:
         """Load once, before account refresh can remove registry identity rows."""
         if self._loaded:
             return
@@ -158,7 +159,10 @@ class BluetoothHistory:
             _LOGGER.warning("Could not load Bluetooth continuity; starting fresh")
             data = None
         self._loaded = True
-        wall = utc_timestamp()
+        # Both readings belong to the same post-I/O instant.
+        now, wall = clock(), utc_timestamp()
+        if self._remove_pending:
+            self.schedule_save()
         self._offset = wall - now
         if not isinstance(data, dict) or data.get("policy") != 1:
             return
@@ -253,8 +257,38 @@ class BluetoothHistory:
             self.schedule_save()
         return valid
 
+    def promote_bindings(self) -> None:
+        """Persist newly available exact registry bindings without renewing age."""
+        registry = dr.async_get(self.hass)
+        for old_key, row in list(self.sources.items()):
+            if row.source_id is None:
+                continue
+            registered = registry.async_get_device(
+                identifiers={(DOMAIN, row.source_id)}
+            )
+            if (
+                registered is None
+                or self.entry.entry_id not in registered.config_entries
+                or registered.id == old_key
+                or registered.id in self.sources
+            ):
+                continue
+            del self.sources[old_key]
+            row.row_id = registered.id
+            self.sources[row.row_id] = row
+            self.schedule_save()
+
+    def invalidate_restore(self) -> None:
+        """Known coordinator failure closes eligibility without renewing evidence."""
+        if self.trackers:
+            self._invalidated.update(self.trackers)
+            self.trackers.clear()
+            self._remove_pending = True
+            self.schedule_save()
+
     def source_reply(self, source_id: str, now: float) -> SourceEvidence:
         """Record only an accepted owned scan, retaining exact memory identity."""
+        self.promote_bindings()
         row = next(
             (item for item in self.sources.values() if item.source_id == source_id),
             None,
@@ -359,6 +393,15 @@ class BluetoothHistory:
                         "Could not remove Bluetooth continuity; memory stays invalidated"
                     )
             # This worker is domain-owned, never cancelled with an entry awaiter.
+            # Same-generation queued evidence must also respect a later known
+            # coordinator failure, whose restore tombstones do not stop retries.
+            trackers = payload.get("trackers")
+            if isinstance(trackers, dict):
+                payload["trackers"] = {
+                    key: row
+                    for key, row in trackers.items()
+                    if key not in self._invalidated
+                }
             await self._store.async_save(payload)
 
     async def async_flush(self) -> None:

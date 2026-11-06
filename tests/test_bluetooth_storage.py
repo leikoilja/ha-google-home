@@ -20,6 +20,7 @@ from custom_components.google_home.bluetooth_storage import (
     SourceEvidence,
     async_history,
 )
+from custom_components.google_home.types import BluetoothJsonDict
 
 # pylint: disable=wrong-import-order,protected-access
 from homeassistant.config_entries import ConfigEntryDisabler
@@ -71,7 +72,7 @@ async def fixture_evidence(
         patch("custom_components.google_home.bluetooth.monotonic", lambda: now[0]),
     ):
         history = async_history(hass, config_entry)
-        await history.async_load(now[0])
+        await history.async_load(lambda: now[0])
         yield history, now
         await history.async_flush()
 
@@ -135,7 +136,7 @@ async def test_full_process_load_preserves_utc_and_shortens_only_unmatched(
     now[0] = 60
     loaded = BluetoothHistory(history.hass, history.entry)
     # New process monotonic origin 1000, UTC age remains 60.
-    await loaded.async_load(1000)
+    await loaded.async_load(lambda: 1000)
     by_id = {row.source_id: row for row in loaded.sources.values()}
     assert by_id["known"].row_id == registered.id
     assert (by_id["known"].last_success, by_id["known"].deadline) == (940, 1240)
@@ -146,11 +147,11 @@ async def test_full_process_load_preserves_utc_and_shortens_only_unmatched(
     )
     now[0] = 91
     again = BluetoothHistory(history.hass, history.entry)
-    await again.async_load(2000)
+    await again.async_load(lambda: 2000)
     assert [row.source_id for row in again.sources.values()] == ["known"]
     now[0] = 301
     expired = BluetoothHistory(history.hass, history.entry)
-    await expired.async_load(3000)
+    await expired.async_load(lambda: 3000)
     assert not expired.trackers and not expired.sources
 
 
@@ -196,7 +197,7 @@ async def test_intent_observer_invalidates_without_loaded_hooks(
     )
     await history.async_flush()
     loaded = BluetoothHistory(hass, entry)
-    await loaded.async_load(10)
+    await loaded.async_load(lambda: 10)
     assert not loaded.trackers
 
 
@@ -323,7 +324,7 @@ async def test_swallowed_store_failure_preserves_memory_but_can_restore_old_disk
     assert history._store._data is None
     now[0] = 60
     loaded = BluetoothHistory(history.hass, history.entry)
-    await loaded.async_load(60)
+    await loaded.async_load(lambda: 60)
     assert (
         loaded.trackers[PHONE].expires == 300
     )  # Accepted full-process durability limit.
@@ -366,7 +367,7 @@ async def test_delayed_write_is_ordered_before_invalidation_and_reload(
         release.set()
         await next_flush
     loaded = BluetoothHistory(history.hass, history.entry)
-    await loaded.async_load(0)
+    await loaded.async_load(lambda: 0)
     assert not loaded.trackers
 
 
@@ -463,7 +464,7 @@ async def test_invalid_saved_rows_are_cold(
             row.setdefault("revision", "invented-config-revision")
     with patch.object(Store, "async_load", return_value=payload):
         loaded = BluetoothHistory(history.hass, history.entry)
-        await loaded.async_load(0)
+        await loaded.async_load(lambda: 0)
     assert not loaded.sources and not loaded.trackers
 
 
@@ -474,7 +475,7 @@ async def test_load_error_is_cold_and_early_invalidation_wins(
     history, _ = evidence
     with patch.object(Store, "async_load", side_effect=OSError("unreadable")):
         loaded = BluetoothHistory(history.hass, history.entry)
-        await loaded.async_load(0)
+        await loaded.async_load(lambda: 0)
     assert not loaded.trackers
     pending = BluetoothHistory(history.hass, history.entry)
     pending.schedule_save()
@@ -503,7 +504,7 @@ async def test_load_error_is_cold_and_early_invalidation_wins(
             },
         },
     ):
-        await pending.async_load(0)
+        await pending.async_load(lambda: 0)
     assert not pending.trackers
     await pending.async_flush()
 
@@ -688,5 +689,242 @@ async def test_missing_config_revision_is_cold(
     rows[PHONE].pop("revision")
     with patch.object(Store, "async_load", return_value=payload):
         loaded = BluetoothHistory(history.hass, history.entry)
-        await loaded.async_load(0)
+        await loaded.async_load(lambda: 0)
     assert not loaded.trackers
+
+
+async def test_delayed_load_pairs_clocks_after_io(
+    evidence: tuple[BluetoothHistory, list[float]],
+) -> None:
+    """Ten seconds of storage I/O is not an extra ten seconds of evidence age."""
+    history, now = evidence
+    history.confirm(PHONE, "not_home", None, 0, "live")
+    await history.async_flush()
+    entered, release = asyncio.Event(), asyncio.Event()
+    real_load = Store.async_load
+
+    async def delayed(store: Store[dict[str, object]]) -> dict[str, object] | None:
+        entered.set()
+        await release.wait()
+        return await real_load(store)
+
+    loaded = BluetoothHistory(history.hass, history.entry)
+    with patch.object(Store, "async_load", delayed):
+        task = asyncio.create_task(loaded.async_load(lambda: now[0]))
+        await entered.wait()
+        now[0] = 10
+        release.set()
+        await task
+    assert (loaded.trackers[PHONE].confirmed, loaded.trackers[PHONE].expires) == (
+        0,
+        300,
+    )
+    assert loaded.check_clock(10)
+    assert loaded.trackers[PHONE].expires == 300
+
+
+async def test_load_completion_rearms_dropped_invalidation_attempt(
+    evidence: tuple[BluetoothHistory, list[float]],
+) -> None:
+    """Off/on during a slow load attempts disk invalidation once loading completes."""
+    history, now = evidence
+    history.confirm(PHONE, "home", 0, 0, "live", WALL)
+    await history.async_flush()
+    entered, release = asyncio.Event(), asyncio.Event()
+    real_load = Store.async_load
+
+    async def delayed(store: Store[dict[str, object]]) -> dict[str, object] | None:
+        entered.set()
+        await release.wait()
+        return await real_load(store)
+
+    pending = BluetoothHistory(history.hass, history.entry)
+    with patch.object(Store, "async_load", delayed):
+        task = asyncio.create_task(pending.async_load(lambda: now[0]))
+        await entered.wait()
+        history.hass.config_entries.async_update_entry(
+            history.entry, options={"bluetooth_tracking": False}
+        )
+        pending.observe()
+        history.hass.config_entries.async_update_entry(
+            history.entry, options={"bluetooth_tracking": True}
+        )
+        pending.observe()
+        pending._enqueue()  # The first coalescing timer fires before load finishes.
+        first_timer = pending._save_cancel
+        assert pending._worker is None and first_timer is None
+        now[0] = 10
+        release.set()
+        await task
+    assert not pending.trackers
+    timer = pending._save_cancel
+    assert timer is not None
+    with patch.object(
+        pending._store, "async_remove", wraps=pending._store.async_remove
+    ) as remove:
+        pending._enqueue()  # Dispatch its coalescing callback, no unrelated flush/scan.
+        await history.hass.async_block_till_done(wait_background_tasks=True)
+        assert remove.call_count == 1
+    loaded = BluetoothHistory(history.hass, history.entry)
+    await loaded.async_load(lambda: now[0])
+    assert not loaded.trackers
+
+
+@pytest.mark.parametrize("phase", ["get", "post"])
+@pytest.mark.parametrize("transition", ["disable", "relist", "reset"])
+async def test_old_404_cannot_remove_current_requirements(
+    evidence: tuple[BluetoothHistory, list[float]], phase: str, transition: str
+) -> None:
+    """Every request completion must still own the source epoch and instance."""
+    from custom_components.google_home.bluetooth import BluetoothScanUnsupported  # noqa: PLC0415 # pylint: disable=import-outside-toplevel
+
+    history, now = evidence
+    speakers = Speakers("A")
+    scanner = scanner_for(history, speakers)
+    observed: list[tuple[float, float]] = []
+    with owned_scans(speakers):
+        await scanner.async_update()
+        history.source_reply("a", 0)
+
+        async def obsolete(_session: object, _device: object) -> list[object]:
+            if transition == "disable":
+                history.hass.config_entries.async_update_entry(
+                    history.entry, options={"bluetooth_tracking": False}
+                )
+                history.hass.config_entries.async_update_entry(
+                    history.entry, options={"bluetooth_tracking": True}
+                )
+            elif transition == "relist":
+                scanner._account.client.bluetooth_source_ids = set()
+                scanner.evaluate()
+                scanner._account.client.bluetooth_source_ids = {"a"}
+                scanner.evaluate()
+                history.source_reply("a", now[0])
+            else:
+                history.generation += 1
+                scanner.reset_clock()
+            observed.extend(
+                (row.last_success, row.deadline) for row in history.sources.values()
+            )
+            raise BluetoothScanUnsupported("old endpoint")
+
+        target = (
+            "async_get_bluetooth_scan_results"
+            if phase == "get"
+            else "async_start_bluetooth_scan"
+        )
+        now[0] = 30
+        with patch(
+            f"custom_components.google_home.bluetooth.{target}", side_effect=obsolete
+        ):
+            if transition == "disable":
+                with pytest.raises(asyncio.CancelledError):
+                    await scanner.async_update()
+            else:
+                await scanner.async_update()
+        assert [
+            (row.last_success, row.deadline) for row in history.sources.values()
+        ] == observed
+        assert "a" not in scanner._unsupported
+
+
+@pytest.mark.parametrize("field", ["ip_address", "auth_token"])
+async def test_mutated_endpoint_cannot_supply_old_results(
+    evidence: tuple[BluetoothHistory, list[float]], field: str
+) -> None:
+    """Changing the same account object rejects old sightings and restarts ownership."""
+    from .test_bluetooth import heard  # noqa: PLC0415 # pylint: disable=import-outside-toplevel
+
+    history, now = evidence
+    speakers = Speakers("A")
+    scanner = scanner_for(history, speakers)
+    with owned_scans(speakers):
+        await scanner.async_update()
+        history.source_reply("a", 0)
+
+        async def replaced(
+            _session: object, _device: object
+        ) -> list[BluetoothJsonDict]:
+            setattr(speakers.devices[0], field, "replacement")
+            return [heard("AA:BB:CC:DD:EE:FF")]
+
+        now[0] = 30
+        with patch(
+            "custom_components.google_home.bluetooth.async_get_bluetooth_scan_results",
+            side_effect=replaced,
+        ):
+            assert (await scanner.async_update())[PHONE].state == "unknown"
+        assert next(iter(history.sources.values())).last_success == 0
+        assert scanner.tracked[0].last_sighted is None
+        assert scanner._speakers["a"].run_start is None
+        now[0] = 60
+        await scanner.async_update()
+        speakers.results["a"] = [heard("AA:BB:CC:DD:EE:FF")]
+        now[0] = 90
+        assert (await scanner.async_update())[PHONE].state == "home"
+        assert scanner.tracked[0].last_sighted == 60
+
+
+async def test_later_registry_binding_promotes_without_renewing(
+    evidence: tuple[BluetoothHistory, list[float]], device_registry: dr.DeviceRegistry
+) -> None:
+    """Normal registry creation later makes the existing exact source restorable."""
+    history, now = evidence
+    original = history.source_reply("later", 0)
+    original_id = original.row_id
+    registered = device_registry.async_get_or_create(
+        config_entry_id=history.entry.entry_id, identifiers={("google_home", "later")}
+    )
+    now[0] = 30
+    history.promote_bindings()
+    assert original_id not in history.sources
+    assert history.sources[registered.id] is original
+    assert (
+        original.last_success,
+        original.deadline,
+        original.last_success_utc,
+        original.deadline_utc,
+    ) == (0, 300, WALL, WALL + 300)
+    await history.async_flush()
+    now[0] = 60
+    loaded = BluetoothHistory(history.hass, history.entry)
+    await loaded.async_load(lambda: 1000)
+    assert (
+        loaded.sources[registered.id].source_id,
+        loaded.sources[registered.id].deadline,
+    ) == ("later", 1240)
+
+
+async def test_unexpected_scan_failure_drains_sibling_requests(
+    evidence: tuple[BluetoothHistory, list[float]],
+) -> None:
+    """A failed update cannot leave another request writing later shared evidence."""
+    history, now = evidence
+    speakers = Speakers("A", "B")
+    scanner = scanner_for(history, speakers)
+    entered, cancelled = asyncio.Event(), asyncio.Event()
+    with owned_scans(speakers):
+        await scanner.async_update()
+
+        async def unexpected(_session: object, device: object) -> list[object]:
+            if device.device_id == "a":
+                await entered.wait()
+                raise RuntimeError("unexpected request failure")
+            entered.set()
+            try:
+                await asyncio.Event().wait()
+            finally:
+                cancelled.set()
+            return []
+
+        now[0] = 30
+        with (
+            patch(
+                "custom_components.google_home.bluetooth.async_get_bluetooth_scan_results",
+                side_effect=unexpected,
+            ),
+            pytest.raises(RuntimeError, match="unexpected request failure"),
+        ):
+            await scanner.async_update()
+        assert cancelled.is_set()
+        assert not history.sources and not history.trackers
