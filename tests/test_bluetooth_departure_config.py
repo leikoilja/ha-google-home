@@ -110,10 +110,13 @@ async def test_departure_delay_schema_refusal(
     submitted = {"additional_departure_delay": value}
     if source == "user":
         submitted |= {"name": "Tag", "irk_or_mac": "AA:BB:CC:DD:EE:FF"}
-    with pytest.raises(InvalidData):
+    with pytest.raises(InvalidData) as refused:
         await hass.config_entries.subentries.async_configure(
             result["flow_id"], submitted
         )
+    assert refused.value.schema_errors == {
+        "additional_departure_delay": "departure-delay-invalid"
+    }
     assert {
         key: dict(item.data) for key, item in config_entry.subentries.items()
     } == before

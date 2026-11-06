@@ -52,7 +52,7 @@ About every 30 seconds, whatever the [update interval](configuration.md#change-t
 | State         | When                                                                                                                                        |
 | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
 | `home`        | A speaker heard the device in the last 90 seconds, or its previous home state is retained while awaiting a covered departure.                                                                                          |
-| `not_home`    | At least one active speaker, and every other required speaker, has scanned without a break for the last 90 seconds, and none heard the device.                                               |
+| `not_home`    | At least one active speaker, and every other required speaker, has scanned without a break for the last 90 seconds, and none heard the device. When leaving `home`, any additional departure delay must also have elapsed. |
 | `unknown`     | There is no recent saved confirmation and the speakers haven't confirmed `home` or `not_home` yet. Fresh scans normally take about 30 to 90 seconds. If it takes longer, see [Tracker doesn't show `home` or stays `unknown`](#tracker-doesnt-show-home-or-stays-unknown). |
 | `unavailable` | The tracker showed `home` or `not_home`, but the speakers haven't confirmed either for 5 minutes, for example because a speaker stopped answering. See [Tracker is unavailable](#tracker-is-unavailable). Also while Bluetooth tracking is off. |
 

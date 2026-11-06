@@ -501,7 +501,7 @@ class DepartureDelaySelector(NumberSelector):
             or not isinstance(data, int | float)
             or not 0 <= data <= DEPARTURE_DELAY_VALUES[-1]
         ):
-            raise probatio.Invalid("Expected a number between 0 and 120")
+            raise probatio.Invalid("departure-delay-invalid")
         return super().__call__(data)
 
 
