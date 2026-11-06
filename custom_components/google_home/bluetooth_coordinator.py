@@ -8,7 +8,7 @@ from typing import override
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from .bluetooth import BluetoothScanner, TrackerUpdate, bluetooth_now
+from .bluetooth import BluetoothScanner, TrackerState, TrackerUpdate, bluetooth_now
 from .bluetooth_storage import BluetoothHistory
 from .const import BLUETOOTH_SCAN_INTERVAL, DOMAIN
 from .types import GoogleHomeConfigEntry
@@ -112,8 +112,17 @@ class BluetoothCoordinator(DataUpdateCoordinator[dict[str, TrackerUpdate]]):
     @callback
     def stop(self) -> None:
         """Cancel entry timers without cancelling the domain Store worker."""
+        if self._stopped:
+            return
         self._stopped = True
         self.scanner.retire()
         if self._expiry is not None:
             self._expiry.cancel()
             self._expiry = None
+        # A failed platform unload can leave entities attached. Publish lifecycle
+        # unavailability once, without treating retirement as failed evidence or
+        # erasing the original, still-eligible restoration lease.
+        self.data = {
+            key: TrackerUpdate(TrackerState.UNAVAILABLE, {}) for key in self.data
+        }
+        super().async_update_listeners()

@@ -9,7 +9,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 import logging
 from math import isfinite
-from typing import cast
+from typing import Final, cast
 from uuid import uuid4
 
 from homeassistant.config_entries import SIGNAL_CONFIG_ENTRY_CHANGED, ConfigEntryChange
@@ -21,6 +21,9 @@ from homeassistant.helpers.storage import Store
 from homeassistant.util import dt as dt_util
 
 from .const import (
+    BLUETOOTH_CONFIRMATION_LEASE,
+    BLUETOOTH_MATCHED_SOURCE_TIMEOUT,
+    BLUETOOTH_UNMATCHED_SOURCE_TIMEOUT,
     CONF_BLUETOOTH_EXCLUDED,
     CONF_BLUETOOTH_TRACKING,
     CONF_IRK,
@@ -30,11 +33,8 @@ from .const import (
 from .types import GoogleHomeConfigEntry
 
 _LOGGER = logging.getLogger(__name__)
-MATCHED_TIMEOUT = 300
-UNMATCHED_TIMEOUT = 90
-RESTORE_LIMIT = 300
-SAVE_DELAY = 5
-HISTORY_KEY = f"{DOMAIN}_bluetooth_history"
+_SAVE_DELAY: Final = 5
+_HISTORY_KEY: Final = f"{DOMAIN}_bluetooth_history"
 
 
 def utc_timestamp() -> float:
@@ -190,7 +190,10 @@ class BluetoothHistory:
             if (
                 last is None
                 or deadline is None
-                or not last <= wall < deadline <= last + MATCHED_TIMEOUT
+                or not last
+                <= wall
+                < deadline
+                <= last + BLUETOOTH_MATCHED_SOURCE_TIMEOUT
             ):
                 continue
             source = registry.async_get(key)
@@ -207,7 +210,7 @@ class BluetoothHistory:
                 else None
             )
             if source_id is None:
-                deadline = min(deadline, last + UNMATCHED_TIMEOUT)
+                deadline = min(deadline, last + BLUETOOTH_UNMATCHED_SOURCE_TIMEOUT)
             if deadline <= wall:
                 continue
             self.sources[key] = SourceEvidence(
@@ -237,7 +240,7 @@ class BluetoothHistory:
                 continue
             if (
                 not confirmed <= wall < expires
-                or expires != confirmed + RESTORE_LIMIT
+                or expires != confirmed + BLUETOOTH_CONFIRMATION_LEASE
                 or state not in {"home", "not_home"}
             ):
                 continue
@@ -316,8 +319,11 @@ class BluetoothHistory:
                 row_id, source_id, now, now, 0, 0
             )
         wall = utc_timestamp()
-        row.last_success, row.deadline = now, now + MATCHED_TIMEOUT
-        row.last_success_utc, row.deadline_utc = wall, wall + MATCHED_TIMEOUT
+        row.last_success, row.deadline = now, now + BLUETOOTH_MATCHED_SOURCE_TIMEOUT
+        row.last_success_utc, row.deadline_utc = (
+            wall,
+            wall + BLUETOOTH_MATCHED_SOURCE_TIMEOUT,
+        )
         self.schedule_save()
         return row
 
@@ -336,10 +342,10 @@ class BluetoothHistory:
             state,
             sighted,
             now,
-            now + RESTORE_LIMIT,
+            now + BLUETOOTH_CONFIRMATION_LEASE,
             sighted_utc,
             wall,
-            wall + RESTORE_LIMIT,
+            wall + BLUETOOTH_CONFIRMATION_LEASE,
             provenance,
             self._revisions.setdefault(key, uuid4().hex),
         )
@@ -371,7 +377,7 @@ class BluetoothHistory:
     def schedule_save(self) -> None:
         """Coalesce attempts without changing evidence or spawning parallel writers."""
         if self._save_cancel is None:
-            self._save_cancel = self.hass.loop.call_later(SAVE_DELAY, self._enqueue)
+            self._save_cancel = self.hass.loop.call_later(_SAVE_DELAY, self._enqueue)
 
     @callback
     def _enqueue(self) -> None:
@@ -450,9 +456,9 @@ def async_history(
     hass: HomeAssistant, entry: GoogleHomeConfigEntry
 ) -> BluetoothHistory:
     """Install the early domain observer and return this entry's single owner."""
-    if HISTORY_KEY not in hass.data:
+    if _HISTORY_KEY not in hass.data:
         histories: dict[str, BluetoothHistory] = {}
-        hass.data[HISTORY_KEY] = histories
+        hass.data[_HISTORY_KEY] = histories
 
         @callback
         def changed(
@@ -466,7 +472,7 @@ def async_history(
                 histories[changed_entry.entry_id].observe()
 
         async_dispatcher_connect(hass, SIGNAL_CONFIG_ENTRY_CHANGED, changed)
-    histories = cast(dict[str, BluetoothHistory], hass.data[HISTORY_KEY])
+    histories = cast(dict[str, BluetoothHistory], hass.data[_HISTORY_KEY])
     if entry.entry_id not in histories:
         histories[entry.entry_id] = BluetoothHistory(hass, entry)
     histories[entry.entry_id].observe()

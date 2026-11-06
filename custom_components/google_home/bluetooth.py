@@ -39,10 +39,12 @@ from homeassistant.const import CONF_MAC
 from homeassistant.util import dt as dt_util
 
 from . import bluetooth_storage
-from .bluetooth_storage import MATCHED_TIMEOUT, BluetoothHistory, SourceEvidence
+from .bluetooth_storage import BluetoothHistory, SourceEvidence
 from .const import (
     API_ENDPOINT_BLUETOOTH_RESULTS,
     API_ENDPOINT_BLUETOOTH_SCAN,
+    BLUETOOTH_CONFIRMATION_LEASE,
+    BLUETOOTH_MATCHED_SOURCE_TIMEOUT,
     BLUETOOTH_MAX_RESULT_AGE,
     BLUETOOTH_MAX_SCAN_GAP,
     BLUETOOTH_MIN_RSSI,
@@ -51,7 +53,6 @@ from .const import (
     BLUETOOTH_RSSI_WINDOW,
     BLUETOOTH_SCAN_INTERVAL,
     BLUETOOTH_TIMEOUT,
-    BLUETOOTH_UNCERTAIN_LIMIT,
     CONF_IRK,
     HEADER_CAST_LOCAL_AUTH,
     HEADER_CONTENT_TYPE,
@@ -429,10 +430,10 @@ class BluetoothScanner:
             return []
         now = monotonic()
         return [row.deadline for row in self._leases.values() if row.deadline > now] + [
-            device.confirmed_at + BLUETOOTH_UNCERTAIN_LIMIT
+            device.confirmed_at + BLUETOOTH_CONFIRMATION_LEASE
             for device in self.tracked
             if device.confirmed_at is not None
-            and device.confirmed_at + BLUETOOTH_UNCERTAIN_LIMIT > now
+            and device.confirmed_at + BLUETOOTH_CONFIRMATION_LEASE > now
         ]
 
     def diagnostics(self) -> dict[str, object]:
@@ -670,9 +671,9 @@ class BluetoothScanner:
                 device_id,
                 device_id,
                 read,
-                read + MATCHED_TIMEOUT,
+                read + BLUETOOTH_MATCHED_SOURCE_TIMEOUT,
                 wall,
-                wall + MATCHED_TIMEOUT,
+                wall + BLUETOOTH_MATCHED_SOURCE_TIMEOUT,
             )
         # Only counts: the results include the neighbours' devices
         _LOGGER.debug("%s heard %d Bluetooth devices", speaker.name, len(results))
@@ -732,7 +733,7 @@ class BluetoothScanner:
                 speaker.uncovered_since = now
             elif (
                 not speaker.warned
-                and now - speaker.uncovered_since >= BLUETOOTH_UNCERTAIN_LIMIT
+                and now - speaker.uncovered_since >= BLUETOOTH_CONFIRMATION_LEASE
             ):
                 speaker.warned = True
                 _LOGGER.warning(
@@ -741,7 +742,7 @@ class BluetoothScanner:
                     "'Speakers not used for Bluetooth tracking' in the integration's "
                     "options",
                     speaker.name,
-                    BLUETOOTH_UNCERTAIN_LIMIT // 60,
+                    BLUETOOTH_CONFIRMATION_LEASE // 60,
                 )
 
     @staticmethod
@@ -767,7 +768,7 @@ class BluetoothScanner:
             device.confirmed_now = True
         elif device.confirmed_at is None:
             return TrackerState.UNKNOWN
-        elif now - device.confirmed_at >= BLUETOOTH_UNCERTAIN_LIMIT:
+        elif now - device.confirmed_at >= BLUETOOTH_CONFIRMATION_LEASE:
             return TrackerState.UNAVAILABLE
         return device.state
 

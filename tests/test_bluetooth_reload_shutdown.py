@@ -32,6 +32,7 @@ from .test_bluetooth import IRK, PHONE, heard, rpa
 from .test_bluetooth_setup import TRACKER, Scans, scan, track_phone
 from .test_bluetooth_storage import WALL
 from .test_coordinators import runtime
+from .test_unsupported_devices import SPEAKER
 
 # pylint: enable=wrong-import-order
 
@@ -287,3 +288,36 @@ async def test_registry_bind_promotion_and_load_use_supported_scoped_apis(
         and "google_home" in record.getMessage()
         for record in caplog.records
     )
+
+
+@pytest.mark.usefixtures("google", "replies")
+async def test_failed_platform_unload_keeps_retired_entities_unavailable(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    scans: Scans,
+) -> None:
+    """Early retirement must not leave a registered tracker frozen beyond E."""
+    await track_phone(hass, config_entry)
+    scans.heard[SPEAKER] = [heard(rpa(IRK))]
+    assert await scan(hass, config_entry, scans, 30) == "home"
+    coordinator = runtime(config_entry).bluetooth
+    assert isinstance(coordinator, BluetoothCoordinator)
+    original = coordinator.history.snapshot()
+    with patch.object(
+        hass.config_entries, "async_unload_platforms", return_value=False
+    ):
+        assert not await hass.config_entries.async_unload(config_entry.entry_id)
+    assert not coordinator.scanner.current()
+    state = hass.states.get(TRACKER)
+    assert state is not None and state.state == "unavailable"
+    assert coordinator.history.snapshot() == original
+    scans.now = 400  # Beyond original C=30/E=330 and source L=30/D=330.
+    await coordinator.async_refresh()
+    coordinator._expire()
+    state = hass.states.get(TRACKER)
+    assert state is not None and state.state == "unavailable"
+    assert coordinator.history.snapshot() == original
+    await coordinator.history.async_flush()
+    loaded = BluetoothHistory(hass, config_entry)
+    await loaded.async_load(lambda: scans.now)
+    assert not loaded.trackers and not loaded.sources

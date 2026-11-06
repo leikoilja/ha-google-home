@@ -6,13 +6,10 @@ from unittest.mock import patch
 import pytest
 from pytest_homeassistant.common import MockConfigEntry, async_capture_events
 
+from custom_components.google_home import bluetooth_storage
 from custom_components.google_home.bluetooth import BluetoothScanError
 from custom_components.google_home.bluetooth_coordinator import BluetoothCoordinator
-from custom_components.google_home.bluetooth_storage import (
-    HISTORY_KEY,
-    async_history,
-    utc_timestamp,
-)
+from custom_components.google_home.bluetooth_storage import async_history, utc_timestamp
 
 # pylint: disable=wrong-import-order
 from homeassistant.const import (
@@ -59,7 +56,7 @@ async def test_recent_state_is_first_entity_state_after_recreation(
     assert await hass.config_entries.async_unload(config_entry.entry_id)
     if new_manager:
         # New owner loads the real Store, with no memory bindings/coverage.
-        hass.data[HISTORY_KEY].pop(config_entry.entry_id)
+        hass.data[bluetooth_storage._HISTORY_KEY].pop(config_entry.entry_id)  # noqa: SLF001 # pylint: disable=protected-access
     scans.now = 105
     await hass.config_entries.async_setup(config_entry.entry_id)
     await hass.async_block_till_done(wait_background_tasks=True)
