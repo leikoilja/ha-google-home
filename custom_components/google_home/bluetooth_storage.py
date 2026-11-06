@@ -89,6 +89,7 @@ class BluetoothHistory:
         self.sources: dict[str, SourceEvidence] = {}
         self.trackers: dict[str, PresenceEvidence] = {}
         self.generation = 0
+        self._scanner_instance: object | None = None
         self._store = Store[dict[str, object]](
             hass,
             1,
@@ -110,6 +111,20 @@ class BluetoothHistory:
         self._remove_pending = False
         hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, self._async_stop)
         self.observe()
+
+    def claim_scanner(self) -> object:
+        """Give a newly set-up scanner exclusive ownership without renewing ages."""
+        self._scanner_instance = object()
+        return self._scanner_instance
+
+    def owns_scanner(self, instance: object) -> bool:
+        """Keep ordinary setup lifetime separate from semantic config generation."""
+        return self._scanner_instance is instance
+
+    def retire_scanner(self, instance: object) -> None:
+        """An old unload must neither retain ownership nor retire a newer setup."""
+        if self.owns_scanner(instance):
+            self._scanner_instance = None
 
     @callback
     def observe(self) -> None:
@@ -188,7 +203,7 @@ class BluetoothHistory:
                     ),
                     None,
                 )
-                if source and self.entry.entry_id in source.config_entries
+                if source and source.config_entry_id == self.entry.entry_id
                 else None
             )
             if source_id is None:
@@ -263,12 +278,11 @@ class BluetoothHistory:
         for old_key, row in list(self.sources.items()):
             if row.source_id is None:
                 continue
-            registered = registry.async_get_device(
-                identifiers={(DOMAIN, row.source_id)}
+            registered = registry.async_get_device_by_identifier(
+                (DOMAIN, row.source_id), self.entry.entry_id
             )
             if (
                 registered is None
-                or self.entry.entry_id not in registered.config_entries
                 or registered.id == old_key
                 or registered.id in self.sources
             ):
@@ -294,14 +308,10 @@ class BluetoothHistory:
             None,
         )
         if row is None:
-            registered = dr.async_get(self.hass).async_get_device(
-                identifiers={(DOMAIN, source_id)}
+            registered = dr.async_get(self.hass).async_get_device_by_identifier(
+                (DOMAIN, source_id), self.entry.entry_id
             )
-            row_id = (
-                registered.id
-                if registered and self.entry.entry_id in registered.config_entries
-                else uuid4().hex
-            )
+            row_id = registered.id if registered is not None else uuid4().hex
             row = self.sources[row_id] = SourceEvidence(
                 row_id, source_id, now, now, 0, 0
             )
@@ -373,8 +383,11 @@ class BluetoothHistory:
         self._queue.append((self.generation, self._remove_pending, self.snapshot()))
         self._remove_pending = False
         if self._worker is None or self._worker.done():
-            self._worker = self.hass.async_create_background_task(
-                self._async_write(), "Save Bluetooth continuity"
+            # Finite critical I/O must survive HA's initial cancellation of
+            # background tasks. The STOP listener drains this same task/queue;
+            # do not put it under an entry's cancellation or replace its owner.
+            self._worker = self.hass.async_create_task(
+                self._async_write(), "Save Bluetooth continuity", eager_start=False
             )
 
     async def _async_write(self) -> None:
@@ -411,6 +424,8 @@ class BluetoothHistory:
             await asyncio.shield(self._worker)
 
     async def _async_stop(self, _event: object) -> None:
+        # Manual service callers can outlive interval-task cancellation too.
+        self._scanner_instance = None
         await self.async_flush()
 
     async def async_remove(self) -> None:

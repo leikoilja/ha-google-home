@@ -52,8 +52,12 @@ class BluetoothCoordinator(DataUpdateCoordinator[dict[str, TrackerUpdate]]):
 
     @override
     async def _async_update_data(self) -> dict[str, TrackerUpdate]:
+        if not self.scanner.current():
+            return self.data
         self._check_clock()
         result = await self.scanner.async_update()
+        if not self.scanner.current():
+            return self.data
         self._schedule_expiry()
         return result
 
@@ -61,6 +65,8 @@ class BluetoothCoordinator(DataUpdateCoordinator[dict[str, TrackerUpdate]]):
     @override
     def async_update_listeners(self) -> None:
         """Known coordinator failure cannot become an eligible restore snapshot."""
+        if self._stopped or not self.scanner.current():
+            return
         if not self.last_update_success:
             self.history.invalidate_restore()
         super().async_update_listeners()
@@ -107,6 +113,7 @@ class BluetoothCoordinator(DataUpdateCoordinator[dict[str, TrackerUpdate]]):
     def stop(self) -> None:
         """Cancel entry timers without cancelling the domain Store worker."""
         self._stopped = True
+        self.scanner.retire()
         if self._expiry is not None:
             self._expiry.cancel()
             self._expiry = None

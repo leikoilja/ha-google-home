@@ -347,6 +347,10 @@ async def async_name_after_account(
 async def async_unload_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -> None:
     """Handle removal of an entry."""
     _LOGGER.debug("Unloading entry...")
+    # Manual update_entity callers are not entry-owned background tasks. Retire
+    # their scanner before the first unload await can let an old reply land.
+    if isinstance(bluetooth := entry.runtime_data.bluetooth, BluetoothCoordinator):
+        bluetooth.stop()
     await hass.config_entries.async_unload_platforms_or_raise(entry, PLATFORMS)
     await async_history(hass, entry).async_flush()
 

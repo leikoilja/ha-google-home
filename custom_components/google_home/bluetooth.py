@@ -2,13 +2,14 @@
 
 Each update reads the results of the scan that every speaker started in the
 previous update, then starts the next scan. A tracked device is home while a
-speaker heard it recently. It's away only when every speaker that Google lists
-and whose reply lease remains active has scanned without a break for the whole
-presence window and none heard it. A silent source expires after five minutes;
-an unidentifiable saved source expires sooner, from its original reply age. Meanwhile the tracker keeps its last state
-for a few minutes, so a missed scan doesn't make it flap. A device that never
-returned results, such as a TV that refuses the connection instead of answering
-404, can't keep trackers from showing away.
+speaker heard it recently. Away requires continuous coverage from every
+required speaker, and at least one active scanner. None may have heard the
+device within the presence window. A silent source expires after five minutes;
+an unidentifiable saved source expires sooner, from its original reply age.
+Meanwhile the tracker keeps its last state for a few minutes, so a missed scan
+doesn't make it flap. A device that never returned results, such as a TV that
+refuses the connection instead of answering 404, can't keep trackers from
+showing away.
 
 Each tracker also shows how strongly each speaker heard the device: the median
 over windows of a few minutes, as single readings swing by about 20 dB even
@@ -264,8 +265,6 @@ class SpeakerScan:
     run_start: float | None = None
     # End of what the latest read scan covered
     covered_until: float | None = None
-    # Whether it returned scan results since setup, so it supports scans
-    answered: bool = False
     # When the speaker started keeping trackers from showing away
     uncovered_since: float | None = None
     warned: bool = False
@@ -294,6 +293,8 @@ class BluetoothScanner:
     ) -> None:
         """Create a scanner for the tracked devices, using the devices Google lists."""
         self._history = history
+        self._instance = history.claim_scanner() if history else object()
+        self._retired = False
         self._generation = history.generation if history else 0
         self._leases = history.sources if history else {}
         self._membership_changed = False
@@ -318,6 +319,17 @@ class BluetoothScanner:
                     device.confirmed_at = row.confirmed
                     device.provenance = "restored"
 
+        self._updates = {
+            device.subentry_id: TrackerUpdate(device.state, {})
+            for device in self.tracked
+        }
+
+    def retire(self) -> None:
+        """Close this setup before unload awaits, without changing saved evidence."""
+        self._retired = True
+        if self._history:
+            self._history.retire_scanner(self._instance)
+
     def reset_clock(self) -> None:
         """Start fresh after a detected clock discontinuity, retaining identities."""
         assert self._history is not None
@@ -331,7 +343,13 @@ class BluetoothScanner:
 
     def current(self) -> bool:
         """An obsolete scanner must not apply late replies or timer decisions."""
-        return self._history is None or self._generation == self._history.generation
+        return not self._retired and (
+            self._history is None
+            or (
+                self._history.owns_scanner(self._instance)
+                and self._generation == self._history.generation
+            )
+        )
 
     def _eligible(self, source_id: str) -> bool:
         account = self._account
@@ -362,6 +380,8 @@ class BluetoothScanner:
         self, *, healthy: bool = True, scan: bool = False
     ) -> dict[str, TrackerUpdate]:
         """One owner decides at actual time, processing source D before tracker E."""
+        if not self.current():
+            return self._updates
         now = monotonic()
         self._expire_sources(now)
         self._update_speakers()
@@ -400,10 +420,13 @@ class BluetoothScanner:
                 )
             updates[device.subentry_id] = self._tracker_update(device, state, now)
             device.heard = {}
+        self._updates = updates
         return updates
 
     def deadlines(self) -> list[float]:
         """Return only future deadlines; consumed expiry events cannot renew state."""
+        if not self.current():
+            return []
         now = monotonic()
         return [row.deadline for row in self._leases.values() if row.deadline > now] + [
             device.confirmed_at + BLUETOOTH_UNCERTAIN_LIMIT
@@ -463,7 +486,8 @@ class BluetoothScanner:
     async def async_update(self) -> dict[str, TrackerUpdate]:
         """Read the scans of the previous update, start new ones, and return the updates."""
         if not self.current():
-            raise asyncio.CancelledError
+            return self._updates
+        generation = self._generation
         self._expire_sources(monotonic())
         self._accepted = False
         devices = self._update_speakers()
@@ -478,14 +502,19 @@ class BluetoothScanner:
         ]
         try:
             await asyncio.gather(*tasks)
-        except BaseException:
+        except Exception, asyncio.CancelledError:
             # A failed coordinator cannot leave sibling requests mutating history.
             for task in tasks:
                 task.cancel()
             await asyncio.gather(*tasks, return_exceptions=True)
+            caller = asyncio.current_task()
+            if (not self.current() or generation != self._generation) and not (
+                caller is not None and caller.cancelling()
+            ):
+                return self._updates
             raise
-        if not self.current():
-            raise asyncio.CancelledError
+        if not self.current() or generation != self._generation:
+            return self._updates
         return self.evaluate(scan=True)
 
     def _update_speakers(self) -> dict[str, GoogleHomeDevice]:
@@ -632,7 +661,6 @@ class BluetoothScanner:
             return
         self._expire_sources(read)
         self._accepted = True
-        speaker.answered = True
         self._answered.add(device_id)
         if self._history:
             self._history.source_reply(device_id, read)

@@ -671,7 +671,6 @@ async def test_obsolete_scan_cannot_confirm_after_disable_cycle(
                 "custom_components.google_home.bluetooth.async_get_bluetooth_scan_results",
                 side_effect=disable_during_read,
             ),
-            pytest.raises(asyncio.CancelledError),
         ):
             await scanner.async_update()
         assert not history.trackers and not history.sources
@@ -818,11 +817,7 @@ async def test_old_404_cannot_remove_current_requirements(
         with patch(
             f"custom_components.google_home.bluetooth.{target}", side_effect=obsolete
         ):
-            if transition == "disable":
-                with pytest.raises(asyncio.CancelledError):
-                    await scanner.async_update()
-            else:
-                await scanner.async_update()
+            await scanner.async_update()
         assert [
             (row.last_success, row.deadline) for row in history.sources.values()
         ] == observed
