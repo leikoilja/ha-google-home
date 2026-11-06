@@ -8,7 +8,13 @@ from typing import override
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
-from .bluetooth import BluetoothScanner, TrackerState, TrackerUpdate, bluetooth_now
+from .bluetooth import (
+    BluetoothScanner,
+    DepartureToken,
+    TrackerState,
+    TrackerUpdate,
+    bluetooth_now,
+)
 from .bluetooth_storage import BluetoothHistory
 from .const import BLUETOOTH_SCAN_INTERVAL, DOMAIN
 from .types import GoogleHomeConfigEntry
@@ -37,6 +43,9 @@ class BluetoothCoordinator(DataUpdateCoordinator[dict[str, TrackerUpdate]]):
         self.scanner = scanner
         self.history = history
         self._expiry: asyncio.TimerHandle | None = None
+        self._departures: dict[
+            str, tuple[DepartureToken, int, asyncio.TimerHandle]
+        ] = {}
         self._stopped = False
         # First entity state uses eligible evidence, without waiting for a scan.
         self.data = scanner.evaluate()
@@ -95,12 +104,90 @@ class BluetoothCoordinator(DataUpdateCoordinator[dict[str, TrackerUpdate]]):
         healthy = (
             self.last_update_success and not self.config_entry.pref_disable_polling
         )
-        self.data = self.scanner.evaluate(healthy=healthy)
+        self.data = self.scanner.evaluate(
+            healthy=healthy, departures=self._due_departures()
+        )
         self.async_update_listeners()
         self._schedule_expiry()
 
     @callback
+    def update_departure_delays(self) -> None:
+        """Apply config inline while HA invokes its single existing listener."""
+        if (
+            not self._stopped
+            and self.scanner.current()
+            and self.scanner.sync_departure_delays()
+        ):
+            self._schedule_departures()
+
+    def _due_departures(self) -> dict[str, DepartureToken]:
+        self.scanner.sync_departure_delays()
+        now = bluetooth_now()
+        return {
+            device.subentry_id: token
+            for device in self.scanner.tracked
+            if (pending := self._departures.get(device.subentry_id)) is not None
+            for token, generation, _handle in [pending]
+            if device.pending_departure == token
+            and generation == self.scanner.generation
+            and token.deadline <= now
+        }
+
+    @callback
+    def _depart(self, subentry_id: str, token: DepartureToken, generation: int) -> None:
+        if self._stopped or not self.scanner.current():
+            return
+        self.update_departure_delays()
+        pending = self._departures.get(subentry_id)
+        if (
+            pending is None
+            or pending[:2] != (token, generation)
+            or generation != self.scanner.generation
+        ):
+            return
+        if bluetooth_now() < token.deadline:
+            # asyncio may invoke timers a clock-resolution tick early.
+            pending[2].cancel()
+            del self._departures[subentry_id]
+            self._schedule_departures()
+            return
+        self._expire()
+
+    @callback
+    def _schedule_departures(self) -> None:
+        pending = {
+            device.subentry_id: device.pending_departure
+            for device in self.scanner.tracked
+            if device.pending_departure is not None
+        }
+        for key, (token, generation, handle) in list(self._departures.items()):
+            if (
+                pending.get(key) != token
+                or generation != self.scanner.generation
+                or self._stopped
+            ):
+                handle.cancel()
+                del self._departures[key]
+        if self._stopped:
+            return
+        for key, token in pending.items():
+            if key not in self._departures:
+                generation = self.scanner.generation
+                self._departures[key] = (
+                    token,
+                    generation,
+                    self.hass.loop.call_later(
+                        max(0, token.deadline - bluetooth_now()),
+                        self._depart,
+                        key,
+                        token,
+                        generation,
+                    ),
+                )
+
+    @callback
     def _schedule_expiry(self) -> None:
+        self._schedule_departures()
         if self._expiry is not None:
             self._expiry.cancel()
             self._expiry = None
@@ -116,6 +203,7 @@ class BluetoothCoordinator(DataUpdateCoordinator[dict[str, TrackerUpdate]]):
             return
         self._stopped = True
         self.scanner.retire()
+        self._schedule_departures()
         if self._expiry is not None:
             self._expiry.cancel()
             self._expiry = None
