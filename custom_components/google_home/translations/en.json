@@ -231,7 +231,7 @@
         "step": {
           "init": {
             "title": "The saved update interval is below {min_interval} s",
-            "description": "The update interval saved in the integration's options is {interval} seconds, which is below the minimum of {min_interval} s. The integration uses the default instead and checks your devices every {default_interval} s.\n\nIf you saved 0 to stop these regular checks, turn off polling instead. Unlike 0, it also stops Bluetooth scans and the adding of new devices that mDNS finds. For details, see {docs_url}.\n\nTo use another interval, open the [Google Home integration]({integration_url}), select **Configure**, enter it, then select **Submit**.",
+            "description": "The update interval saved in the integration's options is {interval} s, which is below the minimum of {min_interval} s. The integration uses the default instead and checks your devices every {default_interval} s.\n\nIf you saved 0 to stop these regular checks, turn off polling instead. Unlike 0, it also stops Bluetooth scans and the adding of new devices that mDNS finds. For details, see {docs_url}.\n\nTo use another interval, open the [Google Home integration]({integration_url}), select **Configure**, enter it, then select **Submit**.",
             "menu_options": {
               "use_default": "Use the default of {default_interval} s",
               "turn_off_polling": "Turn off polling instead"

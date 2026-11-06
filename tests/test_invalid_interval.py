@@ -204,7 +204,7 @@ async def test_interval_owners_reach_validation_and_repair(
     description = text[f"{step}.description"].format_map(values)
     assert "below the minimum of 3 s" in description
     assert "checks your devices every 37 s" in description
-    assert "is 2 seconds" in description
+    assert "is 2 s" in description
 
     await choose(hass, result, "use_default")
 
@@ -218,10 +218,10 @@ async def test_interval_owners_reach_validation_and_repair(
     assert invalid.value.schema_errors == {
         CONF_UPDATE_INTERVAL: "value must be at least 3"
     }
-    result = await hass.config_entries.options.async_configure(
+    options_result = await hass.config_entries.options.async_configure(
         options["flow_id"], {CONF_UPDATE_INTERVAL: 3}
     )
-    assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert options_result["type"] is FlowResultType.CREATE_ENTRY
     assert config_entry.options[CONF_UPDATE_INTERVAL] == 3
 
 

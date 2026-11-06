@@ -83,7 +83,7 @@
       "google-unreachable": "Nie udało się połączyć z Google. Sprawdź, czy Home Assistant ma połączenie z internetem, a następnie spróbuj ponownie.",
       "google-busy": "Google jest przeciążone lub ogranicza liczbę logowań. Odczekaj kilka minut, a następnie zaloguj się ponownie.",
       "oauth-token-format": "To nie jest plik cookie oauth_token. Jego wartość zaczyna się od oauth2_4/.",
-      "master-token-format": "Token główny zaczyna się od aas_et/ i ma {token_length} znaki. Skopiuj cały token.",
+      "master-token-format": "Token główny zaczyna się od aas_et/. Wymagana liczba znaków: {token_length}. Skopiuj cały token.",
       "other-account": "Zalogowano się na inne konto Google, więc nic nie zostało zmienione. Zaloguj się na konto używane przez tę integrację. Aby zamiast tego używać tamtego konta, usuń integrację i dodaj ją ponownie.",
       "no-home-selected": "Wybierz co najmniej jeden dom."
     },
@@ -233,7 +233,7 @@
             "title": "Zapisany interwał aktualizacji jest krótszy niż {min_interval} s",
             "description": "Interwał aktualizacji zapisany w opcjach integracji wynosi {interval} s, czyli mniej niż minimalna wartość {min_interval} s. Integracja używa zamiast tego wartości domyślnej i sprawdza Twoje urządzenia co {default_interval} s.\n\nJeśli wartość 0 została zapisana po to, żeby zatrzymać te regularne sprawdzenia, wyłącz zamiast tego odpytywanie. W przeciwieństwie do 0 wyłączenie odpytywania zatrzymuje też wyszukiwanie urządzeń Bluetooth i dodawanie nowych urządzeń znalezionych przez mDNS. Szczegóły znajdziesz tutaj: {docs_url}.\n\nAby użyć innego interwału, otwórz [integrację Google Home]({integration_url}), wybierz **Konfiguruj**, wpisz go, a następnie wybierz **Zatwierdź**.",
             "menu_options": {
-              "use_default": "Użyj domyślnych {default_interval} s",
+              "use_default": "Użyj wartości domyślnej: {default_interval} s",
               "turn_off_polling": "Zamiast tego wyłącz odpytywanie"
             }
           }

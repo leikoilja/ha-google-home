@@ -231,9 +231,9 @@
         "step": {
           "init": {
             "title": "Uložený interval aktualizácie je kratší ako {min_interval} s",
-            "description": "Interval aktualizácie uložený v možnostiach integrácie je {interval} s, čo je menej ako minimum {min_interval} s. Integrácia preto používa predvolenú hodnotu a kontroluje vaše zariadenia každých {default_interval} s.\n\nAk ste uložili 0, aby ste tieto pravidelné kontroly zastavili, vypnite namiesto toho dotazovanie. Na rozdiel od 0 vypnuté dotazovanie zastaví aj vyhľadávanie zariadení Bluetooth a pridávanie nových zariadení, ktoré nájde mDNS. Podrobnosti nájdete tu: {docs_url}.\n\nAk chcete použiť iný interval, otvorte [integráciu Google Home]({integration_url}), vyberte **Konfigurovať**, zadajte ho a potom vyberte **Odoslať**.",
+            "description": "Interval aktualizácie uložený v možnostiach integrácie je {interval} s, čo je menej ako minimum {min_interval} s. Integrácia preto používa predvolenú hodnotu a kontroluje vaše zariadenia v intervale {default_interval} s.\n\nAk ste uložili 0, aby ste tieto pravidelné kontroly zastavili, vypnite namiesto toho dotazovanie. Na rozdiel od 0 vypnuté dotazovanie zastaví aj vyhľadávanie zariadení Bluetooth a pridávanie nových zariadení, ktoré nájde mDNS. Podrobnosti nájdete tu: {docs_url}.\n\nAk chcete použiť iný interval, otvorte [integráciu Google Home]({integration_url}), vyberte **Konfigurovať**, zadajte ho a potom vyberte **Odoslať**.",
             "menu_options": {
-              "use_default": "Použiť predvolených {default_interval} s",
+              "use_default": "Použiť predvolenú hodnotu {default_interval} s",
               "turn_off_polling": "Namiesto toho vypnúť dotazovanie"
             }
           }

@@ -231,9 +231,9 @@
         "step": {
           "init": {
             "title": "Uložený interval aktualizace je kratší než {min_interval} s",
-            "description": "Interval aktualizace uložený ve volbách integrace je {interval} s, což je méně než minimum {min_interval} s. Integrace proto používá výchozí hodnotu a kontroluje vaše zařízení každých {default_interval} s.\n\nPokud jste uložili 0, abyste tyto pravidelné kontroly zastavili, vypněte místo toho dotazování. Na rozdíl od 0 vypnuté dotazování zastaví i vyhledávání zařízení Bluetooth a přidávání nových zařízení, která najde mDNS. Podrobnosti najdete na {docs_url}.\n\nPokud chcete použít jiný interval, otevřete [integraci Google Home]({integration_url}), vyberte **Nastavit**, zadejte ho a pak vyberte **Odeslat**.",
+            "description": "Interval aktualizace uložený ve volbách integrace je {interval} s, což je méně než minimum {min_interval} s. Integrace proto používá výchozí hodnotu a kontroluje vaše zařízení v intervalu {default_interval} s.\n\nPokud jste uložili 0, abyste tyto pravidelné kontroly zastavili, vypněte místo toho dotazování. Na rozdíl od 0 vypnuté dotazování zastaví i vyhledávání zařízení Bluetooth a přidávání nových zařízení, která najde mDNS. Podrobnosti najdete na {docs_url}.\n\nPokud chcete použít jiný interval, otevřete [integraci Google Home]({integration_url}), vyberte **Nastavit**, zadejte ho a pak vyberte **Odeslat**.",
             "menu_options": {
-              "use_default": "Použít výchozích {default_interval} s",
+              "use_default": "Použít výchozí hodnotu {default_interval} s",
               "turn_off_polling": "Místo toho vypnout dotazování"
             }
           }
