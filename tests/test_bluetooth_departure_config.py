@@ -8,6 +8,8 @@ import probatio
 import pytest
 from pytest_homeassistant.common import MockConfigEntry
 
+from custom_components.google_home.const import DEPARTURE_DELAY_VALUES
+
 # pylint: disable=wrong-import-order
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType, InvalidData
@@ -162,18 +164,35 @@ async def test_departure_delay_schema_refusal(
 
 
 async def test_departure_radio_labels(hass: HomeAssistant) -> None:
-    """Only normal timing needs translation; numeric labels come from the policy."""
+    """Every supported choice has a full localized label in both checked locales."""
     text = await async_get_translations(hass, "en", "selector", ["google_home"])
     assert text == {
-        "component.google_home.selector.departure_delay.options.0": "Normal timing",
+        "component.google_home.selector.departure_delay.options.0": "0 seconds (normal timing)",
+        "component.google_home.selector.departure_delay.options.30": "30 seconds",
+        "component.google_home.selector.departure_delay.options.60": "60 seconds",
+        "component.google_home.selector.departure_delay.options.90": "90 seconds",
+        "component.google_home.selector.departure_delay.options.120": "120 seconds",
     }
+    russian = await async_get_translations(hass, "ru", "selector", ["google_home"])
+    assert russian == {
+        "component.google_home.selector.departure_delay.options.0": "0 секунд (обычный интервал)",
+        "component.google_home.selector.departure_delay.options.30": "30 секунд",
+        "component.google_home.selector.departure_delay.options.60": "60 секунд",
+        "component.google_home.selector.departure_delay.options.90": "90 секунд",
+        "component.google_home.selector.departure_delay.options.120": "120 секунд",
+    }
+    for labels in (text, russian):
+        assert set(labels) == {
+            f"component.google_home.selector.departure_delay.options.{seconds}"
+            for seconds in DEPARTURE_DELAY_VALUES
+        }
 
 
 @pytest.mark.parametrize("source", ["user", "reconfigure"])
 async def test_policy_values_feed_bluetooth_form(
     hass: HomeAssistant, config_entry: MockConfigEntry, source: str
 ) -> None:
-    """A policy edit reaches both help text and valid choices without locale edits."""
+    """Policy values feed help, schema choices and unit-bearing fallback labels."""
     hass.config_entries.async_update_entry(
         config_entry, options={"bluetooth_tracking": True}
     )

@@ -409,7 +409,11 @@
   "selector": {
     "departure_delay": {
       "options": {
-        "0": "Bežné načasovanie"
+        "0": "0 sekúnd (bežné načasovanie)",
+        "30": "30 sekúnd",
+        "60": "60 sekúnd",
+        "90": "90 sekúnd",
+        "120": "120 sekúnd"
       }
     }
   }

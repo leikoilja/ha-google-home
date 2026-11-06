@@ -409,7 +409,11 @@
   "selector": {
     "departure_delay": {
       "options": {
-        "0": "Szokásos időzítés"
+        "0": "0 másodperc (szokásos időzítés)",
+        "30": "30 másodperc",
+        "60": "60 másodperc",
+        "90": "90 másodperc",
+        "120": "120 másodperc"
       }
     }
   }

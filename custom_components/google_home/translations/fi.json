@@ -409,7 +409,11 @@
   "selector": {
     "departure_delay": {
       "options": {
-        "0": "Tavallinen ajoitus"
+        "0": "0 sekuntia (tavallinen ajoitus)",
+        "30": "30 sekuntia",
+        "60": "60 sekuntia",
+        "90": "90 sekuntia",
+        "120": "120 sekuntia"
       }
     }
   }

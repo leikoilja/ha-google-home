@@ -409,7 +409,11 @@
   "selector": {
     "departure_delay": {
       "options": {
-        "0": "Vanleg tidsinnstilling"
+        "0": "0 sekund (vanleg tidsinnstilling)",
+        "30": "30 sekund",
+        "60": "60 sekund",
+        "90": "90 sekund",
+        "120": "120 sekund"
       }
     }
   }

@@ -501,7 +501,7 @@ class DepartureDelaySelector(SelectSelector):
 
 
 def _departure_delay_selector() -> DepartureDelaySelector:
-    """Build radio labels from the policy values, with translated normal timing."""
+    """Provide policy-derived fallbacks for localized radio labels."""
     return DepartureDelaySelector(
         SelectSelectorConfig(
             options=[

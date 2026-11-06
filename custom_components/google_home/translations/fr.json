@@ -409,7 +409,11 @@
   "selector": {
     "departure_delay": {
       "options": {
-        "0": "Délais habituels"
+        "0": "0 seconde (délais habituels)",
+        "30": "30 secondes",
+        "60": "60 secondes",
+        "90": "90 secondes",
+        "120": "120 secondes"
       }
     }
   }
