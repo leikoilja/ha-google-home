@@ -367,8 +367,8 @@ def fixture_google(
     """Fake glocaltokens' fetch of Google's device list, which lists one speaker.
 
     The mock gives the list, or raises, as glocaltokens' get_google_devices() would,
-    and the async fetch returns it with a home graph whose one home has no ID and no
-    devices, so Google has only the devices it lists, and a home whose devices are
+    and the async fetch returns it with a full home graph containing those same devices in a home with no ID,
+    so Google has only the devices it lists, and a home whose devices are
     added. mDNS finds no other device.
     """
     google = Mock(return_value=[kitchen_speaker()])
@@ -376,7 +376,20 @@ def fixture_google(
     def fetch(
         client: GLocalAuthenticationTokens, **options: object
     ) -> tuple[list[Device], HomeGraph]:
-        return google(client, **options), HomeGraph(homes=[HomeGraph.Home()])
+        devices = google(client, **options)
+        graph = HomeGraph(
+            homes=[
+                HomeGraph.Home(
+                    devices=[
+                        HomeGraph.Device(
+                            id=HomeGraph.DeviceId(device_id=device.device_id)
+                        )
+                        for device in devices
+                    ]
+                )
+            ]
+        )
+        return devices, graph
 
     with (
         # With autospec, a call that glocaltokens wouldn't accept fails

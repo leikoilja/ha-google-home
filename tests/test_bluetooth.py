@@ -480,19 +480,17 @@ def test_new_address_or_token_skips_next_read(field: str, value: str) -> None:
     assert speakers.starts == ["kitchen", "kitchen"]
 
 
-def test_speaker_that_stops_answering_never_shows_away() -> None:
-    """Keep home, then show unavailable, when the speaker that heard the phone stops answering."""
+def test_silent_source_expires_with_unique_coverage_risk() -> None:
+    """A silent source expires; remaining empty coverage can miss a still-home phone."""
     speakers = Speakers("Bedroom", "Kitchen")
     speakers.results["bedroom"] = [heard(rpa(IRK))]
     scanner = make_scanner(speakers)
     assert states(scanner, speakers, range(0, 90, 30)) == [UNKNOWN, HOME, HOME]
 
-    # The last bedroom scan to hear it started at 30, so home is last confirmed
-    # at 90; the kitchen hears nothing
+    # Last Bedroom reply L=60 expires at 360. Kitchen keeps supplying coverage.
+    # Truth can still be HOME near Bedroom: this is the disclosed coverage risk.
     speakers.failing.add("bedroom")
-    assert (
-        states(scanner, speakers, range(90, 600, 30)) == [HOME] * 10 + [UNAVAILABLE] * 7
-    )
+    assert states(scanner, speakers, range(90, 600, 30)) == [HOME] * 9 + [NOT_HOME] * 8
 
 
 def test_new_speaker_coming_online_keeps_away() -> None:
@@ -577,44 +575,36 @@ def test_excluded_speaker_not_used() -> None:
     assert "garage" not in speakers.starts
 
 
-def test_warn_about_speaker_that_blocks_away(caplog: pytest.LogCaptureFixture) -> None:
-    """Warn once each time a speaker has kept trackers from showing away for 5 minutes."""
+def test_warn_about_responsive_source_without_continuous_coverage(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Warn for a still-active intermittent source, never a fully expired one."""
     speakers = Speakers("Kitchen", "Garage")
     scanner = make_scanner(speakers)
     states(scanner, speakers, range(0, 60, 30))
-    speakers.failing.add("garage")
-
-    def warnings() -> list[str]:
-        return [
-            record.getMessage()
-            for record in caplog.records
-            if record.levelno >= logging.WARNING
-        ]
-
-    states(scanner, speakers, range(60, 330, 30))
-    assert not warnings()
-    states(scanner, speakers, range(330, 600, 30))
-
-    (warning,) = warnings()
-    assert warning.startswith("Garage hasn't answered Bluetooth scans for 5 minutes")
-
-    # Garage answers again but stops at 690, before it has scanned for the whole
-    # window, so it still keeps trackers from showing away and doesn't warn again
+    for now in range(60, 600, 30):
+        speakers.failing = {"garage"} if now % 90 == 60 else set()
+        update(scanner, speakers, now)
+    warnings = [
+        record.getMessage()
+        for record in caplog.records
+        if record.levelno >= logging.WARNING
+    ]
+    assert len(warnings) == 1
+    assert warnings[0].startswith(
+        "Garage has not provided continuous Bluetooth coverage for 5 minutes"
+    )
+    # A full healthy run resets the warning; a wholly silent source expires
+    # before another five-minute blocking warning and must not be blamed forever.
     speakers.failing.clear()
-    states(scanner, speakers, range(600, 690, 30))
+    states(scanner, speakers, range(600, 750, 30))
     speakers.failing.add("garage")
-    states(scanner, speakers, range(690, 1020, 30))
-    assert warnings() == [warning]
-
-    # Garage answers again and has scanned for the whole window at 1110, then stops
-    # answering at 1140, so it warns again 5 minutes later
-    speakers.failing.clear()
-    states(scanner, speakers, range(1020, 1140, 30))
-    speakers.failing.add("garage")
-    states(scanner, speakers, range(1140, 1440, 30))
-    assert warnings() == [warning]
-    update(scanner, speakers, 1440)
-    assert warnings() == [warning, warning]
+    states(scanner, speakers, range(750, 1200, 30))
+    assert [
+        record.getMessage()
+        for record in caplog.records
+        if record.levelno >= logging.WARNING
+    ] == warnings
 
 
 def test_speakers_show_median_rssi_over_window() -> None:
@@ -667,14 +657,15 @@ def test_speakers_empty_after_window_without_two_readings() -> None:
     assert states(scanner, speakers, range(0, 330, 30))[-1] == HOME
     assert run(scanner, speakers, 330).speakers == {"Bedroom": -50, "Kitchen": -50}
 
-    # Kitchen stops answering, so the phone stays home, and Bedroom hears it once more
+    # Kitchen stops answering; Bedroom hears it once more. At 630 Kitchen's
+    # lease expires and Bedroom's empty coverage confirms away, clearing RSSI.
     speakers.failing.add("kitchen")
     run(scanner, speakers, 360)
     speakers.results = {}
     shown = [run(scanner, speakers, now) for now in range(390, 631, 30)]
 
     assert shown[-2] == TrackerUpdate(HOME, {"Bedroom": -50, "Kitchen": -50})
-    assert shown[-1] == TrackerUpdate(HOME, {})
+    assert shown[-1] == TrackerUpdate(NOT_HOME, {})
 
 
 def test_speakers_restart_when_state_changes() -> None:

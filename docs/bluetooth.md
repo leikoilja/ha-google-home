@@ -38,13 +38,17 @@ About every 30 seconds, whatever the [update interval](configuration.md#change-t
 | State         | When                                                                                                                                        |
 | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
 | `home`        | A speaker heard the device in the last 90 seconds.                                                                                          |
-| `not_home`    | Every speaker has scanned without a break for the last 90 seconds, and none heard the device.                                               |
-| `unknown`     | The speakers haven't confirmed `home` or `not_home` since Home Assistant started or the integration reloaded. This normally takes about 30 to 90 seconds. If it takes longer, see [Tracker doesn't show `home` or stays `unknown`](#tracker-doesnt-show-home-or-stays-unknown). |
+| `not_home`    | At least one active speaker, and every other required speaker, has scanned without a break for the last 90 seconds, and none heard the device.                                               |
+| `unknown`     | There is no recent saved confirmation and the speakers haven't confirmed `home` or `not_home` yet. Fresh scans normally take about 30 to 90 seconds. If it takes longer, see [Tracker doesn't show `home` or stays `unknown`](#tracker-doesnt-show-home-or-stays-unknown). |
 | `unavailable` | The tracker showed `home` or `not_home`, but the speakers haven't confirmed either for 5 minutes, for example because a speaker stopped answering. See [Tracker is unavailable](#tracker-is-unavailable). Also while Bluetooth tracking is off. |
 
 In the best case, a phone shows `home` within about a minute of arriving, and `not_home` about 60 to 90 seconds after it leaves.
 
-Starting as `unknown` after a restart keeps automations from seeing you leave and come back each time Home Assistant restarts. While Bluetooth tracking is on, trackers also start as `unknown` again after any reload, such as after you add or delete a tracked device or change an option under **Bluetooth**.
+After a successful Home Assistant restart or integration reload, a tracker can start with its recently confirmed `home` or `not_home` state. It keeps only the unused part of the original five minutes since confirmation: restarting repeatedly never makes that evidence newer. Without usable saved evidence, including on first installation or after a long shutdown, it starts `unknown`.
+
+A normal startup can publish the saved state first. An explicit integration reload, a late setup or a failed setup can still show `unavailable` while Home Assistant removes or waits for the entity. Saved state reduces avoidable relearning after the entity returns; it cannot hide those Home Assistant availability transitions. The speakers must rebuild live scan coverage after every restart/reload, and a new sighting can show `home` immediately.
+
+Turning tracking, polling or the integration off invalidates saved tracker state when the integration observes that change. Re-enabling starts fresh. Renaming a tracker keeps its saved state; deleting and re-adding it does not.
 
 While [polling is turned off](configuration.md#turn-off-polling) in the integration's system options, the speakers don't scan on their own, and [Refresh devices](actions.md#refresh-devices) doesn't make them scan, so trackers usually stay `unknown`.
 
@@ -74,30 +78,34 @@ Home Assistant doesn't keep the attribute's values in its history, so only the c
 
 ## Tracker is unavailable
 
-A tracker shows `not_home` only when every speaker has answered for the last 90 seconds. That includes every speaker that has returned scan results since the integration last loaded, as long as Google lists it and you haven't disabled it. If one of them stops answering, it might be the one that hears you, so the integration can't tell whether you left.
+A tracker makes a new `not_home` decision only with at least one active speaker and continuous 90-second coverage from every required speaker. A speaker joins after returning usable scan results. Failed requests provide no absence evidence; a single missed response does not by itself make a recently confirmed away tracker `unknown` or `unavailable`.
+
+A speaker that stops returning usable results remains required for **five minutes from its last usable scan reply**, then stops blocking away. Reloading or restarting does not restart that timeout. If a saved scanner record can no longer be matched to its exact speaker, it expires sooner: **90 seconds from its original last reply**, or its earlier saved deadline. These timeouts are fixed, shared across trackers and separate from the normal 90-second departure window.
+
+The integration keeps trying inactive speakers on its usual schedule. A new usable reply brings a still-listed speaker back, but it must rebuild continuous coverage from fresh scans. A fresh positive sighting can show `home` immediately. New Google Home devices start being tried automatically once their address and token are available, unless excluded or disabled; a device that has never answered supplies no evidence and does not block away forever.
 
 While it can't tell, the tracker keeps its last state for 5 minutes from when the speakers last confirmed it, so a speaker that misses a scan or comes online doesn't make it flap. If you arrive in that time and only the silent speaker can hear you, `home` waits until another speaker hears you. After the 5 minutes, the tracker shows `unavailable` until the speakers can tell again.
 
 [Download diagnostics](troubleshooting.md#download-diagnostics) to see which speakers are excluded or unsupported, have never returned scan results since the integration last loaded, or aren't currently covering the presence window.
 
-Once a speaker has kept trackers from showing `not_home` for 5 minutes, the integration logs a warning that names it, such as "Kitchen hasn't answered Bluetooth scans for 5 minutes, so Bluetooth trackers can't show away". Those 5 minutes count how long the speaker has gone without 90 seconds of unbroken scans, and start over once it manages them. So a speaker that answers some scans but misses others gets the warning too. They're the speaker's own 5 minutes, so the warning can come before or after a tracker shows `unavailable`, and also while another speaker hears the device and the tracker shows `home`.
+A speaker that replies intermittently can remain active but repeatedly fail to build 90 seconds of unbroken scans. After five minutes without continuous coverage, the integration logs a warning such as "Kitchen has not provided continuous Bluetooth coverage for 5 minutes, so Bluetooth trackers cannot show away". This warning applies while that speaker still blocks away; a fully inactive speaker no longer blocks it. A complete coverage window resets the warning period.
 
 If that speaker is unplugged or out of service, tell the integration not to use it:
 
 1. Go to **Settings** > **Devices & services** > **Google Home** and select **Configure**.
 2. Under **Bluetooth**, select the speaker in **Speakers not used for Bluetooth tracking**, then select **Submit**.
 
-You can't delete a speaker that Google still lists in your home, even when it's offline. To stop it from blocking `not_home`, exclude it, or disable it as described below.
+You can't delete a speaker that Google still lists in your home, even when it's offline. To stop using it immediately, exclude it, or disable it as described below.
 
 A speaker that you [disable in Home Assistant](configuration.md#stop-checking-some-devices) stops scanning until you enable it again, and no longer keeps trackers from showing `not_home`. If no other speaker scans, trackers can't tell whether you're home, as described above.
 
-A silent speaker also stops blocking `not_home` once Google no longer lists it, for example after you remove it from the Google Home app. The integration notices when it next fetches Google's device list: normally within about 20 minutes, or later with a long [update interval](configuration.md#change-the-update-interval) or after a fetch fails. Reloading the integration or restarting Home Assistant stops a silent speaker from blocking `not_home` straight away, until it answers again.
+A silent speaker also stops blocking `not_home` once Google no longer lists it, for example after you remove it from the Google Home app. The integration notices when it next fetches Google's device list: normally within about 20 minutes, or later with a long [update interval](configuration.md#change-the-update-interval) or after a fetch fails. Only a successful complete device list proves removal: a failed fetch or missing local token does not. After removal, late replies cannot add it back; a later successful list must include it again.
 
-Devices that don't support Bluetooth scans, such as a Chromecast Audio or an Android TV, are left out automatically. So is any device that hasn't returned scan results since the integration last loaded, for example because it was offline.
+Devices that don't support Bluetooth scans, such as a Chromecast Audio or an Android TV, are left out automatically. A device that has never returned usable results cannot confirm absence.
 
 ## Tracker doesn't show `home` or stays `unknown`
 
-A tracker shows `unknown` until the speakers first confirm `home` or `not_home` after Home Assistant starts or the integration reloads. While Bluetooth tracking is on, only a tracker they've confirmed can become `unavailable`. If a speaker stops answering before then, the tracker stays `unknown` until a speaker hears the device or the silent speaker answers again. To stop the silent speaker from blocking it, reload the integration, which leaves the speaker out until it answers, or [exclude or disable it](#tracker-is-unavailable). After 5 minutes, the integration logs the warning described in [Tracker is unavailable](#tracker-is-unavailable).
+Without an eligible saved state, a tracker shows `unknown` until the speakers first confirm `home` or `not_home`. Only a tracker with a confirmation can later become `unavailable` while tracking is on. A silent required speaker can delay that first away decision until its inactivity timeout or until you [exclude or disable it](#tracker-is-unavailable). Restarting is not a way to clear its original timeout.
 
 The speakers can't confirm either state while none of them scans, for example while:
 
@@ -108,7 +116,7 @@ The speakers can't confirm either state while none of them scans, for example wh
 
 If a tracker shows `not_home` while the device is near a speaker, the speakers that scan don't find the device:
 
-- The speaker it's near doesn't scan: it's excluded or disabled, doesn't support Bluetooth scans, or hasn't answered since the integration loaded. The debug lines below show which speakers scan.
+- The speaker it's near doesn't scan: it's excluded or disabled, doesn't support Bluetooth scans, has never answered, or has become inactive. The debug lines below show which speakers scan.
 - Its signal is weaker than -80 dBm at every speaker that scans. Try it right next to one.
 - The IRK or MAC address you entered doesn't match the device. Track a phone by its IRK, as its MAC address stops matching once the phone changes it.
 - The speakers don't pick the device up in their scans. Which devices they pick up, and when, for example while a phone is asleep or connected to headphones, hasn't been tested.
@@ -131,8 +139,13 @@ If no line names a speaker, the integration doesn't scan with it: it's excluded 
 - The IRKs and MAC addresses you enter are stored in Home Assistant's configuration, like the master token. The integration doesn't send them to your speakers, log them, or show them in entity attributes or the [diagnostics file](troubleshooting.md#download-diagnostics).
 - The speakers hear every Bluetooth device nearby, including your neighbors'. The integration keeps only whether your tracked devices were heard, by which speakers and how strongly. It doesn't store or log other addresses.
 - The integration gets the scan results from your speakers over your local network and doesn't send them anywhere.
+- For restart continuity, it keeps one latest snapshot per integration entry in Home Assistant's local `.storage` directory. It contains tracker state and original evidence/expiry times, plus opaque scanner registry or random record IDs and reply/expiry times. It does not contain radio readings, addresses, IRKs, speaker names, local tokens or a history of movements. Its size depends on tracked devices and recent scanner records; it is replaced and pruned, not appended daily. The file is private local storage, not encryption.
 
 ## Known limitations
 
 - Whether scanning affects audio that a speaker plays over Bluetooth hasn't been tested. If you notice dropouts, turn off Bluetooth tracking or exclude that speaker.
 - A speaker that sits near a wall can hear a phone outside, as long as the signal is stronger than -80 dBm. The phone then shows `home` while you're just outside.
+
+- A silent speaker may be the only one hearing a device that is still home. Once that speaker's timeout expires, empty coverage from the others can incorrectly show `not_home`. If no active speaker has valid coverage, the integration never infers away: it retains the last confirmed state only until its original five-minute expiry, then shows `unavailable`; without any confirmation it stays `unknown`.
+- Restored state may hide an arrival or departure during downtime until fresh evidence arrives or the original lease expires. Because a home confirmation can use a sighting almost 90 seconds earlier, saved home can represent a sighting nearly six and a half minutes old. These changes do not add an extra departure delay or establish that intermittent false-away pulses are fixed.
+- Local writes are best effort. A failed write or interrupted process can lose recent evidence, leave older still-unexpired state, or lose scanner requirements. A disable/re-enable completed before the integration could observe it cannot always be reconstructed after process loss. Wrong system time during downtime can also make saved ages unreliable; detected time discontinuities discard continuity and start fresh.

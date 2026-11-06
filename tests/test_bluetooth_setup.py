@@ -107,10 +107,15 @@ def fixture_scans(request: pytest.FixtureRequest) -> Iterator[Scans]:
     if "freezer" in request.fixturenames:
         request.getfixturevalue("freezer")
     scans = Scans()
+    wall_origin = dt_util.utcnow().timestamp()
     with (
         patch(f"{BLUETOOTH}.async_get_bluetooth_scan_results", scans.results),
         patch(f"{BLUETOOTH}.async_start_bluetooth_scan", scans.start),
         patch(f"{BLUETOOTH}.monotonic", lambda: scans.now),
+        patch(
+            "custom_components.google_home.bluetooth_storage.utc_timestamp",
+            lambda: wall_origin + scans.now,
+        ),
     ):
         yield scans
 
@@ -890,6 +895,17 @@ async def test_diagnostics_bluetooth_speakers(
     assert diagnostics["bluetooth"] == {
         "speakers": {
             SPEAKER_ID: {
+                "participating": status in {"covering", "blocking"},
+                "last_success_age": 30.0
+                if status == "blocking"
+                else 0.0
+                if status == "covering"
+                else None,
+                "remaining_lease": 270.0
+                if status == "blocking"
+                else 300.0
+                if status == "covering"
+                else None,
                 "excluded": excluded,
                 "unsupported": unsupported,
                 "answered": answered,

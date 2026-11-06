@@ -501,6 +501,10 @@ def test_setup_browses_before_first_fetch() -> None:
 
     account.async_config_entry_first_refresh = first_refresh
     with (
+        patch(
+            "custom_components.google_home.async_history",
+            return_value=Mock(async_load=AsyncMock()),
+        ),
         patch("custom_components.google_home.zeroconf.async_get_instance"),
         patch("custom_components.google_home.async_get_clientsession"),
         # They need Home Assistant's issue registry
