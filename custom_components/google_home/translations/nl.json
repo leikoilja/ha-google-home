@@ -266,8 +266,8 @@
           },
           "data_description": {
             "name": "Naam van de tracker, bijvoorbeeld Telefoon van Alex.",
-            "irk_or_mac": "De Identity Resolving Key van een telefoon, als 32 hexadecimale cijfers of in base64, of een MAC-adres zoals AA:BB:CC:DD:EE:FF. De integratie herkent zelf welke van de twee je hebt ingevoerd.",
-            "additional_departure_delay": "Extra tijd na het normale aanwezigheidsvenster van 90 seconden voordat de status van ‘Thuis’ naar ‘Afwezig’ verandert. 0 behoudt de normale timing. Een langere vertraging vertraagt ook de detectie van een daadwerkelijk vertrek. Als de scans afwezigheid niet kunnen bevestigen, kan de tracker de status ‘Niet beschikbaar’ krijgen."
+            "irk_or_mac": "De Identity Resolving Key van een telefoon, als {irk_hex_length} hexadecimale cijfers of in base64, of een MAC-adres zoals AA:BB:CC:DD:EE:FF.",
+            "additional_departure_delay": "Extra tijd na het normale aanwezigheidsvenster van {presence_window} seconden voordat de status van ‘Thuis’ naar ‘Afwezig’ verandert. Normale timing voegt geen vertraging toe. Een langere vertraging vertraagt ook de detectie van een daadwerkelijk vertrek. Als de scans afwezigheid niet kunnen bevestigen, kan de tracker de status ‘Niet beschikbaar’ krijgen."
           }
         },
         "reconfigure": {
@@ -277,17 +277,17 @@
             "additional_departure_delay": "Extra vertraging bij vertrek"
           },
           "data_description": {
-            "additional_departure_delay": "Extra tijd na het normale aanwezigheidsvenster van 90 seconden voordat de status van ‘Thuis’ naar ‘Afwezig’ verandert. 0 behoudt de normale timing. Een langere vertraging vertraagt ook de detectie van een daadwerkelijk vertrek. Als de scans afwezigheid niet kunnen bevestigen, kan de tracker de status ‘Niet beschikbaar’ krijgen."
+            "additional_departure_delay": "Extra tijd na het normale aanwezigheidsvenster van {presence_window} seconden voordat de status van ‘Thuis’ naar ‘Afwezig’ verandert. Normale timing voegt geen vertraging toe. Een langere vertraging vertraagt ook de detectie van een daadwerkelijk vertrek. Als de scans afwezigheid niet kunnen bevestigen, kan de tracker de status ‘Niet beschikbaar’ krijgen."
           }
         }
       },
       "error": {
         "name-empty": "Voer een naam in.",
         "irk-or-mac": "Voer een IRK of een MAC-adres in.",
-        "irk-invalid": "Dit is geen IRK. Een IRK is 16 bytes: 32 hexadecimale cijfers, of 24 base64-tekens die eindigen op ==.",
+        "irk-invalid": "Dit is geen IRK. Voer {irk_bytes} bytes in als {irk_hex_length} hexadecimale cijfers of in base64.",
         "mac-invalid": "Dit is geen MAC-adres. Voer zes paren hexadecimale cijfers in, gescheiden door dubbele punten of koppeltekens, bijvoorbeeld AA:BB:CC:DD:EE:FF.",
         "already-tracked": "Dit apparaat wordt al gevolgd.",
-        "departure-delay-invalid": "Kies 0, 30, 60, 90 of 120 seconden."
+        "departure-delay-invalid": "Kies een van de vermelde vertragingen bij vertrek."
       },
       "abort": {
         "bluetooth-tracking-off": "Bluetooth-tracking is uitgeschakeld. Schakel het eerst in bij de instellingen van de integratie: selecteer ‘Configureer’ op de pagina van de integratie.",
@@ -409,11 +409,7 @@
   "selector": {
     "departure_delay": {
       "options": {
-        "0": "0 seconden (normale timing)",
-        "30": "30 seconden",
-        "60": "60 seconden",
-        "90": "90 seconden",
-        "120": "120 seconden"
+        "0": "Normale timing"
       }
     }
   }

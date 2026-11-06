@@ -266,8 +266,8 @@
           },
           "data_description": {
             "name": "Nom du traceur, par exemple Téléphone d'Alex.",
-            "irk_or_mac": "L'Identity Resolving Key d'un téléphone, sous forme de 32 chiffres hexadécimaux ou en base64, ou une adresse MAC comme AA:BB:CC:DD:EE:FF. L'intégration reconnaît lequel des deux vous avez saisi.",
-            "additional_departure_delay": "Temps supplémentaire après la période normale de présence de 90 secondes avant de passer de « Maison » à « Absent ». 0 conserve les délais habituels. Un délai plus long retarde aussi la détection d’un départ réel. Si les analyses ne peuvent pas confirmer l’absence, le traceur peut devenir indisponible."
+            "irk_or_mac": "L'Identity Resolving Key d'un téléphone, sous forme de {irk_hex_length} chiffres hexadécimaux ou en base64, ou une adresse MAC comme AA:BB:CC:DD:EE:FF.",
+            "additional_departure_delay": "Temps supplémentaire après la période normale de présence de {presence_window} secondes avant de passer de « Maison » à « Absent ». Les délais habituels n’ajoutent aucun délai. Un délai plus long retarde aussi la détection d’un départ réel. Si les analyses ne peuvent pas confirmer l’absence, le traceur peut devenir indisponible."
           }
         },
         "reconfigure": {
@@ -277,17 +277,17 @@
             "additional_departure_delay": "Délai de départ supplémentaire"
           },
           "data_description": {
-            "additional_departure_delay": "Temps supplémentaire après la période normale de présence de 90 secondes avant de passer de « Maison » à « Absent ». 0 conserve les délais habituels. Un délai plus long retarde aussi la détection d’un départ réel. Si les analyses ne peuvent pas confirmer l’absence, le traceur peut devenir indisponible."
+            "additional_departure_delay": "Temps supplémentaire après la période normale de présence de {presence_window} secondes avant de passer de « Maison » à « Absent ». Les délais habituels n’ajoutent aucun délai. Un délai plus long retarde aussi la détection d’un départ réel. Si les analyses ne peuvent pas confirmer l’absence, le traceur peut devenir indisponible."
           }
         }
       },
       "error": {
         "name-empty": "Saisissez un nom.",
         "irk-or-mac": "Saisissez un IRK ou une adresse MAC.",
-        "irk-invalid": "Ce n'est pas un IRK. Un IRK fait 16 octets : 32 chiffres hexadécimaux, ou 24 caractères base64 se terminant par ==.",
+        "irk-invalid": "Ce n’est pas un IRK. Saisissez {irk_bytes} octets sous forme de {irk_hex_length} chiffres hexadécimaux ou en base64.",
         "mac-invalid": "Ce n'est pas une adresse MAC. Saisissez six paires de chiffres hexadécimaux séparées par des deux-points ou des tirets, par exemple AA:BB:CC:DD:EE:FF.",
         "already-tracked": "Cet appareil est déjà suivi.",
-        "departure-delay-invalid": "Choisissez 0, 30, 60, 90 ou 120 secondes."
+        "departure-delay-invalid": "Choisissez l’un des délais de départ proposés."
       },
       "abort": {
         "bluetooth-tracking-off": "Le suivi Bluetooth est désactivé. Activez-le d'abord dans les options de l'intégration : sélectionnez « Configurer » sur la page de l'intégration.",
@@ -409,11 +409,7 @@
   "selector": {
     "departure_delay": {
       "options": {
-        "0": "0 seconde (délais habituels)",
-        "30": "30 secondes",
-        "60": "60 secondes",
-        "90": "90 secondes",
-        "120": "120 secondes"
+        "0": "Délais habituels"
       }
     }
   }

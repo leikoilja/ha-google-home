@@ -266,8 +266,8 @@
           },
           "data_description": {
             "name": "Nom del rastrejador, per exemple Telèfon de l'Alex.",
-            "irk_or_mac": "La Identity Resolving Key d'un telèfon, com a 32 dígits hexadecimals o en base64, o una adreça MAC com AA:BB:CC:DD:EE:FF. La integració detecta quina de les dues has introduït.",
-            "additional_departure_delay": "Temps addicional després del període normal de presència de 90 segons abans de passar d’«A casa» a «Fora». 0 manté els temps normals. Un retard més llarg també endarrereix la detecció d’una sortida real. Si els escanejos no poden confirmar l’absència, el rastrejador pot passar a no disponible."
+            "irk_or_mac": "La Identity Resolving Key d'un telèfon, com a {irk_hex_length} dígits hexadecimals o en base64, o una adreça MAC com AA:BB:CC:DD:EE:FF.",
+            "additional_departure_delay": "Temps addicional després del període normal de presència de {presence_window} segons abans de passar d’«A casa» a «Fora». Els temps normals no afegeixen cap retard. Un retard més llarg també endarrereix la detecció d’una sortida real. Si els escanejos no poden confirmar l’absència, el rastrejador pot passar a no disponible."
           }
         },
         "reconfigure": {
@@ -277,17 +277,17 @@
             "additional_departure_delay": "Retard addicional de sortida"
           },
           "data_description": {
-            "additional_departure_delay": "Temps addicional després del període normal de presència de 90 segons abans de passar d’«A casa» a «Fora». 0 manté els temps normals. Un retard més llarg també endarrereix la detecció d’una sortida real. Si els escanejos no poden confirmar l’absència, el rastrejador pot passar a no disponible."
+            "additional_departure_delay": "Temps addicional després del període normal de presència de {presence_window} segons abans de passar d’«A casa» a «Fora». Els temps normals no afegeixen cap retard. Un retard més llarg també endarrereix la detecció d’una sortida real. Si els escanejos no poden confirmar l’absència, el rastrejador pot passar a no disponible."
           }
         }
       },
       "error": {
         "name-empty": "Introdueix un nom.",
         "irk-or-mac": "Introdueix una IRK o una adreça MAC.",
-        "irk-invalid": "Això no és una IRK. Una IRK té 16 bytes: 32 dígits hexadecimals o 24 caràcters base64 que acaben en ==.",
+        "irk-invalid": "Això no és una IRK. Introdueix {irk_bytes} bytes com a {irk_hex_length} dígits hexadecimals o en base64.",
         "mac-invalid": "Això no és una adreça MAC. Introdueix sis parells de dígits hexadecimals separats per dos punts o guions, per exemple AA:BB:CC:DD:EE:FF.",
         "already-tracked": "Ja es fa el seguiment d'aquest dispositiu.",
-        "departure-delay-invalid": "Tria 0, 30, 60, 90 o 120 segons."
+        "departure-delay-invalid": "Tria un dels retards de sortida de la llista."
       },
       "abort": {
         "bluetooth-tracking-off": "El seguiment per Bluetooth està desactivat. Activa'l primer a les opcions de la integració: selecciona «Configura» a la pàgina de la integració.",
@@ -409,11 +409,7 @@
   "selector": {
     "departure_delay": {
       "options": {
-        "0": "0 segons (temps normals)",
-        "30": "30 segons",
-        "60": "60 segons",
-        "90": "90 segons",
-        "120": "120 segons"
+        "0": "Temps normals"
       }
     }
   }

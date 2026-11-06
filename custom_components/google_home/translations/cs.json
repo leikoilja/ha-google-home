@@ -266,8 +266,8 @@
           },
           "data_description": {
             "name": "Název sledovače, například Alexův telefon.",
-            "irk_or_mac": "Identity Resolving Key telefonu jako 32 šestnáctkových číslic nebo v base64, nebo MAC adresa, například AA:BB:CC:DD:EE:FF. Integrace sama rozpozná, kterou z nich jste zadali.",
-            "additional_departure_delay": "Dodatečná doba po běžném 90sekundovém intervalu přítomnosti, než se stav změní z „Doma“ na „Pryč“. Hodnota 0 zachovává běžné načasování. Delší zpoždění oddálí i rozpoznání skutečného odchodu. Pokud skenování nedokáže potvrdit nepřítomnost, sledovač může být nedostupný."
+            "irk_or_mac": "Identity Resolving Key telefonu jako {irk_hex_length} šestnáctkových číslic nebo v base64, nebo MAC adresa, například AA:BB:CC:DD:EE:FF.",
+            "additional_departure_delay": "Dodatečná doba po běžném {presence_window}sekundovém intervalu přítomnosti, než se stav změní z „Doma“ na „Pryč“. Běžné načasování nepřidává žádné zpoždění. Delší zpoždění oddálí i rozpoznání skutečného odchodu. Pokud skenování nedokáže potvrdit nepřítomnost, sledovač může být nedostupný."
           }
         },
         "reconfigure": {
@@ -277,17 +277,17 @@
             "additional_departure_delay": "Dodatečné zpoždění odchodu"
           },
           "data_description": {
-            "additional_departure_delay": "Dodatečná doba po běžném 90sekundovém intervalu přítomnosti, než se stav změní z „Doma“ na „Pryč“. Hodnota 0 zachovává běžné načasování. Delší zpoždění oddálí i rozpoznání skutečného odchodu. Pokud skenování nedokáže potvrdit nepřítomnost, sledovač může být nedostupný."
+            "additional_departure_delay": "Dodatečná doba po běžném {presence_window}sekundovém intervalu přítomnosti, než se stav změní z „Doma“ na „Pryč“. Běžné načasování nepřidává žádné zpoždění. Delší zpoždění oddálí i rozpoznání skutečného odchodu. Pokud skenování nedokáže potvrdit nepřítomnost, sledovač může být nedostupný."
           }
         }
       },
       "error": {
         "name-empty": "Zadejte název.",
         "irk-or-mac": "Zadejte IRK nebo MAC adresu.",
-        "irk-invalid": "Toto není IRK. IRK má 16 bajtů: 32 šestnáctkových číslic nebo 24 znaků base64 končících ==.",
+        "irk-invalid": "Toto není IRK. Zadejte {irk_bytes} bajtů jako {irk_hex_length} šestnáctkových číslic nebo v base64.",
         "mac-invalid": "Toto není MAC adresa. Zadejte šest dvojic šestnáctkových číslic oddělených dvojtečkami nebo pomlčkami, například AA:BB:CC:DD:EE:FF.",
         "already-tracked": "Toto zařízení se už sleduje.",
-        "departure-delay-invalid": "Vyberte 0, 30, 60, 90 nebo 120 sekund."
+        "departure-delay-invalid": "Vyberte jedno z uvedených zpoždění odchodu."
       },
       "abort": {
         "bluetooth-tracking-off": "Sledování přes Bluetooth je vypnuté. Nejprve ho zapněte ve volbách integrace: na stránce integrace vyberte „Nastavit“.",
@@ -409,11 +409,7 @@
   "selector": {
     "departure_delay": {
       "options": {
-        "0": "0 sekund (běžné načasování)",
-        "30": "30 sekund",
-        "60": "60 sekund",
-        "90": "90 sekund",
-        "120": "120 sekund"
+        "0": "Běžné načasování"
       }
     }
   }

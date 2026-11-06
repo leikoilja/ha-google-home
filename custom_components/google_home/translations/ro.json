@@ -266,8 +266,8 @@
           },
           "data_description": {
             "name": "Numele dispozitivului de urmărire, de exemplu Telefonul lui Alex.",
-            "irk_or_mac": "Identity Resolving Key al unui telefon, ca 32 de cifre hexazecimale sau în base64, ori o adresă MAC, de exemplu AA:BB:CC:DD:EE:FF. Integrarea recunoaște ce ai introdus.",
-            "additional_departure_delay": "Timp suplimentar după intervalul normal de prezență de 90 de secunde înainte de trecerea de la „Acasă” la „Plecat”. 0 păstrează timpii normali. O întârziere mai mare întârzie și detectarea unei plecări reale. Dacă scanările nu pot confirma absența, dispozitivul de urmărire poate deveni indisponibil."
+            "irk_or_mac": "Identity Resolving Key al unui telefon, ca {irk_hex_length} de cifre hexazecimale sau în base64, ori o adresă MAC, de exemplu AA:BB:CC:DD:EE:FF.",
+            "additional_departure_delay": "Timp suplimentar după intervalul normal de prezență de {presence_window} de secunde înainte de trecerea de la „Acasă” la „Plecat”. Timpii normali nu adaugă nicio întârziere. O întârziere mai mare întârzie și detectarea unei plecări reale. Dacă scanările nu pot confirma absența, dispozitivul de urmărire poate deveni indisponibil."
           }
         },
         "reconfigure": {
@@ -277,17 +277,17 @@
             "additional_departure_delay": "Întârziere suplimentară la plecare"
           },
           "data_description": {
-            "additional_departure_delay": "Timp suplimentar după intervalul normal de prezență de 90 de secunde înainte de trecerea de la „Acasă” la „Plecat”. 0 păstrează timpii normali. O întârziere mai mare întârzie și detectarea unei plecări reale. Dacă scanările nu pot confirma absența, dispozitivul de urmărire poate deveni indisponibil."
+            "additional_departure_delay": "Timp suplimentar după intervalul normal de prezență de {presence_window} de secunde înainte de trecerea de la „Acasă” la „Plecat”. Timpii normali nu adaugă nicio întârziere. O întârziere mai mare întârzie și detectarea unei plecări reale. Dacă scanările nu pot confirma absența, dispozitivul de urmărire poate deveni indisponibil."
           }
         }
       },
       "error": {
         "name-empty": "Introdu un nume.",
         "irk-or-mac": "Introdu un IRK sau o adresă MAC.",
-        "irk-invalid": "Acesta nu este un IRK. Un IRK are 16 octeți: 32 de cifre hexazecimale sau 24 de caractere base64 care se termină cu ==.",
+        "irk-invalid": "Acesta nu este un IRK. Introdu {irk_bytes} octeți ca {irk_hex_length} de cifre hexazecimale sau în base64.",
         "mac-invalid": "Aceasta nu este o adresă MAC. Introdu șase perechi de cifre hexazecimale separate prin două puncte sau cratime, de exemplu AA:BB:CC:DD:EE:FF.",
         "already-tracked": "Acest dispozitiv este deja urmărit.",
-        "departure-delay-invalid": "Alege 0, 30, 60, 90 sau 120 de secunde."
+        "departure-delay-invalid": "Alege una dintre întârzierile la plecare afișate."
       },
       "abort": {
         "bluetooth-tracking-off": "Urmărirea prin Bluetooth este dezactivată. Activeaz-o mai întâi în opțiunile integrării: selectează „Configurare” pe pagina integrării.",
@@ -409,11 +409,7 @@
   "selector": {
     "departure_delay": {
       "options": {
-        "0": "0 secunde (timpi normali)",
-        "30": "30 de secunde",
-        "60": "60 de secunde",
-        "90": "90 de secunde",
-        "120": "120 de secunde"
+        "0": "Timpi normali"
       }
     }
   }

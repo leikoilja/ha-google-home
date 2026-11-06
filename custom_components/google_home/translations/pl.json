@@ -266,8 +266,8 @@
           },
           "data_description": {
             "name": "Nazwa trackera, np. Telefon Alexa.",
-            "irk_or_mac": "Identity Resolving Key telefonu jako 32 cyfry szesnastkowe lub w base64 albo adres MAC, np. AA:BB:CC:DD:EE:FF. Integracja sama rozpozna, co zostało wpisane.",
-            "additional_departure_delay": "Dodatkowy czas po standardowym 90-sekundowym okresie obecności, zanim stan zmieni się z „w domu” na „poza domem”. 0 zachowuje standardowe czasy. Dłuższe opóźnienie opóźnia również wykrycie rzeczywistego wyjścia. Jeśli skanowanie nie może potwierdzić nieobecności, tracker może stać się niedostępny."
+            "irk_or_mac": "Identity Resolving Key telefonu jako {irk_hex_length} cyfry szesnastkowe lub w base64 albo adres MAC, np. AA:BB:CC:DD:EE:FF.",
+            "additional_departure_delay": "Dodatkowy czas po standardowym {presence_window}-sekundowym okresie obecności, zanim stan zmieni się z „w domu” na „poza domem”. Standardowe czasy nie dodają opóźnienia. Dłuższe opóźnienie opóźnia również wykrycie rzeczywistego wyjścia. Jeśli skanowanie nie może potwierdzić nieobecności, tracker może stać się niedostępny."
           }
         },
         "reconfigure": {
@@ -277,17 +277,17 @@
             "additional_departure_delay": "Dodatkowe opóźnienie wyjścia"
           },
           "data_description": {
-            "additional_departure_delay": "Dodatkowy czas po standardowym 90-sekundowym okresie obecności, zanim stan zmieni się z „w domu” na „poza domem”. 0 zachowuje standardowe czasy. Dłuższe opóźnienie opóźnia również wykrycie rzeczywistego wyjścia. Jeśli skanowanie nie może potwierdzić nieobecności, tracker może stać się niedostępny."
+            "additional_departure_delay": "Dodatkowy czas po standardowym {presence_window}-sekundowym okresie obecności, zanim stan zmieni się z „w domu” na „poza domem”. Standardowe czasy nie dodają opóźnienia. Dłuższe opóźnienie opóźnia również wykrycie rzeczywistego wyjścia. Jeśli skanowanie nie może potwierdzić nieobecności, tracker może stać się niedostępny."
           }
         }
       },
       "error": {
         "name-empty": "Wpisz nazwę.",
         "irk-or-mac": "Wpisz IRK lub adres MAC.",
-        "irk-invalid": "To nie jest IRK. IRK ma 16 bajtów: 32 cyfry szesnastkowe albo 24 znaki base64 zakończone ==.",
+        "irk-invalid": "To nie jest IRK. Wpisz {irk_bytes} bajtów jako {irk_hex_length} cyfry szesnastkowe lub w base64.",
         "mac-invalid": "To nie jest adres MAC. Wpisz sześć par cyfr szesnastkowych rozdzielonych dwukropkami lub łącznikami, np. AA:BB:CC:DD:EE:FF.",
         "already-tracked": "To urządzenie jest już śledzone.",
-        "departure-delay-invalid": "Wybierz 0, 30, 60, 90 lub 120 sekund."
+        "departure-delay-invalid": "Wybierz jedno z wymienionych opóźnień wyjścia."
       },
       "abort": {
         "bluetooth-tracking-off": "Śledzenie Bluetooth jest wyłączone. Najpierw włącz je w opcjach integracji: wybierz „Konfiguruj” na stronie integracji.",
@@ -409,11 +409,7 @@
   "selector": {
     "departure_delay": {
       "options": {
-        "0": "0 sekund (standardowe czasy)",
-        "30": "30 sekund",
-        "60": "60 sekund",
-        "90": "90 sekund",
-        "120": "120 sekund"
+        "0": "Standardowe czasy"
       }
     }
   }

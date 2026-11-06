@@ -21,7 +21,7 @@ from homeassistant.config_entries import (
     SubentryFlowResult,
     UnknownSubEntry,
 )
-from homeassistant.const import CONF_MAC, CONF_NAME
+from homeassistant.const import CONF_MAC, CONF_NAME, UnitOfTime
 from homeassistant.core import callback
 from homeassistant.data_entry_flow import section
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
@@ -33,8 +33,9 @@ from homeassistant.helpers.selector import (
 )
 
 from .api import GlocaltokensApiClient
-from .bluetooth import parse_irk, parse_mac
+from .bluetooth import IRK_LENGTH, parse_irk, parse_mac
 from .const import (
+    BLUETOOTH_PRESENCE_WINDOW,
     BROWSER_TITLE,
     CONF_ADDITIONAL_DEPARTURE_DELAY,
     CONF_ANDROID_ID,
@@ -500,10 +501,15 @@ class DepartureDelaySelector(SelectSelector):
 
 
 def _departure_delay_selector() -> DepartureDelaySelector:
-    """Show the five translated choices as radio buttons in both forms."""
+    """Build radio labels from the policy values, with translated normal timing."""
     return DepartureDelaySelector(
         SelectSelectorConfig(
-            options=[str(seconds) for seconds in DEPARTURE_DELAY_VALUES],
+            options=[
+                SelectOptionDict(
+                    value=str(seconds), label=f"{seconds} {UnitOfTime.SECONDS}"
+                )
+                for seconds in DEPARTURE_DELAY_VALUES
+            ],
             mode=SelectSelectorMode.LIST,
             translation_key="departure_delay",
         )
@@ -570,7 +576,12 @@ class BluetoothDeviceSubentryFlow(ConfigSubentryFlow):
                 user_input,
             ),
             errors=errors,
-            description_placeholders={"docs_url": BLUETOOTH_DOCS_URL},
+            description_placeholders={
+                "docs_url": BLUETOOTH_DOCS_URL,
+                "presence_window": str(BLUETOOTH_PRESENCE_WINDOW),
+                "irk_bytes": str(IRK_LENGTH),
+                "irk_hex_length": str(IRK_LENGTH * 2),
+            },
         )
 
     async def async_step_reconfigure(
@@ -607,6 +618,9 @@ class BluetoothDeviceSubentryFlow(ConfigSubentryFlow):
                 ),
                 user_input,
             ),
+            description_placeholders={
+                "presence_window": str(BLUETOOTH_PRESENCE_WINDOW)
+            },
         )
 
 

@@ -266,8 +266,8 @@
           },
           "data_description": {
             "name": "Name of the tracker, such as Alex's phone.",
-            "irk_or_mac": "A phone's Identity Resolving Key, as 32 hex digits or in base64, or a MAC address such as AA:BB:CC:DD:EE:FF. The integration tells which one you entered.",
-            "additional_departure_delay": "Additional time after the normal 90-second presence window before changing from Home to Away. 0 keeps normal timing. A longer delay also delays a real departure. If scans cannot confirm absence, the tracker may become unavailable."
+            "irk_or_mac": "A phone's Identity Resolving Key, as {irk_hex_length} hex digits or in base64, or a MAC address such as AA:BB:CC:DD:EE:FF.",
+            "additional_departure_delay": "Additional time after the normal {presence_window}-second presence window before changing from Home to Away. Normal timing adds no delay. A longer delay also delays a real departure. If scans cannot confirm absence, the tracker may become unavailable."
           }
         },
         "reconfigure": {
@@ -277,17 +277,17 @@
             "additional_departure_delay": "Additional departure delay"
           },
           "data_description": {
-            "additional_departure_delay": "Additional time after the normal 90-second presence window before changing from Home to Away. 0 keeps normal timing. A longer delay also delays a real departure. If scans cannot confirm absence, the tracker may become unavailable."
+            "additional_departure_delay": "Additional time after the normal {presence_window}-second presence window before changing from Home to Away. Normal timing adds no delay. A longer delay also delays a real departure. If scans cannot confirm absence, the tracker may become unavailable."
           }
         }
       },
       "error": {
         "name-empty": "Enter a name.",
         "irk-or-mac": "Enter an IRK or a MAC address.",
-        "irk-invalid": "This isn't an IRK. An IRK is 16 bytes: 32 hex digits, or 24 base64 characters ending in ==.",
+        "irk-invalid": "This isn't an IRK. Enter {irk_bytes} bytes as {irk_hex_length} hex digits or in base64.",
         "mac-invalid": "This isn't a MAC address. Enter six pairs of hex digits separated by colons or hyphens, such as AA:BB:CC:DD:EE:FF.",
         "already-tracked": "This device is already tracked.",
-        "departure-delay-invalid": "Choose 0, 30, 60, 90, or 120 seconds."
+        "departure-delay-invalid": "Choose one of the listed departure delays."
       },
       "abort": {
         "bluetooth-tracking-off": "Bluetooth tracking is off. Turn it on in the integration's options first: select Configure on the integration's page.",
@@ -409,11 +409,7 @@
   "selector": {
     "departure_delay": {
       "options": {
-        "0": "0 seconds (normal timing)",
-        "30": "30 seconds",
-        "60": "60 seconds",
-        "90": "90 seconds",
-        "120": "120 seconds"
+        "0": "Normal timing"
       }
     }
   }

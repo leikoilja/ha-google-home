@@ -266,8 +266,8 @@
           },
           "data_description": {
             "name": "Nome del tracker, ad esempio Telefono di Alex.",
-            "irk_or_mac": "L'Identity Resolving Key di un telefono, come 32 cifre esadecimali o in base64, oppure un indirizzo MAC come AA:BB:CC:DD:EE:FF. L'integrazione riconosce quale dei due hai inserito.",
-            "additional_departure_delay": "Tempo aggiuntivo dopo il normale intervallo di presenza di 90 secondi prima di passare da «In casa» a «Fuori casa». 0 mantiene le tempistiche normali. Un ritardo maggiore ritarda anche il rilevamento di un’uscita reale. Se le scansioni non riescono a confermare l’assenza, il tracker può diventare non disponibile."
+            "irk_or_mac": "L'Identity Resolving Key di un telefono, come {irk_hex_length} cifre esadecimali o in base64, oppure un indirizzo MAC come AA:BB:CC:DD:EE:FF.",
+            "additional_departure_delay": "Tempo aggiuntivo dopo il normale intervallo di presenza di {presence_window} secondi prima di passare da «In casa» a «Fuori casa». Le tempistiche normali non aggiungono alcun ritardo. Un ritardo maggiore ritarda anche il rilevamento di un’uscita reale. Se le scansioni non riescono a confermare l’assenza, il tracker può diventare non disponibile."
           }
         },
         "reconfigure": {
@@ -277,17 +277,17 @@
             "additional_departure_delay": "Ritardo aggiuntivo all’uscita"
           },
           "data_description": {
-            "additional_departure_delay": "Tempo aggiuntivo dopo il normale intervallo di presenza di 90 secondi prima di passare da «In casa» a «Fuori casa». 0 mantiene le tempistiche normali. Un ritardo maggiore ritarda anche il rilevamento di un’uscita reale. Se le scansioni non riescono a confermare l’assenza, il tracker può diventare non disponibile."
+            "additional_departure_delay": "Tempo aggiuntivo dopo il normale intervallo di presenza di {presence_window} secondi prima di passare da «In casa» a «Fuori casa». Le tempistiche normali non aggiungono alcun ritardo. Un ritardo maggiore ritarda anche il rilevamento di un’uscita reale. Se le scansioni non riescono a confermare l’assenza, il tracker può diventare non disponibile."
           }
         }
       },
       "error": {
         "name-empty": "Inserisci un nome.",
         "irk-or-mac": "Inserisci un IRK o un indirizzo MAC.",
-        "irk-invalid": "Questo non è un IRK. Un IRK è di 16 byte: 32 cifre esadecimali oppure 24 caratteri base64 che terminano con ==.",
+        "irk-invalid": "Questo non è un IRK. Inserisci {irk_bytes} byte come {irk_hex_length} cifre esadecimali o in base64.",
         "mac-invalid": "Questo non è un indirizzo MAC. Inserisci sei coppie di cifre esadecimali separate da due punti o trattini, ad esempio AA:BB:CC:DD:EE:FF.",
         "already-tracked": "Questo dispositivo è già monitorato.",
-        "departure-delay-invalid": "Scegli 0, 30, 60, 90 o 120 secondi."
+        "departure-delay-invalid": "Scegli uno dei ritardi all’uscita elencati."
       },
       "abort": {
         "bluetooth-tracking-off": "Il tracciamento Bluetooth è disattivato. Attivalo prima nelle opzioni dell'integrazione: seleziona «Configura» nella pagina dell'integrazione.",
@@ -409,11 +409,7 @@
   "selector": {
     "departure_delay": {
       "options": {
-        "0": "0 secondi (tempistiche normali)",
-        "30": "30 secondi",
-        "60": "60 secondi",
-        "90": "90 secondi",
-        "120": "120 secondi"
+        "0": "Tempistiche normali"
       }
     }
   }

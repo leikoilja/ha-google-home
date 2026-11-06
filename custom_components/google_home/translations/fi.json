@@ -266,8 +266,8 @@
           },
           "data_description": {
             "name": "Seurannan nimi, esimerkiksi Alexin puhelin.",
-            "irk_or_mac": "Puhelimen Identity Resolving Key 32 heksadesimaalinumerona tai base64-muodossa tai MAC-osoite, kuten AA:BB:CC:DD:EE:FF. Integraatio tunnistaa, kumman annoit.",
-            "additional_departure_delay": "Lisäaika tavallisen 90 sekunnin läsnäolojakson jälkeen ennen tilan vaihtumista Kotona-tilasta Poissa-tilaan. 0 säilyttää tavallisen ajoituksen. Pidempi viive viivästyttää myös todellisen poistumisen havaitsemista. Jos skannaukset eivät pysty vahvistamaan poissaoloa, seuranta voi muuttua tilaan Ei saatavissa."
+            "irk_or_mac": "Puhelimen Identity Resolving Key {irk_hex_length} heksadesimaalinumerona tai base64-muodossa tai MAC-osoite, kuten AA:BB:CC:DD:EE:FF.",
+            "additional_departure_delay": "Lisäaika tavallisen {presence_window} sekunnin läsnäolojakson jälkeen ennen tilan vaihtumista Kotona-tilasta Poissa-tilaan. Tavallinen ajoitus ei lisää viivettä. Pidempi viive viivästyttää myös todellisen poistumisen havaitsemista. Jos skannaukset eivät pysty vahvistamaan poissaoloa, seuranta voi muuttua tilaan Ei saatavissa."
           }
         },
         "reconfigure": {
@@ -277,17 +277,17 @@
             "additional_departure_delay": "Poistumisen lisäviive"
           },
           "data_description": {
-            "additional_departure_delay": "Lisäaika tavallisen 90 sekunnin läsnäolojakson jälkeen ennen tilan vaihtumista Kotona-tilasta Poissa-tilaan. 0 säilyttää tavallisen ajoituksen. Pidempi viive viivästyttää myös todellisen poistumisen havaitsemista. Jos skannaukset eivät pysty vahvistamaan poissaoloa, seuranta voi muuttua tilaan Ei saatavissa."
+            "additional_departure_delay": "Lisäaika tavallisen {presence_window} sekunnin läsnäolojakson jälkeen ennen tilan vaihtumista Kotona-tilasta Poissa-tilaan. Tavallinen ajoitus ei lisää viivettä. Pidempi viive viivästyttää myös todellisen poistumisen havaitsemista. Jos skannaukset eivät pysty vahvistamaan poissaoloa, seuranta voi muuttua tilaan Ei saatavissa."
           }
         }
       },
       "error": {
         "name-empty": "Anna nimi.",
         "irk-or-mac": "Anna IRK tai MAC-osoite.",
-        "irk-invalid": "Tämä ei ole IRK. IRK on 16 tavua: 32 heksadesimaalinumeroa tai 24 base64-merkkiä, joiden lopussa on ==.",
+        "irk-invalid": "Tämä ei ole IRK. Anna {irk_bytes} tavua {irk_hex_length} heksadesimaalinumerona tai base64-muodossa.",
         "mac-invalid": "Tämä ei ole MAC-osoite. Anna kuusi heksadesimaalinumeroparia kaksoispisteillä tai yhdysmerkeillä erotettuina, esimerkiksi AA:BB:CC:DD:EE:FF.",
         "already-tracked": "Tätä laitetta seurataan jo.",
-        "departure-delay-invalid": "Valitse 0, 30, 60, 90 tai 120 sekuntia."
+        "departure-delay-invalid": "Valitse jokin luetelluista poistumisviiveistä."
       },
       "abort": {
         "bluetooth-tracking-off": "Bluetooth-seuranta ei ole käytössä. Ota se ensin käyttöön integraation asetuksissa: valitse integraation sivulla ”Määrittele”.",
@@ -409,11 +409,7 @@
   "selector": {
     "departure_delay": {
       "options": {
-        "0": "0 sekuntia (tavallinen ajoitus)",
-        "30": "30 sekuntia",
-        "60": "60 sekuntia",
-        "90": "90 sekuntia",
-        "120": "120 sekuntia"
+        "0": "Tavallinen ajoitus"
       }
     }
   }

@@ -37,9 +37,9 @@ If a device briefly shows away while it is still home, you can add a departure d
 
 1. Open **Settings** > **Devices & services** > **Google Home**.
 2. Open the tracked Bluetooth device's **⋮** menu and select **Reconfigure**.
-3. Under **Additional departure delay**, select one of the radio buttons: **0 seconds (normal timing)**, **30 seconds**, **60 seconds**, **90 seconds** or **120 seconds**, then select **Submit**. You can also set it when adding a device.
+3. Under **Additional departure delay**, select one of the radio buttons: **Normal timing**, **30 s**, **60 s**, **90 s** or **120 s**, then select **Submit**. You can also set it when adding a device.
 
-The default, **0**, keeps normal timing. A longer delay can suppress brief away transitions, but also slows detection of a real departure. It applies only to this tracker; arrival still shows home as soon as an accepted scan hears the device. Your tracker and its links to people stay in place, and you do not need to enter its IRK or MAC address again.
+The default, **Normal timing**, adds no delay. A longer delay can suppress brief away transitions, but also slows detection of a real departure. It applies only to this tracker; arrival still shows home as soon as an accepted scan hears the device. Your tracker and its links to people stay in place, and you do not need to enter its IRK or MAC address again.
 
 The delay extends the normal 90-second presence window, measured from the start of the last scan that heard the device. For example, 60 seconds makes the departure threshold 150 seconds from that scan start. The speakers must still provide current, continuous coverage before the tracker can show away. If coverage first becomes adequate after the threshold, it may show away then, without waiting another full delay.
 

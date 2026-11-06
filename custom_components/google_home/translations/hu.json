@@ -266,8 +266,8 @@
           },
           "data_description": {
             "name": "A követő neve, például Alex telefonja.",
-            "irk_or_mac": "Egy telefon Identity Resolving Key-e (identitásfeloldó kulcsa) 32 hexadecimális számjegyként vagy base64 formátumban, vagy egy MAC-cím, például AA:BB:CC:DD:EE:FF. Az integráció felismeri, melyiket adta meg.",
-            "additional_departure_delay": "További idő a szokásos 90 másodperces jelenléti időszak után, mielőtt az állapot „Otthon” értékről „Távol” értékre vált. A 0 megtartja a szokásos időzítést. A hosszabb késleltetés a tényleges távozás észlelését is késlelteti. Ha a keresések nem tudják megerősíteni a távollétet, a követő elérhetetlenné válhat."
+            "irk_or_mac": "Egy telefon Identity Resolving Key-e (identitásfeloldó kulcsa) {irk_hex_length} hexadecimális számjegyként vagy base64 formátumban, vagy egy MAC-cím, például AA:BB:CC:DD:EE:FF.",
+            "additional_departure_delay": "További idő a szokásos {presence_window} másodperces jelenléti időszak után, mielőtt az állapot „Otthon” értékről „Távol” értékre vált. A szokásos időzítés nem ad hozzá késleltetést. A hosszabb késleltetés a tényleges távozás észlelését is késlelteti. Ha a keresések nem tudják megerősíteni a távollétet, a követő elérhetetlenné válhat."
           }
         },
         "reconfigure": {
@@ -277,17 +277,17 @@
             "additional_departure_delay": "További távozási késleltetés"
           },
           "data_description": {
-            "additional_departure_delay": "További idő a szokásos 90 másodperces jelenléti időszak után, mielőtt az állapot „Otthon” értékről „Távol” értékre vált. A 0 megtartja a szokásos időzítést. A hosszabb késleltetés a tényleges távozás észlelését is késlelteti. Ha a keresések nem tudják megerősíteni a távollétet, a követő elérhetetlenné válhat."
+            "additional_departure_delay": "További idő a szokásos {presence_window} másodperces jelenléti időszak után, mielőtt az állapot „Otthon” értékről „Távol” értékre vált. A szokásos időzítés nem ad hozzá késleltetést. A hosszabb késleltetés a tényleges távozás észlelését is késlelteti. Ha a keresések nem tudják megerősíteni a távollétet, a követő elérhetetlenné válhat."
           }
         }
       },
       "error": {
         "name-empty": "Adjon meg egy nevet.",
         "irk-or-mac": "Adjon meg egy IRK-t vagy egy MAC-címet.",
-        "irk-invalid": "Ez nem IRK. Az IRK 16 bájt: 32 hexadecimális számjegy vagy 24 base64-karakter, amely ==-re végződik.",
+        "irk-invalid": "Ez nem IRK. Adjon meg {irk_bytes} bájtot {irk_hex_length} hexadecimális számjegyként vagy base64 formátumban.",
         "mac-invalid": "Ez nem MAC-cím. Adjon meg hat hexadecimális számjegypárt kettősponttal vagy kötőjellel elválasztva, például AA:BB:CC:DD:EE:FF.",
         "already-tracked": "Ezt az eszközt már követi az integráció.",
-        "departure-delay-invalid": "Válasszon 0, 30, 60, 90 vagy 120 másodpercet."
+        "departure-delay-invalid": "Válasszon egyet a felsorolt távozási késleltetések közül."
       },
       "abort": {
         "bluetooth-tracking-off": "A Bluetooth-követés ki van kapcsolva. Először kapcsolja be az integráció opcióiban: válassza a „Konfigurálás” lehetőséget az integráció oldalán.",
@@ -409,11 +409,7 @@
   "selector": {
     "departure_delay": {
       "options": {
-        "0": "0 másodperc (szokásos időzítés)",
-        "30": "30 másodperc",
-        "60": "60 másodperc",
-        "90": "90 másodperc",
-        "120": "120 másodperc"
+        "0": "Szokásos időzítés"
       }
     }
   }
