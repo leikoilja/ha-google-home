@@ -23,8 +23,10 @@ from urllib.parse import parse_qs
 
 from aiohttp import ClientConnectionError
 from ghome_foyer_api.api_pb2 import HomeGraph  # pylint: disable=no-name-in-module
+from glocaltokens import const as glocaltokens_const
 from glocaltokens.const import ACCESS_TOKEN_SERVICE
 from glocaltokens.exceptions import AuthenticationError, HomegraphError
+from glocaltokens.utils import token as token_utils
 import gpsoauth
 import grpc  # type: ignore[import-untyped]
 import pytest
@@ -56,6 +58,7 @@ from homeassistant.data_entry_flow import FlowResultType
 from homeassistant.helpers import issue_registry as ir
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.service_info.zeroconf import ZeroconfServiceInfo
+from homeassistant.helpers.translation import async_get_translations
 
 from .test_missing_devices import answered
 
@@ -168,20 +171,47 @@ def test_browser_sign_in_with_glocaltokens(flow: GoogleHomeFlowHandler) -> None:
     assert result["data"]["android_id"] == android_id
 
 
+@pytest.mark.parametrize(
+    ("exchange_reply", "access_reply", "token_stage"),
+    [
+        pytest.param(
+            {"Error": "BadAuthentication"}, {}, "master", id="cookie-rejected"
+        ),
+        pytest.param(
+            {"Token": MASTER_TOKEN, "Email": "test@example.com"},
+            {"Error": "BadAuthentication"},
+            "access",
+            id="cookie-accepted-access-rejected",
+        ),
+    ],
+)
 def test_browser_sign_in_rejected_by_google(
     flow: GoogleHomeFlowHandler,
     create_session: Mock,
     caplog: pytest.LogCaptureFixture,
+    exchange_reply: dict[str, str],
+    access_reply: dict[str, str],
+    token_stage: str,
 ) -> None:
-    """Point out a cookie that Google refuses, logging its reason in one line."""
-    with google_sign_in(Mock(return_value={"Error": "BadAuthentication"}), Mock()):
+    """Report either rejected sign-in stage without blaming an accepted cookie."""
+    exchange = Mock(return_value=exchange_reply)
+    access = Mock(return_value=access_reply)
+    with google_sign_in(exchange, access):
         result = asyncio.run(
             flow.async_step_browser({"oauth_token": "oauth2_4/cookie"})
         )
 
     assert result["errors"] == {"base": "oauth-token-invalid"}
+    assert ENGLISH["config"]["error"][result["errors"]["base"]] == (
+        "Google didn't accept the sign-in. Get a new cookie and paste it straight "
+        "away: it can expire quickly and works only once. Copy the whole value, "
+        "starting with oauth2_4/."
+    )
+    assert exchange.call_count == 1
+    assert access.call_count == (1 if token_stage == "access" else 0)
     assert_logged_without_traceback(
-        caplog, "Failed to sign in: Google gave no master token: BadAuthentication"
+        caplog,
+        f"Failed to sign in: Google gave no {token_stage} token: BadAuthentication",
     )
     create_session.assert_not_called()
 
@@ -1084,3 +1114,45 @@ async def test_reauth_loaded_entry(
         for record in caplog.records
         if record.levelno >= logging.WARNING
     ] == []
+
+
+@pytest.mark.usefixtures("mock_setup_entry")
+@pytest.mark.parametrize(("payload_length", "total_length"), [(216, 223), (310, 317)])
+@pytest.mark.parametrize("reauth", [False, True], ids=["setup", "reauth"])
+async def test_master_token_length_matches_dependency_validation(
+    hass: HomeAssistant,
+    request: pytest.FixtureRequest,
+    sign_in: Mock,
+    monkeypatch: pytest.MonkeyPatch,
+    payload_length: int,
+    total_length: int,
+    reauth: bool,
+) -> None:
+    """Fill the format error from the validator's length in both sign-in routes."""
+    monkeypatch.setattr(glocaltokens_const, "MASTER_TOKEN_LENGTH", payload_length)
+    # The validator imports the owner's value by name. Synchronize that binding to
+    # simulate a dependency update without replacing its actual validation function.
+    monkeypatch.setattr(token_utils, "MASTER_TOKEN_LENGTH", payload_length)
+    entry = request.getfixturevalue("config_entry") if reauth else None
+    result = await submit(
+        hass,
+        await choose(hass, "master_token", entry),
+        {"master_token": "aas_et/short"},
+    )
+
+    assert result["errors"] == {"master_token": "master-token-format"}
+    assert sent_to_google(sign_in) == []
+    text = await async_get_translations(hass, "en", "config", [DOMAIN])
+    message = text[f"component.{DOMAIN}.config.error.master-token-format"].format_map(
+        result["description_placeholders"] or {}
+    )
+    assert message == (
+        f"A master token starts with aas_et/ and is {total_length} characters long. "
+        "Copy the whole token."
+    )
+    token = "aas_et/" + "n" * payload_length
+    assert token_utils.is_aas_et(token)
+
+    await submit(hass, result, {"master_token": token})
+
+    assert saved_master_tokens(hass) == [token]

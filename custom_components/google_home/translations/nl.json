@@ -9,13 +9,13 @@
           "master_token": "Mastertoken"
         },
         "menu_option_descriptions": {
-          "browser": "Log in bij Google in een desktopbrowser en plak daarna een cookie. Werkt voor de meeste accounts.",
+          "browser": "Log in bij Google in een desktopbrowser en plak daarna een cookie.",
           "master_token": "Plak een mastertoken dat je al hebt."
         }
       },
       "browser": {
         "title": "Inloggen via de browser",
-        "description": "1. Open op een computer {embedded_setup_url} in een privévenster en log in. Nadat je hebt geaccepteerd, kan de pagina blijven laden; dat is normaal.\n2. Open de ontwikkelaarstools van de browser en zoek de cookies voor `accounts.google.com`.\n3. Kopieer de waarde van de cookie `oauth_token` en plak deze meteen hieronder. De cookie verloopt binnen een paar minuten en werkt maar één keer.\n\nStapsgewijze instructies: {browser_docs_url}\n\nSluit dit venster en voeg de integratie opnieuw toe om een andere manier van inloggen te kiezen.",
+        "description": "1. Open op een computer {embedded_setup_url} in een privévenster en log in. Nadat je hebt geaccepteerd, kan de pagina blijven laden; dat is normaal.\n2. Open de ontwikkelaarstools van de browser en zoek de cookies voor `accounts.google.com`.\n3. Kopieer de waarde van de cookie `oauth_token` en plak deze meteen hieronder. De cookie kan snel verlopen en werkt maar één keer.\n\nStapsgewijze instructies: {browser_docs_url}\n\nSluit dit venster en voeg de integratie opnieuw toe om een andere manier van inloggen te kiezen.",
         "data": {
           "oauth_token": "Cookie oauth_token"
         },
@@ -51,13 +51,13 @@
           "master_token": "Mastertoken"
         },
         "menu_option_descriptions": {
-          "browser": "Log in bij Google in een desktopbrowser en plak daarna een cookie. Werkt voor de meeste accounts.",
+          "browser": "Log in bij Google in een desktopbrowser en plak daarna een cookie.",
           "master_token": "Plak een mastertoken dat je al hebt."
         }
       },
       "reauth_browser": {
         "title": "Inloggen via de browser",
-        "description": "1. Open op een computer {embedded_setup_url} in een privévenster en log in met hetzelfde Google-account. Nadat je hebt geaccepteerd, kan de pagina blijven laden; dat is normaal.\n2. Open de ontwikkelaarstools van de browser en zoek de cookies voor `accounts.google.com`.\n3. Kopieer de waarde van de cookie `oauth_token` en plak deze meteen hieronder. De cookie verloopt binnen een paar minuten en werkt maar één keer.\n\nStapsgewijze instructies: {browser_docs_url}",
+        "description": "1. Open op een computer {embedded_setup_url} in een privévenster en log in met hetzelfde Google-account. Nadat je hebt geaccepteerd, kan de pagina blijven laden; dat is normaal.\n2. Open de ontwikkelaarstools van de browser en zoek de cookies voor `accounts.google.com`.\n3. Kopieer de waarde van de cookie `oauth_token` en plak deze meteen hieronder. De cookie kan snel verlopen en werkt maar één keer.\n\nStapsgewijze instructies: {browser_docs_url}",
         "data": {
           "oauth_token": "Cookie oauth_token"
         },
@@ -77,13 +77,13 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "Google heeft de cookie niet geaccepteerd. Haal een nieuwe op en plak deze meteen: de cookie verloopt binnen een paar minuten en werkt maar één keer. Kopieer de volledige waarde, die begint met oauth2_4/.",
+      "oauth-token-invalid": "Google heeft de aanmelding niet geaccepteerd. Haal een nieuwe cookie op en plak deze meteen: de cookie kan snel verlopen en werkt maar één keer. Kopieer de volledige waarde, die begint met oauth2_4/.",
       "master-token-invalid": "Google heeft het mastertoken niet geaccepteerd. Controleer of je het goed hebt gekopieerd. Als het eerder werkte, bijvoorbeeld totdat je je Google-wachtwoord hebt gewijzigd, accepteert Google het niet meer: gebruik in plaats daarvan inloggen via de browser.",
       "google-rejected": "Google heeft de inlogpoging niet geaccepteerd. Bekijk de logboeken van Home Assistant voor details.",
       "google-unreachable": "Google kon niet worden bereikt. Controleer of Home Assistant met internet is verbonden en probeer het daarna opnieuw.",
       "google-busy": "Google is overbelast of beperkt het aantal inlogpogingen. Wacht een paar minuten en log daarna opnieuw in.",
       "oauth-token-format": "Dit is niet de cookie oauth_token. De waarde begint met oauth2_4/.",
-      "master-token-format": "Een mastertoken begint met aas_et/ en is 223 tekens lang. Kopieer het volledige token.",
+      "master-token-format": "Een mastertoken begint met aas_et/ en is {token_length} tekens lang. Kopieer het volledige token.",
       "other-account": "Je bent ingelogd met een ander Google-account, dus er is niets gewijzigd. Log in met het account dat deze integratie gebruikt. Om in plaats daarvan dat andere account te gebruiken, verwijder je de integratie en voeg je deze opnieuw toe.",
       "no-home-selected": "Kies ten minste één huis."
     },
@@ -152,7 +152,7 @@
       "message": "De huidige alarmen en timers konden niet worden opgehaald van {device}. Er is daarom niets van dit apparaat verwijderd. Controleer of het apparaat online is en probeer het later opnieuw."
     },
     "alarms_and_timers_not_fetched_token_rejected_polling_off": {
-      "message": "De huidige alarmen en timers konden niet worden opgehaald van {device}. Er is daarom niets van dit apparaat verwijderd. Het apparaat heeft zijn token geweigerd, en het ophalen van een nieuw token bij Google heeft niet geholpen. Polling voor wijzigingen is uitgeschakeld, dus de integratie vraagt niet uit zichzelf opnieuw een token aan bij Google: voer de actie ‘Apparaten verversen’ uit en probeer het daarna opnieuw."
+      "message": "De huidige alarmen en timers konden niet worden opgehaald van {device}. Er is daarom niets van dit apparaat verwijderd. Het apparaat heeft zijn token geweigerd. Polling voor wijzigingen is uitgeschakeld, dus de integratie vraagt niet uit zichzelf opnieuw een token aan bij Google: voer de actie ‘Apparaten verversen’ uit en probeer het daarna opnieuw."
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "De huidige alarmen en timers konden niet worden opgehaald van de volgende apparaten: {devices}. Er is daarom niets van deze apparaten verwijderd. Controleer of de apparaten online zijn en probeer het later opnieuw."
@@ -161,13 +161,13 @@
       "message": "{device} heeft het verwijderen van de alarmen of timers niet bevestigd. Ze kunnen dus nog ingesteld zijn. Controleer of het apparaat online is en probeer het later opnieuw."
     },
     "alarms_and_timers_not_deleted_token_rejected_polling_off": {
-      "message": "{device} heeft het verwijderen van de alarmen of timers niet bevestigd. Ze kunnen dus nog ingesteld zijn. Het apparaat heeft zijn token geweigerd, en het ophalen van een nieuw token bij Google heeft niet geholpen. Polling voor wijzigingen is uitgeschakeld, dus de integratie vraagt niet uit zichzelf opnieuw een token aan bij Google: voer de actie ‘Apparaten verversen’ uit en probeer het daarna opnieuw."
+      "message": "{device} heeft het verwijderen van de alarmen of timers niet bevestigd. Ze kunnen dus nog ingesteld zijn. Het apparaat heeft zijn token geweigerd. Polling voor wijzigingen is uitgeschakeld, dus de integratie vraagt niet uit zichzelf opnieuw een token aan bij Google: voer de actie ‘Apparaten verversen’ uit en probeer het daarna opnieuw."
     },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "Alarmen of timers konden niet worden verwijderd van de volgende apparaten, of het verwijderen kon niet worden bevestigd: {devices}. Controleer of de apparaten online zijn en probeer het later opnieuw."
     },
     "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
-      "message": "Alarmen of timers konden niet worden verwijderd van de volgende apparaten, of het verwijderen kon niet worden bevestigd: {devices}. Ten minste één ervan heeft zijn token geweigerd, en het ophalen van een nieuw token bij Google heeft niet geholpen. Polling voor wijzigingen is uitgeschakeld, dus de integratie vraagt niet uit zichzelf opnieuw een token aan bij Google: voer de actie ‘Apparaten verversen’ uit, controleer of de apparaten online zijn en probeer het daarna opnieuw."
+      "message": "Alarmen of timers konden niet worden verwijderd van de volgende apparaten, of het verwijderen kon niet worden bevestigd: {devices}. Ten minste één ervan heeft zijn token geweigerd. Polling voor wijzigingen is uitgeschakeld, dus de integratie vraagt niet uit zichzelf opnieuw een token aan bij Google: voer de actie ‘Apparaten verversen’ uit, controleer of de apparaten online zijn en probeer het daarna opnieuw."
     },
     "invalid_alarm_id": {
       "message": "‘{alarm_id}’ is geen alarm-ID. Kopieer de ID, die begint met alarm/, uit het attribuut alarms van de alarmsensor van het apparaat."
@@ -188,10 +188,10 @@
       "message": "{device} heeft niet bevestigd dat de actie is uitgevoerd: het heeft niet op tijd geantwoord of het antwoord werd afgebroken. Controleer of het apparaat online is en probeer het opnieuw."
     },
     "device_token_rejected": {
-      "message": "{device} heeft zijn token geweigerd, en het ophalen van een nieuw token bij Google heeft niet geholpen. De integratie blijft een nieuw token aanvragen bij Google, dus probeer het later opnieuw."
+      "message": "{device} heeft zijn token geweigerd. De integratie blijft een nieuw token aanvragen bij Google, dus probeer het later opnieuw."
     },
     "device_token_rejected_polling_off": {
-      "message": "{device} heeft zijn token geweigerd, en het ophalen van een nieuw token bij Google heeft niet geholpen. Polling voor wijzigingen is uitgeschakeld, dus de integratie vraagt niet uit zichzelf opnieuw een token aan bij Google: voer de actie ‘Apparaten verversen’ uit en probeer het daarna opnieuw."
+      "message": "{device} heeft zijn token geweigerd. Polling voor wijzigingen is uitgeschakeld, dus de integratie vraagt niet uit zichzelf opnieuw een token aan bij Google: voer de actie ‘Apparaten verversen’ uit en probeer het daarna opnieuw."
     },
     "device_not_ready": {
       "message": "{device} heeft ‘niet gevonden’ geantwoord. Het apparaat is misschien nog aan het opstarten, dus probeer het later opnieuw, of het ondersteunt dit misschien niet."
@@ -226,14 +226,14 @@
       }
     },
     "invalid_update_interval": {
-      "title": "Het opgeslagen update-interval is korter dan 1 seconde",
+      "title": "Het opgeslagen update-interval is korter dan {min_interval} s",
       "fix_flow": {
         "step": {
           "init": {
-            "title": "Het opgeslagen update-interval is korter dan 1 seconde",
-            "description": "Het update-interval dat in de instellingen van de integratie is opgeslagen, is {interval} s, wat onder het minimum van 1 seconde ligt. De integratie gebruikt in plaats daarvan de standaardwaarde en controleert je apparaten elke 15 seconden.\n\nAls je 0 hebt opgeslagen om deze regelmatige controles te stoppen, schakel dan in plaats daarvan polling uit. Anders dan 0 stopt dat ook het zoeken naar Bluetooth-apparaten en het toevoegen van nieuwe apparaten die mDNS vindt. Raadpleeg {docs_url} voor meer informatie.\n\nOm een ander interval te gebruiken, open je de [Google Home-integratie]({integration_url}), selecteer je **Configureer**, vul je het in en selecteer je daarna **Verzend**.",
+            "title": "Het opgeslagen update-interval is korter dan {min_interval} s",
+            "description": "Het update-interval dat in de instellingen van de integratie is opgeslagen, is {interval} s, wat onder het minimum van {min_interval} s ligt. De integratie gebruikt in plaats daarvan de standaardwaarde en controleert je apparaten elke {default_interval} s.\n\nAls je 0 hebt opgeslagen om deze regelmatige controles te stoppen, schakel dan in plaats daarvan polling uit. Anders dan 0 stopt dat ook het zoeken naar Bluetooth-apparaten en het toevoegen van nieuwe apparaten die mDNS vindt. Raadpleeg {docs_url} voor meer informatie.\n\nOm een ander interval te gebruiken, open je de [Google Home-integratie]({integration_url}), selecteer je **Configureer**, vul je het in en selecteer je daarna **Verzend**.",
             "menu_options": {
-              "use_default": "Standaardwaarde van 15 seconden gebruiken",
+              "use_default": "Standaardwaarde van {default_interval} s gebruiken",
               "turn_off_polling": "In plaats daarvan polling uitschakelen"
             }
           }
@@ -317,7 +317,7 @@
             },
             "data_description": {
               "bluetooth_tracking": "Gebruik je speakers om te zien of je telefoon of andere Bluetooth-apparaten thuis zijn. Selecteer na het inschakelen ‘Een Bluetooth-apparaat volgen’ op de pagina van de integratie voor elk apparaat dat je wilt volgen. Zolang het is uitgeschakeld, stuurt de integratie geen Bluetooth-verzoeken naar je speakers.",
-              "bluetooth_excluded_speakers": "Speakers die niet naar Bluetooth-apparaten zoeken. Voeg een speaker toe die is losgekoppeld of buiten gebruik is: zolang een speaker niet antwoordt, kunnen trackers niet ‘Afwezig’ tonen."
+              "bluetooth_excluded_speakers": "Speakers die niet naar Bluetooth-apparaten zoeken. Voeg een speaker toe die is losgekoppeld of buiten gebruik is."
             }
           }
         }

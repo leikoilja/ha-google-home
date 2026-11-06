@@ -9,13 +9,13 @@
           "master_token": "Master token"
         },
         "menu_option_descriptions": {
-          "browser": "Logga in på Google i en webbläsare på en dator och klistra sedan in en cookie. Fungerar för de flesta konton.",
+          "browser": "Logga in på Google i en webbläsare på en dator och klistra sedan in en cookie.",
           "master_token": "Klistra in en master token som du redan har."
         }
       },
       "browser": {
         "title": "Inloggning via webbläsare",
-        "description": "1. Öppna {embedded_setup_url} i ett privat webbläsarfönster på en dator och logga in. När du har godkänt kan sidan fortsätta att laddas. Det är normalt.\n2. Öppna webbläsarens utvecklarverktyg och leta upp cookies för `accounts.google.com`.\n3. Kopiera värdet för cookien `oauth_token` och klistra in det nedan direkt. Det upphör att gälla inom några minuter och kan bara användas en gång.\n\nStegvisa instruktioner: {browser_docs_url}\n\nStäng det här fönstret och lägg till integrationen igen om du vill välja ett annat sätt att logga in.",
+        "description": "1. Öppna {embedded_setup_url} i ett privat webbläsarfönster på en dator och logga in. När du har godkänt kan sidan fortsätta att laddas. Det är normalt.\n2. Öppna webbläsarens utvecklarverktyg och leta upp cookies för `accounts.google.com`.\n3. Kopiera värdet för cookien `oauth_token` och klistra in det nedan direkt. Det kan snabbt upphöra att gälla och kan bara användas en gång.\n\nStegvisa instruktioner: {browser_docs_url}\n\nStäng det här fönstret och lägg till integrationen igen om du vill välja ett annat sätt att logga in.",
         "data": {
           "oauth_token": "Cookien oauth_token"
         },
@@ -51,13 +51,13 @@
           "master_token": "Master token"
         },
         "menu_option_descriptions": {
-          "browser": "Logga in på Google i en webbläsare på en dator och klistra sedan in en cookie. Fungerar för de flesta konton.",
+          "browser": "Logga in på Google i en webbläsare på en dator och klistra sedan in en cookie.",
           "master_token": "Klistra in en master token som du redan har."
         }
       },
       "reauth_browser": {
         "title": "Inloggning via webbläsare",
-        "description": "1. Öppna {embedded_setup_url} i ett privat webbläsarfönster på en dator och logga in på samma Google-konto. När du har godkänt kan sidan fortsätta att laddas. Det är normalt.\n2. Öppna webbläsarens utvecklarverktyg och leta upp cookies för `accounts.google.com`.\n3. Kopiera värdet för cookien `oauth_token` och klistra in det nedan direkt. Det upphör att gälla inom några minuter och kan bara användas en gång.\n\nStegvisa instruktioner: {browser_docs_url}",
+        "description": "1. Öppna {embedded_setup_url} i ett privat webbläsarfönster på en dator och logga in på samma Google-konto. När du har godkänt kan sidan fortsätta att laddas. Det är normalt.\n2. Öppna webbläsarens utvecklarverktyg och leta upp cookies för `accounts.google.com`.\n3. Kopiera värdet för cookien `oauth_token` och klistra in det nedan direkt. Det kan snabbt upphöra att gälla och kan bara användas en gång.\n\nStegvisa instruktioner: {browser_docs_url}",
         "data": {
           "oauth_token": "Cookien oauth_token"
         },
@@ -77,13 +77,13 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "Google godkände inte cookien. Hämta en ny och klistra in den direkt. Den upphör att gälla inom några minuter och kan bara användas en gång. Kopiera hela värdet, som börjar med oauth2_4/.",
+      "oauth-token-invalid": "Google godkände inte inloggningen. Hämta en ny cookie och klistra in den direkt. Den kan snabbt upphöra att gälla och kan bara användas en gång. Kopiera hela värdet, som börjar med oauth2_4/.",
       "master-token-invalid": "Google godkände inte din master token. Kontrollera att du har kopierat den korrekt. Om den fungerade tidigare, till exempel tills du bytte ditt Google-lösenord, godkänner Google den inte längre: använd inloggning via webbläsare i stället.",
       "google-rejected": "Google godkände inte inloggningen. Mer information finns i Home Assistants loggar.",
       "google-unreachable": "Det gick inte att nå Google. Kontrollera att Home Assistant har internetanslutning och försök sedan igen.",
       "google-busy": "Google har hög belastning eller begränsar inloggningar. Vänta några minuter och logga sedan in igen.",
       "oauth-token-format": "Det här är inte cookien oauth_token. Dess värde börjar med oauth2_4/.",
-      "master-token-format": "En master token börjar med aas_et/ och är 223 tecken lång. Kopiera hela värdet.",
+      "master-token-format": "En master token börjar med aas_et/ och är {token_length} tecken lång. Kopiera hela värdet.",
       "other-account": "Du loggade in på ett annat Google-konto, så inget ändrades. Logga in med kontot som den här integrationen använder. Om du i stället vill använda det andra kontot raderar du integrationen och lägger till den igen.",
       "no-home-selected": "Välj minst ett hem."
     },
@@ -152,7 +152,7 @@
       "message": "Det gick inte att hämta aktuella alarm och timers från {device}, så inget raderades från den enheten. Kontrollera att enheten är online och försök igen senare."
     },
     "alarms_and_timers_not_fetched_token_rejected_polling_off": {
-      "message": "Det gick inte att hämta aktuella alarm och timers från {device}, så inget raderades från den enheten. Enheten avvisade sin token, och det hjälpte inte att hämta en ny från Google. Pollning för ändringar är inaktiverad, så integrationen ber inte Google om en ny igen på egen hand: kör åtgärden ”Uppdatera enheter” och försök sedan igen."
+      "message": "Det gick inte att hämta aktuella alarm och timers från {device}, så inget raderades från den enheten. Enheten avvisade sin token. Pollning för ändringar är inaktiverad, så integrationen ber inte Google om en ny igen på egen hand: kör åtgärden ”Uppdatera enheter” och försök sedan igen."
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Det gick inte att hämta aktuella alarm och timers från följande enheter, så inget raderades från dem: {devices}. Kontrollera att enheterna är online och försök igen senare."
@@ -161,13 +161,13 @@
       "message": "{device} bekräftade inte att alarm eller timers raderades, så de kan fortfarande vara inställda. Kontrollera att enheten är online och försök igen senare."
     },
     "alarms_and_timers_not_deleted_token_rejected_polling_off": {
-      "message": "{device} bekräftade inte att alarm eller timers raderades, så de kan fortfarande vara inställda. Enheten avvisade sin token, och det hjälpte inte att hämta en ny från Google. Pollning för ändringar är inaktiverad, så integrationen ber inte Google om en ny igen på egen hand: kör åtgärden ”Uppdatera enheter” och försök sedan igen."
+      "message": "{device} bekräftade inte att alarm eller timers raderades, så de kan fortfarande vara inställda. Enheten avvisade sin token. Pollning för ändringar är inaktiverad, så integrationen ber inte Google om en ny igen på egen hand: kör åtgärden ”Uppdatera enheter” och försök sedan igen."
     },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "Det gick inte att radera alarm eller timers från följande enheter eller bekräfta att de raderades: {devices}. Kontrollera att enheterna är online och försök igen senare."
     },
     "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
-      "message": "Det gick inte att radera alarm eller timers från följande enheter eller bekräfta att de raderades: {devices}. Minst en av dem avvisade sin token, och det hjälpte inte att hämta en ny från Google. Pollning för ändringar är inaktiverad, så integrationen ber inte Google om en ny igen på egen hand: kör åtgärden ”Uppdatera enheter”, kontrollera att enheterna är online och försök sedan igen."
+      "message": "Det gick inte att radera alarm eller timers från följande enheter eller bekräfta att de raderades: {devices}. Minst en av dem avvisade sin token. Pollning för ändringar är inaktiverad, så integrationen ber inte Google om en ny igen på egen hand: kör åtgärden ”Uppdatera enheter”, kontrollera att enheterna är online och försök sedan igen."
     },
     "invalid_alarm_id": {
       "message": "”{alarm_id}” är inte ett alarm-ID. Kopiera ID:t, som börjar med alarm/, från attributet alarms på enhetens alarmsensor."
@@ -188,10 +188,10 @@
       "message": "{device} bekräftade inte att den utförde åtgärden: den svarade inte i tid, eller så avbröts svaret. Kontrollera att enheten är online och försök igen."
     },
     "device_token_rejected": {
-      "message": "{device} avvisade sin token, och det hjälpte inte att hämta en ny från Google. Integrationen fortsätter att be Google om en ny, så försök igen senare."
+      "message": "{device} avvisade sin token. Integrationen fortsätter att be Google om en ny, så försök igen senare."
     },
     "device_token_rejected_polling_off": {
-      "message": "{device} avvisade sin token, och det hjälpte inte att hämta en ny från Google. Pollning för ändringar är inaktiverad, så integrationen ber inte Google om en ny igen på egen hand: kör åtgärden ”Uppdatera enheter” och försök sedan igen."
+      "message": "{device} avvisade sin token. Pollning för ändringar är inaktiverad, så integrationen ber inte Google om en ny igen på egen hand: kör åtgärden ”Uppdatera enheter” och försök sedan igen."
     },
     "device_not_ready": {
       "message": "{device} svarade ”hittades inte”. Den håller kanske fortfarande på att starta, så försök igen senare, eller så stöder den inte detta."
@@ -226,14 +226,14 @@
       }
     },
     "invalid_update_interval": {
-      "title": "Det sparade uppdateringsintervallet är kortare än 1 sekund",
+      "title": "Det sparade uppdateringsintervallet är kortare än {min_interval} s",
       "fix_flow": {
         "step": {
           "init": {
-            "title": "Det sparade uppdateringsintervallet är kortare än 1 sekund",
-            "description": "Uppdateringsintervallet som sparats i integrationens alternativ är {interval} s, vilket är under minimivärdet 1 sekund. Integrationen använder i stället standardvärdet och kontrollerar dina enheter var 15:e sekund.\n\nOm du sparade 0 för att stoppa de här regelbundna kontrollerna kan du inaktivera pollning i stället. Till skillnad från 0 stoppar det även sökningen efter Bluetooth-enheter och att nya enheter som mDNS hittar läggs till. Läs mer på {docs_url}.\n\nOm du vill använda ett annat intervall öppnar du [Google Home-integrationen]({integration_url}), väljer **Konfigurera**, anger det och väljer sedan **Bekräfta**.",
+            "title": "Det sparade uppdateringsintervallet är kortare än {min_interval} s",
+            "description": "Uppdateringsintervallet som sparats i integrationens alternativ är {interval} s, vilket är under minimivärdet {min_interval} s. Integrationen använder i stället standardvärdet och kontrollerar dina enheter med {default_interval} s mellanrum.\n\nOm du sparade 0 för att stoppa de här regelbundna kontrollerna kan du inaktivera pollning i stället. Till skillnad från 0 stoppar det även sökningen efter Bluetooth-enheter och att nya enheter som mDNS hittar läggs till. Läs mer på {docs_url}.\n\nOm du vill använda ett annat intervall öppnar du [Google Home-integrationen]({integration_url}), väljer **Konfigurera**, anger det och väljer sedan **Bekräfta**.",
             "menu_options": {
-              "use_default": "Använd standardvärdet 15 sekunder",
+              "use_default": "Använd standardvärdet {default_interval} s",
               "turn_off_polling": "Inaktivera pollning i stället"
             }
           }
@@ -317,7 +317,7 @@
             },
             "data_description": {
               "bluetooth_tracking": "Använd dina högtalare för att se om din telefon eller andra Bluetooth-enheter är hemma. När du har aktiverat spårningen väljer du ”Spåra en Bluetooth-enhet” på integrationens sida för varje enhet som ska spåras. Så länge den är avaktiverad skickar integrationen inga Bluetooth-förfrågningar till dina högtalare.",
-              "bluetooth_excluded_speakers": "Högtalare som inte söker efter Bluetooth-enheter. Lägg till en högtalare som är urkopplad eller ur drift: så länge en högtalare inte svarar kan spårare inte visa ”Borta”."
+              "bluetooth_excluded_speakers": "Högtalare som inte söker efter Bluetooth-enheter. Lägg till en högtalare som är urkopplad eller ur drift."
             }
           }
         }

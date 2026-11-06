@@ -9,13 +9,13 @@
           "master_token": "Token master"
         },
         "menu_option_descriptions": {
-          "browser": "Accedi a Google in un browser desktop, poi incolla un cookie. Funziona con la maggior parte degli account.",
+          "browser": "Accedi a Google in un browser desktop, poi incolla un cookie.",
           "master_token": "Incolla un token master che hai già."
         }
       },
       "browser": {
         "title": "Accesso dal browser",
-        "description": "1. Su un computer, apri {embedded_setup_url} in una finestra di navigazione privata e accedi. Dopo aver accettato, la pagina potrebbe continuare a caricare; è normale.\n2. Apri gli strumenti per sviluppatori del browser e trova i cookie di `accounts.google.com`.\n3. Copia il valore del cookie `oauth_token` e incollalo subito qui sotto. Scade dopo pochi minuti e funziona una sola volta.\n\nIstruzioni passo passo: {browser_docs_url}\n\nPer scegliere un altro modo di accedere, chiudi questa finestra e aggiungi di nuovo l'integrazione.",
+        "description": "1. Su un computer, apri {embedded_setup_url} in una finestra di navigazione privata e accedi. Dopo aver accettato, la pagina potrebbe continuare a caricare; è normale.\n2. Apri gli strumenti per sviluppatori del browser e trova i cookie di `accounts.google.com`.\n3. Copia il valore del cookie `oauth_token` e incollalo subito qui sotto. Può scadere rapidamente e funziona una sola volta.\n\nIstruzioni passo passo: {browser_docs_url}\n\nPer scegliere un altro modo di accedere, chiudi questa finestra e aggiungi di nuovo l'integrazione.",
         "data": {
           "oauth_token": "Cookie oauth_token"
         },
@@ -51,13 +51,13 @@
           "master_token": "Token master"
         },
         "menu_option_descriptions": {
-          "browser": "Accedi a Google in un browser desktop, poi incolla un cookie. Funziona con la maggior parte degli account.",
+          "browser": "Accedi a Google in un browser desktop, poi incolla un cookie.",
           "master_token": "Incolla un token master che hai già."
         }
       },
       "reauth_browser": {
         "title": "Accesso dal browser",
-        "description": "1. Su un computer, apri {embedded_setup_url} in una finestra di navigazione privata e accedi allo stesso account Google. Dopo aver accettato, la pagina potrebbe continuare a caricare; è normale.\n2. Apri gli strumenti per sviluppatori del browser e trova i cookie di `accounts.google.com`.\n3. Copia il valore del cookie `oauth_token` e incollalo subito qui sotto. Scade dopo pochi minuti e funziona una sola volta.\n\nIstruzioni passo passo: {browser_docs_url}",
+        "description": "1. Su un computer, apri {embedded_setup_url} in una finestra di navigazione privata e accedi allo stesso account Google. Dopo aver accettato, la pagina potrebbe continuare a caricare; è normale.\n2. Apri gli strumenti per sviluppatori del browser e trova i cookie di `accounts.google.com`.\n3. Copia il valore del cookie `oauth_token` e incollalo subito qui sotto. Può scadere rapidamente e funziona una sola volta.\n\nIstruzioni passo passo: {browser_docs_url}",
         "data": {
           "oauth_token": "Cookie oauth_token"
         },
@@ -77,13 +77,13 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "Google non ha accettato il cookie. Ottienine uno nuovo e incollalo subito: scade dopo pochi minuti e funziona una sola volta. Copia il valore completo, che inizia con oauth2_4/.",
+      "oauth-token-invalid": "Google non ha accettato l'accesso. Ottieni un nuovo cookie e incollalo subito: può scadere rapidamente e funziona una sola volta. Copia il valore completo, che inizia con oauth2_4/.",
       "master-token-invalid": "Google non ha accettato il token master. Verifica di averlo copiato correttamente. Se prima funzionava, ad esempio finché non hai cambiato la password di Google, Google non lo accetta più: usa invece l'accesso dal browser.",
       "google-rejected": "Google non ha accettato l'accesso. Per i dettagli, consulta i registri di Home Assistant.",
       "google-unreachable": "Impossibile raggiungere Google. Verifica che Home Assistant sia connesso a Internet, poi riprova.",
       "google-busy": "Google è occupato o sta limitando gli accessi. Attendi qualche minuto, poi accedi di nuovo.",
       "oauth-token-format": "Questo non è il cookie oauth_token. Il suo valore inizia con oauth2_4/.",
-      "master-token-format": "Un token master inizia con aas_et/ ed è lungo 223 caratteri. Copia il token completo.",
+      "master-token-format": "Un token master inizia con aas_et/ ed è lungo {token_length} caratteri. Copia il token completo.",
       "other-account": "Hai effettuato l'accesso con un altro account Google, quindi non è stato modificato nulla. Accedi con l'account usato da questa integrazione. Per usare invece quell'altro account, elimina l'integrazione e aggiungila di nuovo.",
       "no-home-selected": "Scegli almeno una casa."
     },
@@ -152,7 +152,7 @@
       "message": "Impossibile recuperare le sveglie e i timer attualmente impostati su {device}, quindi non è stato eliminato nulla da questo dispositivo. Verifica che sia online e riprova più tardi."
     },
     "alarms_and_timers_not_fetched_token_rejected_polling_off": {
-      "message": "Impossibile recuperare le sveglie e i timer attualmente impostati su {device}, quindi non è stato eliminato nulla da questo dispositivo. Il dispositivo ha rifiutato il suo token e ottenerne uno nuovo da Google non è servito. Il rilevamento delle variazioni è disabilitato, quindi l'integrazione non ne richiede uno nuovo a Google di propria iniziativa: esegui l'azione «Aggiorna i dispositivi», poi riprova."
+      "message": "Impossibile recuperare le sveglie e i timer attualmente impostati su {device}, quindi non è stato eliminato nulla da questo dispositivo. Il dispositivo ha rifiutato il suo token. Il rilevamento delle variazioni è disabilitato, quindi l'integrazione non ne richiede uno nuovo a Google di propria iniziativa: esegui l'azione «Aggiorna i dispositivi», poi riprova."
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Impossibile recuperare le sveglie e i timer attualmente impostati sui seguenti dispositivi: {devices}. Non è stato quindi eliminato nulla da questi dispositivi. Verifica che siano online e riprova più tardi."
@@ -161,13 +161,13 @@
       "message": "{device} non ha confermato l'eliminazione delle sveglie o dei timer, quindi potrebbero essere ancora impostati. Verifica che sia online e riprova più tardi."
     },
     "alarms_and_timers_not_deleted_token_rejected_polling_off": {
-      "message": "{device} non ha confermato l'eliminazione delle sveglie o dei timer, quindi potrebbero essere ancora impostati. Il dispositivo ha rifiutato il suo token e ottenerne uno nuovo da Google non è servito. Il rilevamento delle variazioni è disabilitato, quindi l'integrazione non ne richiede uno nuovo a Google di propria iniziativa: esegui l'azione «Aggiorna i dispositivi», poi riprova."
+      "message": "{device} non ha confermato l'eliminazione delle sveglie o dei timer, quindi potrebbero essere ancora impostati. Il dispositivo ha rifiutato il suo token. Il rilevamento delle variazioni è disabilitato, quindi l'integrazione non ne richiede uno nuovo a Google di propria iniziativa: esegui l'azione «Aggiorna i dispositivi», poi riprova."
     },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "Impossibile eliminare le sveglie o i timer dai seguenti dispositivi, o confermarne l'eliminazione: {devices}. Verifica che siano online e riprova più tardi."
     },
     "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
-      "message": "Impossibile eliminare le sveglie o i timer dai seguenti dispositivi, o confermarne l'eliminazione: {devices}. Almeno uno di questi ha rifiutato il suo token e ottenerne uno nuovo da Google non è servito. Il rilevamento delle variazioni è disabilitato, quindi l'integrazione non ne richiede uno nuovo a Google di propria iniziativa: esegui l'azione «Aggiorna i dispositivi», verifica che i dispositivi siano online, poi riprova."
+      "message": "Impossibile eliminare le sveglie o i timer dai seguenti dispositivi, o confermarne l'eliminazione: {devices}. Almeno uno di questi ha rifiutato il suo token. Il rilevamento delle variazioni è disabilitato, quindi l'integrazione non ne richiede uno nuovo a Google di propria iniziativa: esegui l'azione «Aggiorna i dispositivi», verifica che i dispositivi siano online, poi riprova."
     },
     "invalid_alarm_id": {
       "message": "«{alarm_id}» non è un ID di sveglia. Copia l'ID, che inizia con alarm/, dall'attributo alarms del sensore delle sveglie del dispositivo."
@@ -188,10 +188,10 @@
       "message": "{device} non ha confermato di aver eseguito l'azione: non ha risposto in tempo o la sua risposta si è interrotta. Verifica che sia online e riprova."
     },
     "device_token_rejected": {
-      "message": "{device} ha rifiutato il suo token e ottenerne uno nuovo da Google non è servito. L'integrazione continua a chiederne uno nuovo a Google, quindi riprova più tardi."
+      "message": "{device} ha rifiutato il suo token. L'integrazione continua a chiederne uno nuovo a Google, quindi riprova più tardi."
     },
     "device_token_rejected_polling_off": {
-      "message": "{device} ha rifiutato il suo token e ottenerne uno nuovo da Google non è servito. Il rilevamento delle variazioni è disabilitato, quindi l'integrazione non ne richiede uno nuovo a Google di propria iniziativa: esegui l'azione «Aggiorna i dispositivi», poi riprova."
+      "message": "{device} ha rifiutato il suo token. Il rilevamento delle variazioni è disabilitato, quindi l'integrazione non ne richiede uno nuovo a Google di propria iniziativa: esegui l'azione «Aggiorna i dispositivi», poi riprova."
     },
     "device_not_ready": {
       "message": "{device} ha risposto «non trovato». Potrebbe essere ancora in fase di avvio, quindi riprova più tardi, oppure potrebbe non supportare questa azione."
@@ -226,14 +226,14 @@
       }
     },
     "invalid_update_interval": {
-      "title": "L'intervallo di aggiornamento salvato è inferiore a 1 secondo",
+      "title": "L'intervallo di aggiornamento salvato è inferiore a {min_interval} s",
       "fix_flow": {
         "step": {
           "init": {
-            "title": "L'intervallo di aggiornamento salvato è inferiore a 1 secondo",
-            "description": "L'intervallo di aggiornamento salvato nelle opzioni dell'integrazione è di {interval} s, inferiore al minimo di 1 secondo. L'integrazione usa invece il valore predefinito e controlla i tuoi dispositivi ogni 15 secondi.\n\nSe avevi salvato 0 per interrompere questi controlli periodici, disabilita invece il rilevamento delle variazioni. A differenza di 0, disabilitarlo interrompe anche la ricerca di dispositivi Bluetooth e l'aggiunta dei nuovi dispositivi trovati da mDNS. Per i dettagli, consulta {docs_url}.\n\nPer usare un altro intervallo, apri l'[integrazione Google Home]({integration_url}), seleziona **Configura**, inseriscilo, quindi seleziona **Invia**.",
+            "title": "L'intervallo di aggiornamento salvato è inferiore a {min_interval} s",
+            "description": "L'intervallo di aggiornamento salvato nelle opzioni dell'integrazione è di {interval} s, inferiore al minimo di {min_interval} s. L'integrazione usa invece il valore predefinito e controlla i tuoi dispositivi ogni {default_interval} s.\n\nSe avevi salvato 0 per interrompere questi controlli periodici, disabilita invece il rilevamento delle variazioni. A differenza di 0, disabilitarlo interrompe anche la ricerca di dispositivi Bluetooth e l'aggiunta dei nuovi dispositivi trovati da mDNS. Per i dettagli, consulta {docs_url}.\n\nPer usare un altro intervallo, apri l'[integrazione Google Home]({integration_url}), seleziona **Configura**, inseriscilo, quindi seleziona **Invia**.",
             "menu_options": {
-              "use_default": "Usa il valore predefinito di 15 secondi",
+              "use_default": "Usa il valore predefinito di {default_interval} s",
               "turn_off_polling": "Disabilita invece il rilevamento delle variazioni"
             }
           }
@@ -317,7 +317,7 @@
             },
             "data_description": {
               "bluetooth_tracking": "Usa i tuoi altoparlanti per sapere se il tuo telefono o altri dispositivi Bluetooth sono in casa. Dopo averlo attivato, seleziona «Monitora un dispositivo Bluetooth» nella pagina dell'integrazione per ogni dispositivo da monitorare. Finché è disattivato, l'integrazione non invia alcuna richiesta Bluetooth ai tuoi altoparlanti.",
-              "bluetooth_excluded_speakers": "Altoparlanti che non cercano dispositivi Bluetooth. Aggiungi un altoparlante scollegato o fuori servizio: finché un altoparlante non risponde, i tracker non possono mostrare «Fuori casa»."
+              "bluetooth_excluded_speakers": "Altoparlanti che non cercano dispositivi Bluetooth. Aggiungi un altoparlante scollegato o fuori servizio."
             }
           }
         }

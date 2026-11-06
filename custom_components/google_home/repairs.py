@@ -4,7 +4,7 @@ from homeassistant.components.repairs import RepairsFlow, RepairsFlowResult
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import issue_registry as ir
 
-from . import async_show_polling_disabled, saved_interval
+from . import async_show_polling_disabled, const, saved_interval
 from .const import (
     CONF_UPDATE_INTERVAL,
     DOMAIN,
@@ -13,7 +13,6 @@ from .const import (
     ISSUE_INVALID_INTERVAL,
     ISSUE_POLLING_DISABLED,
     POLLING_DOCS_URL,
-    UPDATE_INTERVAL,
 )
 from .types import GoogleHomeConfigEntry
 
@@ -81,7 +80,7 @@ class InvalidIntervalFlow(RepairsFlow):
         """
         if (
             (entry := self._entry()) is None
-            or (seconds := saved_interval(entry)) > 0
+            or (seconds := saved_interval(entry)) >= const.MIN_UPDATE_INTERVAL
             or entry.pref_disable_polling
         ):
             return self.async_create_entry(data={})
@@ -90,6 +89,8 @@ class InvalidIntervalFlow(RepairsFlow):
             menu_options=["use_default", "turn_off_polling"],
             description_placeholders={
                 "interval": str(seconds),
+                "min_interval": str(const.MIN_UPDATE_INTERVAL),
+                "default_interval": str(const.UPDATE_INTERVAL),
                 "docs_url": INTERVAL_DOCS_URL,
                 "integration_url": INTEGRATION_PAGE_URL,
             },
@@ -130,9 +131,9 @@ class InvalidIntervalFlow(RepairsFlow):
 
 def default_interval_options(entry: GoogleHomeConfigEntry) -> dict[str, object]:
     """Return the options with the default interval, unless a valid one was saved meanwhile."""
-    if saved_interval(entry) > 0:
+    if saved_interval(entry) >= const.MIN_UPDATE_INTERVAL:
         return dict(entry.options)
-    return {**entry.options, CONF_UPDATE_INTERVAL: UPDATE_INTERVAL}
+    return {**entry.options, CONF_UPDATE_INTERVAL: const.UPDATE_INTERVAL}
 
 
 async def async_create_fix_flow(

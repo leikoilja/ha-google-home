@@ -9,13 +9,13 @@
           "master_token": "Master token"
         },
         "menu_option_descriptions": {
-          "browser": "Logg på Google i en nettleser på en datamaskin, og lim deretter inn en informasjonskapsel. Fungerer for de fleste kontoer.",
+          "browser": "Logg på Google i en nettleser på en datamaskin, og lim deretter inn en informasjonskapsel.",
           "master_token": "Lim inn et master token du allerede har."
         }
       },
       "browser": {
         "title": "Pålogging i nettleseren",
-        "description": "1. Åpne {embedded_setup_url} i et privat nettleservindu på en datamaskin, og logg på. Etter at du har godtatt, kan siden fortsette å laste; det er forventet.\n2. Åpne utviklerverktøyene i nettleseren, og finn informasjonskapslene for `accounts.google.com`.\n3. Kopier verdien til informasjonskapselen `oauth_token`, og lim den inn nedenfor med en gang. Den utløper i løpet av noen minutter og fungerer bare én gang.\n\nTrinnvis veiledning: {browser_docs_url}\n\nFor å velge en annen påloggingsmåte, lukk dette vinduet og legg til integrasjonen på nytt.",
+        "description": "1. Åpne {embedded_setup_url} i et privat nettleservindu på en datamaskin, og logg på. Etter at du har godtatt, kan siden fortsette å laste; det er forventet.\n2. Åpne utviklerverktøyene i nettleseren, og finn informasjonskapslene for `accounts.google.com`.\n3. Kopier verdien til informasjonskapselen `oauth_token`, og lim den inn nedenfor med en gang. Den kan utløpe raskt og fungerer bare én gang.\n\nTrinnvis veiledning: {browser_docs_url}\n\nFor å velge en annen påloggingsmåte, lukk dette vinduet og legg til integrasjonen på nytt.",
         "data": {
           "oauth_token": "Informasjonskapselen oauth_token"
         },
@@ -51,13 +51,13 @@
           "master_token": "Master token"
         },
         "menu_option_descriptions": {
-          "browser": "Logg på Google i en nettleser på en datamaskin, og lim deretter inn en informasjonskapsel. Fungerer for de fleste kontoer.",
+          "browser": "Logg på Google i en nettleser på en datamaskin, og lim deretter inn en informasjonskapsel.",
           "master_token": "Lim inn et master token du allerede har."
         }
       },
       "reauth_browser": {
         "title": "Pålogging i nettleseren",
-        "description": "1. Åpne {embedded_setup_url} i et privat nettleservindu på en datamaskin, og logg på den samme Google-kontoen. Etter at du har godtatt, kan siden fortsette å laste; det er forventet.\n2. Åpne utviklerverktøyene i nettleseren, og finn informasjonskapslene for `accounts.google.com`.\n3. Kopier verdien til informasjonskapselen `oauth_token`, og lim den inn nedenfor med en gang. Den utløper i løpet av noen minutter og fungerer bare én gang.\n\nTrinnvis veiledning: {browser_docs_url}",
+        "description": "1. Åpne {embedded_setup_url} i et privat nettleservindu på en datamaskin, og logg på den samme Google-kontoen. Etter at du har godtatt, kan siden fortsette å laste; det er forventet.\n2. Åpne utviklerverktøyene i nettleseren, og finn informasjonskapslene for `accounts.google.com`.\n3. Kopier verdien til informasjonskapselen `oauth_token`, og lim den inn nedenfor med en gang. Den kan utløpe raskt og fungerer bare én gang.\n\nTrinnvis veiledning: {browser_docs_url}",
         "data": {
           "oauth_token": "Informasjonskapselen oauth_token"
         },
@@ -77,13 +77,13 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "Google godtok ikke informasjonskapselen. Hent en ny, og lim den inn med en gang: den utløper i løpet av noen minutter og fungerer bare én gang. Kopier hele verdien, som starter med oauth2_4/.",
+      "oauth-token-invalid": "Google godtok ikke påloggingen. Hent en ny informasjonskapsel, og lim den inn med en gang: den kan utløpe raskt og fungerer bare én gang. Kopier hele verdien, som starter med oauth2_4/.",
       "master-token-invalid": "Google godtok ikke master tokenet. Kontroller at du har kopiert det riktig. Hvis det fungerte før, for eksempel frem til du endret Google-passordet ditt, godtar ikke Google det lenger: bruk pålogging i nettleseren i stedet.",
       "google-rejected": "Google godtok ikke påloggingen. Se Home Assistant-loggene for detaljer.",
       "google-unreachable": "Kunne ikke nå Google. Kontroller at Home Assistant er koblet til internett, og prøv deretter igjen.",
       "google-busy": "Google har stor pågang eller begrenser pålogginger. Vent noen minutter, og logg deretter på igjen.",
       "oauth-token-format": "Dette er ikke informasjonskapselen oauth_token. Verdien starter med oauth2_4/.",
-      "master-token-format": "Et master token starter med aas_et/ og er 223 tegn langt. Kopier hele tokenet.",
+      "master-token-format": "Et master token starter med aas_et/ og er {token_length} tegn langt. Kopier hele tokenet.",
       "other-account": "Du logget på en annen Google-konto, så ingenting ble endret. Logg på med kontoen som denne integrasjonen bruker. For å bruke den andre kontoen i stedet, slett integrasjonen og legg den til på nytt.",
       "no-home-selected": "Velg minst ett hjem."
     },
@@ -152,7 +152,7 @@
       "message": "Kunne ikke hente gjeldende alarmer og timere fra {device}, så ingenting ble slettet fra denne enheten. Kontroller at enheten er på nett, og prøv igjen senere."
     },
     "alarms_and_timers_not_fetched_token_rejected_polling_off": {
-      "message": "Kunne ikke hente gjeldende alarmer og timere fra {device}, så ingenting ble slettet fra denne enheten. Enheten avviste tokenet sitt, og det hjalp ikke å hente et nytt fra Google. Polling av oppdateringer er slått av, så integrasjonen ber ikke Google om et nytt igjen på egen hånd: kjør handlingen «Oppdater enheter», og prøv deretter igjen."
+      "message": "Kunne ikke hente gjeldende alarmer og timere fra {device}, så ingenting ble slettet fra denne enheten. Enheten avviste tokenet sitt. Polling av oppdateringer er slått av, så integrasjonen ber ikke Google om et nytt igjen på egen hånd: kjør handlingen «Oppdater enheter», og prøv deretter igjen."
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Kunne ikke hente gjeldende alarmer og timere fra disse enhetene, så ingenting ble slettet fra dem: {devices}. Kontroller at enhetene er på nett, og prøv igjen senere."
@@ -161,13 +161,13 @@
       "message": "{device} bekreftet ikke sletting av alarmene eller timerne, så de kan fortsatt være stilt inn. Kontroller at enheten er på nett, og prøv igjen senere."
     },
     "alarms_and_timers_not_deleted_token_rejected_polling_off": {
-      "message": "{device} bekreftet ikke sletting av alarmene eller timerne, så de kan fortsatt være stilt inn. Enheten avviste tokenet sitt, og det hjalp ikke å hente et nytt fra Google. Polling av oppdateringer er slått av, så integrasjonen ber ikke Google om et nytt igjen på egen hånd: kjør handlingen «Oppdater enheter», og prøv deretter igjen."
+      "message": "{device} bekreftet ikke sletting av alarmene eller timerne, så de kan fortsatt være stilt inn. Enheten avviste tokenet sitt. Polling av oppdateringer er slått av, så integrasjonen ber ikke Google om et nytt igjen på egen hånd: kjør handlingen «Oppdater enheter», og prøv deretter igjen."
     },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "Kunne ikke slette alarmer eller timere fra disse enhetene, eller bekrefte at de ble slettet: {devices}. Kontroller at enhetene er på nett, og prøv igjen senere."
     },
     "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
-      "message": "Kunne ikke slette alarmer eller timere fra disse enhetene, eller bekrefte at de ble slettet: {devices}. Minst én av dem avviste tokenet sitt, og det hjalp ikke å hente et nytt fra Google. Polling av oppdateringer er slått av, så integrasjonen ber ikke Google om et nytt igjen på egen hånd: kjør handlingen «Oppdater enheter», kontroller at enhetene er på nett, og prøv deretter igjen."
+      "message": "Kunne ikke slette alarmer eller timere fra disse enhetene, eller bekrefte at de ble slettet: {devices}. Minst én av dem avviste tokenet sitt. Polling av oppdateringer er slått av, så integrasjonen ber ikke Google om et nytt igjen på egen hånd: kjør handlingen «Oppdater enheter», kontroller at enhetene er på nett, og prøv deretter igjen."
     },
     "invalid_alarm_id": {
       "message": "«{alarm_id}» er ikke en alarm-ID. Kopier ID-en, som begynner med alarm/, fra attributtet alarms på enhetens alarmsensor."
@@ -188,10 +188,10 @@
       "message": "{device} bekreftet ikke at den utførte handlingen: den svarte ikke i tide, eller svaret ble avbrutt. Kontroller at enheten er på nett, og prøv igjen."
     },
     "device_token_rejected": {
-      "message": "{device} avviste tokenet sitt, og det hjalp ikke å hente et nytt fra Google. Integrasjonen fortsetter å be Google om et nytt, så prøv igjen senere."
+      "message": "{device} avviste tokenet sitt. Integrasjonen fortsetter å be Google om et nytt, så prøv igjen senere."
     },
     "device_token_rejected_polling_off": {
-      "message": "{device} avviste tokenet sitt, og det hjalp ikke å hente et nytt fra Google. Polling av oppdateringer er slått av, så integrasjonen ber ikke Google om et nytt igjen på egen hånd: kjør handlingen «Oppdater enheter», og prøv deretter igjen."
+      "message": "{device} avviste tokenet sitt. Polling av oppdateringer er slått av, så integrasjonen ber ikke Google om et nytt igjen på egen hånd: kjør handlingen «Oppdater enheter», og prøv deretter igjen."
     },
     "device_not_ready": {
       "message": "{device} svarte «ikke funnet». Den holder kanskje fortsatt på å starte, så prøv igjen senere, eller den støtter kanskje ikke dette."
@@ -226,14 +226,14 @@
       }
     },
     "invalid_update_interval": {
-      "title": "Det lagrede oppdateringsintervallet er under 1 sekund",
+      "title": "Det lagrede oppdateringsintervallet er under {min_interval} s",
       "fix_flow": {
         "step": {
           "init": {
-            "title": "Det lagrede oppdateringsintervallet er under 1 sekund",
-            "description": "Oppdateringsintervallet som er lagret i alternativene for integrasjonen, er {interval} s, som er under minimumsverdien på 1 sekund. Integrasjonen bruker i stedet standardverdien og sjekker enhetene dine hvert 15. sekund.\n\nHvis du lagret 0 for å stoppe disse faste sjekkene, bør du heller slå av polling. I motsetning til 0 stopper det også søket etter Bluetooth-enheter og at nye enheter som mDNS finner, legges til. Se flere detaljer her: {docs_url}.\n\nFor å bruke et annet intervall åpner du [Google Home-integrasjonen]({integration_url}), velger **Konfigurer**, skriver det inn og velger deretter **Send inn**.",
+            "title": "Det lagrede oppdateringsintervallet er under {min_interval} s",
+            "description": "Oppdateringsintervallet som er lagret i alternativene for integrasjonen, er {interval} s, som er under minimumsverdien på {min_interval} s. Integrasjonen bruker i stedet standardverdien og sjekker enhetene dine med {default_interval} s mellomrom.\n\nHvis du lagret 0 for å stoppe disse faste sjekkene, bør du heller slå av polling. I motsetning til 0 stopper det også søket etter Bluetooth-enheter og at nye enheter som mDNS finner, legges til. Se flere detaljer her: {docs_url}.\n\nFor å bruke et annet intervall åpner du [Google Home-integrasjonen]({integration_url}), velger **Konfigurer**, skriver det inn og velger deretter **Send inn**.",
             "menu_options": {
-              "use_default": "Bruk standardverdien på 15 sekunder",
+              "use_default": "Bruk standardverdien på {default_interval} s",
               "turn_off_polling": "Slå av polling i stedet"
             }
           }
@@ -317,7 +317,7 @@
             },
             "data_description": {
               "bluetooth_tracking": "Bruk høyttalerne til å se om telefonen din eller andre Bluetooth-enheter er hjemme. Når sporingen er slått på, velger du «Spor en Bluetooth-enhet» på siden til integrasjonen for hver enhet som skal spores. Når den er slått av, sender ikke integrasjonen noen Bluetooth-forespørsler til høyttalerne.",
-              "bluetooth_excluded_speakers": "Høyttalere som ikke søker etter Bluetooth-enheter. Legg til en høyttaler som er koblet fra strømmen eller ute av drift: Så lenge en høyttaler ikke svarer, kan ikke sporere vise «Borte»."
+              "bluetooth_excluded_speakers": "Høyttalere som ikke søker etter Bluetooth-enheter. Legg til en høyttaler som er koblet fra strømmen eller ute av drift."
             }
           }
         }

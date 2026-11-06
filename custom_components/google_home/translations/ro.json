@@ -9,13 +9,13 @@
           "master_token": "Token principal"
         },
         "menu_option_descriptions": {
-          "browser": "Conectează-te la Google într-un browser de pe computer, apoi lipește un cookie. Funcționează pentru majoritatea conturilor.",
+          "browser": "Conectează-te la Google într-un browser de pe computer, apoi lipește un cookie.",
           "master_token": "Lipește un token principal pe care îl ai deja."
         }
       },
       "browser": {
         "title": "Conectare prin browser",
-        "description": "1. Pe un computer, deschide {embedded_setup_url} într-o fereastră de navigare privată a browserului, de exemplu o fereastră incognito, și conectează-te. După ce accepți, pagina poate continua să se încarce; acest lucru este normal.\n2. Deschide instrumentele pentru dezvoltatori ale browserului și găsește cookie-urile pentru `accounts.google.com`.\n3. Copiază valoarea cookie-ului `oauth_token` și lipește-o imediat mai jos. Expiră în câteva minute și poate fi folosită o singură dată.\n\nInstrucțiuni pas cu pas: {browser_docs_url}\n\nPentru a alege altă metodă de conectare, închide această fereastră și adaugă din nou integrarea.",
+        "description": "1. Pe un computer, deschide {embedded_setup_url} într-o fereastră de navigare privată a browserului, de exemplu o fereastră incognito, și conectează-te. După ce accepți, pagina poate continua să se încarce; acest lucru este normal.\n2. Deschide instrumentele pentru dezvoltatori ale browserului și găsește cookie-urile pentru `accounts.google.com`.\n3. Copiază valoarea cookie-ului `oauth_token` și lipește-o imediat mai jos. Poate expira rapid și poate fi folosită o singură dată.\n\nInstrucțiuni pas cu pas: {browser_docs_url}\n\nPentru a alege altă metodă de conectare, închide această fereastră și adaugă din nou integrarea.",
         "data": {
           "oauth_token": "Cookie oauth_token"
         },
@@ -51,13 +51,13 @@
           "master_token": "Token principal"
         },
         "menu_option_descriptions": {
-          "browser": "Conectează-te la Google într-un browser de pe computer, apoi lipește un cookie. Funcționează pentru majoritatea conturilor.",
+          "browser": "Conectează-te la Google într-un browser de pe computer, apoi lipește un cookie.",
           "master_token": "Lipește un token principal pe care îl ai deja."
         }
       },
       "reauth_browser": {
         "title": "Conectare prin browser",
-        "description": "1. Pe un computer, deschide {embedded_setup_url} într-o fereastră de navigare privată a browserului, de exemplu o fereastră incognito, și conectează-te la același cont Google. După ce accepți, pagina poate continua să se încarce; acest lucru este normal.\n2. Deschide instrumentele pentru dezvoltatori ale browserului și găsește cookie-urile pentru `accounts.google.com`.\n3. Copiază valoarea cookie-ului `oauth_token` și lipește-o imediat mai jos. Expiră în câteva minute și poate fi folosită o singură dată.\n\nInstrucțiuni pas cu pas: {browser_docs_url}",
+        "description": "1. Pe un computer, deschide {embedded_setup_url} într-o fereastră de navigare privată a browserului, de exemplu o fereastră incognito, și conectează-te la același cont Google. După ce accepți, pagina poate continua să se încarce; acest lucru este normal.\n2. Deschide instrumentele pentru dezvoltatori ale browserului și găsește cookie-urile pentru `accounts.google.com`.\n3. Copiază valoarea cookie-ului `oauth_token` și lipește-o imediat mai jos. Poate expira rapid și poate fi folosită o singură dată.\n\nInstrucțiuni pas cu pas: {browser_docs_url}",
         "data": {
           "oauth_token": "Cookie oauth_token"
         },
@@ -77,13 +77,13 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "Google nu a acceptat cookie-ul. Obține unul nou și lipește-l imediat: expiră în câteva minute și poate fi folosit o singură dată. Copiază întreaga valoare, care începe cu oauth2_4/.",
+      "oauth-token-invalid": "Google nu a acceptat conectarea. Obține un cookie nou și lipește-l imediat: poate expira rapid și poate fi folosit o singură dată. Copiază întreaga valoare, care începe cu oauth2_4/.",
       "master-token-invalid": "Google nu a acceptat tokenul principal. Verifică dacă l-ai copiat corect. Dacă a funcționat înainte, de exemplu până când ți-ai schimbat parola Google, Google nu îl mai acceptă: folosește în schimb conectarea prin browser.",
       "google-rejected": "Google nu a acceptat conectarea. Pentru detalii, consultă jurnalele Home Assistant.",
       "google-unreachable": "Nu s-a putut contacta Google. Verifică dacă Home Assistant este conectat la internet, apoi încearcă din nou.",
       "google-busy": "Google este ocupat sau limitează numărul de conectări. Așteaptă câteva minute, apoi conectează-te din nou.",
       "oauth-token-format": "Acesta nu este cookie-ul oauth_token. Valoarea lui începe cu oauth2_4/.",
-      "master-token-format": "Un token principal începe cu aas_et/ și are 223 de caractere. Copiază tokenul complet.",
+      "master-token-format": "Un token principal începe cu aas_et/. Numărul necesar de caractere: {token_length}. Copiază tokenul complet.",
       "other-account": "Te-ai conectat la un alt cont Google, așa că nu s-a modificat nimic. Conectează-te cu contul pe care îl folosește această integrare. Pentru a folosi în schimb celălalt cont, șterge integrarea și adaug-o din nou.",
       "no-home-selected": "Alege cel puțin o casă."
     },
@@ -152,7 +152,7 @@
       "message": "Nu s-au putut prelua alarmele și temporizatoarele curente de pe dispozitivul {device}, așa că nu s-a șters nimic de pe acesta. Verifică dacă dispozitivul este online și încearcă din nou mai târziu."
     },
     "alarms_and_timers_not_fetched_token_rejected_polling_off": {
-      "message": "Nu s-au putut prelua alarmele și temporizatoarele curente de pe dispozitivul {device}, așa că nu s-a șters nimic de pe acesta. Dispozitivul a respins tokenul, iar obținerea unuia nou de la Google nu a ajutat. Interogarea pentru modificări este dezactivată, așa că integrarea nu cere singură din nou un token de la Google: rulează acțiunea „Actualizează starea dispozitivelor”, apoi încearcă din nou."
+      "message": "Nu s-au putut prelua alarmele și temporizatoarele curente de pe dispozitivul {device}, așa că nu s-a șters nimic de pe acesta. Dispozitivul a respins tokenul. Interogarea pentru modificări este dezactivată, așa că integrarea nu cere singură din nou un token de la Google: rulează acțiunea „Actualizează starea dispozitivelor”, apoi încearcă din nou."
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Nu s-au putut prelua alarmele și temporizatoarele curente de pe următoarele dispozitive, așa că nu s-a șters nimic de pe acestea: {devices}. Verifică dacă dispozitivele sunt online și încearcă din nou mai târziu."
@@ -161,13 +161,13 @@
       "message": "Dispozitivul {device} nu a confirmat ștergerea alarmelor sau a temporizatoarelor, așa că acestea pot fi încă setate. Verifică dacă dispozitivul este online și încearcă din nou mai târziu."
     },
     "alarms_and_timers_not_deleted_token_rejected_polling_off": {
-      "message": "Dispozitivul {device} nu a confirmat ștergerea alarmelor sau a temporizatoarelor, așa că acestea pot fi încă setate. Dispozitivul a respins tokenul, iar obținerea unuia nou de la Google nu a ajutat. Interogarea pentru modificări este dezactivată, așa că integrarea nu cere singură din nou un token de la Google: rulează acțiunea „Actualizează starea dispozitivelor”, apoi încearcă din nou."
+      "message": "Dispozitivul {device} nu a confirmat ștergerea alarmelor sau a temporizatoarelor, așa că acestea pot fi încă setate. Dispozitivul a respins tokenul. Interogarea pentru modificări este dezactivată, așa că integrarea nu cere singură din nou un token de la Google: rulează acțiunea „Actualizează starea dispozitivelor”, apoi încearcă din nou."
     },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "Nu s-au putut șterge alarmele sau temporizatoarele de pe următoarele dispozitive ori nu s-a putut confirma ștergerea lor: {devices}. Verifică dacă dispozitivele sunt online și încearcă din nou mai târziu."
     },
     "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
-      "message": "Nu s-au putut șterge alarmele sau temporizatoarele de pe următoarele dispozitive ori nu s-a putut confirma ștergerea lor: {devices}. Cel puțin unul dintre ele a respins tokenul, iar obținerea unuia nou de la Google nu a ajutat. Interogarea pentru modificări este dezactivată, așa că integrarea nu cere singură din nou un token de la Google: rulează acțiunea „Actualizează starea dispozitivelor”, verifică dacă dispozitivele sunt online, apoi încearcă din nou."
+      "message": "Nu s-au putut șterge alarmele sau temporizatoarele de pe următoarele dispozitive ori nu s-a putut confirma ștergerea lor: {devices}. Cel puțin unul dintre ele a respins tokenul. Interogarea pentru modificări este dezactivată, așa că integrarea nu cere singură din nou un token de la Google: rulează acțiunea „Actualizează starea dispozitivelor”, verifică dacă dispozitivele sunt online, apoi încearcă din nou."
     },
     "invalid_alarm_id": {
       "message": "„{alarm_id}” nu este un ID de alarmă. Copiază ID-ul, care începe cu alarm/, din atributul alarms al senzorului de alarme al dispozitivului."
@@ -188,10 +188,10 @@
       "message": "Dispozitivul {device} nu a confirmat că a executat acțiunea: nu a răspuns la timp sau răspunsul său a fost întrerupt. Verifică dacă dispozitivul este online și încearcă din nou."
     },
     "device_token_rejected": {
-      "message": "Dispozitivul {device} a respins tokenul, iar obținerea unuia nou de la Google nu a ajutat. Integrarea continuă să ceară unul nou de la Google, așa că încearcă din nou mai târziu."
+      "message": "Dispozitivul {device} a respins tokenul. Integrarea continuă să ceară unul nou de la Google, așa că încearcă din nou mai târziu."
     },
     "device_token_rejected_polling_off": {
-      "message": "Dispozitivul {device} a respins tokenul, iar obținerea unuia nou de la Google nu a ajutat. Interogarea pentru modificări este dezactivată, așa că integrarea nu cere singură din nou un token de la Google: rulează acțiunea „Actualizează starea dispozitivelor”, apoi încearcă din nou."
+      "message": "Dispozitivul {device} a respins tokenul. Interogarea pentru modificări este dezactivată, așa că integrarea nu cere singură din nou un token de la Google: rulează acțiunea „Actualizează starea dispozitivelor”, apoi încearcă din nou."
     },
     "device_not_ready": {
       "message": "Dispozitivul {device} a răspuns „negăsit”. Este posibil să fie încă în curs de pornire, așa că încearcă din nou mai târziu, sau să nu accepte acest lucru."
@@ -226,14 +226,14 @@
       }
     },
     "invalid_update_interval": {
-      "title": "Intervalul de actualizare salvat este sub 1 secundă",
+      "title": "Intervalul de actualizare salvat este sub {min_interval} s",
       "fix_flow": {
         "step": {
           "init": {
-            "title": "Intervalul de actualizare salvat este sub 1 secundă",
-            "description": "Intervalul de actualizare salvat în opțiunile integrării este de {interval} s, sub minimul de 1 secundă. Integrarea folosește în schimb valoarea implicită și îți verifică dispozitivele la fiecare 15 secunde.\n\nDacă ai salvat 0 ca să oprești aceste verificări regulate, dezactivează în schimb interogarea. Spre deosebire de 0, asta oprește și căutarea dispozitivelor Bluetooth și adăugarea dispozitivelor noi găsite de mDNS. Pentru detalii, consultă {docs_url}.\n\nCa să folosești alt interval, deschide [integrarea Google Home]({integration_url}), selectează **Configurare**, introdu-l, apoi selectează **Trimite**.",
+            "title": "Intervalul de actualizare salvat este sub {min_interval} s",
+            "description": "Intervalul de actualizare salvat în opțiunile integrării este de {interval} s, sub minimul de {min_interval} s. Integrarea folosește în schimb valoarea implicită și îți verifică dispozitivele la fiecare {default_interval} s.\n\nDacă ai salvat 0 ca să oprești aceste verificări regulate, dezactivează în schimb interogarea. Spre deosebire de 0, asta oprește și căutarea dispozitivelor Bluetooth și adăugarea dispozitivelor noi găsite de mDNS. Pentru detalii, consultă {docs_url}.\n\nCa să folosești alt interval, deschide [integrarea Google Home]({integration_url}), selectează **Configurare**, introdu-l, apoi selectează **Trimite**.",
             "menu_options": {
-              "use_default": "Folosește valoarea implicită de 15 secunde",
+              "use_default": "Folosește valoarea implicită de {default_interval} s",
               "turn_off_polling": "Dezactivează în schimb interogarea"
             }
           }
@@ -317,7 +317,7 @@
             },
             "data_description": {
               "bluetooth_tracking": "Folosește difuzoarele ca să afli dacă telefonul tău sau alte dispozitive Bluetooth sunt acasă. După ce o activezi, selectează „Urmărește un dispozitiv Bluetooth” pe pagina integrării pentru fiecare dispozitiv pe care vrei să-l urmărești. Cât timp este dezactivată, integrarea nu trimite nicio solicitare Bluetooth difuzoarelor tale.",
-              "bluetooth_excluded_speakers": "Difuzoare care nu caută dispozitive Bluetooth. Adaugă un difuzor scos din priză sau nefuncțional: cât timp un difuzor nu răspunde, dispozitivele de urmărire nu pot afișa „Plecat”."
+              "bluetooth_excluded_speakers": "Difuzoare care nu caută dispozitive Bluetooth. Adaugă un difuzor scos din priză sau nefuncțional."
             }
           }
         }

@@ -9,13 +9,13 @@
           "master_token": "Master-Token"
         },
         "menu_option_descriptions": {
-          "browser": "Melde dich in einem Desktop-Browser bei Google an und füge dann ein Cookie ein. Funktioniert bei den meisten Konten.",
+          "browser": "Melde dich in einem Desktop-Browser bei Google an und füge dann ein Cookie ein.",
           "master_token": "Füge ein Master-Token ein, das du bereits hast."
         }
       },
       "browser": {
         "title": "Anmeldung im Browser",
-        "description": "1. Öffne auf einem Computer {embedded_setup_url} in einem privaten Browserfenster und melde dich an. Nachdem du zugestimmt hast, lädt die Seite eventuell weiter; das ist normal.\n2. Öffne die Entwicklertools des Browsers und suche die Cookies für `accounts.google.com`.\n3. Kopiere den Wert des Cookies `oauth_token` und füge ihn sofort unten ein. Er läuft nach wenigen Minuten ab und funktioniert nur einmal.\n\nSchritt-für-Schritt-Anleitung: {browser_docs_url}\n\nUm eine andere Anmeldeart zu wählen, schließe dieses Fenster und füge die Integration erneut hinzu.",
+        "description": "1. Öffne auf einem Computer {embedded_setup_url} in einem privaten Browserfenster und melde dich an. Nachdem du zugestimmt hast, lädt die Seite eventuell weiter; das ist normal.\n2. Öffne die Entwicklertools des Browsers und suche die Cookies für `accounts.google.com`.\n3. Kopiere den Wert des Cookies `oauth_token` und füge ihn sofort unten ein. Er kann schnell ablaufen und funktioniert nur einmal.\n\nSchritt-für-Schritt-Anleitung: {browser_docs_url}\n\nUm eine andere Anmeldeart zu wählen, schließe dieses Fenster und füge die Integration erneut hinzu.",
         "data": {
           "oauth_token": "Cookie oauth_token"
         },
@@ -51,13 +51,13 @@
           "master_token": "Master-Token"
         },
         "menu_option_descriptions": {
-          "browser": "Melde dich in einem Desktop-Browser bei Google an und füge dann ein Cookie ein. Funktioniert bei den meisten Konten.",
+          "browser": "Melde dich in einem Desktop-Browser bei Google an und füge dann ein Cookie ein.",
           "master_token": "Füge ein Master-Token ein, das du bereits hast."
         }
       },
       "reauth_browser": {
         "title": "Anmeldung im Browser",
-        "description": "1. Öffne auf einem Computer {embedded_setup_url} in einem privaten Browserfenster und melde dich beim selben Google-Konto an. Nachdem du zugestimmt hast, lädt die Seite eventuell weiter; das ist normal.\n2. Öffne die Entwicklertools des Browsers und suche die Cookies für `accounts.google.com`.\n3. Kopiere den Wert des Cookies `oauth_token` und füge ihn sofort unten ein. Er läuft nach wenigen Minuten ab und funktioniert nur einmal.\n\nSchritt-für-Schritt-Anleitung: {browser_docs_url}",
+        "description": "1. Öffne auf einem Computer {embedded_setup_url} in einem privaten Browserfenster und melde dich beim selben Google-Konto an. Nachdem du zugestimmt hast, lädt die Seite eventuell weiter; das ist normal.\n2. Öffne die Entwicklertools des Browsers und suche die Cookies für `accounts.google.com`.\n3. Kopiere den Wert des Cookies `oauth_token` und füge ihn sofort unten ein. Er kann schnell ablaufen und funktioniert nur einmal.\n\nSchritt-für-Schritt-Anleitung: {browser_docs_url}",
         "data": {
           "oauth_token": "Cookie oauth_token"
         },
@@ -77,13 +77,13 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "Google hat das Cookie nicht akzeptiert. Hol dir ein neues und füge es sofort ein: Es läuft nach wenigen Minuten ab und funktioniert nur einmal. Kopiere den vollständigen Wert, der mit oauth2_4/ beginnt.",
+      "oauth-token-invalid": "Google hat die Anmeldung nicht akzeptiert. Hol dir ein neues Cookie und füge es sofort ein: Es kann schnell ablaufen und funktioniert nur einmal. Kopiere den vollständigen Wert, der mit oauth2_4/ beginnt.",
       "master-token-invalid": "Google hat das Master-Token nicht akzeptiert. Prüfe, ob du es richtig kopiert hast. Wenn es vorher funktioniert hat, zum Beispiel bis du dein Google-Passwort geändert hast, akzeptiert Google es nicht mehr: Verwende stattdessen die Anmeldung im Browser.",
       "google-rejected": "Google hat die Anmeldung nicht akzeptiert. Details findest du in den Protokollen von Home Assistant.",
       "google-unreachable": "Google konnte nicht erreicht werden. Prüfe, ob Home Assistant mit dem Internet verbunden ist, und versuche es dann erneut.",
       "google-busy": "Google ist ausgelastet oder begrenzt Anmeldungen. Warte ein paar Minuten und melde dich dann erneut an.",
       "oauth-token-format": "Das ist nicht das Cookie oauth_token. Sein Wert beginnt mit oauth2_4/.",
-      "master-token-format": "Ein Master-Token beginnt mit aas_et/ und ist 223 Zeichen lang. Kopiere das vollständige Token.",
+      "master-token-format": "Ein Master-Token beginnt mit aas_et/ und ist {token_length} Zeichen lang. Kopiere das vollständige Token.",
       "other-account": "Du hast dich bei einem anderen Google-Konto angemeldet, daher wurde nichts geändert. Melde dich mit dem Konto an, das diese Integration verwendet. Um stattdessen das andere Konto zu verwenden, lösche die Integration und füge sie erneut hinzu.",
       "no-home-selected": "Wähle mindestens ein Zuhause aus."
     },
@@ -152,7 +152,7 @@
       "message": "Die aktuellen Wecker und Timer konnten nicht von {device} abgerufen werden. Daher wurde auf diesem Gerät nichts gelöscht. Prüfe, ob es online ist, und versuche es später erneut."
     },
     "alarms_and_timers_not_fetched_token_rejected_polling_off": {
-      "message": "Die aktuellen Wecker und Timer konnten nicht von {device} abgerufen werden. Daher wurde auf diesem Gerät nichts gelöscht. Es hat sein Token abgelehnt, und das Anfordern eines neuen bei Google hat nicht geholfen. Die Abfrage von Änderungen ist deaktiviert, daher fragt die Integration nicht selbstständig erneut bei Google an: Führe die Aktion „Geräte aktualisieren“ aus und versuche es dann erneut."
+      "message": "Die aktuellen Wecker und Timer konnten nicht von {device} abgerufen werden. Daher wurde auf diesem Gerät nichts gelöscht. Es hat sein Token abgelehnt. Die Abfrage von Änderungen ist deaktiviert, daher fragt die Integration nicht selbstständig erneut bei Google an: Führe die Aktion „Geräte aktualisieren“ aus und versuche es dann erneut."
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Die aktuellen Wecker und Timer konnten von den folgenden Geräten nicht abgerufen werden: {devices}. Daher wurde auf diesen Geräten nichts gelöscht. Prüfe, ob sie online sind, und versuche es später erneut."
@@ -161,13 +161,13 @@
       "message": "Das Gerät {device} hat das Löschen der Wecker oder Timer nicht bestätigt, daher sind sie möglicherweise noch eingestellt. Prüfe, ob es online ist, und versuche es später erneut."
     },
     "alarms_and_timers_not_deleted_token_rejected_polling_off": {
-      "message": "Das Gerät {device} hat das Löschen der Wecker oder Timer nicht bestätigt, daher sind sie möglicherweise noch eingestellt. Es hat sein Token abgelehnt, und das Anfordern eines neuen bei Google hat nicht geholfen. Die Abfrage von Änderungen ist deaktiviert, daher fragt die Integration nicht selbstständig erneut bei Google an: Führe die Aktion „Geräte aktualisieren“ aus und versuche es dann erneut."
+      "message": "Das Gerät {device} hat das Löschen der Wecker oder Timer nicht bestätigt, daher sind sie möglicherweise noch eingestellt. Es hat sein Token abgelehnt. Die Abfrage von Änderungen ist deaktiviert, daher fragt die Integration nicht selbstständig erneut bei Google an: Führe die Aktion „Geräte aktualisieren“ aus und versuche es dann erneut."
     },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "Wecker oder Timer konnten auf den folgenden Geräten nicht gelöscht werden, oder das Löschen konnte nicht bestätigt werden: {devices}. Prüfe, ob sie online sind, und versuche es später erneut."
     },
     "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
-      "message": "Wecker oder Timer konnten auf den folgenden Geräten nicht gelöscht werden, oder das Löschen konnte nicht bestätigt werden: {devices}. Mindestens eines davon hat sein Token abgelehnt, und das Anfordern eines neuen bei Google hat nicht geholfen. Die Abfrage von Änderungen ist deaktiviert, daher fragt die Integration nicht selbstständig erneut bei Google an: Führe die Aktion „Geräte aktualisieren“ aus, prüfe, ob die Geräte online sind, und versuche es dann erneut."
+      "message": "Wecker oder Timer konnten auf den folgenden Geräten nicht gelöscht werden, oder das Löschen konnte nicht bestätigt werden: {devices}. Mindestens eines davon hat sein Token abgelehnt. Die Abfrage von Änderungen ist deaktiviert, daher fragt die Integration nicht selbstständig erneut bei Google an: Führe die Aktion „Geräte aktualisieren“ aus, prüfe, ob die Geräte online sind, und versuche es dann erneut."
     },
     "invalid_alarm_id": {
       "message": "„{alarm_id}“ ist keine Wecker-ID. Kopiere die ID, die mit alarm/ beginnt, aus dem Attribut alarms des Weckersensors des Geräts."
@@ -188,10 +188,10 @@
       "message": "Das Gerät {device} hat nicht bestätigt, dass es die Aktion ausgeführt hat: Es hat nicht rechtzeitig geantwortet oder seine Antwort wurde unterbrochen. Prüfe, ob es online ist, und versuche es erneut."
     },
     "device_token_rejected": {
-      "message": "Das Gerät {device} hat sein Token abgelehnt, und das Anfordern eines neuen bei Google hat nicht geholfen. Die Integration fordert weiterhin ein neues bei Google an, versuche es also später erneut."
+      "message": "Das Gerät {device} hat sein Token abgelehnt. Die Integration fordert weiterhin ein neues bei Google an, versuche es also später erneut."
     },
     "device_token_rejected_polling_off": {
-      "message": "Das Gerät {device} hat sein Token abgelehnt, und das Anfordern eines neuen bei Google hat nicht geholfen. Die Abfrage von Änderungen ist deaktiviert, daher fragt die Integration nicht selbstständig erneut bei Google an: Führe die Aktion „Geräte aktualisieren“ aus und versuche es dann erneut."
+      "message": "Das Gerät {device} hat sein Token abgelehnt. Die Abfrage von Änderungen ist deaktiviert, daher fragt die Integration nicht selbstständig erneut bei Google an: Führe die Aktion „Geräte aktualisieren“ aus und versuche es dann erneut."
     },
     "device_not_ready": {
       "message": "Das Gerät {device} hat „nicht gefunden“ geantwortet. Möglicherweise startet es noch, versuche es also später erneut, oder es unterstützt dies vielleicht nicht."
@@ -226,14 +226,14 @@
       }
     },
     "invalid_update_interval": {
-      "title": "Das gespeicherte Aktualisierungsintervall ist kürzer als 1 Sekunde",
+      "title": "Das gespeicherte Aktualisierungsintervall ist kürzer als {min_interval} s",
       "fix_flow": {
         "step": {
           "init": {
-            "title": "Das gespeicherte Aktualisierungsintervall ist kürzer als 1 Sekunde",
-            "description": "Das in den Optionen der Integration gespeicherte Aktualisierungsintervall beträgt {interval} s und liegt damit unter dem Minimum von 1 Sekunde. Die Integration verwendet stattdessen den Standardwert und fragt deine Geräte alle 15 Sekunden ab.\n\nWenn du 0 gespeichert hast, um diese regelmäßigen Abfragen zu stoppen, deaktiviere stattdessen die Abfrage von Änderungen. Anders als 0 stoppt das auch die Suche nach Bluetooth-Geräten und das Hinzufügen neuer Geräte, die mDNS findet. Details erfährst du unter {docs_url}.\n\nUm ein anderes Intervall zu verwenden, öffne die [Google Home-Integration]({integration_url}), wähle **Konfigurieren**, gib es ein und wähle dann **OK**.",
+            "title": "Das gespeicherte Aktualisierungsintervall ist kürzer als {min_interval} s",
+            "description": "Das in den Optionen der Integration gespeicherte Aktualisierungsintervall beträgt {interval} s und liegt damit unter dem Minimum von {min_interval} s. Die Integration verwendet stattdessen den Standardwert und fragt deine Geräte alle {default_interval} s ab.\n\nWenn du 0 gespeichert hast, um diese regelmäßigen Abfragen zu stoppen, deaktiviere stattdessen die Abfrage von Änderungen. Anders als 0 stoppt das auch die Suche nach Bluetooth-Geräten und das Hinzufügen neuer Geräte, die mDNS findet. Details erfährst du unter {docs_url}.\n\nUm ein anderes Intervall zu verwenden, öffne die [Google Home-Integration]({integration_url}), wähle **Konfigurieren**, gib es ein und wähle dann **OK**.",
             "menu_options": {
-              "use_default": "Standardwert von 15 Sekunden verwenden",
+              "use_default": "Standardwert von {default_interval} s verwenden",
               "turn_off_polling": "Stattdessen Abfrage deaktivieren"
             }
           }
@@ -317,7 +317,7 @@
             },
             "data_description": {
               "bluetooth_tracking": "Erkenne mit deinen Lautsprechern, ob dein Smartphone oder andere Bluetooth-Geräte zu Hause sind. Wähle nach dem Einschalten auf der Seite der Integration „Bluetooth-Gerät verfolgen“ für jedes Gerät, das du verfolgen möchtest. Solange es ausgeschaltet ist, sendet die Integration keine Bluetooth-Anfragen an deine Lautsprecher.",
-              "bluetooth_excluded_speakers": "Lautsprecher, die nicht nach Bluetooth-Geräten suchen. Füge einen Lautsprecher hinzu, der vom Strom getrennt oder außer Betrieb ist: Solange ein Lautsprecher nicht antwortet, können Tracker nicht „Abwesend“ anzeigen."
+              "bluetooth_excluded_speakers": "Lautsprecher, die nicht nach Bluetooth-Geräten suchen. Füge einen Lautsprecher hinzu, der vom Strom getrennt oder außer Betrieb ist."
             }
           }
         }

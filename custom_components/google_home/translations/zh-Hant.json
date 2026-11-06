@@ -9,13 +9,13 @@
           "master_token": "Master token"
         },
         "menu_option_descriptions": {
-          "browser": "在電腦瀏覽器中登入 Google，然後貼上 Cookie。適用於大多數帳號。",
+          "browser": "在電腦瀏覽器中登入 Google，然後貼上 Cookie。",
           "master_token": "貼上你已取得的 master token。"
         }
       },
       "browser": {
         "title": "透過瀏覽器登入",
-        "description": "1. 在電腦上開啟瀏覽器的私密瀏覽視窗（例如無痕視窗），前往 {embedded_setup_url} 並登入。同意後，網頁可能會持續載入，這是正常現象。\n2. 開啟瀏覽器的開發人員工具，找出 `accounts.google.com` 的 Cookie。\n3. 複製 `oauth_token` Cookie 的值，並立即貼到下方。此值會在幾分鐘內失效，且只能使用一次。\n\n詳細操作步驟：{browser_docs_url}\n\n如要改用其他登入方式，請關閉此視窗並重新新增整合。",
+        "description": "1. 在電腦上開啟瀏覽器的私密瀏覽視窗（例如無痕視窗），前往 {embedded_setup_url} 並登入。同意後，網頁可能會持續載入，這是正常現象。\n2. 開啟瀏覽器的開發人員工具，找出 `accounts.google.com` 的 Cookie。\n3. 複製 `oauth_token` Cookie 的值，並立即貼到下方。此值可能很快失效，且只能使用一次。\n\n詳細操作步驟：{browser_docs_url}\n\n如要改用其他登入方式，請關閉此視窗並重新新增整合。",
         "data": {
           "oauth_token": "oauth_token Cookie"
         },
@@ -51,13 +51,13 @@
           "master_token": "Master token"
         },
         "menu_option_descriptions": {
-          "browser": "在電腦瀏覽器中登入 Google，然後貼上 Cookie。適用於大多數帳號。",
+          "browser": "在電腦瀏覽器中登入 Google，然後貼上 Cookie。",
           "master_token": "貼上你已取得的 master token。"
         }
       },
       "reauth_browser": {
         "title": "透過瀏覽器登入",
-        "description": "1. 在電腦上開啟瀏覽器的私密瀏覽視窗（例如無痕視窗），前往 {embedded_setup_url} 並登入同一個 Google 帳號。同意後，網頁可能會持續載入，這是正常現象。\n2. 開啟瀏覽器的開發人員工具，找出 `accounts.google.com` 的 Cookie。\n3. 複製 `oauth_token` Cookie 的值，並立即貼到下方。此值會在幾分鐘內失效，且只能使用一次。\n\n詳細操作步驟：{browser_docs_url}",
+        "description": "1. 在電腦上開啟瀏覽器的私密瀏覽視窗（例如無痕視窗），前往 {embedded_setup_url} 並登入同一個 Google 帳號。同意後，網頁可能會持續載入，這是正常現象。\n2. 開啟瀏覽器的開發人員工具，找出 `accounts.google.com` 的 Cookie。\n3. 複製 `oauth_token` Cookie 的值，並立即貼到下方。此值可能很快失效，且只能使用一次。\n\n詳細操作步驟：{browser_docs_url}",
         "data": {
           "oauth_token": "oauth_token Cookie"
         },
@@ -77,13 +77,13 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "Google 未接受此 Cookie。請取得新的 Cookie 並立即貼上：此值會在幾分鐘內失效，且只能使用一次。請複製以 oauth2_4/ 開頭的完整值。",
+      "oauth-token-invalid": "Google 未接受此次登入。請取得新的 Cookie 並立即貼上：此值可能很快失效，且只能使用一次。請複製以 oauth2_4/ 開頭的完整值。",
       "master-token-invalid": "Google 未接受此 master token。請確認是否已正確複製。如果此 master token 之前可以使用（例如在你變更 Google 密碼之前），表示 Google 已不再接受它：請改用「透過瀏覽器登入」。",
       "google-rejected": "Google 未接受此登入。如需詳細資訊，請查看 Home Assistant 日誌。",
       "google-unreachable": "無法連線至 Google。請確認 Home Assistant 已連上網際網路，然後再試一次。",
       "google-busy": "Google 目前忙碌中或正在限制登入。請稍候幾分鐘，然後重新登入。",
       "oauth-token-format": "這不是 oauth_token Cookie，其值應以 oauth2_4/ 開頭。",
-      "master-token-format": "Master token 以 aas_et/ 開頭，共 223 個字元。請複製完整值。",
+      "master-token-format": "Master token 以 aas_et/ 開頭，共 {token_length} 個字元。請複製完整值。",
       "other-account": "你登入的是其他 Google 帳號，因此未進行任何變更。請使用此整合所用的帳號登入。如要改用剛才登入的帳號，請刪除整合後再重新新增。",
       "no-home-selected": "請至少選擇一個住家。"
     },
@@ -152,7 +152,7 @@
       "message": "無法從 {device} 取得目前的鬧鐘和計時器，因此未從該裝置刪除任何項目。請確認裝置已連線，並稍後再試。"
     },
     "alarms_and_timers_not_fetched_token_rejected_polling_off": {
-      "message": "無法從 {device} 取得目前的鬧鐘和計時器，因此未從該裝置刪除任何項目。該裝置拒絕了它的存取權杖，而向 Google 取得新的權杖也沒有幫助。輪詢變更已關閉，因此整合不會自動再向 Google 要求新的權杖：請執行「更新裝置」操作，然後再試一次。"
+      "message": "無法從 {device} 取得目前的鬧鐘和計時器，因此未從該裝置刪除任何項目。該裝置拒絕了它的存取權杖。輪詢變更已關閉，因此整合不會自動再向 Google 要求新的權杖：請執行「更新裝置」操作，然後再試一次。"
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "無法從下列裝置取得目前的鬧鐘和計時器，因此未從這些裝置刪除任何項目：{devices}。請確認這些裝置已連線，並稍後再試。"
@@ -161,13 +161,13 @@
       "message": "{device} 未確認已刪除鬧鐘或計時器，因此這些項目可能仍處於已設定狀態。請確認裝置已連線，並稍後再試。"
     },
     "alarms_and_timers_not_deleted_token_rejected_polling_off": {
-      "message": "{device} 未確認已刪除鬧鐘或計時器，因此這些項目可能仍處於已設定狀態。該裝置拒絕了它的存取權杖，而向 Google 取得新的權杖也沒有幫助。輪詢變更已關閉，因此整合不會自動再向 Google 要求新的權杖：請執行「更新裝置」操作，然後再試一次。"
+      "message": "{device} 未確認已刪除鬧鐘或計時器，因此這些項目可能仍處於已設定狀態。該裝置拒絕了它的存取權杖。輪詢變更已關閉，因此整合不會自動再向 Google 要求新的權杖：請執行「更新裝置」操作，然後再試一次。"
     },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "無法從下列裝置刪除鬧鐘或計時器，或無法確認是否已刪除：{devices}。請確認這些裝置已連線，並稍後再試。"
     },
     "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
-      "message": "無法從下列裝置刪除鬧鐘或計時器，或無法確認是否已刪除：{devices}。其中至少一個裝置拒絕了它的存取權杖，而向 Google 取得新的權杖也沒有幫助。輪詢變更已關閉，因此整合不會自動再向 Google 要求新的權杖：請執行「更新裝置」操作，確認這些裝置已連線，然後再試一次。"
+      "message": "無法從下列裝置刪除鬧鐘或計時器，或無法確認是否已刪除：{devices}。其中至少一個裝置拒絕了它的存取權杖。輪詢變更已關閉，因此整合不會自動再向 Google 要求新的權杖：請執行「更新裝置」操作，確認這些裝置已連線，然後再試一次。"
     },
     "invalid_alarm_id": {
       "message": "「{alarm_id}」不是鬧鐘 ID。請從裝置的鬧鐘感測器的 alarms 屬性複製以 alarm/ 開頭的 ID。"
@@ -188,10 +188,10 @@
       "message": "{device} 未確認已執行此操作：沒有及時回應，或回應中途中斷。請確認裝置已連線，然後再試一次。"
     },
     "device_token_rejected": {
-      "message": "{device} 拒絕了它的存取權杖，而向 Google 取得新的權杖也沒有幫助。整合會持續向 Google 要求新的權杖，請稍後再試。"
+      "message": "{device} 拒絕了它的存取權杖。整合會持續向 Google 要求新的權杖，請稍後再試。"
     },
     "device_token_rejected_polling_off": {
-      "message": "{device} 拒絕了它的存取權杖，而向 Google 取得新的權杖也沒有幫助。輪詢變更已關閉，因此整合不會自動再向 Google 要求新的權杖：請執行「更新裝置」操作，然後再試一次。"
+      "message": "{device} 拒絕了它的存取權杖。輪詢變更已關閉，因此整合不會自動再向 Google 要求新的權杖：請執行「更新裝置」操作，然後再試一次。"
     },
     "device_not_ready": {
       "message": "{device} 回應「找不到」。裝置可能仍在啟動中，請稍後再試；也可能不支援此操作。"
@@ -226,14 +226,14 @@
       }
     },
     "invalid_update_interval": {
-      "title": "儲存的更新間隔小於 1 秒",
+      "title": "儲存的更新間隔小於 {min_interval} 秒",
       "fix_flow": {
         "step": {
           "init": {
-            "title": "儲存的更新間隔小於 1 秒",
-            "description": "整合選項中儲存的更新間隔為 {interval} 秒，低於最小值 1 秒。整合會改用預設值，每 15 秒檢查一次你的裝置。\n\n如果你儲存 0 是為了停止這些定期檢查，請改為關閉輪詢。與 0 不同，關閉輪詢也會停止掃描藍牙裝置，以及停止加入 mDNS 找到的新裝置。詳情請參閱 {docs_url}\n\n如要使用其他間隔，請開啟 [Google Home 整合]({integration_url})，選擇「**設定**」，輸入間隔，然後選擇「**傳送**」。",
+            "title": "儲存的更新間隔小於 {min_interval} 秒",
+            "description": "整合選項中儲存的更新間隔為 {interval} 秒，低於最小值 {min_interval} 秒。整合會改用預設值，每 {default_interval} 秒檢查一次你的裝置。\n\n如果你儲存 0 是為了停止這些定期檢查，請改為關閉輪詢。與 0 不同，關閉輪詢也會停止掃描藍牙裝置，以及停止加入 mDNS 找到的新裝置。詳情請參閱 {docs_url}\n\n如要使用其他間隔，請開啟 [Google Home 整合]({integration_url})，選擇「**設定**」，輸入間隔，然後選擇「**傳送**」。",
             "menu_options": {
-              "use_default": "使用預設值 15 秒",
+              "use_default": "使用預設值 {default_interval} 秒",
               "turn_off_polling": "改為關閉輪詢"
             }
           }
@@ -317,7 +317,7 @@
             },
             "data_description": {
               "bluetooth_tracking": "使用音箱判斷你的手機或其他藍牙裝置是否在家。開啟後，請針對每個要追蹤的裝置，在此整合的頁面上選擇「追蹤藍牙裝置」。關閉期間，此整合不會向音箱傳送任何藍牙要求。",
-              "bluetooth_excluded_speakers": "不掃描藍牙裝置的音箱。請加入已拔除電源或停止使用的音箱：只要有音箱沒有回應，追蹤器就無法顯示「離家」。"
+              "bluetooth_excluded_speakers": "不掃描藍牙裝置的音箱。請加入已拔除電源或停止使用的音箱。"
             }
           }
         }

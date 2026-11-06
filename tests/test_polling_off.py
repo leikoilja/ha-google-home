@@ -603,10 +603,7 @@ async def test_token_rejected_says_how_to_get_new_one(
     with pytest.raises(DeviceRequestFailed) as err:
         await press_reboot(hass)
 
-    assert error_message(err.value) == (
-        f"{SPEAKER_NAME} rejected its token, and getting a new one from Google "
-        f"didn't help. {advice}"
-    )
+    assert error_message(err.value) == (f"{SPEAKER_NAME} rejected its token. {advice}")
     assert (
         f"Failed to send the request to {SPEAKER_NAME} due to invalid token. {logged}"
     ) in [record.getMessage() for record in caplog.records]
@@ -644,7 +641,7 @@ async def test_token_rejected_says_how_to_get_new_one(
 # its token while polling is off, with what to do instead
 TRY_LATER = "Check that it's online and try again later."
 RUN_REFRESH = (
-    "It rejected its token, and getting a new one from Google didn't help. "
+    "It rejected its token. "
     "Polling is turned off, so the integration doesn't ask Google again by "
     "itself: run the Refresh devices action, then try again."
 )
@@ -868,7 +865,7 @@ async def test_delete_from_speakers_one_rejecting_token(
         if polling
         else "Couldn't delete alarms or timers from these devices, or confirm that "
         "they were deleted: Bedroom speaker, Kitchen speaker. At least one of them "
-        "rejected its token, and getting a new one from Google didn't help. Polling "
+        "rejected its token. Polling "
         "is turned off, so the integration doesn't ask Google again by itself: run "
         "the Refresh devices action, check that the devices are online, then try "
         "again."

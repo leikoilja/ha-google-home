@@ -23,6 +23,7 @@ from homeassistant.helpers.device_registry import DeviceEntry
 from homeassistant.helpers.typing import ConfigType
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
+from . import const
 from .api import GlocaltokensApiClient
 from .bluetooth import BluetoothScanner, TrackerUpdate, bluetooth_now
 from .bluetooth_coordinator import BluetoothCoordinator
@@ -45,7 +46,6 @@ from .const import (
     NO_DEVICES_DOCS_URL,
     PLATFORMS,
     SUBENTRY_BLUETOOTH_DEVICE,
-    UPDATE_INTERVAL,
 )
 from .coordinator import GoogleAccountCoordinator
 from .mdns import async_browse_cast_devices
@@ -271,7 +271,7 @@ def async_show_invalid_interval(
     does once polling is off, forgets that the user hid it. Home Assistant hides it
     while the entry is disabled and deletes it with the entry.
     """
-    if saved_interval(entry) > 0 or entry.pref_disable_polling:
+    if saved_interval(entry) >= const.MIN_UPDATE_INTERVAL or entry.pref_disable_polling:
         ir.async_delete_issue(hass, DOMAIN, ISSUE_INVALID_INTERVAL)
         return
     ir.async_create_issue(
@@ -283,6 +283,7 @@ def async_show_invalid_interval(
         is_fixable=True,
         severity=ir.IssueSeverity.WARNING,
         translation_key=ISSUE_INVALID_INTERVAL,
+        translation_placeholders={"min_interval": str(const.MIN_UPDATE_INTERVAL)},
     )
 
 
@@ -399,18 +400,22 @@ async def async_remove_config_entry_device(
 
 def saved_interval(entry: GoogleHomeConfigEntry) -> int:
     """Return the update interval in the options, in seconds."""
-    return cast(int, entry.options.get(CONF_UPDATE_INTERVAL, UPDATE_INTERVAL))
+    return cast(int, entry.options.get(CONF_UPDATE_INTERVAL, const.UPDATE_INTERVAL))
 
 
 def configured_interval(entry: GoogleHomeConfigEntry) -> timedelta:
-    """Return the update interval in the options, or the default for one that isn't positive.
+    """Return the update interval in the options, or the default for one below the minimum.
 
     The options form refuses such an interval, but earlier versions saved it: zero
     stopped scheduled updates and a negative one ran them without a pause. A repair
     says so and offers to fix it.
     """
     seconds = saved_interval(entry)
-    return timedelta(seconds=seconds if seconds > 0 else UPDATE_INTERVAL)
+    return timedelta(
+        seconds=seconds
+        if seconds >= const.MIN_UPDATE_INTERVAL
+        else const.UPDATE_INTERVAL
+    )
 
 
 @callback

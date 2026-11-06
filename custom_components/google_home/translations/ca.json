@@ -9,13 +9,13 @@
           "master_token": "Testimoni mestre"
         },
         "menu_option_descriptions": {
-          "browser": "Inicia la sessió a Google en un navegador d'ordinador i després enganxa una galeta. Funciona amb la majoria de comptes.",
+          "browser": "Inicia la sessió a Google en un navegador d'ordinador i després enganxa una galeta.",
           "master_token": "Enganxa un testimoni mestre que ja tinguis."
         }
       },
       "browser": {
         "title": "Inici de sessió amb el navegador",
-        "description": "1. En un ordinador, obre {embedded_setup_url} en una finestra de navegació privada i inicia la sessió. Després d'acceptar, és possible que la pàgina continuï carregant; és normal.\n2. Obre les eines per a desenvolupadors del navegador i cerca les galetes de `accounts.google.com`.\n3. Copia el valor de la galeta `oauth_token` i enganxa'l a continuació immediatament. Caduca en pocs minuts i només funciona una vegada.\n\nInstruccions pas a pas (en anglès): {browser_docs_url}\n\nPer triar una altra manera d'iniciar la sessió, tanca aquesta finestra i torna a afegir la integració.",
+        "description": "1. En un ordinador, obre {embedded_setup_url} en una finestra de navegació privada i inicia la sessió. Després d'acceptar, és possible que la pàgina continuï carregant; és normal.\n2. Obre les eines per a desenvolupadors del navegador i cerca les galetes de `accounts.google.com`.\n3. Copia el valor de la galeta `oauth_token` i enganxa'l a continuació immediatament. Pot caducar ràpidament i només funciona una vegada.\n\nInstruccions pas a pas (en anglès): {browser_docs_url}\n\nPer triar una altra manera d'iniciar la sessió, tanca aquesta finestra i torna a afegir la integració.",
         "data": {
           "oauth_token": "Galeta oauth_token"
         },
@@ -51,13 +51,13 @@
           "master_token": "Testimoni mestre"
         },
         "menu_option_descriptions": {
-          "browser": "Inicia la sessió a Google en un navegador d'ordinador i després enganxa una galeta. Funciona amb la majoria de comptes.",
+          "browser": "Inicia la sessió a Google en un navegador d'ordinador i després enganxa una galeta.",
           "master_token": "Enganxa un testimoni mestre que ja tinguis."
         }
       },
       "reauth_browser": {
         "title": "Inici de sessió amb el navegador",
-        "description": "1. En un ordinador, obre {embedded_setup_url} en una finestra de navegació privada i inicia la sessió al mateix compte de Google. Després d'acceptar, és possible que la pàgina continuï carregant; és normal.\n2. Obre les eines per a desenvolupadors del navegador i cerca les galetes de `accounts.google.com`.\n3. Copia el valor de la galeta `oauth_token` i enganxa'l a continuació immediatament. Caduca en pocs minuts i només funciona una vegada.\n\nInstruccions pas a pas (en anglès): {browser_docs_url}",
+        "description": "1. En un ordinador, obre {embedded_setup_url} en una finestra de navegació privada i inicia la sessió al mateix compte de Google. Després d'acceptar, és possible que la pàgina continuï carregant; és normal.\n2. Obre les eines per a desenvolupadors del navegador i cerca les galetes de `accounts.google.com`.\n3. Copia el valor de la galeta `oauth_token` i enganxa'l a continuació immediatament. Pot caducar ràpidament i només funciona una vegada.\n\nInstruccions pas a pas (en anglès): {browser_docs_url}",
         "data": {
           "oauth_token": "Galeta oauth_token"
         },
@@ -77,13 +77,13 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "Google no ha acceptat la galeta. Obtén-ne una de nova i enganxa-la immediatament: caduca en pocs minuts i només funciona una vegada. Copia el valor sencer, que comença per oauth2_4/.",
+      "oauth-token-invalid": "Google no ha acceptat l'inici de sessió. Obtén una galeta nova i enganxa-la immediatament: pot caducar ràpidament i només funciona una vegada. Copia el valor sencer, que comença per oauth2_4/.",
       "master-token-invalid": "Google no ha acceptat el testimoni mestre. Comprova que l'has copiat correctament. Si abans funcionava, per exemple fins que vas canviar la contrasenya de Google, Google ja no l'accepta: en lloc d'això, fes servir l'inici de sessió amb el navegador.",
       "google-rejected": "Google no ha acceptat l'inici de sessió. Per veure'n els detalls, consulta els registres de Home Assistant.",
       "google-unreachable": "No s'ha pogut connectar amb Google. Comprova que Home Assistant estigui connectat a Internet i torna-ho a provar.",
       "google-busy": "Google està ocupat o està limitant els inicis de sessió. Espera uns minuts i torna a iniciar la sessió.",
       "oauth-token-format": "Aquesta no és la galeta oauth_token. El seu valor comença per oauth2_4/.",
-      "master-token-format": "Un testimoni mestre comença per aas_et/ i té 223 caràcters. Copia el testimoni sencer.",
+      "master-token-format": "Un testimoni mestre comença per aas_et/ i té {token_length} caràcters. Copia el testimoni sencer.",
       "other-account": "Has iniciat la sessió en un altre compte de Google, de manera que no s'ha canviat res. Inicia la sessió amb el compte que fa servir aquesta integració. Per fer servir aquest altre compte, elimina la integració i torna-la a afegir.",
       "no-home-selected": "Tria almenys una llar."
     },
@@ -152,7 +152,7 @@
       "message": "No s'han pogut obtenir les alarmes i els temporitzadors actuals de {device}, de manera que no s'ha eliminat res d'aquest dispositiu. Comprova que estigui en línia i torna-ho a provar més tard."
     },
     "alarms_and_timers_not_fetched_token_rejected_polling_off": {
-      "message": "No s'han pogut obtenir les alarmes i els temporitzadors actuals de {device}, de manera que no s'ha eliminat res d'aquest dispositiu. El dispositiu ha rebutjat el seu testimoni, i obtenir-ne un altre de Google no ha servit de res. El sondeig està desactivat, de manera que la integració no torna a demanar-ne un a Google per si mateixa: executa l'acció «Actualitza dispositius» i torna-ho a provar."
+      "message": "No s'han pogut obtenir les alarmes i els temporitzadors actuals de {device}, de manera que no s'ha eliminat res d'aquest dispositiu. El dispositiu ha rebutjat el seu testimoni. El sondeig està desactivat, de manera que la integració no torna a demanar-ne un a Google per si mateixa: executa l'acció «Actualitza dispositius» i torna-ho a provar."
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "No s'han pogut obtenir les alarmes i els temporitzadors actuals d'aquests dispositius, de manera que no se n'ha eliminat res: {devices}. Comprova que estiguin en línia i torna-ho a provar més tard."
@@ -161,13 +161,13 @@
       "message": "{device} no ha confirmat l'eliminació de les alarmes o els temporitzadors, de manera que encara poden estar configurats. Comprova que estigui en línia i torna-ho a provar més tard."
     },
     "alarms_and_timers_not_deleted_token_rejected_polling_off": {
-      "message": "{device} no ha confirmat l'eliminació de les alarmes o els temporitzadors, de manera que encara poden estar configurats. El dispositiu ha rebutjat el seu testimoni, i obtenir-ne un altre de Google no ha servit de res. El sondeig està desactivat, de manera que la integració no torna a demanar-ne un a Google per si mateixa: executa l'acció «Actualitza dispositius» i torna-ho a provar."
+      "message": "{device} no ha confirmat l'eliminació de les alarmes o els temporitzadors, de manera que encara poden estar configurats. El dispositiu ha rebutjat el seu testimoni. El sondeig està desactivat, de manera que la integració no torna a demanar-ne un a Google per si mateixa: executa l'acció «Actualitza dispositius» i torna-ho a provar."
     },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "No s'han pogut eliminar les alarmes o els temporitzadors d'aquests dispositius, o confirmar que s'hagin eliminat: {devices}. Comprova que estiguin en línia i torna-ho a provar més tard."
     },
     "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
-      "message": "No s'han pogut eliminar les alarmes o els temporitzadors d'aquests dispositius, o confirmar que s'hagin eliminat: {devices}. Almenys un d'ells ha rebutjat el seu testimoni, i obtenir-ne un altre de Google no ha servit de res. El sondeig està desactivat, de manera que la integració no torna a demanar-ne un a Google per si mateixa: executa l'acció «Actualitza dispositius», comprova que els dispositius estiguin en línia i torna-ho a provar."
+      "message": "No s'han pogut eliminar les alarmes o els temporitzadors d'aquests dispositius, o confirmar que s'hagin eliminat: {devices}. Almenys un d'ells ha rebutjat el seu testimoni. El sondeig està desactivat, de manera que la integració no torna a demanar-ne un a Google per si mateixa: executa l'acció «Actualitza dispositius», comprova que els dispositius estiguin en línia i torna-ho a provar."
     },
     "invalid_alarm_id": {
       "message": "«{alarm_id}» no és un ID d'alarma. Copia l'ID, que comença per alarm/, de l'atribut alarms del sensor d'alarmes del dispositiu."
@@ -188,10 +188,10 @@
       "message": "{device} no ha confirmat que ho hagi fet: no ha respost a temps, o la resposta s'ha tallat. Comprova que estigui en línia i torna-ho a provar."
     },
     "device_token_rejected": {
-      "message": "{device} ha rebutjat el seu testimoni, i obtenir-ne un altre de Google no ha servit de res. La integració continua demanant-ne un de nou a Google, així que torna-ho a provar més tard."
+      "message": "{device} ha rebutjat el seu testimoni. La integració continua demanant-ne un de nou a Google, així que torna-ho a provar més tard."
     },
     "device_token_rejected_polling_off": {
-      "message": "{device} ha rebutjat el seu testimoni, i obtenir-ne un altre de Google no ha servit de res. El sondeig està desactivat, de manera que la integració no torna a demanar-ne un a Google per si mateixa: executa l'acció «Actualitza dispositius» i torna-ho a provar."
+      "message": "{device} ha rebutjat el seu testimoni. El sondeig està desactivat, de manera que la integració no torna a demanar-ne un a Google per si mateixa: executa l'acció «Actualitza dispositius» i torna-ho a provar."
     },
     "device_not_ready": {
       "message": "{device} ha respost «no s'ha trobat». És possible que encara s'estigui iniciant, així que torna-ho a provar més tard, o que no admeti aquesta acció."
@@ -226,14 +226,14 @@
       }
     },
     "invalid_update_interval": {
-      "title": "L'interval d'actualització desat és inferior a 1 segon",
+      "title": "L'interval d'actualització desat és inferior a {min_interval} s",
       "fix_flow": {
         "step": {
           "init": {
-            "title": "L'interval d'actualització desat és inferior a 1 segon",
-            "description": "L'interval d'actualització desat a les opcions de la integració és de {interval} s, per sota del mínim d'1 segon. La integració utilitza el valor per defecte i consulta els teus dispositius cada 15 segons.\n\nSi vas desar 0 per aturar aquestes consultes periòdiques, desactiva el sondeig en lloc d'això. A diferència del 0, desactivar el sondeig també atura les cerques de dispositius Bluetooth i l'addició dels dispositius nous que troba mDNS. Per a més detalls, consulta {docs_url} (en anglès).\n\nPer utilitzar un altre interval, obre la [integració Google Home]({integration_url}), selecciona **Configura**, introdueix-lo i després selecciona **Envia**.",
+            "title": "L'interval d'actualització desat és inferior a {min_interval} s",
+            "description": "L'interval d'actualització desat a les opcions de la integració és de {interval} s, per sota del mínim de {min_interval} s. La integració utilitza el valor per defecte i consulta els teus dispositius cada {default_interval} s.\n\nSi vas desar 0 per aturar aquestes consultes periòdiques, desactiva el sondeig en lloc d'això. A diferència del 0, desactivar el sondeig també atura les cerques de dispositius Bluetooth i l'addició dels dispositius nous que troba mDNS. Per a més detalls, consulta {docs_url} (en anglès).\n\nPer utilitzar un altre interval, obre la [integració Google Home]({integration_url}), selecciona **Configura**, introdueix-lo i després selecciona **Envia**.",
             "menu_options": {
-              "use_default": "Utilitza el valor per defecte de 15 segons",
+              "use_default": "Utilitza el valor per defecte de {default_interval} s",
               "turn_off_polling": "Desactiva el sondeig en lloc d'això"
             }
           }
@@ -317,7 +317,7 @@
             },
             "data_description": {
               "bluetooth_tracking": "Utilitza els altaveus per saber si el teu telèfon o altres dispositius Bluetooth són a casa. Després d'activar-lo, selecciona «Segueix un dispositiu Bluetooth» a la pàgina de la integració per a cada dispositiu que vulguis seguir. Mentre estigui desactivat, la integració no envia cap sol·licitud Bluetooth als altaveus.",
-              "bluetooth_excluded_speakers": "Altaveus que no cerquen dispositius Bluetooth. Afegeix-hi un altaveu desendollat o fora de servei: mentre un altaveu no respon, els rastrejadors no poden mostrar «Fora»."
+              "bluetooth_excluded_speakers": "Altaveus que no cerquen dispositius Bluetooth. Afegeix-hi un altaveu desendollat o fora de servei."
             }
           }
         }

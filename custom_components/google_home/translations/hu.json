@@ -9,13 +9,13 @@
           "master_token": "Mestertoken"
         },
         "menu_option_descriptions": {
-          "browser": "Jelentkezzen be a Google-fiókjába egy számítógép böngészőjében, majd illesszen be egy cookie-t. A legtöbb fiókkal működik.",
+          "browser": "Jelentkezzen be a Google-fiókjába egy számítógép böngészőjében, majd illesszen be egy cookie-t.",
           "master_token": "Illesszen be egy már meglévő mestertokent."
         }
       },
       "browser": {
         "title": "Bejelentkezés böngészővel",
-        "description": "1. Számítógépen nyissa meg a {embedded_setup_url} címet a böngésző privát ablakában, például inkognitó ablakban, és jelentkezzen be. Az elfogadás után az oldal tovább töltődhet; ez normális.\n2. Nyissa meg a böngésző fejlesztői eszközeit, és keresse meg az `accounts.google.com` cookie-jait.\n3. Másolja ki az `oauth_token` cookie értékét, és azonnal illessze be alább. Néhány percen belül lejár, és csak egyszer használható.\n\nRészletes útmutató: {browser_docs_url}\n\nMásik bejelentkezési mód választásához zárja be ezt az ablakot, és adja hozzá újra az integrációt.",
+        "description": "1. Számítógépen nyissa meg a {embedded_setup_url} címet a böngésző privát ablakában, például inkognitó ablakban, és jelentkezzen be. Az elfogadás után az oldal tovább töltődhet; ez normális.\n2. Nyissa meg a böngésző fejlesztői eszközeit, és keresse meg az `accounts.google.com` cookie-jait.\n3. Másolja ki az `oauth_token` cookie értékét, és azonnal illessze be alább. Gyorsan lejárhat, és csak egyszer használható.\n\nRészletes útmutató: {browser_docs_url}\n\nMásik bejelentkezési mód választásához zárja be ezt az ablakot, és adja hozzá újra az integrációt.",
         "data": {
           "oauth_token": "oauth_token cookie"
         },
@@ -51,13 +51,13 @@
           "master_token": "Mestertoken"
         },
         "menu_option_descriptions": {
-          "browser": "Jelentkezzen be a Google-fiókjába egy számítógép böngészőjében, majd illesszen be egy cookie-t. A legtöbb fiókkal működik.",
+          "browser": "Jelentkezzen be a Google-fiókjába egy számítógép böngészőjében, majd illesszen be egy cookie-t.",
           "master_token": "Illesszen be egy már meglévő mestertokent."
         }
       },
       "reauth_browser": {
         "title": "Bejelentkezés böngészővel",
-        "description": "1. Számítógépen nyissa meg a {embedded_setup_url} címet a böngésző privát ablakában, például inkognitó ablakban, és jelentkezzen be ugyanabba a Google-fiókba. Az elfogadás után az oldal tovább töltődhet; ez normális.\n2. Nyissa meg a böngésző fejlesztői eszközeit, és keresse meg az `accounts.google.com` cookie-jait.\n3. Másolja ki az `oauth_token` cookie értékét, és azonnal illessze be alább. Néhány percen belül lejár, és csak egyszer használható.\n\nRészletes útmutató: {browser_docs_url}",
+        "description": "1. Számítógépen nyissa meg a {embedded_setup_url} címet a böngésző privát ablakában, például inkognitó ablakban, és jelentkezzen be ugyanabba a Google-fiókba. Az elfogadás után az oldal tovább töltődhet; ez normális.\n2. Nyissa meg a böngésző fejlesztői eszközeit, és keresse meg az `accounts.google.com` cookie-jait.\n3. Másolja ki az `oauth_token` cookie értékét, és azonnal illessze be alább. Gyorsan lejárhat, és csak egyszer használható.\n\nRészletes útmutató: {browser_docs_url}",
         "data": {
           "oauth_token": "oauth_token cookie"
         },
@@ -77,13 +77,13 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "A Google nem fogadta el a cookie-t. Szerezzen be egy újat, és azonnal illessze be: néhány percen belül lejár, és csak egyszer használható. Másolja ki a teljes, oauth2_4/ kezdetű értéket.",
+      "oauth-token-invalid": "A Google nem fogadta el a bejelentkezést. Szerezzen be egy új cookie-t, és azonnal illessze be: gyorsan lejárhat, és csak egyszer használható. Másolja ki a teljes, oauth2_4/ kezdetű értéket.",
       "master-token-invalid": "A Google nem fogadta el a mestertokent. Ellenőrizze, hogy helyesen másolta-e ki. Ha korábban működött, például amíg meg nem változtatta a Google-jelszavát, a Google már nem fogadja el: használja helyette a Bejelentkezés böngészővel lehetőséget.",
       "google-rejected": "A Google nem fogadta el a bejelentkezést. A részletekért tekintse meg a Home Assistant naplóját.",
       "google-unreachable": "Nem sikerült elérni a Google-t. Ellenőrizze, hogy a Home Assistant csatlakozik-e az internethez, majd próbálja újra.",
       "google-busy": "A Google túlterhelt, vagy korlátozza a bejelentkezéseket. Várjon néhány percet, majd jelentkezzen be újra.",
       "oauth-token-format": "Ez nem az oauth_token cookie. Annak értéke oauth2_4/ kezdetű.",
-      "master-token-format": "A mestertoken aas_et/ kezdetű és 223 karakter hosszú. Másolja ki a teljes tokent.",
+      "master-token-format": "A mestertoken aas_et/ kezdetű és {token_length} karakter hosszú. Másolja ki a teljes tokent.",
       "other-account": "Egy másik Google-fiókba jelentkezett be, ezért semmi sem változott. Jelentkezzen be az integráció által használt fiókkal. Ha inkább azt a másik fiókot szeretné használni, törölje az integrációt, és adja hozzá újra.",
       "no-home-selected": "Válasszon ki legalább egy otthont."
     },
@@ -152,7 +152,7 @@
       "message": "Nem sikerült lekérni a(z) {device} eszköz aktuális ébresztéseit és időzítőit, ezért semmi sem lett törölve erről az eszközről. Ellenőrizze, hogy az eszköz online van-e, és próbálja újra később."
     },
     "alarms_and_timers_not_fetched_token_rejected_polling_off": {
-      "message": "Nem sikerült lekérni a(z) {device} eszköz aktuális ébresztéseit és időzítőit, ezért semmi sem lett törölve erről az eszközről. Az eszköz elutasította a tokenjét, és egy új token lekérése a Google-tól nem segített. A változások lekérdezése le van tiltva, ezért az integráció magától nem kér újra tokent a Google-tól: futtassa az „Eszközök állapotának frissítése” műveletet, majd próbálja újra."
+      "message": "Nem sikerült lekérni a(z) {device} eszköz aktuális ébresztéseit és időzítőit, ezért semmi sem lett törölve erről az eszközről. Az eszköz elutasította a tokenjét. A változások lekérdezése le van tiltva, ezért az integráció magától nem kér újra tokent a Google-tól: futtassa az „Eszközök állapotának frissítése” műveletet, majd próbálja újra."
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Nem sikerült lekérni a következő eszközök aktuális ébresztéseit és időzítőit: {devices}. Ezért semmi sem lett törölve ezekről az eszközökről. Ellenőrizze, hogy az eszközök online vannak-e, és próbálja újra később."
@@ -161,13 +161,13 @@
       "message": "A(z) {device} eszköz nem erősítette meg az ébresztések vagy időzítők törlését, ezért azok továbbra is be lehetnek állítva. Ellenőrizze, hogy az eszköz online van-e, és próbálja újra később."
     },
     "alarms_and_timers_not_deleted_token_rejected_polling_off": {
-      "message": "A(z) {device} eszköz nem erősítette meg az ébresztések vagy időzítők törlését, ezért azok továbbra is be lehetnek állítva. Az eszköz elutasította a tokenjét, és egy új token lekérése a Google-tól nem segített. A változások lekérdezése le van tiltva, ezért az integráció magától nem kér újra tokent a Google-tól: futtassa az „Eszközök állapotának frissítése” műveletet, majd próbálja újra."
+      "message": "A(z) {device} eszköz nem erősítette meg az ébresztések vagy időzítők törlését, ezért azok továbbra is be lehetnek állítva. Az eszköz elutasította a tokenjét. A változások lekérdezése le van tiltva, ezért az integráció magától nem kér újra tokent a Google-tól: futtassa az „Eszközök állapotának frissítése” műveletet, majd próbálja újra."
     },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "Nem sikerült törölni az ébresztéseket vagy időzítőket a következő eszközökről, vagy megerősíteni a törlésüket: {devices}. Ellenőrizze, hogy az eszközök online vannak-e, és próbálja újra később."
     },
     "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
-      "message": "Nem sikerült törölni az ébresztéseket vagy időzítőket a következő eszközökről, vagy megerősíteni a törlésüket: {devices}. Legalább az egyikük elutasította a tokenjét, és egy új token lekérése a Google-tól nem segített. A változások lekérdezése le van tiltva, ezért az integráció magától nem kér újra tokent a Google-tól: futtassa az „Eszközök állapotának frissítése” műveletet, ellenőrizze, hogy az eszközök online vannak-e, majd próbálja újra."
+      "message": "Nem sikerült törölni az ébresztéseket vagy időzítőket a következő eszközökről, vagy megerősíteni a törlésüket: {devices}. Legalább az egyikük elutasította a tokenjét. A változások lekérdezése le van tiltva, ezért az integráció magától nem kér újra tokent a Google-tól: futtassa az „Eszközök állapotának frissítése” műveletet, ellenőrizze, hogy az eszközök online vannak-e, majd próbálja újra."
     },
     "invalid_alarm_id": {
       "message": "A(z) „{alarm_id}” nem ébresztésazonosító. Másolja ki az alarm/ kezdetű azonosítót az eszköz ébresztésérzékelőjének alarms attribútumából."
@@ -188,10 +188,10 @@
       "message": "A(z) {device} eszköz nem erősítette meg, hogy végrehajtotta a műveletet: nem válaszolt időben, vagy a válasza megszakadt. Ellenőrizze, hogy az eszköz online van-e, és próbálja újra."
     },
     "device_token_rejected": {
-      "message": "A(z) {device} eszköz elutasította a tokenjét, és egy új token lekérése a Google-tól nem segített. Az integráció továbbra is újat kér a Google-tól, ezért próbálja újra később."
+      "message": "A(z) {device} eszköz elutasította a tokenjét. Az integráció továbbra is újat kér a Google-tól, ezért próbálja újra később."
     },
     "device_token_rejected_polling_off": {
-      "message": "A(z) {device} eszköz elutasította a tokenjét, és egy új token lekérése a Google-tól nem segített. A változások lekérdezése le van tiltva, ezért az integráció magától nem kér újra tokent a Google-tól: futtassa az „Eszközök állapotának frissítése” műveletet, majd próbálja újra."
+      "message": "A(z) {device} eszköz elutasította a tokenjét. A változások lekérdezése le van tiltva, ezért az integráció magától nem kér újra tokent a Google-tól: futtassa az „Eszközök állapotának frissítése” műveletet, majd próbálja újra."
     },
     "device_not_ready": {
       "message": "A(z) {device} eszköz azt válaszolta: „nem található”. Lehet, hogy még indul, ezért próbálja újra később, vagy az is lehet, hogy nem támogatja ezt."
@@ -226,14 +226,14 @@
       }
     },
     "invalid_update_interval": {
-      "title": "A mentett frissítési időköz rövidebb 1 másodpercnél",
+      "title": "A mentett frissítési időköz rövidebb {min_interval} másodpercnél",
       "fix_flow": {
         "step": {
           "init": {
-            "title": "A mentett frissítési időköz rövidebb 1 másodpercnél",
-            "description": "Az integráció opcióiban mentett frissítési időköz {interval} másodperc, ami kevesebb az 1 másodperces minimumnál. Az integráció helyette az alapértelmezett értéket használja, és 15 másodpercenként ellenőrzi az eszközeit.\n\nHa azért mentett 0-t, hogy leállítsa ezeket a rendszeres ellenőrzéseket, inkább tiltsa le a lekérdezést. A 0-val ellentétben ez a Bluetooth-eszközök keresését és az mDNS által talált új eszközök hozzáadását is leállítja. A részleteket itt találja: {docs_url}.\n\nMásik időköz használatához nyissa meg a [Google Home-integrációt]({integration_url}), válassza a **Konfigurálás** lehetőséget, adja meg az időközt, majd válassza a **Mehet** lehetőséget.",
+            "title": "A mentett frissítési időköz rövidebb {min_interval} másodpercnél",
+            "description": "Az integráció opcióiban mentett frissítési időköz {interval} másodperc, ami kevesebb a(z) {min_interval} másodperces minimumnál. Az integráció helyette az alapértelmezett értéket használja, és {default_interval} másodpercenként ellenőrzi az eszközeit.\n\nHa azért mentett 0-t, hogy leállítsa ezeket a rendszeres ellenőrzéseket, inkább tiltsa le a lekérdezést. A 0-val ellentétben ez a Bluetooth-eszközök keresését és az mDNS által talált új eszközök hozzáadását is leállítja. A részleteket itt találja: {docs_url}.\n\nMásik időköz használatához nyissa meg a [Google Home-integrációt]({integration_url}), válassza a **Konfigurálás** lehetőséget, adja meg az időközt, majd válassza a **Mehet** lehetőséget.",
             "menu_options": {
-              "use_default": "Az alapértelmezett 15 másodperc használata",
+              "use_default": "Az alapértelmezett {default_interval} másodperc használata",
               "turn_off_polling": "Inkább a lekérdezés letiltása"
             }
           }
@@ -317,7 +317,7 @@
             },
             "data_description": {
               "bluetooth_tracking": "A hangszórók segítségével megtudhatja, hogy a telefonja vagy más Bluetooth-eszközök otthon vannak-e. Bekapcsolás után minden követendő eszközhöz válassza az integráció oldalán a „Bluetooth-eszköz követése” lehetőséget. Amíg ki van kapcsolva, az integráció nem küld Bluetooth-kéréseket a hangszóróknak.",
-              "bluetooth_excluded_speakers": "Hangszórók, amelyek nem keresnek Bluetooth-eszközöket. Adjon hozzá egy áramtalanított vagy üzemen kívüli hangszórót: amíg egy hangszóró nem válaszol, a követők nem tudják a „Távol” állapotot mutatni."
+              "bluetooth_excluded_speakers": "Hangszórók, amelyek nem keresnek Bluetooth-eszközöket. Adjon hozzá egy áramtalanított vagy üzemen kívüli hangszórót."
             }
           }
         }

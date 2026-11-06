@@ -9,13 +9,13 @@
           "master_token": "Token główny"
         },
         "menu_option_descriptions": {
-          "browser": "Zaloguj się do Google w przeglądarce na komputerze, a następnie wklej plik cookie. Działa w przypadku większości kont.",
+          "browser": "Zaloguj się do Google w przeglądarce na komputerze, a następnie wklej plik cookie.",
           "master_token": "Wklej token główny, który już masz."
         }
       },
       "browser": {
         "title": "Logowanie w przeglądarce",
-        "description": "1. Na komputerze otwórz {embedded_setup_url} w oknie prywatnym przeglądarki i zaloguj się. Po zaakceptowaniu strona może się dalej ładować; to normalne.\n2. Otwórz narzędzia deweloperskie przeglądarki i znajdź pliki cookie dla `accounts.google.com`.\n3. Skopiuj wartość pliku cookie `oauth_token` i od razu wklej ją poniżej. Wygasa po kilku minutach i działa tylko raz.\n\nInstrukcje krok po kroku: {browser_docs_url}\n\nAby wybrać inny sposób logowania, zamknij to okno i dodaj integrację ponownie.",
+        "description": "1. Na komputerze otwórz {embedded_setup_url} w oknie prywatnym przeglądarki i zaloguj się. Po zaakceptowaniu strona może się dalej ładować; to normalne.\n2. Otwórz narzędzia deweloperskie przeglądarki i znajdź pliki cookie dla `accounts.google.com`.\n3. Skopiuj wartość pliku cookie `oauth_token` i od razu wklej ją poniżej. Może szybko wygasnąć i działa tylko raz.\n\nInstrukcje krok po kroku: {browser_docs_url}\n\nAby wybrać inny sposób logowania, zamknij to okno i dodaj integrację ponownie.",
         "data": {
           "oauth_token": "Plik cookie oauth_token"
         },
@@ -51,13 +51,13 @@
           "master_token": "Token główny"
         },
         "menu_option_descriptions": {
-          "browser": "Zaloguj się do Google w przeglądarce na komputerze, a następnie wklej plik cookie. Działa w przypadku większości kont.",
+          "browser": "Zaloguj się do Google w przeglądarce na komputerze, a następnie wklej plik cookie.",
           "master_token": "Wklej token główny, który już masz."
         }
       },
       "reauth_browser": {
         "title": "Logowanie w przeglądarce",
-        "description": "1. Na komputerze otwórz {embedded_setup_url} w oknie prywatnym przeglądarki i zaloguj się na to samo konto Google. Po zaakceptowaniu strona może się dalej ładować; to normalne.\n2. Otwórz narzędzia deweloperskie przeglądarki i znajdź pliki cookie dla `accounts.google.com`.\n3. Skopiuj wartość pliku cookie `oauth_token` i od razu wklej ją poniżej. Wygasa po kilku minutach i działa tylko raz.\n\nInstrukcje krok po kroku: {browser_docs_url}",
+        "description": "1. Na komputerze otwórz {embedded_setup_url} w oknie prywatnym przeglądarki i zaloguj się na to samo konto Google. Po zaakceptowaniu strona może się dalej ładować; to normalne.\n2. Otwórz narzędzia deweloperskie przeglądarki i znajdź pliki cookie dla `accounts.google.com`.\n3. Skopiuj wartość pliku cookie `oauth_token` i od razu wklej ją poniżej. Może szybko wygasnąć i działa tylko raz.\n\nInstrukcje krok po kroku: {browser_docs_url}",
         "data": {
           "oauth_token": "Plik cookie oauth_token"
         },
@@ -77,13 +77,13 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "Google nie zaakceptowało pliku cookie. Pobierz nowy i od razu go wklej: wygasa po kilku minutach i działa tylko raz. Skopiuj całą wartość, zaczynającą się od oauth2_4/.",
+      "oauth-token-invalid": "Google nie zaakceptowało logowania. Pobierz nowy plik cookie i od razu go wklej: może szybko wygasnąć i działa tylko raz. Skopiuj całą wartość, zaczynającą się od oauth2_4/.",
       "master-token-invalid": "Google nie zaakceptowało tokenu głównego. Sprawdź, czy został poprawnie skopiowany. Jeśli wcześniej działał, na przykład do czasu zmiany hasła do konta Google, Google już go nie akceptuje: zamiast tego użyj logowania w przeglądarce.",
       "google-rejected": "Google nie zaakceptowało logowania. Szczegóły znajdziesz w logach Home Assistanta.",
       "google-unreachable": "Nie udało się połączyć z Google. Sprawdź, czy Home Assistant ma połączenie z internetem, a następnie spróbuj ponownie.",
       "google-busy": "Google jest przeciążone lub ogranicza liczbę logowań. Odczekaj kilka minut, a następnie zaloguj się ponownie.",
       "oauth-token-format": "To nie jest plik cookie oauth_token. Jego wartość zaczyna się od oauth2_4/.",
-      "master-token-format": "Token główny zaczyna się od aas_et/ i ma 223 znaki. Skopiuj cały token.",
+      "master-token-format": "Token główny zaczyna się od aas_et/. Wymagana liczba znaków: {token_length}. Skopiuj cały token.",
       "other-account": "Zalogowano się na inne konto Google, więc nic nie zostało zmienione. Zaloguj się na konto używane przez tę integrację. Aby zamiast tego używać tamtego konta, usuń integrację i dodaj ją ponownie.",
       "no-home-selected": "Wybierz co najmniej jeden dom."
     },
@@ -152,7 +152,7 @@
       "message": "Nie udało się pobrać aktualnych alarmów i timerów z urządzenia {device}, więc nic z niego nie usunięto. Sprawdź, czy urządzenie jest online, i spróbuj ponownie później."
     },
     "alarms_and_timers_not_fetched_token_rejected_polling_off": {
-      "message": "Nie udało się pobrać aktualnych alarmów i timerów z urządzenia {device}, więc nic z niego nie usunięto. Urządzenie odrzuciło swój token, a pobranie nowego z Google nie pomogło. Cykliczne odpytywanie jest wyłączone, więc integracja sama nie poprosi ponownie Google o nowy token: uruchom akcję „Odśwież urządzenia”, a potem spróbuj ponownie."
+      "message": "Nie udało się pobrać aktualnych alarmów i timerów z urządzenia {device}, więc nic z niego nie usunięto. Urządzenie odrzuciło swój token. Cykliczne odpytywanie jest wyłączone, więc integracja sama nie poprosi ponownie Google o nowy token: uruchom akcję „Odśwież urządzenia”, a potem spróbuj ponownie."
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Nie udało się pobrać aktualnych alarmów i timerów z tych urządzeń, więc nic z nich nie usunięto: {devices}. Sprawdź, czy urządzenia są online, i spróbuj ponownie później."
@@ -161,13 +161,13 @@
       "message": "Urządzenie {device} nie potwierdziło usunięcia alarmów lub timerów, więc mogą one nadal być ustawione. Sprawdź, czy urządzenie jest online, i spróbuj ponownie później."
     },
     "alarms_and_timers_not_deleted_token_rejected_polling_off": {
-      "message": "Urządzenie {device} nie potwierdziło usunięcia alarmów lub timerów, więc mogą one nadal być ustawione. Urządzenie odrzuciło swój token, a pobranie nowego z Google nie pomogło. Cykliczne odpytywanie jest wyłączone, więc integracja sama nie poprosi ponownie Google o nowy token: uruchom akcję „Odśwież urządzenia”, a potem spróbuj ponownie."
+      "message": "Urządzenie {device} nie potwierdziło usunięcia alarmów lub timerów, więc mogą one nadal być ustawione. Urządzenie odrzuciło swój token. Cykliczne odpytywanie jest wyłączone, więc integracja sama nie poprosi ponownie Google o nowy token: uruchom akcję „Odśwież urządzenia”, a potem spróbuj ponownie."
     },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "Nie udało się usunąć alarmów lub timerów z tych urządzeń albo potwierdzić ich usunięcia: {devices}. Sprawdź, czy urządzenia są online, i spróbuj ponownie później."
     },
     "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
-      "message": "Nie udało się usunąć alarmów lub timerów z tych urządzeń albo potwierdzić ich usunięcia: {devices}. Co najmniej jedno z nich odrzuciło swój token, a pobranie nowego z Google nie pomogło. Cykliczne odpytywanie jest wyłączone, więc integracja sama nie poprosi ponownie Google o nowy token: uruchom akcję „Odśwież urządzenia”, sprawdź, czy urządzenia są online, a potem spróbuj ponownie."
+      "message": "Nie udało się usunąć alarmów lub timerów z tych urządzeń albo potwierdzić ich usunięcia: {devices}. Co najmniej jedno z nich odrzuciło swój token. Cykliczne odpytywanie jest wyłączone, więc integracja sama nie poprosi ponownie Google o nowy token: uruchom akcję „Odśwież urządzenia”, sprawdź, czy urządzenia są online, a potem spróbuj ponownie."
     },
     "invalid_alarm_id": {
       "message": "„{alarm_id}” nie jest identyfikatorem alarmu. Skopiuj identyfikator zaczynający się od alarm/ z atrybutu alarms czujnika alarmów urządzenia."
@@ -188,10 +188,10 @@
       "message": "Urządzenie {device} nie potwierdziło, że wykonało akcję: nie odpowiedziało na czas lub jego odpowiedź została przerwana. Sprawdź, czy urządzenie jest online, i spróbuj ponownie."
     },
     "device_token_rejected": {
-      "message": "Urządzenie {device} odrzuciło swój token, a pobranie nowego z Google nie pomogło. Integracja nadal prosi Google o nowy, więc spróbuj ponownie później."
+      "message": "Urządzenie {device} odrzuciło swój token. Integracja nadal prosi Google o nowy, więc spróbuj ponownie później."
     },
     "device_token_rejected_polling_off": {
-      "message": "Urządzenie {device} odrzuciło swój token, a pobranie nowego z Google nie pomogło. Cykliczne odpytywanie jest wyłączone, więc integracja sama nie poprosi ponownie Google o nowy token: uruchom akcję „Odśwież urządzenia”, a potem spróbuj ponownie."
+      "message": "Urządzenie {device} odrzuciło swój token. Cykliczne odpytywanie jest wyłączone, więc integracja sama nie poprosi ponownie Google o nowy token: uruchom akcję „Odśwież urządzenia”, a potem spróbuj ponownie."
     },
     "device_not_ready": {
       "message": "Urządzenie {device} odpowiedziało „nie znaleziono”. Być może nadal się uruchamia, więc spróbuj ponownie później, albo może tego nie obsługiwać."
@@ -226,14 +226,14 @@
       }
     },
     "invalid_update_interval": {
-      "title": "Zapisany interwał aktualizacji jest krótszy niż 1 sekunda",
+      "title": "Zapisany interwał aktualizacji jest krótszy niż {min_interval} s",
       "fix_flow": {
         "step": {
           "init": {
-            "title": "Zapisany interwał aktualizacji jest krótszy niż 1 sekunda",
-            "description": "Interwał aktualizacji zapisany w opcjach integracji wynosi {interval} s, czyli mniej niż minimalna wartość 1 sekundy. Integracja używa zamiast tego wartości domyślnej i sprawdza Twoje urządzenia co 15 sekund.\n\nJeśli wartość 0 została zapisana po to, żeby zatrzymać te regularne sprawdzenia, wyłącz zamiast tego odpytywanie. W przeciwieństwie do 0 wyłączenie odpytywania zatrzymuje też wyszukiwanie urządzeń Bluetooth i dodawanie nowych urządzeń znalezionych przez mDNS. Szczegóły znajdziesz tutaj: {docs_url}.\n\nAby użyć innego interwału, otwórz [integrację Google Home]({integration_url}), wybierz **Konfiguruj**, wpisz go, a następnie wybierz **Zatwierdź**.",
+            "title": "Zapisany interwał aktualizacji jest krótszy niż {min_interval} s",
+            "description": "Interwał aktualizacji zapisany w opcjach integracji wynosi {interval} s, czyli mniej niż minimalna wartość {min_interval} s. Integracja używa zamiast tego wartości domyślnej i sprawdza Twoje urządzenia co {default_interval} s.\n\nJeśli wartość 0 została zapisana po to, żeby zatrzymać te regularne sprawdzenia, wyłącz zamiast tego odpytywanie. W przeciwieństwie do 0 wyłączenie odpytywania zatrzymuje też wyszukiwanie urządzeń Bluetooth i dodawanie nowych urządzeń znalezionych przez mDNS. Szczegóły znajdziesz tutaj: {docs_url}.\n\nAby użyć innego interwału, otwórz [integrację Google Home]({integration_url}), wybierz **Konfiguruj**, wpisz go, a następnie wybierz **Zatwierdź**.",
             "menu_options": {
-              "use_default": "Użyj domyślnych 15 sekund",
+              "use_default": "Użyj wartości domyślnej: {default_interval} s",
               "turn_off_polling": "Zamiast tego wyłącz odpytywanie"
             }
           }
@@ -317,7 +317,7 @@
             },
             "data_description": {
               "bluetooth_tracking": "Używaj głośników, aby sprawdzać, czy telefon lub inne urządzenia Bluetooth są w domu. Po włączeniu wybierz „Śledź urządzenie Bluetooth” na stronie integracji dla każdego urządzenia, które chcesz śledzić. Gdy śledzenie jest wyłączone, integracja nie wysyła do głośników żadnych żądań Bluetooth.",
-              "bluetooth_excluded_speakers": "Głośniki, które nie wyszukują urządzeń Bluetooth. Dodaj głośnik odłączony od zasilania lub niedziałający: dopóki głośnik nie odpowiada, trackery nie mogą pokazać stanu „poza domem”."
+              "bluetooth_excluded_speakers": "Głośniki, które nie wyszukują urządzeń Bluetooth. Dodaj głośnik odłączony od zasilania lub niedziałający."
             }
           }
         }

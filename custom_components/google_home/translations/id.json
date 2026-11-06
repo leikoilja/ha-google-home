@@ -9,13 +9,13 @@
           "master_token": "Token master"
         },
         "menu_option_descriptions": {
-          "browser": "Login ke Google melalui browser di komputer, lalu tempelkan cookie. Berfungsi untuk sebagian besar akun.",
+          "browser": "Login ke Google melalui browser di komputer, lalu tempelkan cookie.",
           "master_token": "Tempelkan token master yang sudah Anda miliki."
         }
       },
       "browser": {
         "title": "Login melalui browser",
-        "description": "1. Di komputer, buka {embedded_setup_url} di jendela penjelajahan pribadi browser, misalnya jendela Samaran, lalu login. Setelah Anda menyetujui, halaman mungkin terus memuat; ini normal.\n2. Buka alat developer browser dan cari cookie untuk `accounts.google.com`.\n3. Salin nilai cookie `oauth_token` dan segera tempelkan di bawah. Nilai ini kedaluwarsa dalam beberapa menit dan hanya dapat digunakan sekali.\n\nPetunjuk langkah demi langkah: {browser_docs_url}\n\nUntuk memilih cara login lain, tutup jendela ini dan tambahkan kembali integrasi.",
+        "description": "1. Di komputer, buka {embedded_setup_url} di jendela penjelajahan pribadi browser, misalnya jendela Samaran, lalu login. Setelah Anda menyetujui, halaman mungkin terus memuat; ini normal.\n2. Buka alat developer browser dan cari cookie untuk `accounts.google.com`.\n3. Salin nilai cookie `oauth_token` dan segera tempelkan di bawah. Nilai ini dapat kedaluwarsa dengan cepat dan hanya dapat digunakan sekali.\n\nPetunjuk langkah demi langkah: {browser_docs_url}\n\nUntuk memilih cara login lain, tutup jendela ini dan tambahkan kembali integrasi.",
         "data": {
           "oauth_token": "Cookie oauth_token"
         },
@@ -51,13 +51,13 @@
           "master_token": "Token master"
         },
         "menu_option_descriptions": {
-          "browser": "Login ke Google melalui browser di komputer, lalu tempelkan cookie. Berfungsi untuk sebagian besar akun.",
+          "browser": "Login ke Google melalui browser di komputer, lalu tempelkan cookie.",
           "master_token": "Tempelkan token master yang sudah Anda miliki."
         }
       },
       "reauth_browser": {
         "title": "Login melalui browser",
-        "description": "1. Di komputer, buka {embedded_setup_url} di jendela penjelajahan pribadi browser, misalnya jendela Samaran, lalu login ke akun Google yang sama. Setelah Anda menyetujui, halaman mungkin terus memuat; ini normal.\n2. Buka alat developer browser dan cari cookie untuk `accounts.google.com`.\n3. Salin nilai cookie `oauth_token` dan segera tempelkan di bawah. Nilai ini kedaluwarsa dalam beberapa menit dan hanya dapat digunakan sekali.\n\nPetunjuk langkah demi langkah: {browser_docs_url}",
+        "description": "1. Di komputer, buka {embedded_setup_url} di jendela penjelajahan pribadi browser, misalnya jendela Samaran, lalu login ke akun Google yang sama. Setelah Anda menyetujui, halaman mungkin terus memuat; ini normal.\n2. Buka alat developer browser dan cari cookie untuk `accounts.google.com`.\n3. Salin nilai cookie `oauth_token` dan segera tempelkan di bawah. Nilai ini dapat kedaluwarsa dengan cepat dan hanya dapat digunakan sekali.\n\nPetunjuk langkah demi langkah: {browser_docs_url}",
         "data": {
           "oauth_token": "Cookie oauth_token"
         },
@@ -77,13 +77,13 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "Google tidak menerima cookie tersebut. Dapatkan cookie baru dan segera tempelkan: cookie kedaluwarsa dalam beberapa menit dan hanya dapat digunakan sekali. Salin seluruh nilai yang diawali dengan oauth2_4/.",
+      "oauth-token-invalid": "Google tidak menerima login tersebut. Dapatkan cookie baru dan segera tempelkan: cookie dapat kedaluwarsa dengan cepat dan hanya dapat digunakan sekali. Salin seluruh nilai yang diawali dengan oauth2_4/.",
       "master-token-invalid": "Google tidak menerima token master tersebut. Pastikan Anda menyalinnya dengan benar. Jika sebelumnya token berfungsi, misalnya hingga Anda mengubah sandi Google, Google tidak lagi menerimanya: gunakan login melalui browser sebagai gantinya.",
       "google-rejected": "Google tidak menerima login tersebut. Untuk detailnya, lihat log Home Assistant.",
       "google-unreachable": "Tidak dapat terhubung ke Google. Pastikan Home Assistant terhubung ke internet, lalu coba lagi.",
       "google-busy": "Google sedang sibuk atau membatasi login. Tunggu beberapa menit, lalu login ulang.",
       "oauth-token-format": "Ini bukan cookie oauth_token. Nilainya diawali dengan oauth2_4/.",
-      "master-token-format": "Token master diawali dengan aas_et/ dan panjangnya 223 karakter. Salin seluruh token.",
+      "master-token-format": "Token master diawali dengan aas_et/ dan panjangnya {token_length} karakter. Salin seluruh token.",
       "other-account": "Anda login ke akun Google yang berbeda, sehingga tidak ada yang diubah. Login dengan akun yang digunakan integrasi ini. Untuk menggunakan akun lain tersebut, hapus integrasi lalu tambahkan kembali.",
       "no-home-selected": "Pilih minimal satu rumah."
     },
@@ -152,7 +152,7 @@
       "message": "Tidak dapat mengambil alarm dan timer saat ini dari perangkat {device}, sehingga tidak ada yang dihapus dari perangkat tersebut. Pastikan perangkat online dan coba lagi nanti."
     },
     "alarms_and_timers_not_fetched_token_rejected_polling_off": {
-      "message": "Tidak dapat mengambil alarm dan timer saat ini dari perangkat {device}, sehingga tidak ada yang dihapus dari perangkat tersebut. Perangkat tersebut menolak tokennya, dan mendapatkan token baru dari Google tidak membantu. Polling untuk perubahan dinonaktifkan, sehingga integrasi tidak meminta token baru dari Google lagi secara mandiri: jalankan aksi “Perbarui status perangkat”, lalu coba lagi."
+      "message": "Tidak dapat mengambil alarm dan timer saat ini dari perangkat {device}, sehingga tidak ada yang dihapus dari perangkat tersebut. Perangkat tersebut menolak tokennya. Polling untuk perubahan dinonaktifkan, sehingga integrasi tidak meminta token baru dari Google lagi secara mandiri: jalankan aksi “Perbarui status perangkat”, lalu coba lagi."
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Tidak dapat mengambil alarm dan timer saat ini dari perangkat berikut, sehingga tidak ada yang dihapus dari perangkat tersebut: {devices}. Pastikan semuanya online dan coba lagi nanti."
@@ -161,13 +161,13 @@
       "message": "Perangkat {device} tidak mengonfirmasi penghapusan alarm atau timer, sehingga alarm atau timer tersebut mungkin masih disetel. Pastikan perangkat online dan coba lagi nanti."
     },
     "alarms_and_timers_not_deleted_token_rejected_polling_off": {
-      "message": "Perangkat {device} tidak mengonfirmasi penghapusan alarm atau timer, sehingga alarm atau timer tersebut mungkin masih disetel. Perangkat tersebut menolak tokennya, dan mendapatkan token baru dari Google tidak membantu. Polling untuk perubahan dinonaktifkan, sehingga integrasi tidak meminta token baru dari Google lagi secara mandiri: jalankan aksi “Perbarui status perangkat”, lalu coba lagi."
+      "message": "Perangkat {device} tidak mengonfirmasi penghapusan alarm atau timer, sehingga alarm atau timer tersebut mungkin masih disetel. Perangkat tersebut menolak tokennya. Polling untuk perubahan dinonaktifkan, sehingga integrasi tidak meminta token baru dari Google lagi secara mandiri: jalankan aksi “Perbarui status perangkat”, lalu coba lagi."
     },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "Tidak dapat menghapus alarm atau timer dari perangkat berikut, atau mengonfirmasi bahwa alarm atau timer tersebut telah dihapus: {devices}. Pastikan semuanya online dan coba lagi nanti."
     },
     "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
-      "message": "Tidak dapat menghapus alarm atau timer dari perangkat berikut, atau mengonfirmasi bahwa alarm atau timer tersebut telah dihapus: {devices}. Setidaknya salah satu di antaranya menolak tokennya, dan mendapatkan token baru dari Google tidak membantu. Polling untuk perubahan dinonaktifkan, sehingga integrasi tidak meminta token baru dari Google lagi secara mandiri: jalankan aksi “Perbarui status perangkat”, pastikan semua perangkat tersebut online, lalu coba lagi."
+      "message": "Tidak dapat menghapus alarm atau timer dari perangkat berikut, atau mengonfirmasi bahwa alarm atau timer tersebut telah dihapus: {devices}. Setidaknya salah satu di antaranya menolak tokennya. Polling untuk perubahan dinonaktifkan, sehingga integrasi tidak meminta token baru dari Google lagi secara mandiri: jalankan aksi “Perbarui status perangkat”, pastikan semua perangkat tersebut online, lalu coba lagi."
     },
     "invalid_alarm_id": {
       "message": "“{alarm_id}” bukan ID alarm. Salin ID yang diawali dengan alarm/ dari atribut alarms pada sensor alarm perangkat."
@@ -188,10 +188,10 @@
       "message": "Perangkat {device} tidak mengonfirmasi bahwa tindakan ini sudah dilakukan: perangkat tidak merespons tepat waktu, atau responsnya terputus. Pastikan perangkat online dan coba lagi."
     },
     "device_token_rejected": {
-      "message": "Perangkat {device} menolak tokennya, dan mendapatkan token baru dari Google tidak membantu. Integrasi terus meminta token baru dari Google, jadi coba lagi nanti."
+      "message": "Perangkat {device} menolak tokennya. Integrasi terus meminta token baru dari Google, jadi coba lagi nanti."
     },
     "device_token_rejected_polling_off": {
-      "message": "Perangkat {device} menolak tokennya, dan mendapatkan token baru dari Google tidak membantu. Polling untuk perubahan dinonaktifkan, sehingga integrasi tidak meminta token baru dari Google lagi secara mandiri: jalankan aksi “Perbarui status perangkat”, lalu coba lagi."
+      "message": "Perangkat {device} menolak tokennya. Polling untuk perubahan dinonaktifkan, sehingga integrasi tidak meminta token baru dari Google lagi secara mandiri: jalankan aksi “Perbarui status perangkat”, lalu coba lagi."
     },
     "device_not_ready": {
       "message": "Perangkat {device} merespons “tidak ditemukan”. Perangkat mungkin masih dalam proses penyalaan, jadi coba lagi nanti, atau mungkin tidak mendukung tindakan ini."
@@ -226,14 +226,14 @@
       }
     },
     "invalid_update_interval": {
-      "title": "Interval pembaruan yang disimpan kurang dari 1 detik",
+      "title": "Interval pembaruan yang disimpan kurang dari {min_interval} detik",
       "fix_flow": {
         "step": {
           "init": {
-            "title": "Interval pembaruan yang disimpan kurang dari 1 detik",
-            "description": "Interval pembaruan yang disimpan di opsi integrasi adalah {interval} detik, di bawah batas minimum 1 detik. Integrasi menggunakan nilai default sebagai gantinya dan memeriksa perangkat Anda setiap 15 detik.\n\nJika Anda menyimpan 0 untuk menghentikan pemeriksaan rutin ini, nonaktifkan polling sebagai gantinya. Berbeda dengan 0, cara ini juga menghentikan pemindaian perangkat Bluetooth dan penambahan perangkat baru yang ditemukan mDNS. Untuk detailnya, lihat {docs_url}.\n\nUntuk menggunakan interval lain, buka [integrasi Google Home]({integration_url}), pilih **Konfigurasikan**, masukkan intervalnya, lalu pilih **Kirimkan**.",
+            "title": "Interval pembaruan yang disimpan kurang dari {min_interval} detik",
+            "description": "Interval pembaruan yang disimpan di opsi integrasi adalah {interval} detik, di bawah batas minimum {min_interval} detik. Integrasi menggunakan nilai default sebagai gantinya dan memeriksa perangkat Anda setiap {default_interval} detik.\n\nJika Anda menyimpan 0 untuk menghentikan pemeriksaan rutin ini, nonaktifkan polling sebagai gantinya. Berbeda dengan 0, cara ini juga menghentikan pemindaian perangkat Bluetooth dan penambahan perangkat baru yang ditemukan mDNS. Untuk detailnya, lihat {docs_url}.\n\nUntuk menggunakan interval lain, buka [integrasi Google Home]({integration_url}), pilih **Konfigurasikan**, masukkan intervalnya, lalu pilih **Kirimkan**.",
             "menu_options": {
-              "use_default": "Gunakan nilai default 15 detik",
+              "use_default": "Gunakan nilai default {default_interval} detik",
               "turn_off_polling": "Nonaktifkan polling sebagai gantinya"
             }
           }
@@ -317,7 +317,7 @@
             },
             "data_description": {
               "bluetooth_tracking": "Gunakan speaker Anda untuk mengetahui apakah ponsel Anda atau perangkat Bluetooth lain ada di rumah. Setelah mengaktifkannya, pilih “Lacak perangkat Bluetooth” di halaman integrasi untuk setiap perangkat yang ingin dilacak. Selama nonaktif, integrasi tidak mengirim permintaan Bluetooth apa pun ke speaker Anda.",
-              "bluetooth_excluded_speakers": "Speaker yang tidak memindai perangkat Bluetooth. Tambahkan speaker yang dicabut atau tidak berfungsi: selama speaker tidak merespons, pelacak tidak dapat menampilkan “Keluar”."
+              "bluetooth_excluded_speakers": "Speaker yang tidak memindai perangkat Bluetooth. Tambahkan speaker yang dicabut atau tidak berfungsi."
             }
           }
         }

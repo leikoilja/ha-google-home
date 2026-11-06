@@ -9,13 +9,13 @@
           "master_token": "Hlavný token"
         },
         "menu_option_descriptions": {
-          "browser": "Prihláste sa do Google v prehliadači na počítači a potom vložte súbor cookie. Funguje pre väčšinu účtov.",
+          "browser": "Prihláste sa do Google v prehliadači na počítači a potom vložte súbor cookie.",
           "master_token": "Vložte hlavný token, ktorý už máte."
         }
       },
       "browser": {
         "title": "Prihlásenie v prehliadači",
-        "description": "1. Na počítači otvorte {embedded_setup_url} v súkromnom okne prehliadača a prihláste sa. Po potvrdení sa stránka môže naďalej načítavať; je to očakávané.\n2. Otvorte nástroje pre vývojárov v prehliadači a nájdite súbory cookie pre `accounts.google.com`.\n3. Skopírujte hodnotu súboru cookie `oauth_token` a hneď ju vložte nižšie. Jeho platnosť vyprší o niekoľko minút a funguje len raz.\n\nPodrobný návod: {browser_docs_url}\n\nAk chcete zvoliť iný spôsob prihlásenia, zatvorte toto okno a pridajte integráciu znova.",
+        "description": "1. Na počítači otvorte {embedded_setup_url} v súkromnom okne prehliadača a prihláste sa. Po potvrdení sa stránka môže naďalej načítavať; je to očakávané.\n2. Otvorte nástroje pre vývojárov v prehliadači a nájdite súbory cookie pre `accounts.google.com`.\n3. Skopírujte hodnotu súboru cookie `oauth_token` a hneď ju vložte nižšie. Jeho platnosť môže rýchlo vypršať a funguje len raz.\n\nPodrobný návod: {browser_docs_url}\n\nAk chcete zvoliť iný spôsob prihlásenia, zatvorte toto okno a pridajte integráciu znova.",
         "data": {
           "oauth_token": "Súbor cookie oauth_token"
         },
@@ -51,13 +51,13 @@
           "master_token": "Hlavný token"
         },
         "menu_option_descriptions": {
-          "browser": "Prihláste sa do Google v prehliadači na počítači a potom vložte súbor cookie. Funguje pre väčšinu účtov.",
+          "browser": "Prihláste sa do Google v prehliadači na počítači a potom vložte súbor cookie.",
           "master_token": "Vložte hlavný token, ktorý už máte."
         }
       },
       "reauth_browser": {
         "title": "Prihlásenie v prehliadači",
-        "description": "1. Na počítači otvorte {embedded_setup_url} v súkromnom okne prehliadača a prihláste sa do toho istého účtu Google. Po potvrdení sa stránka môže naďalej načítavať; je to očakávané.\n2. Otvorte nástroje pre vývojárov v prehliadači a nájdite súbory cookie pre `accounts.google.com`.\n3. Skopírujte hodnotu súboru cookie `oauth_token` a hneď ju vložte nižšie. Jeho platnosť vyprší o niekoľko minút a funguje len raz.\n\nPodrobný návod: {browser_docs_url}",
+        "description": "1. Na počítači otvorte {embedded_setup_url} v súkromnom okne prehliadača a prihláste sa do toho istého účtu Google. Po potvrdení sa stránka môže naďalej načítavať; je to očakávané.\n2. Otvorte nástroje pre vývojárov v prehliadači a nájdite súbory cookie pre `accounts.google.com`.\n3. Skopírujte hodnotu súboru cookie `oauth_token` a hneď ju vložte nižšie. Jeho platnosť môže rýchlo vypršať a funguje len raz.\n\nPodrobný návod: {browser_docs_url}",
         "data": {
           "oauth_token": "Súbor cookie oauth_token"
         },
@@ -77,13 +77,13 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "Google súbor cookie neprijal. Získajte nový a hneď ho vložte: jeho platnosť vyprší o niekoľko minút a funguje len raz. Skopírujte celú hodnotu, ktorá sa začína oauth2_4/.",
+      "oauth-token-invalid": "Google prihlásenie neprijal. Získajte nový súbor cookie a hneď ho vložte: jeho platnosť môže rýchlo vypršať a funguje len raz. Skopírujte celú hodnotu, ktorá sa začína oauth2_4/.",
       "master-token-invalid": "Google hlavný token neprijal. Skontrolujte, či ste ho skopírovali správne. Ak predtým fungoval, napríklad kým ste nezmenili heslo k účtu Google, Google ho už neprijíma: namiesto toho použite prihlásenie v prehliadači.",
       "google-rejected": "Google prihlásenie neprijal. Podrobnosti nájdete v protokoloch Home Assistant.",
       "google-unreachable": "Nepodarilo sa pripojiť ku Googlu. Skontrolujte, či je Home Assistant pripojený k internetu, a skúste to znova.",
       "google-busy": "Google je preťažený alebo obmedzuje prihlasovanie. Počkajte niekoľko minút a potom sa znova prihláste.",
       "oauth-token-format": "Toto nie je súbor cookie oauth_token. Jeho hodnota sa začína oauth2_4/.",
-      "master-token-format": "Hlavný token sa začína aas_et/ a má 223 znakov. Skopírujte celý token.",
+      "master-token-format": "Hlavný token sa začína aas_et/ a má {token_length} znakov. Skopírujte celý token.",
       "other-account": "Prihlásili ste sa do iného účtu Google, preto sa nič nezmenilo. Prihláste sa do účtu, ktorý táto integrácia používa. Ak chcete namiesto toho používať ten druhý účet, integráciu odstráňte a pridajte ju znova.",
       "no-home-selected": "Vyberte aspoň jednu domácnosť."
     },
@@ -152,7 +152,7 @@
       "message": "Nepodarilo sa načítať aktuálne budíky a časovače zo zariadenia {device}, preto sa z neho nič neodstránilo. Skontrolujte, či je zariadenie online, a skúste to znova neskôr."
     },
     "alarms_and_timers_not_fetched_token_rejected_polling_off": {
-      "message": "Nepodarilo sa načítať aktuálne budíky a časovače zo zariadenia {device}, preto sa z neho nič neodstránilo. Zariadenie odmietlo svoj token a získanie nového od Googlu nepomohlo. Dotazovanie na zmeny je vypnuté, takže integrácia sama znova nežiada Google o nový token: spustite akciu „Obnoviť zariadenia“ a potom to skúste znova."
+      "message": "Nepodarilo sa načítať aktuálne budíky a časovače zo zariadenia {device}, preto sa z neho nič neodstránilo. Zariadenie odmietlo svoj token. Dotazovanie na zmeny je vypnuté, takže integrácia sama znova nežiada Google o nový token: spustite akciu „Obnoviť zariadenia“ a potom to skúste znova."
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Nepodarilo sa načítať aktuálne budíky a časovače z nasledujúcich zariadení, preto sa z nich nič neodstránilo: {devices}. Skontrolujte, či sú zariadenia online, a skúste to znova neskôr."
@@ -161,13 +161,13 @@
       "message": "Zariadenie {device} nepotvrdilo odstránenie budíkov alebo časovačov, takže môžu byť stále nastavené. Skontrolujte, či je zariadenie online, a skúste to znova neskôr."
     },
     "alarms_and_timers_not_deleted_token_rejected_polling_off": {
-      "message": "Zariadenie {device} nepotvrdilo odstránenie budíkov alebo časovačov, takže môžu byť stále nastavené. Zariadenie odmietlo svoj token a získanie nového od Googlu nepomohlo. Dotazovanie na zmeny je vypnuté, takže integrácia sama znova nežiada Google o nový token: spustite akciu „Obnoviť zariadenia“ a potom to skúste znova."
+      "message": "Zariadenie {device} nepotvrdilo odstránenie budíkov alebo časovačov, takže môžu byť stále nastavené. Zariadenie odmietlo svoj token. Dotazovanie na zmeny je vypnuté, takže integrácia sama znova nežiada Google o nový token: spustite akciu „Obnoviť zariadenia“ a potom to skúste znova."
     },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "Nepodarilo sa odstrániť budíky alebo časovače z nasledujúcich zariadení alebo potvrdiť ich odstránenie: {devices}. Skontrolujte, či sú zariadenia online, a skúste to znova neskôr."
     },
     "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
-      "message": "Nepodarilo sa odstrániť budíky alebo časovače z nasledujúcich zariadení alebo potvrdiť ich odstránenie: {devices}. Aspoň jedno z nich odmietlo svoj token a získanie nového od Googlu nepomohlo. Dotazovanie na zmeny je vypnuté, takže integrácia sama znova nežiada Google o nový token: spustite akciu „Obnoviť zariadenia“, skontrolujte, či sú zariadenia online, a potom to skúste znova."
+      "message": "Nepodarilo sa odstrániť budíky alebo časovače z nasledujúcich zariadení alebo potvrdiť ich odstránenie: {devices}. Aspoň jedno z nich odmietlo svoj token. Dotazovanie na zmeny je vypnuté, takže integrácia sama znova nežiada Google o nový token: spustite akciu „Obnoviť zariadenia“, skontrolujte, či sú zariadenia online, a potom to skúste znova."
     },
     "invalid_alarm_id": {
       "message": "„{alarm_id}“ nie je ID budíka. Skopírujte ID začínajúce na alarm/ z atribútu alarms senzora budíkov daného zariadenia."
@@ -188,10 +188,10 @@
       "message": "Zariadenie {device} nepotvrdilo, že akciu vykonalo: neodpovedalo včas alebo sa jeho odpoveď prerušila. Skontrolujte, či je zariadenie online, a skúste to znova."
     },
     "device_token_rejected": {
-      "message": "Zariadenie {device} odmietlo svoj token a získanie nového od Googlu nepomohlo. Integrácia bude naďalej žiadať Google o nový, takže to skúste znova neskôr."
+      "message": "Zariadenie {device} odmietlo svoj token. Integrácia bude naďalej žiadať Google o nový, takže to skúste znova neskôr."
     },
     "device_token_rejected_polling_off": {
-      "message": "Zariadenie {device} odmietlo svoj token a získanie nového od Googlu nepomohlo. Dotazovanie na zmeny je vypnuté, takže integrácia sama znova nežiada Google o nový token: spustite akciu „Obnoviť zariadenia“ a potom to skúste znova."
+      "message": "Zariadenie {device} odmietlo svoj token. Dotazovanie na zmeny je vypnuté, takže integrácia sama znova nežiada Google o nový token: spustite akciu „Obnoviť zariadenia“ a potom to skúste znova."
     },
     "device_not_ready": {
       "message": "Zariadenie {device} odpovedalo „nenájdené“. Možno sa ešte spúšťa, takže to skúste znova neskôr, alebo to možno nepodporuje."
@@ -226,14 +226,14 @@
       }
     },
     "invalid_update_interval": {
-      "title": "Uložený interval aktualizácie je kratší ako 1 sekunda",
+      "title": "Uložený interval aktualizácie je kratší ako {min_interval} s",
       "fix_flow": {
         "step": {
           "init": {
-            "title": "Uložený interval aktualizácie je kratší ako 1 sekunda",
-            "description": "Interval aktualizácie uložený v možnostiach integrácie je {interval} s, čo je menej ako minimum 1 sekunda. Integrácia preto používa predvolenú hodnotu a kontroluje vaše zariadenia každých 15 sekúnd.\n\nAk ste uložili 0, aby ste tieto pravidelné kontroly zastavili, vypnite namiesto toho dotazovanie. Na rozdiel od 0 vypnuté dotazovanie zastaví aj vyhľadávanie zariadení Bluetooth a pridávanie nových zariadení, ktoré nájde mDNS. Podrobnosti nájdete tu: {docs_url}.\n\nAk chcete použiť iný interval, otvorte [integráciu Google Home]({integration_url}), vyberte **Konfigurovať**, zadajte ho a potom vyberte **Odoslať**.",
+            "title": "Uložený interval aktualizácie je kratší ako {min_interval} s",
+            "description": "Interval aktualizácie uložený v možnostiach integrácie je {interval} s, čo je menej ako minimum {min_interval} s. Integrácia preto používa predvolenú hodnotu a kontroluje vaše zariadenia v intervale {default_interval} s.\n\nAk ste uložili 0, aby ste tieto pravidelné kontroly zastavili, vypnite namiesto toho dotazovanie. Na rozdiel od 0 vypnuté dotazovanie zastaví aj vyhľadávanie zariadení Bluetooth a pridávanie nových zariadení, ktoré nájde mDNS. Podrobnosti nájdete tu: {docs_url}.\n\nAk chcete použiť iný interval, otvorte [integráciu Google Home]({integration_url}), vyberte **Konfigurovať**, zadajte ho a potom vyberte **Odoslať**.",
             "menu_options": {
-              "use_default": "Použiť predvolených 15 sekúnd",
+              "use_default": "Použiť predvolenú hodnotu {default_interval} s",
               "turn_off_polling": "Namiesto toho vypnúť dotazovanie"
             }
           }
@@ -317,7 +317,7 @@
             },
             "data_description": {
               "bluetooth_tracking": "Pomocou reproduktorov zistíte, či je váš telefón alebo iné zariadenia Bluetooth doma. Po zapnutí vyberte na stránke integrácie „Sledovať zariadenie Bluetooth“ pre každé zariadenie, ktoré chcete sledovať. Kým je sledovanie vypnuté, integrácia neposiela reproduktorom žiadne požiadavky Bluetooth.",
-              "bluetooth_excluded_speakers": "Reproduktory, ktoré nevyhľadávajú zariadenia Bluetooth. Pridajte reproduktor, ktorý je odpojený alebo mimo prevádzky: kým reproduktor neodpovedá, sledovače nemôžu zobraziť „Neprítomnosť“."
+              "bluetooth_excluded_speakers": "Reproduktory, ktoré nevyhľadávajú zariadenia Bluetooth. Pridajte reproduktor, ktorý je odpojený alebo mimo prevádzky."
             }
           }
         }

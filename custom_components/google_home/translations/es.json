@@ -9,13 +9,13 @@
           "master_token": "Token maestro"
         },
         "menu_option_descriptions": {
-          "browser": "Inicia sesión en Google en un navegador de ordenador y después pega una cookie. Funciona con la mayoría de las cuentas.",
+          "browser": "Inicia sesión en Google en un navegador de ordenador y después pega una cookie.",
           "master_token": "Pega un token maestro que ya tengas."
         }
       },
       "browser": {
         "title": "Inicio de sesión en el navegador",
-        "description": "1. En un ordenador, abre {embedded_setup_url} en una ventana de navegación privada e inicia sesión. Después de aceptar, puede que la página siga cargando; es normal.\n2. Abre las herramientas para desarrolladores del navegador y busca las cookies de `accounts.google.com`.\n3. Copia el valor de la cookie `oauth_token` y pégalo abajo enseguida. Caduca en pocos minutos y solo funciona una vez.\n\nInstrucciones paso a paso (en inglés): {browser_docs_url}\n\nPara elegir otra forma de iniciar sesión, cierra esta ventana y vuelve a añadir la integración.",
+        "description": "1. En un ordenador, abre {embedded_setup_url} en una ventana de navegación privada e inicia sesión. Después de aceptar, puede que la página siga cargando; es normal.\n2. Abre las herramientas para desarrolladores del navegador y busca las cookies de `accounts.google.com`.\n3. Copia el valor de la cookie `oauth_token` y pégalo abajo enseguida. Puede caducar rápidamente y solo funciona una vez.\n\nInstrucciones paso a paso (en inglés): {browser_docs_url}\n\nPara elegir otra forma de iniciar sesión, cierra esta ventana y vuelve a añadir la integración.",
         "data": {
           "oauth_token": "Cookie oauth_token"
         },
@@ -51,13 +51,13 @@
           "master_token": "Token maestro"
         },
         "menu_option_descriptions": {
-          "browser": "Inicia sesión en Google en un navegador de ordenador y después pega una cookie. Funciona con la mayoría de las cuentas.",
+          "browser": "Inicia sesión en Google en un navegador de ordenador y después pega una cookie.",
           "master_token": "Pega un token maestro que ya tengas."
         }
       },
       "reauth_browser": {
         "title": "Inicio de sesión en el navegador",
-        "description": "1. En un ordenador, abre {embedded_setup_url} en una ventana de navegación privada e inicia sesión en la misma cuenta de Google. Después de aceptar, puede que la página siga cargando; es normal.\n2. Abre las herramientas para desarrolladores del navegador y busca las cookies de `accounts.google.com`.\n3. Copia el valor de la cookie `oauth_token` y pégalo abajo enseguida. Caduca en pocos minutos y solo funciona una vez.\n\nInstrucciones paso a paso (en inglés): {browser_docs_url}",
+        "description": "1. En un ordenador, abre {embedded_setup_url} en una ventana de navegación privada e inicia sesión en la misma cuenta de Google. Después de aceptar, puede que la página siga cargando; es normal.\n2. Abre las herramientas para desarrolladores del navegador y busca las cookies de `accounts.google.com`.\n3. Copia el valor de la cookie `oauth_token` y pégalo abajo enseguida. Puede caducar rápidamente y solo funciona una vez.\n\nInstrucciones paso a paso (en inglés): {browser_docs_url}",
         "data": {
           "oauth_token": "Cookie oauth_token"
         },
@@ -77,13 +77,13 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "Google no ha aceptado la cookie. Consigue una nueva y pégala enseguida: caduca en pocos minutos y solo funciona una vez. Copia el valor completo, que empieza por oauth2_4/.",
+      "oauth-token-invalid": "Google no ha aceptado el inicio de sesión. Consigue una cookie nueva y pégala enseguida: puede caducar rápidamente y solo funciona una vez. Copia el valor completo, que empieza por oauth2_4/.",
       "master-token-invalid": "Google no ha aceptado el token maestro. Comprueba que lo has copiado correctamente. Si antes funcionaba, por ejemplo hasta que cambiaste tu contraseña de Google, Google ya no lo acepta: usa en su lugar el inicio de sesión en el navegador.",
       "google-rejected": "Google no ha aceptado el inicio de sesión. Para ver los detalles, consulta los registros de Home Assistant.",
       "google-unreachable": "No se ha podido conectar con Google. Comprueba que Home Assistant esté conectado a Internet y vuelve a intentarlo.",
       "google-busy": "Google está ocupado o está limitando los inicios de sesión. Espera unos minutos y vuelve a iniciar sesión.",
       "oauth-token-format": "Esta no es la cookie oauth_token. Su valor empieza por oauth2_4/.",
-      "master-token-format": "Un token maestro empieza por aas_et/ y tiene 223 caracteres. Copia el token completo.",
+      "master-token-format": "Un token maestro empieza por aas_et/ y tiene {token_length} caracteres. Copia el token completo.",
       "other-account": "Has iniciado sesión en otra cuenta de Google, por lo que no se ha cambiado nada. Inicia sesión con la cuenta que usa esta integración. Para usar esa otra cuenta, elimina la integración y vuelve a añadirla.",
       "no-home-selected": "Elige al menos una casa."
     },
@@ -152,7 +152,7 @@
       "message": "No se han podido obtener las alarmas y los temporizadores actuales de {device}, por lo que no se ha eliminado nada de ese dispositivo. Comprueba que esté en línea y vuelve a intentarlo más tarde."
     },
     "alarms_and_timers_not_fetched_token_rejected_polling_off": {
-      "message": "No se han podido obtener las alarmas y los temporizadores actuales de {device}, por lo que no se ha eliminado nada de ese dispositivo. El dispositivo ha rechazado su token y obtener uno nuevo de Google no ha servido de nada. El sondeo de cambios está deshabilitado, así que la integración no vuelve a pedir uno a Google por sí misma: ejecuta la acción «Actualizar dispositivos» y vuelve a intentarlo."
+      "message": "No se han podido obtener las alarmas y los temporizadores actuales de {device}, por lo que no se ha eliminado nada de ese dispositivo. El dispositivo ha rechazado su token. El sondeo de cambios está deshabilitado, así que la integración no vuelve a pedir uno a Google por sí misma: ejecuta la acción «Actualizar dispositivos» y vuelve a intentarlo."
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "No se han podido obtener las alarmas y los temporizadores actuales de estos dispositivos, por lo que no se ha eliminado nada de ellos: {devices}. Comprueba que estén en línea y vuelve a intentarlo más tarde."
@@ -161,13 +161,13 @@
       "message": "{device} no ha confirmado la eliminación de las alarmas o los temporizadores, por lo que podrían seguir configurados. Comprueba que esté en línea y vuelve a intentarlo más tarde."
     },
     "alarms_and_timers_not_deleted_token_rejected_polling_off": {
-      "message": "{device} no ha confirmado la eliminación de las alarmas o los temporizadores, por lo que podrían seguir configurados. El dispositivo ha rechazado su token y obtener uno nuevo de Google no ha servido de nada. El sondeo de cambios está deshabilitado, así que la integración no vuelve a pedir uno a Google por sí misma: ejecuta la acción «Actualizar dispositivos» y vuelve a intentarlo."
+      "message": "{device} no ha confirmado la eliminación de las alarmas o los temporizadores, por lo que podrían seguir configurados. El dispositivo ha rechazado su token. El sondeo de cambios está deshabilitado, así que la integración no vuelve a pedir uno a Google por sí misma: ejecuta la acción «Actualizar dispositivos» y vuelve a intentarlo."
     },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "No se han podido eliminar las alarmas o los temporizadores de estos dispositivos, o confirmar que se hayan eliminado: {devices}. Comprueba que estén en línea y vuelve a intentarlo más tarde."
     },
     "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
-      "message": "No se han podido eliminar las alarmas o los temporizadores de estos dispositivos, o confirmar que se hayan eliminado: {devices}. Al menos uno de ellos ha rechazado su token y obtener uno nuevo de Google no ha servido de nada. El sondeo de cambios está deshabilitado, así que la integración no vuelve a pedir uno a Google por sí misma: ejecuta la acción «Actualizar dispositivos», comprueba que los dispositivos estén en línea y vuelve a intentarlo."
+      "message": "No se han podido eliminar las alarmas o los temporizadores de estos dispositivos, o confirmar que se hayan eliminado: {devices}. Al menos uno de ellos ha rechazado su token. El sondeo de cambios está deshabilitado, así que la integración no vuelve a pedir uno a Google por sí misma: ejecuta la acción «Actualizar dispositivos», comprueba que los dispositivos estén en línea y vuelve a intentarlo."
     },
     "invalid_alarm_id": {
       "message": "«{alarm_id}» no es un ID de alarma. Copia el ID, que empieza por alarm/, del atributo alarms del sensor de alarmas del dispositivo."
@@ -188,10 +188,10 @@
       "message": "{device} no ha confirmado que lo haya hecho: no ha respondido a tiempo o su respuesta se ha cortado. Comprueba que esté en línea y vuelve a intentarlo."
     },
     "device_token_rejected": {
-      "message": "{device} ha rechazado su token y obtener uno nuevo de Google no ha servido de nada. La integración sigue pidiendo uno nuevo a Google, así que vuelve a intentarlo más tarde."
+      "message": "{device} ha rechazado su token. La integración sigue pidiendo uno nuevo a Google, así que vuelve a intentarlo más tarde."
     },
     "device_token_rejected_polling_off": {
-      "message": "{device} ha rechazado su token y obtener uno nuevo de Google no ha servido de nada. El sondeo de cambios está deshabilitado, así que la integración no vuelve a pedir uno a Google por sí misma: ejecuta la acción «Actualizar dispositivos» y vuelve a intentarlo."
+      "message": "{device} ha rechazado su token. El sondeo de cambios está deshabilitado, así que la integración no vuelve a pedir uno a Google por sí misma: ejecuta la acción «Actualizar dispositivos» y vuelve a intentarlo."
     },
     "device_not_ready": {
       "message": "{device} ha respondido «no encontrado». Puede que aún se esté iniciando, así que vuelve a intentarlo más tarde, o que no admita esta acción."
@@ -226,14 +226,14 @@
       }
     },
     "invalid_update_interval": {
-      "title": "El intervalo de actualización guardado es inferior a 1 segundo",
+      "title": "El intervalo de actualización guardado es inferior a {min_interval} s",
       "fix_flow": {
         "step": {
           "init": {
-            "title": "El intervalo de actualización guardado es inferior a 1 segundo",
-            "description": "El intervalo de actualización guardado en las opciones de la integración es de {interval} s, por debajo del mínimo de 1 segundo. La integración usa en su lugar el valor por defecto y consulta tus dispositivos cada 15 segundos.\n\nSi guardaste 0 para detener estas consultas periódicas, deshabilita el sondeo en su lugar. A diferencia de 0, deshabilitar el sondeo también detiene la búsqueda de dispositivos Bluetooth y la adición de los dispositivos nuevos que encuentra mDNS. Para más detalles, consulta {docs_url} (en inglés).\n\nPara usar otro intervalo, abre la [integración Google Home]({integration_url}), selecciona **Configurar**, introdúcelo y luego selecciona **Enviar**.",
+            "title": "El intervalo de actualización guardado es inferior a {min_interval} s",
+            "description": "El intervalo de actualización guardado en las opciones de la integración es de {interval} s, por debajo del mínimo de {min_interval} s. La integración usa en su lugar el valor por defecto y consulta tus dispositivos cada {default_interval} s.\n\nSi guardaste 0 para detener estas consultas periódicas, deshabilita el sondeo en su lugar. A diferencia de 0, deshabilitar el sondeo también detiene la búsqueda de dispositivos Bluetooth y la adición de los dispositivos nuevos que encuentra mDNS. Para más detalles, consulta {docs_url} (en inglés).\n\nPara usar otro intervalo, abre la [integración Google Home]({integration_url}), selecciona **Configurar**, introdúcelo y luego selecciona **Enviar**.",
             "menu_options": {
-              "use_default": "Usar el valor por defecto de 15 segundos",
+              "use_default": "Usar el valor por defecto de {default_interval} s",
               "turn_off_polling": "Deshabilitar el sondeo en su lugar"
             }
           }
@@ -317,7 +317,7 @@
             },
             "data_description": {
               "bluetooth_tracking": "Usa tus altavoces para saber si tu teléfono u otros dispositivos Bluetooth están en casa. Después de activarlo, selecciona «Rastrear un dispositivo Bluetooth» en la página de la integración para cada dispositivo que quieras rastrear. Mientras esté desactivado, la integración no envía ninguna solicitud Bluetooth a tus altavoces.",
-              "bluetooth_excluded_speakers": "Altavoces que no buscan dispositivos Bluetooth. Añade un altavoz que esté desenchufado o fuera de servicio: mientras un altavoz no responda, los rastreadores no pueden mostrar «Fuera»."
+              "bluetooth_excluded_speakers": "Altavoces que no buscan dispositivos Bluetooth. Añade un altavoz que esté desenchufado o fuera de servicio."
             }
           }
         }

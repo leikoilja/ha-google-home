@@ -9,13 +9,13 @@
           "master_token": "Jeton maître"
         },
         "menu_option_descriptions": {
-          "browser": "Connectez-vous à Google dans un navigateur sur ordinateur, puis collez un cookie. Fonctionne pour la plupart des comptes.",
+          "browser": "Connectez-vous à Google dans un navigateur sur ordinateur, puis collez un cookie.",
           "master_token": "Collez un jeton maître que vous avez déjà."
         }
       },
       "browser": {
         "title": "Connexion via le navigateur",
-        "description": "1. Sur un ordinateur, ouvrez {embedded_setup_url} dans une fenêtre de navigation privée et connectez-vous. Une fois que vous avez accepté, la page peut continuer à charger ; c'est normal.\n2. Ouvrez les outils de développement du navigateur et trouvez les cookies de `accounts.google.com`.\n3. Copiez la valeur du cookie `oauth_token` et collez-la ci-dessous immédiatement. Il expire en quelques minutes et ne fonctionne qu'une seule fois.\n\nInstructions détaillées : {browser_docs_url}\n\nPour choisir une autre méthode de connexion, fermez cette fenêtre et ajoutez à nouveau l'intégration.",
+        "description": "1. Sur un ordinateur, ouvrez {embedded_setup_url} dans une fenêtre de navigation privée et connectez-vous. Une fois que vous avez accepté, la page peut continuer à charger ; c'est normal.\n2. Ouvrez les outils de développement du navigateur et trouvez les cookies de `accounts.google.com`.\n3. Copiez la valeur du cookie `oauth_token` et collez-la ci-dessous immédiatement. Il peut expirer rapidement et ne fonctionne qu'une seule fois.\n\nInstructions détaillées : {browser_docs_url}\n\nPour choisir une autre méthode de connexion, fermez cette fenêtre et ajoutez à nouveau l'intégration.",
         "data": {
           "oauth_token": "Cookie oauth_token"
         },
@@ -51,13 +51,13 @@
           "master_token": "Jeton maître"
         },
         "menu_option_descriptions": {
-          "browser": "Connectez-vous à Google dans un navigateur sur ordinateur, puis collez un cookie. Fonctionne pour la plupart des comptes.",
+          "browser": "Connectez-vous à Google dans un navigateur sur ordinateur, puis collez un cookie.",
           "master_token": "Collez un jeton maître que vous avez déjà."
         }
       },
       "reauth_browser": {
         "title": "Connexion via le navigateur",
-        "description": "1. Sur un ordinateur, ouvrez {embedded_setup_url} dans une fenêtre de navigation privée et connectez-vous au même compte Google. Une fois que vous avez accepté, la page peut continuer à charger ; c'est normal.\n2. Ouvrez les outils de développement du navigateur et trouvez les cookies de `accounts.google.com`.\n3. Copiez la valeur du cookie `oauth_token` et collez-la ci-dessous immédiatement. Il expire en quelques minutes et ne fonctionne qu'une seule fois.\n\nInstructions détaillées : {browser_docs_url}",
+        "description": "1. Sur un ordinateur, ouvrez {embedded_setup_url} dans une fenêtre de navigation privée et connectez-vous au même compte Google. Une fois que vous avez accepté, la page peut continuer à charger ; c'est normal.\n2. Ouvrez les outils de développement du navigateur et trouvez les cookies de `accounts.google.com`.\n3. Copiez la valeur du cookie `oauth_token` et collez-la ci-dessous immédiatement. Il peut expirer rapidement et ne fonctionne qu'une seule fois.\n\nInstructions détaillées : {browser_docs_url}",
         "data": {
           "oauth_token": "Cookie oauth_token"
         },
@@ -77,13 +77,13 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "Google n'a pas accepté le cookie. Récupérez-en un nouveau et collez-le immédiatement : il expire en quelques minutes et ne fonctionne qu'une seule fois. Copiez la valeur complète, qui commence par oauth2_4/.",
+      "oauth-token-invalid": "Google n'a pas accepté la connexion. Récupérez un nouveau cookie et collez-le immédiatement : il peut expirer rapidement et ne fonctionne qu'une seule fois. Copiez la valeur complète, qui commence par oauth2_4/.",
       "master-token-invalid": "Google n'a pas accepté le jeton maître. Vérifiez que vous l'avez copié correctement. S'il fonctionnait auparavant, par exemple jusqu'à ce que vous changiez votre mot de passe Google, Google ne l'accepte plus : utilisez plutôt la connexion via le navigateur.",
       "google-rejected": "Google n'a pas accepté la connexion. Pour en savoir plus, consultez les journaux de Home Assistant.",
       "google-unreachable": "Impossible de joindre Google. Vérifiez que Home Assistant est connecté à Internet, puis réessayez.",
       "google-busy": "Google est occupé ou limite les connexions. Patientez quelques minutes, puis reconnectez-vous.",
       "oauth-token-format": "Ce n'est pas le cookie oauth_token. Sa valeur commence par oauth2_4/.",
-      "master-token-format": "Un jeton maître commence par aas_et/ et comporte 223 caractères. Copiez le jeton complet.",
+      "master-token-format": "Un jeton maître commence par aas_et/ et comporte {token_length} caractères. Copiez le jeton complet.",
       "other-account": "Vous avez utilisé un autre compte Google pour vous connecter, rien n'a donc été modifié. Connectez-vous avec le compte qu'utilise cette intégration. Pour utiliser plutôt cet autre compte, supprimez l'intégration et ajoutez-la à nouveau.",
       "no-home-selected": "Choisissez au moins une maison."
     },
@@ -152,7 +152,7 @@
       "message": "Impossible de récupérer les alarmes et les minuteurs actuels de l'appareil {device}. Rien n'a donc été supprimé de cet appareil. Vérifiez qu'il est en ligne et réessayez plus tard."
     },
     "alarms_and_timers_not_fetched_token_rejected_polling_off": {
-      "message": "Impossible de récupérer les alarmes et les minuteurs actuels de l'appareil {device}. Rien n'a donc été supprimé de cet appareil. Il a refusé son jeton, et en obtenir un nouveau auprès de Google n'a rien changé. L'interrogation périodique des changements est désactivée : l'intégration n'en redemande donc pas à Google d'elle-même. Exécutez l'action « Actualiser les appareils », puis réessayez."
+      "message": "Impossible de récupérer les alarmes et les minuteurs actuels de l'appareil {device}. Rien n'a donc été supprimé de cet appareil. Il a refusé son jeton. L'interrogation périodique des changements est désactivée : l'intégration n'en redemande donc pas à Google d'elle-même. Exécutez l'action « Actualiser les appareils », puis réessayez."
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Impossible de récupérer les alarmes et les minuteurs actuels des appareils suivants : {devices}. Rien n'a donc été supprimé de ces appareils. Vérifiez qu'ils sont en ligne et réessayez plus tard."
@@ -161,13 +161,13 @@
       "message": "L'appareil {device} n'a pas confirmé la suppression des alarmes ou des minuteurs ; ils sont donc peut-être encore programmés. Vérifiez qu'il est en ligne et réessayez plus tard."
     },
     "alarms_and_timers_not_deleted_token_rejected_polling_off": {
-      "message": "L'appareil {device} n'a pas confirmé la suppression des alarmes ou des minuteurs ; ils sont donc peut-être encore programmés. Il a refusé son jeton, et en obtenir un nouveau auprès de Google n'a rien changé. L'interrogation périodique des changements est désactivée : l'intégration n'en redemande donc pas à Google d'elle-même. Exécutez l'action « Actualiser les appareils », puis réessayez."
+      "message": "L'appareil {device} n'a pas confirmé la suppression des alarmes ou des minuteurs ; ils sont donc peut-être encore programmés. Il a refusé son jeton. L'interrogation périodique des changements est désactivée : l'intégration n'en redemande donc pas à Google d'elle-même. Exécutez l'action « Actualiser les appareils », puis réessayez."
     },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "Impossible de supprimer les alarmes ou les minuteurs des appareils suivants, ou de confirmer leur suppression : {devices}. Vérifiez qu'ils sont en ligne et réessayez plus tard."
     },
     "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
-      "message": "Impossible de supprimer les alarmes ou les minuteurs des appareils suivants, ou de confirmer leur suppression : {devices}. Au moins l'un d'eux a refusé son jeton, et en obtenir un nouveau auprès de Google n'a rien changé. L'interrogation périodique des changements est désactivée : l'intégration n'en redemande donc pas à Google d'elle-même. Exécutez l'action « Actualiser les appareils », vérifiez que les appareils sont en ligne, puis réessayez."
+      "message": "Impossible de supprimer les alarmes ou les minuteurs des appareils suivants, ou de confirmer leur suppression : {devices}. Au moins l'un d'eux a refusé son jeton. L'interrogation périodique des changements est désactivée : l'intégration n'en redemande donc pas à Google d'elle-même. Exécutez l'action « Actualiser les appareils », vérifiez que les appareils sont en ligne, puis réessayez."
     },
     "invalid_alarm_id": {
       "message": "« {alarm_id} » n'est pas un ID d'alarme. Copiez l'ID, qui commence par alarm/, depuis l'attribut alarms du capteur d'alarmes de l'appareil."
@@ -188,10 +188,10 @@
       "message": "L'appareil {device} n'a pas confirmé avoir effectué l'action : il n'a pas répondu à temps ou sa réponse a été interrompue. Vérifiez qu'il est en ligne et réessayez."
     },
     "device_token_rejected": {
-      "message": "L'appareil {device} a refusé son jeton, et en obtenir un nouveau auprès de Google n'a rien changé. L'intégration continue d'en demander un nouveau à Google ; réessayez plus tard."
+      "message": "L'appareil {device} a refusé son jeton. L'intégration continue d'en demander un nouveau à Google ; réessayez plus tard."
     },
     "device_token_rejected_polling_off": {
-      "message": "L'appareil {device} a refusé son jeton, et en obtenir un nouveau auprès de Google n'a rien changé. L'interrogation périodique des changements est désactivée : l'intégration n'en redemande donc pas à Google d'elle-même. Exécutez l'action « Actualiser les appareils », puis réessayez."
+      "message": "L'appareil {device} a refusé son jeton. L'interrogation périodique des changements est désactivée : l'intégration n'en redemande donc pas à Google d'elle-même. Exécutez l'action « Actualiser les appareils », puis réessayez."
     },
     "device_not_ready": {
       "message": "L'appareil {device} a répondu « introuvable ». Il est peut-être encore en cours de démarrage, auquel cas réessayez plus tard, ou il ne prend peut-être pas en charge cette action."
@@ -226,14 +226,14 @@
       }
     },
     "invalid_update_interval": {
-      "title": "L'intervalle de mise à jour enregistré est inférieur à 1 seconde",
+      "title": "L'intervalle de mise à jour enregistré est inférieur à {min_interval} s",
       "fix_flow": {
         "step": {
           "init": {
-            "title": "L'intervalle de mise à jour enregistré est inférieur à 1 seconde",
-            "description": "L'intervalle de mise à jour enregistré dans les options de l'intégration est de {interval} s, ce qui est inférieur au minimum de 1 seconde. L'intégration utilise donc la valeur par défaut et interroge vos appareils toutes les 15 secondes.\n\nSi vous aviez enregistré 0 pour arrêter ces interrogations régulières, désactivez plutôt l'interrogation périodique. Contrairement à 0, cela arrête aussi la recherche d'appareils Bluetooth et l'ajout des nouveaux appareils trouvés par mDNS. Pour plus de détails, consultez {docs_url}.\n\nPour utiliser un autre intervalle, ouvrez l'[intégration Google Home]({integration_url}), sélectionnez **Configurer**, saisissez-le, puis sélectionnez **Valider**.",
+            "title": "L'intervalle de mise à jour enregistré est inférieur à {min_interval} s",
+            "description": "L'intervalle de mise à jour enregistré dans les options de l'intégration est de {interval} s, ce qui est inférieur au minimum de {min_interval} s. L'intégration utilise donc la valeur par défaut et interroge vos appareils avec un intervalle de {default_interval} s.\n\nSi vous aviez enregistré 0 pour arrêter ces interrogations régulières, désactivez plutôt l'interrogation périodique. Contrairement à 0, cela arrête aussi la recherche d'appareils Bluetooth et l'ajout des nouveaux appareils trouvés par mDNS. Pour plus de détails, consultez {docs_url}.\n\nPour utiliser un autre intervalle, ouvrez l'[intégration Google Home]({integration_url}), sélectionnez **Configurer**, saisissez-le, puis sélectionnez **Valider**.",
             "menu_options": {
-              "use_default": "Utiliser la valeur par défaut de 15 secondes",
+              "use_default": "Utiliser la valeur par défaut de {default_interval} s",
               "turn_off_polling": "Désactiver plutôt l'interrogation périodique"
             }
           }
@@ -317,7 +317,7 @@
             },
             "data_description": {
               "bluetooth_tracking": "Utilisez vos enceintes pour savoir si votre téléphone ou d'autres appareils Bluetooth sont à la maison. Après l'avoir activé, sélectionnez « Suivre un appareil Bluetooth » sur la page de l'intégration pour chaque appareil à suivre. Tant qu'il est désactivé, l'intégration n'envoie aucune requête Bluetooth à vos enceintes.",
-              "bluetooth_excluded_speakers": "Enceintes qui ne recherchent pas d'appareils Bluetooth. Ajoutez une enceinte débranchée ou hors service : tant qu'une enceinte ne répond pas, les traceurs ne peuvent pas afficher « Absent »."
+              "bluetooth_excluded_speakers": "Enceintes qui ne recherchent pas d'appareils Bluetooth. Ajoutez une enceinte débranchée ou hors service."
             }
           }
         }

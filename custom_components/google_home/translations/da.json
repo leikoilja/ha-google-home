@@ -9,13 +9,13 @@
           "master_token": "Master token"
         },
         "menu_option_descriptions": {
-          "browser": "Log ind på Google i en browser på en computer, og indsæt derefter en cookie. Virker for de fleste konti.",
+          "browser": "Log ind på Google i en browser på en computer, og indsæt derefter en cookie.",
           "master_token": "Indsæt et master token, du allerede har."
         }
       },
       "browser": {
         "title": "Login via browser",
-        "description": "1. Åbn {embedded_setup_url} i et privat browservindue på en computer, og log ind. Når du har accepteret, bliver siden måske ved med at indlæse; det er forventet.\n2. Åbn browserens udviklerværktøjer, og find cookies for `accounts.google.com`.\n3. Kopiér værdien af cookien `oauth_token`, og indsæt den nedenfor med det samme. Den udløber inden for få minutter og virker kun én gang.\n\nTrin-for-trin-vejledning: {browser_docs_url}\n\nHvis du vil vælge en anden måde at logge ind på, så luk dette vindue, og tilføj integrationen igen.",
+        "description": "1. Åbn {embedded_setup_url} i et privat browservindue på en computer, og log ind. Når du har accepteret, bliver siden måske ved med at indlæse; det er forventet.\n2. Åbn browserens udviklerværktøjer, og find cookies for `accounts.google.com`.\n3. Kopiér værdien af cookien `oauth_token`, og indsæt den nedenfor med det samme. Den kan udløbe hurtigt og virker kun én gang.\n\nTrin-for-trin-vejledning: {browser_docs_url}\n\nHvis du vil vælge en anden måde at logge ind på, så luk dette vindue, og tilføj integrationen igen.",
         "data": {
           "oauth_token": "Cookien oauth_token"
         },
@@ -51,13 +51,13 @@
           "master_token": "Master token"
         },
         "menu_option_descriptions": {
-          "browser": "Log ind på Google i en browser på en computer, og indsæt derefter en cookie. Virker for de fleste konti.",
+          "browser": "Log ind på Google i en browser på en computer, og indsæt derefter en cookie.",
           "master_token": "Indsæt et master token, du allerede har."
         }
       },
       "reauth_browser": {
         "title": "Login via browser",
-        "description": "1. Åbn {embedded_setup_url} i et privat browservindue på en computer, og log ind på den samme Google-konto. Når du har accepteret, bliver siden måske ved med at indlæse; det er forventet.\n2. Åbn browserens udviklerværktøjer, og find cookies for `accounts.google.com`.\n3. Kopiér værdien af cookien `oauth_token`, og indsæt den nedenfor med det samme. Den udløber inden for få minutter og virker kun én gang.\n\nTrin-for-trin-vejledning: {browser_docs_url}",
+        "description": "1. Åbn {embedded_setup_url} i et privat browservindue på en computer, og log ind på den samme Google-konto. Når du har accepteret, bliver siden måske ved med at indlæse; det er forventet.\n2. Åbn browserens udviklerværktøjer, og find cookies for `accounts.google.com`.\n3. Kopiér værdien af cookien `oauth_token`, og indsæt den nedenfor med det samme. Den kan udløbe hurtigt og virker kun én gang.\n\nTrin-for-trin-vejledning: {browser_docs_url}",
         "data": {
           "oauth_token": "Cookien oauth_token"
         },
@@ -77,13 +77,13 @@
       }
     },
     "error": {
-      "oauth-token-invalid": "Google accepterede ikke cookien. Hent en ny, og indsæt den med det samme: den udløber inden for få minutter og virker kun én gang. Kopiér hele værdien, der starter med oauth2_4/.",
+      "oauth-token-invalid": "Google accepterede ikke loginforsøget. Hent en ny cookie, og indsæt den med det samme: den kan udløbe hurtigt og virker kun én gang. Kopiér hele værdien, der starter med oauth2_4/.",
       "master-token-invalid": "Google accepterede ikke master tokenet. Kontrollér, at du har kopieret det korrekt. Hvis det virkede før, f.eks. indtil du ændrede din Google-adgangskode, accepterer Google det ikke længere: brug login via browser i stedet.",
       "google-rejected": "Google accepterede ikke loginet. Du kan se detaljerne i logfilerne i Home Assistant.",
       "google-unreachable": "Kunne ikke oprette forbindelse til Google. Kontrollér, at Home Assistant har forbindelse til internettet, og prøv derefter igen.",
       "google-busy": "Google er overbelastet eller begrænser loginforsøg. Vent et par minutter, og log derefter ind igen.",
       "oauth-token-format": "Dette er ikke cookien oauth_token. Dens værdi starter med oauth2_4/.",
-      "master-token-format": "Et master token starter med aas_et/ og er 223 tegn langt. Kopiér hele tokenet.",
+      "master-token-format": "Et master token starter med aas_et/ og er {token_length} tegn langt. Kopiér hele tokenet.",
       "other-account": "Du loggede ind på en anden Google-konto, så der blev ikke ændret noget. Log ind med den konto, som denne integration bruger. Hvis du i stedet vil bruge den anden konto, skal du slette integrationen og tilføje den igen.",
       "no-home-selected": "Vælg mindst ét hjem."
     },
@@ -152,7 +152,7 @@
       "message": "Kunne ikke hente de aktuelle alarmer og timere fra {device}, så der blev ikke slettet noget fra enheden. Kontrollér, at den er online, og prøv igen senere."
     },
     "alarms_and_timers_not_fetched_token_rejected_polling_off": {
-      "message": "Kunne ikke hente de aktuelle alarmer og timere fra {device}, så der blev ikke slettet noget fra enheden. Den afviste sit token, og det hjalp ikke at hente et nyt fra Google. Automatisk hentning af opdateringer er slået fra, så integrationen beder ikke selv Google om et nyt igen: kør handlingen »Opdater enheder«, og prøv derefter igen."
+      "message": "Kunne ikke hente de aktuelle alarmer og timere fra {device}, så der blev ikke slettet noget fra enheden. Den afviste sit token. Automatisk hentning af opdateringer er slået fra, så integrationen beder ikke selv Google om et nyt igen: kør handlingen »Opdater enheder«, og prøv derefter igen."
     },
     "alarms_and_timers_not_fetched_from_devices": {
       "message": "Kunne ikke hente de aktuelle alarmer og timere fra disse enheder, så der blev ikke slettet noget fra dem: {devices}. Kontrollér, at de er online, og prøv igen senere."
@@ -161,13 +161,13 @@
       "message": "{device} bekræftede ikke sletningen af alarmerne eller timerne, så de kan stadig være indstillet. Kontrollér, at den er online, og prøv igen senere."
     },
     "alarms_and_timers_not_deleted_token_rejected_polling_off": {
-      "message": "{device} bekræftede ikke sletningen af alarmerne eller timerne, så de kan stadig være indstillet. Den afviste sit token, og det hjalp ikke at hente et nyt fra Google. Automatisk hentning af opdateringer er slået fra, så integrationen beder ikke selv Google om et nyt igen: kør handlingen »Opdater enheder«, og prøv derefter igen."
+      "message": "{device} bekræftede ikke sletningen af alarmerne eller timerne, så de kan stadig være indstillet. Den afviste sit token. Automatisk hentning af opdateringer er slået fra, så integrationen beder ikke selv Google om et nyt igen: kør handlingen »Opdater enheder«, og prøv derefter igen."
     },
     "alarms_and_timers_not_deleted_from_devices": {
       "message": "Kunne ikke slette alarmer eller timere fra disse enheder eller bekræfte, at de blev slettet: {devices}. Kontrollér, at de er online, og prøv igen senere."
     },
     "alarms_and_timers_not_deleted_from_devices_token_rejected_polling_off": {
-      "message": "Kunne ikke slette alarmer eller timere fra disse enheder eller bekræfte, at de blev slettet: {devices}. Mindst én af dem afviste sit token, og det hjalp ikke at hente et nyt fra Google. Automatisk hentning af opdateringer er slået fra, så integrationen beder ikke selv Google om et nyt igen: kør handlingen »Opdater enheder«, kontrollér, at enhederne er online, og prøv derefter igen."
+      "message": "Kunne ikke slette alarmer eller timere fra disse enheder eller bekræfte, at de blev slettet: {devices}. Mindst én af dem afviste sit token. Automatisk hentning af opdateringer er slået fra, så integrationen beder ikke selv Google om et nyt igen: kør handlingen »Opdater enheder«, kontrollér, at enhederne er online, og prøv derefter igen."
     },
     "invalid_alarm_id": {
       "message": "»{alarm_id}« er ikke et alarm-ID. Kopiér ID'et, som begynder med alarm/, fra attributten alarms på enhedens alarmsensor."
@@ -188,10 +188,10 @@
       "message": "{device} bekræftede ikke, at den udførte handlingen: den svarede ikke i tide, eller svaret blev afbrudt. Kontrollér, at den er online, og prøv igen."
     },
     "device_token_rejected": {
-      "message": "{device} afviste sit token, og det hjalp ikke at hente et nyt fra Google. Integrationen bliver ved med at bede Google om et nyt, så prøv igen senere."
+      "message": "{device} afviste sit token. Integrationen bliver ved med at bede Google om et nyt, så prøv igen senere."
     },
     "device_token_rejected_polling_off": {
-      "message": "{device} afviste sit token, og det hjalp ikke at hente et nyt fra Google. Automatisk hentning af opdateringer er slået fra, så integrationen beder ikke selv Google om et nyt igen: kør handlingen »Opdater enheder«, og prøv derefter igen."
+      "message": "{device} afviste sit token. Automatisk hentning af opdateringer er slået fra, så integrationen beder ikke selv Google om et nyt igen: kør handlingen »Opdater enheder«, og prøv derefter igen."
     },
     "device_not_ready": {
       "message": "{device} svarede »ikke fundet«. Den er måske stadig ved at starte, så prøv igen senere, eller den understøtter det måske ikke."
@@ -226,14 +226,14 @@
       }
     },
     "invalid_update_interval": {
-      "title": "Det gemte opdateringsinterval er under 1 sekund",
+      "title": "Det gemte opdateringsinterval er under {min_interval} s",
       "fix_flow": {
         "step": {
           "init": {
-            "title": "Det gemte opdateringsinterval er under 1 sekund",
-            "description": "Opdateringsintervallet, der er gemt i integrationens indstillinger, er {interval} s, hvilket er under minimum på 1 sekund. Integrationen bruger i stedet standardværdien og tjekker dine enheder hvert 15. sekund.\n\nHvis du gemte 0 for at stoppe disse faste tjek, så slå automatisk hentning fra i stedet. I modsætning til 0 stopper det også søgningen efter Bluetooth-enheder og tilføjelsen af nye enheder, som mDNS finder. Se flere detaljer her: {docs_url}.\n\nHvis du vil bruge et andet interval, skal du åbne [Google Home-integrationen]({integration_url}), vælge **Konfigurér**, indtaste det og derefter vælge **Indsend**.",
+            "title": "Det gemte opdateringsinterval er under {min_interval} s",
+            "description": "Opdateringsintervallet, der er gemt i integrationens indstillinger, er {interval} s, hvilket er under minimum på {min_interval} s. Integrationen bruger i stedet standardværdien og tjekker dine enheder med {default_interval} s mellemrum.\n\nHvis du gemte 0 for at stoppe disse faste tjek, så slå automatisk hentning fra i stedet. I modsætning til 0 stopper det også søgningen efter Bluetooth-enheder og tilføjelsen af nye enheder, som mDNS finder. Se flere detaljer her: {docs_url}.\n\nHvis du vil bruge et andet interval, skal du åbne [Google Home-integrationen]({integration_url}), vælge **Konfigurér**, indtaste det og derefter vælge **Indsend**.",
             "menu_options": {
-              "use_default": "Brug standardværdien på 15 sekunder",
+              "use_default": "Brug standardværdien på {default_interval} s",
               "turn_off_polling": "Slå automatisk hentning fra i stedet"
             }
           }
@@ -317,7 +317,7 @@
             },
             "data_description": {
               "bluetooth_tracking": "Brug dine højttalere til at se, om din telefon eller andre Bluetooth-enheder er hjemme. Når sporingen er slået til, skal du vælge »Spor en Bluetooth-enhed« på integrationens side for hver enhed, der skal spores. Mens den er slået fra, sender integrationen ingen Bluetooth-forespørgsler til dine højttalere.",
-              "bluetooth_excluded_speakers": "Højttalere, der ikke søger efter Bluetooth-enheder. Tilføj en højttaler, der er taget ud af stikket eller ude af drift: Mens en højttaler ikke svarer, kan trackere ikke vise »Ude«."
+              "bluetooth_excluded_speakers": "Højttalere, der ikke søger efter Bluetooth-enheder. Tilføj en højttaler, der er taget ud af stikket eller ude af drift."
             }
           }
         }
