@@ -20,6 +20,7 @@ from custom_components.google_home.bluetooth_storage import (
     SourceEvidence,
     async_history,
 )
+from custom_components.google_home.models import GoogleHomeDevice
 from custom_components.google_home.types import BluetoothJsonDict
 
 # pylint: disable=wrong-import-order,protected-access
@@ -906,7 +907,9 @@ async def test_unexpected_scan_failure_drains_sibling_requests(
     with owned_scans(speakers):
         await scanner.async_update()
 
-        async def unexpected(_session: object, device: object) -> list[object]:
+        async def unexpected(
+            _session: object, device: GoogleHomeDevice
+        ) -> list[object]:
             if device.device_id == "a":
                 await entered.wait()
                 raise RuntimeError("unexpected request failure")
