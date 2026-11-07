@@ -50,7 +50,7 @@ def pending_home(
             data=dict(tracked_subentry.data) | {"additional_departure_delay": delay},
         )
     now[0] = 30
-    history.confirm(PHONE, "home", 0, 30, "live", WALL)
+    history.confirm(PHONE, "home", 0, 30, WALL)
     scanner = scanner_for(history, Speakers("A"))
     scanner._update_speakers()
     a = scanner._speakers["a"]
@@ -454,8 +454,8 @@ async def test_per_tracker_policy_and_home_arrival(
     )
     # Both have an invented valid prior HOME confirmation at S=0/C=30.
     now[0] = 30
-    history.confirm(PHONE, "home", 0, 30, "live", WALL)
-    history.confirm("second", "home", 0, 30, "live", WALL)
+    history.confirm(PHONE, "home", 0, 30, WALL)
+    history.confirm("second", "home", 0, 30, WALL)
     scanner = scanner_for(history, Speakers("A"))
     scanner._update_speakers()
     scanner._speakers["a"].run_start = 0

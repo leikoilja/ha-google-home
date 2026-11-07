@@ -66,7 +66,6 @@ class PresenceEvidence:
     sighted_utc: float | None
     confirmed_utc: float
     expires_utc: float
-    provenance: str
     config_revision: str
 
 
@@ -269,14 +268,13 @@ class BluetoothHistory:
                 continue
             self._revisions[key] = revision
             self.trackers[key] = PresenceEvidence(
-                str(state),
+                state,
                 now + sighted - wall if sighted is not None else None,
                 now + confirmed - wall,
                 now + expires - wall,
                 sighted,
                 confirmed,
                 expires,
-                "restored",
                 revision,
             )
 
@@ -351,7 +349,6 @@ class BluetoothHistory:
         state: str,
         sighted: float | None,
         now: float,
-        provenance: str,
         sighted_utc: float | None = None,
     ) -> None:
         """Store a real decision; saving itself never calls this method."""
@@ -364,7 +361,6 @@ class BluetoothHistory:
             sighted_utc,
             wall,
             wall + BLUETOOTH_CONFIRMATION_LEASE,
-            provenance,
             self._revisions.setdefault(key, uuid4().hex),
         )
         self._invalidated.discard(key)
