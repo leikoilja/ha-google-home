@@ -96,7 +96,7 @@ async def test_restore_original_age_and_expire_without_polling(
 ) -> None:
     """Reload/save never renew a decision; original E expires without a scan."""
     history, now = evidence
-    history.confirm(PHONE, state, -30, 0, "live", WALL - 30)
+    history.confirm(PHONE, state, -30, 0, WALL - 30)
     speakers = Speakers("A")
     scanner = scanner_for(history, speakers)
     for time in (75, 150, 299):
@@ -132,7 +132,7 @@ async def test_full_process_load_preserves_utc_and_shortens_only_unmatched(
     )
     history.source_reply("known", 0)
     history.source_reply("anonymous", 0)
-    history.confirm(PHONE, "not_home", None, 0, "live")
+    history.confirm(PHONE, "not_home", None, 0)
     await history.async_flush()
     now[0] = 60
     loaded = BluetoothHistory(history.hass, history.entry)
@@ -164,7 +164,7 @@ async def test_intent_observer_invalidates_without_loaded_hooks(
 ) -> None:
     """A failed/not-yet-loaded entry can be toggled twice before setup succeeds."""
     history, now = evidence
-    history.confirm(PHONE, "home", 0, 0, "live", WALL)
+    history.confirm(PHONE, "home", 0, 0, WALL)
     await history.async_flush()
     now[0] = 10
     hass, entry = history.hass, history.entry
@@ -207,7 +207,7 @@ async def test_rename_preserves_evidence(
 ) -> None:
     """Title-only entry/subentry changes preserve the original evidence lease."""
     history, _ = evidence
-    history.confirm(PHONE, "not_home", None, 0, "live")
+    history.confirm(PHONE, "not_home", None, 0)
     generation = history.generation
     history.hass.config_entries.async_update_entry(history.entry, title="Renamed")
     history.hass.config_entries.async_update_subentry(
@@ -233,7 +233,7 @@ async def test_no_scan_at_simultaneous_expiry(
 ) -> None:
     """A consumed D=E event owns exactly one coverage-backed C=300/E=600 decision."""
     history, now = evidence
-    history.confirm(PHONE, "not_home", -120, 0, "live", WALL - 120)
+    history.confirm(PHONE, "not_home", -120, 0, WALL - 120)
     speakers = Speakers("A", "B")
     scanner = scanner_for(history, speakers)
     with owned_scans(speakers):
@@ -275,7 +275,7 @@ async def test_actual_expiry_time_and_d_before_e(
 ) -> None:
     """Early D creates a new lease; late callbacks cannot backdate stale coverage."""
     history, now = evidence
-    history.confirm(PHONE, "not_home", None, 0, "live")
+    history.confirm(PHONE, "not_home", None, 0)
     speakers = Speakers("A", "B")
     scanner = scanner_for(history, speakers)
     with owned_scans(speakers):
@@ -307,7 +307,7 @@ async def test_swallowed_store_failure_preserves_memory_but_can_restore_old_disk
 ) -> None:
     """Real Store catches WriteError; failed unlink leaves older valid data possible."""
     history, now = evidence
-    history.confirm(PHONE, "home", 0, 0, "live", WALL)
+    history.confirm(PHONE, "home", 0, 0, WALL)
     await history.async_flush()
     with (
         patch.object(Store, "async_remove", side_effect=OSError("unwritable")),
@@ -336,7 +336,7 @@ async def test_delayed_write_is_ordered_before_invalidation_and_reload(
 ) -> None:
     """Cancelling a waiter cannot cancel the domain worker or overtake its write."""
     history, _ = evidence
-    history.confirm(PHONE, "not_home", None, 0, "live")
+    history.confirm(PHONE, "not_home", None, 0)
     entered, release = asyncio.Event(), asyncio.Event()
     real_write = Store._async_write_data
     calls = 0
@@ -378,7 +378,7 @@ async def test_privacy_and_clock_discontinuity(
     """Persist only opaque row keys and ages; wall jumps cannot renew evidence."""
     history, now = evidence
     history.source_reply("invented-private-google-id", 0)
-    history.confirm(PHONE, "home", 0, 0, "live", WALL)
+    history.confirm(PHONE, "home", 0, 0, WALL)
     payload = json.dumps(history.snapshot())
     for forbidden in (
         "invented-private-google-id",
@@ -475,7 +475,7 @@ async def test_load_error_is_cold_and_early_invalidation_wins(
 ) -> None:
     """A Store that refuses its file is nonfatal, and off/on during load can't restore home."""
     history, _ = evidence
-    history.confirm(PHONE, "home", 0, 0, "live", WALL)
+    history.confirm(PHONE, "home", 0, 0, WALL)
     await history.async_flush()
     # Store refuses the saved home that would otherwise restore
     hass_storage[history._store.key]["version"] = 2
@@ -522,7 +522,7 @@ async def test_stale_queued_write_and_entry_removal(
 ) -> None:
     """Skip obsolete queued generations; removal cannot be undone by final flush."""
     history, _ = evidence
-    history.confirm(PHONE, "home", 0, 0, "live", WALL)
+    history.confirm(PHONE, "home", 0, 0, WALL)
     history._enqueue()
     history.generation += 1  # The queued generation has not started I/O yet.
     await history.async_flush()
@@ -541,7 +541,7 @@ async def test_remove_failure_is_memory_final(
 ) -> None:
     """An unlink error cannot keep live evidence for a removed entry."""
     history, _ = evidence
-    history.confirm(PHONE, "not_home", None, 0, "live")
+    history.confirm(PHONE, "not_home", None, 0)
     await history.async_flush()
     with patch.object(Store, "async_remove", side_effect=OSError("unwritable")):
         await history.async_remove()
@@ -630,7 +630,7 @@ async def test_non_identity_metadata_does_not_renew_or_invalidate(
     """Future non-identity options cannot become freshness or restore identity."""
     history, now = evidence
     history.source_reply("a", 0)
-    history.confirm(PHONE, "not_home", None, 0, "live")
+    history.confirm(PHONE, "not_home", None, 0)
     before, generation = history.snapshot(), history.generation
     now[0] = 30
     data = dict(history.entry.subentries[PHONE].data)
@@ -659,7 +659,7 @@ async def test_obsolete_scan_cannot_confirm_after_disable_cycle(
     scanner = scanner_for(history, speakers)
     with owned_scans(speakers):
         await scanner.async_update()
-        history.confirm(PHONE, "home", 0, 0, "live", WALL)
+        history.confirm(PHONE, "home", 0, 0, WALL)
 
         async def disable_during_read(
             _session: object, _device: object
@@ -689,7 +689,7 @@ async def test_missing_config_revision_is_cold(
 ) -> None:
     """Unversioned tracker evidence never migrates by inventing a revision/age."""
     history, _ = evidence
-    history.confirm(PHONE, "not_home", None, 0, "live")
+    history.confirm(PHONE, "not_home", None, 0)
     payload = history.snapshot()
     rows = payload["trackers"]
     assert isinstance(rows, dict)
@@ -705,7 +705,7 @@ async def test_delayed_load_pairs_clocks_after_io(
 ) -> None:
     """Ten seconds of storage I/O is not an extra ten seconds of evidence age."""
     history, now = evidence
-    history.confirm(PHONE, "not_home", None, 0, "live")
+    history.confirm(PHONE, "not_home", None, 0)
     await history.async_flush()
     entered, release = asyncio.Event(), asyncio.Event()
     real_load = Store.async_load
@@ -735,7 +735,7 @@ async def test_load_completion_rearms_dropped_invalidation_attempt(
 ) -> None:
     """Off/on during a slow load attempts disk invalidation once loading completes."""
     history, now = evidence
-    history.confirm(PHONE, "home", 0, 0, "live", WALL)
+    history.confirm(PHONE, "home", 0, 0, WALL)
     await history.async_flush()
     entered, release = asyncio.Event(), asyncio.Event()
     real_load = Store.async_load

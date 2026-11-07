@@ -187,7 +187,7 @@ async def test_actual_ha_stop_drains_same_worker_after_blocked_executor_write(
     """ASTRA-R1-02: normal stop waits for old I/O, then invalidation/new snapshot."""
     history, now = evidence
     hass = history.hass
-    history.confirm(PHONE, "not_home", None, 0, "live")
+    history.confirm(PHONE, "not_home", None, 0)
     entered, written, stopping = asyncio.Event(), asyncio.Event(), asyncio.Event()
     release = ThreadEvent()
     order: list[str] = []
@@ -230,7 +230,7 @@ async def test_actual_ha_stop_drains_same_worker_after_blocked_executor_write(
         hass.config_entries.async_update_entry(
             history.entry, options={"bluetooth_tracking": True}
         )
-        history.confirm(PHONE, "home", 10, 20, "live", WALL + 10)
+        history.confirm(PHONE, "home", 10, 20, WALL + 10)
         history._enqueue()
         stop = asyncio.create_task(hass.async_stop(force=True))
         try:
