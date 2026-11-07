@@ -258,7 +258,7 @@
       "step": {
         "user": {
           "title": "Een Bluetooth-apparaat volgen",
-          "description": "Voer de IRK van een telefoon in, of het MAC-adres van een apparaat waarvan het adres nooit verandert, zoals sommige horloges en tags. Telefoons wijzigen hun adres om de paar minuten, dus volg ze via de IRK. Zie {docs_url} voor hoe je de IRK vindt.",
+          "description": "Voer de IRK van een telefoon in, of het MAC-adres van een apparaat waarvan het adres nooit verandert, zoals sommige horloges en tags. Telefoons wijzigen hun adres van tijd tot tijd, dus volg ze via de IRK. Zie {docs_url} voor hoe je de IRK vindt.",
           "data": {
             "name": "Naam",
             "irk_or_mac": "IRK of MAC-adres",

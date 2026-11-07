@@ -258,7 +258,7 @@
       "step": {
         "user": {
           "title": "Rastrear un dispositivo Bluetooth",
-          "description": "Introduce la IRK de un teléfono o la dirección MAC de un dispositivo cuya dirección nunca cambia, como algunos relojes y etiquetas localizadoras. Los teléfonos cambian de dirección cada pocos minutos, así que rastréalos por su IRK. Para saber cómo encontrar la IRK, consulta {docs_url}.",
+          "description": "Introduce la IRK de un teléfono o la dirección MAC de un dispositivo cuya dirección nunca cambia, como algunos relojes y etiquetas localizadoras. Los teléfonos cambian de dirección de vez en cuando, así que rastréalos por su IRK. Para saber cómo encontrar la IRK, consulta {docs_url}.",
           "data": {
             "name": "Nombre",
             "irk_or_mac": "IRK o dirección MAC",

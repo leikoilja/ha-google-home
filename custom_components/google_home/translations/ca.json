@@ -258,7 +258,7 @@
       "step": {
         "user": {
           "title": "Segueix un dispositiu Bluetooth",
-          "description": "Introdueix la IRK d'un telèfon o l'adreça MAC d'un dispositiu amb una adreça que no canvia mai, com alguns rellotges i etiquetes localitzadores. Els telèfons canvien d'adreça cada pocs minuts, així que segueix-los per la IRK. Per saber com trobar la IRK, consulta {docs_url}.",
+          "description": "Introdueix la IRK d'un telèfon o l'adreça MAC d'un dispositiu amb una adreça que no canvia mai, com alguns rellotges i etiquetes localitzadores. Els telèfons canvien d'adreça de tant en tant, així que segueix-los per la IRK. Per saber com trobar la IRK, consulta {docs_url}.",
           "data": {
             "name": "Nom",
             "irk_or_mac": "IRK o adreça MAC",

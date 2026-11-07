@@ -258,7 +258,7 @@
       "step": {
         "user": {
           "title": "Śledź urządzenie Bluetooth",
-          "description": "Wpisz IRK telefonu albo adres MAC urządzenia, którego adres nigdy się nie zmienia, np. niektórych zegarków i lokalizatorów. Telefony zmieniają adres co kilka minut, więc śledź je za pomocą IRK. Jak znaleźć IRK, opisano w {docs_url}.",
+          "description": "Wpisz IRK telefonu albo adres MAC urządzenia, którego adres nigdy się nie zmienia, np. niektórych zegarków i lokalizatorów. Telefony od czasu do czasu zmieniają adres, więc śledź je za pomocą IRK. Jak znaleźć IRK, opisano w {docs_url}.",
           "data": {
             "name": "Nazwa",
             "irk_or_mac": "IRK lub adres MAC",
