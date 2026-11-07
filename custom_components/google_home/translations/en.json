@@ -258,7 +258,7 @@
       "step": {
         "user": {
           "title": "Track a Bluetooth device",
-          "description": "Enter the IRK of a phone, or the MAC address of a device whose address never changes, such as some watches and tags. Phones change their address every few minutes, so track them by IRK. For how to find the IRK, see {docs_url}.",
+          "description": "Enter the IRK of a phone, or the MAC address of a device whose address never changes, such as some watches and tags. Phones change their address from time to time, so track them by IRK. For how to find the IRK, see {docs_url}.",
           "data": {
             "name": "Name",
             "irk_or_mac": "IRK or MAC address",

@@ -258,7 +258,7 @@
       "step": {
         "user": {
           "title": "Lacak perangkat Bluetooth",
-          "description": "Masukkan IRK ponsel, atau alamat MAC perangkat yang alamatnya tidak pernah berubah, seperti beberapa jam tangan dan tag pelacak. Ponsel mengganti alamatnya setiap beberapa menit, jadi lacak ponsel dengan IRK. Untuk cara menemukan IRK, lihat {docs_url}.",
+          "description": "Masukkan IRK ponsel, atau alamat MAC perangkat yang alamatnya tidak pernah berubah, seperti beberapa jam tangan dan tag pelacak. Ponsel mengganti alamatnya dari waktu ke waktu, jadi lacak ponsel dengan IRK. Untuk cara menemukan IRK, lihat {docs_url}.",
           "data": {
             "name": "Nama",
             "irk_or_mac": "IRK atau alamat MAC",

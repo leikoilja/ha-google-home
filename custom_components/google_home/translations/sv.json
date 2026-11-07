@@ -258,7 +258,7 @@
       "step": {
         "user": {
           "title": "Spåra en Bluetooth-enhet",
-          "description": "Ange IRK för en telefon, eller MAC-adressen för en enhet vars adress aldrig ändras, till exempel vissa klockor och taggar. Telefoner byter adress med några minuters mellanrum, så spåra dem med IRK. Se {docs_url} för hur du hittar IRK.",
+          "description": "Ange IRK för en telefon, eller MAC-adressen för en enhet vars adress aldrig ändras, till exempel vissa klockor och taggar. Telefoner byter adress då och då, så spåra dem med IRK. Se {docs_url} för hur du hittar IRK.",
           "data": {
             "name": "Namn",
             "irk_or_mac": "IRK eller MAC-adress",

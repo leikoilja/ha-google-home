@@ -258,7 +258,7 @@
       "step": {
         "user": {
           "title": "Suivre un appareil Bluetooth",
-          "description": "Saisissez l'IRK d'un téléphone, ou l'adresse MAC d'un appareil dont l'adresse ne change jamais, comme certaines montres et balises. Les téléphones changent d'adresse toutes les quelques minutes : suivez-les donc par leur IRK. Pour savoir comment trouver l'IRK, consultez {docs_url}.",
+          "description": "Saisissez l'IRK d'un téléphone, ou l'adresse MAC d'un appareil dont l'adresse ne change jamais, comme certaines montres et balises. Les téléphones changent d'adresse de temps en temps : suivez-les donc par leur IRK. Pour savoir comment trouver l'IRK, consultez {docs_url}.",
           "data": {
             "name": "Nom",
             "irk_or_mac": "IRK ou adresse MAC",

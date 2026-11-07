@@ -258,7 +258,7 @@
       "step": {
         "user": {
           "title": "Urmărește un dispozitiv Bluetooth",
-          "description": "Introdu IRK-ul unui telefon sau adresa MAC a unui dispozitiv a cărui adresă nu se schimbă niciodată, cum ar fi unele ceasuri și etichete de localizare. Telefoanele își schimbă adresa la fiecare câteva minute, așa că urmărește-le după IRK. Pentru a afla cum găsești IRK-ul, consultă {docs_url}.",
+          "description": "Introdu IRK-ul unui telefon sau adresa MAC a unui dispozitiv a cărui adresă nu se schimbă niciodată, cum ar fi unele ceasuri și etichete de localizare. Telefoanele își schimbă adresa din când în când, așa că urmărește-le după IRK. Pentru a afla cum găsești IRK-ul, consultă {docs_url}.",
           "data": {
             "name": "Nume",
             "irk_or_mac": "IRK sau adresă MAC",
