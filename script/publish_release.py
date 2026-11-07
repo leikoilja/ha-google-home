@@ -53,14 +53,15 @@ def main() -> int:
     return 0
 
 
-def cleanup_message(version: str) -> str:
-    """Return the message of the commit after the release commit."""
-    # Keep this historical wording: update_manifests matches the exact message
-    # to recognize a completed earlier run, including one before the rename.
+def cleanup_message(version: str, *, legacy: bool = False) -> str:
+    """Return the cleanup message, with legacy wording for recognizing old runs."""
+    installer = (
+        "HACS and Home Assistant install" if legacy else "the Marketplace installs"
+    )
     return (
         f"Use the source archive for master again after v{version}\n\n"
         f"The v{version} release commit adds zip_release and filename to "
-        f"hacs.json, so HACS and Home Assistant install that release from "
+        f"hacs.json, so {installer} that release from "
         f"{ZIP_NAME}. Remove them again, so installs of master keep using "
         "the source archive."
     )
@@ -73,7 +74,10 @@ def update_manifests(repo: Repository, version: str) -> str:
     after it removes them. Master moves straight to the second commit.
     """
     head = repo.get_branch("master").commit
-    if head.commit.message.strip() == cleanup_message(version):
+    if head.commit.message.strip() in {
+        cleanup_message(version),
+        cleanup_message(version, legacy=True),
+    }:
         print("Reusing the release commit of an earlier run...")
         return head.parents[0].sha
 
