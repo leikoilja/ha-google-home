@@ -1,5 +1,8 @@
 """Entity-level persistence and expiry checks inside real Home Assistant setup."""
 
+import json
+import logging
+from pathlib import Path
 from typing import cast
 from unittest.mock import patch
 
@@ -12,6 +15,7 @@ from custom_components.google_home.bluetooth_coordinator import BluetoothCoordin
 from custom_components.google_home.bluetooth_storage import async_history, utc_timestamp
 
 # pylint: disable=wrong-import-order
+from homeassistant.config_entries import ConfigEntryState
 from homeassistant.const import (
     EVENT_STATE_CHANGED,
     STATE_HOME,
@@ -19,11 +23,14 @@ from homeassistant.const import (
     STATE_UNKNOWN,
 )
 from homeassistant.core import HomeAssistant
+from homeassistant.util import dt as dt_util
 
 from . import test_bluetooth_setup
-from .test_bluetooth import IRK, PHONE, heard, rpa
+from .test_bluetooth import IRK, PHONE, heard, rpa, subentry
+from .test_bluetooth_reload_shutdown import file_backend
 from .test_bluetooth_setup import TRACKER, Scans, scan, track_phone
 from .test_coordinators import runtime
+from .test_setup import set_up
 from .test_unsupported_devices import SPEAKER
 
 # pylint: enable=wrong-import-order
@@ -168,3 +175,131 @@ async def test_real_coordinator_failure_closes_reload_eligibility(
     await hass.async_block_till_done(wait_background_tasks=True)
     state = hass.states.get(TRACKER)
     assert state is not None and state.state == "unknown"
+
+
+def saved_home(wall: float) -> dict[str, object]:
+    """Return a tracker row, as snapshot() saves it, that restores home at wall."""
+    return {
+        "revision": "invented-config-revision",
+        "state": STATE_HOME,
+        "sighted": wall - 10,
+        "confirmed": wall - 10,
+        "expires": wall + 290,
+    }
+
+
+def saved_file(hass: HomeAssistant, entry: MockConfigEntry, tmp_path: Path) -> Path:
+    """Track the phone and the tablet, and read this entry's saved state from a real file.
+
+    The file goes through Home Assistant's own file reading and Store envelope handling.
+    """
+    hass.config_entries.async_update_entry(entry, options={"bluetooth_tracking": True})
+    hass.config_entries.async_add_subentry(entry, subentry({"irk": IRK.hex()}))
+    hass.config_entries.async_add_subentry(
+        entry, subentry({"mac": "AA:BB:CC:DD:EE:FF"}, "tablet", "Tablet")
+    )
+    history = async_history(hass, entry)
+    path = tmp_path / history._store.key  # noqa: SLF001 # pylint: disable=protected-access
+    file_backend(history, str(path))
+    return path
+
+
+def assert_loaded(hass: HomeAssistant, entry: MockConfigEntry) -> None:
+    """Check that the entry is set up with its speaker's ordinary entities."""
+    assert entry.state is ConfigEntryState.LOADED
+    assert hass.states.get("sensor.kitchen_speaker_device") is not None
+
+
+def tracker_state(hass: HomeAssistant, entity_id: str) -> str:
+    """Return a tracker's state, which must exist."""
+    state = hass.states.get(entity_id)
+    assert state is not None
+    return state.state
+
+
+@pytest.mark.usefixtures("google", "replies", "scans", "freezer")
+@pytest.mark.parametrize(
+    "saved",
+    [
+        "newer version",
+        "unreadable",
+        "corrupt and can't be moved aside",
+        "not an object",
+        "no version",
+        "older version",
+    ],
+)
+async def test_saved_state_that_cannot_load_is_skipped(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+    saved: str,
+) -> None:
+    """Setup goes on without a saved file Home Assistant's Store can't load."""
+    path = saved_file(hass, config_entry, tmp_path)
+    data = {
+        "policy": 1,
+        "trackers": {PHONE: saved_home(bluetooth_storage.utc_timestamp())},
+    }
+    if saved == "unreadable":
+        # Reading it fails as reading a file without permission does
+        path.mkdir()
+    elif saved == "corrupt and can't be moved aside":
+        # Store renames a corrupt file to this name, which a directory takes
+        path.write_text("{")
+        Path(f"{path}.corrupt.{dt_util.utcnow().isoformat()}").mkdir()
+    else:
+        path.write_text(
+            json.dumps(
+                {
+                    "newer version": {"version": 2, "minor_version": 1, "data": data},
+                    "not an object": [],
+                    "no version": {"data": data},
+                    "older version": {"version": 0, "data": data},
+                }[saved]
+            )
+        )
+    await set_up(hass, config_entry)
+    assert_loaded(hass, config_entry)
+    assert tracker_state(hass, TRACKER) == STATE_UNKNOWN
+    warnings = [
+        record.getMessage()
+        for record in caplog.records
+        if record.name == bluetooth_storage.__name__
+        and record.levelno == logging.WARNING
+    ]
+    assert len(warnings) == 1
+    assert path.name in warnings[0]
+
+
+@pytest.mark.usefixtures("google", "replies", "scans")
+@pytest.mark.parametrize("state", [[], {}], ids=["list", "object"])
+async def test_malformed_saved_tracker_is_skipped_alone(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    tmp_path: Path,
+    state: object,
+) -> None:
+    """A saved tracker with a state that isn't text doesn't stop the others restoring."""
+    path = saved_file(hass, config_entry, tmp_path)
+    wall = bluetooth_storage.utc_timestamp()
+    path.write_text(
+        json.dumps(
+            {
+                "version": 1,
+                "minor_version": 1,
+                "data": {
+                    "policy": 1,
+                    "trackers": {
+                        PHONE: {**saved_home(wall), "state": state},
+                        "tablet": saved_home(wall),
+                    },
+                },
+            }
+        )
+    )
+    await set_up(hass, config_entry)
+    assert_loaded(hass, config_entry)
+    assert tracker_state(hass, TRACKER) == STATE_UNKNOWN
+    assert tracker_state(hass, "device_tracker.tablet") == STATE_HOME

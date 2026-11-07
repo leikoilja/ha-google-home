@@ -471,13 +471,20 @@ async def test_invalid_saved_rows_are_cold(
 
 async def test_load_error_is_cold_and_early_invalidation_wins(
     evidence: tuple[BluetoothHistory, list[float]],
+    hass_storage: dict[str, dict[str, object]],
 ) -> None:
-    """An unreadable Store is nonfatal, and off/on during load cannot restore old home."""
+    """A Store that refuses its file is nonfatal, and off/on during load can't restore home."""
     history, _ = evidence
-    with patch.object(Store, "async_load", side_effect=OSError("unreadable")):
-        loaded = BluetoothHistory(history.hass, history.entry)
-        await loaded.async_load(lambda: 0)
+    history.confirm(PHONE, "home", 0, 0, "live", WALL)
+    await history.async_flush()
+    # Store refuses the saved home that would otherwise restore
+    hass_storage[history._store.key]["version"] = 2
+    loaded = BluetoothHistory(history.hass, history.entry)
+    await loaded.async_load(lambda: 0)
     assert not loaded.trackers
+    # Saving goes on, replacing the refused file
+    await loaded.async_flush()
+    assert hass_storage[history._store.key]["version"] == 1
     pending = BluetoothHistory(history.hass, history.entry)
     pending.schedule_save()
     pending._enqueue()  # Before load: do not overwrite a file we have not read.
