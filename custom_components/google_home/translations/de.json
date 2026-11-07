@@ -258,7 +258,7 @@
       "step": {
         "user": {
           "title": "Bluetooth-Gerät verfolgen",
-          "description": "Gib den IRK eines Smartphones ein oder die MAC-Adresse eines Geräts, dessen Adresse sich nie ändert, etwa mancher Uhren und Bluetooth-Tags. Smartphones ändern ihre Adresse alle paar Minuten, verfolge sie daher per IRK. Wie du den IRK findest, steht unter {docs_url}.",
+          "description": "Gib den IRK eines Smartphones ein oder die MAC-Adresse eines Geräts, dessen Adresse sich nie ändert, etwa mancher Uhren und Bluetooth-Tags. Smartphones ändern ihre Adresse von Zeit zu Zeit, verfolge sie daher per IRK. Wie du den IRK findest, steht unter {docs_url}.",
           "data": {
             "name": "Name",
             "irk_or_mac": "IRK oder MAC-Adresse",

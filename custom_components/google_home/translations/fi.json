@@ -258,7 +258,7 @@
       "step": {
         "user": {
           "title": "Seuraa Bluetooth-laitetta",
-          "description": "Anna puhelimen IRK tai sellaisen laitteen MAC-osoite, jonka osoite ei koskaan muutu, kuten jotkin kellot ja paikannustagit. Puhelimet vaihtavat osoitettaan muutaman minuutin välein, joten seuraa niitä IRK:n avulla. Ohjeet IRK:n löytämiseen: {docs_url}.",
+          "description": "Anna puhelimen IRK tai sellaisen laitteen MAC-osoite, jonka osoite ei koskaan muutu, kuten jotkin kellot ja paikannustagit. Puhelimet vaihtavat osoitettaan ajoittain, joten seuraa niitä IRK:n avulla. Ohjeet IRK:n löytämiseen: {docs_url}.",
           "data": {
             "name": "Nimi",
             "irk_or_mac": "IRK tai MAC-osoite",

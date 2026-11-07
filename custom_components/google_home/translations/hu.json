@@ -258,7 +258,7 @@
       "step": {
         "user": {
           "title": "Bluetooth-eszköz követése",
-          "description": "Adja meg egy telefon IRK-ját, vagy egy olyan eszköz MAC-címét, amelynek címe soha nem változik, például egyes órákét és nyomkövető címkékét. A telefonok néhány percenként megváltoztatják a címüket, ezért IRK alapján kövesse őket. Az IRK megkeresésének módját lásd itt: {docs_url}.",
+          "description": "Adja meg egy telefon IRK-ját, vagy egy olyan eszköz MAC-címét, amelynek címe soha nem változik, például egyes órákét és nyomkövető címkékét. A telefonok időről időre megváltoztatják a címüket, ezért IRK alapján kövesse őket. Az IRK megkeresésének módját lásd itt: {docs_url}.",
           "data": {
             "name": "Név",
             "irk_or_mac": "IRK vagy MAC-cím",
