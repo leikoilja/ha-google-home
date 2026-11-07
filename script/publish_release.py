@@ -26,7 +26,7 @@ from homeassistant.util.json import JsonObjectType, json_loads_object
 INTEGRATION_PATH = "custom_components/google_home"
 MANIFEST_PATH = f"{INTEGRATION_PATH}/manifest.json"
 ZIP_NAME = "google_home.zip"
-# HACS and Home Assistant read hacs.json at the version they install
+# The Marketplace reads hacs.json at the version it installs
 ZIP_RELEASE: JsonObjectType = {"zip_release": True, "filename": ZIP_NAME}
 
 
@@ -53,12 +53,15 @@ def main() -> int:
     return 0
 
 
-def cleanup_message(version: str) -> str:
-    """Return the message of the commit after the release commit."""
+def cleanup_message(version: str, *, legacy: bool = False) -> str:
+    """Return the cleanup message, with legacy wording for recognizing old runs."""
+    installer = (
+        "HACS and Home Assistant install" if legacy else "the Marketplace installs"
+    )
     return (
         f"Use the source archive for master again after v{version}\n\n"
         f"The v{version} release commit adds zip_release and filename to "
-        f"hacs.json, so HACS and Home Assistant install that release from "
+        f"hacs.json, so {installer} that release from "
         f"{ZIP_NAME}. Remove them again, so installs of master keep using "
         "the source archive."
     )
@@ -71,7 +74,10 @@ def update_manifests(repo: Repository, version: str) -> str:
     after it removes them. Master moves straight to the second commit.
     """
     head = repo.get_branch("master").commit
-    if head.commit.message.strip() == cleanup_message(version):
+    if head.commit.message.strip() in {
+        cleanup_message(version),
+        cleanup_message(version, legacy=True),
+    }:
         print("Reusing the release commit of an earlier run...")
         return head.parents[0].sha
 

@@ -231,7 +231,7 @@ The pull request runs these checks. On your first pull request, they may wait fo
 
 - **Pre-commit:** prek, the [quality scale check](#keep-the-quality-scale-up-to-date), the tests and the coverage check.
 - **Translations:** the translation check.
-- **HACS** and **Hassfest:** the validators of HACS and Home Assistant. They use the latest versions, so a rule added upstream can fail them without your change causing it.
+- **HACS** and **Hassfest:** repository validation using `hacs/action` and Home Assistant's integration validator. The HACS action still checks repository metadata for this project, including `hacs.json`, which the Marketplace also reads. Both checks use images that change upstream, so a new rule can fail them without your change causing it.
 - **Build site:** the docs build, when your pull request changes `docs/`, `zensical.toml`, `pyproject.toml` or `uv.lock`.
 
 To run the Pre-commit check's steps yourself, in its order:
@@ -256,7 +256,7 @@ The tests and the quality scale check use the Home Assistant version that `pypro
 2. Update the ruff rules in `pyproject.toml` to match Home Assistant's `pyproject.toml` at that version. Keep the rules listed under `# Beyond Home Assistant core`.
 3. Change the version in the link to [Home Assistant's language list](#translate-the-integration).
 4. Run the tests and checks. The [quality scale check](#keep-the-quality-scale-up-to-date) reports rules the new version added, and the snapshots may need updating.
-5. Set the minimum version in `hacs.json` and under [Before you start](installation.md#before-you-start) to match. For a beta, use its stable version, such as 2026.11.0 for 2026.11.0b4. HACS reads `hacs.json` at the version it installs, including `master`, and each release sets it to the pinned version; see [Publish a release](#publish-a-release).
+5. Set the minimum version in `hacs.json` and under [Before you start](installation.md#before-you-start) to match. For a beta, use its stable version, such as 2026.11.0 for 2026.11.0b4. The Marketplace reads `hacs.json` at the version it installs, including `master`, and each release sets it to the pinned version; see [Publish a release](#publish-a-release).
 
 ### Publish a release
 

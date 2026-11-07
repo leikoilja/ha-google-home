@@ -45,7 +45,7 @@ def zip_of(files: dict[str, str]) -> bytes:
 
 
 def test_zip_holds_integration_files_at_root(tmp_path: Path) -> None:
-    """HACS and Home Assistant extract the zip into custom_components/google_home."""
+    """The Marketplace extracts the zip into custom_components/google_home."""
     path = tmp_path / "google_home.zip"
     publish_release.build_zip("HEAD", path)
 
@@ -158,6 +158,13 @@ def test_release_commit_has_zip_settings_and_master_does_not(repo: FakeRepo) -> 
 
     assert repo.parents[tagged] == "base"
     assert repo.parents[repo.master] == tagged
+    assert repo.messages[repo.master] == (
+        "Use the source archive for master again after v1.17.0\n\n"
+        "The v1.17.0 release commit adds zip_release and filename to "
+        "hacs.json, so the Marketplace installs that release from "
+        "google_home.zip. Remove them again, so installs of master keep using "
+        "the source archive."
+    )
     hacs_json = HACS_JSON | {"homeassistant": package_version("homeassistant")}
     assert repo.files[tagged]["hacs.json"] == hacs_json | {
         "zip_release": True,
@@ -179,6 +186,22 @@ def test_rerun_reuses_release_commit(repo: FakeRepo) -> None:
     next_tagged = repo.release("1.17.1")
     assert repo.parents[next_tagged] == master
     assert repo.files[next_tagged][MANIFEST]["version"] == "1.17.1"
+
+
+def test_rerun_reuses_release_commit_with_legacy_message(repo: FakeRepo) -> None:
+    """A retry of an older workflow reuses its existing release commit."""
+    tagged = repo.release("1.17.0")
+    master = repo.master
+    repo.messages[master] = (
+        "Use the source archive for master again after v1.17.0\n\n"
+        "The v1.17.0 release commit adds zip_release and filename to "
+        "hacs.json, so HACS and Home Assistant install that release from "
+        "google_home.zip. Remove them again, so installs of master keep using "
+        "the source archive."
+    )
+
+    assert repo.release("1.17.0") == tagged
+    assert repo.master == master
 
 
 def test_release_pins_glocaltokens_and_keeps_other_requirements(
@@ -348,7 +371,7 @@ def test_does_not_publish_unless_stored_zip_matches(
     store: Callable[[bytes], bytes | None],
     error: str,
 ) -> None:
-    """HACS and Home Assistant would fail to install a release without it."""
+    """The Marketplace would fail to install a release without it."""
     release = FakeRelease(head_tag(), store)
 
     with pytest.raises(
