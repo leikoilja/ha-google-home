@@ -15,6 +15,7 @@ from uuid import uuid4
 from homeassistant.config_entries import SIGNAL_CONFIG_ENTRY_CHANGED, ConfigEntryChange
 from homeassistant.const import EVENT_HOMEASSISTANT_STOP
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.storage import Store
@@ -170,8 +171,24 @@ class BluetoothHistory:
             return
         try:
             data = await self._store.async_load()
-        except OSError, ValueError:
-            _LOGGER.warning("Could not load Bluetooth continuity; starting fresh")
+        # What Store raises for this file: HomeAssistantError when it can't be
+        # read or has a newer version, OSError when a corrupt file can't be
+        # renamed aside, and KeyError, TypeError or NotImplementedError when it
+        # isn't an object holding data and a version this Store can read.
+        except (
+            HomeAssistantError,
+            OSError,
+            KeyError,
+            TypeError,
+            NotImplementedError,
+        ) as err:
+            _LOGGER.warning(
+                "Could not load the saved Bluetooth tracking state from %s (%r), "
+                "so trackers start without it. If this repeats at every start, "
+                "check that Home Assistant can read and write that file",
+                self._store.path,
+                err,
+            )
             data = None
         self._loaded = True
         # Both readings belong to the same post-I/O instant.
@@ -241,6 +258,7 @@ class BluetoothHistory:
             if (
                 not confirmed <= wall < expires
                 or expires != confirmed + BLUETOOTH_CONFIRMATION_LEASE
+                or not isinstance(state, str)
                 or state not in {"home", "not_home"}
             ):
                 continue
