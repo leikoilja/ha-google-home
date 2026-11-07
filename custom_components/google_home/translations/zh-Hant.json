@@ -258,7 +258,7 @@
       "step": {
         "user": {
           "title": "追蹤藍牙裝置",
-          "description": "輸入手機的 IRK，或位址永不變更之裝置（例如部分手錶和防丟標籤）的 MAC 位址。手機每隔幾分鐘就會變更位址，因此請以 IRK 追蹤手機。如何找到 IRK，請參閱 {docs_url}",
+          "description": "輸入手機的 IRK，或位址永不變更之裝置（例如部分手錶和防丟標籤）的 MAC 位址。手機會不時變更位址，因此請以 IRK 追蹤手機。如何找到 IRK，請參閱 {docs_url}",
           "data": {
             "name": "名稱",
             "irk_or_mac": "IRK 或 MAC 位址",

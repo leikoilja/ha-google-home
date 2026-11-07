@@ -123,7 +123,7 @@ Once the cause is fixed, you can reload the integration to ask Google straight a
 
 ### No alarms or timers sensors
 
-The integration adds the alarms sensor, timers sensor, Do Not Disturb switch and alarm volume for a device once the device answers successfully. Until then, a device that is offline, or that doesn't support these features, has only a device sensor, a reboot button, an update sensor, and disabled Wi-Fi and uptime sensors. Check the device sensor:
+The integration adds the alarms sensor, timers sensor, alarm and timer event entities, Do Not Disturb switch and alarm volume for a device once the device answers successfully. Until then, a device that is offline, or that doesn't support these features, has only a device sensor, a reboot button, an update sensor, and disabled Wi-Fi and uptime sensors. Check the device sensor:
 
 - **It shows an IP address:** the entities appear at the next update the device answers successfully. If they don't, the device may have [no alarms and timers](#devices-without-alarms-and-timers).
 - **It's unavailable on all your devices:** first check that Home Assistant can reach them on your network; see [Home Assistant can't reach your devices](#device-offline-or-not-compatible). For other causes, see [When entities are unavailable](entities.md#when-entities-are-unavailable).
@@ -199,7 +199,7 @@ The integration then doesn't ask Google for that device at every update: it asks
 
 Once the cause is fixed, you can reload the integration to ask Google straight away: **Settings** > **Devices & services** > **Google Home** > **⋮** > **Reload**.
 
-If the log instead has an error such as `Failed to parse fetched alarms and timers for device Kitchen - API returned unknown json structure`, `Kitchen sent a reply to setup/assistant/alarms that isn't valid JSON` or `Kitchen sent an alarm volume that isn't a number`, the device answered with something the integration can't read. Its entities keep the values they had, which may be out of date, until a reply can be read again. If the error keeps coming back, [get help](#still-stuck) and attach [diagnostics](#download-diagnostics).
+If the log instead has an error such as `Failed to parse fetched alarms and timers for device Kitchen - API returned unknown json structure`, `Kitchen sent a reply to setup/assistant/alarms that isn't valid JSON`, `Kitchen sent a reply to setup/assistant/alarms/volume that isn't a JSON object` or `Kitchen sent an alarm volume that isn't a number`, the device answered with something the integration can't read. The entities that reply is for keep the values they had, which may be out of date, until a reply can be read again. The device's other entities still update, but [alarm and timer events](entities.md#alarm-and-timer-events) aren't fired for that update or the next one that works. If the error keeps coming back, [get help](#still-stuck) and attach [diagnostics](#download-diagnostics).
 
 ## An action or setting fails
 
@@ -264,7 +264,12 @@ The diagnostics file shows:
 
 - The integration's options.
 - For each device: its model, whether it answers, whether Home Assistant has received its mDNS announcements since the integration loaded, its last reply about alarms and timers, as the device sent it, its firmware versions and release channel, whether it says a firmware update is waiting, its Wi-Fi signal strength, and its estimated last boot time (`booted_at`, before Home Assistant smooths it).
-- Bluetooth tracking (`bluetooth`): whether each speaker is `excluded` (including disabled speakers) or `unsupported`, whether it has ever returned scan results since the integration last loaded (`answered`), whether its scans currently cover the presence window (`covers_presence_window`), and the end of its covered scan interval (`covered_until`, not the time results were read). Each tracker shows its latest `state`, including `unavailable`. The summary is `null` when Bluetooth tracking is off or no devices are tracked.
+- Bluetooth tracking (`bluetooth`), which is `null` when Bluetooth tracking is off or no devices are tracked. Each tracker shows its latest `state`, including `unavailable`. For each speaker, it shows:
+    - Whether it's `excluded` (including disabled speakers) or `unsupported`.
+    - Whether it has ever returned scan results since the integration last loaded (`answered`).
+    - Whether it has scanned without a break for the last 90 seconds (`covers_presence_window`), and the end of its covered scan interval (`covered_until`, not the time results were read).
+    - Whether it's [active](bluetooth.md#how-the-tracker-works) (`participating`). An active speaker whose `covers_presence_window` is `false` keeps trackers from making a new `not_home` decision, as described in [Tracker is unavailable](bluetooth.md#tracker-is-unavailable).
+    - How many seconds ago it last returned usable scan results (`last_success_age`), and how many seconds it stays active if it returns no more (`remaining_lease`). Both include results from before a restart or reload, so a speaker can be `participating` while `answered` is `false`. Both are `null` when no recent results are recorded for it.
 - How many other Cast devices on your network have announced themselves since the integration loaded but aren't in Google's device list, such as TVs with Chromecast built in, or speakers in another Google account. Only the number, not their names or addresses. Devices in homes that you [deselected](configuration.md#choose-homes) don't count.
 - When you downloaded it.
 

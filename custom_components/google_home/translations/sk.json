@@ -258,7 +258,7 @@
       "step": {
         "user": {
           "title": "Sledovať zariadenie Bluetooth",
-          "description": "Zadajte IRK telefónu alebo MAC adresu zariadenia, ktorého adresa sa nikdy nemení, napríklad niektorých hodiniek a lokalizačných štítkov. Telefóny menia adresu každých niekoľko minút, preto ich sledujte podľa IRK. Ako nájsť IRK, sa dozviete na {docs_url}.",
+          "description": "Zadajte IRK telefónu alebo MAC adresu zariadenia, ktorého adresa sa nikdy nemení, napríklad niektorých hodiniek a lokalizačných štítkov. Telefóny z času na čas menia adresu, preto ich sledujte podľa IRK. Ako nájsť IRK, sa dozviete na {docs_url}.",
           "data": {
             "name": "Názov",
             "irk_or_mac": "IRK alebo MAC adresa",

@@ -68,7 +68,7 @@ from .test_sensor import (
     set_up_devices,
     timers_json,
 )
-from .test_setup import set_up, state
+from .test_setup import STATES, set_up, state
 from .test_unsupported_devices import (
     ALARMS,
     ALWAYS_LABELS,
@@ -516,6 +516,72 @@ def test_alarm_volume_reply_without_the_volume_is_only_debugged(
 
     assert device.alarm_volume == 70
     assert above_debug(caplog) == []
+
+
+@pytest.mark.usefixtures("google")
+@pytest.mark.parametrize(
+    ("label", "path", "body"),
+    [
+        pytest.param(VOLUME, API_ENDPOINT_ALARM_VOLUME, 42, id="volume-number"),
+        pytest.param(DND, API_ENDPOINT_DO_NOT_DISTURB, 42, id="do-not-disturb-number"),
+        # A list or text that has the setting's name passes a check that the name is
+        # in the reply, but not reading the setting from it
+        pytest.param(VOLUME, API_ENDPOINT_ALARM_VOLUME, ["volume"], id="volume-list"),
+        pytest.param(
+            DND,
+            API_ENDPOINT_DO_NOT_DISTURB,
+            ["notifications_enabled"],
+            id="do-not-disturb-list",
+        ),
+        pytest.param(VOLUME, API_ENDPOINT_ALARM_VOLUME, "volume", id="volume-text"),
+        # Like an empty reply, it's false
+        pytest.param(VOLUME, API_ENDPOINT_ALARM_VOLUME, False, id="volume-false"),
+        pytest.param(
+            DND, API_ENDPOINT_DO_NOT_DISTURB, False, id="do-not-disturb-false"
+        ),
+    ],
+)
+async def test_setting_reply_that_isnt_an_object(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    replies: Replies,
+    aioclient_mock: AiohttpClientMocker,
+    caplog: pytest.LogCaptureFixture,
+    label: str,
+    path: str,
+    body: object,
+) -> None:
+    """Keep a speaker's settings, alarms and entities when its reply about a setting isn't a JSON object, and log it once until an update works.
+
+    Its updates work, and it's still asked the rest.
+    """
+    await set_up(hass, config_entry)
+    coordinator = runtime(config_entry).devices[SPEAKER_ID]
+    replies[SPEAKER][label] = (HTTPStatus.OK, body)
+    asked(aioclient_mock)
+    caplog.clear()
+
+    for _ in range(2):
+        await coordinator.async_refresh()
+    await hass.async_block_till_done()
+
+    assert coordinator.last_update_success
+    assert asked_by(asked(aioclient_mock), SPEAKER) == EVERYTHING * 2
+    # The alarm, alarm volume and Do Not Disturb that SUPPORTED gave at setup
+    assert {entity_id: state(hass, entity_id) for entity_id in STATES} == STATES
+    message = f"Kitchen speaker sent a reply to {path} that isn't a JSON object: {body}"
+    assert above_debug(caplog) == [("ERROR", message)]
+
+    replies[SPEAKER][label] = SUPPORTED[label]
+    await coordinator.async_refresh()
+    replies[SPEAKER][label] = (HTTPStatus.OK, body)
+    await coordinator.async_refresh()
+
+    assert above_debug(caplog) == [
+        ("ERROR", message),
+        ("INFO", "Updating Kitchen speaker works again"),
+        ("ERROR", message),
+    ]
 
 
 def test_null_after_reply_that_cant_be_read_doesnt_end_the_failure(

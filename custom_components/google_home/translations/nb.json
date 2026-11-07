@@ -258,7 +258,7 @@
       "step": {
         "user": {
           "title": "Spor en Bluetooth-enhet",
-          "description": "Skriv inn IRK-en til en telefon, eller MAC-adressen til en enhet med en adresse som aldri endres, for eksempel enkelte klokker og sporingsbrikker. Telefoner bytter adresse med noen minutters mellomrom, så spor dem med IRK. Se {docs_url} for hvordan du finner IRK-en.",
+          "description": "Skriv inn IRK-en til en telefon, eller MAC-adressen til en enhet med en adresse som aldri endres, for eksempel enkelte klokker og sporingsbrikker. Telefoner bytter adresse fra tid til annen, så spor dem med IRK. Se {docs_url} for hvordan du finner IRK-en.",
           "data": {
             "name": "Navn",
             "irk_or_mac": "IRK eller MAC-adresse",
