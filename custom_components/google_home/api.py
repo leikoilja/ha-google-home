@@ -492,7 +492,8 @@ class GlocaltokensApiClient(GoogleAccountClient):
             device=device,
             polling=True,
         )
-        self._store_do_not_disturb(device, response)
+        if self._is_setting_reply(device, API_ENDPOINT_DO_NOT_DISTURB, response):
+            self._store_do_not_disturb(device, response)
         return device
 
     async def set_do_not_disturb(self, device: GoogleHomeDevice, enable: bool) -> None:
@@ -552,6 +553,8 @@ class GlocaltokensApiClient(GoogleAccountClient):
             device=device,
             polling=True,
         )
+        if not self._is_setting_reply(device, API_ENDPOINT_ALARM_VOLUME, response):
+            return device
         if response and JSON_ALARM_VOLUME in response:
             volume_raw = str(response[JSON_ALARM_VOLUME])
             try:
@@ -605,6 +608,28 @@ class GlocaltokensApiClient(GoogleAccountClient):
             device.alarm_volume = volume
         elif response:
             self._log_unexpected_volume_answer(device, response)
+
+    @staticmethod
+    def _is_setting_reply(
+        device: GoogleHomeDevice, endpoint: str, response: JsonDict | None
+    ) -> bool:
+        """Return whether an update's reply about a setting is a JSON object, or nothing.
+
+        Log other JSON, such as a number or a list, as a failure of the update, which
+        keeps the setting the device had.
+        """
+        if response is None or isinstance(response, dict):
+            return True
+        log_failure(
+            device,
+            True,
+            "setting reply that isn't an object",
+            "%s sent a reply to %s that isn't a JSON object: %s",
+            device.name,
+            endpoint,
+            response,
+        )
+        return False
 
     @staticmethod
     def _log_unexpected_volume_answer(
