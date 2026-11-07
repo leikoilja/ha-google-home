@@ -134,7 +134,6 @@ class GoogleAccountClient:
         self.google_devices: list[GoogleHomeDevice] = []
         # Complete successful graph membership, separate from token-filtered devices.
         self.bluetooth_source_ids: set[str] | None = None
-        self.bluetooth_graph_revision = 0
         self.bluetooth_graph_answered: Callable[[], None] | None = None
         # Whether google_devices is the list of the last successful fetch, which can
         # be empty. It isn't until a fetch succeeds, or once a device rejects its
@@ -460,7 +459,6 @@ class GoogleAccountClient:
             if home.id not in self.excluded_homes
             for device in home.devices
         }
-        self.bluetooth_graph_revision += 1
         if self.bluetooth_graph_answered is not None:
             self.bluetooth_graph_answered()
         known_devices = {device.device_id: device for device in self.google_devices}

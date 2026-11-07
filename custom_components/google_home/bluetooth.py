@@ -59,6 +59,7 @@ from .const import (
     HEADER_CAST_LOCAL_AUTH,
     HEADER_CONTENT_TYPE,
     PORT,
+    SUBENTRY_BLUETOOTH_DEVICE,
 )
 from .coordinator import GoogleAccountCoordinator, async_device_disabled
 from .device_info import create_url
@@ -261,7 +262,6 @@ class TrackedDevice:
         self.confirmed_now = False
         self.last_sighted_utc: float | None = None
         self.live_sighting = False
-        self.provenance = "live"
         # The strongest RSSI each speaker heard the device at in this update,
         # by the speaker's device ID
         self.heard: dict[str, int] = {}
@@ -345,7 +345,6 @@ class BluetoothScanner:
                     device.last_sighted = row.sighted
                     device.last_sighted_utc = row.sighted_utc
                     device.confirmed_at = row.confirmed
-                    device.provenance = "restored"
 
         self._updates = {
             device.subentry_id: TrackerUpdate(device.state, {})
@@ -391,7 +390,9 @@ class BluetoothScanner:
         if self._history is None:
             return False
         changed = False
-        for subentry in self._history.entry.get_subentries_of_type("bluetooth_device"):
+        for subentry in self._history.entry.get_subentries_of_type(
+            SUBENTRY_BLUETOOTH_DEVICE
+        ):
             for device in self.tracked:
                 if device.subentry_id == subentry.subentry_id and device.identity == (
                     subentry.data.get(CONF_IRK),
@@ -469,7 +470,6 @@ class BluetoothScanner:
             [speaker for speaker in required if speaker is not None], now
         )
         decision = healthy and ((scan and self._accepted) or self._membership_changed)
-        provenance = "live" if scan and self._accepted else "membership_expiry"
         self._membership_changed = False
         updates = {}
         for device in self.tracked:
@@ -490,13 +490,11 @@ class BluetoothScanner:
                 home_confirm=scan and self._accepted and device.live_sighting,
             )
             if device.confirmed_now and self._history:
-                device.provenance = "departure_delay" if delayed else provenance
                 self._history.confirm(
                     device.subentry_id,
                     str(device.state),
                     device.last_sighted,
                     now,
-                    device.provenance,
                     device.last_sighted_utc,
                 )
             updates[device.subentry_id] = self._tracker_update(device, state, now)
