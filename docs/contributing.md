@@ -231,7 +231,7 @@ The pull request runs these checks. On your first pull request, they may wait fo
 
 - **Pre-commit:** prek, the [quality scale check](#keep-the-quality-scale-up-to-date), the tests and the coverage check.
 - **Translations:** the translation check.
-- **Marketplace repository** and **Hassfest:** repository validation using `hacs/action` and Home Assistant's integration validator. The Marketplace still reads `hacs.json`, so the repository check keeps the existing action. Both checks use images that change upstream, so a new rule can fail them without your change causing it.
+- **HACS** and **Hassfest:** repository validation using `hacs/action` and Home Assistant's integration validator. The HACS action still checks repository metadata for this project, including `hacs.json`, which the Marketplace also reads. Both checks use images that change upstream, so a new rule can fail them without your change causing it.
 - **Build site:** the docs build, when your pull request changes `docs/`, `zensical.toml`, `pyproject.toml` or `uv.lock`.
 
 To run the Pre-commit check's steps yourself, in its order:
@@ -244,7 +244,7 @@ uv run pytest --cov
 script/check_coverage
 ```
 
-The second command runs the `python-typing-update` hook, which updates old typing syntax. It's set to run only when asked, so the first command skips it. The commands for the translation check and the docs build are in [Run the checks](#run-the-checks) and [Edit the docs](#edit-the-docs). Marketplace repository and Hassfest validation run on GitHub.
+The second command runs the `python-typing-update` hook, which updates old typing syntax. It's set to run only when asked, so the first command skips it. The commands for the translation check and the docs build are in [Run the checks](#run-the-checks) and [Edit the docs](#edit-the-docs). HACS and Hassfest run on GitHub.
 
 The pull request also shows the **Coverage** status, with the tests' total coverage, and **Translation coverage**, with how many translations are complete.
 

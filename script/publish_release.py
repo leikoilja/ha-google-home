@@ -88,20 +88,20 @@ def update_manifests(repo: Repository, version: str) -> str:
     requirements[names.index("glocaltokens")] = pin
 
     print("Updating hacs.json...")
-    marketplace_config = read_json(repo, "hacs.json", head.sha)
-    marketplace_config["homeassistant"] = package_version("homeassistant")
+    hacs_config = read_json(repo, "hacs.json", head.sha)
+    hacs_config["homeassistant"] = package_version("homeassistant")
 
     release_commit = commit_files(
         repo,
         head.sha,
         f"Release v{version}",
-        {MANIFEST_PATH: manifest, "hacs.json": marketplace_config | ZIP_RELEASE},
+        {MANIFEST_PATH: manifest, "hacs.json": hacs_config | ZIP_RELEASE},
     )
     cleanup_commit = commit_files(
         repo,
         release_commit.sha,
         cleanup_message(version),
-        {"hacs.json": marketplace_config},
+        {"hacs.json": hacs_config},
     )
     repo.get_git_ref("heads/master").edit(sha=cleanup_commit.sha)
     return release_commit.sha

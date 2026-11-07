@@ -20,11 +20,7 @@ from script import publish_release
 
 INTEGRATION = "custom_components/google_home"
 MANIFEST = f"{INTEGRATION}/manifest.json"
-MARKETPLACE_JSON = {
-    "name": "Google Home",
-    "homeassistant": "2026.1.0",
-    "render_readme": True,
-}
+HACS_JSON = {"name": "Google Home", "homeassistant": "2026.1.0", "render_readme": True}
 
 
 def git(*args: str) -> str:
@@ -100,7 +96,7 @@ class FakeRepo:
                     ],
                     "version": "1.15.0",
                 },
-                "hacs.json": MARKETPLACE_JSON,
+                "hacs.json": HACS_JSON,
             }
         }
         self.parents: dict[str, str] = {}
@@ -162,14 +158,12 @@ def test_release_commit_has_zip_settings_and_master_does_not(repo: FakeRepo) -> 
 
     assert repo.parents[tagged] == "base"
     assert repo.parents[repo.master] == tagged
-    marketplace_json = MARKETPLACE_JSON | {
-        "homeassistant": package_version("homeassistant")
-    }
-    assert repo.files[tagged]["hacs.json"] == marketplace_json | {
+    hacs_json = HACS_JSON | {"homeassistant": package_version("homeassistant")}
+    assert repo.files[tagged]["hacs.json"] == hacs_json | {
         "zip_release": True,
         "filename": "google_home.zip",
     }
-    assert repo.files[repo.master]["hacs.json"] == marketplace_json
+    assert repo.files[repo.master]["hacs.json"] == hacs_json
     for sha in (tagged, repo.master):
         assert repo.files[sha][MANIFEST]["version"] == "1.17.0"
 
