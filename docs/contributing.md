@@ -39,7 +39,7 @@ Or open the repository in its [dev container](https://containers.dev/), in Visua
 
 ### How the integration works
 
-The code is in [`custom_components/google_home`](https://github.com/leikoilja/ha-google-home/tree/master/custom_components/google_home). `__init__.py` sets up the config entry: it creates the account's client and coordinator, starts the mDNS browser and adds the entity platforms. The client's requests to Google are in `account.py`, and those to each device in `api.py`. The requests for a device's info, firmware and Wi-Fi need no token, and `device_info.py` sends them with the [ghome-local-api](https://github.com/KapJI/ghome-local-api) library. The integration builds the requests that need a device's token itself, as it does the Bluetooth scans in `bluetooth.py`. Setup, in `config_flow.py`, signs in with a client of its own and saves the master token in the config entry.
+The code is in [`custom_components/google_home`](https://github.com/leikoilja/ha-google-home/tree/master/custom_components/google_home). `__init__.py` sets up the config entry: it creates the account's client and coordinator, starts the mDNS browser and adds the entity platforms. The client's requests to Google are in `account.py`, and those to each device in `api.py`. `api.py` sends the requests that need a device's token: for its alarms, timers and settings, and to delete alarms and timers or reboot it. `device_info.py` asks for its info, firmware and Wi-Fi, which need no token. Both use the [ghome-local-api](https://github.com/KapJI/ghome-local-api) library. The integration builds the Bluetooth scans in `bluetooth.py` itself. Setup, in `config_flow.py`, signs in with a client of its own and saves the master token in the config entry.
 
 - A stacked box means there are several, such as one for each device.
 - A two-way arrow carries information both ways, such as a request and its answer. A one-way arrow hands something over, and a dotted arrow finds the devices on your network.
@@ -89,7 +89,7 @@ flowchart TB
     actions -- "delete, reboot, refresh" --> devices
     mdns <-. "Cast devices" .-> speakers
     client <-. "known hosts,<br>with ghome-local-api" .-> speakers
-    devices <-- "alarms, timers, settings,<br>and with ghome-local-api,<br>firmware and Wi-Fi" --> speakers
+    devices <-- "alarms, timers, settings,<br>firmware and Wi-Fi,<br>with ghome-local-api" --> speakers
     account -- "device list" --> bluetooth
     flows -- "devices to track" --> bluetooth
     bluetooth <-- "scans" --> speakers
