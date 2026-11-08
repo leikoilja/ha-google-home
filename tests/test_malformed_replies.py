@@ -75,6 +75,7 @@ from .test_unsupported_devices import (
     DND,
     EVERYTHING,
     FEATURE_LABELS,
+    INFO,
     SPEAKER,
     SUPPORTED,
     VOLUME,
@@ -422,6 +423,48 @@ def test_reply_that_isnt_valid_json(
         ("INFO", "Updating Device 0 works again"),
         ("ERROR", invalid),
     ]
+
+
+@pytest.mark.parametrize(
+    ("label", "path", "requested", "unanswered"),
+    [
+        # Its info says whether it answers, and its settings aren't asked
+        pytest.param(ALARMS, API_ENDPOINT_ALARMS, [ALARMS, INFO], 1, id="alarms"),
+        # Do Not Disturb isn't asked
+        pytest.param(
+            VOLUME, API_ENDPOINT_ALARM_VOLUME, [ALARMS, VOLUME], 0, id="volume"
+        ),
+    ],
+)
+def test_reply_that_isnt_valid_json_and_cant_be_closed(
+    clock: Mock,
+    caplog: pytest.LogCaptureFixture,
+    label: str,
+    path: str,
+    requested: list[str],
+    unanswered: int,
+) -> None:
+    """Count no answer when closing an answer fails after a 200 whose reply isn't valid JSON.
+
+    The request fails as one whose answer broke off, and its 200 isn't kept. Only a
+    fake session does this: aiohttp doesn't fail to close an answer whose body came.
+    """
+    client, _, network = setup(SUPPORTED)
+    [device] = client.google_devices
+    poll(client, clock, at(0))
+    network.asked(SPEAKER)
+    network.replies[SPEAKER][label] = (
+        HTTPStatus.OK,
+        JSONDecodeError("Expecting value", "<html>", 0),
+    )
+    network.close_errors[SPEAKER, label] = ClientPayloadError("closed")
+
+    poll(client, clock, at(0, 15))
+
+    assert network.asked(SPEAKER) == requested
+    assert (path, True) not in device.statuses
+    assert (device.available, device.unanswered_updates) == (False, unanswered)
+    assert above_debug(caplog) == [("ERROR", "Request from Device 0 device error")]
 
 
 @pytest.mark.usefixtures("google")

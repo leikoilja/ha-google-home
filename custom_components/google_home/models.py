@@ -2,14 +2,20 @@
 
 from collections.abc import Mapping
 from datetime import datetime, timedelta
-from enum import Enum
 from http import HTTPStatus
 import logging
 import math
 import sys
-from typing import Self, cast, override
+from typing import Self, cast
 
-from ghome_local_api import BuildInfo, JsonObject
+from ghome_local_api import (
+    AlarmsAndTimers,
+    AlarmStatus,
+    BuildInfo,
+    JsonObject,
+    JsonValue,
+    TimerStatus,
+)
 
 from homeassistant.util.dt import as_local, utc_from_timestamp
 
@@ -35,36 +41,6 @@ _LOGGER: logging.Logger = logging.getLogger(__package__)
 def convert_from_ms_to_s(timestamp: int) -> int:
     """Convert from milliseconds to seconds."""
     return round(timestamp / 1000)
-
-
-def is_number(value: object) -> bool:
-    """Return whether a JSON value is a whole number or a finite one.
-
-    True and false aren't numbers. A whole number isn't turned into a float to check
-    it, so one too large to convert is left for its conversion to reject.
-    """
-    if isinstance(value, float):
-        return math.isfinite(value)
-    return isinstance(value, int) and not isinstance(value, bool)
-
-
-def is_item(
-    item: object, numbers: tuple[str, ...], optional_numbers: tuple[str, ...] = ()
-) -> bool:
-    """Return whether an alarm or timer has its ID, its status and these numbers.
-
-    The status must be a whole number, and an optional number may be missing or null.
-    """
-    return (
-        isinstance(item, dict)
-        and isinstance(item.get("id"), str)
-        and isinstance(status := item.get("status"), int)
-        and not isinstance(status, bool)
-        and all(is_number(item.get(key)) for key in numbers)
-        and all(
-            item.get(key) is None or is_number(item[key]) for key in optional_numbers
-        )
-    )
 
 
 class GoogleHomeDevice:
@@ -200,19 +176,11 @@ class GoogleHomeDevice:
         items all have the fields that GoogleHomeAlarm and GoogleHomeTimer read, with
         times that can be converted. Their labels and recurrences are kept as they come.
         """
-        alarms, timers = reply.get(JSON_ALARM), reply.get(JSON_TIMER)
-        if not (
-            isinstance(alarms, list)
-            and isinstance(timers, list)
-            and all(is_item(alarm, ("fire_time",)) for alarm in alarms)
-            and all(
-                is_item(
-                    timer, ("original_duration",), ("fire_time", "remaining_duration")
-                )
-                for timer in timers
-            )
-        ):
+        # The local API library's rules for a reply that can be read whole
+        if AlarmsAndTimers.from_json(cast(JsonValue, reply)) is None:
             return False
+        alarms = cast(list[AlarmJsonDict], reply[JSON_ALARM])
+        timers = cast(list[TimerJsonDict], reply[JSON_TIMER])
         try:
             new_alarms = [GoogleHomeAlarm.from_json(alarm) for alarm in alarms]
             new_timers = [GoogleHomeTimer.from_json(timer) for timer in timers]
@@ -378,40 +346,9 @@ class GoogleHomeAlarm:
         }
 
 
-class GoogleHomeAlarmStatus(Enum):
-    """Definition of Google Home alarm status."""
-
-    NONE = 0
-    SET = 1
-    RINGING = 2
-    SNOOZED = 3
-    INACTIVE = 4
-    MISSED = 5
-    # A status the integration doesn't know, such as one that newer firmware adds
-    UNKNOWN = -1
-
-    @classmethod
-    @override
-    def _missing_(cls, value: object) -> Self:
-        """Return UNKNOWN for a status the integration doesn't know."""
-        return cls.UNKNOWN
-
-
-class GoogleHomeTimerStatus(Enum):
-    """Definition of Google Home timer status."""
-
-    NONE = 0
-    SET = 1
-    PAUSED = 2
-    RINGING = 3
-    # A status the integration doesn't know, such as one that newer firmware adds
-    UNKNOWN = -1
-
-    @classmethod
-    @override
-    def _missing_(cls, value: object) -> Self:
-        """Return UNKNOWN for a status the integration doesn't know."""
-        return cls.UNKNOWN
+# The statuses of alarms and timers, as the local API library reads them
+GoogleHomeAlarmStatus = AlarmStatus
+GoogleHomeTimerStatus = TimerStatus
 
 
 # The statuses of the alarms that come last, and whose time the alarms sensor never

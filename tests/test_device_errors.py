@@ -111,14 +111,17 @@ def test_log_each_type_of_failure_once(
     for seconds, failure in (
         (at(0), SERVER_ERROR),
         (at(0, 15), ServerDisconnectedError()),
-        (at(0, 30), SERVER_ERROR),
-        (at(0, 45), HTTPStatus.SERVICE_UNAVAILABLE),
+        # Another type of failure with the same message: its own type counts
+        (at(0, 30), (HTTPStatus.OK, ClientPayloadError("cut off"))),
+        (at(0, 45), SERVER_ERROR),
+        (at(1), HTTPStatus.SERVICE_UNAVAILABLE),
     ):
         network.replies[SPEAKER][ALARMS] = failure
         poll(client, clock, seconds)
 
     assert above_debug(caplog) == [
         ("ERROR", FAILED_500),
+        ("ERROR", DROPPED),
         ("ERROR", DROPPED),
         ("ERROR", "Failed to access Device 0, API returned 503: <answer>"),
     ]

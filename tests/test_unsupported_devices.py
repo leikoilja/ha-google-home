@@ -165,13 +165,14 @@ class Network:
     """Devices that answer each request as `replies` says, by address, and record it.
 
     It records each call the client makes on the session, not what goes over the
-    wire. Closing an answer from an address in `close_errors` raises that error.
+    wire. Closing an answer from an address in `close_errors`, or to a request named
+    there by its address and label, raises that error.
     """
 
     def __init__(self) -> None:
         """Start with no devices."""
         self.replies: dict[str, dict[str, Reply]] = {}
-        self.close_errors: dict[str, Exception] = {}
+        self.close_errors: dict[str | tuple[str, str], Exception] = {}
         # Each session.get() call: its URL and keyword arguments
         self.gets: list[tuple[str, dict[str, object]]] = []
         self._asked: list[tuple[str, str]] = []
@@ -187,8 +188,9 @@ class Network:
     def _answer(self, url: str) -> MagicMock:
         host, endpoint = url.removeprefix("https://").split("/", 1)
         address = host.rsplit(":", 1)[0]
-        self._asked.append((address, ENDPOINTS[endpoint]))
-        reply = self.replies[address][ENDPOINTS[endpoint]]
+        label = ENDPOINTS[endpoint]
+        self._asked.append((address, label))
+        reply = self.replies[address][label]
         response = MagicMock()
         if isinstance(reply, Exception):
             response.__aenter__.side_effect = reply
@@ -203,7 +205,9 @@ class Network:
             if isinstance(body, Exception)
             else AsyncMock(return_value=body if isinstance(body, bytes) else b"{}"),
         )
-        if close_error := self.close_errors.get(address):
+        if close_error := self.close_errors.get(
+            (address, label), self.close_errors.get(address)
+        ):
             response.__aexit__.side_effect = close_error
         return response
 

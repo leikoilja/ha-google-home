@@ -122,8 +122,6 @@ API_ENDPOINT_UPDATE_INFO: Final = local_api.API_ENDPOINT_UPDATE_INFO
 HEADER_CAST_LOCAL_AUTH: Final = local_api.HEADER_CAST_LOCAL_AUTH
 HEADER_CONTENT_TYPE: Final = local_api.HEADER_CONTENT_TYPE
 
-# How long a device has to answer a request, in seconds
-TIMEOUT: Final = local_api.DEFAULT_TIMEOUT
 # A device's alarms and timers sensors, Do Not Disturb switch and alarm volume are
 # unavailable once it hasn't answered this many updates in a row. In logs at a
 # 10-second interval, speakers that restarted at night missed 2 or 3.

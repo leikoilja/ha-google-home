@@ -123,8 +123,7 @@ class GoogleAccountClient:
     ):
         """Create the client of a Google account."""
         self.hass = hass
-        self._session = session
-        # The device requests that need no token
+        # The requests to the devices, except for Bluetooth scans
         self._local_client = GoogleHomeLocalClient(session)
         self._client = GLocalAuthenticationTokens(
             username=username,
