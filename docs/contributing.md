@@ -221,7 +221,13 @@ Before you push, build the site as CI does. It fails on warnings, such as a link
 uv run --only-group docs zensical build --clean --strict
 ```
 
-A pull request that changes the docs gets a preview link in a comment.
+### Where the docs are published
+
+- [ha-google-home.pages.dev](https://ha-google-home.pages.dev/) shows the docs of the latest stable release. They're built from the release's tag when it's published, so if you have an older version installed, they may describe features it doesn't have.
+- [next.ha-google-home.pages.dev](https://next.ha-google-home.pages.dev/) shows the docs on `master`, including changes that aren't released yet. It's updated after each change to the docs on `master`. A banner on every page says the version is unreleased, and search engines are asked not to index the site.
+- A pull request that changes the rendered docs gets a preview, built like next.ha-google-home.pages.dev. A comment on the pull request links to it.
+
+A docs change merged to `master` therefore reaches ha-google-home.pages.dev with the next release. Maintainers can publish a fix to the released docs sooner; see [Fix the released docs without a release](#fix-the-released-docs-without-a-release).
 
 ### Open a pull request
 
@@ -232,7 +238,7 @@ The pull request runs these checks. On your first pull request, they may wait fo
 - **Pre-commit:** prek, the [quality scale check](#keep-the-quality-scale-up-to-date), the tests and the coverage check.
 - **Translations:** the translation check.
 - **HACS** and **Hassfest:** repository validation using `hacs/action` and Home Assistant's integration validator. The HACS action still checks repository metadata for this project, including `hacs.json`, which the Marketplace also reads. Both checks use images that change upstream, so a new rule can fail them without your change causing it.
-- **Build site:** the docs build, when your pull request changes `docs/`, `zensical.toml`, `pyproject.toml` or `uv.lock`.
+- **Build site:** the docs build, when your pull request changes `docs/`, `overrides/`, `zensical.toml`, `pyproject.toml` or `uv.lock`.
 
 To run the Pre-commit check's steps yourself, in its order:
 
@@ -267,6 +273,8 @@ Maintainers publish the draft release that Release Drafter keeps up to date: run
 3. Downloads the attached zip and checks that its `manifest.json` has the release's version.
 4. Publishes the release, with its tag on the release commit.
 
+Publishing the release also runs the **Release docs** workflow, which builds the docs from the release's tag and publishes them to [ha-google-home.pages.dev](https://ha-google-home.pages.dev/). Publishing a pre-release doesn't change the site, but turning a pre-release into a full release does.
+
 The Marketplace installs a release from its `google_home.zip`, and GitHub counts its downloads. A release whose zip is missing can't be installed, so the workflow publishes only after the check passes. Don't publish the draft by hand: the release would keep the previous version in `manifest.json` and have no zip.
 
 If the workflow stops, fix the cause and run it again. If nothing has been merged since, it reuses the release commit; otherwise it commits the release again, on top of what was merged. If the release's tag already exists on another commit, the workflow stops before changing the draft, because GitHub would publish the release on that commit. Delete the tag if it's wrong, then run the workflow again.
@@ -275,6 +283,27 @@ If a published release's zip is missing or wrong, run the workflow with the rele
 
 - The old zip's download count is lost. If you need it, note it first, for example with `gh release view v1.17.0 --json assets`.
 - The release can't be installed until the new zip is uploaded. If the upload fails, run the workflow with the tag again.
+
+### Fix the released docs without a release
+
+The docs on `master` are published to [next.ha-google-home.pages.dev](https://next.ha-google-home.pages.dev/). To correct the docs of the latest release on ha-google-home.pages.dev before the next release:
+
+1. Merge the fix to `master` as usual.
+2. Create a branch named `docs/<tag>` from the latest release's tag, for example `docs/v1.17.0` from `v1.17.0`. The branch may change only files under `docs/`. If the branch already exists from an earlier fix, add to it instead.
+3. For each commit whose docs fix applies to that release, copy only its changes under `docs/`. Most commits also change code or tests, so leave those out:
+
+    ```shell
+    git cherry-pick --no-commit <commit>
+    git restore --source=HEAD --staged --worktree -- . ':!docs/'
+    git commit -C <commit>
+    ```
+
+4. Push the branch to this repository.
+5. Open **Actions** > **Release docs** > **Run workflow**, keep **Use workflow from** set to `master`, and enter `docs/v1.17.0` as the ref.
+
+The workflow refuses any other ref, including `master`. It also refuses a branch that doesn't contain the release's tag or that changes files outside `docs/`. A fix that also needs a change to `zensical.toml`, such as a new page or a navigation change, has to wait for the next release.
+
+To publish the same docs again, for example after a failed run, run the workflow with the same ref. Entering just the tag, such as `v1.17.0`, publishes the release's docs without the fixes on its `docs/<tag>` branch. Entering an older release's tag, or publishing a release of an older version, replaces the site with that version's docs.
 
 ## License
 

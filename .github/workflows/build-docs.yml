@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - docs/**
+      - overrides/**
       - zensical.toml
       - pyproject.toml
       - uv.lock
@@ -36,6 +37,8 @@ jobs:
         uses: ./.github/actions/build-docs
         with:
           python-version: ${{ env.PYTHON_VERSION }}
+          # Built like next.ha-google-home.pages.dev, which the preview is compared with.
+          next: "true"
 
       - name: Upload site artifact
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

@@ -61,7 +61,7 @@ The **[documentation site](https://ha-google-home.pages.dev/)** has these pages:
 
 ## Contribution
 
-Ask questions, report bugs or suggest features in [issues](https://github.com/leikoilja/ha-google-home/issues/new/choose). To translate the integration or change its code, see [Contributing](https://ha-google-home.pages.dev/contributing/).
+Ask questions, report bugs or suggest features in [issues](https://github.com/leikoilja/ha-google-home/issues/new/choose). To translate the integration or change its code, see [Contributing](https://next.ha-google-home.pages.dev/contributing/).
 
 ## Credits
 
