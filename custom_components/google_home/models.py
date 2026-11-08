@@ -7,7 +7,9 @@ from http import HTTPStatus
 import logging
 import math
 import sys
-from typing import Self, override
+from typing import Self, cast, override
+
+from ghome_local_api import BuildInfo, JsonObject
 
 from homeassistant.util.dt import as_local, utc_from_timestamp
 
@@ -150,14 +152,10 @@ class GoogleHomeDevice:
         the last part of its Cast version, such as 3.77.512345, which is the one
         Google publishes for it.
         """
-        info = self.build_info or {}
-        system = info.get("system_build_number")
-        cast = info.get("cast_build_revision")
-        if isinstance(system, str) and "." in system:
-            return system
-        if isinstance(cast, str) and cast:
-            return cast
-        return system if isinstance(system, str) and system else None
+        # The fields came from the library's BuildInfo, as JSON
+        return BuildInfo(
+            fields=cast(JsonObject | None, self.build_info)
+        ).firmware_version
 
     def count_answer(self, status: int | None) -> bool:
         """Count the answer to this update's request, and return whether there was one.

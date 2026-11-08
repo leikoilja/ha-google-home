@@ -39,7 +39,7 @@ Or open the repository in its [dev container](https://containers.dev/), in Visua
 
 ### How the integration works
 
-The code is in [`custom_components/google_home`](https://github.com/leikoilja/ha-google-home/tree/master/custom_components/google_home). `__init__.py` sets up the config entry: it creates the account's client and coordinator, starts the mDNS browser and adds the entity platforms. The client's requests to Google are in `account.py`, and those to each device in `api.py`. Setup, in `config_flow.py`, signs in with a client of its own and saves the master token in the config entry.
+The code is in [`custom_components/google_home`](https://github.com/leikoilja/ha-google-home/tree/master/custom_components/google_home). `__init__.py` sets up the config entry: it creates the account's client and coordinator, starts the mDNS browser and adds the entity platforms. The client's requests to Google are in `account.py`, and those to each device in `api.py`. The requests for a device's info, firmware and Wi-Fi need no token, and `device_info.py` sends them with the [ghome-local-api](https://github.com/KapJI/ghome-local-api) library. The integration builds the requests that need a device's token itself, as it does the Bluetooth scans in `bluetooth.py`. Setup, in `config_flow.py`, signs in with a client of its own and saves the master token in the config entry.
 
 - A stacked box means there are several, such as one for each device.
 - A two-way arrow carries information both ways, such as a request and its answer. A one-way arrow hands something over, and a dotted arrow finds the devices on your network.
@@ -88,8 +88,8 @@ flowchart TB
     account -- "adds and removes" --> devices
     actions -- "delete, reboot, refresh" --> devices
     mdns <-. "Cast devices" .-> speakers
-    client <-. "known hosts" .-> speakers
-    devices <-- "alarms, timers, settings,<br>firmware, Wi-Fi" --> speakers
+    client <-. "known hosts,<br>with ghome-local-api" .-> speakers
+    devices <-- "alarms, timers, settings,<br>and with ghome-local-api,<br>firmware and Wi-Fi" --> speakers
     account -- "device list" --> bluetooth
     flows -- "devices to track" --> bluetooth
     bluetooth <-- "scans" --> speakers
@@ -106,8 +106,8 @@ flowchart TB
 ```
 
 - **Google's device list:** [glocaltokens](https://github.com/leikoilja/glocaltokens) signs in with the saved master token and gets the home graph over gRPC: the device list, with each device's local token and home. Devices in [homes you deselect](configuration.md#choose-homes) are left out. The account coordinator updates at the [update interval](configuration.md#change-the-update-interval) in the options, but Google's list is fetched only every 20 minutes, and sooner when mDNS finds a Cast device that the list lacks or a device rejects its token. While the list is unknown, the wait before the next fetch grows with each failure.
-- **Addresses:** Google's list has none. mDNS gives them, and known hosts fill in the devices that mDNS doesn't find.
-- **Devices:** each device's coordinator asks the device's local API with its token, at the update interval and more often around an alarm's or timer's fire time. It asks for the firmware and Wi-Fi every 20 minutes.
+- **Addresses:** Google's list has none. mDNS gives them, and known hosts fill in the devices that mDNS doesn't find: each known host is asked for its info, which has its device's ID.
+- **Devices:** each device's coordinator asks the device's local API with its token, at the update interval and more often around an alarm's or timer's fire time. It asks for the firmware and Wi-Fi every 20 minutes, without the token.
 - **Bluetooth:** while Bluetooth tracking is on and has devices to track, a coordinator asks the speakers to scan every 30 seconds, and reads each scan's results at the next update.
 
 ### Try your changes

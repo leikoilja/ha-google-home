@@ -16,6 +16,7 @@ from aiohttp import (
     ClientTimeout,
 )
 from aiohttp.client_exceptions import ClientConnectorError, ContentTypeError
+from ghome_local_api import RequestError
 
 from homeassistant.util import dt as dt_util
 
@@ -24,10 +25,8 @@ from .const import (
     API_ENDPOINT_ALARM_DELETE,
     API_ENDPOINT_ALARM_VOLUME,
     API_ENDPOINT_ALARMS,
-    API_ENDPOINT_BUILD_INFO,
     API_ENDPOINT_DO_NOT_DISTURB,
     API_ENDPOINT_REBOOT,
-    API_ENDPOINT_UPDATE_INFO,
     FIRMWARE_CHECK_INTERVAL,
     HEADER_CAST_LOCAL_AUTH,
     HEADER_CONTENT_TYPE,
@@ -38,10 +37,11 @@ from .const import (
     TIMEOUT,
 )
 from .device_info import (
+    async_get_build_info,
     async_get_device_info,
     async_get_info_status,
+    async_get_update_info,
     create_url,
-    lacks_assistant,
 )
 from .exceptions import (
     AlarmsAndTimersNotDeleted,
@@ -49,19 +49,11 @@ from .exceptions import (
     DeviceRequestFailed,
     RequestFailure,
 )
-from .models import GoogleHomeDevice, is_number
+from .models import GoogleHomeDevice
 from .observations import observe_poll
 from .types import JsonDict
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
-
-# The fields of a device's build info that are kept: its versions and release channel
-BUILD_INFO_FIELDS = (
-    "cast_build_revision",
-    "system_build_number",
-    "release_track",
-    "preview_channel_state",
-)
 
 
 def log_failure(
@@ -179,7 +171,7 @@ class GlocaltokensApiClient(GoogleAccountClient):
             status = (
                 HTTPStatus.OK
                 if found_at_known_host
-                else await async_get_info_status(self._session, device)
+                else await async_get_info_status(self._local_client, device)
             )
             device.reachable = status == HTTPStatus.OK
             device.count_answer(status)
@@ -190,20 +182,20 @@ class GlocaltokensApiClient(GoogleAccountClient):
         device.reachable = status == HTTPStatus.OK
         try:
             asked_info = await self._async_find_alarms_unsupported(device)
-        except ClientError, TimeoutError:
+        except RequestError as error:
             _LOGGER.debug(
                 "%s didn't answer when asked for its info. Will check again in %d "
                 "minutes.",
                 device.name,
                 SUPPORT_CHECK_DELAY // 60,
-                exc_info=True,
+                exc_info=error.__cause__,
             )
             return device
         if device.alarms_unsupported:
             return device
         if not device.reachable and not asked_info:
             device.reachable = found_at_known_host or (
-                await async_get_info_status(self._session, device) == HTTPStatus.OK
+                await async_get_info_status(self._local_client, device) == HTTPStatus.OK
             )
         if not answered:
             return device
@@ -224,8 +216,7 @@ class GlocaltokensApiClient(GoogleAccountClient):
         list its features without Google Assistant. Only a 404 counts: a device
         that doesn't answer may be busy or offline.
 
-        Raise TimeoutError or ClientError if the device doesn't answer when asked
-        for its info.
+        Raise RequestError if the device doesn't answer when asked for its info.
         """
         now = monotonic()
         due = device.support_check_at is not None and now >= device.support_check_at
@@ -243,8 +234,10 @@ class GlocaltokensApiClient(GoogleAccountClient):
         # also when it doesn't answer
         device.support_check_at = now + SUPPORT_CHECK_DELAY
         assert device.ip_address is not None
-        info = await async_get_device_info(self._session, device.ip_address, device)
-        if not lacks_assistant(info):
+        info = await async_get_device_info(
+            self._local_client, device.ip_address, device
+        )
+        if info is None or not info.lacks_assistant:
             _LOGGER.debug(
                 "%s still answers 404 for alarms, but its info doesn't show that it "
                 "lacks Google Assistant. Will check again in %d minutes.",
@@ -290,51 +283,30 @@ class GlocaltokensApiClient(GoogleAccountClient):
         device.firmware_checked_at = now
         assert device.ip_address is not None
         try:
-            info = await async_get_device_info(
-                self._session, device.ip_address, endpoint=API_ENDPOINT_BUILD_INFO
-            )
-            if info is not None:
-                build_info = info.get("build_info")
+            build = await async_get_build_info(self._local_client, device.ip_address)
+            if build is not None:
                 device.build_info = (
-                    {
-                        field: build_info[field]
-                        for field in BUILD_INFO_FIELDS
-                        if field in build_info
-                    }
-                    if isinstance(build_info, dict)
-                    else None
+                    None if build.fields is None else dict[str, object](build.fields)
                 )
-            info = await async_get_device_info(
-                self._session, device.ip_address, endpoint=API_ENDPOINT_UPDATE_INFO
-            )
-        except ClientError, TimeoutError:
+            info = await async_get_update_info(self._local_client, device.ip_address)
+        except RequestError as error:
             _LOGGER.debug(
                 "%s didn't answer when asked for its firmware. Will check again in %d "
                 "minutes.",
                 device.name,
                 FIRMWARE_CHECK_INTERVAL // 60,
-                exc_info=True,
+                exc_info=error.__cause__,
             )
             return
         if info is not None:
-            uptime = info.get("uptime")
             device.booted_at = None
-            if isinstance(uptime, int | float) and is_number(uptime) and uptime >= 0:
+            if info.uptime is not None:
                 # Either the duration or the resulting date can be too large.
                 with suppress(OverflowError):
-                    device.booted_at = dt_util.utcnow() - timedelta(seconds=uptime)
-            has_update = info.get("has_update")
-            # Only the JSON true or false
-            device.has_update = has_update if isinstance(has_update, bool) else None
-            ssid = info.get("ssid")
-            device.wifi_ssid = ssid if isinstance(ssid, str) and ssid else None
-            signal = info.get("signal_level")
-            # A JSON number, but not true or false, which Python counts as numbers
-            device.wifi_signal = (
-                signal
-                if isinstance(signal, int | float) and not isinstance(signal, bool)
-                else None
-            )
+                    device.booted_at = dt_util.utcnow() - timedelta(seconds=info.uptime)
+            device.has_update = info.has_update
+            device.wifi_ssid = info.ssid
+            device.wifi_signal = info.signal_level
         _LOGGER.debug(
             "%s has firmware %s, update waiting: %s",
             device.name,

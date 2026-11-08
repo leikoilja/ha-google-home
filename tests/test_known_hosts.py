@@ -83,14 +83,14 @@ def device(
 
 def test_known_hosts_fill_in_missing_addresses() -> None:
     """Give a device that mDNS didn't find the address of the host that reports it."""
-    kitchen = device("Kitchen", "AAAA")
+    kitchen = device("Kitchen", "aaaa")
     office = device("Office", "BBBB", ip_address="10.0.0.2")
     bedroom = device("Bedroom", "CCCC")
 
     use_known_hosts(
         [kitchen, office, bedroom],
         {
-            "10.0.1.5": ("Kitchen speaker", "aaaa"),
+            "10.0.1.5": ("Kitchen speaker", "AAAA"),
             "10.0.1.6": ("Office", "bbbb"),
             "10.0.1.7": ClientError("No route to host"),
             "10.0.1.8": TimeoutError(),

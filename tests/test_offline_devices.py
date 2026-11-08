@@ -724,6 +724,9 @@ def test_device_without_alarms_unavailable_while_info_doesnt_answer(
         pytest.param(
             (HTTPStatus.OK, b"<html>"), None, ALWAYS_LABELS, id="200-not-json"
         ),
+        pytest.param(
+            info(), ClientPayloadError("closed"), ALWAYS_LABELS, id="200-close-fails"
+        ),
         pytest.param(HTTPStatus.NOT_FOUND, None, set(), id="404-holds"),
         pytest.param(
             (HTTPStatus.INTERNAL_SERVER_ERROR, ClientPayloadError("cut off")),
@@ -745,9 +748,9 @@ def test_info_answer_after_device_without_alarms_was_unavailable(
 ) -> None:
     """Count an info answer as the integration receives it.
 
-    A 200 counts once its body has come, whatever it is. Another status counts as
-    soon as it comes, even if its body or closing then fails. A redirect that
-    reaches the integration is an answer.
+    A 200 counts once its body has come, whatever it is, even if closing then
+    fails. Another status counts as soon as it comes, even if its body or closing
+    then fails. A redirect that reaches the integration is an answer.
     """
     client, _, network, chromecast = without_alarms(clock)
     go_silent(client, clock, network, 5)
