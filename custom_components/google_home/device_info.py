@@ -1,4 +1,4 @@
-"""Build a device's URLs, and ask it about itself, which needs no token."""
+"""Ask a device about itself, which needs no token."""
 
 from collections.abc import Awaitable
 import logging
@@ -10,17 +10,11 @@ from ghome_local_api import (
     RequestError,
     StatusError,
     UpdateInfo,
-    device_url,
 )
 
 from .models import GoogleHomeDevice
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
-
-
-def create_url(ip_address: str, port: int, api_endpoint: str) -> str:
-    """Create url to endpoint."""
-    return device_url(ip_address, api_endpoint, port)
 
 
 async def _async_info[T](

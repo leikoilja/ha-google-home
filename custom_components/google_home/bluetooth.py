@@ -19,20 +19,26 @@ restarts whenever the tracker's state changes.
 
 import asyncio
 import base64
-from collections.abc import Callable, Iterable, Mapping
+from collections.abc import Awaitable, Callable, Iterable, Mapping
 from dataclasses import dataclass
 from datetime import timedelta
 from enum import StrEnum
-from http import HTTPStatus
+import ipaddress
 import logging
 import re
 from statistics import median
 from time import monotonic
-from typing import Literal, cast
 
-from aiohttp import ClientError, ClientSession, ClientTimeout
-from aiohttp.client_exceptions import ContentTypeError
+from aiohttp import ClientSession
 from bluetooth_data_tools import get_cipher_for_irk, resolve_private_address
+from ghome_local_api import (
+    GoogleHomeLocalClient,
+    InvalidJsonError,
+    NotFoundError,
+    RequestError,
+    StatusError,
+    UnexpectedResponseError,
+)
 
 from homeassistant.config_entries import ConfigSubentry
 from homeassistant.const import CONF_MAC
@@ -41,8 +47,6 @@ from homeassistant.util import dt as dt_util
 from . import bluetooth_storage
 from .bluetooth_storage import BluetoothHistory, SourceEvidence
 from .const import (
-    API_ENDPOINT_BLUETOOTH_RESULTS,
-    API_ENDPOINT_BLUETOOTH_SCAN,
     BLUETOOTH_CONFIRMATION_LEASE,
     BLUETOOTH_MATCHED_SOURCE_TIMEOUT,
     BLUETOOTH_MAX_RESULT_AGE,
@@ -56,15 +60,11 @@ from .const import (
     CONF_ADDITIONAL_DEPARTURE_DELAY,
     CONF_IRK,
     DEPARTURE_DELAY_VALUES,
-    HEADER_CAST_LOCAL_AUTH,
-    HEADER_CONTENT_TYPE,
-    PORT,
     SUBENTRY_BLUETOOTH_DEVICE,
 )
 from .coordinator import GoogleAccountCoordinator, async_device_disabled
-from .device_info import create_url
 from .models import GoogleHomeDevice
-from .types import BluetoothJsonDict, JsonDict
+from .types import BluetoothJsonDict
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -89,10 +89,10 @@ async def async_start_bluetooth_scan(
     """
     await _async_bluetooth_request(
         session,
-        "POST",
-        API_ENDPOINT_BLUETOOTH_SCAN,
         device,
-        {"enable": True, "clear_results": True, "timeout": BLUETOOTH_SCAN_INTERVAL},
+        lambda client, host, token: client.start_bluetooth_scan(
+            host, token, duration=BLUETOOTH_SCAN_INTERVAL, timeout=BLUETOOTH_TIMEOUT
+        ),
     )
 
 
@@ -100,28 +100,28 @@ async def async_get_bluetooth_scan_results(
     session: ClientSession, device: GoogleHomeDevice
 ) -> list[BluetoothJsonDict]:
     """Return the Bluetooth devices the device heard since its scan started."""
-    response = await _async_bluetooth_request(
-        session, "GET", API_ENDPOINT_BLUETOOTH_RESULTS, device
-    )
-    if not isinstance(response, list):
-        raise BluetoothScanError(f"{device.name} returned no list of results")
+    try:
+        sightings = await _async_bluetooth_request(
+            session,
+            device,
+            lambda client, host, token: client.get_bluetooth_scan_results(
+                host, token, timeout=BLUETOOTH_TIMEOUT
+            ),
+        )
+    except UnexpectedResponseError:
+        raise BluetoothScanError(f"{device.name} returned no list of results") from None
     return [
-        {"mac_address": result["mac_address"], "rssi": result["rssi"]}
-        for result in cast(list[object], response)
-        if isinstance(result, dict)
-        and isinstance(result.get("mac_address"), str)
-        and isinstance(result.get("rssi"), int)
+        {"mac_address": sighting.mac_address, "rssi": sighting.rssi}
+        for sighting in sightings
     ]
 
 
-async def _async_bluetooth_request(
+async def _async_bluetooth_request[T](
     session: ClientSession,
-    method: Literal["GET", "POST"],
-    endpoint: str,
     device: GoogleHomeDevice,
-    data: JsonDict | None = None,
-) -> object:
-    """Send a Bluetooth request and return its JSON response.
+    request: Callable[[GoogleHomeLocalClient, str, str], Awaitable[T]],
+) -> T:
+    """Send a Bluetooth request with the local API library and return its reply.
 
     Unlike the client's requests, a failure leaves the device's availability alone
     and raises instead of logging, as Bluetooth updates run every 30 seconds. The
@@ -130,28 +130,27 @@ async def _async_bluetooth_request(
     """
     if not device.ip_address or not device.auth_token:
         raise BluetoothScanError(f"{device.name} has no IP address or auth token")
-    url = create_url(device.ip_address, PORT, endpoint)
-    headers = {
-        HEADER_CAST_LOCAL_AUTH: device.auth_token,
-        HEADER_CONTENT_TYPE: "application/json",
-    }
+    # An address that isn't an IP raises ValueError before anything is sent
+    ipaddress.ip_address(device.ip_address)
     try:
-        async with session.request(
-            method,
-            url,
-            json=data,
-            headers=headers,
-            timeout=ClientTimeout(total=BLUETOOTH_TIMEOUT),
-        ) as response:
-            if response.status == HTTPStatus.NOT_FOUND:
-                raise BluetoothScanUnsupported(f"{device.name} returned 404")
-            if response.status != HTTPStatus.OK:
-                raise BluetoothScanError(f"{device.name} returned {response.status}")
-            try:
-                return cast(object, await response.json())
-            except ContentTypeError:
-                return None
-    except (ClientError, TimeoutError, ValueError) as err:
+        return await request(
+            GoogleHomeLocalClient(session), device.ip_address, device.auth_token
+        )
+    except NotFoundError:
+        raise BluetoothScanUnsupported(f"{device.name} returned 404") from None
+    except StatusError as err:
+        raise BluetoothScanError(f"{device.name} returned {err.status}") from None
+    except (InvalidJsonError, RequestError) as err:
+        cause = err.__cause__
+        # A reply that isn't valid JSON or UTF-8 is a ValueError. Another decoder
+        # error, such as the LookupError of a charset that isn't a text encoding, is
+        # raised as it comes.
+        if isinstance(err, InvalidJsonError) and not isinstance(cause, ValueError):
+            assert cause is not None
+            raise cause from None
+        raise BluetoothScanError(f"{device.name} didn't answer: {cause!r}") from cause
+    # A request aiohttp won't send, such as with a control character in the token
+    except ValueError as err:
         raise BluetoothScanError(f"{device.name} didn't answer: {err!r}") from err
 
 

@@ -101,8 +101,9 @@ class ForToken:
     reply: Reply
 
 
-# What each speaker answers, by address and endpoint
-type Replies = dict[str, dict[str, Reply | Held | ForToken]]
+# What each speaker answers, by address and endpoint. A mock response is the whole
+# answer as it is, such as one whose body is held.
+type Replies = dict[str, dict[str, Reply | Held | ForToken | AiohttpClientMockResponse]]
 
 
 @pytest.fixture(name="clock")
@@ -419,9 +420,9 @@ def fixture_replies(aioclient_mock: AiohttpClientMocker) -> Replies:
     """Answer each request to a speaker as this table says when it's sent.
 
     By address and endpoint, as in test_unsupported_devices, Held to answer only once
-    released, or ForToken to answer only requests with that token. Another host, such
-    as Google's, is answered by its path. The speaker at SPEAKER is a Google or Nest
-    speaker.
+    released, ForToken to answer only requests with that token, or a mock response to
+    send as it is. Another host, such as Google's, is answered by its path. The
+    speaker at SPEAKER is a Google or Nest speaker.
     """
     replies: Replies = {SPEAKER: dict(SUPPORTED)}
     endpoints = {**ENDPOINTS, API_ENDPOINT_ALARM_DELETE: DELETE}
@@ -438,6 +439,8 @@ def fixture_replies(aioclient_mock: AiohttpClientMocker) -> Replies:
             reply.asked.set()
             await reply.released.wait()
             reply = reply.reply
+        if isinstance(reply, AiohttpClientMockResponse):
+            return reply
         if isinstance(reply, Exception):
             return AiohttpClientMockResponse(method, url, exc=reply)
         status, body = reply if isinstance(reply, tuple) else (reply, None)

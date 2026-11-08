@@ -1,8 +1,9 @@
-"""Tests for Bluetooth presence tracking: the scanner, the tracker and the requests.
+"""Tests for Bluetooth presence tracking: the scanner and the tracker.
 
 The scanner's tests fake the speakers' Bluetooth requests and the clock. The tests
-with speakers that take time to answer are in test_bluetooth_timing.py, and those
-that run inside Home Assistant are in test_bluetooth_setup.py.
+of the requests themselves are in test_bluetooth_requests.py, those with speakers
+that take time to answer in test_bluetooth_timing.py, and those that run inside
+Home Assistant in test_bluetooth_setup.py.
 """
 
 import asyncio
@@ -11,9 +12,8 @@ from collections.abc import Callable, Iterator, Mapping
 from contextlib import contextmanager
 import logging
 from types import MappingProxyType
-from unittest.mock import AsyncMock, MagicMock, Mock, patch
+from unittest.mock import Mock, patch
 
-from aiohttp import ClientError, ContentTypeError
 from bluetooth_data_tools import get_cipher_for_irk
 import pytest
 
@@ -29,8 +29,6 @@ from custom_components.google_home.bluetooth import (
     TrackedDevice,
     TrackerState,
     TrackerUpdate,
-    async_get_bluetooth_scan_results,
-    async_start_bluetooth_scan,
     normalize_mac,
     parse_irk,
 )
@@ -903,89 +901,3 @@ def test_no_reload_when_only_interval_changes() -> None:
     )
 
     hass.config_entries.async_schedule_reload.assert_not_called()
-
-
-def mock_session(status: int = 200, body: object = None) -> Mock:
-    """Return a session whose device answers with this status and JSON body."""
-    response = MagicMock()
-    response.__aenter__.return_value = Mock(
-        status=status, json=AsyncMock(return_value=body)
-    )
-    return Mock(request=Mock(return_value=response))
-
-
-KITCHEN = GoogleHomeDevice("kitchen", "Kitchen", "token", ip_address="10.0.0.1")
-
-
-def test_start_scan_request() -> None:
-    """Start a 30-second scan that clears the previous results."""
-    session = mock_session()
-
-    asyncio.run(async_start_bluetooth_scan(session, KITCHEN))
-
-    method, url = session.request.call_args.args
-    assert (method, url) == ("POST", "https://10.0.0.1:8443/setup/bluetooth/scan")
-    assert session.request.call_args.kwargs["json"] == {
-        "enable": True,
-        "clear_results": True,
-        "timeout": 30,
-    }
-    assert (
-        session.request.call_args.kwargs["headers"]["cast-local-authorization-token"]
-        == "token"
-    )
-
-
-def test_scan_results_skip_malformed_entries() -> None:
-    """Return the address and signal strength of each well-formed result."""
-    session = mock_session(
-        body=[
-            {"mac_address": "AA:BB:CC:DD:EE:FF", "rssi": -50, "name": ""},
-            {"mac_address": "AA:BB:CC:DD:EE:00"},
-            "garbage",
-        ]
-    )
-
-    results = asyncio.run(async_get_bluetooth_scan_results(session, KITCHEN))
-
-    assert results == [{"mac_address": "AA:BB:CC:DD:EE:FF", "rssi": -50}]
-
-
-@pytest.mark.parametrize(
-    ("status", "body", "error"),
-    [
-        (404, None, BluetoothScanUnsupported),
-        (401, None, BluetoothScanError),
-        (500, None, BluetoothScanError),
-        (200, {"error": "no list"}, BluetoothScanError),
-    ],
-)
-def test_scan_results_errors(
-    status: int, body: object, error: type[BluetoothScanError]
-) -> None:
-    """Raise for 404 as unsupported, and for other failures as errors."""
-    session = mock_session(status, body)
-
-    with pytest.raises(error):
-        asyncio.run(async_get_bluetooth_scan_results(session, KITCHEN))
-
-
-def test_start_scan_answered_without_json() -> None:
-    """Count a scan as started when the device answers 200 with a non-JSON content type."""
-    session = mock_session()
-    response = session.request.return_value.__aenter__.return_value
-    response.json.side_effect = ContentTypeError(Mock(), ())
-
-    # Returning instead of raising is how the scanner knows the scan started
-    asyncio.run(async_start_bluetooth_scan(session, KITCHEN))
-
-
-def test_request_failure_leaves_device_available() -> None:
-    """Raise on a connection error without marking the device unavailable."""
-    session = mock_session()
-    session.request.side_effect = ClientError("offline")
-    device = GoogleHomeDevice("kitchen", "Kitchen", "token", ip_address="10.0.0.1")
-
-    with pytest.raises(BluetoothScanError):
-        asyncio.run(async_start_bluetooth_scan(session, device))
-    assert device.available

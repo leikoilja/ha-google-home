@@ -4,14 +4,24 @@
 # ruff: noqa: SLF001
 
 import asyncio
+from http import HTTPStatus
 import json
 from pathlib import Path
 from threading import Event as ThreadEvent
 from typing import cast
-from unittest.mock import patch
+from unittest.mock import AsyncMock, Mock, patch
 
+from ghome_local_api.const import (
+    API_ENDPOINT_BLUETOOTH_RESULTS as RESULTS,
+    API_ENDPOINT_BLUETOOTH_SCAN as SCAN,
+)
 import pytest
 from pytest_homeassistant.common import MockConfigEntry, async_capture_events
+from pytest_homeassistant.test_util.aiohttp import (
+    AiohttpClientMocker,
+    AiohttpClientMockResponse,
+)
+from yarl import URL
 
 from custom_components.google_home.bluetooth import (
     BluetoothScanError,
@@ -28,6 +38,7 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import device_registry as dr, storage
 
 from . import test_bluetooth_setup, test_bluetooth_storage
+from .conftest import BEDROOM, SPEAKER_ID, Replies
 from .test_bluetooth import IRK, PHONE, heard, rpa
 from .test_bluetooth_setup import TRACKER, Scans, scan, track_phone
 from .test_bluetooth_storage import WALL
@@ -321,3 +332,72 @@ async def test_failed_platform_unload_keeps_retired_entities_unavailable(
     loaded = BluetoothHistory(hass, config_entry)
     await loaded.async_load(lambda: scans.now)
     assert not loaded.trackers and not loaded.sources
+
+
+def bluetooth_requests(
+    aioclient_mock: AiohttpClientMocker, host: str
+) -> list[tuple[str, str]]:
+    """Return the method and path of each Bluetooth request to this host, in order."""
+    return [
+        (method, url.path.removeprefix("/"))
+        for method, url, _, _ in aioclient_mock.mock_calls
+        if url.host == host and "/bluetooth/" in url.path
+    ]
+
+
+@pytest.mark.usefixtures("two_speakers")
+async def test_unload_cancels_held_read_through_real_requests(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    replies: Replies,
+    aioclient_mock: AiohttpClientMocker,
+) -> None:
+    """A 404 stops a speaker's scans, and unloading cancels a held read without effect.
+
+    The requests go through the real wrappers and Home Assistant's session. The
+    kitchen answers its first scan with 404, so it isn't asked again. The bedroom's
+    results hear the phone at the next update. At the update after, the entry
+    unloads while the bedroom's 200 has come but its body hasn't. That update is
+    cancelled and the answer released; history stays as it was and no scan starts.
+    """
+    replies[SPEAKER][SCAN] = HTTPStatus.NOT_FOUND
+    replies[BEDROOM][SCAN] = (HTTPStatus.OK, {})
+    replies[BEDROOM][RESULTS] = (HTTPStatus.OK, [heard(rpa(IRK))])
+    await track_phone(hass, config_entry)
+    coordinator = runtime(config_entry).bluetooth
+    assert isinstance(coordinator, BluetoothCoordinator)
+    await coordinator.async_refresh()
+    await hass.async_block_till_done()
+    state = hass.states.get(TRACKER)
+    assert state is not None and state.state == "home"
+    speakers = cast(dict[str, dict[str, object]], coordinator.scanner.diagnostics())
+    assert speakers[SPEAKER_ID]["unsupported"] is True
+
+    body_asked = asyncio.Event()
+
+    async def held_body(*_: object) -> None:
+        body_asked.set()
+        await asyncio.Event().wait()
+
+    held = AiohttpClientMockResponse("GET", URL(f"https://{BEDROOM}:8443/{RESULTS}"))
+    held.json = AsyncMock(side_effect=held_body)  # type: ignore[method-assign]
+    held.release = Mock()  # type: ignore[method-assign]
+    replies[BEDROOM][RESULTS] = held
+    history = coordinator.history.snapshot()
+    # As a scheduled update runs: a task of the entry, which unloading cancels
+    update = config_entry.async_create_background_task(
+        hass, coordinator.async_refresh(), "Bluetooth update"
+    )
+    await asyncio.wait_for(body_asked.wait(), 5)
+    assert await hass.config_entries.async_unload(config_entry.entry_id)
+
+    assert update.cancelled()
+    held.release.assert_called_once_with()
+    assert coordinator.history.snapshot() == history
+    assert bluetooth_requests(aioclient_mock, SPEAKER) == [("POST", SCAN)]
+    assert bluetooth_requests(aioclient_mock, BEDROOM) == [
+        ("POST", SCAN),
+        ("GET", RESULTS),
+        ("POST", SCAN),
+        ("GET", RESULTS),
+    ]

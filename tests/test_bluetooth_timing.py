@@ -24,16 +24,15 @@ from custom_components.google_home.types import BluetoothJsonDict
 from .test_bluetooth import (
     HOME,
     IRK,
-    KITCHEN,
     NOT_HOME,
     PHONE,
     Speakers,
     faked,
     heard,
     make_scanner,
-    mock_session,
     rpa,
 )
+from .test_bluetooth_requests import KITCHEN, mock_session
 
 
 class SlowSpeakers(Speakers):

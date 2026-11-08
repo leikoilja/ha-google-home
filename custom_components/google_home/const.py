@@ -109,8 +109,7 @@ LABEL_UPTIME: Final = "uptime"
 LABEL_WIFI_NETWORK: Final = "Wi-Fi network"
 LABEL_WIFI_SIGNAL: Final = "Wi-Fi signal"
 
-# The device's port, paths and headers, as the local API library sends them
-PORT: Final = local_api.DEFAULT_PORT
+# The device's paths and headers, as the local API library sends them
 API_ENDPOINT_ALARMS: Final = local_api.API_ENDPOINT_ALARMS
 API_ENDPOINT_ALARM_DELETE: Final = local_api.API_ENDPOINT_ALARM_DELETE
 API_ENDPOINT_ALARM_VOLUME: Final = local_api.API_ENDPOINT_ALARM_VOLUME
@@ -120,7 +119,6 @@ API_ENDPOINT_EUREKA_INFO: Final = local_api.API_ENDPOINT_EUREKA_INFO
 API_ENDPOINT_BUILD_INFO: Final = local_api.API_ENDPOINT_BUILD_INFO
 API_ENDPOINT_UPDATE_INFO: Final = local_api.API_ENDPOINT_UPDATE_INFO
 HEADER_CAST_LOCAL_AUTH: Final = local_api.HEADER_CAST_LOCAL_AUTH
-HEADER_CONTENT_TYPE: Final = local_api.HEADER_CONTENT_TYPE
 
 # A device's alarms and timers sensors, Do Not Disturb switch and alarm volume are
 # unavailable once it hasn't answered this many updates in a row. In logs at a
@@ -189,9 +187,6 @@ SUPPORT_CHECK_DELAY: Final = 10 * 60  # sec
 # often, counted from the start of the last check. Firmware changes rarely.
 FIRMWARE_CHECK_INTERVAL: Final = 20 * 60  # sec
 
-# Bluetooth scans of the speakers, for Bluetooth tracking
-API_ENDPOINT_BLUETOOTH_SCAN: Final = local_api.API_ENDPOINT_BLUETOOTH_SCAN
-API_ENDPOINT_BLUETOOTH_RESULTS: Final = local_api.API_ENDPOINT_BLUETOOTH_RESULTS
 # Bluetooth tracking, in seconds unless noted. Each update asks every speaker for
 # a scan of up to this long, and the next update reads its results and starts the
 # next scan.
