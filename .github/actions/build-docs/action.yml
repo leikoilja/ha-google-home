@@ -5,6 +5,10 @@ inputs:
   python-version:
     description: "Python version to build with"
     required: true
+  next:
+    description: "Build for next.ha-google-home.pages.dev, with the unreleased-version banner and noindex"
+    required: false
+    default: "false"
 
 runs:
   using: "composite"
@@ -16,9 +20,32 @@ runs:
         python-version: ${{ inputs.python-version }}
         cache-suffix: docs
 
+    # The next site differs from a release only in its address and theme
+    # overrides. Zensical's TOML config has no includes or environment
+    # variables, so the build edits a copy, and stops if a line has moved.
+    - name: Configure the next site
+      if: inputs.next == 'true'
+      shell: bash
+      run: |
+        python3 - <<'EOF'
+        from pathlib import Path
+
+        text = Path("zensical.toml").read_text(encoding="utf-8")
+        for old, new in [
+            ('site_url = "https://ha-google-home.pages.dev/"\n', 'site_url = "https://next.ha-google-home.pages.dev/"\n'),
+            ("[project.theme]\n", '[project.theme]\ncustom_dir = "overrides/next"\n'),
+        ]:
+            if text.count(old) != 1:
+                raise SystemExit(f"zensical.toml must contain {old!r} exactly once")
+            text = text.replace(old, new)
+        Path("zensical-next.toml").write_text(text, encoding="utf-8")
+        EOF
+
     - name: Build docs
       shell: bash
-      run: uv run --only-group docs zensical build --clean --strict
+      env:
+        CONFIG_FILE: ${{ inputs.next == 'true' && 'zensical-next.toml' || 'zensical.toml' }}
+      run: uv run --only-group docs zensical build --clean --strict -f "${CONFIG_FILE}"
 
     # The build is reproducible, so an unchanged digest means the PR doesn't
     # change the rendered site and needs no preview.

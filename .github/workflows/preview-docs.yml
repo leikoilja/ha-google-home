@@ -20,7 +20,7 @@ env:
   HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
   COMMENT_MARKER: "<!-- ha-google-home-docs-preview -->"
   STATUS_CONTEXT: Docs preview
-  LIVE_URL: https://ha-google-home.pages.dev/
+  NEXT_URL: https://next.ha-google-home.pages.dev/
 
 jobs:
   preview:
@@ -144,7 +144,7 @@ jobs:
           if [ "${UNCHANGED}" = "true" ]; then
             gh api --method POST "repos/${GH_REPO}/statuses/${HEAD_SHA}" \
               -f state=success -f context="${STATUS_CONTEXT}" \
-              -f description="No rendered changes" -f target_url="${LIVE_URL}"
+              -f description="No rendered changes" -f target_url="${NEXT_URL}"
           else
             gh api --method POST "repos/${GH_REPO}/statuses/${HEAD_SHA}" \
               -f state=success -f context="${STATUS_CONTEXT}" \
@@ -164,8 +164,8 @@ jobs:
           UPDATED=$(date -u '+%Y-%m-%d %H:%M UTC')
           if [ "${UNCHANGED}" = "true" ]; then
             [ -z "${ID}" ] && exit 0
-            BODY=$(printf '%s\nNo rendered changes: this PR matches the live docs at %s\n\n_Checked %s, updated %s_' \
-              "${COMMENT_MARKER}" "${LIVE_URL}" "${HEAD_SHA:0:7}" "${UPDATED}")
+            BODY=$(printf '%s\nNo rendered changes: this PR matches the docs on master at %s\n\n_Checked %s, updated %s_' \
+              "${COMMENT_MARKER}" "${NEXT_URL}" "${HEAD_SHA:0:7}" "${UPDATED}")
           else
             BODY=$(printf '%s\n**Docs preview:** https://pr-%s.ha-google-home.pages.dev/\n\n_Built from %s, updated %s_' \
               "${COMMENT_MARKER}" "${NUMBER}" "${HEAD_SHA:0:7}" "${UPDATED}")

@@ -1,0 +1,12 @@
+{#- Used only by builds with the Build docs action's `next` input, which are the
+    next.ha-google-home.pages.dev site and PR previews. Release builds never read
+    this directory. -#}
+{% extends "base.html" %}
+{% block extrahead %}
+  <meta name="robots" content="noindex">
+{% endblock %}
+{% block announce %}
+  These docs describe the next, unreleased version of the integration, which you can
+  <a href="/installation/#try-a-fix-before-its-released">install from <code>master</code></a>.
+  For the latest release, see <a href="https://ha-google-home.pages.dev/">ha-google-home.pages.dev</a>.
+{% endblock %}
