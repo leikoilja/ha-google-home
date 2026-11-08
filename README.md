@@ -68,7 +68,7 @@ Ask questions, report bugs or suggest features in [issues](https://github.com/le
 - The integration started from a [community discussion][community-discussion] about reading Google Home alarms and timers in Home Assistant.
 - This project was generated from [@oncleben31](https://github.com/oncleben31)'s [Home Assistant Custom Component Cookiecutter](https://github.com/oncleben31/cookiecutter-homeassistant-custom-component) template.
 - Code template was mainly taken from [@Ludeeus](https://github.com/ludeeus)'s [integration_blueprint][integration_blueprint] template.
-- Under the hood the integration uses [glocaltokens](https://github.com/leikoilja/glocaltokens) python package.
+- Under the hood the integration uses the [glocaltokens](https://github.com/leikoilja/glocaltokens) and [ghome-local-api](https://github.com/KapJI/ghome-local-api) Python packages.
 
 [community-discussion]: https://community.home-assistant.io/t/solution-to-track-your-google-home-alarms-and-timers-and-trigger-different-home-assistant-events/61534/74
 [integration_blueprint]: https://github.com/custom-components/integration_blueprint

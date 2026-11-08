@@ -10,6 +10,7 @@ from time import monotonic
 from typing import TYPE_CHECKING, Final
 
 from aiohttp import ClientError, ClientResponseError, ClientSession
+from ghome_local_api import GoogleHomeLocalClient, RequestError
 from glocaltokens.client import Device, GLocalAuthenticationTokens
 from glocaltokens.exceptions import AuthenticationError, GLocalTokensError
 from glocaltokens.utils.token import is_aas_et
@@ -123,6 +124,8 @@ class GoogleAccountClient:
         """Create the client of a Google account."""
         self.hass = hass
         self._session = session
+        # The device requests that need no token
+        self._local_client = GoogleHomeLocalClient(session)
         self._client = GLocalAuthenticationTokens(
             username=username,
             password=password,
@@ -633,23 +636,19 @@ class GoogleAccountClient:
     async def _async_get_cloud_device_id(self, host: str) -> str | None:
         """Return Google's ID of the device at a known host."""
         try:
-            info = await async_get_device_info(self._session, host)
-        except ClientError, TimeoutError:
-            _LOGGER.debug("%s didn't answer with its info", host, exc_info=True)
+            info = await async_get_device_info(self._local_client, host)
+        except RequestError as error:
+            _LOGGER.debug(
+                "%s didn't answer with its info", host, exc_info=error.__cause__
+            )
             return None
         if info is None:
             return None
-        device_info = info.get("device_info")
-        cloud_device_id = (
-            device_info.get("cloud_device_id")
-            if isinstance(device_info, dict)
-            else None
-        )
-        if not isinstance(cloud_device_id, str) or not cloud_device_id:
+        if info.cloud_device_id is None:
             _LOGGER.debug("Known host %s didn't report a device ID", host)
             return None
-        _LOGGER.debug("Known host %s is %s", host, info.get("name"))
-        return cloud_device_id.lower()
+        _LOGGER.debug("Known host %s is %s", host, info.name)
+        return info.cloud_device_id.lower()
 
 
 def _homes(home_graph: HomeGraph) -> dict[str, str]:

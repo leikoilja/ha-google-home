@@ -91,6 +91,7 @@ class FakeRepo:
                     "domain": "google_home",
                     "requirements": [
                         "first-package>=1.0",
+                        "ghome-local-api==0.0.1",
                         "glocaltokens==1.0.0",
                         "other-package>=1.2",
                     ],
@@ -204,31 +205,44 @@ def test_rerun_reuses_release_commit_with_legacy_message(repo: FakeRepo) -> None
     assert repo.master == master
 
 
-def test_release_pins_glocaltokens_and_keeps_other_requirements(
+def test_release_pins_libraries_and_keeps_other_requirements(
     repo: FakeRepo,
 ) -> None:
-    """The release keeps every other requirement the manifest declares, in order."""
+    """The release pins the installed libraries and keeps every other requirement, in order."""
     tagged = repo.release("1.17.0")
 
+    library_pin = f"ghome-local-api=={package_version('ghome-local-api')}"
     pin = f"glocaltokens=={package_version('glocaltokens')}"
+    assert library_pin != "ghome-local-api==0.0.1"
     assert pin != "glocaltokens==1.0.0"
     for sha in (tagged, repo.master):
         assert repo.files[sha][MANIFEST]["requirements"] == [
             "first-package>=1.0",
+            library_pin,
             pin,
             "other-package>=1.2",
         ]
 
 
-def test_release_stops_without_glocaltokens_requirement(repo: FakeRepo) -> None:
+@pytest.mark.parametrize(
+    ("package", "others"),
+    [
+        ("glocaltokens", ["ghome-local-api==0.0.1"]),
+        ("ghome-local-api", ["glocaltokens==1.0.0"]),
+    ],
+)
+def test_release_stops_without_library_requirement(
+    repo: FakeRepo, package: str, others: list[str]
+) -> None:
     """Master stays as it was, rather than released without the pin."""
     repo.files["base"][MANIFEST]["requirements"] = [
         "first-package>=1.0",
+        *others,
         "other-package>=1.2",
     ]
 
     with pytest.raises(
-        SystemExit, match=f"^{re.escape(MANIFEST)} has no glocaltokens requirement"
+        SystemExit, match=f"^{re.escape(MANIFEST)} has no {package} requirement"
     ):
         repo.release("1.17.0")
 

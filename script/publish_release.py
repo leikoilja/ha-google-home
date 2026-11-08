@@ -86,10 +86,10 @@ def update_manifests(repo: Repository, version: str) -> str:
     manifest["version"] = version
     requirements = cast(list[str], manifest["requirements"])
     names = [Requirement(requirement).name for requirement in requirements]
-    if "glocaltokens" not in names:
-        sys.exit(f"{MANIFEST_PATH} has no glocaltokens requirement to pin")
-    pin = f"glocaltokens=={package_version('glocaltokens')}"
-    requirements[names.index("glocaltokens")] = pin
+    for package in ("glocaltokens", "ghome-local-api"):
+        if package not in names:
+            sys.exit(f"{MANIFEST_PATH} has no {package} requirement to pin")
+        requirements[names.index(package)] = f"{package}=={package_version(package)}"
 
     print("Updating hacs.json...")
     hacs_config = read_json(repo, "hacs.json", head.sha)

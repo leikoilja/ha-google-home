@@ -26,6 +26,7 @@
   ],
   "requirements": [
     "bluetooth-data-tools>=1.29.24",
+    "ghome-local-api==0.1.0",
     "glocaltokens==2.0.0"
   ],
   "single_config_entry": true,
