@@ -19,6 +19,7 @@ from ghome_local_api import (
     ResponseObserver,
     StatusError,
     UnexpectedResponseError,
+    device_url,
 )
 
 from homeassistant.util import dt as dt_util
@@ -33,7 +34,6 @@ from .const import (
     FIRMWARE_CHECK_INTERVAL,
     JSON_ALARM_VOLUME,
     JSON_NOTIFICATIONS_ENABLED,
-    PORT,
     SUPPORT_CHECK_DELAY,
 )
 from .device_info import (
@@ -41,7 +41,6 @@ from .device_info import (
     async_get_device_info,
     async_get_info_status,
     async_get_update_info,
-    create_url,
 )
 from .exceptions import (
     AlarmsAndTimersNotDeleted,
@@ -726,7 +725,7 @@ class GlocaltokensApiClient(GoogleAccountClient):
             _LOGGER.warning("Device %s doesn't have an auth token!", device.name)
             raise DeviceRequestFailed(device.name, "request_failed")
 
-        url = create_url(device.ip_address, PORT, endpoint)
+        url = device_url(device.ip_address, endpoint)
 
         _LOGGER.debug(
             "Requesting endpoint %s for Google Home device %s - %s",
