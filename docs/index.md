@@ -57,4 +57,8 @@ Home Assistant's [integration quality scale](https://www.home-assistant.io/docs/
 
 The integration's setup screens, options, entity names and action descriptions follow your Home Assistant language. Text that isn't translated yet is shown in English. To add or fix a translation, see [Translate the integration](contributing.md#translate-the-integration).
 
+## Saying thanks
+
+If you find the integration useful, please give it a star on [GitHub](https://github.com/leikoilja/ha-google-home).
+
 [quality-scale-badge]: https://img.shields.io/badge/quality%20scale-%F0%9F%8F%86%20platinum-e5e4e2.svg?style=for-the-badge

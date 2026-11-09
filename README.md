@@ -63,6 +63,8 @@ The **[documentation site](https://ha-google-home.pages.dev/)** has these pages:
 
 Ask questions, report bugs or suggest features in [issues](https://github.com/leikoilja/ha-google-home/issues/new/choose). To translate the integration or change its code, see [Contributing](https://next.ha-google-home.pages.dev/contributing/).
 
+Find the integration useful? A star on [GitHub](https://github.com/leikoilja/ha-google-home) is a quick way to say thanks.
+
 ## Credits
 
 - The integration started from a [community discussion][community-discussion] about reading Google Home alarms and timers in Home Assistant.
