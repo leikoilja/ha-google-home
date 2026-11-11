@@ -9,6 +9,7 @@ from datetime import timedelta
 from importlib.metadata import version as package_version
 import json
 from pathlib import Path
+import re
 from unittest.mock import Mock, patch
 
 from freezegun.api import FrozenDateTimeFactory
@@ -36,6 +37,7 @@ from .test_setup import set_up
 # pylint: enable=wrong-import-order
 
 HACS = Path(__file__).parents[1] / "hacs.json"
+INSTALLATION = Path(__file__).parents[1] / "docs/installation.md"
 ISSUE = "unsupported_ha_version"
 DOCS = (
     "https://ha-google-home.pages.dev/troubleshooting/"
@@ -229,14 +231,20 @@ async def test_supported_ha_offers_first_setup(
 
 
 def test_minimum_is_the_declared_one() -> None:
-    """Need the Home Assistant release that hacs.json and each release declare.
+    """Need the Home Assistant release that hacs.json, each release and the docs declare.
 
     Publishing a release sets the minimum in hacs.json to the Home Assistant version
-    that the tests are pinned to, so raising that pin raises the minimum too.
+    that the tests are pinned to, so raising that pin raises the minimum too. That
+    can be a patch release, so only the year and month have to match.
     """
     declared = json.loads(HACS.read_text())["homeassistant"]
     pinned = package_version("homeassistant")
+    # The requirement under Before you start
+    documented = re.search(
+        r"^- Home Assistant (\S+) or later\.$", INSTALLATION.read_text(), re.MULTILINE
+    )
+    assert documented is not None
 
-    assert [version.split(".")[:2] for version in (declared, pinned)] == [
-        [str(part) for part in MIN_HA_VERSION]
-    ] * 2
+    assert [
+        version.split(".")[:2] for version in (declared, pinned, documented[1])
+    ] == [[str(part) for part in MIN_HA_VERSION]] * 3
