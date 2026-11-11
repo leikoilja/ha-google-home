@@ -88,7 +88,8 @@
       "no-home-selected": "家を 1 つ以上選択してください。"
     },
     "abort": {
-      "no-home": "Google によると、このアカウントはどの家のメンバーでもないため、追加できるスピーカーやディスプレイはありません。Google Home アプリで、デバイスがある家にこのアカウントを招待して招待を承諾し、統合を追加し直してください。Google Workspace アカウントは招待できないため、代わりに家のメンバーである Gmail アカウントで統合を追加してください。詳しくは {docs_url} をご覧ください。"
+      "no-home": "Google によると、このアカウントはどの家のメンバーでもないため、追加できるスピーカーやディスプレイはありません。Google Home アプリで、デバイスがある家にこのアカウントを招待して招待を承諾し、統合を追加し直してください。Google Workspace アカウントは招待できないため、代わりに家のメンバーである Gmail アカウントで統合を追加してください。詳しくは {docs_url} をご覧ください。",
+      "unsupported-ha-version": "このバージョンの Google Home 統合には Home Assistant {required_version} 以降が必要ですが、このシステムでは {current_version} が動作しています。Home Assistant を更新してから、統合を追加し直してください。Home Assistant {current_version} を使い続ける場合は、{releases_url} から統合の以前のリリースをインストールし、Home Assistant を再起動してください。"
     }
   },
   "entity": {
@@ -247,6 +248,10 @@
     "no_home": {
       "title": "Google からアカウントの家が報告されていません",
       "description": "Google によると、統合がログインしているアカウントはどの家のメンバーでもないため、追加できるスピーカーやディスプレイはありません。Google Home アプリで、デバイスがある家にこのアカウントを招待し、招待を承諾してください。その後、[Google Home 統合]({integration_url})を再読み込みします。「**⋮**」>「**再読込**」を選択してください。\n\n引っ越し中など、意図的に統合を残しておく場合は、「**無視**」を選択してください。不要になった場合は、同じページで統合を削除できます。"
+    },
+    "unsupported_ha_version": {
+      "title": "Google Home には Home Assistant {required_version} 以降が必要です",
+      "description": "このバージョンの Google Home 統合には Home Assistant {required_version} 以降が必要ですが、このシステムでは {current_version} が動作しているため、統合はセットアップされませんでした。統合の設定は保持されており、Home Assistant を更新すると、その設定で起動します。\n\nHome Assistant {current_version} を使い続ける場合は、{releases_url} から統合の以前のリリースをインストールし、Home Assistant を再起動してください。"
     }
   },
   "config_subentries": {

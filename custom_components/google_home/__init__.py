@@ -13,6 +13,7 @@ from typing import cast
 from aiohttp import ClientSession
 from glocaltokens.utils.token import is_aas_et
 
+from homeassistant import const as ha_const
 from homeassistant.components import zeroconf
 from homeassistant.config_entries import ConfigEntryState
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
@@ -42,9 +43,11 @@ from .const import (
     ISSUE_INVALID_INTERVAL,
     ISSUE_NO_ADDED_HOME,
     ISSUE_POLLING_DISABLED,
+    ISSUE_UNSUPPORTED_HA,
     MASTER_TOKEN_TITLE,
     NO_DEVICES_DOCS_URL,
     PLATFORMS,
+    RELEASES_URL,
     SUBENTRY_BLUETOOTH_DEVICE,
 )
 from .coordinator import GoogleAccountCoordinator
@@ -64,8 +67,47 @@ CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 GENERIC_TITLES = {MASTER_TOKEN_TITLE, BROWSER_TITLE}
 
 
+def unsupported_ha_version() -> dict[str, str] | None:
+    """Return the repair's placeholders if Home Assistant is older than needed, else None."""
+    if (ha_const.MAJOR_VERSION, ha_const.MINOR_VERSION) >= const.MIN_HA_VERSION:
+        return None
+    return {
+        "current_version": ha_const.__version__,
+        "required_version": ".".join(map(str, const.MIN_HA_VERSION)),
+        "releases_url": RELEASES_URL,
+    }
+
+
 async def async_setup(hass: HomeAssistant, _config: ConfigType) -> bool:
-    """Register the actions, which exist whether or not the entry is loaded."""
+    """Register the actions, which exist whether or not the entry is loaded.
+
+    On a Home Assistant older than this version needs, set up nothing and show an
+    error in Repairs. Home Assistant calls this before it migrates or sets up the
+    entry, so the saved entry stays as it is, for an earlier release of the
+    integration or a newer Home Assistant. Home Assistant adds its own notification
+    that setup failed.
+    """
+    if versions := unsupported_ha_version():
+        _LOGGER.error(
+            "This version of Google Home needs Home Assistant %s or later, but this "
+            "is %s, so it wasn't set up. Update Home Assistant, or install an "
+            "earlier release of Google Home from %s",
+            versions["required_version"],
+            versions["current_version"],
+            RELEASES_URL,
+        )
+        # Not kept over a restart, so it's gone once Home Assistant is updated
+        ir.async_create_issue(
+            hass,
+            DOMAIN,
+            ISSUE_UNSUPPORTED_HA,
+            is_fixable=False,
+            is_persistent=False,
+            severity=ir.IssueSeverity.ERROR,
+            translation_key=ISSUE_UNSUPPORTED_HA,
+            translation_placeholders=versions,
+        )
+        return False
     async_setup_actions(hass)
     for entry in hass.config_entries.async_entries(DOMAIN):
         async_history(hass, entry)

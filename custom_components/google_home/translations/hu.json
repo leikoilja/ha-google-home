@@ -88,7 +88,8 @@
       "no-home-selected": "Válasszon ki legalább egy otthont."
     },
     "abort": {
-      "no-home": "A Google szerint ez a fiók egyetlen otthonnak sem tagja, így nincsenek hozzáadható hangszórók vagy kijelzők. A Google Home alkalmazásban hívja meg a fiókot abba az otthonba, amelyben az eszközei vannak, fogadja el a meghívást, majd adja hozzá újra az integrációt. Google Workspace-fiókot nem lehet meghívni, ezért ilyenkor egy olyan Gmail-fiókkal adja hozzá az integrációt, amely tagja az otthonnak. Részletek: {docs_url}."
+      "no-home": "A Google szerint ez a fiók egyetlen otthonnak sem tagja, így nincsenek hozzáadható hangszórók vagy kijelzők. A Google Home alkalmazásban hívja meg a fiókot abba az otthonba, amelyben az eszközei vannak, fogadja el a meghívást, majd adja hozzá újra az integrációt. Google Workspace-fiókot nem lehet meghívni, ezért ilyenkor egy olyan Gmail-fiókkal adja hozzá az integrációt, amely tagja az otthonnak. Részletek: {docs_url}.",
+      "unsupported-ha-version": "A Google Home-integráció ezen verziója a Home Assistant {required_version} vagy újabb verzióját igényli, de ezen a rendszeren a Home Assistant {current_version} verziója fut. Frissítse a Home Assistantot, majd adja hozzá újra az integrációt. Ha inkább a Home Assistant {current_version} verziójánál maradna, telepítse az integráció egy korábbi kiadását innen: {releases_url}, majd indítsa újra a Home Assistantot."
     }
   },
   "entity": {
@@ -247,6 +248,10 @@
     "no_home": {
       "title": "A Google nem jelez otthont a fiókjához",
       "description": "A Google szerint az a fiók, amellyel az integráció bejelentkezett, egyetlen otthonnak sem tagja, így nincsenek hozzáadható hangszórók vagy kijelzők. A Google Home alkalmazásban hívja meg ezt a fiókot abba az otthonba, amelyben az eszközei vannak, és fogadja el a meghívást. Ezután töltse újra a [Google Home-integrációt]({integration_url}): válassza a **⋮** > **Konfiguráció újratöltése** lehetőséget.\n\nHa szándékosan tartja meg az integrációt, például költözés közben, válassza a **Mellőzés** lehetőséget. Ha már nincs rá szüksége, ugyanezen az oldalon törölheti."
+    },
+    "unsupported_ha_version": {
+      "title": "A Google Home a Home Assistant {required_version} vagy újabb verzióját igényli",
+      "description": "A Google Home-integráció ezen verziója a Home Assistant {required_version} vagy újabb verzióját igényli, de ezen a rendszeren a Home Assistant {current_version} verziója fut, ezért az integráció nem lett beállítva. A beállításai megmaradnak, és a Home Assistant frissítése után ezekkel indul el.\n\nHa inkább a Home Assistant {current_version} verziójánál maradna, telepítse az integráció egy korábbi kiadását innen: {releases_url}, majd indítsa újra a Home Assistantot."
     }
   },
   "config_subentries": {

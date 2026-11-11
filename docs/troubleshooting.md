@@ -62,7 +62,9 @@ Check that Home Assistant can reach Google; see ["Couldn't reach Google"](#could
 
 An update can stop the integration from loading: a new Home Assistant version may not be able to install the libraries that an older version of the integration needs, and a new release of the integration needs a recent Home Assistant. **Settings** > **Devices & services** > **Google Home** then shows **Not loaded**. After a restart, an **Invalid config** notification lists `google_home` under "The following integrations and platforms could not be set up". The [log](https://my.home-assistant.io/redirect/logs/) shows an error such as `Setup failed for custom integration 'google_home': Requirements for google_home not found`, and adding the integration can show "Config flow could not be loaded".
 
-1. Check that your Home Assistant version is supported; see [Before you start](installation.md#before-you-start). If it's older, update Home Assistant first.
+When Home Assistant is too old for the installed release, **Settings** > **System** > **Repairs** can also show an error that says which version the integration needs. Adding the integration then shows the same message instead of asking you to sign in. The integration's settings are kept.
+
+1. Check that your Home Assistant version is supported; see [Before you start](installation.md#before-you-start). If it's older, update Home Assistant first. To stay on your version instead, delete the `google_home` folder, then follow the **Manual** steps under [Install the integration](installation.md#install-the-integration) with an [earlier release](https://github.com/leikoilja/ha-google-home/releases) that supports it, and skip step 2. The `homeassistant` value in a release's `hacs.json` file is the oldest Home Assistant version it supports.
 2. [Update the integration](installation.md#install-the-integration) to the latest release, then restart Home Assistant.
 
 If the latest release doesn't load either, search the [issues](https://github.com/leikoilja/ha-google-home/issues?q=is%3Aissue) for the error, or [open an issue](https://github.com/leikoilja/ha-google-home/issues/new/choose) with the error from the log.

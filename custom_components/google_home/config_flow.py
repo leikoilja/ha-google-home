@@ -33,7 +33,7 @@ from homeassistant.helpers.selector import (
     SelectSelectorMode,
 )
 
-from . import const
+from . import const, unsupported_ha_version
 from .api import GlocaltokensApiClient
 from .bluetooth import IRK_LENGTH, parse_irk, parse_mac
 from .const import (
@@ -104,7 +104,14 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
         self,
         user_input: dict[str, str] | None = None,
     ) -> ConfigFlowResult:
-        """Ask how to sign in."""
+        """Ask how to sign in, unless Home Assistant is too old to set up the entry.
+
+        Discovery starts here too, so a discovered device isn't offered then either.
+        """
+        if versions := unsupported_ha_version():
+            return self.async_abort(
+                reason="unsupported-ha-version", description_placeholders=versions
+            )
         return self.async_show_menu(
             step_id="user",
             menu_options=[STEP_BROWSER, STEP_MASTER_TOKEN],

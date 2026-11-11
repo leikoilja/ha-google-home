@@ -88,7 +88,8 @@
       "no-home-selected": "Kies ten minste één huis."
     },
     "abort": {
-      "no-home": "Google meldt dat dit account geen lid is van een huis, dus er zijn geen speakers of schermen om toe te voegen. Nodig het account in de Google Home-app uit voor het huis waarin je apparaten staan, accepteer de uitnodiging en voeg de integratie daarna opnieuw toe. Een Google Workspace-account kan niet worden uitgenodigd, dus voeg de integratie in dat geval toe met een Gmail-account dat lid is van het huis. Zie {docs_url} voor meer informatie."
+      "no-home": "Google meldt dat dit account geen lid is van een huis, dus er zijn geen speakers of schermen om toe te voegen. Nodig het account in de Google Home-app uit voor het huis waarin je apparaten staan, accepteer de uitnodiging en voeg de integratie daarna opnieuw toe. Een Google Workspace-account kan niet worden uitgenodigd, dus voeg de integratie in dat geval toe met een Gmail-account dat lid is van het huis. Zie {docs_url} voor meer informatie.",
+      "unsupported-ha-version": "Deze versie van de Google Home-integratie heeft Home Assistant {required_version} of nieuwer nodig, maar op dit systeem draait {current_version}. Werk Home Assistant bij en voeg de integratie daarna opnieuw toe. Wil je liever bij Home Assistant {current_version} blijven, installeer dan een eerdere versie van de integratie via {releases_url} en herstart daarna Home Assistant."
     }
   },
   "entity": {
@@ -247,6 +248,10 @@
     "no_home": {
       "title": "Google meldt geen huis voor je account",
       "description": "Google meldt dat het account waarmee de integratie is ingelogd geen lid is van een huis, dus er zijn geen speakers of schermen om toe te voegen. Nodig dit account in de Google Home-app uit voor het huis waarin je apparaten staan, en accepteer de uitnodiging. Herlaad daarna de [Google Home-integratie]({integration_url}): selecteer **⋮** > **Herladen**.\n\nAls je de integratie bewust houdt, bijvoorbeeld tijdens een verhuizing, selecteer je **Negeer**. Als je de integratie niet meer nodig hebt, kun je deze op dezelfde pagina verwijderen."
+    },
+    "unsupported_ha_version": {
+      "title": "Google Home heeft Home Assistant {required_version} of nieuwer nodig",
+      "description": "Deze versie van de Google Home-integratie heeft Home Assistant {required_version} of nieuwer nodig, maar op dit systeem draait {current_version}, daarom is de integratie niet ingesteld. De instellingen blijven bewaard en de integratie start ermee zodra je Home Assistant bijwerkt.\n\nWil je liever bij Home Assistant {current_version} blijven, installeer dan een eerdere versie van de integratie via {releases_url} en herstart daarna Home Assistant."
     }
   },
   "config_subentries": {

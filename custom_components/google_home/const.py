@@ -84,6 +84,13 @@ INTEGRATION_PAGE_URL: Final = f"/config/integrations/integration/{DOMAIN}"
 NO_DEVICES_DOCS_URL: Final = (
     "https://ha-google-home.pages.dev/troubleshooting/#no-devices-appear"
 )
+# The oldest Home Assistant release that this version sets up on, as (year, month).
+# hacs.json declares it too. Its betas count: 2026.11.0b0 has what this version needs.
+MIN_HA_VERSION: Final = (2026, 11)
+# The repair shown when Home Assistant is older, and where its text points for an
+# earlier release of the integration
+ISSUE_UNSUPPORTED_HA: Final = "unsupported_ha_version"
+RELEASES_URL: Final = "https://github.com/leikoilja/ha-google-home/releases"
 
 # Configuration and options
 CONF_ANDROID_ID: Final = "android_id"

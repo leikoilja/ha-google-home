@@ -88,7 +88,8 @@
       "no-home-selected": "Valitse vähintään yksi koti."
     },
     "abort": {
-      "no-home": "Googlen mukaan tämä tili ei ole minkään kodin jäsen, joten lisättäviä kaiuttimia tai näyttöjä ei ole. Kutsu Google Home ‑sovelluksessa tili kotiin, jossa laitteesi ovat, hyväksy kutsu ja lisää sitten integraatio uudelleen. Google Workspace ‑tiliä ei voi kutsua, joten lisää integraatio sen sijaan Gmail-tilillä, joka on kodin jäsen. Lisätietoja on osoitteessa {docs_url}."
+      "no-home": "Googlen mukaan tämä tili ei ole minkään kodin jäsen, joten lisättäviä kaiuttimia tai näyttöjä ei ole. Kutsu Google Home ‑sovelluksessa tili kotiin, jossa laitteesi ovat, hyväksy kutsu ja lisää sitten integraatio uudelleen. Google Workspace ‑tiliä ei voi kutsua, joten lisää integraatio sen sijaan Gmail-tilillä, joka on kodin jäsen. Lisätietoja on osoitteessa {docs_url}.",
+      "unsupported-ha-version": "Tämä Google Home ‑integraation versio vaatii Home Assistantin version {required_version} tai uudemman, mutta tässä järjestelmässä on versio {current_version}. Päivitä Home Assistant ja lisää sitten integraatio uudelleen. Jos haluat sen sijaan pysyä Home Assistantin versiossa {current_version}, asenna integraation aiempi julkaisu osoitteesta {releases_url} ja käynnistä sitten Home Assistant uudelleen."
     }
   },
   "entity": {
@@ -247,6 +248,10 @@
     "no_home": {
       "title": "Google ei ilmoita tilillesi yhtään kotia",
       "description": "Googlen mukaan tili, jolla integraatio kirjautui, ei ole minkään kodin jäsen, joten lisättäviä kaiuttimia tai näyttöjä ei ole. Kutsu Google Home ‑sovelluksessa tämä tili kotiin, jossa laitteesi ovat, ja hyväksy kutsu. Lataa sitten [Google Home ‑integraatio]({integration_url}) uudelleen: valitse **⋮** > **Lataa uudelleen**.\n\nJos pidät integraation tarkoituksella, esimerkiksi muuton aikana, valitse **Sivuta**. Jos et enää tarvitse sitä, voit poistaa sen samalla sivulla."
+    },
+    "unsupported_ha_version": {
+      "title": "Google Home vaatii Home Assistantin version {required_version} tai uudemman",
+      "description": "Tämä Google Home ‑integraation versio vaatii Home Assistantin version {required_version} tai uudemman, mutta tässä järjestelmässä on versio {current_version}, joten integraatiota ei otettu käyttöön. Sen asetukset säilyvät, ja se käynnistyy niillä, kun päivität Home Assistantin.\n\nJos haluat sen sijaan pysyä Home Assistantin versiossa {current_version}, asenna integraation aiempi julkaisu osoitteesta {releases_url} ja käynnistä sitten Home Assistant uudelleen."
     }
   },
   "config_subentries": {

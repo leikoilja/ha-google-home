@@ -88,7 +88,8 @@
       "no-home-selected": "Wybierz co najmniej jeden dom."
     },
     "abort": {
-      "no-home": "Według Google to konto nie jest członkiem żadnego domu, więc nie ma głośników ani wyświetlaczy do dodania. W aplikacji Google Home zaproś to konto do domu, w którym są Twoje urządzenia, zaakceptuj zaproszenie, a potem dodaj integrację ponownie. Konta Google Workspace nie można zaprosić, więc w takim przypadku dodaj integrację za pomocą konta Gmail, które jest członkiem domu. Szczegóły znajdziesz na stronie {docs_url}."
+      "no-home": "Według Google to konto nie jest członkiem żadnego domu, więc nie ma głośników ani wyświetlaczy do dodania. W aplikacji Google Home zaproś to konto do domu, w którym są Twoje urządzenia, zaakceptuj zaproszenie, a potem dodaj integrację ponownie. Konta Google Workspace nie można zaprosić, więc w takim przypadku dodaj integrację za pomocą konta Gmail, które jest członkiem domu. Szczegóły znajdziesz na stronie {docs_url}.",
+      "unsupported-ha-version": "Ta wersja integracji Google Home wymaga Home Assistanta {required_version} lub nowszego, ale w tym systemie działa wersja {current_version}. Zaktualizuj Home Assistanta, a potem dodaj integrację ponownie. Jeśli wolisz zostać przy wersji Home Assistanta {current_version}, zainstaluj wcześniejsze wydanie integracji ze strony {releases_url}, a następnie uruchom ponownie Home Assistanta."
     }
   },
   "entity": {
@@ -247,6 +248,10 @@
     "no_home": {
       "title": "Google nie zgłasza żadnego domu dla Twojego konta",
       "description": "Według Google konto, na które zalogowała się integracja, nie jest członkiem żadnego domu, więc nie ma głośników ani wyświetlaczy do dodania. W aplikacji Google Home zaproś to konto do domu, w którym są Twoje urządzenia, i zaakceptuj zaproszenie. Następnie wczytaj ponownie [integrację Google Home]({integration_url}): wybierz **⋮** > **Wczytaj ponownie**.\n\nJeśli celowo zachowujesz integrację, na przykład podczas przeprowadzki, wybierz **Ignoruj**. Jeśli już jej nie potrzebujesz, możesz ją usunąć na tej samej stronie."
+    },
+    "unsupported_ha_version": {
+      "title": "Google Home wymaga Home Assistanta {required_version} lub nowszego",
+      "description": "Ta wersja integracji Google Home wymaga Home Assistanta {required_version} lub nowszego, ale w tym systemie działa wersja {current_version}, więc integracja nie została skonfigurowana. Jej ustawienia zostają zachowane, a integracja uruchomi się z nimi po aktualizacji Home Assistanta.\n\nJeśli wolisz zostać przy wersji Home Assistanta {current_version}, zainstaluj wcześniejsze wydanie integracji ze strony {releases_url}, a następnie uruchom ponownie Home Assistanta."
     }
   },
   "config_subentries": {
