@@ -89,7 +89,7 @@
     },
     "abort": {
       "no-home": "A Google szerint ez a fiók egyetlen otthonnak sem tagja, így nincsenek hozzáadható hangszórók vagy kijelzők. A Google Home alkalmazásban hívja meg a fiókot abba az otthonba, amelyben az eszközei vannak, fogadja el a meghívást, majd adja hozzá újra az integrációt. Google Workspace-fiókot nem lehet meghívni, ezért ilyenkor egy olyan Gmail-fiókkal adja hozzá az integrációt, amely tagja az otthonnak. Részletek: {docs_url}.",
-      "unsupported-ha-version": "A Google Home-integráció ezen verziója a Home Assistant {required_version} vagy újabb verzióját igényli, de ezen a rendszeren a Home Assistant {current_version} verziója fut. Frissítse a Home Assistantot, majd adja hozzá újra az integrációt. Ha inkább a Home Assistant {current_version} verziójánál maradna, törölje a konfigurációs mappából a `custom_components/google_home` mappát, másolja a helyére ugyanezt a mappát az integráció egy korábbi kiadásából, amely itt érhető el: {releases_url}, majd indítsa újra a Home Assistantot."
+      "unsupported-ha-version": "A Google Home-integráció ezen verziója a Home Assistant {required_version} vagy újabb verzióját igényli, de ezen a rendszeren a Home Assistant {current_version} verziója fut. Frissítse a Home Assistantot, majd adja hozzá újra az integrációt. Ha inkább a Home Assistant {current_version} verziójánál maradna, telepítse az integráció egy korábbi kiadását. A lépéseket itt találja: {docs_url}."
     }
   },
   "entity": {
@@ -251,7 +251,7 @@
     },
     "unsupported_ha_version": {
       "title": "A Google Home a Home Assistant {required_version} vagy újabb verzióját igényli",
-      "description": "A Google Home-integráció ezen verziója a Home Assistant {required_version} vagy újabb verzióját igényli, de ezen a rendszeren a Home Assistant {current_version} verziója fut, ezért az integráció nem lett beállítva. A beállításai megmaradnak, és a Home Assistant frissítése után ezekkel indul el.\n\nHa inkább a Home Assistant {current_version} verziójánál maradna, törölje a konfigurációs mappából a `custom_components/google_home` mappát, másolja a helyére ugyanezt a mappát az integráció egy korábbi kiadásából, amely itt érhető el: {releases_url}, majd indítsa újra a Home Assistantot."
+      "description": "A Google Home-integráció ezen verziója a Home Assistant {required_version} vagy újabb verzióját igényli, de ezen a rendszeren a Home Assistant {current_version} verziója fut, ezért az integráció nem lett beállítva. A beállításai megmaradnak, és a Home Assistant frissítése után ezekkel indul el.\n\nHa inkább a Home Assistant {current_version} verziójánál maradna, telepítse az integráció egy korábbi kiadását. A lépéseket itt találja: {docs_url}."
     }
   },
   "config_subentries": {

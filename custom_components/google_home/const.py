@@ -87,10 +87,13 @@ NO_DEVICES_DOCS_URL: Final = (
 # The oldest Home Assistant release that this version sets up on, as (year, month).
 # hacs.json declares it too. Its betas count: 2026.11.0b0 has what this version needs.
 MIN_HA_VERSION: Final = (2026, 11)
-# The repair shown when Home Assistant is older, and where its text points for an
-# earlier release of the integration
+# The repair shown when Home Assistant is older, and the docs that its text links to,
+# which say how to install an earlier release with HACS or by hand
 ISSUE_UNSUPPORTED_HA: Final = "unsupported_ha_version"
-RELEASES_URL: Final = "https://github.com/leikoilja/ha-google-home/releases"
+UNSUPPORTED_HA_DOCS_URL: Final = (
+    "https://ha-google-home.pages.dev/troubleshooting/"
+    "#the-integration-doesnt-load-after-an-update"
+)
 
 # Configuration and options
 CONF_ANDROID_ID: Final = "android_id"

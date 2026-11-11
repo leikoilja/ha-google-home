@@ -47,8 +47,8 @@ from .const import (
     MASTER_TOKEN_TITLE,
     NO_DEVICES_DOCS_URL,
     PLATFORMS,
-    RELEASES_URL,
     SUBENTRY_BLUETOOTH_DEVICE,
+    UNSUPPORTED_HA_DOCS_URL,
 )
 from .coordinator import GoogleAccountCoordinator
 from .mdns import async_browse_cast_devices
@@ -74,7 +74,7 @@ def unsupported_ha_version() -> dict[str, str] | None:
     return {
         "current_version": ha_const.__version__,
         "required_version": ".".join(map(str, const.MIN_HA_VERSION)),
-        "releases_url": RELEASES_URL,
+        "docs_url": UNSUPPORTED_HA_DOCS_URL,
     }
 
 
@@ -90,12 +90,11 @@ async def async_setup(hass: HomeAssistant, _config: ConfigType) -> bool:
     if versions := unsupported_ha_version():
         _LOGGER.error(
             "This version of Google Home needs Home Assistant %s or later, but this "
-            "is %s, so it wasn't set up. Update Home Assistant, or replace the "
-            "custom_components/google_home folder with the one from an earlier "
-            "release at %s",
+            "is %s, so it wasn't set up. Update Home Assistant, or install an "
+            "earlier release of Google Home as described at %s",
             versions["required_version"],
             versions["current_version"],
-            RELEASES_URL,
+            UNSUPPORTED_HA_DOCS_URL,
         )
         # Not kept over a restart, so it's gone once Home Assistant is updated
         ir.async_create_issue(

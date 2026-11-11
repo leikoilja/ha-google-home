@@ -89,7 +89,7 @@
     },
     "abort": {
       "no-home": "Google รายงานว่าบัญชีนี้ไม่ได้เป็นสมาชิกของบ้านใดเลย จึงไม่มีลำโพงหรือจอแสดงผลให้เพิ่ม ในแอป Google Home ให้เชิญบัญชีนี้เข้าบ้านที่อุปกรณ์ของคุณอยู่ แล้วตอบรับคำเชิญ จากนั้นเพิ่ม Integration อีกครั้ง ไม่สามารถเชิญบัญชี Google Workspace ได้ จึงให้เพิ่ม Integration ด้วยบัญชี Gmail ที่เป็นสมาชิกของบ้านแทน ดูรายละเอียดได้ที่ {docs_url}",
-      "unsupported-ha-version": "Integration Google Home เวอร์ชันนี้ต้องใช้ Home Assistant {required_version} ขึ้นไป แต่ระบบนี้ใช้เวอร์ชัน {current_version} อยู่ ให้อัปเดต Home Assistant แล้วเพิ่ม Integration อีกครั้ง หากต้องการใช้ Home Assistant {current_version} ต่อไป ให้ลบโฟลเดอร์ `custom_components/google_home` ในโฟลเดอร์การกำหนดค่า คัดลอกโฟลเดอร์เดียวกันจาก Integration เวอร์ชันก่อนหน้าที่ {releases_url} มาไว้แทน แล้วรีสตาร์ท Home Assistant"
+      "unsupported-ha-version": "Integration Google Home เวอร์ชันนี้ต้องใช้ Home Assistant {required_version} ขึ้นไป แต่ระบบนี้ใช้เวอร์ชัน {current_version} อยู่ ให้อัปเดต Home Assistant แล้วเพิ่ม Integration อีกครั้ง หากต้องการใช้ Home Assistant {current_version} ต่อไป ให้ติดตั้ง Integration เวอร์ชันก่อนหน้า ดูขั้นตอนได้ที่ {docs_url}"
     }
   },
   "entity": {
@@ -251,7 +251,7 @@
     },
     "unsupported_ha_version": {
       "title": "Google Home ต้องใช้ Home Assistant {required_version} ขึ้นไป",
-      "description": "Integration Google Home เวอร์ชันนี้ต้องใช้ Home Assistant {required_version} ขึ้นไป แต่ระบบนี้ใช้เวอร์ชัน {current_version} อยู่ Integration จึงไม่ได้เริ่มทำงาน การตั้งค่าของ Integration ยังคงอยู่ และ Integration จะเริ่มทำงานด้วยการตั้งค่าเหล่านั้นเมื่อคุณอัปเดต Home Assistant\n\nหากต้องการใช้ Home Assistant {current_version} ต่อไป ให้ลบโฟลเดอร์ `custom_components/google_home` ในโฟลเดอร์การกำหนดค่า คัดลอกโฟลเดอร์เดียวกันจาก Integration เวอร์ชันก่อนหน้าที่ {releases_url} มาไว้แทน แล้วรีสตาร์ท Home Assistant"
+      "description": "Integration Google Home เวอร์ชันนี้ต้องใช้ Home Assistant {required_version} ขึ้นไป แต่ระบบนี้ใช้เวอร์ชัน {current_version} อยู่ Integration จึงไม่ได้เริ่มทำงาน การตั้งค่าของ Integration ยังคงอยู่ และ Integration จะเริ่มทำงานด้วยการตั้งค่าเหล่านั้นเมื่อคุณอัปเดต Home Assistant\n\nหากต้องการใช้ Home Assistant {current_version} ต่อไป ให้ติดตั้ง Integration เวอร์ชันก่อนหน้า ดูขั้นตอนได้ที่ {docs_url}"
     }
   },
   "config_subentries": {

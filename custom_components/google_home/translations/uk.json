@@ -89,7 +89,7 @@
     },
     "abort": {
       "no-home": "За даними Google, цей обліковий запис не є учасником жодного дому, тому немає колонок і дисплеїв, які можна додати. У застосунку Google Home запросіть обліковий запис до дому, де розташовані ваші пристрої, прийміть запрошення, а потім додайте інтеграцію знову. Обліковий запис Google Workspace не можна запросити, тому додайте інтеграцію з обліковим записом Gmail, який є учасником дому. Докладніше тут: {docs_url}.",
-      "unsupported-ha-version": "Для цієї версії інтеграції Google Home потрібен Home Assistant {required_version} або новіший, але в цій системі встановлено версію {current_version}. Оновіть Home Assistant, а потім додайте інтеграцію знову. Якщо натомість ви хочете залишитися на Home Assistant {current_version}, видаліть папку `custom_components/google_home` у папці конфігурації, скопіюйте на її місце ту саму папку зі старішого випуску, який можна завантажити зі сторінки {releases_url}, а потім перезапустіть Home Assistant."
+      "unsupported-ha-version": "Для цієї версії інтеграції Google Home потрібен Home Assistant {required_version} або новіший, але в цій системі встановлено версію {current_version}. Оновіть Home Assistant, а потім додайте інтеграцію знову. Якщо натомість ви хочете залишитися на Home Assistant {current_version}, встановіть старіший випуск інтеграції. Інструкції доступні тут: {docs_url}."
     }
   },
   "entity": {
@@ -251,7 +251,7 @@
     },
     "unsupported_ha_version": {
       "title": "Для Google Home потрібен Home Assistant {required_version} або новіший",
-      "description": "Для цієї версії інтеграції Google Home потрібен Home Assistant {required_version} або новіший, але в цій системі встановлено версію {current_version}, тому інтеграцію не було налаштовано. Її налаштування збережено, і вона запуститься з ними після оновлення Home Assistant.\n\nЯкщо натомість ви хочете залишитися на Home Assistant {current_version}, видаліть папку `custom_components/google_home` у папці конфігурації, скопіюйте на її місце ту саму папку зі старішого випуску, який можна завантажити зі сторінки {releases_url}, а потім перезапустіть Home Assistant."
+      "description": "Для цієї версії інтеграції Google Home потрібен Home Assistant {required_version} або новіший, але в цій системі встановлено версію {current_version}, тому інтеграцію не було налаштовано. Її налаштування збережено, і вона запуститься з ними після оновлення Home Assistant.\n\nЯкщо натомість ви хочете залишитися на Home Assistant {current_version}, встановіть старіший випуск інтеграції. Інструкції доступні тут: {docs_url}."
     }
   },
   "config_subentries": {

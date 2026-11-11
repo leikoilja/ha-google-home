@@ -89,7 +89,7 @@
     },
     "abort": {
       "no-home": "Google indica que esta cuenta no es miembro de ninguna casa, así que no hay altavoces ni pantallas que añadir. En la aplicación Google Home, invita a la cuenta a la casa en la que están tus dispositivos, acepta la invitación y vuelve a añadir la integración. Una cuenta de Google Workspace no se puede invitar, así que añade la integración con una cuenta de Gmail que sea miembro de la casa. Para más información, consulta {docs_url}.",
-      "unsupported-ha-version": "Esta versión de la integración Google Home necesita Home Assistant {required_version} o posterior, pero este sistema usa la versión {current_version}. Actualiza Home Assistant y vuelve a añadir la integración. Si prefieres seguir con Home Assistant {current_version}, elimina la carpeta `custom_components/google_home` de tu carpeta de configuración, copia en su lugar la misma carpeta de una versión anterior disponible en {releases_url} y después reinicia Home Assistant."
+      "unsupported-ha-version": "Esta versión de la integración Google Home necesita Home Assistant {required_version} o posterior, pero este sistema usa la versión {current_version}. Actualiza Home Assistant y vuelve a añadir la integración. Si prefieres seguir con Home Assistant {current_version}, instala una versión anterior de la integración. Para ver los pasos, consulta {docs_url}."
     }
   },
   "entity": {
@@ -251,7 +251,7 @@
     },
     "unsupported_ha_version": {
       "title": "Google Home necesita Home Assistant {required_version} o posterior",
-      "description": "Esta versión de la integración Google Home necesita Home Assistant {required_version} o posterior, pero este sistema usa la versión {current_version}, así que la integración no se ha configurado. Su configuración se conserva, y la integración se iniciará con ella cuando actualices Home Assistant.\n\nSi prefieres seguir con Home Assistant {current_version}, elimina la carpeta `custom_components/google_home` de tu carpeta de configuración, copia en su lugar la misma carpeta de una versión anterior disponible en {releases_url} y después reinicia Home Assistant."
+      "description": "Esta versión de la integración Google Home necesita Home Assistant {required_version} o posterior, pero este sistema usa la versión {current_version}, así que la integración no se ha configurado. Su configuración se conserva, y la integración se iniciará con ella cuando actualices Home Assistant.\n\nSi prefieres seguir con Home Assistant {current_version}, instala una versión anterior de la integración. Para ver los pasos, consulta {docs_url}."
     }
   },
   "config_subentries": {

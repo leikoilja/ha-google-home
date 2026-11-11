@@ -37,7 +37,10 @@ from .test_setup import set_up
 
 HACS = Path(__file__).parents[1] / "hacs.json"
 ISSUE = "unsupported_ha_version"
-RELEASES = "https://github.com/leikoilja/ha-google-home/releases"
+DOCS = (
+    "https://ha-google-home.pages.dev/troubleshooting/"
+    "#the-integration-doesnt-load-after-an-update"
+)
 UNSUPPORTED = ["2026.10.0", "2026.10.4", "2025.12.3"]
 SUPPORTED = ["2026.11.0b0", "2026.11.0", "2026.12.1", "2027.1.0"]
 
@@ -124,13 +127,13 @@ async def test_unsupported_ha_refuses_setup(
         {
             "current_version": version,
             "required_version": "2026.11",
-            "releases_url": RELEASES,
+            "docs_url": DOCS,
         },
     )
     text = await shown_text(hass, issue)
     assert text["title"] == "Google Home needs Home Assistant 2026.11 or later"
     assert f"this system runs {version}" in text["description"]
-    assert RELEASES in text["description"]
+    assert DOCS in text["description"]
     assert f"needs Home Assistant 2026.11 or later, but this is {version}" in (
         caplog.text
     )
@@ -203,7 +206,7 @@ async def test_unsupported_ha_refuses_first_setup(
     assert result["description_placeholders"] == {
         "current_version": version,
         "required_version": "2026.11",
-        "releases_url": RELEASES,
+        "docs_url": DOCS,
     }
     assert hass.config_entries.flow.async_progress_by_handler(DOMAIN) == []
 
