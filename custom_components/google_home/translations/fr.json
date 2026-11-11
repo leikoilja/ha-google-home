@@ -88,7 +88,8 @@
       "no-home-selected": "Choisissez au moins une maison."
     },
     "abort": {
-      "no-home": "Google indique que ce compte n'est membre d'aucune maison, il n'y a donc aucune enceinte ni aucun écran à ajouter. Dans l'application Google Home, invitez le compte dans la maison où se trouvent vos appareils, acceptez l'invitation, puis ajoutez à nouveau l'intégration. Un compte Google Workspace ne pouvant pas être invité, ajoutez plutôt l'intégration avec un compte Gmail membre de la maison. Pour en savoir plus, consultez {docs_url}."
+      "no-home": "Google indique que ce compte n'est membre d'aucune maison, il n'y a donc aucune enceinte ni aucun écran à ajouter. Dans l'application Google Home, invitez le compte dans la maison où se trouvent vos appareils, acceptez l'invitation, puis ajoutez à nouveau l'intégration. Un compte Google Workspace ne pouvant pas être invité, ajoutez plutôt l'intégration avec un compte Gmail membre de la maison. Pour en savoir plus, consultez {docs_url}.",
+      "unsupported-ha-version": "Cette version de l'intégration Google Home nécessite Home Assistant {required_version} ou une version ultérieure, mais ce système utilise la version {current_version}. Mettez à jour Home Assistant, puis ajoutez à nouveau l'intégration. Si vous préférez rester sur Home Assistant {current_version}, installez une version antérieure de l'intégration. Pour connaître la marche à suivre, consultez {docs_url}."
     }
   },
   "entity": {
@@ -247,6 +248,10 @@
     "no_home": {
       "title": "Google n'indique aucune maison pour votre compte",
       "description": "Google indique que le compte avec lequel l'intégration s'est connectée n'est membre d'aucune maison, il n'y a donc aucune enceinte ni aucun écran à ajouter. Dans l'application Google Home, invitez ce compte dans la maison où se trouvent vos appareils, puis acceptez l'invitation. Rechargez ensuite l'[intégration Google Home]({integration_url}) : sélectionnez **⋮** > **Recharger**.\n\nSi vous gardez l'intégration volontairement, par exemple pendant un déménagement, sélectionnez **Ignorer**. Si vous n'en avez plus besoin, vous pouvez la supprimer sur la même page."
+    },
+    "unsupported_ha_version": {
+      "title": "Google Home nécessite Home Assistant {required_version} ou une version ultérieure",
+      "description": "Cette version de l'intégration Google Home nécessite Home Assistant {required_version} ou une version ultérieure, mais ce système utilise la version {current_version}, l'intégration n'a donc pas été configurée. Ses paramètres sont conservés, et elle démarrera avec ceux-ci dès que vous aurez mis à jour Home Assistant.\n\nSi vous préférez rester sur Home Assistant {current_version}, installez une version antérieure de l'intégration. Pour connaître la marche à suivre, consultez {docs_url}."
     }
   },
   "config_subentries": {

@@ -263,6 +263,7 @@ The tests and the quality scale check use the Home Assistant version that `pypro
 3. Change the version in the link to [Home Assistant's language list](#translate-the-integration).
 4. Run the tests and checks. The [quality scale check](#keep-the-quality-scale-up-to-date) reports rules the new version added, and the snapshots may need updating.
 5. Set the minimum version in `hacs.json` and under [Before you start](installation.md#before-you-start) to match. For a beta, use its stable version, such as 2026.11.0 for 2026.11.0b4. The Marketplace reads `hacs.json` at the version it installs, including `master`, and each release sets it to the pinned version; see [Publish a release](#publish-a-release).
+6. Set `MIN_HA_VERSION` in `const.py` to the pinned version's year and month, such as `(2026, 11)`, and update the versions in `tests/test_unsupported_ha.py`. On an older Home Assistant, the integration then refuses to set up and says why in **Repairs**, also when it was installed by hand. It accepts every beta of that release, so check that its first beta has the changes the integration needs. The tests fail until `hacs.json`, [Before you start](installation.md#before-you-start) and `MIN_HA_VERSION` match the pinned version's year and month.
 
 ### Publish a release
 

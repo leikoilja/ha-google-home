@@ -88,7 +88,8 @@
       "no-home-selected": "เลือกบ้านอย่างน้อย 1 หลัง"
     },
     "abort": {
-      "no-home": "Google รายงานว่าบัญชีนี้ไม่ได้เป็นสมาชิกของบ้านใดเลย จึงไม่มีลำโพงหรือจอแสดงผลให้เพิ่ม ในแอป Google Home ให้เชิญบัญชีนี้เข้าบ้านที่อุปกรณ์ของคุณอยู่ แล้วตอบรับคำเชิญ จากนั้นเพิ่ม Integration อีกครั้ง ไม่สามารถเชิญบัญชี Google Workspace ได้ จึงให้เพิ่ม Integration ด้วยบัญชี Gmail ที่เป็นสมาชิกของบ้านแทน ดูรายละเอียดได้ที่ {docs_url}"
+      "no-home": "Google รายงานว่าบัญชีนี้ไม่ได้เป็นสมาชิกของบ้านใดเลย จึงไม่มีลำโพงหรือจอแสดงผลให้เพิ่ม ในแอป Google Home ให้เชิญบัญชีนี้เข้าบ้านที่อุปกรณ์ของคุณอยู่ แล้วตอบรับคำเชิญ จากนั้นเพิ่ม Integration อีกครั้ง ไม่สามารถเชิญบัญชี Google Workspace ได้ จึงให้เพิ่ม Integration ด้วยบัญชี Gmail ที่เป็นสมาชิกของบ้านแทน ดูรายละเอียดได้ที่ {docs_url}",
+      "unsupported-ha-version": "Integration Google Home เวอร์ชันนี้ต้องใช้ Home Assistant {required_version} ขึ้นไป แต่ระบบนี้ใช้เวอร์ชัน {current_version} อยู่ ให้อัปเดต Home Assistant แล้วเพิ่ม Integration อีกครั้ง หากต้องการใช้ Home Assistant {current_version} ต่อไป ให้ติดตั้ง Integration เวอร์ชันก่อนหน้า ดูขั้นตอนได้ที่ {docs_url}"
     }
   },
   "entity": {
@@ -247,6 +248,10 @@
     "no_home": {
       "title": "Google รายงานว่าไม่มีบ้านสำหรับบัญชีของคุณ",
       "description": "Google รายงานว่าบัญชีที่ Integration ใช้ลงชื่อเข้าใช้ไม่ได้เป็นสมาชิกของบ้านใดเลย จึงไม่มีลำโพงหรือจอแสดงผลให้เพิ่ม ในแอป Google Home ให้เชิญบัญชีนี้เข้าบ้านที่อุปกรณ์ของคุณอยู่ แล้วตอบรับคำเชิญ จากนั้นโหลด [Integration Google Home]({integration_url}) ใหม่ โดยเลือก **⋮** > **Reload**\n\nหากคุณตั้งใจเก็บ Integration ไว้ เช่น ระหว่างที่กำลังย้ายบ้าน ให้เลือก **เพิกเฉย** หากไม่ต้องการใช้แล้ว คุณสามารถลบได้ที่หน้าเดียวกัน"
+    },
+    "unsupported_ha_version": {
+      "title": "Google Home ต้องใช้ Home Assistant {required_version} ขึ้นไป",
+      "description": "Integration Google Home เวอร์ชันนี้ต้องใช้ Home Assistant {required_version} ขึ้นไป แต่ระบบนี้ใช้เวอร์ชัน {current_version} อยู่ Integration จึงไม่ได้เริ่มทำงาน การตั้งค่าของ Integration ยังคงอยู่ และ Integration จะเริ่มทำงานด้วยการตั้งค่าเหล่านั้นเมื่อคุณอัปเดต Home Assistant\n\nหากต้องการใช้ Home Assistant {current_version} ต่อไป ให้ติดตั้ง Integration เวอร์ชันก่อนหน้า ดูขั้นตอนได้ที่ {docs_url}"
     }
   },
   "config_subentries": {

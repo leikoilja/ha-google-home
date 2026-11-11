@@ -88,7 +88,8 @@
       "no-home-selected": "Pilih minimal satu rumah."
     },
     "abort": {
-      "no-home": "Google melaporkan bahwa akun ini bukan anggota rumah mana pun, sehingga tidak ada speaker atau layar yang dapat ditambahkan. Di aplikasi Google Home, undang akun ini ke rumah tempat perangkat Anda berada, terima undangannya, lalu tambahkan kembali integrasi. Akun Google Workspace tidak dapat diundang, jadi tambahkan integrasi dengan akun Gmail yang merupakan anggota rumah tersebut. Untuk detailnya, lihat {docs_url}."
+      "no-home": "Google melaporkan bahwa akun ini bukan anggota rumah mana pun, sehingga tidak ada speaker atau layar yang dapat ditambahkan. Di aplikasi Google Home, undang akun ini ke rumah tempat perangkat Anda berada, terima undangannya, lalu tambahkan kembali integrasi. Akun Google Workspace tidak dapat diundang, jadi tambahkan integrasi dengan akun Gmail yang merupakan anggota rumah tersebut. Untuk detailnya, lihat {docs_url}.",
+      "unsupported-ha-version": "Versi integrasi Google Home ini memerlukan Home Assistant {required_version} atau yang lebih baru, tetapi sistem ini menjalankan {current_version}. Perbarui Home Assistant, lalu tambahkan kembali integrasi. Jika Anda ingin tetap menggunakan Home Assistant {current_version}, instal rilis integrasi yang lebih lama. Untuk langkah-langkahnya, lihat {docs_url}."
     }
   },
   "entity": {
@@ -247,6 +248,10 @@
     "no_home": {
       "title": "Google tidak melaporkan rumah apa pun untuk akun Anda",
       "description": "Google melaporkan bahwa akun yang digunakan integrasi untuk login bukan anggota rumah mana pun, sehingga tidak ada speaker atau layar yang dapat ditambahkan. Di aplikasi Google Home, undang akun ini ke rumah tempat perangkat Anda berada, lalu terima undangannya. Kemudian, muat ulang [integrasi Google Home]({integration_url}): pilih **⋮** > **Muat Ulang**.\n\nJika Anda sengaja mempertahankan integrasi ini, misalnya saat sedang pindah rumah, pilih **Abaikan**. Jika tidak memerlukannya lagi, Anda dapat menghapusnya di halaman yang sama."
+    },
+    "unsupported_ha_version": {
+      "title": "Google Home memerlukan Home Assistant {required_version} atau yang lebih baru",
+      "description": "Versi integrasi Google Home ini memerlukan Home Assistant {required_version} atau yang lebih baru, tetapi sistem ini menjalankan {current_version}, sehingga integrasi tidak disiapkan. Pengaturannya tetap disimpan, dan integrasi akan dimulai dengan pengaturan tersebut setelah Anda memperbarui Home Assistant.\n\nJika Anda ingin tetap menggunakan Home Assistant {current_version}, instal rilis integrasi yang lebih lama. Untuk langkah-langkahnya, lihat {docs_url}."
     }
   },
   "config_subentries": {

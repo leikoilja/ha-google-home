@@ -88,7 +88,8 @@
       "no-home-selected": "Velg minst ett hjem."
     },
     "abort": {
-      "no-home": "Google oppgir at denne kontoen ikke er medlem av noe hjem, så det finnes ingen høyttalere eller skjermer å legge til. I Google Home-appen inviterer du kontoen til hjemmet enhetene dine er i, godtar invitasjonen og legger deretter til integrasjonen på nytt. En Google Workspace-konto kan ikke inviteres, så legg i stedet til integrasjonen med en Gmail-konto som er medlem av hjemmet. Du finner mer informasjon på {docs_url}."
+      "no-home": "Google oppgir at denne kontoen ikke er medlem av noe hjem, så det finnes ingen høyttalere eller skjermer å legge til. I Google Home-appen inviterer du kontoen til hjemmet enhetene dine er i, godtar invitasjonen og legger deretter til integrasjonen på nytt. En Google Workspace-konto kan ikke inviteres, så legg i stedet til integrasjonen med en Gmail-konto som er medlem av hjemmet. Du finner mer informasjon på {docs_url}.",
+      "unsupported-ha-version": "Denne versjonen av Google Home-integrasjonen krever Home Assistant {required_version} eller nyere, men dette systemet kjører {current_version}. Oppdater Home Assistant, og legg deretter til integrasjonen på nytt. Hvis du heller vil bli på Home Assistant {current_version}, installerer du en tidligere utgivelse av integrasjonen. Se veiledningen her: {docs_url}."
     }
   },
   "entity": {
@@ -247,6 +248,10 @@
     "no_home": {
       "title": "Google oppgir ikke noe hjem for kontoen din",
       "description": "Google oppgir at kontoen integrasjonen er logget på med, ikke er medlem av noe hjem, så det finnes ingen høyttalere eller skjermer å legge til. I Google Home-appen inviterer du denne kontoen til hjemmet enhetene dine er i, og godtar invitasjonen. Last deretter inn [Google Home-integrasjonen]({integration_url}) på nytt: Velg **⋮** > **Last inn på nytt**.\n\nHvis du beholder integrasjonen med vilje, for eksempel mens du flytter, velger du **Ignorer**. Hvis du ikke trenger den lenger, kan du slette den på den samme siden."
+    },
+    "unsupported_ha_version": {
+      "title": "Google Home krever Home Assistant {required_version} eller nyere",
+      "description": "Denne versjonen av Google Home-integrasjonen krever Home Assistant {required_version} eller nyere, men dette systemet kjører {current_version}, så integrasjonen ble ikke satt opp. Innstillingene beholdes, og integrasjonen starter med dem når du oppdaterer Home Assistant.\n\nHvis du heller vil bli på Home Assistant {current_version}, installerer du en tidligere utgivelse av integrasjonen. Se veiledningen her: {docs_url}."
     }
   },
   "config_subentries": {

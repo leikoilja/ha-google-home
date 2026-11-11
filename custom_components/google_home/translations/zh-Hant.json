@@ -88,7 +88,8 @@
       "no-home-selected": "請至少選擇一個住家。"
     },
     "abort": {
-      "no-home": "Google 回報，這個帳號不是任何住家的成員，因此沒有可以加入的音箱或螢幕。請在 Google Home 應用程式中，邀請這個帳號加入你的裝置所在的住家並接受邀請，然後重新新增整合。Google Workspace 帳號無法受邀，因此請改用身為該住家成員的 Gmail 帳號新增整合。詳情請參閱：{docs_url}"
+      "no-home": "Google 回報，這個帳號不是任何住家的成員，因此沒有可以加入的音箱或螢幕。請在 Google Home 應用程式中，邀請這個帳號加入你的裝置所在的住家並接受邀請，然後重新新增整合。Google Workspace 帳號無法受邀，因此請改用身為該住家成員的 Gmail 帳號新增整合。詳情請參閱：{docs_url}",
+      "unsupported-ha-version": "這個版本的 Google Home 整合需要 Home Assistant {required_version} 或更新版本，但這個系統執行的是 {current_version}。請更新 Home Assistant，然後重新新增整合。如果你想繼續使用 Home Assistant {current_version}，請安裝整合的較早發行版本。操作步驟請參閱：{docs_url}"
     }
   },
   "entity": {
@@ -247,6 +248,10 @@
     "no_home": {
       "title": "Google 回報你的帳號沒有任何住家",
       "description": "Google 回報，整合用來登入的帳號不是任何住家的成員，因此沒有可以加入的音箱或螢幕。請在 Google Home 應用程式中，邀請這個帳號加入你的裝置所在的住家，並接受邀請。接著重新載入 [Google Home 整合]({integration_url})：選擇「**⋮**」>「**重新載入**」。\n\n如果你是刻意保留這個整合，例如正在搬家，請選擇「**忽略**」。如果不再需要，可以在同一頁面上刪除。"
+    },
+    "unsupported_ha_version": {
+      "title": "Google Home 需要 Home Assistant {required_version} 或更新版本",
+      "description": "這個版本的 Google Home 整合需要 Home Assistant {required_version} 或更新版本，但這個系統執行的是 {current_version}，因此整合沒有啟動。整合的設定會保留，更新 Home Assistant 後就會使用這些設定啟動。\n\n如果你想繼續使用 Home Assistant {current_version}，請安裝整合的較早發行版本。操作步驟請參閱：{docs_url}"
     }
   },
   "config_subentries": {

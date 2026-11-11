@@ -88,7 +88,8 @@
       "no-home-selected": "Escolha pelo menos uma casa."
     },
     "abort": {
-      "no-home": "O Google informa que esta conta não é membro de nenhuma casa, então não há alto-falantes nem telas para adicionar. No app Google Home, convide a conta para a casa em que seus dispositivos estão, aceite o convite e adicione a integração novamente. Uma conta do Google Workspace não pode ser convidada, então adicione a integração com uma conta do Gmail que seja membro da casa. Para mais detalhes, consulte {docs_url}."
+      "no-home": "O Google informa que esta conta não é membro de nenhuma casa, então não há alto-falantes nem telas para adicionar. No app Google Home, convide a conta para a casa em que seus dispositivos estão, aceite o convite e adicione a integração novamente. Uma conta do Google Workspace não pode ser convidada, então adicione a integração com uma conta do Gmail que seja membro da casa. Para mais detalhes, consulte {docs_url}.",
+      "unsupported-ha-version": "Esta versão da integração Google Home precisa do Home Assistant {required_version} ou posterior, mas este sistema usa a versão {current_version}. Atualize o Home Assistant e adicione a integração novamente. Se preferir continuar no Home Assistant {current_version}, instale uma versão anterior da integração. Para ver o passo a passo, consulte {docs_url}."
     }
   },
   "entity": {
@@ -247,6 +248,10 @@
     "no_home": {
       "title": "O Google não informa nenhuma casa para sua conta",
       "description": "O Google informa que a conta com que a integração entrou não é membro de nenhuma casa, então não há alto-falantes nem telas para adicionar. No app Google Home, convide esta conta para a casa em que seus dispositivos estão e aceite o convite. Depois, recarregue a [integração Google Home]({integration_url}): selecione **⋮** > **Recarregar**.\n\nSe você está mantendo a integração de propósito, por exemplo durante uma mudança, selecione **Ignorar**. Se não precisar mais dela, você pode excluí-la na mesma página."
+    },
+    "unsupported_ha_version": {
+      "title": "O Google Home precisa do Home Assistant {required_version} ou posterior",
+      "description": "Esta versão da integração Google Home precisa do Home Assistant {required_version} ou posterior, mas este sistema usa a versão {current_version}, então a integração não foi configurada. As configurações dela são mantidas, e ela vai iniciar com elas assim que você atualizar o Home Assistant.\n\nSe preferir continuar no Home Assistant {current_version}, instale uma versão anterior da integração. Para ver o passo a passo, consulte {docs_url}."
     }
   },
   "config_subentries": {

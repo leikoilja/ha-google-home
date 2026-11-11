@@ -88,7 +88,8 @@
       "no-home-selected": "Vyberte aspoň jednu domácnosť."
     },
     "abort": {
-      "no-home": "Google uvádza, že tento účet nie je členom žiadnej domácnosti, takže nie sú žiadne reproduktory ani displeje na pridanie. V aplikácii Google Home pozvite tento účet do domácnosti, v ktorej sú vaše zariadenia, pozvánku prijmite a potom pridajte integráciu znova. Účet Google Workspace nie je možné pozvať, preto namiesto neho pridajte integráciu s účtom Gmail, ktorý je členom domácnosti. Podrobnosti nájdete na {docs_url}."
+      "no-home": "Google uvádza, že tento účet nie je členom žiadnej domácnosti, takže nie sú žiadne reproduktory ani displeje na pridanie. V aplikácii Google Home pozvite tento účet do domácnosti, v ktorej sú vaše zariadenia, pozvánku prijmite a potom pridajte integráciu znova. Účet Google Workspace nie je možné pozvať, preto namiesto neho pridajte integráciu s účtom Gmail, ktorý je členom domácnosti. Podrobnosti nájdete na {docs_url}.",
+      "unsupported-ha-version": "Táto verzia integrácie Google Home vyžaduje Home Assistant {required_version} alebo novší, ale v tomto systéme beží {current_version}. Aktualizujte Home Assistant a potom pridajte integráciu znova. Ak chcete namiesto toho zostať pri verzii Home Assistant {current_version}, nainštalujte staršie vydanie integrácie. Postup nájdete na {docs_url}."
     }
   },
   "entity": {
@@ -247,6 +248,10 @@
     "no_home": {
       "title": "Google pre váš účet neuvádza žiadnu domácnosť",
       "description": "Google uvádza, že účet, do ktorého sa integrácia prihlásila, nie je členom žiadnej domácnosti, takže nie sú žiadne reproduktory ani displeje na pridanie. V aplikácii Google Home pozvite tento účet do domácnosti, v ktorej sú vaše zariadenia, a pozvánku prijmite. Potom znova načítajte [integráciu Google Home]({integration_url}): vyberte **⋮** > **Znova načítať**.\n\nAk si integráciu ponechávate zámerne, napríklad počas sťahovania, vyberte **Ignorovať**. Ak ju už nepotrebujete, môžete ju na tej istej stránke odstrániť."
+    },
+    "unsupported_ha_version": {
+      "title": "Google Home vyžaduje Home Assistant {required_version} alebo novší",
+      "description": "Táto verzia integrácie Google Home vyžaduje Home Assistant {required_version} alebo novší, ale v tomto systéme beží {current_version}, preto integrácia nebola nastavená. Jej nastavenia zostávajú zachované a po aktualizácii Home Assistant sa s nimi integrácia spustí.\n\nAk chcete namiesto toho zostať pri verzii Home Assistant {current_version}, nainštalujte staršie vydanie integrácie. Postup nájdete na {docs_url}."
     }
   },
   "config_subentries": {
