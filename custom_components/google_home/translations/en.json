@@ -89,7 +89,7 @@
     },
     "abort": {
       "no-home": "Google reports that this account isn't a member of any home, so there are no speakers or displays to add. In the Google Home app, invite the account to the home that your devices are in and accept the invitation, then add the integration again. A Google Workspace account can't be invited, so add the integration with a Gmail account that is a member of the home instead. For details, see {docs_url}.",
-      "unsupported-ha-version": "This version of the Google Home integration needs Home Assistant {required_version} or later, but this system runs {current_version}. Update Home Assistant, then add the integration again. To stay on Home Assistant {current_version} instead, install an earlier release of the integration from {releases_url}, then restart Home Assistant."
+      "unsupported-ha-version": "This version of the Google Home integration needs Home Assistant {required_version} or later, but this system runs {current_version}. Update Home Assistant, then add the integration again. To stay on Home Assistant {current_version} instead, delete the `custom_components/google_home` folder in your configuration folder, copy in the same folder from an earlier release at {releases_url}, then restart Home Assistant."
     }
   },
   "entity": {
@@ -251,7 +251,7 @@
     },
     "unsupported_ha_version": {
       "title": "Google Home needs Home Assistant {required_version} or later",
-      "description": "This version of the Google Home integration needs Home Assistant {required_version} or later, but this system runs {current_version}, so the integration wasn't set up. Its settings are kept, and it starts with them once you update Home Assistant.\n\nTo stay on Home Assistant {current_version} instead, install an earlier release of the integration from {releases_url}, then restart Home Assistant."
+      "description": "This version of the Google Home integration needs Home Assistant {required_version} or later, but this system runs {current_version}, so the integration wasn't set up. Its settings are kept, and it starts with them once you update Home Assistant.\n\nTo stay on Home Assistant {current_version} instead, delete the `custom_components/google_home` folder in your configuration folder, copy in the same folder from an earlier release at {releases_url}, then restart Home Assistant."
     }
   },
   "config_subentries": {

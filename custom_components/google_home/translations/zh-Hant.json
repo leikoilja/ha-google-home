@@ -89,7 +89,7 @@
     },
     "abort": {
       "no-home": "Google 回報，這個帳號不是任何住家的成員，因此沒有可以加入的音箱或螢幕。請在 Google Home 應用程式中，邀請這個帳號加入你的裝置所在的住家並接受邀請，然後重新新增整合。Google Workspace 帳號無法受邀，因此請改用身為該住家成員的 Gmail 帳號新增整合。詳情請參閱：{docs_url}",
-      "unsupported-ha-version": "這個版本的 Google Home 整合需要 Home Assistant {required_version} 或更新版本，但這個系統執行的是 {current_version}。請更新 Home Assistant，然後重新新增整合。如果你想繼續使用 Home Assistant {current_version}，請從 {releases_url} 安裝整合的較早發行版本，然後重新啟動 Home Assistant。"
+      "unsupported-ha-version": "這個版本的 Google Home 整合需要 Home Assistant {required_version} 或更新版本，但這個系統執行的是 {current_version}。請更新 Home Assistant，然後重新新增整合。如果你想繼續使用 Home Assistant {current_version}，請刪除設定資料夾中的 `custom_components/google_home` 資料夾，再從 {releases_url} 的較早發行版本中複製同一個資料夾放回原處，然後重新啟動 Home Assistant。"
     }
   },
   "entity": {
@@ -251,7 +251,7 @@
     },
     "unsupported_ha_version": {
       "title": "Google Home 需要 Home Assistant {required_version} 或更新版本",
-      "description": "這個版本的 Google Home 整合需要 Home Assistant {required_version} 或更新版本，但這個系統執行的是 {current_version}，因此整合沒有啟動。整合的設定會保留，更新 Home Assistant 後就會使用這些設定啟動。\n\n如果你想繼續使用 Home Assistant {current_version}，請從 {releases_url} 安裝整合的較早發行版本，然後重新啟動 Home Assistant。"
+      "description": "這個版本的 Google Home 整合需要 Home Assistant {required_version} 或更新版本，但這個系統執行的是 {current_version}，因此整合沒有啟動。整合的設定會保留，更新 Home Assistant 後就會使用這些設定啟動。\n\n如果你想繼續使用 Home Assistant {current_version}，請刪除設定資料夾中的 `custom_components/google_home` 資料夾，再從 {releases_url} 的較早發行版本中複製同一個資料夾放回原處，然後重新啟動 Home Assistant。"
     }
   },
   "config_subentries": {

@@ -89,7 +89,7 @@
     },
     "abort": {
       "no-home": "Google angiver, at denne konto ikke er medlem af noget hjem, så der er ingen højttalere eller skærme at tilføje. I Google Home-appen skal du invitere kontoen til det hjem, dine enheder er i, acceptere invitationen og derefter tilføje integrationen igen. En Google Workspace-konto kan ikke inviteres, så tilføj i stedet integrationen med en Gmail-konto, der er medlem af hjemmet. Du kan læse mere på {docs_url}.",
-      "unsupported-ha-version": "Denne version af Google Home-integrationen kræver Home Assistant {required_version} eller nyere, men dette system kører {current_version}. Opdater Home Assistant, og tilføj derefter integrationen igen. Hvis du i stedet vil blive på Home Assistant {current_version}, skal du installere en tidligere udgivelse af integrationen fra {releases_url} og derefter genstarte Home Assistant."
+      "unsupported-ha-version": "Denne version af Google Home-integrationen kræver Home Assistant {required_version} eller nyere, men dette system kører {current_version}. Opdater Home Assistant, og tilføj derefter integrationen igen. Hvis du i stedet vil blive på Home Assistant {current_version}, skal du slette mappen `custom_components/google_home` i din konfigurationsmappe, kopiere den samme mappe ind fra en tidligere udgivelse på {releases_url} og derefter genstarte Home Assistant."
     }
   },
   "entity": {
@@ -251,7 +251,7 @@
     },
     "unsupported_ha_version": {
       "title": "Google Home kræver Home Assistant {required_version} eller nyere",
-      "description": "Denne version af Google Home-integrationen kræver Home Assistant {required_version} eller nyere, men dette system kører {current_version}, så integrationen blev ikke sat op. Dens indstillinger bevares, og den starter med dem, når du opdaterer Home Assistant.\n\nHvis du i stedet vil blive på Home Assistant {current_version}, skal du installere en tidligere udgivelse af integrationen fra {releases_url} og derefter genstarte Home Assistant."
+      "description": "Denne version af Google Home-integrationen kræver Home Assistant {required_version} eller nyere, men dette system kører {current_version}, så integrationen blev ikke sat op. Dens indstillinger bevares, og den starter med dem, når du opdaterer Home Assistant.\n\nHvis du i stedet vil blive på Home Assistant {current_version}, skal du slette mappen `custom_components/google_home` i din konfigurationsmappe, kopiere den samme mappe ind fra en tidligere udgivelse på {releases_url} og derefter genstarte Home Assistant."
     }
   },
   "config_subentries": {

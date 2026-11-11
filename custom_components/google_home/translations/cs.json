@@ -89,7 +89,7 @@
     },
     "abort": {
       "no-home": "Google uvádí, že tento účet není členem žádné domácnosti, takže nejsou žádné reproduktory ani displeje k přidání. V aplikaci Google Home pozvěte tento účet do domácnosti, ve které jsou vaše zařízení, pozvánku přijměte a pak přidejte integraci znovu. Účet Google Workspace pozvat nelze, proto místo něj přidejte integraci s účtem Gmail, který je členem domácnosti. Podrobnosti najdete na {docs_url}.",
-      "unsupported-ha-version": "Tato verze integrace Google Home vyžaduje Home Assistant {required_version} nebo novější, ale v tomto systému běží {current_version}. Aktualizujte Home Assistant a pak přidejte integraci znovu. Pokud chcete místo toho zůstat u verze Home Assistant {current_version}, nainstalujte starší vydání integrace ze stránky {releases_url} a pak restartujte Home Assistant."
+      "unsupported-ha-version": "Tato verze integrace Google Home vyžaduje Home Assistant {required_version} nebo novější, ale v tomto systému běží {current_version}. Aktualizujte Home Assistant a pak přidejte integraci znovu. Pokud chcete místo toho zůstat u verze Home Assistant {current_version}, smažte v konfigurační složce složku `custom_components/google_home`, zkopírujte na její místo stejnou složku ze staršího vydání, které najdete na {releases_url}, a pak restartujte Home Assistant."
     }
   },
   "entity": {
@@ -251,7 +251,7 @@
     },
     "unsupported_ha_version": {
       "title": "Google Home vyžaduje Home Assistant {required_version} nebo novější",
-      "description": "Tato verze integrace Google Home vyžaduje Home Assistant {required_version} nebo novější, ale v tomto systému běží {current_version}, proto integrace nebyla nastavena. Její nastavení zůstává zachováno a po aktualizaci Home Assistanta se s ním integrace spustí.\n\nPokud chcete místo toho zůstat u verze Home Assistant {current_version}, nainstalujte starší vydání integrace ze stránky {releases_url} a pak restartujte Home Assistant."
+      "description": "Tato verze integrace Google Home vyžaduje Home Assistant {required_version} nebo novější, ale v tomto systému běží {current_version}, proto integrace nebyla nastavena. Její nastavení zůstává zachováno a po aktualizaci Home Assistanta se s ním integrace spustí.\n\nPokud chcete místo toho zůstat u verze Home Assistant {current_version}, smažte v konfigurační složce složku `custom_components/google_home`, zkopírujte na její místo stejnou složku ze staršího vydání, které najdete na {releases_url}, a pak restartujte Home Assistant."
     }
   },
   "config_subentries": {

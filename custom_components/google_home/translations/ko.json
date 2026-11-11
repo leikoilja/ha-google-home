@@ -89,7 +89,7 @@
     },
     "abort": {
       "no-home": "Google에 따르면 이 계정은 어떤 홈의 구성원도 아니므로 추가할 스피커나 디스플레이가 없습니다. Google Home 앱에서 기기가 있는 홈에 이 계정을 초대하고 초대를 수락한 다음 통합 구성 요소를 다시 추가하세요. Google Workspace 계정은 초대할 수 없으므로 대신 홈의 구성원인 Gmail 계정으로 통합 구성 요소를 추가하세요. 자세한 내용은 {docs_url} 페이지를 참고하세요.",
-      "unsupported-ha-version": "이 버전의 Google Home 통합 구성 요소에는 Home Assistant {required_version} 이상이 필요하지만, 이 시스템에서는 {current_version} 버전이 실행 중입니다. Home Assistant를 업데이트한 다음 통합 구성 요소를 다시 추가하세요. 대신 Home Assistant {current_version} 버전을 계속 사용하려면 {releases_url} 페이지에서 통합 구성 요소의 이전 릴리스를 설치한 다음 Home Assistant를 다시 시작하세요."
+      "unsupported-ha-version": "이 버전의 Google Home 통합 구성 요소에는 Home Assistant {required_version} 이상이 필요하지만, 이 시스템에서는 {current_version} 버전이 실행 중입니다. Home Assistant를 업데이트한 다음 통합 구성 요소를 다시 추가하세요. 대신 Home Assistant {current_version} 버전을 계속 사용하려면 구성 폴더에서 `custom_components/google_home` 폴더를 삭제하고, {releases_url} 페이지에 있는 이전 릴리스의 같은 폴더를 그 자리에 복사한 다음 Home Assistant를 다시 시작하세요."
     }
   },
   "entity": {
@@ -251,7 +251,7 @@
     },
     "unsupported_ha_version": {
       "title": "Google Home에는 Home Assistant {required_version} 이상이 필요합니다",
-      "description": "이 버전의 Google Home 통합 구성 요소에는 Home Assistant {required_version} 이상이 필요하지만, 이 시스템에서는 {current_version} 버전이 실행 중이므로 통합 구성 요소가 설정되지 않았습니다. 기존 설정은 그대로 유지되며, Home Assistant를 업데이트하면 해당 설정으로 시작됩니다.\n\n대신 Home Assistant {current_version} 버전을 계속 사용하려면 {releases_url} 페이지에서 통합 구성 요소의 이전 릴리스를 설치한 다음 Home Assistant를 다시 시작하세요."
+      "description": "이 버전의 Google Home 통합 구성 요소에는 Home Assistant {required_version} 이상이 필요하지만, 이 시스템에서는 {current_version} 버전이 실행 중이므로 통합 구성 요소가 설정되지 않았습니다. 기존 설정은 그대로 유지되며, Home Assistant를 업데이트하면 해당 설정으로 시작됩니다.\n\n대신 Home Assistant {current_version} 버전을 계속 사용하려면 구성 폴더에서 `custom_components/google_home` 폴더를 삭제하고, {releases_url} 페이지에 있는 이전 릴리스의 같은 폴더를 그 자리에 복사한 다음 Home Assistant를 다시 시작하세요."
     }
   },
   "config_subentries": {

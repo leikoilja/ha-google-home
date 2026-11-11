@@ -90,8 +90,9 @@ async def async_setup(hass: HomeAssistant, _config: ConfigType) -> bool:
     if versions := unsupported_ha_version():
         _LOGGER.error(
             "This version of Google Home needs Home Assistant %s or later, but this "
-            "is %s, so it wasn't set up. Update Home Assistant, or install an "
-            "earlier release of Google Home from %s",
+            "is %s, so it wasn't set up. Update Home Assistant, or replace the "
+            "custom_components/google_home folder with the one from an earlier "
+            "release at %s",
             versions["required_version"],
             versions["current_version"],
             RELEASES_URL,
