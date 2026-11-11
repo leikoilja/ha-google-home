@@ -237,14 +237,25 @@ def test_minimum_is_the_declared_one() -> None:
     that the tests are pinned to, so raising that pin raises the minimum too. That
     can be a patch release, so only the year and month have to match.
     """
-    declared = json.loads(HACS.read_text())["homeassistant"]
-    pinned = package_version("homeassistant")
-    # The requirement under Before you start
+    required = ".".join(map(str, MIN_HA_VERSION))
     documented = re.search(
         r"^- Home Assistant (\S+) or later\.$", INSTALLATION.read_text(), re.MULTILINE
     )
-    assert documented is not None
+    found = {
+        "hacs.json": json.loads(HACS.read_text())["homeassistant"],
+        "homeassistant pinned in pyproject.toml": package_version("homeassistant"),
+        "Before you start in docs/installation.md": (
+            documented[1] if documented else "no '- Home Assistant X or later.' line"
+        ),
+    }
+    mismatched = {
+        where: version
+        for where, version in found.items()
+        if version.split(".")[:2] != required.split(".")
+    }
 
-    assert [
-        version.split(".")[:2] for version in (declared, pinned, documented[1])
-    ] == [[str(part) for part in MIN_HA_VERSION]] * 3
+    assert not mismatched, (
+        f"MIN_HA_VERSION in const.py is {required}, but "
+        + "; ".join(f"{where} has {version}" for where, version in mismatched.items())
+        + ". Update them together; see Update Home Assistant in docs/contributing.md."
+    )
