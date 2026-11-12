@@ -19,6 +19,10 @@ class ItemObservation:
     status: str
     label: str | None
     fire_time: int | None
+    # A timer's length, as the timers sensor shows it
+    duration: str | None = None
+    # An alarm's repeat days, only if the speaker sent a list of whole numbers
+    recurrence: tuple[int, ...] | None = None
 
 
 @dataclass(frozen=True)
@@ -42,9 +46,9 @@ class ItemEvent:
     previous_status: str | None
     status: str
 
-    def attributes(self) -> dict[str, str | int | None]:
-        """Return a fresh event payload containing primitives only."""
-        return {
+    def attributes(self) -> dict[str, str | int | list[int] | None]:
+        """Return a fresh event payload of primitives and a new list of repeat days."""
+        attributes: dict[str, str | int | list[int] | None] = {
             "item_id": self.item.item_id,
             "label": self.item.label,
             "fire_time": self.item.fire_time,
@@ -52,6 +56,21 @@ class ItemEvent:
             "previous_status": self.previous_status,
             "status": self.status,
         }
+        if self.kind == "alarm":
+            recurrence = self.item.recurrence
+            attributes["recurrence"] = None if recurrence is None else list(recurrence)
+        else:
+            attributes["duration"] = self.item.duration
+        return attributes
+
+
+def _weekdays(recurrence: object) -> tuple[int, ...] | None:
+    """Return an alarm's repeat days if they are a list of whole numbers, else None."""
+    if isinstance(recurrence, list) and all(
+        isinstance(day, int) and not isinstance(day, bool) for day in recurrence
+    ):
+        return tuple(recurrence)
+    return None
 
 
 def observe_poll(device: GoogleHomeDevice) -> PollObservation | None:
@@ -62,6 +81,7 @@ def observe_poll(device: GoogleHomeDevice) -> PollObservation | None:
             alarm.status.name.lower(),
             alarm.label if isinstance(alarm.label, str) else None,
             alarm.fire_time,
+            recurrence=_weekdays(alarm.recurrence),
         )
         for alarm in device.get_sorted_alarms()
     )
@@ -71,6 +91,7 @@ def observe_poll(device: GoogleHomeDevice) -> PollObservation | None:
             timer.status.name.lower(),
             timer.label if isinstance(timer.label, str) else None,
             timer.fire_time,
+            duration=timer.duration,
         )
         for timer in device.get_sorted_timers()
     )

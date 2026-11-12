@@ -100,19 +100,21 @@ Each entity's state is the timestamp when Home Assistant published its latest ev
 
 Alarm event types are `ringing`, `snoozed` and `stopped`; timer types are `ringing` and `stopped`. Stopped describes the observed end of ringing tracked under a reported ID, including its removal, rather than proof of dismissal. A changed ID can produce stopped for the old ID and ringing or snoozed for the new one without proving physical cessation or identity. A same-ID ringing-to-snoozed alarm produces snoozed only. Polling can miss an entire ring, and startup, reload, recovery from a failed update and reappearance start with a silent baseline.
 
-Every event includes these attributes. In an automation, read them from `trigger.to_state.attributes` to retain that event's values when several items change together:
+Every event includes these attributes, except that only timer events have `duration` and only alarm events have `recurrence`. In an automation, read them from `trigger.to_state.attributes` to retain that event's values when several items change together:
 
 | Attribute | Meaning |
 | --- | --- |
 | `event_type` | `ringing`, `snoozed` or `stopped` |
 | `item_id` | The ID reported by the speaker, such as `alarm/…` or `timer/…` |
 | `label` | The item's label, or `null` when it has none |
-| `fire_time` | The item's fire time in Unix seconds, or `null` if a timer has none |
+| `fire_time` | The item's fire time in Unix seconds, or `null` if a timer has none. For `snoozed`, the time the snooze ends: the integration doesn't get the time the alarm was first due. |
+| `duration` | Timer events only. The length the timer was set for, such as `0:10:00`, the same as `duration` in the [timers sensor](#timers-sensor). |
+| `recurrence` | Alarm events only. Days of the week the alarm repeats on, such as `[1, 2, 3, 4, 5]` (`0` is Sunday, `6` is Saturday), the same as `recurrence` in the [alarms sensor](#alarms-sensor). `null` if the speaker leaves it out or sends anything other than a list of whole numbers. |
 | `observed_at` | ISO 8601 time when the poll response was received, not the exact physical transition time |
 | `previous_status` | The status in the preceding successful observation, or `null` for a new ID |
 | `status` | The newly observed status, or `removed` when that ID left a complete list |
 
-Ringing and snoozed use the current item's label and fire time. Stopped keeps the last ringing item's label and fire time, so a recurring alarm advancing to tomorrow still identifies the occurrence that ended. A poll's event values are kept even if an action changes the sensor's lists before the event is published. Each item produces a separate event, while the entity's current state holds only the latest one.
+Ringing and snoozed use the current item's label, fire time, duration and recurrence. Stopped keeps the last ringing item's values, so a recurring alarm advancing to tomorrow still identifies the occurrence that ended. A poll's event values are kept even if an action changes the sensor's lists before the event is published. Each item produces a separate event, while the entity's current state holds only the latest one.
 
 ## Device sensor
 

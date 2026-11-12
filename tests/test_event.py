@@ -55,16 +55,24 @@ def items(
     alarm_id: str = ALARM_ID,
     label: object = "Wake up",
     at: int = 0,
+    recurrence: object = None,
+    duration: int = 60000,
 ) -> Reply:
     """Return complete, invented lists with distinct labels and occurrence times."""
     return HTTPStatus.OK, {
         "alarm": (
-            [{**alarm(alarm_status, at, alarm_id), "label": label}]
+            [
+                {
+                    **alarm(alarm_status, at, alarm_id),
+                    "label": label,
+                    "recurrence": recurrence,
+                }
+            ]
             if alarm_status is not None
             else []
         ),
         "timer": (
-            [{**timer(timer_status, 60), "label": "Tea"}]
+            [{**timer(timer_status, 60), "label": "Tea", "original_duration": duration}]
             if timer_status is not None
             else []
         ),
@@ -144,6 +152,8 @@ async def test_ringing_repeat_and_removal(
     assert received[0].attributes["previous_status"] == "set"
     assert received[-1].attributes["status"] == "removed"
     assert received[-1].attributes["previous_status"] == "ringing"
+    # The removed timer's one-minute original_duration of 60000 ms
+    assert received[-1].attributes["duration"] == "0:01:00"
     assert received[0].state < received[2].state
 
 
@@ -194,6 +204,77 @@ async def test_reset_and_observed_post_snooze_ring(
         (ALARM_EVENTS, "snoozed", ALARM_ID, "Wake up", FIRE + 87000),
         (ALARM_EVENTS, "ringing", ALARM_ID, "Wake up", FIRE + 87000),
     ]
+
+
+async def test_duration_and_recurrence_follow_the_ringing_item(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    replies: Replies,
+    received: list[State],
+) -> None:
+    """Each kind gets only its own field, and stopped keeps the last ringing values."""
+    replies[SPEAKER][ALARMS] = items(recurrence=[1, 2, 3, 4, 5], duration=600000)
+    await set_up(hass, config_entry)
+    await poll(
+        hass,
+        config_entry,
+        replies,
+        items(2, 3, recurrence=[1, 2, 3, 4, 5], duration=600000),
+    )
+    # Only these fields change while both keep ringing, which is no new event
+    await poll(
+        hass, config_entry, replies, items(2, 3, recurrence=[0, 6], duration=900000)
+    )
+    await poll(
+        hass,
+        config_entry,
+        replies,
+        items(1, 1, recurrence=[1], duration=300000, at=86400),
+    )
+    assert [
+        (state.attributes["event_type"], state.attributes["recurrence"])
+        for state in received
+        if state.entity_id == ALARM_EVENTS
+    ] == [("ringing", [1, 2, 3, 4, 5]), ("stopped", [0, 6])]
+    # 600000 and 900000 ms are 10 and 15 minutes
+    assert [
+        (state.attributes["event_type"], state.attributes["duration"])
+        for state in received
+        if state.entity_id == TIMER_EVENTS
+    ] == [("ringing", "0:10:00"), ("stopped", "0:15:00")]
+    assert all(
+        ("duration" in state.attributes) == (state.entity_id == TIMER_EVENTS)
+        and ("recurrence" in state.attributes) == (state.entity_id == ALARM_EVENTS)
+        for state in received
+    )
+
+
+@pytest.mark.parametrize(
+    ("recurrence", "expected"),
+    [
+        ([0, 6], [0, 6]),
+        ([], []),
+        (None, None),
+        ({"days": [1]}, None),
+        ("1,2", None),
+        ([1, "2"], None),
+        ([True], None),
+    ],
+    ids=["weekend", "empty", "null", "object", "text", "mixed", "boolean"],
+)
+async def test_recurrence_is_whole_numbers_or_null(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    replies: Replies,
+    received: list[State],
+    recurrence: object,
+    expected: list[int] | None,
+) -> None:
+    """Only a list of whole numbers is passed on, as sent; anything else is null."""
+    replies[SPEAKER][ALARMS] = items(timer_status=None)
+    await set_up(hass, config_entry)
+    await poll(hass, config_entry, replies, items(2, None, recurrence=recurrence))
+    assert [state.attributes["recurrence"] for state in received] == [expected]
 
 
 async def test_simultaneous_items_reach_event_received_automation(
@@ -247,8 +328,8 @@ async def test_simultaneous_items_reach_event_received_automation(
             HTTPStatus.OK,
             {
                 "alarm": [
-                    {**alarm(2), "label": "Wake up"},
-                    {**alarm(2, 600, OTHER_ID), "label": "Later"},
+                    {**alarm(2), "label": "Wake up", "recurrence": [1, 2, 3, 4, 5]},
+                    {**alarm(2, 600, OTHER_ID), "label": "Later", "recurrence": [0, 6]},
                 ],
                 "timer": [{**timer(3, 60), "label": "Tea"}],
             },
@@ -259,6 +340,11 @@ async def test_simultaneous_items_reach_event_received_automation(
         (ALARM_EVENTS, "ringing", OTHER_ID, "Later", FIRE + 600),
         (TIMER_EVENTS, "ringing", TIMER_ID, "Tea", FIRE + 60),
     ]
+    assert [
+        received[0].attributes["recurrence"],
+        received[1].attributes["recurrence"],
+        received[2].attributes["duration"],
+    ] == [[1, 2, 3, 4, 5], [0, 6], "0:01:00"]
     assert [dict(call.data) for call in calls] == [
         {"item_id": ALARM_ID, "label": "Wake up", "fire_time": FIRE},
         {"item_id": OTHER_ID, "label": "Later", "fire_time": FIRE + 600},
@@ -283,11 +369,13 @@ async def test_action_cannot_replace_pending_poll(
     device.firmware_checked_at = None
     held = Held(SUPPORTED[endpoint])
     replies[SPEAKER][endpoint] = held
-    replies[SPEAKER][ALARMS] = items(2, 3)
+    replies[SPEAKER][ALARMS] = items(2, 3, recurrence=[1, 2, 3, 4, 5], duration=600000)
     coordinator = runtime(config_entry).devices[SPEAKER_ID]
     refresh = hass.async_create_task(coordinator.async_refresh())
     await held.asked.wait()
-    replies[SPEAKER][ALARMS] = items(1, None, label="Action replacement", at=3600)
+    replies[SPEAKER][ALARMS] = items(
+        1, None, label="Action replacement", at=3600, recurrence=[0]
+    )
     replies[SPEAKER][DELETE] = HTTPStatus.OK, {"success": True}
     await hass.services.async_call(
         DOMAIN,
@@ -307,6 +395,9 @@ async def test_action_cannot_replace_pending_poll(
         (ALARM_EVENTS, "ringing", ALARM_ID, "Wake up", FIRE),
         (TIMER_EVENTS, "ringing", TIMER_ID, "Tea", FIRE + 60),
     ]
+    # The poll's values, not the action's replacement or the timer it no longer has
+    assert received[0].attributes["recurrence"] == [1, 2, 3, 4, 5]
+    assert received[1].attributes["duration"] == "0:10:00"
     coordinator.async_update_listeners()
     await hass.async_block_till_done()
     assert len(received) == 2
@@ -556,6 +647,8 @@ async def test_primitive_metadata_and_timer_without_time(
         (ALARM_EVENTS, "ringing", ALARM_ID, None, FIRE),
         (TIMER_EVENTS, "ringing", TIMER_ID, None, None),
     ]
+    # The alarm has no recurrence key
+    assert received[0].attributes["recurrence"] is None
 
 
 async def test_new_entity_does_not_replay_published_batch(
