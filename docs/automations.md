@@ -61,7 +61,7 @@ Use **Event received** to react to ringing, snoozing or stopping that the integr
 - **Alarm events:** `ringing`, `snoozed` or `stopped`.
 - **Timer events:** `ringing` or `stopped`. A timer returning from ringing to set produces `stopped`; it has no separate snoozed status.
 
-Each detected transition produces its own event. If several items change at the same update, use an automation mode such as `queued` or `parallel` so its actions can handle each event. You can read that event's ID, label and time from `trigger.to_state.attributes`; see [Alarm and timer events](entities.md#alarm-and-timer-events). The entity itself shows only the latest event.
+Each detected transition produces its own event. If several items change at the same update, use an automation mode such as `queued` or `parallel` so its actions can handle each event. You can read that event's ID, label and time, and a timer's length or an alarm's repeat days, from `trigger.to_state.attributes`; see [Alarm and timer events](entities.md#alarm-and-timer-events). The entity itself shows only the latest event.
 
 ### What these events mean
 
@@ -111,6 +111,28 @@ actions:
     data:
       message: The kitchen timer has finished.
 ```
+
+To be told about every timer that rings, including one that isn't next, with its label and length, use the timer events instead. The notification comes once a check sees the timer ringing, usually a few seconds later; see [How quickly ringing shows](#how-quickly-ringing-shows):
+
+```yaml
+alias: Kitchen timers ringing
+triggers:
+  - trigger: event.received
+    target:
+      entity_id: event.kitchen_timer_events
+    options:
+      event_type:
+        - ringing
+actions:
+  - action: notify.mobile_app_your_phone
+    data:
+      message: >
+        {{ trigger.to_state.attributes.label or 'A timer' }} set for
+        {{ trigger.to_state.attributes.duration }} is ringing on the kitchen speaker.
+mode: queued
+```
+
+For a 10-minute timer named Pasta, the message is "Pasta set for 0:10:00 is ringing on the kitchen speaker."
 
 ## When a timer starts
 
