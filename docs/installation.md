@@ -17,6 +17,10 @@ You need:
 
 ## Install the integration
 
+If you use Google Keep Sync, update it to 1.2.0 first.
+
+Starting with v1.18, Google Home uses glocaltokens 2.1.0, which requires gpsoauth 3.0.1 or newer. Google Keep Sync 1.1.0 requires gpsoauth 2.0.0, so the two cannot be installed together. [Google Keep Sync 1.2.0](https://github.com/watkins-matt/home-assistant-google-keep-sync/releases/tag/1.2.0) removes that conflict.
+
 === "Marketplace (recommended)"
 
     The Marketplace replaced HACS in Home Assistant 2026.11. If you installed the integration with HACS, Home Assistant moved it to the Marketplace when you updated Home Assistant, so you don't need to install it again.
