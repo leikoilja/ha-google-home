@@ -8,12 +8,20 @@ rule must be listed, in core's order, as done or as exempt with a comment, and
 the rules marked done must pass core's validators.
 """
 
+from datetime import UTC, datetime
+from email.utils import parsedate_to_datetime
+import gzip
+from http.client import HTTPException
 from importlib import import_module, metadata
+import os
 from pathlib import Path
 import sys
 import tarfile
 import tempfile
+import time
+from urllib.error import HTTPError
 import urllib.request
+import zlib
 
 from packaging.requirements import Requirement
 import probatio
@@ -208,29 +216,94 @@ class Hassfest:
         return rejected
 
 
-def extract_core(version: str, destination: Path) -> None:
-    """Extract the parts of core's source that hassfest's checks need."""
+def retry_delay(header: str | None, backoff: int) -> float:
+    """Return the server's requested delay or the fallback backoff."""
+    if header is None:
+        return backoff
+    header = header.strip()
+    if header.isascii() and header.isdigit():
+        return float(header)
+    try:
+        retry_at = parsedate_to_datetime(header)
+    except ValueError:
+        return backoff
+    if retry_at.tzinfo is None:
+        retry_at = retry_at.replace(tzinfo=UTC)
+    return max(0, (retry_at - datetime.now(UTC)).total_seconds())
+
+
+def download_core(version: str, destination: Path) -> None:
+    """Download core's archive with at most two retries and ten seconds of waiting."""
     url = CORE_ARCHIVE.format(version)
+    remaining_wait = 10.0
+    try:
+        for backoff in (1, 2, None):
+            try:
+                with urllib.request.urlopen(url, timeout=60) as response:
+                    destination.write_bytes(response.read())
+            except HTTPError as err:
+                with err:
+                    if backoff is None or err.code not in {429, 500, 502, 503, 504}:
+                        raise
+                    delay = retry_delay(err.headers.get("Retry-After"), backoff)
+                    if delay > remaining_wait:
+                        raise
+                time.sleep(delay)
+                remaining_wait -= delay
+            else:
+                return
+    except (OSError, HTTPException) as err:
+        sys.exit(f"Cannot download Home Assistant {version}'s source from {url}: {err}")
+
+
+def extract_archive(path: Path, version: str, destination: Path) -> None:
+    """Check the archive and extract only the source files hassfest needs."""
+    root = f"core-{version}"
     try:
         with (
-            urllib.request.urlopen(url, timeout=60) as response,
-            tarfile.open(fileobj=response, mode="r|gz") as archive,
+            gzip.open(path, "rb") as source,
+            tarfile.open(fileobj=source, mode="r|") as archive,
         ):
             for member in archive:
-                # Strip the archive's core-<version>/ directory
-                member.name = member.name.partition("/")[2]
+                if member.name == root:
+                    continue
+                prefix, _, member.name = member.name.partition("/")
+                if prefix != root:
+                    raise tarfile.ReadError(f"expected all paths under {root}/")
                 if member.isfile() and member.name.startswith(CORE_FILES):
                     archive.extract(member, destination, filter="data")
-    except OSError as err:
-        sys.exit(f"Cannot download Home Assistant {version}'s source from {url}: {err}")
+            # Tar iteration can end before gzip verifies the checksum and trailer.
+            while source.read(1024 * 1024):
+                pass
+    except (OSError, EOFError, tarfile.TarError, zlib.error) as err:
+        sys.exit(f"Cannot extract Home Assistant {version}'s source from {path}: {err}")
+
+
+def extract_core(version: str, destination: Path, cache_dir: Path | None) -> None:
+    """Extract the exact core release, downloading it if absent from the cache."""
+    filename = f"core-{version}.tar.gz"
+    cached = cache_dir / filename if cache_dir is not None else None
+    if cached is not None and cached.is_file():
+        extract_archive(cached, version, destination)
+        return
+
+    if cache_dir is not None:
+        cache_dir.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(dir=cache_dir) as staging:
+        path = Path(staging) / filename
+        download_core(version, path)
+        extract_archive(path, version, destination)
+        if cached is not None:
+            path.replace(cached)
 
 
 def main() -> int:
     """Check the file and that the check rejects faulty copies of it."""
     path = INTEGRATION / "quality_scale.yaml"
     document = load_yaml_dict(str(path))
+    cache_dir = os.environ.get("HA_QUALITY_SCALE_CACHE_DIR")
     with tempfile.TemporaryDirectory() as core:
-        extract_core(ha_version, Path(core))
+        extract_core(ha_version, Path(core), Path(cache_dir) if cache_dir else None)
         try:
             hassfest = Hassfest(Path(core))
             errors = hassfest.check(document)
