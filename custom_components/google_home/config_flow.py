@@ -24,6 +24,7 @@ from homeassistant.const import CONF_MAC, CONF_NAME, UnitOfTime
 from homeassistant.core import callback
 from homeassistant.data_entry_flow import Required, section
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.field_visibility import ConditionOperator
 from homeassistant.helpers.selector import (
     BooleanSelector,
     SelectOptionDict,
@@ -311,7 +312,12 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
                     SWITCH_SIGN_IN_METHOD, default=False
                 ): BooleanSelector(),
                 Required(
-                    credential, visible={"field": SWITCH_SIGN_IN_METHOD, "value": False}
+                    credential,
+                    visible={
+                        "field": SWITCH_SIGN_IN_METHOD,
+                        "operator": ConditionOperator.NOT_EQ,
+                        "value": True,
+                    },
                 ): str,
             }
         else:

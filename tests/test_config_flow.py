@@ -1141,7 +1141,10 @@ async def test_reauth_switch_method(
     )
     assert not result["errors"]
 
-    result = await submit(hass, result, SIGN_IN_INPUT[second])
+    # An API client can explicitly clear the optional switch.
+    result = await hass.config_entries.flow.async_configure(
+        flow_id, {**SIGN_IN_INPUT[second], "switch_sign_in_method": None}
+    )
     await hass.async_block_till_done()
 
     assert result["type"] is FlowResultType.ABORT
