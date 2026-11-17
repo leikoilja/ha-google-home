@@ -86,6 +86,7 @@
       "master-token-format": "Master-tokenet starter ikke med aas_et/. Kontrollér den værdi, du har indsat, og prøv at logge ind igen. Længde: {token_length} tegn; genkendt præfiks: {token_prefix}.",
       "master-token-empty": "Master-tokenet har ingen værdi efter aas_et/. Kontrollér den værdi, du har indsat, og prøv at logge ind igen. Længde: {token_length} tegn; genkendt præfiks: {token_prefix}.",
       "master-token-characters": "Master-tokenet indeholder mellemrum, linjeskift eller ikke-understøttede tegn. Kontrollér den værdi, du har indsat, og prøv at logge ind igen. Længde: {token_length} tegn; genkendt præfiks: {token_prefix}.",
+      "master-token-too-short": "Master-tokenet skal være mindst 200 tegn langt. Kopiér hele tokenet. Længde: {token_length} tegn.",
       "other-account": "Du loggede ind på en anden Google-konto, så der blev ikke ændret noget. Log ind med den konto, som denne integration bruger. Hvis du i stedet vil bruge den anden konto, skal du slette integrationen og tilføje den igen.",
       "no-home-selected": "Vælg mindst ét hjem."
     },
@@ -204,6 +205,9 @@
     },
     "devices_not_rebooted": {
       "message": "Disse enheder bekræftede ikke, at de genstarter: {devices}. Kontrollér, at de er online, og prøv igen senere."
+    },
+    "saved_sign_in_invalid": {
+      "message": "De gemte loginoplysninger mangler eller er ugyldige. Log ind igen."
     },
     "sign_in_rejected": {
       "message": "Google accepterede ikke loginet ({reason}). Log ind igen."

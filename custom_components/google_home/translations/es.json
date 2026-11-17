@@ -86,6 +86,7 @@
       "master-token-format": "El token maestro no empieza por aas_et/. Comprueba el valor que has pegado e intenta iniciar sesión de nuevo. Longitud: {token_length} caracteres; prefijo reconocido: {token_prefix}.",
       "master-token-empty": "El token maestro no tiene ningún valor después de aas_et/. Comprueba el valor que has pegado e intenta iniciar sesión de nuevo. Longitud: {token_length} caracteres; prefijo reconocido: {token_prefix}.",
       "master-token-characters": "El token maestro contiene espacios, saltos de línea o caracteres no admitidos. Comprueba el valor que has pegado e intenta iniciar sesión de nuevo. Longitud: {token_length} caracteres; prefijo reconocido: {token_prefix}.",
+      "master-token-too-short": "El token maestro debe tener al menos 200 caracteres. Copia el token completo. Longitud: {token_length} caracteres.",
       "other-account": "Has iniciado sesión en otra cuenta de Google, por lo que no se ha cambiado nada. Inicia sesión con la cuenta que usa esta integración. Para usar esa otra cuenta, elimina la integración y vuelve a añadirla.",
       "no-home-selected": "Elige al menos una casa."
     },
@@ -204,6 +205,9 @@
     },
     "devices_not_rebooted": {
       "message": "Estos dispositivos no han confirmado que se vayan a reiniciar: {devices}. Comprueba que estén en línea y vuelve a intentarlo más tarde."
+    },
+    "saved_sign_in_invalid": {
+      "message": "Faltan los datos de inicio de sesión guardados o no son válidos. Vuelve a iniciar sesión."
     },
     "sign_in_rejected": {
       "message": "Google no ha aceptado el inicio de sesión ({reason}). Vuelve a iniciar sesión."

@@ -86,6 +86,7 @@
       "master-token-format": "Het mastertoken begint niet met aas_et/. Controleer de waarde die je hebt geplakt en probeer opnieuw in te loggen. Lengte: {token_length} tekens; herkend voorvoegsel: {token_prefix}.",
       "master-token-empty": "Het mastertoken bevat geen waarde na aas_et/. Controleer de waarde die je hebt geplakt en probeer opnieuw in te loggen. Lengte: {token_length} tekens; herkend voorvoegsel: {token_prefix}.",
       "master-token-characters": "Het mastertoken bevat spaties, regeleinden of niet-ondersteunde tekens. Controleer de waarde die je hebt geplakt en probeer opnieuw in te loggen. Lengte: {token_length} tekens; herkend voorvoegsel: {token_prefix}.",
+      "master-token-too-short": "Het mastertoken moet minstens 200 tekens lang zijn. Kopieer het hele token. Lengte: {token_length} tekens.",
       "other-account": "Je bent ingelogd met een ander Google-account, dus er is niets gewijzigd. Log in met het account dat deze integratie gebruikt. Om in plaats daarvan dat andere account te gebruiken, verwijder je de integratie en voeg je deze opnieuw toe.",
       "no-home-selected": "Kies ten minste één huis."
     },
@@ -204,6 +205,9 @@
     },
     "devices_not_rebooted": {
       "message": "De volgende apparaten hebben niet bevestigd dat ze herstarten: {devices}. Controleer of de apparaten online zijn en probeer het later opnieuw."
+    },
+    "saved_sign_in_invalid": {
+      "message": "De opgeslagen inloggegevens ontbreken of zijn ongeldig. Log opnieuw in."
     },
     "sign_in_rejected": {
       "message": "Google heeft de inlogpoging niet geaccepteerd ({reason}). Log opnieuw in."

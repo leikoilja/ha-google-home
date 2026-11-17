@@ -402,6 +402,76 @@ async def test_master_token_rejected_at_setup(
     assert flow["context"].get("entry_id") == config_entry.entry_id
 
 
+@pytest.mark.parametrize(
+    "saved_token",
+    [
+        pytest.param("aas_et/fictional" + "x" * 183, id="199-characters"),
+        pytest.param("aas_et/fictional " + "x" * 206, id="interior-space-223"),
+        pytest.param(123, id="non-string"),
+        pytest.param(" \t\r\n", id="whitespace-only"),
+    ],
+)
+async def test_unusable_saved_master_token_requests_reauth(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    google: Mock,
+    caplog: pytest.LogCaptureFixture,
+    saved_token: object,
+) -> None:
+    """Keep invalid saved credentials intact and request reauth before fetching."""
+    saved_data = {
+        **config_entry.data,
+        "master_token": saved_token,
+        "password": "fictional-legacy-password",
+    }
+    hass.config_entries.async_update_entry(config_entry, data=saved_data)
+
+    assert not await hass.config_entries.async_setup(config_entry.entry_id)
+    await hass.async_block_till_done()
+
+    assert config_entry.state is ConfigEntryState.SETUP_ERROR
+    assert config_entry.error_reason_translation_domain == DOMAIN
+    assert config_entry.error_reason_translation_key == "saved_sign_in_invalid"
+    assert (
+        config_entry.reason
+        == "The saved sign-in details are missing or invalid. Sign in again"
+    )
+    [flow] = hass.config_entries.flow.async_progress_by_handler(DOMAIN)
+    assert flow["context"].get("source") == SOURCE_REAUTH
+    assert flow["context"].get("entry_id") == config_entry.entry_id
+    assert config_entry.data == saved_data
+    google.assert_not_called()
+    assert "fictional" not in caplog.text
+
+
+@pytest.mark.usefixtures("replies")
+@pytest.mark.parametrize("omit_token", [True, False], ids=["missing", "empty"])
+async def test_legacy_entry_without_master_token_uses_saved_password(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    google: Mock,
+    omit_token: bool,
+) -> None:
+    """Still load an entry with only the legacy username and password."""
+    saved_data = {**config_entry.data, "master_token": "", "password": "app-password"}
+    if omit_token:
+        del saved_data["master_token"]
+    hass.config_entries.async_update_entry(
+        config_entry, data=saved_data, minor_version=1
+    )
+
+    await set_up(hass, config_entry)
+
+    assert config_entry.state is ConfigEntryState.LOADED
+    google.assert_called_once()
+    (client,) = google.call_args.args
+    assert client.username == saved_data["username"]
+    assert client.password == "app-password"
+    assert not client.master_token
+    assert config_entry.data == saved_data
+    assert hass.config_entries.flow.async_progress_by_handler(DOMAIN) == []
+
+
 @pytest.mark.usefixtures("replies")
 @pytest.mark.parametrize(
     "error", [ClientConnectionError(), TimeoutError()], ids=["unreachable", "timed-out"]

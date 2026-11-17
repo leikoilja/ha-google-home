@@ -33,18 +33,20 @@ _LOGGER: logging.Logger = logging.getLogger(__package__)
 KNOWN_HOSTS_INTERVAL: Final = 5 * 60  # sec
 
 
-def master_token_format_error(token: object) -> InvalidMasterTokenFormat | None:
+def master_token_format_error(token: str) -> InvalidMasterTokenFormat | None:
     """Reject malformed tokens without assuming an opaque payload's length.
 
-    Google's sign-in validates the token itself. glocaltokens' is_aas_et still
-    requires a fixed length, so it cannot check newer token formats here.
+    The caller strips outer whitespace before checking and using the token.
+    This matches glocaltokens 2.1.1's shape check and gives the form a reason.
     """
-    if not isinstance(token, str) or not token.startswith("aas_et/"):
+    if not token.startswith("aas_et/"):
         return InvalidMasterTokenFormat("master-token-format", token)
     if token == "aas_et/":
         return InvalidMasterTokenFormat("master-token-empty", token)
     if re.fullmatch(r"aas_et/[!-~]+", token) is None:
         return InvalidMasterTokenFormat("master-token-characters", token)
+    if len(token) < 200:
+        return InvalidMasterTokenFormat("master-token-too-short", token)
     return None
 
 
@@ -143,8 +145,8 @@ class GoogleAccountClient:
         self._client = GLocalAuthenticationTokens(
             username=username,
             password=password,
-            master_token=master_token,
-            oauth_token=oauth_token,
+            master_token=master_token.strip() if master_token is not None else None,
+            oauth_token=oauth_token.strip() if oauth_token is not None else None,
             android_id=android_id,
             session=session,
         )
@@ -220,11 +222,15 @@ class GoogleAccountClient:
     async def async_get_master_token(self) -> str:
         """Get master API token."""
         try:
-            master_token = await self._client.async_get_master_token()
+            master_token = (await self._client.async_get_master_token()).strip()
         except AuthenticationError as error:
             raise InvalidMasterToken(str(error)) from error
         if format_error := master_token_format_error(master_token):
+            self._client.master_token = None
             raise format_error
+        # Older glocaltokens caches the reply before normalization. Its OAuth
+        # request reads that cache, so keep it in sync with the value HA saves.
+        self._client.master_token = master_token
         return master_token
 
     async def async_get_access_token(self) -> str:

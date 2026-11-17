@@ -42,6 +42,8 @@ def make_entry(
     ("master_token", "password"),
     [
         (MASTER_TOKEN, ""),
+        (" \taas_et/" + "n" * 192 + "\r\n", "app-password"),
+        (" \taas_et/" + "n" * 193 + "\r\n", ""),
         ("aas_et/" + "n" * 236, ""),
         ("aas_et/" + "n" * 310, ""),
         ("", "app-password"),
@@ -49,7 +51,7 @@ def make_entry(
         (None, "app-password"),
         (123, "app-password"),
         ("aas_et/", "app-password"),
-        ("aas_et/" + "x" * 215 + "\n", "app-password"),
+        ("aas_et/" + "x" * 100 + "\n" + "x" * 115, "app-password"),
     ],
 )
 def test_migrate_clears_unused_password(master_token: object, password: str) -> None:
@@ -70,7 +72,9 @@ def test_migrate_clears_unused_password(master_token: object, password: str) -> 
     kwargs = hass.config_entries.async_update_entry.call_args.kwargs
     assert kwargs["minor_version"] == 2
     assert kwargs["data"]["password"] == password
-    assert kwargs["data"]["master_token"] == master_token
+    assert kwargs["data"]["master_token"] == (
+        str(master_token).strip() if password == "" else master_token
+    )
 
 
 def test_migrate_skips_current_entries() -> None:

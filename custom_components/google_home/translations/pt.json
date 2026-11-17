@@ -86,6 +86,7 @@
       "master-token-format": "O token principal não começa por aas_et/. Verifique o valor que colou e tente iniciar sessão novamente. Comprimento: {token_length} caracteres; prefixo reconhecido: {token_prefix}.",
       "master-token-empty": "O token principal não contém nenhum valor após aas_et/. Verifique o valor que colou e tente iniciar sessão novamente. Comprimento: {token_length} caracteres; prefixo reconhecido: {token_prefix}.",
       "master-token-characters": "O token principal contém espaços, quebras de linha ou caracteres não suportados. Verifique o valor que colou e tente iniciar sessão novamente. Comprimento: {token_length} caracteres; prefixo reconhecido: {token_prefix}.",
+      "master-token-too-short": "O token principal tem de ter pelo menos 200 caracteres. Copie o token completo. Comprimento: {token_length} caracteres.",
       "other-account": "Iniciou sessão numa conta Google diferente, pelo que nada foi alterado. Inicie sessão com a conta que esta integração utiliza. Para passar a utilizar essa outra conta, elimine a integração e adicione-a novamente.",
       "no-home-selected": "Escolha pelo menos uma casa."
     },
@@ -204,6 +205,9 @@
     },
     "devices_not_rebooted": {
       "message": "Os seguintes dispositivos não confirmaram que vão reiniciar: {devices}. Verifique se estão online e tente novamente mais tarde."
+    },
+    "saved_sign_in_invalid": {
+      "message": "Os dados de início de sessão guardados estão em falta ou são inválidos. Inicie sessão novamente."
     },
     "sign_in_rejected": {
       "message": "A Google não aceitou o início de sessão ({reason}). Inicie sessão novamente."

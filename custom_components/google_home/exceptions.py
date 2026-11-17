@@ -17,14 +17,12 @@ class InvalidMasterToken(Exception):
 class InvalidMasterTokenFormat(InvalidMasterToken):
     """A local format failure with only safe facts for the form and log."""
 
-    def __init__(self, reason: str, token: object) -> None:
+    def __init__(self, reason: str, token: str) -> None:
         """Keep the reason, length and a recognized public prefix, never the token."""
-        prefix = (
-            token.partition("/")[0] if isinstance(token, str) and "/" in token else ""
-        )
+        prefix = token.partition("/")[0] if "/" in token else ""
         self.reason = reason
         self.placeholders = {
-            "token_length": str(len(token)) if isinstance(token, str) else "0",
+            "token_length": str(len(token)),
             # Unknown prefixes could themselves contain credentials.
             "token_prefix": prefix if prefix in {"aas_et", "oauth2_4"} else "-",
         }

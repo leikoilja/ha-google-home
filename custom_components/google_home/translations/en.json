@@ -86,6 +86,7 @@
       "master-token-format": "The master token does not start with aas_et/. Check the value you pasted and try signing in again. Length: {token_length} characters; recognized prefix: {token_prefix}.",
       "master-token-empty": "The master token has no value after aas_et/. Check the value you pasted and try signing in again. Length: {token_length} characters; recognized prefix: {token_prefix}.",
       "master-token-characters": "The master token contains spaces, line breaks or unsupported characters. Check the value you pasted and try signing in again. Length: {token_length} characters; recognized prefix: {token_prefix}.",
+      "master-token-too-short": "The master token must be at least 200 characters long. Copy the whole token. Length: {token_length} characters.",
       "other-account": "You signed in to a different Google account, so nothing was changed. Sign in with the account this integration uses. To use the other account instead, delete the integration and add it again.",
       "no-home-selected": "Choose at least one home."
     },
@@ -204,6 +205,9 @@
     },
     "devices_not_rebooted": {
       "message": "These devices didn't confirm that they'll reboot: {devices}. Check that they're online and try again later."
+    },
+    "saved_sign_in_invalid": {
+      "message": "The saved sign-in details are missing or invalid. Sign in again."
     },
     "sign_in_rejected": {
       "message": "Google didn't accept the sign-in ({reason}). Sign in again."

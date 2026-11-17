@@ -86,6 +86,7 @@
       "master-token-format": "Il token master non inizia con aas_et/. Verifica il valore che hai incollato e prova ad accedere di nuovo. Lunghezza: {token_length} caratteri; prefisso riconosciuto: {token_prefix}.",
       "master-token-empty": "Il token master non contiene alcun valore dopo aas_et/. Verifica il valore che hai incollato e prova ad accedere di nuovo. Lunghezza: {token_length} caratteri; prefisso riconosciuto: {token_prefix}.",
       "master-token-characters": "Il token master contiene spazi, interruzioni di riga o caratteri non supportati. Verifica il valore che hai incollato e prova ad accedere di nuovo. Lunghezza: {token_length} caratteri; prefisso riconosciuto: {token_prefix}.",
+      "master-token-too-short": "Il token master deve contenere almeno 200 caratteri. Copia il token per intero. Lunghezza: {token_length} caratteri.",
       "other-account": "Hai effettuato l'accesso con un altro account Google, quindi non è stato modificato nulla. Accedi con l'account usato da questa integrazione. Per usare invece quell'altro account, elimina l'integrazione e aggiungila di nuovo.",
       "no-home-selected": "Scegli almeno una casa."
     },
@@ -204,6 +205,9 @@
     },
     "devices_not_rebooted": {
       "message": "Questi dispositivi non hanno confermato che si riavvieranno: {devices}. Verifica che siano online e riprova più tardi."
+    },
+    "saved_sign_in_invalid": {
+      "message": "I dati di accesso salvati sono mancanti o non validi. Accedi di nuovo."
     },
     "sign_in_rejected": {
       "message": "Google non ha accettato l'accesso ({reason}). Accedi di nuovo."

@@ -11,8 +11,9 @@ and logs, and which accounts count as the entry's.
 
 import asyncio
 from collections.abc import AsyncIterator, Iterator
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext
 from http import HTTPStatus
+from importlib.metadata import version as package_version
 from ipaddress import ip_address
 import json
 import logging
@@ -437,6 +438,11 @@ def google_answers(answer: dict[str, str] | Exception) -> Iterator[None]:
         pytest.param({"Error": "BadAuthentication"}, None, id="rejected"),
         pytest.param({"Error": "NeedsBrowser"}, "google-rejected", id="other-reason"),
         pytest.param({}, "google-rejected", id="no-reason"),
+        pytest.param(
+            AuthenticationError("Invalid token response"),
+            "google-rejected",
+            id="library-rejected-token",
+        ),
         pytest.param(answered(HTTPStatus.SERVICE_UNAVAILABLE), "google-busy", id="503"),
         pytest.param(answered(HTTPStatus.TOO_MANY_REQUESTS), "google-busy", id="429"),
         pytest.param(
@@ -679,6 +685,70 @@ async def test_sign_in_through_home_assistant_session(
     [entry] = hass.config_entries.async_entries(DOMAIN)
     assert (entry.title, entry.data["master_token"]) == (EMAIL, token)
     assert services == ["ac2dm", ACCESS_TOKEN_SERVICE]
+
+
+async def test_malformed_browser_reply_through_home_assistant_session(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    aioclient_mock: AiohttpClientMocker,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Reject a simulated malformed exchange response before requesting access."""
+    saved_data = dict(config_entry.data)
+    token = "aas_et/fictional-reply-marker" + "x" * 170
+    services: list[str] = []
+
+    async def answer(method: str, url: URL, data: bytes) -> AiohttpClientMockResponse:
+        [service] = parse_qs(data.decode())["service"]
+        services.append(service)
+        text = (
+            f"Token={token}\nEmail={EMAIL}\n"
+            if len(services) == 1
+            else "Error=NeedsBrowser\n"
+        )
+        return AiohttpClientMockResponse(method, url, text=text)
+
+    aioclient_mock.post(gpsoauth.AUTH_URL, side_effect=answer)
+    caplog.set_level(logging.DEBUG, logger="custom_components.google_home")
+    caplog.set_level(logging.DEBUG, logger="glocaltokens")
+
+    result = await submit(
+        hass, await choose(hass, "browser", config_entry), SIGN_IN_INPUT["browser"]
+    )
+
+    assert (result["type"], result["step_id"]) == (
+        FlowResultType.FORM,
+        "reauth_browser",
+    )
+    assert services == ["ac2dm"]
+    assert config_entry.data == saved_data
+    placeholders = result["description_placeholders"] or {}
+    translations = await async_get_translations(hass, "en", "config", [DOMAIN])
+    # The old pin returns the reply to HA, which can report its format reason.
+    # Since 2.1.1 the library rejects the reply before HA can inspect it.
+    if package_version("glocaltokens") == "2.0.0":
+        error = "master-token-too-short"
+        assert placeholders["token_length"] == "199"
+    else:
+        error = "google-rejected"
+        assert {"token_length", "token_prefix"}.isdisjoint(placeholders)
+        assert translations[f"component.{DOMAIN}.config.error.{error}"] == (
+            "Google didn't accept the sign-in. For details, see the Home Assistant log."
+        )
+        assert_logged_without_traceback(
+            caplog, "Failed to sign in: Google gave an invalid master token"
+        )
+    assert result["errors"] == {"base": error}
+    assert "fictional-reply-marker" not in caplog.text + str(result)
+
+    retry = await submit(hass, result, {"oauth_token": "oauth2_4/fresh-cookie"})
+
+    assert retry["errors"] == {"base": "google-rejected"}
+    assert {"token_length", "token_prefix"}.isdisjoint(
+        retry["description_placeholders"] or {}
+    )
+    assert services == ["ac2dm", "ac2dm"]
+    assert config_entry.data == saved_data
 
 
 # The account's homes
@@ -1067,6 +1137,9 @@ async def test_reauth_loaded_entry(
     it says stops working in 2026.12. The sign-in flow and its repair are gone
     afterwards.
     """
+    hass.config_entries.async_update_entry(
+        config_entry, data={**config_entry.data, "master_token": f" {MASTER_TOKEN}\n"}
+    )
     assert await hass.config_entries.async_setup(config_entry.entry_id)
     await hass.async_block_till_done()
     # As the integration does when Google rejects the token of a loaded entry
@@ -1105,7 +1178,7 @@ async def test_reauth_loaded_entry(
 
 
 @pytest.mark.usefixtures("mock_setup_entry")
-@pytest.mark.parametrize("total_length", [8, 222, 223, 243, 317])
+@pytest.mark.parametrize("total_length", [200, 222, 223, 243, 317])
 @pytest.mark.parametrize("method", METHODS)
 @pytest.mark.parametrize("reauth", [False, True], ids=["setup", "reauth"])
 async def test_master_token_lengths(
@@ -1123,12 +1196,12 @@ async def test_master_token_lengths(
     """
     # Do not infer a payload alphabet or padding rule from its observed lengths.
     token = "aas_et/" + ("A0-_+/=!" * total_length)[: total_length - 7]
-    sign_in.exchange_token.return_value = {"Token": token}
+    sign_in.exchange_token.return_value = {"Token": f" \t{token}\r\n"}
     entry = request.getfixturevalue("config_entry") if reauth else None
     user_input = (
-        {"master_token": token}
+        {"master_token": f" \t{token}\r\n"}
         if method == "master_token"
-        else {"oauth_token": "oauth2_4/cookie"}
+        else {"oauth_token": " \toauth2_4/cookie\r\n"}
     )
 
     result = await submit(hass, await choose(hass, method, entry), user_input)
@@ -1142,6 +1215,8 @@ async def test_master_token_lengths(
     sign_in.perform_oauth.assert_called_once()
     assert sign_in.perform_oauth.call_args.args[1] == token
     assert sign_in.exchange_token.call_count == (1 if method == "browser" else 0)
+    if method == "browser":
+        assert sign_in.exchange_token.call_args.args[1] == "oauth2_4/cookie"
 
 
 @pytest.mark.parametrize("method", METHODS)
@@ -1177,6 +1252,12 @@ async def test_long_master_token_can_still_be_rejected(
     [
         pytest.param("wrong/" + "x" * 217, "master-token-format", "-", id="prefix"),
         pytest.param("aas_et/", "master-token-empty", "aas_et", id="empty-payload"),
+        pytest.param(
+            "aas_et/" + "x" * 192,
+            "master-token-too-short",
+            "aas_et",
+            id="199-characters",
+        ),
         pytest.param(
             "oauth2_4/private-cookie", "master-token-format", "oauth2_4", id="cookie"
         ),
@@ -1220,16 +1301,28 @@ async def test_malformed_master_token_is_not_used_or_exposed(
     reauth: bool,
 ) -> None:
     """Show a translated reason and safe facts before OAuth; preserve any saved entry."""
-    sign_in.exchange_token.return_value = {"Token": token}
+    padded_token = f" \t{token}\r\n"
     user_input = (
-        {"master_token": token}
+        {"master_token": padded_token}
         if method == "master_token"
         else {"oauth_token": "oauth2_4/private-cookie"}
     )
     caplog.set_level(logging.DEBUG, logger="custom_components.google_home")
     entry = request.getfixturevalue("config_entry") if reauth else None
 
-    result = await submit(hass, await choose(hass, method, entry), user_input)
+    form = await choose(hass, method, entry)
+    # glocaltokens 2.1.1 rejects malformed exchange replies before returning them.
+    # Exercise the detailed HA error when the library does return the value.
+    returned_token = (
+        patch(
+            "glocaltokens.client.GLocalAuthenticationTokens.async_get_master_token",
+            return_value=padded_token,
+        )
+        if method == "browser"
+        else nullcontext()
+    )
+    with returned_token:
+        result = await submit(hass, form, user_input)
 
     assert result["errors"] == {
         "master_token" if method == "master_token" else "base": error_key
@@ -1242,17 +1335,23 @@ async def test_malformed_master_token_is_not_used_or_exposed(
     message = text[f"component.{DOMAIN}.config.error.{error_key}"].format_map(
         placeholders
     )
-    reason = {
+    reasons = {
         "master-token-format": "The master token does not start with aas_et/.",
         "master-token-empty": "The master token has no value after aas_et/.",
         "master-token-characters": "The master token contains spaces, line breaks or unsupported characters.",
-    }[error_key]
-    assert message == (
-        f"{reason} Check the value you pasted and try signing in again. "
-        f"Length: {len(token)} characters; recognized prefix: {prefix}."
-    )
+    }
+    if error_key == "master-token-too-short":
+        assert message == (
+            "The master token must be at least 200 characters long. "
+            f"Copy the whole token. Length: {len(token)} characters."
+        )
+    else:
+        assert message == (
+            f"{reasons[error_key]} Check the value you pasted and try signing in again. "
+            f"Length: {len(token)} characters; recognized prefix: {prefix}."
+        )
     sign_in.perform_oauth.assert_not_called()
-    assert sign_in.exchange_token.call_count == (1 if method == "browser" else 0)
+    sign_in.exchange_token.assert_not_called()
     assert saved_master_tokens(hass) == ([MASTER_TOKEN] if reauth else [])
     if method == "browser":
         assert_logged_without_traceback(

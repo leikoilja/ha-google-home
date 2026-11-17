@@ -86,6 +86,7 @@
       "master-token-format": "Token główny nie zaczyna się od aas_et/. Sprawdź wklejoną wartość i spróbuj zalogować się ponownie. Liczba znaków: {token_length}; rozpoznany prefiks: {token_prefix}.",
       "master-token-empty": "Token główny nie zawiera żadnej wartości po aas_et/. Sprawdź wklejoną wartość i spróbuj zalogować się ponownie. Liczba znaków: {token_length}; rozpoznany prefiks: {token_prefix}.",
       "master-token-characters": "Token główny zawiera spacje, znaki nowego wiersza lub nieobsługiwane znaki. Sprawdź wklejoną wartość i spróbuj zalogować się ponownie. Liczba znaków: {token_length}; rozpoznany prefiks: {token_prefix}.",
+      "master-token-too-short": "Token główny musi mieć co najmniej 200 znaków. Skopiuj cały token. Liczba znaków: {token_length}.",
       "other-account": "Zalogowano się na inne konto Google, więc nic nie zostało zmienione. Zaloguj się na konto używane przez tę integrację. Aby zamiast tego używać tamtego konta, usuń integrację i dodaj ją ponownie.",
       "no-home-selected": "Wybierz co najmniej jeden dom."
     },
@@ -204,6 +205,9 @@
     },
     "devices_not_rebooted": {
       "message": "Te urządzenia nie potwierdziły, że uruchomią się ponownie: {devices}. Sprawdź, czy urządzenia są online, i spróbuj ponownie później."
+    },
+    "saved_sign_in_invalid": {
+      "message": "Brakuje zapisanych danych logowania lub są one nieprawidłowe. Zaloguj się ponownie."
     },
     "sign_in_rejected": {
       "message": "Google nie zaakceptowało logowania ({reason}). Zaloguj się ponownie."

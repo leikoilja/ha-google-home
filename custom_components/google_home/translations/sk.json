@@ -86,6 +86,7 @@
       "master-token-format": "Hlavný token sa nezačína aas_et/. Skontrolujte vloženú hodnotu a skúste sa znova prihlásiť. Dĺžka: {token_length} znakov; rozpoznaná predpona: {token_prefix}.",
       "master-token-empty": "Hlavný token za aas_et/ neobsahuje žiadnu hodnotu. Skontrolujte vloženú hodnotu a skúste sa znova prihlásiť. Dĺžka: {token_length} znakov; rozpoznaná predpona: {token_prefix}.",
       "master-token-characters": "Hlavný token obsahuje medzery, zalomenia riadkov alebo nepodporované znaky. Skontrolujte vloženú hodnotu a skúste sa znova prihlásiť. Dĺžka: {token_length} znakov; rozpoznaná predpona: {token_prefix}.",
+      "master-token-too-short": "Hlavný token musí mať aspoň 200 znakov. Skopírujte celý token. Počet znakov: {token_length}.",
       "other-account": "Prihlásili ste sa do iného účtu Google, preto sa nič nezmenilo. Prihláste sa do účtu, ktorý táto integrácia používa. Ak chcete namiesto toho používať ten druhý účet, integráciu odstráňte a pridajte ju znova.",
       "no-home-selected": "Vyberte aspoň jednu domácnosť."
     },
@@ -204,6 +205,9 @@
     },
     "devices_not_rebooted": {
       "message": "Nasledujúce zariadenia nepotvrdili, že sa reštartujú: {devices}. Skontrolujte, či sú zariadenia online, a skúste to znova neskôr."
+    },
+    "saved_sign_in_invalid": {
+      "message": "Uložené prihlasovacie údaje chýbajú alebo sú neplatné. Prihláste sa znova."
     },
     "sign_in_rejected": {
       "message": "Google prihlásenie neprijal ({reason}). Prihláste sa znova."

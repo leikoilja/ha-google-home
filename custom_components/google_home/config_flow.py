@@ -309,14 +309,13 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
             # The same form, with text that doesn't suggest adding the integration
             # again: closing the window keeps the sign-in open
             step_id = f"{STEP_REAUTH}_{step_id}"
+        placeholders = DESCRIPTION_PLACEHOLDERS | self._token_diagnostics
+        self._token_diagnostics.clear()
         return self.async_show_form(
             step_id=step_id,
             data_schema=probatio.Schema(schema),
             errors=errors,
-            description_placeholders={
-                **DESCRIPTION_PLACEHOLDERS,
-                **self._token_diagnostics,
-            },
+            description_placeholders=placeholders,
         )
 
     @staticmethod

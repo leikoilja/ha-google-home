@@ -86,6 +86,7 @@
       "master-token-format": "Le jeton maître ne commence pas par aas_et/. Vérifiez la valeur que vous avez collée et réessayez de vous connecter. Longueur : {token_length} caractères ; préfixe reconnu : {token_prefix}.",
       "master-token-empty": "Le jeton maître ne contient aucune valeur après aas_et/. Vérifiez la valeur que vous avez collée et réessayez de vous connecter. Longueur : {token_length} caractères ; préfixe reconnu : {token_prefix}.",
       "master-token-characters": "Le jeton maître contient des espaces, des sauts de ligne ou des caractères non pris en charge. Vérifiez la valeur que vous avez collée et réessayez de vous connecter. Longueur : {token_length} caractères ; préfixe reconnu : {token_prefix}.",
+      "master-token-too-short": "Le jeton maître doit contenir au moins 200 caractères. Copiez le jeton en entier. Longueur : {token_length} caractères.",
       "other-account": "Vous avez utilisé un autre compte Google pour vous connecter, rien n'a donc été modifié. Connectez-vous avec le compte qu'utilise cette intégration. Pour utiliser plutôt cet autre compte, supprimez l'intégration et ajoutez-la à nouveau.",
       "no-home-selected": "Choisissez au moins une maison."
     },
@@ -204,6 +205,9 @@
     },
     "devices_not_rebooted": {
       "message": "Les appareils suivants n'ont pas confirmé qu'ils vont redémarrer : {devices}. Vérifiez qu'ils sont en ligne et réessayez plus tard."
+    },
+    "saved_sign_in_invalid": {
+      "message": "Les informations de connexion enregistrées sont manquantes ou non valides. Reconnectez-vous."
     },
     "sign_in_rejected": {
       "message": "Google n'a pas accepté la connexion ({reason}). Reconnectez-vous."

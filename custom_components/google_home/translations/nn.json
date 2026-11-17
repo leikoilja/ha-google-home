@@ -86,6 +86,7 @@
       "master-token-format": "Master-tokenet byrjar ikkje med aas_et/. Kontroller verdien du limte inn, og prøv å logge på igjen. Lengd: {token_length} teikn; attkjent prefiks: {token_prefix}.",
       "master-token-empty": "Master-tokenet har ingen verdi etter aas_et/. Kontroller verdien du limte inn, og prøv å logge på igjen. Lengd: {token_length} teikn; attkjent prefiks: {token_prefix}.",
       "master-token-characters": "Master-tokenet inneheld mellomrom, linjeskift eller teikn som ikkje er støtta. Kontroller verdien du limte inn, og prøv å logge på igjen. Lengd: {token_length} teikn; attkjent prefiks: {token_prefix}.",
+      "master-token-too-short": "Master-tokenet må vere minst 200 teikn langt. Kopier heile tokenet. Lengd: {token_length} teikn.",
       "other-account": "Du logga på ein annan Google-konto, så ingenting vart endra. Logg på med kontoen som denne integrasjonen brukar. For å bruke den andre kontoen i staden, slett integrasjonen og legg han til på nytt.",
       "no-home-selected": "Vel minst éin heim."
     },
@@ -204,6 +205,9 @@
     },
     "devices_not_rebooted": {
       "message": "Desse einingane stadfesta ikkje at dei vil starte på nytt: {devices}. Kontroller at einingane er på nett, og prøv igjen seinare."
+    },
+    "saved_sign_in_invalid": {
+      "message": "Dei lagra påloggingsopplysningane manglar eller er ugyldige. Logg på igjen."
     },
     "sign_in_rejected": {
       "message": "Google godtok ikkje pålogginga ({reason}). Logg på igjen."
