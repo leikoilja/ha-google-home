@@ -43,40 +43,17 @@
           "homes": "Bifează cel puțin o casă. Dacă mai târziu contul tău devine membru al altei case, difuzoarele și ecranele din acea casă sunt adăugate și ele."
         }
       },
-      "reauth": {
+      "reauth_confirm": {
         "title": "Conectează-te din nou",
         "description": "Conectează-te din nou la contul Google folosit de {name}. Dispozitivele, entitățile și automatizările tale rămân neschimbate. Până atunci, entitățile dispozitivelor tale pot afișa valori neactualizate sau pot fi indisponibile.",
-        "menu_options": {
-          "browser": "Conectare prin browser (recomandată)",
-          "master_token": "Token principal"
-        },
-        "menu_option_descriptions": {
-          "browser": "Conectează-te la Google într-un browser de pe computer, apoi lipește un cookie.",
-          "master_token": "Lipește un token principal pe care îl ai deja."
-        }
-      },
-      "reauth_browser": {
-        "title": "Conectare prin browser",
-        "description": "1. Pe un computer, deschide {embedded_setup_url} într-o fereastră de navigare privată a browserului, de exemplu o fereastră incognito, și conectează-te la același cont Google. După ce accepți, pagina poate continua să se încarce; acest lucru este normal.\n2. Deschide instrumentele pentru dezvoltatori ale browserului și găsește cookie-urile pentru `accounts.google.com`.\n3. Copiază valoarea cookie-ului `oauth_token` și lipește-o imediat mai jos. Poate expira rapid și poate fi folosită o singură dată.\n\nInstrucțiuni pas cu pas: {browser_docs_url}",
         "data": {
-          "switch_sign_in_method": "Alege altă metodă de conectare",
-          "oauth_token": "Cookie oauth_token"
-        },
-        "data_description": {
-          "switch_sign_in_method": "Activează această opțiune și trimite formularul pentru a reveni la meniul de conectare.",
-          "oauth_token": "Începe cu oauth2_4/"
-        }
-      },
-      "reauth_master_token": {
-        "title": "Token principal",
-        "description": "Lipește un token principal pentru același cont Google, de exemplu unul pe care l-ai obținut cu un alt instrument.",
-        "data": {
-          "switch_sign_in_method": "Alege altă metodă de conectare",
+          "sign_in_method": "Metodă de conectare",
+          "oauth_token": "Cookie oauth_token",
           "master_token": "Token principal al contului Google"
         },
         "data_description": {
-          "switch_sign_in_method": "Activează această opțiune și trimite formularul pentru a reveni la meniul de conectare.",
-          "master_token": "Începe cu aas_et/"
+          "oauth_token": "1. Pe un computer, deschide {embedded_setup_url} într-o fereastră de navigare privată a browserului, de exemplu o fereastră incognito, și conectează-te la același cont Google. După ce accepți, pagina poate continua să se încarce; acest lucru este normal.\n2. Deschide instrumentele pentru dezvoltatori ale browserului și găsește cookie-urile pentru `accounts.google.com`.\n3. Copiază valoarea cookie-ului `oauth_token` și lipește-o imediat în acest câmp. Poate expira rapid și poate fi folosită o singură dată.\n\nInstrucțiuni pas cu pas: {browser_docs_url}\n\nÎncepe cu oauth2_4/",
+          "master_token": "Lipește un token principal pentru același cont Google, de exemplu unul pe care l-ai obținut cu un alt instrument.\n\nÎncepe cu aas_et/"
         }
       }
     },
@@ -433,6 +410,12 @@
         "60": "60 de secunde",
         "90": "90 de secunde",
         "120": "120 de secunde"
+      }
+    },
+    "sign_in_method": {
+      "options": {
+        "browser": "Conectare prin browser (recomandată)",
+        "master_token": "Token principal"
       }
     }
   }

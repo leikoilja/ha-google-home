@@ -43,40 +43,17 @@
           "homes": "Select at least one home. Speakers and displays in homes that your account joins later are also added."
         }
       },
-      "reauth": {
+      "reauth_confirm": {
         "title": "Sign in again",
         "description": "Sign in again to the Google account used by {name}. Your devices, entities and automations stay as they are. Until you do, your devices' entities can show out-of-date values or be unavailable.",
-        "menu_options": {
-          "browser": "Browser sign-in (recommended)",
-          "master_token": "Master token"
-        },
-        "menu_option_descriptions": {
-          "browser": "Sign in to Google in a desktop browser, then paste a cookie.",
-          "master_token": "Paste a master token you already have."
-        }
-      },
-      "reauth_browser": {
-        "title": "Browser sign-in",
-        "description": "1. On a computer, open {embedded_setup_url} in a private browser window and sign in to the same Google account. After you accept, the page may keep loading; that is expected.\n2. Open the browser's developer tools and find the cookies for `accounts.google.com`.\n3. Copy the value of the `oauth_token` cookie and paste it below straight away. It can expire quickly and works only once.\n\nStep-by-step instructions: {browser_docs_url}",
         "data": {
-          "switch_sign_in_method": "Choose another sign-in method",
-          "oauth_token": "oauth_token cookie"
-        },
-        "data_description": {
-          "switch_sign_in_method": "Turn this on and submit the form to return to the sign-in menu.",
-          "oauth_token": "Starts with oauth2_4/"
-        }
-      },
-      "reauth_master_token": {
-        "title": "Master token",
-        "description": "Paste a master token for the same Google account, for example one that you got with another tool.",
-        "data": {
-          "switch_sign_in_method": "Choose another sign-in method",
+          "sign_in_method": "Sign-in method",
+          "oauth_token": "oauth_token cookie",
           "master_token": "Google account master token"
         },
         "data_description": {
-          "switch_sign_in_method": "Turn this on and submit the form to return to the sign-in menu.",
-          "master_token": "Starts with aas_et/"
+          "oauth_token": "1. On a computer, open {embedded_setup_url} in a private browser window and sign in to the same Google account. After you accept, the page may keep loading; that is expected.\n2. Open the browser's developer tools and find the cookies for `accounts.google.com`.\n3. Copy the value of the `oauth_token` cookie and paste it into this field straight away. It can expire quickly and works only once.\n\nStep-by-step instructions: {browser_docs_url}\n\nStarts with oauth2_4/",
+          "master_token": "Paste a master token for the same Google account, for example one that you got with another tool.\n\nStarts with aas_et/"
         }
       }
     },
@@ -433,6 +410,12 @@
         "60": "60 seconds",
         "90": "90 seconds",
         "120": "120 seconds"
+      }
+    },
+    "sign_in_method": {
+      "options": {
+        "browser": "Browser sign-in (recommended)",
+        "master_token": "Master token"
       }
     }
   }

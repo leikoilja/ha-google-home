@@ -43,40 +43,17 @@
           "homes": "Jelöljön ki legalább egy otthont. Az integráció azoknak az otthonoknak a hangszóróit és kijelzőit is hozzáadja, amelyekhez Google-fiókja később csatlakozik."
         }
       },
-      "reauth": {
+      "reauth_confirm": {
         "title": "Újbóli bejelentkezés",
         "description": "Jelentkezzen be újra a(z) {name} által használt Google-fiókba. Az eszközei, entitásai és automatizmusai változatlanok maradnak. Amíg ezt meg nem teszi, az eszközei entitásai elavult értékeket mutathatnak, vagy nem érhetők el.",
-        "menu_options": {
-          "browser": "Bejelentkezés böngészővel (ajánlott)",
-          "master_token": "Mestertoken"
-        },
-        "menu_option_descriptions": {
-          "browser": "Jelentkezzen be a Google-fiókjába egy számítógép böngészőjében, majd illesszen be egy cookie-t.",
-          "master_token": "Illesszen be egy már meglévő mestertokent."
-        }
-      },
-      "reauth_browser": {
-        "title": "Bejelentkezés böngészővel",
-        "description": "1. Számítógépen nyissa meg a {embedded_setup_url} címet a böngésző privát ablakában, például inkognitó ablakban, és jelentkezzen be ugyanabba a Google-fiókba. Az elfogadás után az oldal tovább töltődhet; ez normális.\n2. Nyissa meg a böngésző fejlesztői eszközeit, és keresse meg az `accounts.google.com` cookie-jait.\n3. Másolja ki az `oauth_token` cookie értékét, és azonnal illessze be alább. Gyorsan lejárhat, és csak egyszer használható.\n\nRészletes útmutató: {browser_docs_url}",
         "data": {
-          "switch_sign_in_method": "Másik bejelentkezési mód választása",
-          "oauth_token": "oauth_token cookie"
-        },
-        "data_description": {
-          "switch_sign_in_method": "A bejelentkezési menübe való visszatéréshez kapcsolja be ezt a lehetőséget, majd küldje el az űrlapot.",
-          "oauth_token": "oauth2_4/ kezdetű"
-        }
-      },
-      "reauth_master_token": {
-        "title": "Mestertoken",
-        "description": "Illesszen be egy mestertokent ugyanahhoz a Google-fiókhoz, például egy másik eszközzel megszerzettet.",
-        "data": {
-          "switch_sign_in_method": "Másik bejelentkezési mód választása",
+          "sign_in_method": "Bejelentkezési mód",
+          "oauth_token": "oauth_token cookie",
           "master_token": "A Google-fiók mestertokenje"
         },
         "data_description": {
-          "switch_sign_in_method": "A bejelentkezési menübe való visszatéréshez kapcsolja be ezt a lehetőséget, majd küldje el az űrlapot.",
-          "master_token": "aas_et/ kezdetű"
+          "oauth_token": "1. Számítógépen nyissa meg a {embedded_setup_url} címet a böngésző privát ablakában, például inkognitó ablakban, és jelentkezzen be ugyanabba a Google-fiókba. Az elfogadás után az oldal tovább töltődhet; ez normális.\n2. Nyissa meg a böngésző fejlesztői eszközeit, és keresse meg az `accounts.google.com` cookie-jait.\n3. Másolja ki az `oauth_token` cookie értékét, és azonnal illessze be ebbe a mezőbe. Gyorsan lejárhat, és csak egyszer használható.\n\nRészletes útmutató: {browser_docs_url}\n\noauth2_4/ kezdetű",
+          "master_token": "Illesszen be egy mestertokent ugyanahhoz a Google-fiókhoz, például egy másik eszközzel megszerzettet.\n\naas_et/ kezdetű"
         }
       }
     },
@@ -433,6 +410,12 @@
         "60": "60 másodperc",
         "90": "90 másodperc",
         "120": "120 másodperc"
+      }
+    },
+    "sign_in_method": {
+      "options": {
+        "browser": "Bejelentkezés böngészővel (ajánlott)",
+        "master_token": "Mestertoken"
       }
     }
   }

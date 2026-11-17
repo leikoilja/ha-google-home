@@ -43,40 +43,17 @@
           "homes": "Marca almenys una llar. També s'afegeixen els altaveus i les pantalles de les llars de les quals el teu compte es faci membre més endavant."
         }
       },
-      "reauth": {
+      "reauth_confirm": {
         "title": "Torna a iniciar la sessió",
         "description": "Torna a iniciar la sessió al compte de Google que utilitza {name}. Els teus dispositius, entitats i automatitzacions es mantenen tal com estan. Fins que no ho facis, les entitats dels teus dispositius poden mostrar valors desactualitzats o no estar disponibles.",
-        "menu_options": {
-          "browser": "Inici de sessió amb el navegador (recomanat)",
-          "master_token": "Testimoni mestre"
-        },
-        "menu_option_descriptions": {
-          "browser": "Inicia la sessió a Google en un navegador d'ordinador i després enganxa una galeta.",
-          "master_token": "Enganxa un testimoni mestre que ja tinguis."
-        }
-      },
-      "reauth_browser": {
-        "title": "Inici de sessió amb el navegador",
-        "description": "1. En un ordinador, obre {embedded_setup_url} en una finestra de navegació privada i inicia la sessió al mateix compte de Google. Després d'acceptar, és possible que la pàgina continuï carregant; és normal.\n2. Obre les eines per a desenvolupadors del navegador i cerca les galetes de `accounts.google.com`.\n3. Copia el valor de la galeta `oauth_token` i enganxa'l a continuació immediatament. Pot caducar ràpidament i només funciona una vegada.\n\nInstruccions pas a pas (en anglès): {browser_docs_url}",
         "data": {
-          "switch_sign_in_method": "Tria un altre mètode d'inici de sessió",
-          "oauth_token": "Galeta oauth_token"
-        },
-        "data_description": {
-          "switch_sign_in_method": "Activa aquesta opció i envia el formulari per tornar al menú d'inici de sessió.",
-          "oauth_token": "Comença per oauth2_4/"
-        }
-      },
-      "reauth_master_token": {
-        "title": "Testimoni mestre",
-        "description": "Enganxa un testimoni mestre del mateix compte de Google, per exemple un que hagis obtingut amb una altra eina.",
-        "data": {
-          "switch_sign_in_method": "Tria un altre mètode d'inici de sessió",
+          "sign_in_method": "Mètode d'inici de sessió",
+          "oauth_token": "Galeta oauth_token",
           "master_token": "Testimoni mestre de Google"
         },
         "data_description": {
-          "switch_sign_in_method": "Activa aquesta opció i envia el formulari per tornar al menú d'inici de sessió.",
-          "master_token": "Comença per aas_et/"
+          "oauth_token": "1. En un ordinador, obre {embedded_setup_url} en una finestra de navegació privada i inicia la sessió al mateix compte de Google. Després d'acceptar, és possible que la pàgina continuï carregant; és normal.\n2. Obre les eines per a desenvolupadors del navegador i cerca les galetes de `accounts.google.com`.\n3. Copia el valor de la galeta `oauth_token` i enganxa'l immediatament en aquest camp. Pot caducar ràpidament i només funciona una vegada.\n\nInstruccions pas a pas (en anglès): {browser_docs_url}\n\nComença per oauth2_4/",
+          "master_token": "Enganxa un testimoni mestre del mateix compte de Google, per exemple un que hagis obtingut amb una altra eina.\n\nComença per aas_et/"
         }
       }
     },
@@ -433,6 +410,12 @@
         "60": "60 segons",
         "90": "90 segons",
         "120": "120 segons"
+      }
+    },
+    "sign_in_method": {
+      "options": {
+        "browser": "Inici de sessió amb el navegador (recomanat)",
+        "master_token": "Testimoni mestre"
       }
     }
   }

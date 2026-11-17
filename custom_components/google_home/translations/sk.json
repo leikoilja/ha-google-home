@@ -43,40 +43,17 @@
           "homes": "Označte aspoň jednu domácnosť. Pridajú sa aj reproduktory a displeje z domácností, ktorých členom sa váš účet stane neskôr."
         }
       },
-      "reauth": {
+      "reauth_confirm": {
         "title": "Opätovné prihlásenie",
         "description": "Znova sa prihláste do účtu Google, ktorý používa {name}. Vaše zariadenia, entity a automatizácie zostanú bez zmeny. Kým to neurobíte, entity vašich zariadení môžu zobrazovať neaktuálne hodnoty alebo byť nedostupné.",
-        "menu_options": {
-          "browser": "Prihlásenie v prehliadači (odporúčané)",
-          "master_token": "Hlavný token"
-        },
-        "menu_option_descriptions": {
-          "browser": "Prihláste sa do Google v prehliadači na počítači a potom vložte súbor cookie.",
-          "master_token": "Vložte hlavný token, ktorý už máte."
-        }
-      },
-      "reauth_browser": {
-        "title": "Prihlásenie v prehliadači",
-        "description": "1. Na počítači otvorte {embedded_setup_url} v súkromnom okne prehliadača a prihláste sa do toho istého účtu Google. Po potvrdení sa stránka môže naďalej načítavať; je to očakávané.\n2. Otvorte nástroje pre vývojárov v prehliadači a nájdite súbory cookie pre `accounts.google.com`.\n3. Skopírujte hodnotu súboru cookie `oauth_token` a hneď ju vložte nižšie. Jeho platnosť môže rýchlo vypršať a funguje len raz.\n\nPodrobný návod: {browser_docs_url}",
         "data": {
-          "switch_sign_in_method": "Vybrať iný spôsob prihlásenia",
-          "oauth_token": "Súbor cookie oauth_token"
-        },
-        "data_description": {
-          "switch_sign_in_method": "Zapnite túto možnosť a odošlite formulár. Vrátite sa do ponuky prihlásenia.",
-          "oauth_token": "Začína sa oauth2_4/"
-        }
-      },
-      "reauth_master_token": {
-        "title": "Hlavný token",
-        "description": "Vložte hlavný token pre ten istý účet Google, napríklad token, ktorý ste získali iným nástrojom.",
-        "data": {
-          "switch_sign_in_method": "Vybrať iný spôsob prihlásenia",
+          "sign_in_method": "Spôsob prihlásenia",
+          "oauth_token": "Súbor cookie oauth_token",
           "master_token": "Hlavný token účtu Google"
         },
         "data_description": {
-          "switch_sign_in_method": "Zapnite túto možnosť a odošlite formulár. Vrátite sa do ponuky prihlásenia.",
-          "master_token": "Začína sa aas_et/"
+          "oauth_token": "1. Na počítači otvorte {embedded_setup_url} v súkromnom okne prehliadača a prihláste sa do toho istého účtu Google. Po potvrdení sa stránka môže naďalej načítavať; je to očakávané.\n2. Otvorte nástroje pre vývojárov v prehliadači a nájdite súbory cookie pre `accounts.google.com`.\n3. Skopírujte hodnotu súboru cookie `oauth_token` a hneď ju vložte do tohto poľa. Jeho platnosť môže rýchlo vypršať a funguje len raz.\n\nPodrobný návod: {browser_docs_url}\n\nZačína sa oauth2_4/",
+          "master_token": "Vložte hlavný token pre ten istý účet Google, napríklad token, ktorý ste získali iným nástrojom.\n\nZačína sa aas_et/"
         }
       }
     },
@@ -433,6 +410,12 @@
         "60": "60 sekúnd",
         "90": "90 sekúnd",
         "120": "120 sekúnd"
+      }
+    },
+    "sign_in_method": {
+      "options": {
+        "browser": "Prihlásenie v prehliadači (odporúčané)",
+        "master_token": "Hlavný token"
       }
     }
   }

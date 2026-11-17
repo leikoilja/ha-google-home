@@ -43,40 +43,17 @@
           "homes": "Pilih minimal satu rumah. Jika nanti akun Anda bergabung dengan rumah lain, speaker dan layar di rumah tersebut juga ditambahkan."
         }
       },
-      "reauth": {
+      "reauth_confirm": {
         "title": "Login ulang",
         "description": "Login ulang ke akun Google yang digunakan oleh {name}. Perangkat, entitas, dan otomasi Anda tetap seperti semula. Sebelum Anda melakukannya, entitas perangkat Anda mungkin menampilkan nilai yang tidak terbaru atau menjadi tidak tersedia.",
-        "menu_options": {
-          "browser": "Login melalui browser (direkomendasikan)",
-          "master_token": "Token master"
-        },
-        "menu_option_descriptions": {
-          "browser": "Login ke Google melalui browser di komputer, lalu tempelkan cookie.",
-          "master_token": "Tempelkan token master yang sudah Anda miliki."
-        }
-      },
-      "reauth_browser": {
-        "title": "Login melalui browser",
-        "description": "1. Di komputer, buka {embedded_setup_url} di jendela penjelajahan pribadi browser, misalnya jendela Samaran, lalu login ke akun Google yang sama. Setelah Anda menyetujui, halaman mungkin terus memuat; ini normal.\n2. Buka alat developer browser dan cari cookie untuk `accounts.google.com`.\n3. Salin nilai cookie `oauth_token` dan segera tempelkan di bawah. Nilai ini dapat kedaluwarsa dengan cepat dan hanya dapat digunakan sekali.\n\nPetunjuk langkah demi langkah: {browser_docs_url}",
         "data": {
-          "switch_sign_in_method": "Pilih metode login lain",
-          "oauth_token": "Cookie oauth_token"
-        },
-        "data_description": {
-          "switch_sign_in_method": "Aktifkan opsi ini dan kirim formulir untuk kembali ke menu login.",
-          "oauth_token": "Diawali dengan oauth2_4/"
-        }
-      },
-      "reauth_master_token": {
-        "title": "Token master",
-        "description": "Tempelkan token master untuk akun Google yang sama, misalnya token yang Anda peroleh dengan alat lain.",
-        "data": {
-          "switch_sign_in_method": "Pilih metode login lain",
+          "sign_in_method": "Metode login",
+          "oauth_token": "Cookie oauth_token",
           "master_token": "Token master akun Google"
         },
         "data_description": {
-          "switch_sign_in_method": "Aktifkan opsi ini dan kirim formulir untuk kembali ke menu login.",
-          "master_token": "Diawali dengan aas_et/"
+          "oauth_token": "1. Di komputer, buka {embedded_setup_url} di jendela penjelajahan pribadi browser, misalnya jendela Samaran, lalu login ke akun Google yang sama. Setelah Anda menyetujui, halaman mungkin terus memuat; ini normal.\n2. Buka alat developer browser dan cari cookie untuk `accounts.google.com`.\n3. Salin nilai cookie `oauth_token` dan segera tempelkan di kolom ini. Nilai ini dapat kedaluwarsa dengan cepat dan hanya dapat digunakan sekali.\n\nPetunjuk langkah demi langkah: {browser_docs_url}\n\nDiawali dengan oauth2_4/",
+          "master_token": "Tempelkan token master untuk akun Google yang sama, misalnya token yang Anda peroleh dengan alat lain.\n\nDiawali dengan aas_et/"
         }
       }
     },
@@ -433,6 +410,12 @@
         "60": "60 detik",
         "90": "90 detik",
         "120": "120 detik"
+      }
+    },
+    "sign_in_method": {
+      "options": {
+        "browser": "Login melalui browser (direkomendasikan)",
+        "master_token": "Token master"
       }
     }
   }

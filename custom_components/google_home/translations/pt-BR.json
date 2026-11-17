@@ -43,40 +43,17 @@
           "homes": "Marque pelo menos uma casa. Se depois sua conta se tornar membro de outra casa, os alto-falantes e as telas dessa casa também serão adicionados."
         }
       },
-      "reauth": {
+      "reauth_confirm": {
         "title": "Entrar novamente",
         "description": "Faça login novamente na conta do Google usada por {name}. Seus dispositivos, entidades e automações continuam como estão. Até lá, as entidades dos seus dispositivos podem mostrar valores desatualizados ou ficar indisponíveis.",
-        "menu_options": {
-          "browser": "Login pelo navegador (recomendado)",
-          "master_token": "Token mestre"
-        },
-        "menu_option_descriptions": {
-          "browser": "Faça login no Google em um navegador de computador e depois cole um cookie.",
-          "master_token": "Cole um token mestre que você já tem."
-        }
-      },
-      "reauth_browser": {
-        "title": "Login pelo navegador",
-        "description": "1. Em um computador, abra {embedded_setup_url} em uma janela anônima do navegador e faça login na mesma conta do Google. Depois de aceitar, a página pode continuar carregando; isso é esperado.\n2. Abra as ferramentas de desenvolvedor do navegador e encontre os cookies de `accounts.google.com`.\n3. Copie o valor do cookie `oauth_token` e cole abaixo imediatamente. Ele pode expirar rapidamente e funciona apenas uma vez.\n\nInstruções passo a passo: {browser_docs_url}",
         "data": {
-          "switch_sign_in_method": "Escolher outro método de login",
-          "oauth_token": "Cookie oauth_token"
-        },
-        "data_description": {
-          "switch_sign_in_method": "Ative esta opção e envie o formulário para voltar ao menu de login.",
-          "oauth_token": "Começa com oauth2_4/"
-        }
-      },
-      "reauth_master_token": {
-        "title": "Token mestre",
-        "description": "Cole um token mestre da mesma conta do Google, por exemplo um que você obteve com outra ferramenta.",
-        "data": {
-          "switch_sign_in_method": "Escolher outro método de login",
+          "sign_in_method": "Método de login",
+          "oauth_token": "Cookie oauth_token",
           "master_token": "Token mestre da conta do Google"
         },
         "data_description": {
-          "switch_sign_in_method": "Ative esta opção e envie o formulário para voltar ao menu de login.",
-          "master_token": "Começa com aas_et/"
+          "oauth_token": "1. Em um computador, abra {embedded_setup_url} em uma janela anônima do navegador e faça login na mesma conta do Google. Depois de aceitar, a página pode continuar carregando; isso é esperado.\n2. Abra as ferramentas de desenvolvedor do navegador e encontre os cookies de `accounts.google.com`.\n3. Copie o valor do cookie `oauth_token` e cole imediatamente neste campo. Ele pode expirar rapidamente e funciona apenas uma vez.\n\nInstruções passo a passo: {browser_docs_url}\n\nComeça com oauth2_4/",
+          "master_token": "Cole um token mestre da mesma conta do Google, por exemplo um que você obteve com outra ferramenta.\n\nComeça com aas_et/"
         }
       }
     },
@@ -433,6 +410,12 @@
         "60": "60 segundos",
         "90": "90 segundos",
         "120": "120 segundos"
+      }
+    },
+    "sign_in_method": {
+      "options": {
+        "browser": "Login pelo navegador (recomendado)",
+        "master_token": "Token mestre"
       }
     }
   }

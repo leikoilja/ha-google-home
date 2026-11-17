@@ -43,40 +43,17 @@
           "homes": "Sélectionnez au moins une maison. Les enceintes et écrans des maisons que votre compte rejoindra plus tard seront également ajoutés."
         }
       },
-      "reauth": {
+      "reauth_confirm": {
         "title": "Se reconnecter",
         "description": "Reconnectez-vous au compte Google utilisé par {name}. Vos appareils, entités et automatisations restent tels quels. D'ici là, les entités de vos appareils peuvent afficher des valeurs obsolètes ou être indisponibles.",
-        "menu_options": {
-          "browser": "Connexion via le navigateur (recommandée)",
-          "master_token": "Jeton maître"
-        },
-        "menu_option_descriptions": {
-          "browser": "Connectez-vous à Google dans un navigateur sur ordinateur, puis collez un cookie.",
-          "master_token": "Collez un jeton maître que vous avez déjà."
-        }
-      },
-      "reauth_browser": {
-        "title": "Connexion via le navigateur",
-        "description": "1. Sur un ordinateur, ouvrez {embedded_setup_url} dans une fenêtre de navigation privée et connectez-vous au même compte Google. Une fois que vous avez accepté, la page peut continuer à charger ; c'est normal.\n2. Ouvrez les outils de développement du navigateur et trouvez les cookies de `accounts.google.com`.\n3. Copiez la valeur du cookie `oauth_token` et collez-la ci-dessous immédiatement. Il peut expirer rapidement et ne fonctionne qu'une seule fois.\n\nInstructions détaillées : {browser_docs_url}",
         "data": {
-          "switch_sign_in_method": "Choisir une autre méthode de connexion",
-          "oauth_token": "Cookie oauth_token"
-        },
-        "data_description": {
-          "switch_sign_in_method": "Activez cette option et envoyez le formulaire pour revenir au menu de connexion.",
-          "oauth_token": "Commence par oauth2_4/"
-        }
-      },
-      "reauth_master_token": {
-        "title": "Jeton maître",
-        "description": "Collez un jeton maître du même compte Google, par exemple un jeton obtenu avec un autre outil.",
-        "data": {
-          "switch_sign_in_method": "Choisir une autre méthode de connexion",
+          "sign_in_method": "Méthode de connexion",
+          "oauth_token": "Cookie oauth_token",
           "master_token": "Jeton maître du compte Google"
         },
         "data_description": {
-          "switch_sign_in_method": "Activez cette option et envoyez le formulaire pour revenir au menu de connexion.",
-          "master_token": "Commence par aas_et/"
+          "oauth_token": "1. Sur un ordinateur, ouvrez {embedded_setup_url} dans une fenêtre de navigation privée et connectez-vous au même compte Google. Une fois que vous avez accepté, la page peut continuer à charger ; c'est normal.\n2. Ouvrez les outils de développement du navigateur et trouvez les cookies de `accounts.google.com`.\n3. Copiez la valeur du cookie `oauth_token` et collez-la immédiatement dans ce champ. Il peut expirer rapidement et ne fonctionne qu'une seule fois.\n\nInstructions détaillées : {browser_docs_url}\n\nCommence par oauth2_4/",
+          "master_token": "Collez un jeton maître du même compte Google, par exemple un jeton obtenu avec un autre outil.\n\nCommence par aas_et/"
         }
       }
     },
@@ -433,6 +410,12 @@
         "60": "60 secondes",
         "90": "90 secondes",
         "120": "120 secondes"
+      }
+    },
+    "sign_in_method": {
+      "options": {
+        "browser": "Connexion via le navigateur (recommandée)",
+        "master_token": "Jeton maître"
       }
     }
   }

@@ -43,40 +43,17 @@
           "homes": "家を 1 つ以上選択してください。お使いのアカウントが今後メンバーになる家のスピーカーとディスプレイも追加されます。"
         }
       },
-      "reauth": {
+      "reauth_confirm": {
         "title": "再度ログイン",
         "description": "{name} が使用している Google アカウントにもう一度ログインしてください。デバイス、エンティティ、オートメーションはそのまま残ります。ログインし直すまで、デバイスのエンティティに古い値が表示されたり、エンティティが利用できなくなったりすることがあります。",
-        "menu_options": {
-          "browser": "ブラウザでログイン（推奨）",
-          "master_token": "マスタートークン"
-        },
-        "menu_option_descriptions": {
-          "browser": "パソコンのブラウザで Google にログインし、Cookie を貼り付けます。",
-          "master_token": "取得済みのマスタートークンを貼り付けます。"
-        }
-      },
-      "reauth_browser": {
-        "title": "ブラウザでログイン",
-        "description": "1. パソコンのブラウザでプライベート ウィンドウ（シークレット ウィンドウなど）を開き、{embedded_setup_url} にアクセスして同じ Google アカウントにログインします。同意した後もページの読み込みが続く場合がありますが、問題ありません。\n2. ブラウザの開発者ツールを開き、`accounts.google.com` の Cookie を探します。\n3. `oauth_token` Cookie の値をコピーして、すぐに下の欄に貼り付けてください。すぐに有効期限が切れることがあり、1 回しか使用できません。\n\n詳しい手順: {browser_docs_url}",
         "data": {
-          "switch_sign_in_method": "別のログイン方法を選ぶ",
-          "oauth_token": "oauth_token Cookie"
-        },
-        "data_description": {
-          "switch_sign_in_method": "このスイッチをオンにしてフォームを送信すると、ログイン方法の選択メニューに戻ります。",
-          "oauth_token": "oauth2_4/ で始まります"
-        }
-      },
-      "reauth_master_token": {
-        "title": "マスタートークン",
-        "description": "別のツールなどで取得した、同じ Google アカウントのマスタートークンを貼り付けてください。",
-        "data": {
-          "switch_sign_in_method": "別のログイン方法を選ぶ",
+          "sign_in_method": "ログイン方法",
+          "oauth_token": "oauth_token Cookie",
           "master_token": "Google アカウントのマスタートークン"
         },
         "data_description": {
-          "switch_sign_in_method": "このスイッチをオンにしてフォームを送信すると、ログイン方法の選択メニューに戻ります。",
-          "master_token": "aas_et/ で始まります"
+          "oauth_token": "1. パソコンのブラウザでプライベート ウィンドウ（シークレット ウィンドウなど）を開き、{embedded_setup_url} にアクセスして同じ Google アカウントにログインします。同意した後もページの読み込みが続く場合がありますが、問題ありません。\n2. ブラウザの開発者ツールを開き、`accounts.google.com` の Cookie を探します。\n3. `oauth_token` Cookie の値をコピーして、すぐにこの欄に貼り付けてください。すぐに有効期限が切れることがあり、1 回しか使用できません。\n\n詳しい手順: {browser_docs_url}\n\noauth2_4/ で始まります",
+          "master_token": "別のツールなどで取得した、同じ Google アカウントのマスタートークンを貼り付けてください。\n\naas_et/ で始まります"
         }
       }
     },
@@ -433,6 +410,12 @@
         "60": "60秒",
         "90": "90秒",
         "120": "120秒"
+      }
+    },
+    "sign_in_method": {
+      "options": {
+        "browser": "ブラウザでログイン（推奨）",
+        "master_token": "マスタートークン"
       }
     }
   }

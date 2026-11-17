@@ -165,7 +165,9 @@ async def test_departure_delay_schema_refusal(
 
 async def test_departure_radio_labels(hass: HomeAssistant) -> None:
     """Every supported choice has a full localized label in both checked locales."""
+    prefix = "component.google_home.selector.departure_delay."
     text = await async_get_translations(hass, "en", "selector", ["google_home"])
+    text = {key: label for key, label in text.items() if key.startswith(prefix)}
     assert text == {
         "component.google_home.selector.departure_delay.options.0": "0 seconds (normal timing)",
         "component.google_home.selector.departure_delay.options.30": "30 seconds",
@@ -174,6 +176,7 @@ async def test_departure_radio_labels(hass: HomeAssistant) -> None:
         "component.google_home.selector.departure_delay.options.120": "120 seconds",
     }
     russian = await async_get_translations(hass, "ru", "selector", ["google_home"])
+    russian = {key: label for key, label in russian.items() if key.startswith(prefix)}
     assert russian == {
         "component.google_home.selector.departure_delay.options.0": "0 секунд (обычный интервал)",
         "component.google_home.selector.departure_delay.options.30": "30 секунд",

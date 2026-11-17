@@ -77,14 +77,14 @@ If the latest release doesn't load either, search the [issues](https://github.co
 Google can stop accepting the integration's sign-in, for example after you change your Google account's password. Home Assistant then reports that authentication expired, and the Google Home card in **Settings** > **Devices & services** shows **Reconfigure**. Sign in again with the same Google account to keep your devices, their entity IDs and your automations:
 
 1. Go to **Settings** > **Devices & services** and, on the Google Home card, select **Reconfigure**.
-2. Choose how to sign in, and follow the same steps as for [browser sign-in](installation.md#browser-sign-in) or a [master token](installation.md#master-token). Use the same Google account as before.
+2. Under **Sign-in method**, choose **Browser sign-in (recommended)** or **Master token**. Follow the instructions for that method and use the same Google account as before. Select **Submit** to sign in.
 
 Home Assistant then reloads the integration with the new sign-in.
 
 Sign in again soon. Until you do, your devices can stop updating one by one, so what Home Assistant shows for them can be out of date, and new devices don't appear. After Home Assistant restarts, the integration doesn't start until you sign in again, and **Settings** > **Devices & services** > **Google Home** shows a message such as "Google didn't accept the sign-in (BadAuthentication). Sign in again."
 
-- If you closed the sign-in window, select **Reconfigure** again to continue where you left off.
-- To choose another way to sign in, turn on **Choose another sign-in method** and select **Submit** to return to the menu.
+- If you closed the sign-in window, select **Reconfigure** again to reopen it.
+- You can change the **Sign-in method** on the same form, including after a sign-in error. The field and instructions update as soon as you choose a method.
 - If Home Assistant says that you signed in to a different Google account, see ["You signed in to a different Google account"](#you-signed-in-to-a-different-google-account).
 
 ### Signing in again fails

@@ -43,40 +43,17 @@
           "homes": "Marque pelo menos uma casa. Se mais tarde a sua conta se tornar membro de outra casa, os altifalantes e ecrãs dessa casa também serão adicionados."
         }
       },
-      "reauth": {
+      "reauth_confirm": {
         "title": "Iniciar sessão novamente",
         "description": "Inicie sessão novamente na conta Google utilizada por {name}. Os seus dispositivos, entidades e automatizações mantêm-se como estão. Até o fazer, as entidades dos seus dispositivos podem mostrar valores desatualizados ou ficar indisponíveis.",
-        "menu_options": {
-          "browser": "Início de sessão no navegador (recomendado)",
-          "master_token": "Token principal"
-        },
-        "menu_option_descriptions": {
-          "browser": "Inicie sessão na Google num navegador de computador e, em seguida, cole um cookie.",
-          "master_token": "Cole um token principal que já tenha."
-        }
-      },
-      "reauth_browser": {
-        "title": "Início de sessão no navegador",
-        "description": "1. Num computador, abra {embedded_setup_url} numa janela de navegação privada e inicie sessão na mesma conta Google. Depois de aceitar, a página pode continuar a carregar; isso é esperado.\n2. Abra as ferramentas de programador do navegador e procure os cookies de `accounts.google.com`.\n3. Copie o valor do cookie `oauth_token` e cole-o abaixo de imediato. Pode expirar rapidamente e só funciona uma vez.\n\nInstruções passo a passo: {browser_docs_url}",
         "data": {
-          "switch_sign_in_method": "Escolher outro método de início de sessão",
-          "oauth_token": "Cookie oauth_token"
-        },
-        "data_description": {
-          "switch_sign_in_method": "Ative esta opção e envie o formulário para voltar ao menu de início de sessão.",
-          "oauth_token": "Começa por oauth2_4/"
-        }
-      },
-      "reauth_master_token": {
-        "title": "Token principal",
-        "description": "Cole um token principal da mesma conta Google, por exemplo um que tenha obtido com outra ferramenta.",
-        "data": {
-          "switch_sign_in_method": "Escolher outro método de início de sessão",
+          "sign_in_method": "Método de início de sessão",
+          "oauth_token": "Cookie oauth_token",
           "master_token": "Token principal da conta Google"
         },
         "data_description": {
-          "switch_sign_in_method": "Ative esta opção e envie o formulário para voltar ao menu de início de sessão.",
-          "master_token": "Começa por aas_et/"
+          "oauth_token": "1. Num computador, abra {embedded_setup_url} numa janela de navegação privada e inicie sessão na mesma conta Google. Depois de aceitar, a página pode continuar a carregar; isso é esperado.\n2. Abra as ferramentas de programador do navegador e procure os cookies de `accounts.google.com`.\n3. Copie o valor do cookie `oauth_token` e cole-o de imediato neste campo. Pode expirar rapidamente e só funciona uma vez.\n\nInstruções passo a passo: {browser_docs_url}\n\nComeça por oauth2_4/",
+          "master_token": "Cole um token principal da mesma conta Google, por exemplo um que tenha obtido com outra ferramenta.\n\nComeça por aas_et/"
         }
       }
     },
@@ -433,6 +410,12 @@
         "60": "60 segundos",
         "90": "90 segundos",
         "120": "120 segundos"
+      }
+    },
+    "sign_in_method": {
+      "options": {
+        "browser": "Início de sessão no navegador (recomendado)",
+        "master_token": "Token principal"
       }
     }
   }
