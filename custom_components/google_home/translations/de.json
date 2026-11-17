@@ -43,36 +43,17 @@
           "homes": "Wähle mindestens ein Zuhause aus. Lautsprecher und Displays in Zuhause, denen dein Konto später beitritt, werden ebenfalls hinzugefügt."
         }
       },
-      "reauth": {
+      "reauth_confirm": {
         "title": "Erneut anmelden",
         "description": "Melde dich erneut bei dem Google-Konto an, das {name} verwendet. Deine Geräte, Entitäten und Automationen bleiben unverändert. Bis dahin können die Entitäten deiner Geräte veraltete Werte anzeigen oder nicht verfügbar sein.",
-        "menu_options": {
-          "browser": "Anmeldung im Browser (empfohlen)",
-          "master_token": "Master-Token"
-        },
-        "menu_option_descriptions": {
-          "browser": "Melde dich in einem Desktop-Browser bei Google an und füge dann ein Cookie ein.",
-          "master_token": "Füge ein Master-Token ein, das du bereits hast."
-        }
-      },
-      "reauth_browser": {
-        "title": "Anmeldung im Browser",
-        "description": "1. Öffne auf einem Computer {embedded_setup_url} in einem privaten Browserfenster und melde dich beim selben Google-Konto an. Nachdem du zugestimmt hast, lädt die Seite eventuell weiter; das ist normal.\n2. Öffne die Entwicklertools des Browsers und suche die Cookies für `accounts.google.com`.\n3. Kopiere den Wert des Cookies `oauth_token` und füge ihn sofort unten ein. Er kann schnell ablaufen und funktioniert nur einmal.\n\nSchritt-für-Schritt-Anleitung: {browser_docs_url}",
         "data": {
-          "oauth_token": "Cookie oauth_token"
-        },
-        "data_description": {
-          "oauth_token": "Beginnt mit oauth2_4/"
-        }
-      },
-      "reauth_master_token": {
-        "title": "Master-Token",
-        "description": "Füge ein Master-Token für dasselbe Google-Konto ein, zum Beispiel eines, das du mit einem anderen Tool erhalten hast.",
-        "data": {
+          "sign_in_method": "Anmeldemethode",
+          "oauth_token": "Cookie oauth_token",
           "master_token": "Master-Token des Google-Kontos"
         },
         "data_description": {
-          "master_token": "Beginnt mit aas_et/"
+          "oauth_token": "1. Öffne auf einem Computer {embedded_setup_url} in einem privaten Browserfenster und melde dich beim selben Google-Konto an. Nachdem du zugestimmt hast, lädt die Seite eventuell weiter; das ist normal.\n2. Öffne die Entwicklertools des Browsers und suche die Cookies für `accounts.google.com`.\n3. Kopiere den Wert des Cookies `oauth_token` und füge ihn sofort in dieses Feld ein. Er kann schnell ablaufen und funktioniert nur einmal.\n\nSchritt-für-Schritt-Anleitung: {browser_docs_url}\n\nBeginnt mit oauth2_4/",
+          "master_token": "Füge ein Master-Token für dasselbe Google-Konto ein, zum Beispiel eines, das du mit einem anderen Tool erhalten hast.\n\nBeginnt mit aas_et/"
         }
       }
     },
@@ -429,6 +410,12 @@
         "60": "60 Sekunden",
         "90": "90 Sekunden",
         "120": "120 Sekunden"
+      }
+    },
+    "sign_in_method": {
+      "options": {
+        "browser": "Anmeldung im Browser (empfohlen)",
+        "master_token": "Master-Token"
       }
     }
   }

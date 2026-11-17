@@ -43,36 +43,17 @@
           "homes": "請至少選取一個住家。如果你的帳號之後成為其他住家的成員，這些住家中的音箱和螢幕也會一併加入。"
         }
       },
-      "reauth": {
+      "reauth_confirm": {
         "title": "重新登入",
         "description": "請重新登入 {name} 使用的 Google 帳號。你的裝置、實體和自動化都會保持不變。在你重新登入之前，裝置的實體可能會顯示過時的數值，或顯示為不可用。",
-        "menu_options": {
-          "browser": "透過瀏覽器登入（建議）",
-          "master_token": "Master token"
-        },
-        "menu_option_descriptions": {
-          "browser": "在電腦瀏覽器中登入 Google，然後貼上 Cookie。",
-          "master_token": "貼上你已取得的 master token。"
-        }
-      },
-      "reauth_browser": {
-        "title": "透過瀏覽器登入",
-        "description": "1. 在電腦上開啟瀏覽器的私密瀏覽視窗（例如無痕視窗），前往 {embedded_setup_url} 並登入同一個 Google 帳號。同意後，網頁可能會持續載入，這是正常現象。\n2. 開啟瀏覽器的開發人員工具，找出 `accounts.google.com` 的 Cookie。\n3. 複製 `oauth_token` Cookie 的值，並立即貼到下方。此值可能很快失效，且只能使用一次。\n\n詳細操作步驟：{browser_docs_url}",
         "data": {
-          "oauth_token": "oauth_token Cookie"
-        },
-        "data_description": {
-          "oauth_token": "以 oauth2_4/ 開頭"
-        }
-      },
-      "reauth_master_token": {
-        "title": "Master token",
-        "description": "請貼上同一個 Google 帳號的 master token，例如使用其他工具取得的值。",
-        "data": {
+          "sign_in_method": "登入方式",
+          "oauth_token": "oauth_token Cookie",
           "master_token": "Google 帳號的 master token"
         },
         "data_description": {
-          "master_token": "以 aas_et/ 開頭"
+          "oauth_token": "1. 在電腦上開啟瀏覽器的私密瀏覽視窗（例如無痕視窗），前往 {embedded_setup_url} 並登入同一個 Google 帳號。同意後，網頁可能會持續載入，這是正常現象。\n2. 開啟瀏覽器的開發人員工具，找出 `accounts.google.com` 的 Cookie。\n3. 複製 `oauth_token` Cookie 的值，並立即貼到此欄位。此值可能很快失效，且只能使用一次。\n\n詳細操作步驟：{browser_docs_url}\n\n以 oauth2_4/ 開頭",
+          "master_token": "請貼上同一個 Google 帳號的 master token，例如使用其他工具取得的值。\n\n以 aas_et/ 開頭"
         }
       }
     },
@@ -429,6 +410,12 @@
         "60": "60 秒",
         "90": "90 秒",
         "120": "120 秒"
+      }
+    },
+    "sign_in_method": {
+      "options": {
+        "browser": "透過瀏覽器登入（建議）",
+        "master_token": "Master token"
       }
     }
   }

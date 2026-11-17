@@ -28,6 +28,7 @@ from glocaltokens.const import ACCESS_TOKEN_SERVICE
 from glocaltokens.exceptions import AuthenticationError, HomegraphError
 import gpsoauth
 import grpc  # type: ignore[import-untyped]
+import probatio
 import pytest
 from pytest_homeassistant.common import MockConfigEntry
 from pytest_homeassistant.test_util.aiohttp import (
@@ -53,8 +54,8 @@ from homeassistant.config_entries import (
     ConfigFlowResult,
 )
 from homeassistant.core import DOMAIN as HOMEASSISTANT_DOMAIN, HomeAssistant
-from homeassistant.data_entry_flow import FlowResultType
-from homeassistant.helpers import issue_registry as ir
+from homeassistant.data_entry_flow import FlowResultType, InvalidData
+from homeassistant.helpers import config_validation as cv, issue_registry as ir
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.service_info.zeroconf import ZeroconfServiceInfo
 from homeassistant.helpers.translation import async_get_translations
@@ -324,7 +325,11 @@ def start_reauth(
 
 def sign_in_again(flow: GoogleHomeFlowHandler) -> ConfigFlowResult:
     """Submit a master token as Home Assistant does when signing in again."""
-    return asyncio.run(flow.async_step_reauth_master_token(MASTER_TOKEN_INPUT))
+    return asyncio.run(
+        flow.async_step_reauth_confirm(
+            {"sign_in_method": "master_token", **MASTER_TOKEN_INPUT}
+        )
+    )
 
 
 def assert_saved(flow: GoogleHomeFlowHandler, username: str) -> None:
@@ -371,7 +376,7 @@ def test_reauth_account_spelled_differently(
         assert result["reason"] == "reauth_successful"
         assert_saved(flow, email)
     else:
-        assert result["errors"] == {"base": "other-account"}
+        assert result["errors"] == {"master_token": "other-account"}
         assert_not_saved(flow)
 
 
@@ -480,18 +485,17 @@ def test_sign_in_failed(
     reauth: bool,
 ) -> None:
     """Show the form again with why Google gave no token, so the entry stays unchanged."""
-    step = method
     if reauth:
         start_reauth(flow, "test@example.com", "test@example.com")
-        step = f"reauth_{method}"
 
     with google_answers(answer):
-        result = asyncio.run(getattr(flow, f"async_step_{step}")(user_input))
+        result = asyncio.run(getattr(flow, f"async_step_{method}")(user_input))
 
+    [credential] = user_input
     assert result["type"] == "form"
-    assert result["step_id"] == step
-    assert result["errors"] == {"base": error or rejected}
-    assert result["errors"]["base"] in ENGLISH["config"]["error"]
+    assert result["step_id"] == ("reauth_confirm" if reauth else method)
+    assert result["errors"] == {(credential if reauth else "base"): error or rejected}
+    assert (error or rejected) in ENGLISH["config"]["error"]
     assert_not_saved(flow)
 
 
@@ -566,13 +570,12 @@ def sent_to_google(sign_in: Mock) -> list[tuple[str, str]]:
 async def choose(
     hass: HomeAssistant, method: str, entry: MockConfigEntry | None = None
 ) -> ConfigFlowResult:
-    """Start adding the integration, or signing in again to the entry, and choose how."""
+    """Open the setup method's form or the single form for signing in again."""
     if entry is not None:
-        result = await entry.start_reauth_flow(hass)
-    else:
-        result = await hass.config_entries.flow.async_init(
-            DOMAIN, context={"source": SOURCE_USER}
-        )
+        return await entry.start_reauth_flow(hass)
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": SOURCE_USER}
+    )
     return await hass.config_entries.flow.async_configure(
         result["flow_id"], {"next_step_id": method}
     )
@@ -582,6 +585,9 @@ async def submit(
     hass: HomeAssistant, result: ConfigFlowResult, user_input: dict[str, str]
 ) -> ConfigFlowResult:
     """Submit the form that the flow shows."""
+    if result["step_id"] == "reauth_confirm":
+        method = "master_token" if "master_token" in user_input else "browser"
+        user_input = {"sign_in_method": method, **user_input}
     return await hass.config_entries.flow.async_configure(result["flow_id"], user_input)
 
 
@@ -718,7 +724,7 @@ async def test_malformed_browser_reply_through_home_assistant_session(
 
     assert (result["type"], result["step_id"]) == (
         FlowResultType.FORM,
-        "reauth_browser",
+        "reauth_confirm",
     )
     assert services == ["ac2dm"]
     assert config_entry.data == saved_data
@@ -743,12 +749,12 @@ async def test_malformed_browser_reply_through_home_assistant_session(
         assert_logged_without_traceback(
             caplog, "Failed to sign in: Google gave an invalid master token"
         )
-    assert result["errors"] == {"base": error}
+    assert result["errors"] == {"oauth_token": error}
     assert "fictional-reply-marker" not in caplog.text + str(result)
 
     retry = await submit(hass, result, {"oauth_token": "oauth2_4/fresh-cookie"})
 
-    assert retry["errors"] == {"base": "google-rejected"}
+    assert retry["errors"] == {"oauth_token": "google-rejected"}
     assert {"token_length", "token_prefix"}.isdisjoint(
         retry["description_placeholders"] or {}
     )
@@ -860,7 +866,7 @@ async def test_sign_in_format_error(
     entry = request.getfixturevalue("config_entry") if reauth else None
     result = await submit(hass, await choose(hass, method, entry), pasted)
 
-    step = f"reauth_{method}" if reauth else method
+    step = "reauth_confirm" if reauth else method
     assert (result["type"], result["step_id"]) == (FlowResultType.FORM, step)
     assert result["errors"] == error
     assert sent_to_google(sign_in) == []
@@ -926,9 +932,10 @@ async def test_sign_in_error(
     with google_answers(answer):
         result = await submit(hass, result, SIGN_IN_INPUT[method])
 
-    step = f"reauth_{method}" if reauth else method
+    step = "reauth_confirm" if reauth else method
     assert (result["type"], result["step_id"]) == (FlowResultType.FORM, step)
-    assert result["errors"] == {"base": error}
+    [credential] = SIGN_IN_INPUT[method]
+    assert result["errors"] == {(credential if reauth else "base"): error}
     assert saved_master_tokens(hass) == ([MASTER_TOKEN] if reauth else [])
 
     await submit(hass, result, SIGN_IN_INPUT[method])
@@ -1035,35 +1042,29 @@ async def test_reauth(
 ) -> None:
     """Save the new master token in the entry and reload it, keeping its Android ID.
 
-    The menu names the entry. The forms have text of their own: the setup forms say
-    to add the integration again to choose another way to sign in, which can't be
-    done while the entry exists. The homes aren't offered again, and the excluded
-    ones stay excluded. An account that Google reports no home for signs in too: the
-    entry exists, and the no-home repair covers it.
+    The form names the entry and offers both methods. Excluded homes stay excluded.
+    An account that Google reports no home for signs in too, since the existing
+    entry uses the no-home repair.
     """
     home_graph.return_value = homes
     hass.config_entries.async_update_entry(
         config_entry, title="Home", options={"excluded_homes": ["flat-id"]}
     )
     result = await config_entry.start_reauth_flow(hass)
-    assert (result["type"], result["step_id"]) == (FlowResultType.MENU, "reauth")
-    assert result["menu_options"] == ["browser", "master_token"]
-    assert result["description_placeholders"] == {"name": "Home"}
+    assert (result["type"], result["step_id"]) == (
+        FlowResultType.FORM,
+        "reauth_confirm",
+    )
+    placeholders = result["description_placeholders"] or {}
+    assert placeholders["name"] == "Home"
     translations = await async_get_translations(hass, "en", "config", [DOMAIN])
     assert translations[
-        f"component.{DOMAIN}.config.step.reauth.description"
-    ].format_map(result["description_placeholders"]) == (
+        f"component.{DOMAIN}.config.step.reauth_confirm.description"
+    ].format_map(placeholders) == (
         "Sign in again to the Google account used by Home. Your devices, entities "
         "and automations stay as they are. Until you do, your devices' entities can "
         "show out-of-date values or be unavailable."
     )
-
-    result = await hass.config_entries.flow.async_configure(
-        result["flow_id"], {"next_step_id": method}
-    )
-    assert result["step_id"] == f"reauth_{method}"
-    text = ENGLISH["config"]["step"][result["step_id"]]["description"]
-    assert "add the integration again" not in text
 
     result = await submit(hass, result, SIGN_IN_INPUT[method])
     await hass.async_block_till_done()
@@ -1080,6 +1081,93 @@ async def test_reauth(
     assert {android_id for _, android_id in sent_to_google(sign_in)} == {"android-id"}
     assert config_entry.options == {"excluded_homes": ["flat-id"]}
     mock_setup_entry.assert_awaited_once()
+    assert config_entry.state is ConfigEntryState.LOADED
+
+
+def reauth_method_field(result: ConfigFlowResult) -> dict[str, object]:
+    """Read the method selector sent to the frontend."""
+    fields = cast(
+        list[dict[str, object]],
+        probatio.to_field_list(
+            result["data_schema"], custom_serializer=cv.custom_serializer
+        ),
+    )
+    [method] = [field for field in fields if field["name"] == "sign_in_method"]
+    return method
+
+
+@pytest.mark.parametrize(
+    ("first", "second", "error"),
+    [
+        ("browser", "master_token", "oauth-token-invalid"),
+        ("master_token", "browser", "master-token-invalid"),
+    ],
+)
+async def test_reauth_switch_method(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    sign_in: Mock,
+    mock_setup_entry: AsyncMock,
+    first: str,
+    second: str,
+    error: str,
+) -> None:
+    """Switch methods on the same form after rejection and update the same entry."""
+    hass.config_entries.async_update_entry(
+        config_entry, options={"excluded_homes": ["flat-id"]}
+    )
+    saved_data = dict(config_entry.data)
+    saved_options = dict(config_entry.options)
+    result = await config_entry.start_reauth_flow(hass)
+    flow_id = result["flow_id"]
+    assert (result["type"], result["step_id"]) == (
+        FlowResultType.FORM,
+        "reauth_confirm",
+    )
+    method_field = reauth_method_field(result)
+    assert method_field["default"] == "browser"
+    selector = cast(dict[str, dict[str, object]], method_field["selector"])["select"]
+    assert selector["mode"] == "list"
+    assert selector["options"] == ["browser", "master_token"]
+    [first_field] = SIGN_IN_INPUT[first]
+    with pytest.raises(InvalidData) as missing:
+        await hass.config_entries.flow.async_configure(
+            flow_id, {"sign_in_method": first, **SIGN_IN_INPUT[second]}
+        )
+    assert first_field in missing.value.schema_errors
+
+    with google_answers({"Error": "BadAuthentication"}):
+        result = await hass.config_entries.flow.async_configure(
+            flow_id, {"sign_in_method": first, **SIGN_IN_INPUT[first]}
+        )
+
+    assert (result["type"], result["step_id"]) == (
+        FlowResultType.FORM,
+        "reauth_confirm",
+    )
+    assert result["errors"] == {first_field: error}
+    assert reauth_method_field(result)["default"] == first
+    assert result["flow_id"] == flow_id
+    assert hass.config_entries.async_entries(DOMAIN) == [config_entry]
+    assert config_entry.data == saved_data
+    assert config_entry.options == saved_options
+    assert sent_to_google(sign_in) == []
+    mock_setup_entry.assert_not_awaited()
+
+    # The frontend omits the hidden field. A client that includes a stale value
+    # still signs in with just the selected credential.
+    result = await hass.config_entries.flow.async_configure(
+        flow_id, {"sign_in_method": second, first_field: 7, **SIGN_IN_INPUT[second]}
+    )
+    await hass.async_block_till_done()
+
+    assert result["type"] is FlowResultType.ABORT
+    assert result["reason"] == "reauth_successful"
+    assert result["flow_id"] == flow_id
+    assert hass.config_entries.async_entries(DOMAIN) == [config_entry]
+    assert config_entry.data == {**saved_data, "master_token": NEW_MASTER_TOKEN}
+    assert config_entry.options == saved_options
+    mock_setup_entry.assert_awaited_once_with(hass, config_entry)
     assert config_entry.state is ConfigEntryState.LOADED
 
 
@@ -1111,18 +1199,16 @@ async def test_reauth_other_account(
     )
     saved = dict(config_entry.data)
     result = await config_entry.start_reauth_flow(hass)
-    result = await hass.config_entries.flow.async_configure(
-        result["flow_id"], {"next_step_id": method}
-    )
     sign_in.get_email.return_value = "other@example.com"
     sign_in.exchange_token.return_value = {"Token": OTHER_ACCOUNT_MASTER_TOKEN}
     result = await submit(hass, result, OTHER_ACCOUNT_INPUT[method])
 
     assert (result["type"], result["step_id"]) == (
         FlowResultType.FORM,
-        f"reauth_{method}",
+        "reauth_confirm",
     )
-    assert result["errors"] == {"base": "other-account"}
+    [credential] = SIGN_IN_INPUT[method]
+    assert result["errors"] == {credential: "other-account"}
     assert config_entry.data == saved
 
     sign_in.get_email.return_value = EMAIL
@@ -1166,9 +1252,7 @@ async def test_reauth_loaded_entry(
     with patch.object(
         hass.config_entries, "async_reload", wraps=hass.config_entries.async_reload
     ) as reload:
-        result = await hass.config_entries.flow.async_configure(
-            flow["flow_id"], {"next_step_id": "master_token"}
-        )
+        result = await hass.config_entries.flow.async_configure(flow["flow_id"])
         result = await submit(hass, result, SIGN_IN_INPUT["master_token"])
         await hass.async_block_till_done()
 
@@ -1339,7 +1423,7 @@ async def test_malformed_master_token_is_not_used_or_exposed(
 
     if method == "browser":
         message_key = f"browser-{error_key}"
-        assert result["errors"] == {"base": message_key}
+        assert result["errors"] == {("oauth_token" if reauth else "base"): message_key}
     else:
         message_key = error_key
         assert result["errors"] == {"master_token": message_key}

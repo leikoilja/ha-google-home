@@ -43,36 +43,17 @@
           "homes": "홈을 하나 이상 선택하세요. 나중에 Google 계정이 참여하게 되는 홈의 스피커와 디스플레이도 추가됩니다."
         }
       },
-      "reauth": {
+      "reauth_confirm": {
         "title": "다시 로그인",
         "description": "{name}에서 사용하는 Google 계정에 다시 로그인하세요. 기기, 엔티티, 자동화는 그대로 유지됩니다. 다시 로그인하기 전까지는 기기의 엔티티에 오래된 값이 표시되거나 엔티티를 사용할 수 없을 수 있습니다.",
-        "menu_options": {
-          "browser": "브라우저 로그인(권장)",
-          "master_token": "마스터 토큰"
-        },
-        "menu_option_descriptions": {
-          "browser": "컴퓨터의 브라우저에서 Google에 로그인한 다음 쿠키를 붙여넣으세요.",
-          "master_token": "이미 가지고 있는 마스터 토큰을 붙여넣으세요."
-        }
-      },
-      "reauth_browser": {
-        "title": "브라우저 로그인",
-        "description": "1. 컴퓨터에서 브라우저의 비공개 창(예: 시크릿 창)을 열고 {embedded_setup_url} 페이지에 접속하여 같은 Google 계정에 로그인하세요. 동의한 후에도 페이지가 계속 로드될 수 있으며, 이는 정상입니다.\n2. 브라우저의 개발자 도구를 열고 `accounts.google.com`의 쿠키를 찾으세요.\n3. `oauth_token` 쿠키의 값을 복사하여 아래에 바로 붙여넣으세요. 빠르게 만료될 수 있으며 한 번만 사용할 수 있습니다.\n\n단계별 안내: {browser_docs_url}",
         "data": {
-          "oauth_token": "oauth_token 쿠키"
-        },
-        "data_description": {
-          "oauth_token": "oauth2_4/로 시작합니다"
-        }
-      },
-      "reauth_master_token": {
-        "title": "마스터 토큰",
-        "description": "다른 도구 등을 통해 받은, 같은 Google 계정의 마스터 토큰을 붙여넣으세요.",
-        "data": {
+          "sign_in_method": "로그인 방법",
+          "oauth_token": "oauth_token 쿠키",
           "master_token": "Google 계정 마스터 토큰"
         },
         "data_description": {
-          "master_token": "aas_et/로 시작합니다"
+          "oauth_token": "1. 컴퓨터에서 브라우저의 비공개 창(예: 시크릿 창)을 열고 {embedded_setup_url} 페이지에 접속하여 같은 Google 계정에 로그인하세요. 동의한 후에도 페이지가 계속 로드될 수 있으며, 이는 정상입니다.\n2. 브라우저의 개발자 도구를 열고 `accounts.google.com`의 쿠키를 찾으세요.\n3. `oauth_token` 쿠키의 값을 복사하여 이 필드에 바로 붙여넣으세요. 빠르게 만료될 수 있으며 한 번만 사용할 수 있습니다.\n\n단계별 안내: {browser_docs_url}\n\noauth2_4/로 시작합니다",
+          "master_token": "다른 도구 등을 통해 받은, 같은 Google 계정의 마스터 토큰을 붙여넣으세요.\n\naas_et/로 시작합니다"
         }
       }
     },
@@ -429,6 +410,12 @@
         "60": "60초",
         "90": "90초",
         "120": "120초"
+      }
+    },
+    "sign_in_method": {
+      "options": {
+        "browser": "브라우저 로그인(권장)",
+        "master_token": "마스터 토큰"
       }
     }
   }

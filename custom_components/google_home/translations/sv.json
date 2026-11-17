@@ -43,36 +43,17 @@
           "homes": "Markera minst ett hem. Högtalare och skärmar i hem som ditt konto senare blir medlem i läggs också till."
         }
       },
-      "reauth": {
+      "reauth_confirm": {
         "title": "Logga in igen",
         "description": "Logga in igen på det Google-konto som {name} använder. Dina enheter, entiteter och automatiseringar förblir som de är. Tills dess kan entiteterna för dina enheter visa inaktuella värden eller vara otillgängliga.",
-        "menu_options": {
-          "browser": "Inloggning via webbläsare (rekommenderas)",
-          "master_token": "Master token"
-        },
-        "menu_option_descriptions": {
-          "browser": "Logga in på Google i en webbläsare på en dator och klistra sedan in en cookie.",
-          "master_token": "Klistra in en master token som du redan har."
-        }
-      },
-      "reauth_browser": {
-        "title": "Inloggning via webbläsare",
-        "description": "1. Öppna {embedded_setup_url} i ett privat webbläsarfönster på en dator och logga in på samma Google-konto. När du har godkänt kan sidan fortsätta att laddas. Det är normalt.\n2. Öppna webbläsarens utvecklarverktyg och leta upp cookies för `accounts.google.com`.\n3. Kopiera värdet för cookien `oauth_token` och klistra in det nedan direkt. Det kan snabbt upphöra att gälla och kan bara användas en gång.\n\nStegvisa instruktioner: {browser_docs_url}",
         "data": {
-          "oauth_token": "Cookien oauth_token"
-        },
-        "data_description": {
-          "oauth_token": "Börjar med oauth2_4/"
-        }
-      },
-      "reauth_master_token": {
-        "title": "Master token",
-        "description": "Klistra in en master token för samma Google-konto, till exempel en som du har fått med ett annat verktyg.",
-        "data": {
+          "sign_in_method": "Inloggningsmetod",
+          "oauth_token": "Cookien oauth_token",
           "master_token": "Master token för Google-kontot"
         },
         "data_description": {
-          "master_token": "Börjar med aas_et/"
+          "oauth_token": "1. Öppna {embedded_setup_url} i ett privat webbläsarfönster på en dator och logga in på samma Google-konto. När du har godkänt kan sidan fortsätta att laddas. Det är normalt.\n2. Öppna webbläsarens utvecklarverktyg och leta upp cookies för `accounts.google.com`.\n3. Kopiera värdet för cookien `oauth_token` och klistra in det direkt i det här fältet. Det kan snabbt upphöra att gälla och kan bara användas en gång.\n\nStegvisa instruktioner: {browser_docs_url}\n\nBörjar med oauth2_4/",
+          "master_token": "Klistra in en master token för samma Google-konto, till exempel en som du har fått med ett annat verktyg.\n\nBörjar med aas_et/"
         }
       }
     },
@@ -429,6 +410,12 @@
         "60": "60 sekunder",
         "90": "90 sekunder",
         "120": "120 sekunder"
+      }
+    },
+    "sign_in_method": {
+      "options": {
+        "browser": "Inloggning via webbläsare (rekommenderas)",
+        "master_token": "Master token"
       }
     }
   }

@@ -9,6 +9,7 @@ from aiohttp import ClientError, ClientResponseError
 from glocaltokens.exceptions import AuthenticationError
 import probatio
 
+from homeassistant import data_entry_flow
 from homeassistant.config_entries import (
     SOURCE_REAUTH,
     ConfigEntry,
@@ -22,7 +23,6 @@ from homeassistant.config_entries import (
 )
 from homeassistant.const import CONF_MAC, CONF_NAME, UnitOfTime
 from homeassistant.core import callback
-from homeassistant.data_entry_flow import section
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.selector import (
     SelectOptionDict,
@@ -68,7 +68,8 @@ STEP_HOMES = "homes"
 # The section of the options form with the Bluetooth options
 SECTION_BLUETOOTH = "bluetooth"
 STEP_MASTER_TOKEN = "master_token"
-STEP_REAUTH = "reauth"
+STEP_REAUTH_CONFIRM = "reauth_confirm"
+CONF_SIGN_IN_METHOD = "sign_in_method"
 
 OAUTH_TOKEN_PREFIX = "oauth2_4/"
 
@@ -122,23 +123,22 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
         self, _entry_data: Mapping[str, object]
     ) -> ConfigFlowResult:
         """Ask how to sign in again when Google rejects the saved master token."""
-        return self.async_show_menu(
-            step_id=STEP_REAUTH,
-            menu_options=[STEP_BROWSER, STEP_MASTER_TOKEN],
-            description_placeholders={"name": self._get_reauth_entry().title},
-        )
+        if versions := unsupported_ha_version():
+            return self.async_abort(
+                reason="unsupported-ha-version", description_placeholders=versions
+            )
+        return await self.async_step_reauth_confirm()
 
-    async def async_step_reauth_browser(
+    async def async_step_reauth_confirm(
         self, user_input: dict[str, str] | None = None
     ) -> ConfigFlowResult:
-        """Sign in again with the oauth_token cookie from a browser sign-in."""
+        """Sign in again with the method selected on the form."""
+        if (
+            user_input is not None
+            and user_input[CONF_SIGN_IN_METHOD] == STEP_MASTER_TOKEN
+        ):
+            return await self.async_step_master_token(user_input)
         return await self.async_step_browser(user_input)
-
-    async def async_step_reauth_master_token(
-        self, user_input: dict[str, str] | None = None
-    ) -> ConfigFlowResult:
-        """Sign in again with an existing master token."""
-        return await self.async_step_master_token(user_input)
 
     async def async_step_browser(
         self, user_input: dict[str, str] | None = None
@@ -166,11 +166,7 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
                         )
                     error = "other-account"
                 errors["base"] = error
-        return self._show_form(
-            STEP_BROWSER,
-            {probatio.Required(CONF_OAUTH_TOKEN): str},
-            errors,
-        )
+        return self._show_form(STEP_BROWSER, CONF_OAUTH_TOKEN, errors)
 
     async def async_step_master_token(
         self, user_input: dict[str, str] | None = None
@@ -200,11 +196,7 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
                         )
                     error = "other-account"
                 errors["base"] = error
-        return self._show_form(
-            STEP_MASTER_TOKEN,
-            {probatio.Required(CONF_MASTER_TOKEN): str},
-            errors,
-        )
+        return self._show_form(STEP_MASTER_TOKEN, CONF_MASTER_TOKEN, errors)
 
     async def _create_entry(
         self,
@@ -301,19 +293,46 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
     def _show_form(
         self,
         step_id: str,
-        schema: dict[probatio.Marker, type],
+        credential: str,
         errors: dict[str, str],
     ) -> ConfigFlowResult:
         """Show the form of one sign-in method."""
-        if self.source == SOURCE_REAUTH:
-            # The same form, with text that doesn't suggest adding the integration
-            # again: closing the window keeps the sign-in open
-            step_id = f"{STEP_REAUTH}_{step_id}"
         placeholders = DESCRIPTION_PLACEHOLDERS | self._token_diagnostics
         self._token_diagnostics.clear()
+        if self.source == SOURCE_REAUTH:
+            placeholders["name"] = self._get_reauth_entry().title
+            schema = probatio.Schema(
+                {
+                    probatio.Required(
+                        CONF_SIGN_IN_METHOD, default=step_id
+                    ): SelectSelector(
+                        SelectSelectorConfig(
+                            options=[STEP_BROWSER, STEP_MASTER_TOKEN],
+                            mode=SelectSelectorMode.LIST,
+                            translation_key=CONF_SIGN_IN_METHOD,
+                        )
+                    ),
+                    data_entry_flow.Required(
+                        CONF_OAUTH_TOKEN,
+                        visible={"field": CONF_SIGN_IN_METHOD, "value": STEP_BROWSER},
+                    ): str,
+                    data_entry_flow.Required(
+                        CONF_MASTER_TOKEN,
+                        visible={
+                            "field": CONF_SIGN_IN_METHOD,
+                            "value": STEP_MASTER_TOKEN,
+                        },
+                    ): str,
+                }
+            )
+            step_id = STEP_REAUTH_CONFIRM
+            if "base" in errors:
+                errors = {credential: errors["base"]}
+        else:
+            schema = probatio.Schema({probatio.Required(credential): str})
         return self.async_show_form(
             step_id=step_id,
-            data_schema=probatio.Schema(schema),
+            data_schema=schema,
             errors=errors,
             description_placeholders=placeholders,
         )
@@ -446,25 +465,27 @@ class GoogleHomeOptionsFlowHandler(OptionsFlow):
         }
         # Under a heading of their own, so they don't run on from the homes. The
         # frontend shows a section's default, not the defaults of its fields.
-        schema[probatio.Optional(SECTION_BLUETOOTH, default=bluetooth)] = section(
-            probatio.Schema(
-                {
-                    probatio.Optional(
-                        CONF_BLUETOOTH_TRACKING,
-                        default=bluetooth[CONF_BLUETOOTH_TRACKING],
-                    ): bool,
-                    probatio.Optional(
-                        CONF_BLUETOOTH_EXCLUDED,
-                        default=bluetooth[CONF_BLUETOOTH_EXCLUDED],
-                    ): SelectSelector(
-                        SelectSelectorConfig(
-                            options=self._speaker_options(
-                                bluetooth[CONF_BLUETOOTH_EXCLUDED]
-                            ),
-                            multiple=True,
-                        )
-                    ),
-                }
+        schema[probatio.Optional(SECTION_BLUETOOTH, default=bluetooth)] = (
+            data_entry_flow.section(
+                probatio.Schema(
+                    {
+                        probatio.Optional(
+                            CONF_BLUETOOTH_TRACKING,
+                            default=bluetooth[CONF_BLUETOOTH_TRACKING],
+                        ): bool,
+                        probatio.Optional(
+                            CONF_BLUETOOTH_EXCLUDED,
+                            default=bluetooth[CONF_BLUETOOTH_EXCLUDED],
+                        ): SelectSelector(
+                            SelectSelectorConfig(
+                                options=self._speaker_options(
+                                    bluetooth[CONF_BLUETOOTH_EXCLUDED]
+                                ),
+                                multiple=True,
+                            )
+                        ),
+                    }
+                )
             )
         )
         return self.async_show_form(
