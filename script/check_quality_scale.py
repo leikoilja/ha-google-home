@@ -6,6 +6,9 @@ hassfest's quality scale code from the core release of the installed
 homeassistant, which `uv run` keeps at the version pyproject.toml pins. Every
 rule must be listed, in core's order, as done or as exempt with a comment, and
 the rules marked done must pass core's validators.
+
+Set HA_QUALITY_SCALE_CACHE_DIR to keep and reuse the archive for the installed
+version, as CI does.
 """
 
 from datetime import UTC, datetime
@@ -15,6 +18,7 @@ from http.client import HTTPException
 from importlib import import_module, metadata
 import os
 from pathlib import Path
+from shutil import copyfileobj
 import sys
 import tarfile
 import tempfile
@@ -239,8 +243,15 @@ def download_core(version: str, destination: Path) -> None:
     try:
         for backoff in (1, 2, None):
             try:
-                with urllib.request.urlopen(url, timeout=60) as response:
-                    destination.write_bytes(response.read())
+                with (
+                    urllib.request.urlopen(url, timeout=60) as response,
+                    destination.open("wb") as file,
+                ):
+                    copyfileobj(response, file)
+                    length = response.headers.get("Content-Length")
+                    received = file.tell()
+                    if length is not None and received != int(length):
+                        raise OSError(f"expected {length} bytes, downloaded {received}")
             except HTTPError as err:
                 with err:
                     if backoff is None or err.code not in {429, 500, 502, 503, 504}:
@@ -252,7 +263,7 @@ def download_core(version: str, destination: Path) -> None:
                 remaining_wait -= delay
             else:
                 return
-    except (OSError, HTTPException) as err:
+    except (OSError, HTTPException, ValueError) as err:
         sys.exit(f"Cannot download Home Assistant {version}'s source from {url}: {err}")
 
 

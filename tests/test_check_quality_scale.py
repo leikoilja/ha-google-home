@@ -8,6 +8,7 @@ import time
 from unittest.mock import Mock, call
 from urllib.error import HTTPError
 import urllib.request
+from urllib.response import addinfourl
 
 import pytest
 
@@ -28,6 +29,14 @@ def archive_for(version: str) -> bytes:
     return data.getvalue()
 
 
+def archive_response(data: bytes, *, length: int | None = None) -> addinfourl:
+    """Return the archive bytes as an HTTP response with an optional length."""
+    headers = Message()
+    if length is not None:
+        headers["Content-Length"] = str(length)
+    return addinfourl(BytesIO(data), headers, URL)
+
+
 def test_reuse_pristine_archive_only_for_exact_version(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -35,7 +44,12 @@ def test_reuse_pristine_archive_only_for_exact_version(
     beta = "2026.11.0b1"
     stable_archive = archive_for(VERSION)
     beta_archive = archive_for(beta)
-    download = Mock(side_effect=[BytesIO(stable_archive), BytesIO(beta_archive)])
+    download = Mock(
+        side_effect=[
+            archive_response(stable_archive, length=len(stable_archive)),
+            archive_response(beta_archive),
+        ]
+    )
     monkeypatch.setattr(urllib.request, "urlopen", download)
     cache = tmp_path / "cache"
 
@@ -80,11 +94,29 @@ def test_invalid_download_is_not_cached(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, data: bytes, error: str
 ) -> None:
     """An extractable tar member does not make a damaged download cacheable."""
-    download = Mock(return_value=BytesIO(data))
+    download = Mock(return_value=archive_response(data))
     monkeypatch.setattr(urllib.request, "urlopen", download)
     cache = tmp_path / "cache"
 
     with pytest.raises(SystemExit, match=f"Cannot extract Home Assistant .*{error}"):
+        check_quality_scale.extract_core(VERSION, tmp_path / "source", cache)
+
+    assert not list(cache.iterdir())
+
+
+def test_response_shorter_than_declared_length_is_not_cached(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A valid gzip stream can still be the prefix of an incomplete response."""
+    data = archive_for(VERSION)
+    expected_length = len(data) + 64
+    download = Mock(return_value=archive_response(data, length=expected_length))
+    monkeypatch.setattr(urllib.request, "urlopen", download)
+    cache = tmp_path / "cache"
+
+    with pytest.raises(
+        SystemExit, match=f"expected {expected_length} bytes, downloaded {len(data)}"
+    ):
         check_quality_scale.extract_core(VERSION, tmp_path / "source", cache)
 
     assert not list(cache.iterdir())
@@ -119,7 +151,10 @@ def test_download_retries(
     """Retry transient errors within both limits and report the final HTTP error."""
     data = archive_for(VERSION)
     download = Mock(
-        side_effect=[*(http_error(*response) for response in responses), BytesIO(data)]
+        side_effect=[
+            *(http_error(*response) for response in responses),
+            archive_response(data),
+        ]
     )
     sleep = Mock()
     monkeypatch.setattr(urllib.request, "urlopen", download)
