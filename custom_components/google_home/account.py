@@ -6,6 +6,7 @@ import ipaddress
 import json
 import logging
 import math
+import re
 from time import monotonic
 from typing import TYPE_CHECKING, Final
 
@@ -13,13 +14,12 @@ from aiohttp import ClientError, ClientResponseError, ClientSession
 from ghome_local_api import GoogleHomeLocalClient, RequestError
 from glocaltokens.client import Device, GLocalAuthenticationTokens
 from glocaltokens.exceptions import AuthenticationError, GLocalTokensError
-from glocaltokens.utils.token import is_aas_et
 
 from homeassistant.core import HomeAssistant
 
 from .const import FETCH_DEVICES_INTERVAL, FETCH_RETRY_DELAYS
 from .device_info import async_get_device_info
-from .exceptions import InvalidMasterToken
+from .exceptions import InvalidMasterToken, InvalidMasterTokenFormat
 from .mdns import FoundDevices
 from .models import GoogleHomeDevice
 
@@ -31,6 +31,21 @@ _LOGGER: logging.Logger = logging.getLogger(__package__)
 # Between fetches of Google's list, known hosts are asked at most this often for a
 # device that has no address
 KNOWN_HOSTS_INTERVAL: Final = 5 * 60  # sec
+
+
+def master_token_format_error(token: object) -> InvalidMasterTokenFormat | None:
+    """Reject malformed tokens without assuming an opaque payload's length.
+
+    Google's sign-in validates the token itself. glocaltokens' is_aas_et still
+    requires a fixed length, so it cannot check newer token formats here.
+    """
+    if not isinstance(token, str) or not token.startswith("aas_et/"):
+        return InvalidMasterTokenFormat("master-token-format", token)
+    if token == "aas_et/":
+        return InvalidMasterTokenFormat("master-token-empty", token)
+    if re.fullmatch(r"aas_et/[!-~]+", token) is None:
+        return InvalidMasterTokenFormat("master-token-characters", token)
+    return None
 
 
 def first_update_after(wait: float) -> str:
@@ -208,8 +223,8 @@ class GoogleAccountClient:
             master_token = await self._client.async_get_master_token()
         except AuthenticationError as error:
             raise InvalidMasterToken(str(error)) from error
-        if not is_aas_et(master_token):
-            raise InvalidMasterToken("Google gave a master token in an unknown format")
+        if format_error := master_token_format_error(master_token):
+            raise format_error
         return master_token
 
     async def async_get_access_token(self) -> str:

@@ -83,7 +83,9 @@
       "google-unreachable": "Impossibile raggiungere Google. Verifica che Home Assistant sia connesso a Internet, poi riprova.",
       "google-busy": "Google è occupato o sta limitando gli accessi. Attendi qualche minuto, poi accedi di nuovo.",
       "oauth-token-format": "Questo non è il cookie oauth_token. Il suo valore inizia con oauth2_4/.",
-      "master-token-format": "Un token master inizia con aas_et/ ed è lungo {token_length} caratteri. Copia il token completo.",
+      "master-token-format": "Il token master non inizia con aas_et/. Verifica il valore che hai incollato e prova ad accedere di nuovo. Lunghezza: {token_length} caratteri; prefisso riconosciuto: {token_prefix}.",
+      "master-token-empty": "Il token master non contiene alcun valore dopo aas_et/. Verifica il valore che hai incollato e prova ad accedere di nuovo. Lunghezza: {token_length} caratteri; prefisso riconosciuto: {token_prefix}.",
+      "master-token-characters": "Il token master contiene spazi, interruzioni di riga o caratteri non supportati. Verifica il valore che hai incollato e prova ad accedere di nuovo. Lunghezza: {token_length} caratteri; prefisso riconosciuto: {token_prefix}.",
       "other-account": "Hai effettuato l'accesso con un altro account Google, quindi non è stato modificato nulla. Accedi con l'account usato da questa integrazione. Per usare invece quell'altro account, elimina l'integrazione e aggiungila di nuovo.",
       "no-home-selected": "Scegli almeno una casa."
     },

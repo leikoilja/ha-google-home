@@ -83,7 +83,9 @@
       "google-unreachable": "Não foi possível estabelecer ligação à Google. Verifique se o Home Assistant está ligado à Internet e tente novamente.",
       "google-busy": "A Google está ocupada ou está a limitar os inícios de sessão. Aguarde alguns minutos e inicie sessão novamente.",
       "oauth-token-format": "Este não é o cookie oauth_token. O seu valor começa por oauth2_4/.",
-      "master-token-format": "Um token principal começa por aas_et/ e tem {token_length} caracteres. Copie o token completo.",
+      "master-token-format": "O token principal não começa por aas_et/. Verifique o valor que colou e tente iniciar sessão novamente. Comprimento: {token_length} caracteres; prefixo reconhecido: {token_prefix}.",
+      "master-token-empty": "O token principal não contém nenhum valor após aas_et/. Verifique o valor que colou e tente iniciar sessão novamente. Comprimento: {token_length} caracteres; prefixo reconhecido: {token_prefix}.",
+      "master-token-characters": "O token principal contém espaços, quebras de linha ou caracteres não suportados. Verifique o valor que colou e tente iniciar sessão novamente. Comprimento: {token_length} caracteres; prefixo reconhecido: {token_prefix}.",
       "other-account": "Iniciou sessão numa conta Google diferente, pelo que nada foi alterado. Inicie sessão com a conta que esta integração utiliza. Para passar a utilizar essa outra conta, elimine a integração e adicione-a novamente.",
       "no-home-selected": "Escolha pelo menos uma casa."
     },

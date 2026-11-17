@@ -83,7 +83,9 @@
       "google-unreachable": "Couldn't reach Google. Check that Home Assistant is connected to the internet, then try again.",
       "google-busy": "Google is busy or is limiting sign-ins. Wait a few minutes, then sign in again.",
       "oauth-token-format": "This isn't the oauth_token cookie. Its value starts with oauth2_4/.",
-      "master-token-format": "A master token starts with aas_et/ and is {token_length} characters long. Copy the whole token.",
+      "master-token-format": "The master token does not start with aas_et/. Check the value you pasted and try signing in again. Length: {token_length} characters; recognized prefix: {token_prefix}.",
+      "master-token-empty": "The master token has no value after aas_et/. Check the value you pasted and try signing in again. Length: {token_length} characters; recognized prefix: {token_prefix}.",
+      "master-token-characters": "The master token contains spaces, line breaks or unsupported characters. Check the value you pasted and try signing in again. Length: {token_length} characters; recognized prefix: {token_prefix}.",
       "other-account": "You signed in to a different Google account, so nothing was changed. Sign in with the account this integration uses. To use the other account instead, delete the integration and add it again.",
       "no-home-selected": "Choose at least one home."
     },

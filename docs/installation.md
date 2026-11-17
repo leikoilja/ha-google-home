@@ -75,7 +75,9 @@ Home Assistant exchanges the cookie for a master token, names the entry after th
 
 ### Master token
 
-Select **Master token**, paste the token into **Google account master token**, and select **Submit**. A master token starts with `aas_et/` and is 223 characters long. The integration looks up which Google account the token belongs to and names the entry after it.
+Select **Master token**, paste the token into **Google account master token**, and select **Submit**. A master token starts with `aas_et/` and contains no spaces or line breaks. Copy the whole token; its length can vary. The integration looks up which Google account the token belongs to and names the entry after it.
+
+If the form reports a master-token format error, it shows why the token was rejected and its length. The recognized prefix is `aas_et` or `oauth2_4`; `-` means neither was recognized. This also applies to the master token Google returns after browser sign-in: get a new cookie and try again if that token has an unexpected format. Passing the format check does not mean Google will accept the token.
 
 ## Check that it works
 

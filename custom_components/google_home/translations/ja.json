@@ -83,7 +83,9 @@
       "google-unreachable": "Google に接続できませんでした。Home Assistant がインターネットに接続されていることを確認してから、もう一度お試しください。",
       "google-busy": "Google が混雑しているか、ログインを制限しています。数分待ってから、再度ログインしてください。",
       "oauth-token-format": "これは oauth_token Cookie ではありません。値は oauth2_4/ で始まります。",
-      "master-token-format": "マスタートークンは aas_et/ で始まる {token_length} 文字の文字列です。トークン全体をコピーしてください。",
+      "master-token-format": "マスタートークンが aas_et/ で始まっていません。貼り付けた値を確認し、もう一度ログインしてください。文字数: {token_length}、認識された接頭辞: {token_prefix}。",
+      "master-token-empty": "マスタートークンの aas_et/ の後に値がありません。貼り付けた値を確認し、もう一度ログインしてください。文字数: {token_length}、認識された接頭辞: {token_prefix}。",
+      "master-token-characters": "マスタートークンに空白、改行、または対応していない文字が含まれています。貼り付けた値を確認し、もう一度ログインしてください。文字数: {token_length}、認識された接頭辞: {token_prefix}。",
       "other-account": "別の Google アカウントでログインしたため、何も変更されていません。この統合で使用しているアカウントでログインしてください。代わりに今回ログインしたアカウントを使用するには、統合を削除して追加し直してください。",
       "no-home-selected": "家を 1 つ以上選択してください。"
     },

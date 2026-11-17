@@ -46,7 +46,7 @@ from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 
 # pylint: enable=wrong-import-order
 
-# A realistic master token: setup checks its length with is_aas_et()
+# An invented master token with the original 223-character format
 MASTER_TOKEN = "aas_et/" + "x" * 216
 ALARM_IDS = [
     "alarm/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51",

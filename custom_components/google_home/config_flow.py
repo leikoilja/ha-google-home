@@ -6,9 +6,7 @@ import logging
 from typing import NotRequired, TypedDict, cast, override
 
 from aiohttp import ClientError, ClientResponseError
-from glocaltokens import const as glocaltokens_const
 from glocaltokens.exceptions import AuthenticationError
-from glocaltokens.utils.token import is_aas_et
 import probatio
 
 from homeassistant.config_entries import (
@@ -34,6 +32,7 @@ from homeassistant.helpers.selector import (
 )
 
 from . import const, unsupported_ha_version
+from .account import master_token_format_error
 from .api import GlocaltokensApiClient
 from .bluetooth import IRK_LENGTH, parse_irk, parse_mac
 from .const import (
@@ -59,7 +58,7 @@ from .const import (
     NO_DEVICES_DOCS_URL,
     SUBENTRY_BLUETOOTH_DEVICE,
 )
-from .exceptions import InvalidMasterToken
+from .exceptions import InvalidMasterToken, InvalidMasterTokenFormat
 from .types import GoogleHomeConfigEntry, OptionsFlowDict
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
@@ -98,6 +97,7 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
         self._title = ""
         self._data: dict[str, str] = {}
         self._homes: dict[str, str] = {}
+        self._token_diagnostics: dict[str, str] = {}
 
     @override
     async def async_step_user(
@@ -179,8 +179,9 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
         errors: dict[str, str] = {}
         if user_input is not None:
             master_token = user_input[CONF_MASTER_TOKEN].strip()
-            if not is_aas_et(master_token):
-                errors[CONF_MASTER_TOKEN] = "master-token-format"
+            if format_error := master_token_format_error(master_token):
+                self._token_diagnostics = format_error.placeholders
+                errors[CONF_MASTER_TOKEN] = format_error.reason
             else:
                 client = GlocaltokensApiClient(
                     hass=self.hass,
@@ -314,9 +315,7 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
             errors=errors,
             description_placeholders={
                 **DESCRIPTION_PLACEHOLDERS,
-                "token_length": str(
-                    len("aas_et/") + glocaltokens_const.MASTER_TOKEN_LENGTH
-                ),
+                **self._token_diagnostics,
             },
         )
 
@@ -342,8 +341,9 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
         """
         return {SUBENTRY_BLUETOOTH_DEVICE: BluetoothDeviceSubentryFlow}
 
-    @staticmethod
-    async def _sign_in(client: GlocaltokensApiClient, rejected: str) -> str | None:
+    async def _sign_in(
+        self, client: GlocaltokensApiClient, rejected: str
+    ) -> str | None:
         """Return the form error saying why Google gives no master or access token.
 
         None means that Google gives both. rejected is the form's error for the cookie
@@ -356,6 +356,9 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
             # The form shows the error, so a traceback would only look like a bug.
             # A timeout has no message of its own.
             _LOGGER.warning("Failed to sign in: %s", str(error) or type(error).__name__)
+            if isinstance(error, InvalidMasterTokenFormat):
+                self._token_diagnostics = error.placeholders
+                return error.reason
             return _sign_in_error(error, rejected)
         return None
 

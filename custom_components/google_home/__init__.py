@@ -11,7 +11,6 @@ import logging
 from typing import cast
 
 from aiohttp import ClientSession
-from glocaltokens.utils.token import is_aas_et
 
 from homeassistant import const as ha_const
 from homeassistant.components import zeroconf
@@ -25,6 +24,7 @@ from homeassistant.helpers.typing import ConfigType
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from . import const
+from .account import master_token_format_error
 from .api import GlocaltokensApiClient
 from .bluetooth import BluetoothScanner, TrackerUpdate, bluetooth_now
 from .bluetooth_coordinator import BluetoothCoordinator
@@ -126,7 +126,10 @@ async def async_migrate_entry(
         data = dict(entry.data)
         # Setup has always saved a master token, and the integration signs in
         # with it from then on, so a saved app password is never used again.
-        if data.get(CONF_PASSWORD) and is_aas_et(data.get(CONF_MASTER_TOKEN) or ""):
+        if (
+            data.get(CONF_PASSWORD)
+            and master_token_format_error(data.get(CONF_MASTER_TOKEN)) is None
+        ):
             data[CONF_PASSWORD] = ""
             _LOGGER.debug("Cleared the app password, which is no longer used")
         hass.config_entries.async_update_entry(entry, data=data, minor_version=2)

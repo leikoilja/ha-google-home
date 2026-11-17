@@ -83,7 +83,9 @@
       "google-unreachable": "Nem sikerült elérni a Google-t. Ellenőrizze, hogy a Home Assistant csatlakozik-e az internethez, majd próbálja újra.",
       "google-busy": "A Google túlterhelt, vagy korlátozza a bejelentkezéseket. Várjon néhány percet, majd jelentkezzen be újra.",
       "oauth-token-format": "Ez nem az oauth_token cookie. Annak értéke oauth2_4/ kezdetű.",
-      "master-token-format": "A mestertoken aas_et/ kezdetű és {token_length} karakter hosszú. Másolja ki a teljes tokent.",
+      "master-token-format": "A mestertoken nem aas_et/ kezdetű. Ellenőrizze a beillesztett értéket, és próbáljon újra bejelentkezni. Hossz: {token_length} karakter; felismert előtag: {token_prefix}.",
+      "master-token-empty": "A mestertokenben nincs érték az aas_et/ után. Ellenőrizze a beillesztett értéket, és próbáljon újra bejelentkezni. Hossz: {token_length} karakter; felismert előtag: {token_prefix}.",
+      "master-token-characters": "A mestertoken szóközöket, sortöréseket vagy nem támogatott karaktereket tartalmaz. Ellenőrizze a beillesztett értéket, és próbáljon újra bejelentkezni. Hossz: {token_length} karakter; felismert előtag: {token_prefix}.",
       "other-account": "Egy másik Google-fiókba jelentkezett be, ezért semmi sem változott. Jelentkezzen be az integráció által használt fiókkal. Ha inkább azt a másik fiókot szeretné használni, törölje az integrációt, és adja hozzá újra.",
       "no-home-selected": "Válasszon ki legalább egy otthont."
     },

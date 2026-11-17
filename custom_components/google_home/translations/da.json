@@ -83,7 +83,9 @@
       "google-unreachable": "Kunne ikke oprette forbindelse til Google. Kontrollér, at Home Assistant har forbindelse til internettet, og prøv derefter igen.",
       "google-busy": "Google er overbelastet eller begrænser loginforsøg. Vent et par minutter, og log derefter ind igen.",
       "oauth-token-format": "Dette er ikke cookien oauth_token. Dens værdi starter med oauth2_4/.",
-      "master-token-format": "Et master token starter med aas_et/ og er {token_length} tegn langt. Kopiér hele tokenet.",
+      "master-token-format": "Master-tokenet starter ikke med aas_et/. Kontrollér den værdi, du har indsat, og prøv at logge ind igen. Længde: {token_length} tegn; genkendt præfiks: {token_prefix}.",
+      "master-token-empty": "Master-tokenet har ingen værdi efter aas_et/. Kontrollér den værdi, du har indsat, og prøv at logge ind igen. Længde: {token_length} tegn; genkendt præfiks: {token_prefix}.",
+      "master-token-characters": "Master-tokenet indeholder mellemrum, linjeskift eller ikke-understøttede tegn. Kontrollér den værdi, du har indsat, og prøv at logge ind igen. Længde: {token_length} tegn; genkendt præfiks: {token_prefix}.",
       "other-account": "Du loggede ind på en anden Google-konto, så der blev ikke ændret noget. Log ind med den konto, som denne integration bruger. Hvis du i stedet vil bruge den anden konto, skal du slette integrationen og tilføje den igen.",
       "no-home-selected": "Vælg mindst ét hjem."
     },
