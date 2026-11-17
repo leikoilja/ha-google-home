@@ -45,7 +45,7 @@
       },
       "reauth": {
         "title": "Logg på igjen",
-        "description": "Google godtar ikke lenger den lagrede påloggingen for {name}. Logg på den samme Google-kontoen igjen: enhetene, entitetene og automatiseringene dine forblir som de er. Inntil du gjør det, kan entitetene til enhetene dine vise utdaterte verdier eller være utilgjengelige.",
+        "description": "Logg på igjen med Google-kontoen som {name} bruker. Enhetene, entitetene og automatiseringene dine forblir som de er. Inntil du gjør det, kan entitetene til enhetene dine vise utdaterte verdier eller være utilgjengelige.",
         "menu_options": {
           "browser": "Pålogging i nettleseren (anbefalt)",
           "master_token": "Master token"
@@ -83,7 +83,14 @@
       "google-unreachable": "Kunne ikke nå Google. Kontroller at Home Assistant er koblet til internett, og prøv deretter igjen.",
       "google-busy": "Google har stor pågang eller begrenser pålogginger. Vent noen minutter, og logg deretter på igjen.",
       "oauth-token-format": "Dette er ikke informasjonskapselen oauth_token. Verdien starter med oauth2_4/.",
-      "master-token-format": "Et master token starter med aas_et/ og er {token_length} tegn langt. Kopier hele tokenet.",
+      "master-token-format": "Master-tokenet starter ikke med aas_et/. Kontroller verdien du limte inn, og prøv å logge på igjen. Lengde: {token_length} tegn; gjenkjent prefiks: {token_prefix}.",
+      "master-token-empty": "Master-tokenet har ingen verdi etter aas_et/. Kontroller verdien du limte inn, og prøv å logge på igjen. Lengde: {token_length} tegn; gjenkjent prefiks: {token_prefix}.",
+      "master-token-characters": "Master-tokenet inneholder mellomrom, linjeskift eller tegn som ikke støttes. Kontroller verdien du limte inn, og prøv å logge på igjen. Lengde: {token_length} tegn; gjenkjent prefiks: {token_prefix}.",
+      "master-token-too-short": "Master-tokenet må være minst 200 tegn langt. Kopier hele tokenet. Lengde: {token_length} tegn.",
+      "browser-master-token-format": "Master-tokenet som Google returnerte, starter ikke med aas_et/. Hent en ny informasjonskapsel og prøv igjen. Lengde: {token_length} tegn; gjenkjent prefiks: {token_prefix}.",
+      "browser-master-token-empty": "Master-tokenet som Google returnerte, har ingen verdi etter aas_et/. Hent en ny informasjonskapsel og prøv igjen. Lengde: {token_length} tegn; gjenkjent prefiks: {token_prefix}.",
+      "browser-master-token-characters": "Master-tokenet som Google returnerte, inneholder mellomrom, linjeskift eller tegn som ikke støttes. Hent en ny informasjonskapsel og prøv igjen. Lengde: {token_length} tegn; gjenkjent prefiks: {token_prefix}.",
+      "browser-master-token-too-short": "Master-tokenet som Google returnerte, er kortere enn 200 tegn. Hent en ny informasjonskapsel og prøv igjen. Lengde: {token_length} tegn.",
       "other-account": "Du logget på en annen Google-konto, så ingenting ble endret. Logg på med kontoen som denne integrasjonen bruker. For å bruke den andre kontoen i stedet, slett integrasjonen og legg den til på nytt.",
       "no-home-selected": "Velg minst ett hjem."
     },
@@ -202,6 +209,9 @@
     },
     "devices_not_rebooted": {
       "message": "Disse enhetene bekreftet ikke at de vil starte på nytt: {devices}. Kontroller at enhetene er på nett, og prøv igjen senere."
+    },
+    "saved_sign_in_invalid": {
+      "message": "De lagrede påloggingsopplysningene mangler eller er ugyldige. Logg på igjen."
     },
     "sign_in_rejected": {
       "message": "Google godtok ikke påloggingen ({reason}). Logg på igjen."

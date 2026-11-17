@@ -27,12 +27,12 @@ from homeassistant.config_entries import ConfigEntryState
 
 # pylint: enable=wrong-import-order
 
-# A realistic master token: setup checks its length with is_aas_et()
+# An invented master token with the original 223-character format
 MASTER_TOKEN = "aas_et/" + "x" * 216
 
 
 def make_entry(
-    data: dict[str, str], minor_version: int = 1, title: str = "Google Home"
+    data: dict[str, object], minor_version: int = 1, title: str = "Google Home"
 ) -> Mock:
     """Return a config entry as an older version saved it."""
     return Mock(version=1, minor_version=minor_version, data=data, title=title)
@@ -40,9 +40,21 @@ def make_entry(
 
 @pytest.mark.parametrize(
     ("master_token", "password"),
-    [(MASTER_TOKEN, ""), ("", "app-password"), ("not-a-token", "app-password")],
+    [
+        (MASTER_TOKEN, ""),
+        (" \taas_et/" + "n" * 192 + "\r\n", "app-password"),
+        (" \taas_et/" + "n" * 193 + "\r\n", ""),
+        ("aas_et/" + "n" * 236, ""),
+        ("aas_et/" + "n" * 310, ""),
+        ("", "app-password"),
+        ("not-a-token", "app-password"),
+        (None, "app-password"),
+        (123, "app-password"),
+        ("aas_et/", "app-password"),
+        ("aas_et/" + "x" * 100 + "\n" + "x" * 115, "app-password"),
+    ],
 )
-def test_migrate_clears_unused_password(master_token: str, password: str) -> None:
+def test_migrate_clears_unused_password(master_token: object, password: str) -> None:
     """Clear a saved app password only when a master token replaces it."""
     hass = Mock()
     entry = make_entry(
@@ -60,7 +72,9 @@ def test_migrate_clears_unused_password(master_token: str, password: str) -> Non
     kwargs = hass.config_entries.async_update_entry.call_args.kwargs
     assert kwargs["minor_version"] == 2
     assert kwargs["data"]["password"] == password
-    assert kwargs["data"]["master_token"] == master_token
+    assert kwargs["data"]["master_token"] == (
+        str(master_token).strip() if password == "" else master_token
+    )
 
 
 def test_migrate_skips_current_entries() -> None:

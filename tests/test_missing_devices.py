@@ -53,7 +53,7 @@ from .test_entity import home_assistant, no_registered_devices
 
 # pylint: enable=wrong-import-order
 
-# A realistic master token: setup checks its length with is_aas_et()
+# An invented master token with the original 223-character format
 MASTER_TOKEN = "aas_et/" + "x" * 216
 # glocaltokens returns only devices whose local auth token has this length
 LOCAL_AUTH_TOKEN = "x" * 108

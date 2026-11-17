@@ -52,9 +52,32 @@ jobs:
         run: |
           uvx prek run --hook-stage manual python-typing-update --all-files --show-diff-on-failure --color=always
 
+      - name: Read the installed Home Assistant version
+        id: ha-version
+        run: |
+          version=$(uv run --no-sync python -c 'from homeassistant.const import __version__; print(__version__)')
+          printf 'version=%s\n' "$version" >> "$GITHUB_OUTPUT"
+
+      - name: Restore Home Assistant source for the quality scale check
+        id: ha-source
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/ha-quality-scale/core-${{ steps.ha-version.outputs.version }}.tar.gz
+          key: ha-quality-scale-core-${{ steps.ha-version.outputs.version }}.tar.gz
+
       # Hassfest skips quality_scale.yaml for custom integrations
       - name: Check quality scale
-        run: uv run python script/check_quality_scale.py
+        env:
+          HA_QUALITY_SCALE_CACHE_DIR: ${{ runner.temp }}/ha-quality-scale
+        run: uv run --no-sync python script/check_quality_scale.py
+
+      # The checker validates the archive before putting it at this path.
+      - name: Save Home Assistant source for the quality scale check
+        if: ${{ !cancelled() && steps.ha-source.outcome == 'success' && steps.ha-source.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/ha-quality-scale/core-${{ steps.ha-version.outputs.version }}.tar.gz
+          key: ${{ steps.ha-source.outputs.cache-primary-key }}
 
       - name: Run tests
         run: uv run pytest -q --cov

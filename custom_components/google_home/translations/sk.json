@@ -45,7 +45,7 @@
       },
       "reauth": {
         "title": "Opätovné prihlásenie",
-        "description": "Google už neprijíma prihlasovacie údaje uložené pre {name}. Znova sa prihláste do toho istého účtu Google: vaše zariadenia, entity a automatizácie zostanú bez zmeny. Kým to neurobíte, entity vašich zariadení môžu zobrazovať neaktuálne hodnoty alebo byť nedostupné.",
+        "description": "Znova sa prihláste do účtu Google, ktorý používa {name}. Vaše zariadenia, entity a automatizácie zostanú bez zmeny. Kým to neurobíte, entity vašich zariadení môžu zobrazovať neaktuálne hodnoty alebo byť nedostupné.",
         "menu_options": {
           "browser": "Prihlásenie v prehliadači (odporúčané)",
           "master_token": "Hlavný token"
@@ -83,7 +83,14 @@
       "google-unreachable": "Nepodarilo sa pripojiť ku Googlu. Skontrolujte, či je Home Assistant pripojený k internetu, a skúste to znova.",
       "google-busy": "Google je preťažený alebo obmedzuje prihlasovanie. Počkajte niekoľko minút a potom sa znova prihláste.",
       "oauth-token-format": "Toto nie je súbor cookie oauth_token. Jeho hodnota sa začína oauth2_4/.",
-      "master-token-format": "Hlavný token sa začína aas_et/ a má {token_length} znakov. Skopírujte celý token.",
+      "master-token-format": "Hlavný token sa nezačína aas_et/. Skontrolujte vloženú hodnotu a skúste sa znova prihlásiť. Dĺžka: {token_length} znakov; rozpoznaná predpona: {token_prefix}.",
+      "master-token-empty": "Hlavný token za aas_et/ neobsahuje žiadnu hodnotu. Skontrolujte vloženú hodnotu a skúste sa znova prihlásiť. Dĺžka: {token_length} znakov; rozpoznaná predpona: {token_prefix}.",
+      "master-token-characters": "Hlavný token obsahuje medzery, zalomenia riadkov alebo nepodporované znaky. Skontrolujte vloženú hodnotu a skúste sa znova prihlásiť. Dĺžka: {token_length} znakov; rozpoznaná predpona: {token_prefix}.",
+      "master-token-too-short": "Hlavný token musí mať aspoň 200 znakov. Skopírujte celý token. Počet znakov: {token_length}.",
+      "browser-master-token-format": "Hlavný token vrátený Googlom sa nezačína na aas_et/. Získajte nový súbor cookie a skúste to znova. Počet znakov: {token_length}; rozpoznaná predpona: {token_prefix}.",
+      "browser-master-token-empty": "Hlavný token vrátený Googlom za aas_et/ neobsahuje žiadnu hodnotu. Získajte nový súbor cookie a skúste to znova. Dĺžka: {token_length} znakov; rozpoznaná predpona: {token_prefix}.",
+      "browser-master-token-characters": "Hlavný token vrátený Googlom obsahuje medzery, zalomenia riadkov alebo nepodporované znaky. Získajte nový súbor cookie a skúste to znova. Dĺžka: {token_length} znakov; rozpoznaná predpona: {token_prefix}.",
+      "browser-master-token-too-short": "Hlavný token vrátený Googlom má menej ako 200 znakov. Získajte nový súbor cookie a skúste to znova. Počet znakov: {token_length}.",
       "other-account": "Prihlásili ste sa do iného účtu Google, preto sa nič nezmenilo. Prihláste sa do účtu, ktorý táto integrácia používa. Ak chcete namiesto toho používať ten druhý účet, integráciu odstráňte a pridajte ju znova.",
       "no-home-selected": "Vyberte aspoň jednu domácnosť."
     },
@@ -202,6 +209,9 @@
     },
     "devices_not_rebooted": {
       "message": "Nasledujúce zariadenia nepotvrdili, že sa reštartujú: {devices}. Skontrolujte, či sú zariadenia online, a skúste to znova neskôr."
+    },
+    "saved_sign_in_invalid": {
+      "message": "Uložené prihlasovacie údaje chýbajú alebo sú neplatné. Prihláste sa znova."
     },
     "sign_in_rejected": {
       "message": "Google prihlásenie neprijal ({reason}). Prihláste sa znova."
