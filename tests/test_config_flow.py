@@ -836,7 +836,7 @@ async def test_sign_in_no_home(
     [
         pytest.param(
             "browser",
-            {"oauth_token": "SAPISID=abc"},
+            {"oauth_token": "fictional-cookie-marker"},
             {"oauth_token": "oauth-token-format"},
             id="oauth-token-format",
         ),
@@ -853,6 +853,7 @@ async def test_sign_in_format_error(
     hass: HomeAssistant,
     request: pytest.FixtureRequest,
     sign_in: Mock,
+    caplog: pytest.LogCaptureFixture,
     method: str,
     pasted: dict[str, str],
     error: dict[str, str],
@@ -863,14 +864,30 @@ async def test_sign_in_format_error(
     Pasting the right one then adds the integration, or saves its master token in the
     entry when signing in again.
     """
-    entry = request.getfixturevalue("config_entry") if reauth else None
+    caplog.set_level(logging.DEBUG, logger="custom_components.google_home")
+    entry: MockConfigEntry | None = (
+        request.getfixturevalue("config_entry") if reauth else None
+    )
+    saved_data = dict(entry.data) if entry is not None else None
     result = await submit(hass, await choose(hass, method, entry), pasted)
 
     step = "reauth_confirm" if reauth else method
     assert (result["type"], result["step_id"]) == (FlowResultType.FORM, step)
     assert result["errors"] == error
+    if method == "browser":
+        translations = await async_get_translations(hass, "en", "config", [DOMAIN])
+        assert translations[f"component.{DOMAIN}.config.error.oauth-token-format"] == (
+            "The cookie value must start with oauth2_4/. "
+            "Copy the whole value of the oauth_token cookie and paste it here."
+        )
+    [invalid_value] = pasted.values()
+    assert invalid_value not in caplog.text + str(result)
     assert sent_to_google(sign_in) == []
-    assert saved_master_tokens(hass) == ([MASTER_TOKEN] if reauth else [])
+    assert hass.config_entries.async_entries(DOMAIN) == (
+        [entry] if entry is not None else []
+    )
+    if entry is not None:
+        assert entry.data == saved_data
 
     await submit(hass, result, SIGN_IN_INPUT[method])
 
@@ -1440,10 +1457,6 @@ async def test_malformed_master_token_is_not_used_or_exposed(
     message = text[f"component.{DOMAIN}.config.error.{message_key}"].format_map(
         placeholders
     )
-    reasons = {
-        "master-token-empty": "The master token has no value after aas_et/.",
-        "master-token-characters": "The master token contains spaces, line breaks or unsupported characters.",
-    }
     if method == "browser":
         assert message.startswith("The master token Google returned ")
         assert (
@@ -1462,10 +1475,14 @@ async def test_malformed_master_token_is_not_used_or_exposed(
             "The master token must be at least 200 characters long. "
             f"Copy the whole token. Length: {len(token)} characters."
         )
+    elif error_key == "master-token-empty":
+        assert message == (
+            "Only aas_et/ was entered. Copy the whole master token and paste it here."
+        )
     else:
         assert message == (
-            f"{reasons[error_key]} Check the value you pasted and try signing in again. "
-            f"Length: {len(token)} characters; recognized prefix: {prefix}."
+            "The master token contains spaces, line breaks or unsupported characters. "
+            "Copy the whole token again and paste it here on one line."
         )
     sign_in.perform_oauth.assert_not_called()
     sign_in.exchange_token.assert_not_called()
