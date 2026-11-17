@@ -17,6 +17,10 @@ You need:
 
 ## Install the integration
 
+!!! warning "Google Keep Sync"
+
+    If you use [Google Keep Sync](https://github.com/watkins-matt/home-assistant-google-keep-sync), update it to 1.2.0 first.
+
 === "Marketplace (recommended)"
 
     The Marketplace replaced HACS in Home Assistant 2026.11. If you installed the integration with HACS, Home Assistant moved it to the Marketplace when you updated Home Assistant, so you don't need to install it again.

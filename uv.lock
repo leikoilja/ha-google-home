@@ -1054,7 +1054,7 @@ wheels = [
 
 [[package]]
 name = "glocaltokens"
-version = "2.0.0"
+version = "2.1.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiohttp" },
@@ -1063,9 +1063,9 @@ dependencies = [
     { name = "grpcio" },
     { name = "requests" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/6d/53/644459b967fe10229ecf1dea8848acef08f4133ff7ed7f49b0c1646dd977/glocaltokens-2.0.0.tar.gz", hash = "sha256:a2a09b694dab5fbe6ceb79177703f6550e2c3ae95b31bd22abb788e82df10db1", size = 201824, upload-time = "2026-11-02T14:15:32.755Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/5c/45/7157be6673b182ef72da93010c2b5791ed0a39c9ed8856e75eb6d9e7b030/glocaltokens-2.1.1.tar.gz", hash = "sha256:125d8358e49d798bbd063f13272c06c79f4fef0b1693f9b201152106820e7f71", size = 209237, upload-time = "2026-11-17T19:03:02.83Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/51/b2/bb6e7f1a816d7b28b7f7009ba7ee2c8fb51d3f5b5bc9c4aa85ccab491362/glocaltokens-2.0.0-py3-none-any.whl", hash = "sha256:a85bdda04bd422f81a395870fdea7ac804c80897e0ac369fa87c80c6bb44ca22", size = 30589, upload-time = "2026-11-02T14:15:31.314Z" },
+    { url = "https://files.pythonhosted.org/packages/39/e1/9bac6f1b2a46fe1f53acc7ed5cae5b3f47ba8217acb853d6939e9a4dc66c/glocaltokens-2.1.1-py3-none-any.whl", hash = "sha256:da2c21ebc3ecfbfc3a42f8b42c19f313dfbb6d8b10d251eae33a35bc52389851", size = 31081, upload-time = "2026-11-17T19:03:01.454Z" },
 ]
 
 [[package]]
@@ -1101,7 +1101,7 @@ docs = [
 requires-dist = [
     { name = "bluetooth-data-tools", specifier = ">=1.29.24" },
     { name = "ghome-local-api", specifier = "==0.1.0" },
-    { name = "glocaltokens", specifier = "==2.0.0" },
+    { name = "glocaltokens", specifier = "==2.1.1" },
     { name = "homeassistant", specifier = "==2026.11.0" },
 ]
 
@@ -1123,16 +1123,16 @@ docs = [{ name = "zensical", specifier = ">=0.0.70" }]
 
 [[package]]
 name = "gpsoauth"
-version = "2.0.0"
+version = "3.0.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pycryptodomex" },
     { name = "requests" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/1a/6a/f4fd84bcfd513d512711a2a14039ac431201c440c29a8f76af5584a34614/gpsoauth-2.0.0.tar.gz", hash = "sha256:9e3b765a6a4e0364dec1bc4157bd3ed7e5ec3066589e285d0b46986910aa6bd2", size = 6501, upload-time = "2025-07-04T01:30:24.296Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/65/dc/4a292981549195983f67151159fbaf3d40ab3ca5e5192250d030319d56ba/gpsoauth-3.0.1.tar.gz", hash = "sha256:bfae846b6c3104063eaccdf257ab61c6db6963e466415bdf1f7b0d376ac35014", size = 7984, upload-time = "2026-11-16T18:44:43.991Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/fe/7a/1dc1e06235732d1a1037640ec6aabd8fc18597a909848885376f1a0cffe3/gpsoauth-2.0.0-py3-none-any.whl", hash = "sha256:fb8bf9cb8b6e6bee1dbedbbbe8958ace71cddaccf5950e79b38c4d2ae9870641", size = 7362, upload-time = "2025-07-04T01:30:23.101Z" },
+    { url = "https://files.pythonhosted.org/packages/71/54/4bc2b711b9b575686d399e77b808a9fc6711117e2da1177bb16e8bab98ff/gpsoauth-3.0.1-py3-none-any.whl", hash = "sha256:560ff50afefab7f4027db542ad737d7de562f60b427dae22e78703ded7d2d892", size = 9078, upload-time = "2026-11-16T18:44:43.127Z" },
 ]
 
 [[package]]
