@@ -84,7 +84,7 @@ Home Assistant then reloads the integration with the new sign-in.
 Sign in again soon. Until you do, your devices can stop updating one by one, so what Home Assistant shows for them can be out of date, and new devices don't appear. After Home Assistant restarts, the integration doesn't start until you sign in again, and **Settings** > **Devices & services** > **Google Home** shows a message such as "Google didn't accept the sign-in (BadAuthentication). Sign in again."
 
 - If you closed the sign-in window, select **Reconfigure** again to continue where you left off.
-- To choose another way to sign in after you picked one, reload the integration: go to **Settings** > **Devices & services** > **Google Home**, open the **⋮** menu and select **Reload**. Sign-in starts again from the choice, but the integration stops until you finish, and its entities are unavailable.
+- To choose another way to sign in, turn on **Choose another sign-in method** and select **Submit** to return to the menu.
 - If Home Assistant says that you signed in to a different Google account, see ["You signed in to a different Google account"](#you-signed-in-to-a-different-google-account).
 
 ### Signing in again fails

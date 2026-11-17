@@ -59,9 +59,11 @@
         "title": "ブラウザでログイン",
         "description": "1. パソコンのブラウザでプライベート ウィンドウ（シークレット ウィンドウなど）を開き、{embedded_setup_url} にアクセスして同じ Google アカウントにログインします。同意した後もページの読み込みが続く場合がありますが、問題ありません。\n2. ブラウザの開発者ツールを開き、`accounts.google.com` の Cookie を探します。\n3. `oauth_token` Cookie の値をコピーして、すぐに下の欄に貼り付けてください。すぐに有効期限が切れることがあり、1 回しか使用できません。\n\n詳しい手順: {browser_docs_url}",
         "data": {
+          "switch_sign_in_method": "別のログイン方法を選ぶ",
           "oauth_token": "oauth_token Cookie"
         },
         "data_description": {
+          "switch_sign_in_method": "このスイッチをオンにしてフォームを送信すると、ログイン方法の選択メニューに戻ります。",
           "oauth_token": "oauth2_4/ で始まります"
         }
       },
@@ -69,9 +71,11 @@
         "title": "マスタートークン",
         "description": "別のツールなどで取得した、同じ Google アカウントのマスタートークンを貼り付けてください。",
         "data": {
+          "switch_sign_in_method": "別のログイン方法を選ぶ",
           "master_token": "Google アカウントのマスタートークン"
         },
         "data_description": {
+          "switch_sign_in_method": "このスイッチをオンにしてフォームを送信すると、ログイン方法の選択メニューに戻ります。",
           "master_token": "aas_et/ で始まります"
         }
       }

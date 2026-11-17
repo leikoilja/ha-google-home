@@ -22,9 +22,10 @@ from homeassistant.config_entries import (
 )
 from homeassistant.const import CONF_MAC, CONF_NAME, UnitOfTime
 from homeassistant.core import callback
-from homeassistant.data_entry_flow import section
+from homeassistant.data_entry_flow import Required, section
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.selector import (
+    BooleanSelector,
     SelectOptionDict,
     SelectSelector,
     SelectSelectorConfig,
@@ -69,6 +70,7 @@ STEP_HOMES = "homes"
 SECTION_BLUETOOTH = "bluetooth"
 STEP_MASTER_TOKEN = "master_token"
 STEP_REAUTH = "reauth"
+SWITCH_SIGN_IN_METHOD = "switch_sign_in_method"
 
 OAUTH_TOKEN_PREFIX = "oauth2_4/"
 
@@ -119,7 +121,7 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
         )
 
     async def async_step_reauth(
-        self, _entry_data: Mapping[str, object]
+        self, _entry_data: Mapping[str, object] | None = None
     ) -> ConfigFlowResult:
         """Ask how to sign in again when Google rejects the saved master token."""
         return self.async_show_menu(
@@ -129,24 +131,28 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
         )
 
     async def async_step_reauth_browser(
-        self, user_input: dict[str, str] | None = None
+        self, user_input: Mapping[str, str | bool] | None = None
     ) -> ConfigFlowResult:
         """Sign in again with the oauth_token cookie from a browser sign-in."""
+        if user_input and user_input.get(SWITCH_SIGN_IN_METHOD) is True:
+            return await self.async_step_reauth()
         return await self.async_step_browser(user_input)
 
     async def async_step_reauth_master_token(
-        self, user_input: dict[str, str] | None = None
+        self, user_input: Mapping[str, str | bool] | None = None
     ) -> ConfigFlowResult:
         """Sign in again with an existing master token."""
+        if user_input and user_input.get(SWITCH_SIGN_IN_METHOD) is True:
+            return await self.async_step_reauth()
         return await self.async_step_master_token(user_input)
 
     async def async_step_browser(
-        self, user_input: dict[str, str] | None = None
+        self, user_input: Mapping[str, str | bool] | None = None
     ) -> ConfigFlowResult:
         """Sign in with the oauth_token cookie from a browser sign-in."""
         errors: dict[str, str] = {}
         if user_input is not None:
-            oauth_token = user_input[CONF_OAUTH_TOKEN].strip()
+            oauth_token = cast(str, user_input[CONF_OAUTH_TOKEN]).strip()
             if not oauth_token.startswith(OAUTH_TOKEN_PREFIX):
                 errors[CONF_OAUTH_TOKEN] = "oauth-token-format"
             else:
@@ -166,19 +172,15 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
                         )
                     error = "other-account"
                 errors["base"] = error
-        return self._show_form(
-            STEP_BROWSER,
-            {probatio.Required(CONF_OAUTH_TOKEN): str},
-            errors,
-        )
+        return self._show_form(STEP_BROWSER, CONF_OAUTH_TOKEN, errors)
 
     async def async_step_master_token(
-        self, user_input: dict[str, str] | None = None
+        self, user_input: Mapping[str, str | bool] | None = None
     ) -> ConfigFlowResult:
         """Sign in with an existing master token."""
         errors: dict[str, str] = {}
         if user_input is not None:
-            master_token = user_input[CONF_MASTER_TOKEN].strip()
+            master_token = cast(str, user_input[CONF_MASTER_TOKEN]).strip()
             if format_error := master_token_format_error(master_token):
                 self._token_diagnostics = format_error.placeholders
                 errors[CONF_MASTER_TOKEN] = format_error.reason
@@ -200,11 +202,7 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
                         )
                     error = "other-account"
                 errors["base"] = error
-        return self._show_form(
-            STEP_MASTER_TOKEN,
-            {probatio.Required(CONF_MASTER_TOKEN): str},
-            errors,
-        )
+        return self._show_form(STEP_MASTER_TOKEN, CONF_MASTER_TOKEN, errors)
 
     async def _create_entry(
         self,
@@ -301,14 +299,23 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
     def _show_form(
         self,
         step_id: str,
-        schema: dict[probatio.Marker, type],
+        credential: str,
         errors: dict[str, str],
     ) -> ConfigFlowResult:
         """Show the form of one sign-in method."""
+        schema: dict[probatio.Marker, type | BooleanSelector]
         if self.source == SOURCE_REAUTH:
-            # The same form, with text that doesn't suggest adding the integration
-            # again: closing the window keeps the sign-in open
             step_id = f"{STEP_REAUTH}_{step_id}"
+            schema = {
+                probatio.Optional(
+                    SWITCH_SIGN_IN_METHOD, default=False
+                ): BooleanSelector(),
+                Required(
+                    credential, visible={"field": SWITCH_SIGN_IN_METHOD, "value": False}
+                ): str,
+            }
+        else:
+            schema = {probatio.Required(credential): str}
         placeholders = DESCRIPTION_PLACEHOLDERS | self._token_diagnostics
         self._token_diagnostics.clear()
         return self.async_show_form(

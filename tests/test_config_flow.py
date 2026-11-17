@@ -1083,6 +1083,77 @@ async def test_reauth(
     assert config_entry.state is ConfigEntryState.LOADED
 
 
+@pytest.mark.parametrize(
+    ("first", "second", "error"),
+    [
+        ("browser", "master_token", "oauth-token-invalid"),
+        ("master_token", "browser", "master-token-invalid"),
+    ],
+)
+async def test_reauth_switch_method(
+    hass: HomeAssistant,
+    config_entry: MockConfigEntry,
+    sign_in: Mock,
+    mock_setup_entry: AsyncMock,
+    first: str,
+    second: str,
+    error: str,
+) -> None:
+    """Switch forms after rejection and sign in again to the same entry."""
+    hass.config_entries.async_update_entry(
+        config_entry, options={"excluded_homes": ["flat-id"]}
+    )
+    saved_data = dict(config_entry.data)
+    saved_options = dict(config_entry.options)
+    result = await choose(hass, first, config_entry)
+    flow_id = result["flow_id"]
+
+    with google_answers({"Error": "BadAuthentication"}):
+        result = await submit(hass, result, SIGN_IN_INPUT[first])
+
+    assert (result["type"], result["step_id"]) == (
+        FlowResultType.FORM,
+        f"reauth_{first}",
+    )
+    assert result["errors"] == {"base": error}
+    assert config_entry.data == saved_data
+    assert config_entry.options == saved_options
+    mock_setup_entry.assert_not_awaited()
+
+    # Home Assistant omits the hidden credential field when the switch is on.
+    result = await hass.config_entries.flow.async_configure(
+        flow_id, {"switch_sign_in_method": True}
+    )
+
+    assert (result["type"], result["step_id"]) == (FlowResultType.MENU, "reauth")
+    assert result["flow_id"] == flow_id
+    assert result["menu_options"] == ["browser", "master_token"]
+    assert hass.config_entries.async_entries(DOMAIN) == [config_entry]
+    assert config_entry.data == saved_data
+    assert config_entry.options == saved_options
+    assert sent_to_google(sign_in) == []
+    mock_setup_entry.assert_not_awaited()
+
+    result = await submit(hass, result, {"next_step_id": second})
+    assert (result["type"], result["step_id"]) == (
+        FlowResultType.FORM,
+        f"reauth_{second}",
+    )
+    assert not result["errors"]
+
+    result = await submit(hass, result, SIGN_IN_INPUT[second])
+    await hass.async_block_till_done()
+
+    assert result["type"] is FlowResultType.ABORT
+    assert result["reason"] == "reauth_successful"
+    assert result["flow_id"] == flow_id
+    assert hass.config_entries.async_entries(DOMAIN) == [config_entry]
+    assert config_entry.data == {**saved_data, "master_token": NEW_MASTER_TOKEN}
+    assert config_entry.options == saved_options
+    mock_setup_entry.assert_awaited_once_with(hass, config_entry)
+    assert config_entry.state is ConfigEntryState.LOADED
+
+
 @pytest.mark.usefixtures("mock_setup_entry")
 @pytest.mark.parametrize(
     ("username", "title"),

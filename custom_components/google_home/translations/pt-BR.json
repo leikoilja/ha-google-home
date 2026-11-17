@@ -59,9 +59,11 @@
         "title": "Login pelo navegador",
         "description": "1. Em um computador, abra {embedded_setup_url} em uma janela anônima do navegador e faça login na mesma conta do Google. Depois de aceitar, a página pode continuar carregando; isso é esperado.\n2. Abra as ferramentas de desenvolvedor do navegador e encontre os cookies de `accounts.google.com`.\n3. Copie o valor do cookie `oauth_token` e cole abaixo imediatamente. Ele pode expirar rapidamente e funciona apenas uma vez.\n\nInstruções passo a passo: {browser_docs_url}",
         "data": {
+          "switch_sign_in_method": "Escolher outro método de login",
           "oauth_token": "Cookie oauth_token"
         },
         "data_description": {
+          "switch_sign_in_method": "Ative esta opção e envie o formulário para voltar ao menu de login.",
           "oauth_token": "Começa com oauth2_4/"
         }
       },
@@ -69,9 +71,11 @@
         "title": "Token mestre",
         "description": "Cole um token mestre da mesma conta do Google, por exemplo um que você obteve com outra ferramenta.",
         "data": {
+          "switch_sign_in_method": "Escolher outro método de login",
           "master_token": "Token mestre da conta do Google"
         },
         "data_description": {
+          "switch_sign_in_method": "Ative esta opção e envie o formulário para voltar ao menu de login.",
           "master_token": "Começa com aas_et/"
         }
       }

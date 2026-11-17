@@ -59,9 +59,11 @@
         "title": "Login via browser",
         "description": "1. Åbn {embedded_setup_url} i et privat browservindue på en computer, og log ind på den samme Google-konto. Når du har accepteret, bliver siden måske ved med at indlæse; det er forventet.\n2. Åbn browserens udviklerværktøjer, og find cookies for `accounts.google.com`.\n3. Kopiér værdien af cookien `oauth_token`, og indsæt den nedenfor med det samme. Den kan udløbe hurtigt og virker kun én gang.\n\nTrin-for-trin-vejledning: {browser_docs_url}",
         "data": {
+          "switch_sign_in_method": "Vælg en anden loginmetode",
           "oauth_token": "Cookien oauth_token"
         },
         "data_description": {
+          "switch_sign_in_method": "Slå denne indstilling til, og indsend formularen for at vende tilbage til loginmenuen.",
           "oauth_token": "Starter med oauth2_4/"
         }
       },
@@ -69,9 +71,11 @@
         "title": "Master token",
         "description": "Indsæt et master token til den samme Google-konto, f.eks. et, som du har fået med et andet værktøj.",
         "data": {
+          "switch_sign_in_method": "Vælg en anden loginmetode",
           "master_token": "Master token til Google-konto"
         },
         "data_description": {
+          "switch_sign_in_method": "Slå denne indstilling til, og indsend formularen for at vende tilbage til loginmenuen.",
           "master_token": "Starter med aas_et/"
         }
       }

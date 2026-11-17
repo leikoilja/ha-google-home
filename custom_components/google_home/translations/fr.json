@@ -59,9 +59,11 @@
         "title": "Connexion via le navigateur",
         "description": "1. Sur un ordinateur, ouvrez {embedded_setup_url} dans une fenêtre de navigation privée et connectez-vous au même compte Google. Une fois que vous avez accepté, la page peut continuer à charger ; c'est normal.\n2. Ouvrez les outils de développement du navigateur et trouvez les cookies de `accounts.google.com`.\n3. Copiez la valeur du cookie `oauth_token` et collez-la ci-dessous immédiatement. Il peut expirer rapidement et ne fonctionne qu'une seule fois.\n\nInstructions détaillées : {browser_docs_url}",
         "data": {
+          "switch_sign_in_method": "Choisir une autre méthode de connexion",
           "oauth_token": "Cookie oauth_token"
         },
         "data_description": {
+          "switch_sign_in_method": "Activez cette option et envoyez le formulaire pour revenir au menu de connexion.",
           "oauth_token": "Commence par oauth2_4/"
         }
       },
@@ -69,9 +71,11 @@
         "title": "Jeton maître",
         "description": "Collez un jeton maître du même compte Google, par exemple un jeton obtenu avec un autre outil.",
         "data": {
+          "switch_sign_in_method": "Choisir une autre méthode de connexion",
           "master_token": "Jeton maître du compte Google"
         },
         "data_description": {
+          "switch_sign_in_method": "Activez cette option et envoyez le formulaire pour revenir au menu de connexion.",
           "master_token": "Commence par aas_et/"
         }
       }

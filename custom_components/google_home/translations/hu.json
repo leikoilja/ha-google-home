@@ -59,9 +59,11 @@
         "title": "Bejelentkezés böngészővel",
         "description": "1. Számítógépen nyissa meg a {embedded_setup_url} címet a böngésző privát ablakában, például inkognitó ablakban, és jelentkezzen be ugyanabba a Google-fiókba. Az elfogadás után az oldal tovább töltődhet; ez normális.\n2. Nyissa meg a böngésző fejlesztői eszközeit, és keresse meg az `accounts.google.com` cookie-jait.\n3. Másolja ki az `oauth_token` cookie értékét, és azonnal illessze be alább. Gyorsan lejárhat, és csak egyszer használható.\n\nRészletes útmutató: {browser_docs_url}",
         "data": {
+          "switch_sign_in_method": "Másik bejelentkezési mód választása",
           "oauth_token": "oauth_token cookie"
         },
         "data_description": {
+          "switch_sign_in_method": "A bejelentkezési menübe való visszatéréshez kapcsolja be ezt a lehetőséget, majd küldje el az űrlapot.",
           "oauth_token": "oauth2_4/ kezdetű"
         }
       },
@@ -69,9 +71,11 @@
         "title": "Mestertoken",
         "description": "Illesszen be egy mestertokent ugyanahhoz a Google-fiókhoz, például egy másik eszközzel megszerzettet.",
         "data": {
+          "switch_sign_in_method": "Másik bejelentkezési mód választása",
           "master_token": "A Google-fiók mestertokenje"
         },
         "data_description": {
+          "switch_sign_in_method": "A bejelentkezési menübe való visszatéréshez kapcsolja be ezt a lehetőséget, majd küldje el az űrlapot.",
           "master_token": "aas_et/ kezdetű"
         }
       }

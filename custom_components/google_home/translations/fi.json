@@ -59,9 +59,11 @@
         "title": "Kirjautuminen selaimella",
         "description": "1. Avaa tietokoneella {embedded_setup_url} selaimen yksityisessä ikkunassa, esimerkiksi incognito-ikkunassa, ja kirjaudu sisään samalle Google-tilille. Hyväksymisen jälkeen sivu saattaa jatkaa lataamista; tämä on normaalia.\n2. Avaa selaimen kehittäjätyökalut ja etsi sivuston `accounts.google.com` evästeet.\n3. Kopioi `oauth_token`-evästeen arvo ja liitä se heti alle. Se voi vanhentua nopeasti ja toimii vain kerran.\n\nVaiheittaiset ohjeet: {browser_docs_url}",
         "data": {
+          "switch_sign_in_method": "Valitse toinen kirjautumistapa",
           "oauth_token": "oauth_token-eväste"
         },
         "data_description": {
+          "switch_sign_in_method": "Ota tämä valinta käyttöön ja lähetä lomake palataksesi kirjautumisvalikkoon.",
           "oauth_token": "Alkaa merkkijonolla oauth2_4/"
         }
       },
@@ -69,9 +71,11 @@
         "title": "Päätunniste",
         "description": "Liitä saman Google-tilin päätunniste, jonka olet saanut esimerkiksi toisella työkalulla.",
         "data": {
+          "switch_sign_in_method": "Valitse toinen kirjautumistapa",
           "master_token": "Google-tilin päätunniste"
         },
         "data_description": {
+          "switch_sign_in_method": "Ota tämä valinta käyttöön ja lähetä lomake palataksesi kirjautumisvalikkoon.",
           "master_token": "Alkaa merkkijonolla aas_et/"
         }
       }

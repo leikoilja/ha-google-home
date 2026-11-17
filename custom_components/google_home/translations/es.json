@@ -59,9 +59,11 @@
         "title": "Inicio de sesión en el navegador",
         "description": "1. En un ordenador, abre {embedded_setup_url} en una ventana de navegación privada e inicia sesión en la misma cuenta de Google. Después de aceptar, puede que la página siga cargando; es normal.\n2. Abre las herramientas para desarrolladores del navegador y busca las cookies de `accounts.google.com`.\n3. Copia el valor de la cookie `oauth_token` y pégalo abajo enseguida. Puede caducar rápidamente y solo funciona una vez.\n\nInstrucciones paso a paso (en inglés): {browser_docs_url}",
         "data": {
+          "switch_sign_in_method": "Elegir otro método de inicio de sesión",
           "oauth_token": "Cookie oauth_token"
         },
         "data_description": {
+          "switch_sign_in_method": "Activa esta opción y envía el formulario para volver al menú de inicio de sesión.",
           "oauth_token": "Empieza por oauth2_4/"
         }
       },
@@ -69,9 +71,11 @@
         "title": "Token maestro",
         "description": "Pega un token maestro de la misma cuenta de Google, por ejemplo uno que hayas obtenido con otra herramienta.",
         "data": {
+          "switch_sign_in_method": "Elegir otro método de inicio de sesión",
           "master_token": "Token maestro de Google"
         },
         "data_description": {
+          "switch_sign_in_method": "Activa esta opción y envía el formulario para volver al menú de inicio de sesión.",
           "master_token": "Empieza por aas_et/"
         }
       }

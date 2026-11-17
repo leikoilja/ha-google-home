@@ -59,9 +59,11 @@
         "title": "Início de sessão no navegador",
         "description": "1. Num computador, abra {embedded_setup_url} numa janela de navegação privada e inicie sessão na mesma conta Google. Depois de aceitar, a página pode continuar a carregar; isso é esperado.\n2. Abra as ferramentas de programador do navegador e procure os cookies de `accounts.google.com`.\n3. Copie o valor do cookie `oauth_token` e cole-o abaixo de imediato. Pode expirar rapidamente e só funciona uma vez.\n\nInstruções passo a passo: {browser_docs_url}",
         "data": {
+          "switch_sign_in_method": "Escolher outro método de início de sessão",
           "oauth_token": "Cookie oauth_token"
         },
         "data_description": {
+          "switch_sign_in_method": "Ative esta opção e envie o formulário para voltar ao menu de início de sessão.",
           "oauth_token": "Começa por oauth2_4/"
         }
       },
@@ -69,9 +71,11 @@
         "title": "Token principal",
         "description": "Cole um token principal da mesma conta Google, por exemplo um que tenha obtido com outra ferramenta.",
         "data": {
+          "switch_sign_in_method": "Escolher outro método de início de sessão",
           "master_token": "Token principal da conta Google"
         },
         "data_description": {
+          "switch_sign_in_method": "Ative esta opção e envie o formulário para voltar ao menu de início de sessão.",
           "master_token": "Começa por aas_et/"
         }
       }

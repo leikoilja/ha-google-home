@@ -59,9 +59,11 @@
         "title": "Conectare prin browser",
         "description": "1. Pe un computer, deschide {embedded_setup_url} într-o fereastră de navigare privată a browserului, de exemplu o fereastră incognito, și conectează-te la același cont Google. După ce accepți, pagina poate continua să se încarce; acest lucru este normal.\n2. Deschide instrumentele pentru dezvoltatori ale browserului și găsește cookie-urile pentru `accounts.google.com`.\n3. Copiază valoarea cookie-ului `oauth_token` și lipește-o imediat mai jos. Poate expira rapid și poate fi folosită o singură dată.\n\nInstrucțiuni pas cu pas: {browser_docs_url}",
         "data": {
+          "switch_sign_in_method": "Alege altă metodă de conectare",
           "oauth_token": "Cookie oauth_token"
         },
         "data_description": {
+          "switch_sign_in_method": "Activează această opțiune și trimite formularul pentru a reveni la meniul de conectare.",
           "oauth_token": "Începe cu oauth2_4/"
         }
       },
@@ -69,9 +71,11 @@
         "title": "Token principal",
         "description": "Lipește un token principal pentru același cont Google, de exemplu unul pe care l-ai obținut cu un alt instrument.",
         "data": {
+          "switch_sign_in_method": "Alege altă metodă de conectare",
           "master_token": "Token principal al contului Google"
         },
         "data_description": {
+          "switch_sign_in_method": "Activează această opțiune și trimite formularul pentru a reveni la meniul de conectare.",
           "master_token": "Începe cu aas_et/"
         }
       }

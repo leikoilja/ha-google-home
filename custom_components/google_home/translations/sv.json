@@ -59,9 +59,11 @@
         "title": "Inloggning via webbläsare",
         "description": "1. Öppna {embedded_setup_url} i ett privat webbläsarfönster på en dator och logga in på samma Google-konto. När du har godkänt kan sidan fortsätta att laddas. Det är normalt.\n2. Öppna webbläsarens utvecklarverktyg och leta upp cookies för `accounts.google.com`.\n3. Kopiera värdet för cookien `oauth_token` och klistra in det nedan direkt. Det kan snabbt upphöra att gälla och kan bara användas en gång.\n\nStegvisa instruktioner: {browser_docs_url}",
         "data": {
+          "switch_sign_in_method": "Välj en annan inloggningsmetod",
           "oauth_token": "Cookien oauth_token"
         },
         "data_description": {
+          "switch_sign_in_method": "Slå på det här alternativet och skicka formuläret för att gå tillbaka till inloggningsmenyn.",
           "oauth_token": "Börjar med oauth2_4/"
         }
       },
@@ -69,9 +71,11 @@
         "title": "Master token",
         "description": "Klistra in en master token för samma Google-konto, till exempel en som du har fått med ett annat verktyg.",
         "data": {
+          "switch_sign_in_method": "Välj en annan inloggningsmetod",
           "master_token": "Master token för Google-kontot"
         },
         "data_description": {
+          "switch_sign_in_method": "Slå på det här alternativet och skicka formuläret för att gå tillbaka till inloggningsmenyn.",
           "master_token": "Börjar med aas_et/"
         }
       }

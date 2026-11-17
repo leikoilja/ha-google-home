@@ -59,9 +59,11 @@
         "title": "Accesso dal browser",
         "description": "1. Su un computer, apri {embedded_setup_url} in una finestra di navigazione privata e accedi allo stesso account Google. Dopo aver accettato, la pagina potrebbe continuare a caricare; è normale.\n2. Apri gli strumenti per sviluppatori del browser e trova i cookie di `accounts.google.com`.\n3. Copia il valore del cookie `oauth_token` e incollalo subito qui sotto. Può scadere rapidamente e funziona una sola volta.\n\nIstruzioni passo passo: {browser_docs_url}",
         "data": {
+          "switch_sign_in_method": "Scegli un altro metodo di accesso",
           "oauth_token": "Cookie oauth_token"
         },
         "data_description": {
+          "switch_sign_in_method": "Attiva questa opzione e invia il modulo per tornare al menu di accesso.",
           "oauth_token": "Inizia con oauth2_4/"
         }
       },
@@ -69,9 +71,11 @@
         "title": "Token master",
         "description": "Incolla un token master dello stesso account Google, ad esempio uno ottenuto con un altro strumento.",
         "data": {
+          "switch_sign_in_method": "Scegli un altro metodo di accesso",
           "master_token": "Token master dell'account Google"
         },
         "data_description": {
+          "switch_sign_in_method": "Attiva questa opzione e invia il modulo per tornare al menu di accesso.",
           "master_token": "Inizia con aas_et/"
         }
       }

@@ -59,9 +59,11 @@
         "title": "Inloggen via de browser",
         "description": "1. Open op een computer {embedded_setup_url} in een privévenster en log in met hetzelfde Google-account. Nadat je hebt geaccepteerd, kan de pagina blijven laden; dat is normaal.\n2. Open de ontwikkelaarstools van de browser en zoek de cookies voor `accounts.google.com`.\n3. Kopieer de waarde van de cookie `oauth_token` en plak deze meteen hieronder. De cookie kan snel verlopen en werkt maar één keer.\n\nStapsgewijze instructies: {browser_docs_url}",
         "data": {
+          "switch_sign_in_method": "Kies een andere inlogmethode",
           "oauth_token": "Cookie oauth_token"
         },
         "data_description": {
+          "switch_sign_in_method": "Schakel deze optie in en verstuur het formulier om terug te gaan naar het inlogmenu.",
           "oauth_token": "Begint met oauth2_4/"
         }
       },
@@ -69,9 +71,11 @@
         "title": "Mastertoken",
         "description": "Plak een mastertoken voor hetzelfde Google-account, bijvoorbeeld een dat je met een ander hulpmiddel hebt verkregen.",
         "data": {
+          "switch_sign_in_method": "Kies een andere inlogmethode",
           "master_token": "Mastertoken van Google-account"
         },
         "data_description": {
+          "switch_sign_in_method": "Schakel deze optie in en verstuur het formulier om terug te gaan naar het inlogmenu.",
           "master_token": "Begint met aas_et/"
         }
       }

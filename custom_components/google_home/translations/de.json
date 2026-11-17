@@ -59,9 +59,11 @@
         "title": "Anmeldung im Browser",
         "description": "1. Öffne auf einem Computer {embedded_setup_url} in einem privaten Browserfenster und melde dich beim selben Google-Konto an. Nachdem du zugestimmt hast, lädt die Seite eventuell weiter; das ist normal.\n2. Öffne die Entwicklertools des Browsers und suche die Cookies für `accounts.google.com`.\n3. Kopiere den Wert des Cookies `oauth_token` und füge ihn sofort unten ein. Er kann schnell ablaufen und funktioniert nur einmal.\n\nSchritt-für-Schritt-Anleitung: {browser_docs_url}",
         "data": {
+          "switch_sign_in_method": "Andere Anmeldemethode wählen",
           "oauth_token": "Cookie oauth_token"
         },
         "data_description": {
+          "switch_sign_in_method": "Aktiviere diese Option und sende das Formular ab, um zum Anmeldemenü zurückzukehren.",
           "oauth_token": "Beginnt mit oauth2_4/"
         }
       },
@@ -69,9 +71,11 @@
         "title": "Master-Token",
         "description": "Füge ein Master-Token für dasselbe Google-Konto ein, zum Beispiel eines, das du mit einem anderen Tool erhalten hast.",
         "data": {
+          "switch_sign_in_method": "Andere Anmeldemethode wählen",
           "master_token": "Master-Token des Google-Kontos"
         },
         "data_description": {
+          "switch_sign_in_method": "Aktiviere diese Option und sende das Formular ab, um zum Anmeldemenü zurückzukehren.",
           "master_token": "Beginnt mit aas_et/"
         }
       }

@@ -59,9 +59,11 @@
         "title": "Přihlášení přes prohlížeč",
         "description": "1. Na počítači otevřete {embedded_setup_url} v anonymním okně prohlížeče a přihlaste se ke stejnému účtu Google. Po potvrzení souhlasu se stránka může stále načítat; to je v pořádku.\n2. Otevřete vývojářské nástroje prohlížeče a najděte soubory cookie pro `accounts.google.com`.\n3. Zkopírujte hodnotu souboru cookie `oauth_token` a ihned ji vložte níže. Její platnost může rychle vypršet a lze ji použít pouze jednou.\n\nPodrobný návod: {browser_docs_url}",
         "data": {
+          "switch_sign_in_method": "Zvolit jiný způsob přihlášení",
           "oauth_token": "Soubor cookie oauth_token"
         },
         "data_description": {
+          "switch_sign_in_method": "Zapněte tuto volbu a odešlete formulář. Vrátíte se do nabídky přihlášení.",
           "oauth_token": "Začíná na oauth2_4/"
         }
       },
@@ -69,9 +71,11 @@
         "title": "Hlavní token",
         "description": "Vložte hlavní token ke stejnému účtu Google, například takový, který jste získali pomocí jiného nástroje.",
         "data": {
+          "switch_sign_in_method": "Zvolit jiný způsob přihlášení",
           "master_token": "Hlavní token účtu Google"
         },
         "data_description": {
+          "switch_sign_in_method": "Zapněte tuto volbu a odešlete formulář. Vrátíte se do nabídky přihlášení.",
           "master_token": "Začíná na aas_et/"
         }
       }

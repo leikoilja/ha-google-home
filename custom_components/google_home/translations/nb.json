@@ -59,9 +59,11 @@
         "title": "Pålogging i nettleseren",
         "description": "1. Åpne {embedded_setup_url} i et privat nettleservindu på en datamaskin, og logg på den samme Google-kontoen. Etter at du har godtatt, kan siden fortsette å laste; det er forventet.\n2. Åpne utviklerverktøyene i nettleseren, og finn informasjonskapslene for `accounts.google.com`.\n3. Kopier verdien til informasjonskapselen `oauth_token`, og lim den inn nedenfor med en gang. Den kan utløpe raskt og fungerer bare én gang.\n\nTrinnvis veiledning: {browser_docs_url}",
         "data": {
+          "switch_sign_in_method": "Velg en annen påloggingsmetode",
           "oauth_token": "Informasjonskapselen oauth_token"
         },
         "data_description": {
+          "switch_sign_in_method": "Slå på denne bryteren og send inn skjemaet for å gå tilbake til påloggingsmenyen.",
           "oauth_token": "Starter med oauth2_4/"
         }
       },
@@ -69,9 +71,11 @@
         "title": "Master token",
         "description": "Lim inn et master token for den samme Google-kontoen, for eksempel et du har fått med et annet verktøy.",
         "data": {
+          "switch_sign_in_method": "Velg en annen påloggingsmetode",
           "master_token": "Master token for Google-kontoen"
         },
         "data_description": {
+          "switch_sign_in_method": "Slå på denne bryteren og send inn skjemaet for å gå tilbake til påloggingsmenyen.",
           "master_token": "Starter med aas_et/"
         }
       }
