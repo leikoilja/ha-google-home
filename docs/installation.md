@@ -17,9 +17,9 @@ You need:
 
 ## Install the integration
 
-If you use Google Keep Sync, update it to 1.2.0 first.
+!!! warning "Google Keep Sync"
 
-Starting with v1.18, Google Home uses glocaltokens 2.1.0, which requires gpsoauth 3.0.1 or newer. Google Keep Sync 1.1.0 requires gpsoauth 2.0.0, so the two cannot be installed together. [Google Keep Sync 1.2.0](https://github.com/watkins-matt/home-assistant-google-keep-sync/releases/tag/1.2.0) removes that conflict.
+    If you use [Google Keep Sync](https://github.com/watkins-matt/home-assistant-google-keep-sync), update it to 1.2.0 first.
 
 === "Marketplace (recommended)"
 
