@@ -357,7 +357,8 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
             _LOGGER.warning("Failed to sign in: %s", str(error) or type(error).__name__)
             if isinstance(error, InvalidMasterTokenFormat):
                 self._token_diagnostics = error.placeholders
-                return error.reason
+                # Only the browser flow can receive a different master token.
+                return f"browser-{error.reason}"
             return _sign_in_error(error, rejected)
         return None
 

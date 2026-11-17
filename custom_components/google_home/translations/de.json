@@ -45,7 +45,7 @@
       },
       "reauth": {
         "title": "Erneut anmelden",
-        "description": "Google akzeptiert die für {name} gespeicherte Anmeldung nicht mehr. Melde dich erneut beim selben Google-Konto an: Deine Geräte, Entitäten und Automationen bleiben unverändert. Bis dahin können die Entitäten deiner Geräte veraltete Werte anzeigen oder nicht verfügbar sein.",
+        "description": "Melde dich erneut bei dem Google-Konto an, das {name} verwendet. Deine Geräte, Entitäten und Automationen bleiben unverändert. Bis dahin können die Entitäten deiner Geräte veraltete Werte anzeigen oder nicht verfügbar sein.",
         "menu_options": {
           "browser": "Anmeldung im Browser (empfohlen)",
           "master_token": "Master-Token"
@@ -87,6 +87,10 @@
       "master-token-empty": "Das Master-Token enthält keinen Wert nach aas_et/. Prüfe den eingefügten Wert und versuche erneut, dich anzumelden. Länge: {token_length} Zeichen; erkanntes Präfix: {token_prefix}.",
       "master-token-characters": "Das Master-Token enthält Leerzeichen, Zeilenumbrüche oder nicht unterstützte Zeichen. Prüfe den eingefügten Wert und versuche erneut, dich anzumelden. Länge: {token_length} Zeichen; erkanntes Präfix: {token_prefix}.",
       "master-token-too-short": "Das Master-Token muss mindestens 200 Zeichen lang sein. Kopiere das vollständige Token. Länge: {token_length} Zeichen.",
+      "browser-master-token-format": "Das von Google zurückgegebene Master-Token beginnt nicht mit aas_et/. Hol dir ein neues Cookie und versuche es erneut. Länge: {token_length} Zeichen; erkanntes Präfix: {token_prefix}.",
+      "browser-master-token-empty": "Das von Google zurückgegebene Master-Token enthält keinen Wert nach aas_et/. Hol dir ein neues Cookie und versuche es erneut. Länge: {token_length} Zeichen; erkanntes Präfix: {token_prefix}.",
+      "browser-master-token-characters": "Das von Google zurückgegebene Master-Token enthält Leerzeichen, Zeilenumbrüche oder nicht unterstützte Zeichen. Hol dir ein neues Cookie und versuche es erneut. Länge: {token_length} Zeichen; erkanntes Präfix: {token_prefix}.",
+      "browser-master-token-too-short": "Das von Google zurückgegebene Master-Token ist kürzer als 200 Zeichen. Hol dir ein neues Cookie und versuche es erneut. Länge: {token_length} Zeichen.",
       "other-account": "Du hast dich bei einem anderen Google-Konto angemeldet, daher wurde nichts geändert. Melde dich mit dem Konto an, das diese Integration verwendet. Um stattdessen das andere Konto zu verwenden, lösche die Integration und füge sie erneut hinzu.",
       "no-home-selected": "Wähle mindestens ein Zuhause aus."
     },

@@ -727,8 +727,13 @@ async def test_malformed_browser_reply_through_home_assistant_session(
     # The old pin returns the reply to HA, which can report its format reason.
     # Since 2.1.1 the library rejects the reply before HA can inspect it.
     if package_version("glocaltokens") == "2.0.0":
-        error = "master-token-too-short"
-        assert placeholders["token_length"] == "199"
+        error = "browser-master-token-too-short"
+        assert translations[f"component.{DOMAIN}.config.error.{error}"].format_map(
+            placeholders
+        ) == (
+            "The master token Google returned is shorter than 200 characters. "
+            "Get a new cookie and try again. Length: 199 characters."
+        )
     else:
         error = "google-rejected"
         assert {"token_length", "token_prefix"}.isdisjoint(placeholders)
@@ -1044,6 +1049,14 @@ async def test_reauth(
     assert (result["type"], result["step_id"]) == (FlowResultType.MENU, "reauth")
     assert result["menu_options"] == ["browser", "master_token"]
     assert result["description_placeholders"] == {"name": "Home"}
+    translations = await async_get_translations(hass, "en", "config", [DOMAIN])
+    assert translations[
+        f"component.{DOMAIN}.config.step.reauth.description"
+    ].format_map(result["description_placeholders"]) == (
+        "Sign in again to the Google account used by Home. Your devices, entities "
+        "and automations stay as they are. Until you do, your devices' entities can "
+        "show out-of-date values or be unavailable."
+    )
 
     result = await hass.config_entries.flow.async_configure(
         result["flow_id"], {"next_step_id": method}
@@ -1324,15 +1337,18 @@ async def test_malformed_master_token_is_not_used_or_exposed(
     with returned_token:
         result = await submit(hass, form, user_input)
 
-    assert result["errors"] == {
-        "master_token" if method == "master_token" else "base": error_key
-    }
+    if method == "browser":
+        message_key = f"browser-{error_key}"
+        assert result["errors"] == {"base": message_key}
+    else:
+        message_key = error_key
+        assert result["errors"] == {"master_token": message_key}
     placeholders = result["description_placeholders"] or {}
     assert placeholders["token_length"] == str(len(token))
     assert placeholders["token_prefix"] == prefix
     assert len(prefix) <= 10
     text = await async_get_translations(hass, "en", "config", [DOMAIN])
-    message = text[f"component.{DOMAIN}.config.error.{error_key}"].format_map(
+    message = text[f"component.{DOMAIN}.config.error.{message_key}"].format_map(
         placeholders
     )
     reasons = {
@@ -1340,7 +1356,15 @@ async def test_malformed_master_token_is_not_used_or_exposed(
         "master-token-empty": "The master token has no value after aas_et/.",
         "master-token-characters": "The master token contains spaces, line breaks or unsupported characters.",
     }
-    if error_key == "master-token-too-short":
+    if method == "browser":
+        assert message.startswith("The master token Google returned ")
+        assert (
+            f"Get a new cookie and try again. Length: {len(token)} characters"
+            in message
+        )
+        if error_key != "master-token-too-short":
+            assert f"recognized prefix: {prefix}." in message
+    elif error_key == "master-token-too-short":
         assert message == (
             "The master token must be at least 200 characters long. "
             f"Copy the whole token. Length: {len(token)} characters."

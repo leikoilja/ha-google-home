@@ -45,7 +45,7 @@
       },
       "reauth": {
         "title": "Conectează-te din nou",
-        "description": "Google nu mai acceptă datele de conectare salvate pentru {name}. Conectează-te din nou la același cont Google: dispozitivele, entitățile și automatizările tale rămân neschimbate. Până atunci, entitățile dispozitivelor tale pot afișa valori neactualizate sau pot fi indisponibile.",
+        "description": "Conectează-te din nou la contul Google folosit de {name}. Dispozitivele, entitățile și automatizările tale rămân neschimbate. Până atunci, entitățile dispozitivelor tale pot afișa valori neactualizate sau pot fi indisponibile.",
         "menu_options": {
           "browser": "Conectare prin browser (recomandată)",
           "master_token": "Token principal"
@@ -87,6 +87,10 @@
       "master-token-empty": "Tokenul principal nu conține nicio valoare după aas_et/. Verifică valoarea pe care ai lipit-o și încearcă să te conectezi din nou. Lungime: {token_length} caractere; prefix recunoscut: {token_prefix}.",
       "master-token-characters": "Tokenul principal conține spații, întreruperi de rând sau caractere neacceptate. Verifică valoarea pe care ai lipit-o și încearcă să te conectezi din nou. Lungime: {token_length} caractere; prefix recunoscut: {token_prefix}.",
       "master-token-too-short": "Tokenul principal trebuie să conțină cel puțin 200 de caractere. Copiază întregul token. Număr de caractere: {token_length}.",
+      "browser-master-token-format": "Tokenul principal returnat de Google nu începe cu aas_et/. Obține un cookie nou și încearcă din nou. Număr de caractere: {token_length}; prefix recunoscut: {token_prefix}.",
+      "browser-master-token-empty": "Tokenul principal returnat de Google nu conține nicio valoare după aas_et/. Obține un cookie nou și încearcă din nou. Lungime: {token_length} caractere; prefix recunoscut: {token_prefix}.",
+      "browser-master-token-characters": "Tokenul principal returnat de Google conține spații, întreruperi de rând sau caractere neacceptate. Obține un cookie nou și încearcă din nou. Număr de caractere: {token_length}; prefix recunoscut: {token_prefix}.",
+      "browser-master-token-too-short": "Tokenul principal returnat de Google are mai puțin de 200 de caractere. Obține un cookie nou și încearcă din nou. Număr de caractere: {token_length}.",
       "other-account": "Te-ai conectat la un alt cont Google, așa că nu s-a modificat nimic. Conectează-te cu contul pe care îl folosește această integrare. Pentru a folosi în schimb celălalt cont, șterge integrarea și adaug-o din nou.",
       "no-home-selected": "Alege cel puțin o casă."
     },

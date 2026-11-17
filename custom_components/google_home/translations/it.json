@@ -45,7 +45,7 @@
       },
       "reauth": {
         "title": "Accedi di nuovo",
-        "description": "Google non accetta più le credenziali di accesso salvate per {name}. Accedi di nuovo allo stesso account Google: i tuoi dispositivi, le entità e le automazioni restano invariati. Finché non lo fai, le entità dei tuoi dispositivi potrebbero mostrare valori non aggiornati o non essere disponibili.",
+        "description": "Accedi di nuovo all'account Google utilizzato da {name}. I tuoi dispositivi, le entità e le automazioni restano invariati. Finché non lo fai, le entità dei tuoi dispositivi potrebbero mostrare valori non aggiornati o non essere disponibili.",
         "menu_options": {
           "browser": "Accesso dal browser (consigliato)",
           "master_token": "Token master"
@@ -87,6 +87,10 @@
       "master-token-empty": "Il token master non contiene alcun valore dopo aas_et/. Verifica il valore che hai incollato e prova ad accedere di nuovo. Lunghezza: {token_length} caratteri; prefisso riconosciuto: {token_prefix}.",
       "master-token-characters": "Il token master contiene spazi, interruzioni di riga o caratteri non supportati. Verifica il valore che hai incollato e prova ad accedere di nuovo. Lunghezza: {token_length} caratteri; prefisso riconosciuto: {token_prefix}.",
       "master-token-too-short": "Il token master deve contenere almeno 200 caratteri. Copia il token per intero. Lunghezza: {token_length} caratteri.",
+      "browser-master-token-format": "Il token master restituito da Google non inizia con aas_et/. Ottieni un nuovo cookie e riprova. Numero di caratteri: {token_length}; prefisso riconosciuto: {token_prefix}.",
+      "browser-master-token-empty": "Il token master restituito da Google non contiene alcun valore dopo aas_et/. Ottieni un nuovo cookie e riprova. Lunghezza: {token_length} caratteri; prefisso riconosciuto: {token_prefix}.",
+      "browser-master-token-characters": "Il token master restituito da Google contiene spazi, interruzioni di riga o caratteri non supportati. Ottieni un nuovo cookie e riprova. Lunghezza: {token_length} caratteri; prefisso riconosciuto: {token_prefix}.",
+      "browser-master-token-too-short": "Il token master restituito da Google contiene meno di 200 caratteri. Ottieni un nuovo cookie e riprova. Lunghezza: {token_length} caratteri.",
       "other-account": "Hai effettuato l'accesso con un altro account Google, quindi non è stato modificato nulla. Accedi con l'account usato da questa integrazione. Per usare invece quell'altro account, elimina l'integrazione e aggiungila di nuovo.",
       "no-home-selected": "Scegli almeno una casa."
     },

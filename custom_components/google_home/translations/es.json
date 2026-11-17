@@ -45,7 +45,7 @@
       },
       "reauth": {
         "title": "Volver a iniciar sesión",
-        "description": "Google ya no acepta los datos de inicio de sesión guardados para {name}. Vuelve a iniciar sesión en la misma cuenta de Google: tus dispositivos, entidades y automatizaciones se mantienen como están. Hasta que lo hagas, las entidades de tus dispositivos pueden mostrar valores desactualizados o no estar disponibles.",
+        "description": "Vuelve a iniciar sesión en la cuenta de Google que usa {name}. Tus dispositivos, entidades y automatizaciones se mantienen como están. Hasta que lo hagas, las entidades de tus dispositivos pueden mostrar valores desactualizados o no estar disponibles.",
         "menu_options": {
           "browser": "Inicio de sesión en el navegador (recomendado)",
           "master_token": "Token maestro"
@@ -87,6 +87,10 @@
       "master-token-empty": "El token maestro no tiene ningún valor después de aas_et/. Comprueba el valor que has pegado e intenta iniciar sesión de nuevo. Longitud: {token_length} caracteres; prefijo reconocido: {token_prefix}.",
       "master-token-characters": "El token maestro contiene espacios, saltos de línea o caracteres no admitidos. Comprueba el valor que has pegado e intenta iniciar sesión de nuevo. Longitud: {token_length} caracteres; prefijo reconocido: {token_prefix}.",
       "master-token-too-short": "El token maestro debe tener al menos 200 caracteres. Copia el token completo. Longitud: {token_length} caracteres.",
+      "browser-master-token-format": "El token maestro que ha devuelto Google no empieza por aas_et/. Consigue una cookie nueva y vuelve a intentarlo. Número de caracteres: {token_length}; prefijo reconocido: {token_prefix}.",
+      "browser-master-token-empty": "El token maestro que ha devuelto Google no tiene ningún valor después de aas_et/. Consigue una cookie nueva y vuelve a intentarlo. Longitud: {token_length} caracteres; prefijo reconocido: {token_prefix}.",
+      "browser-master-token-characters": "El token maestro que ha devuelto Google contiene espacios, saltos de línea o caracteres no admitidos. Consigue una cookie nueva y vuelve a intentarlo. Longitud: {token_length} caracteres; prefijo reconocido: {token_prefix}.",
+      "browser-master-token-too-short": "El token maestro que ha devuelto Google tiene menos de 200 caracteres. Consigue una cookie nueva y vuelve a intentarlo. Longitud: {token_length} caracteres.",
       "other-account": "Has iniciado sesión en otra cuenta de Google, por lo que no se ha cambiado nada. Inicia sesión con la cuenta que usa esta integración. Para usar esa otra cuenta, elimina la integración y vuelve a añadirla.",
       "no-home-selected": "Elige al menos una casa."
     },

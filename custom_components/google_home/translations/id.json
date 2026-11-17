@@ -45,7 +45,7 @@
       },
       "reauth": {
         "title": "Login ulang",
-        "description": "Google tidak lagi menerima data login yang tersimpan untuk {name}. Login ulang ke akun Google yang sama: perangkat, entitas, dan otomasi Anda tetap seperti semula. Sebelum Anda melakukannya, entitas perangkat Anda mungkin menampilkan nilai yang tidak terbaru atau menjadi tidak tersedia.",
+        "description": "Login ulang ke akun Google yang digunakan oleh {name}. Perangkat, entitas, dan otomasi Anda tetap seperti semula. Sebelum Anda melakukannya, entitas perangkat Anda mungkin menampilkan nilai yang tidak terbaru atau menjadi tidak tersedia.",
         "menu_options": {
           "browser": "Login melalui browser (direkomendasikan)",
           "master_token": "Token master"
@@ -87,6 +87,10 @@
       "master-token-empty": "Token master tidak memiliki nilai setelah aas_et/. Periksa nilai yang Anda tempelkan dan coba login lagi. Panjang: {token_length} karakter; awalan yang dikenali: {token_prefix}.",
       "master-token-characters": "Token master mengandung spasi, jeda baris, atau karakter yang tidak didukung. Periksa nilai yang Anda tempelkan dan coba login lagi. Panjang: {token_length} karakter; awalan yang dikenali: {token_prefix}.",
       "master-token-too-short": "Token master harus terdiri dari setidaknya 200 karakter. Salin seluruh token. Panjang: {token_length} karakter.",
+      "browser-master-token-format": "Token master yang dikembalikan oleh Google tidak diawali dengan aas_et/. Dapatkan cookie baru dan coba lagi. Panjang: {token_length} karakter; awalan yang dikenali: {token_prefix}.",
+      "browser-master-token-empty": "Token master yang dikembalikan oleh Google tidak memiliki nilai setelah aas_et/. Dapatkan cookie baru dan coba lagi. Panjang: {token_length} karakter; awalan yang dikenali: {token_prefix}.",
+      "browser-master-token-characters": "Token master yang dikembalikan oleh Google mengandung spasi, jeda baris, atau karakter yang tidak didukung. Dapatkan cookie baru dan coba lagi. Panjang: {token_length} karakter; awalan yang dikenali: {token_prefix}.",
+      "browser-master-token-too-short": "Token master yang dikembalikan oleh Google panjangnya kurang dari 200 karakter. Dapatkan cookie baru dan coba lagi. Panjang: {token_length} karakter.",
       "other-account": "Anda login ke akun Google yang berbeda, sehingga tidak ada yang diubah. Login dengan akun yang digunakan integrasi ini. Untuk menggunakan akun lain tersebut, hapus integrasi lalu tambahkan kembali.",
       "no-home-selected": "Pilih minimal satu rumah."
     },

@@ -45,7 +45,7 @@
       },
       "reauth": {
         "title": "Sign in again",
-        "description": "Google no longer accepts the sign-in saved for {name}. Sign in to the same Google account again: your devices, entities and automations stay as they are. Until you do, your devices' entities can show out-of-date values or be unavailable.",
+        "description": "Sign in again to the Google account used by {name}. Your devices, entities and automations stay as they are. Until you do, your devices' entities can show out-of-date values or be unavailable.",
         "menu_options": {
           "browser": "Browser sign-in (recommended)",
           "master_token": "Master token"
@@ -87,6 +87,10 @@
       "master-token-empty": "The master token has no value after aas_et/. Check the value you pasted and try signing in again. Length: {token_length} characters; recognized prefix: {token_prefix}.",
       "master-token-characters": "The master token contains spaces, line breaks or unsupported characters. Check the value you pasted and try signing in again. Length: {token_length} characters; recognized prefix: {token_prefix}.",
       "master-token-too-short": "The master token must be at least 200 characters long. Copy the whole token. Length: {token_length} characters.",
+      "browser-master-token-format": "The master token Google returned does not start with aas_et/. Get a new cookie and try again. Length: {token_length} characters; recognized prefix: {token_prefix}.",
+      "browser-master-token-empty": "The master token Google returned has no value after aas_et/. Get a new cookie and try again. Length: {token_length} characters; recognized prefix: {token_prefix}.",
+      "browser-master-token-characters": "The master token Google returned contains spaces, line breaks or unsupported characters. Get a new cookie and try again. Length: {token_length} characters; recognized prefix: {token_prefix}.",
+      "browser-master-token-too-short": "The master token Google returned is shorter than 200 characters. Get a new cookie and try again. Length: {token_length} characters.",
       "other-account": "You signed in to a different Google account, so nothing was changed. Sign in with the account this integration uses. To use the other account instead, delete the integration and add it again.",
       "no-home-selected": "Choose at least one home."
     },

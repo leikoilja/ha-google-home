@@ -45,7 +45,7 @@
       },
       "reauth": {
         "title": "Logg på igjen",
-        "description": "Google godtek ikkje lenger den lagra pålogginga for {name}. Logg på den same Google-kontoen igjen: einingane, entitetane og automatiseringane dine blir verande som dei er. Fram til du gjer det, kan entitetane til einingane dine vise utdaterte verdiar eller vere utilgjengelege.",
+        "description": "Logg på igjen med Google-kontoen som {name} brukar. Einingane, entitetane og automatiseringane dine blir verande som dei er. Fram til du gjer det, kan entitetane til einingane dine vise utdaterte verdiar eller vere utilgjengelege.",
         "menu_options": {
           "browser": "Pålogging i nettlesaren (tilrådd)",
           "master_token": "Master token"
@@ -87,6 +87,10 @@
       "master-token-empty": "Master-tokenet har ingen verdi etter aas_et/. Kontroller verdien du limte inn, og prøv å logge på igjen. Lengd: {token_length} teikn; attkjent prefiks: {token_prefix}.",
       "master-token-characters": "Master-tokenet inneheld mellomrom, linjeskift eller teikn som ikkje er støtta. Kontroller verdien du limte inn, og prøv å logge på igjen. Lengd: {token_length} teikn; attkjent prefiks: {token_prefix}.",
       "master-token-too-short": "Master-tokenet må vere minst 200 teikn langt. Kopier heile tokenet. Lengd: {token_length} teikn.",
+      "browser-master-token-format": "Master-tokenet som Google returnerte, byrjar ikkje med aas_et/. Hent ein ny informasjonskapsel og prøv igjen. Lengd: {token_length} teikn; attkjent prefiks: {token_prefix}.",
+      "browser-master-token-empty": "Master-tokenet som Google returnerte, har ingen verdi etter aas_et/. Hent ein ny informasjonskapsel og prøv igjen. Lengd: {token_length} teikn; attkjent prefiks: {token_prefix}.",
+      "browser-master-token-characters": "Master-tokenet som Google returnerte, inneheld mellomrom, linjeskift eller teikn som ikkje er støtta. Hent ein ny informasjonskapsel og prøv igjen. Lengd: {token_length} teikn; attkjent prefiks: {token_prefix}.",
+      "browser-master-token-too-short": "Master-tokenet som Google returnerte, er kortare enn 200 teikn. Hent ein ny informasjonskapsel og prøv igjen. Lengd: {token_length} teikn.",
       "other-account": "Du logga på ein annan Google-konto, så ingenting vart endra. Logg på med kontoen som denne integrasjonen brukar. For å bruke den andre kontoen i staden, slett integrasjonen og legg han til på nytt.",
       "no-home-selected": "Vel minst éin heim."
     },

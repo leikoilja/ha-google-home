@@ -45,7 +45,7 @@
       },
       "reauth": {
         "title": "再度ログイン",
-        "description": "Google が {name} の保存済みログイン情報を受け付けなくなりました。同じ Google アカウントにもう一度ログインしてください。デバイス、エンティティ、オートメーションはそのまま残ります。ログインし直すまで、デバイスのエンティティに古い値が表示されたり、エンティティが利用できなくなったりすることがあります。",
+        "description": "{name} が使用している Google アカウントにもう一度ログインしてください。デバイス、エンティティ、オートメーションはそのまま残ります。ログインし直すまで、デバイスのエンティティに古い値が表示されたり、エンティティが利用できなくなったりすることがあります。",
         "menu_options": {
           "browser": "ブラウザでログイン（推奨）",
           "master_token": "マスタートークン"
@@ -87,6 +87,10 @@
       "master-token-empty": "マスタートークンの aas_et/ の後に値がありません。貼り付けた値を確認し、もう一度ログインしてください。文字数: {token_length}、認識された接頭辞: {token_prefix}。",
       "master-token-characters": "マスタートークンに空白、改行、または対応していない文字が含まれています。貼り付けた値を確認し、もう一度ログインしてください。文字数: {token_length}、認識された接頭辞: {token_prefix}。",
       "master-token-too-short": "マスタートークンは 200 文字以上である必要があります。トークン全体をコピーしてください。文字数: {token_length}。",
+      "browser-master-token-format": "Google が返したマスタートークンが aas_et/ で始まっていません。新しい Cookie を取得して、もう一度お試しください。文字数: {token_length}、認識された接頭辞: {token_prefix}。",
+      "browser-master-token-empty": "Google が返したマスタートークンの aas_et/ の後に値がありません。新しい Cookie を取得して、もう一度お試しください。文字数: {token_length}、認識された接頭辞: {token_prefix}。",
+      "browser-master-token-characters": "Google が返したマスタートークンに空白、改行、または対応していない文字が含まれています。新しい Cookie を取得して、もう一度お試しください。文字数: {token_length}、認識された接頭辞: {token_prefix}。",
+      "browser-master-token-too-short": "Google が返したマスタートークンは 200 文字未満です。新しい Cookie を取得して、もう一度お試しください。文字数: {token_length}。",
       "other-account": "別の Google アカウントでログインしたため、何も変更されていません。この統合で使用しているアカウントでログインしてください。代わりに今回ログインしたアカウントを使用するには、統合を削除して追加し直してください。",
       "no-home-selected": "家を 1 つ以上選択してください。"
     },

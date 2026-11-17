@@ -45,7 +45,7 @@
       },
       "reauth": {
         "title": "Iniciar sessão novamente",
-        "description": "A Google já não aceita os dados de início de sessão guardados para {name}. Inicie sessão novamente na mesma conta Google: os seus dispositivos, entidades e automatizações mantêm-se como estão. Até o fazer, as entidades dos seus dispositivos podem mostrar valores desatualizados ou ficar indisponíveis.",
+        "description": "Inicie sessão novamente na conta Google utilizada por {name}. Os seus dispositivos, entidades e automatizações mantêm-se como estão. Até o fazer, as entidades dos seus dispositivos podem mostrar valores desatualizados ou ficar indisponíveis.",
         "menu_options": {
           "browser": "Início de sessão no navegador (recomendado)",
           "master_token": "Token principal"
@@ -87,6 +87,10 @@
       "master-token-empty": "O token principal não contém nenhum valor após aas_et/. Verifique o valor que colou e tente iniciar sessão novamente. Comprimento: {token_length} caracteres; prefixo reconhecido: {token_prefix}.",
       "master-token-characters": "O token principal contém espaços, quebras de linha ou caracteres não suportados. Verifique o valor que colou e tente iniciar sessão novamente. Comprimento: {token_length} caracteres; prefixo reconhecido: {token_prefix}.",
       "master-token-too-short": "O token principal tem de ter pelo menos 200 caracteres. Copie o token completo. Comprimento: {token_length} caracteres.",
+      "browser-master-token-format": "O token principal devolvido pela Google não começa por aas_et/. Obtenha um novo cookie e tente novamente. Número de caracteres: {token_length}; prefixo reconhecido: {token_prefix}.",
+      "browser-master-token-empty": "O token principal devolvido pela Google não contém nenhum valor após aas_et/. Obtenha um novo cookie e tente novamente. Comprimento: {token_length} caracteres; prefixo reconhecido: {token_prefix}.",
+      "browser-master-token-characters": "O token principal devolvido pela Google contém espaços, quebras de linha ou caracteres não suportados. Obtenha um novo cookie e tente novamente. Comprimento: {token_length} caracteres; prefixo reconhecido: {token_prefix}.",
+      "browser-master-token-too-short": "O token principal devolvido pela Google tem menos de 200 caracteres. Obtenha um novo cookie e tente novamente. Comprimento: {token_length} caracteres.",
       "other-account": "Iniciou sessão numa conta Google diferente, pelo que nada foi alterado. Inicie sessão com a conta que esta integração utiliza. Para passar a utilizar essa outra conta, elimine a integração e adicione-a novamente.",
       "no-home-selected": "Escolha pelo menos uma casa."
     },

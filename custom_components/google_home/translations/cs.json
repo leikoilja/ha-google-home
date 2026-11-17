@@ -45,7 +45,7 @@
       },
       "reauth": {
         "title": "Opětovné přihlášení",
-        "description": "Google už nepřijímá přihlašovací údaje uložené pro {name}. Znovu se přihlaste ke stejnému účtu Google: vaše zařízení, entity a automatizace zůstanou beze změny. Dokud to neuděláte, mohou entity vašich zařízení zobrazovat zastaralé hodnoty nebo být nedostupné.",
+        "description": "Znovu se přihlaste k účtu Google, který používá {name}. Vaše zařízení, entity a automatizace zůstanou beze změny. Dokud to neuděláte, mohou entity vašich zařízení zobrazovat zastaralé hodnoty nebo být nedostupné.",
         "menu_options": {
           "browser": "Přihlášení přes prohlížeč (doporučeno)",
           "master_token": "Hlavní token"
@@ -87,6 +87,10 @@
       "master-token-empty": "Hlavní token za aas_et/ neobsahuje žádnou hodnotu. Zkontrolujte vloženou hodnotu a zkuste se znovu přihlásit. Délka: {token_length} znaků; rozpoznaná předpona: {token_prefix}.",
       "master-token-characters": "Hlavní token obsahuje mezery, zalomení řádků nebo nepodporované znaky. Zkontrolujte vloženou hodnotu a zkuste se znovu přihlásit. Délka: {token_length} znaků; rozpoznaná předpona: {token_prefix}.",
       "master-token-too-short": "Hlavní token musí mít alespoň 200 znaků. Zkopírujte celý token. Počet znaků: {token_length}.",
+      "browser-master-token-format": "Hlavní token vrácený Googlem nezačíná na aas_et/. Získejte nový soubor cookie a zkuste to znovu. Počet znaků: {token_length}; rozpoznaná předpona: {token_prefix}.",
+      "browser-master-token-empty": "Hlavní token vrácený Googlem za aas_et/ neobsahuje žádnou hodnotu. Získejte nový soubor cookie a zkuste to znovu. Délka: {token_length} znaků; rozpoznaná předpona: {token_prefix}.",
+      "browser-master-token-characters": "Hlavní token vrácený Googlem obsahuje mezery, zalomení řádků nebo nepodporované znaky. Získejte nový soubor cookie a zkuste to znovu. Délka: {token_length} znaků; rozpoznaná předpona: {token_prefix}.",
+      "browser-master-token-too-short": "Hlavní token vrácený Googlem má méně než 200 znaků. Získejte nový soubor cookie a zkuste to znovu. Počet znaků: {token_length}.",
       "other-account": "Přihlásili jste se k jinému účtu Google, proto se nic nezměnilo. Přihlaste se k účtu, který tato integrace používá. Pokud chcete místo toho používat ten druhý účet, integraci smažte a přidejte ji znovu.",
       "no-home-selected": "Vyberte alespoň jednu domácnost."
     },

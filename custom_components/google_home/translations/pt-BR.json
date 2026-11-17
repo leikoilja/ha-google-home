@@ -45,7 +45,7 @@
       },
       "reauth": {
         "title": "Entrar novamente",
-        "description": "O Google não aceita mais os dados de login salvos para {name}. Faça login novamente na mesma conta do Google: seus dispositivos, entidades e automações continuam como estão. Até lá, as entidades dos seus dispositivos podem mostrar valores desatualizados ou ficar indisponíveis.",
+        "description": "Faça login novamente na conta do Google usada por {name}. Seus dispositivos, entidades e automações continuam como estão. Até lá, as entidades dos seus dispositivos podem mostrar valores desatualizados ou ficar indisponíveis.",
         "menu_options": {
           "browser": "Login pelo navegador (recomendado)",
           "master_token": "Token mestre"
@@ -87,6 +87,10 @@
       "master-token-empty": "O token mestre não contém nenhum valor após aas_et/. Verifique o valor que você colou e tente fazer login novamente. Comprimento: {token_length} caracteres; prefixo reconhecido: {token_prefix}.",
       "master-token-characters": "O token mestre contém espaços, quebras de linha ou caracteres não compatíveis. Verifique o valor que você colou e tente fazer login novamente. Comprimento: {token_length} caracteres; prefixo reconhecido: {token_prefix}.",
       "master-token-too-short": "O token mestre deve ter pelo menos 200 caracteres. Copie o token inteiro. Comprimento: {token_length} caracteres.",
+      "browser-master-token-format": "O token mestre retornado pelo Google não começa com aas_et/. Obtenha um novo cookie e tente novamente. Número de caracteres: {token_length}; prefixo reconhecido: {token_prefix}.",
+      "browser-master-token-empty": "O token mestre retornado pelo Google não contém nenhum valor após aas_et/. Obtenha um novo cookie e tente novamente. Comprimento: {token_length} caracteres; prefixo reconhecido: {token_prefix}.",
+      "browser-master-token-characters": "O token mestre retornado pelo Google contém espaços, quebras de linha ou caracteres não compatíveis. Obtenha um novo cookie e tente novamente. Comprimento: {token_length} caracteres; prefixo reconhecido: {token_prefix}.",
+      "browser-master-token-too-short": "O token mestre retornado pelo Google tem menos de 200 caracteres. Obtenha um novo cookie e tente novamente. Comprimento: {token_length} caracteres.",
       "other-account": "Você fez login em outra conta do Google, então nada foi alterado. Faça login com a conta que esta integração usa. Para usar essa outra conta, exclua a integração e adicione-a novamente.",
       "no-home-selected": "Escolha pelo menos uma casa."
     },

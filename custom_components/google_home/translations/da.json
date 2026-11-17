@@ -45,7 +45,7 @@
       },
       "reauth": {
         "title": "Log ind igen",
-        "description": "Google accepterer ikke længere det gemte login for {name}. Log ind på den samme Google-konto igen: dine enheder, entiteter og automatiseringer forbliver, som de er. Indtil du gør det, kan dine enheders entiteter vise forældede værdier eller være utilgængelige.",
+        "description": "Log ind igen på den Google-konto, som {name} bruger. Dine enheder, entiteter og automatiseringer forbliver, som de er. Indtil du gør det, kan dine enheders entiteter vise forældede værdier eller være utilgængelige.",
         "menu_options": {
           "browser": "Login via browser (anbefalet)",
           "master_token": "Master token"
@@ -87,6 +87,10 @@
       "master-token-empty": "Master-tokenet har ingen værdi efter aas_et/. Kontrollér den værdi, du har indsat, og prøv at logge ind igen. Længde: {token_length} tegn; genkendt præfiks: {token_prefix}.",
       "master-token-characters": "Master-tokenet indeholder mellemrum, linjeskift eller ikke-understøttede tegn. Kontrollér den værdi, du har indsat, og prøv at logge ind igen. Længde: {token_length} tegn; genkendt præfiks: {token_prefix}.",
       "master-token-too-short": "Master-tokenet skal være mindst 200 tegn langt. Kopiér hele tokenet. Længde: {token_length} tegn.",
+      "browser-master-token-format": "Det master-token, som Google returnerede, starter ikke med aas_et/. Hent en ny cookie, og prøv igen. Længde: {token_length} tegn; genkendt præfiks: {token_prefix}.",
+      "browser-master-token-empty": "Det master-token, som Google returnerede, har ingen værdi efter aas_et/. Hent en ny cookie, og prøv igen. Længde: {token_length} tegn; genkendt præfiks: {token_prefix}.",
+      "browser-master-token-characters": "Det master-token, som Google returnerede, indeholder mellemrum, linjeskift eller ikke-understøttede tegn. Hent en ny cookie, og prøv igen. Længde: {token_length} tegn; genkendt præfiks: {token_prefix}.",
+      "browser-master-token-too-short": "Det master-token, som Google returnerede, er kortere end 200 tegn. Hent en ny cookie, og prøv igen. Længde: {token_length} tegn.",
       "other-account": "Du loggede ind på en anden Google-konto, så der blev ikke ændret noget. Log ind med den konto, som denne integration bruger. Hvis du i stedet vil bruge den anden konto, skal du slette integrationen og tilføje den igen.",
       "no-home-selected": "Vælg mindst ét hjem."
     },

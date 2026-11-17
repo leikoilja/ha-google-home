@@ -45,7 +45,7 @@
       },
       "reauth": {
         "title": "Újbóli bejelentkezés",
-        "description": "A Google már nem fogadja el a mentett bejelentkezési adatokat ({name}). Jelentkezzen be újra ugyanabba a Google-fiókba: az eszközei, entitásai és automatizmusai változatlanok maradnak. Amíg ezt meg nem teszi, az eszközei entitásai elavult értékeket mutathatnak, vagy nem érhetők el.",
+        "description": "Jelentkezzen be újra a(z) {name} által használt Google-fiókba. Az eszközei, entitásai és automatizmusai változatlanok maradnak. Amíg ezt meg nem teszi, az eszközei entitásai elavult értékeket mutathatnak, vagy nem érhetők el.",
         "menu_options": {
           "browser": "Bejelentkezés böngészővel (ajánlott)",
           "master_token": "Mestertoken"
@@ -87,6 +87,10 @@
       "master-token-empty": "A mestertokenben nincs érték az aas_et/ után. Ellenőrizze a beillesztett értéket, és próbáljon újra bejelentkezni. Hossz: {token_length} karakter; felismert előtag: {token_prefix}.",
       "master-token-characters": "A mestertoken szóközöket, sortöréseket vagy nem támogatott karaktereket tartalmaz. Ellenőrizze a beillesztett értéket, és próbáljon újra bejelentkezni. Hossz: {token_length} karakter; felismert előtag: {token_prefix}.",
       "master-token-too-short": "A mestertokennek legalább 200 karakterből kell állnia. Másolja ki a teljes tokent. Hossz: {token_length} karakter.",
+      "browser-master-token-format": "A Google által visszaadott mestertoken nem aas_et/ kezdetű. Szerezzen be egy új cookie-t, és próbálja újra. Hossz: {token_length} karakter; felismert előtag: {token_prefix}.",
+      "browser-master-token-empty": "A Google által visszaadott mestertoken nem tartalmaz értéket az aas_et/ után. Szerezzen be egy új cookie-t, és próbálja újra. Hossz: {token_length} karakter; felismert előtag: {token_prefix}.",
+      "browser-master-token-characters": "A Google által visszaadott mestertoken szóközöket, sortöréseket vagy nem támogatott karaktereket tartalmaz. Szerezzen be egy új cookie-t, és próbálja újra. Hossz: {token_length} karakter; felismert előtag: {token_prefix}.",
+      "browser-master-token-too-short": "A Google által visszaadott mestertoken 200 karakternél rövidebb. Szerezzen be egy új cookie-t, és próbálja újra. Hossz: {token_length} karakter.",
       "other-account": "Egy másik Google-fiókba jelentkezett be, ezért semmi sem változott. Jelentkezzen be az integráció által használt fiókkal. Ha inkább azt a másik fiókot szeretné használni, törölje az integrációt, és adja hozzá újra.",
       "no-home-selected": "Válasszon ki legalább egy otthont."
     },

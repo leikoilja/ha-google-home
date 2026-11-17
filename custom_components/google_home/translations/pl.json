@@ -45,7 +45,7 @@
       },
       "reauth": {
         "title": "Zaloguj się ponownie",
-        "description": "Google nie akceptuje już danych logowania zapisanych dla {name}. Zaloguj się ponownie na to samo konto Google: Twoje urządzenia, encje i automatyzacje pozostaną bez zmian. Dopóki tego nie zrobisz, encje Twoich urządzeń mogą pokazywać nieaktualne wartości lub być niedostępne.",
+        "description": "Zaloguj się ponownie na konto Google, z którego korzysta {name}. Twoje urządzenia, encje i automatyzacje pozostaną bez zmian. Dopóki tego nie zrobisz, encje Twoich urządzeń mogą pokazywać nieaktualne wartości lub być niedostępne.",
         "menu_options": {
           "browser": "Logowanie w przeglądarce (zalecane)",
           "master_token": "Token główny"
@@ -87,6 +87,10 @@
       "master-token-empty": "Token główny nie zawiera żadnej wartości po aas_et/. Sprawdź wklejoną wartość i spróbuj zalogować się ponownie. Liczba znaków: {token_length}; rozpoznany prefiks: {token_prefix}.",
       "master-token-characters": "Token główny zawiera spacje, znaki nowego wiersza lub nieobsługiwane znaki. Sprawdź wklejoną wartość i spróbuj zalogować się ponownie. Liczba znaków: {token_length}; rozpoznany prefiks: {token_prefix}.",
       "master-token-too-short": "Token główny musi mieć co najmniej 200 znaków. Skopiuj cały token. Liczba znaków: {token_length}.",
+      "browser-master-token-format": "Token główny zwrócony przez Google nie zaczyna się od aas_et/. Pobierz nowy plik cookie i spróbuj ponownie. Liczba znaków: {token_length}; rozpoznany prefiks: {token_prefix}.",
+      "browser-master-token-empty": "Token główny zwrócony przez Google nie zawiera żadnej wartości po aas_et/. Pobierz nowy plik cookie i spróbuj ponownie. Liczba znaków: {token_length}; rozpoznany prefiks: {token_prefix}.",
+      "browser-master-token-characters": "Token główny zwrócony przez Google zawiera spacje, znaki nowego wiersza lub nieobsługiwane znaki. Pobierz nowy plik cookie i spróbuj ponownie. Liczba znaków: {token_length}; rozpoznany prefiks: {token_prefix}.",
+      "browser-master-token-too-short": "Token główny zwrócony przez Google ma mniej niż 200 znaków. Pobierz nowy plik cookie i spróbuj ponownie. Liczba znaków: {token_length}.",
       "other-account": "Zalogowano się na inne konto Google, więc nic nie zostało zmienione. Zaloguj się na konto używane przez tę integrację. Aby zamiast tego używać tamtego konta, usuń integrację i dodaj ją ponownie.",
       "no-home-selected": "Wybierz co najmniej jeden dom."
     },
