@@ -45,7 +45,7 @@
       },
       "reauth": {
         "title": "Sign in again",
-        "description": "Google no longer accepts the sign-in saved for {name}. Sign in to the same Google account again: your devices, entities and automations stay as they are. Until you do, your devices' entities can show out-of-date values or be unavailable.",
+        "description": "Sign in again to the Google account used by {name}. Your devices, entities and automations stay as they are. Until you do, your devices' entities can show out-of-date values or be unavailable.",
         "menu_options": {
           "browser": "Browser sign-in (recommended)",
           "master_token": "Master token"
@@ -83,7 +83,14 @@
       "google-unreachable": "Couldn't reach Google. Check that Home Assistant is connected to the internet, then try again.",
       "google-busy": "Google is busy or is limiting sign-ins. Wait a few minutes, then sign in again.",
       "oauth-token-format": "This isn't the oauth_token cookie. Its value starts with oauth2_4/.",
-      "master-token-format": "A master token starts with aas_et/ and is {token_length} characters long. Copy the whole token.",
+      "master-token-format": "The master token does not start with aas_et/. Check the value you pasted and try signing in again. Length: {token_length} characters; recognized prefix: {token_prefix}.",
+      "master-token-empty": "The master token has no value after aas_et/. Check the value you pasted and try signing in again. Length: {token_length} characters; recognized prefix: {token_prefix}.",
+      "master-token-characters": "The master token contains spaces, line breaks or unsupported characters. Check the value you pasted and try signing in again. Length: {token_length} characters; recognized prefix: {token_prefix}.",
+      "master-token-too-short": "The master token must be at least 200 characters long. Copy the whole token. Length: {token_length} characters.",
+      "browser-master-token-format": "The master token Google returned does not start with aas_et/. Get a new cookie and try again. Length: {token_length} characters; recognized prefix: {token_prefix}.",
+      "browser-master-token-empty": "The master token Google returned has no value after aas_et/. Get a new cookie and try again. Length: {token_length} characters; recognized prefix: {token_prefix}.",
+      "browser-master-token-characters": "The master token Google returned contains spaces, line breaks or unsupported characters. Get a new cookie and try again. Length: {token_length} characters; recognized prefix: {token_prefix}.",
+      "browser-master-token-too-short": "The master token Google returned is shorter than 200 characters. Get a new cookie and try again. Length: {token_length} characters.",
       "other-account": "You signed in to a different Google account, so nothing was changed. Sign in with the account this integration uses. To use the other account instead, delete the integration and add it again.",
       "no-home-selected": "Choose at least one home."
     },
@@ -202,6 +209,9 @@
     },
     "devices_not_rebooted": {
       "message": "These devices didn't confirm that they'll reboot: {devices}. Check that they're online and try again later."
+    },
+    "saved_sign_in_invalid": {
+      "message": "The saved sign-in details are missing or invalid. Sign in again."
     },
     "sign_in_rejected": {
       "message": "Google didn't accept the sign-in ({reason}). Sign in again."

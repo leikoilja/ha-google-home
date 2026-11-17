@@ -45,7 +45,7 @@
       },
       "reauth": {
         "title": "Kirjaudu uudelleen",
-        "description": "Google ei enää hyväksy tallennettuja kirjautumistietoja ({name}). Kirjaudu uudelleen samalle Google-tilille: laitteesi, entiteettisi ja automaatiosi säilyvät ennallaan. Siihen asti laitteidesi entiteetit voivat näyttää vanhentuneita arvoja, tai ne eivät välttämättä ole käytettävissä.",
+        "description": "Kirjaudu uudelleen Google-tilille, jota {name} käyttää. Laitteesi, entiteettisi ja automaatiosi säilyvät ennallaan. Siihen asti laitteidesi entiteetit voivat näyttää vanhentuneita arvoja, tai ne eivät välttämättä ole käytettävissä.",
         "menu_options": {
           "browser": "Kirjautuminen selaimella (suositeltu)",
           "master_token": "Päätunniste"
@@ -83,7 +83,14 @@
       "google-unreachable": "Googleen ei saatu yhteyttä. Tarkista, että Home Assistant on yhteydessä internetiin, ja yritä sitten uudelleen.",
       "google-busy": "Google on ruuhkautunut tai rajoittaa kirjautumisia. Odota muutama minuutti ja kirjaudu sitten uudelleen.",
       "oauth-token-format": "Tämä ei ole oauth_token-eväste. Sen arvo alkaa merkkijonolla oauth2_4/.",
-      "master-token-format": "Päätunniste alkaa merkkijonolla aas_et/ ja on {token_length} merkkiä pitkä. Kopioi koko tunniste.",
+      "master-token-format": "Päätunniste ei ala merkkijonolla aas_et/. Tarkista liittämäsi arvo ja yritä kirjautua uudelleen. Pituus: {token_length} merkkiä; tunnistettu etuliite: {token_prefix}.",
+      "master-token-empty": "Päätunnisteessa ei ole arvoa merkkijonon aas_et/ jälkeen. Tarkista liittämäsi arvo ja yritä kirjautua uudelleen. Pituus: {token_length} merkkiä; tunnistettu etuliite: {token_prefix}.",
+      "master-token-characters": "Päätunniste sisältää välilyöntejä, rivinvaihtoja tai merkkejä, joita ei tueta. Tarkista liittämäsi arvo ja yritä kirjautua uudelleen. Pituus: {token_length} merkkiä; tunnistettu etuliite: {token_prefix}.",
+      "master-token-too-short": "Päätunnisteessa on oltava vähintään 200 merkkiä. Kopioi koko tunniste. Pituus: {token_length} merkkiä.",
+      "browser-master-token-format": "Googlen palauttama päätunniste ei ala merkkijonolla aas_et/. Hanki uusi eväste ja yritä uudelleen. Merkkimäärä: {token_length}; tunnistettu etuliite: {token_prefix}.",
+      "browser-master-token-empty": "Googlen palauttama päätunniste ei sisällä arvoa merkkijonon aas_et/ jälkeen. Hanki uusi eväste ja yritä uudelleen. Pituus: {token_length} merkkiä; tunnistettu etuliite: {token_prefix}.",
+      "browser-master-token-characters": "Googlen palauttama päätunniste sisältää välilyöntejä, rivinvaihtoja tai merkkejä, joita ei tueta. Hanki uusi eväste ja yritä uudelleen. Pituus: {token_length} merkkiä; tunnistettu etuliite: {token_prefix}.",
+      "browser-master-token-too-short": "Googlen palauttama päätunniste on alle 200 merkin pituinen. Hanki uusi eväste ja yritä uudelleen. Pituus: {token_length} merkkiä.",
       "other-account": "Kirjauduit eri Google-tilille, joten mitään ei muutettu. Kirjaudu tilille, jota tämä integraatio käyttää. Jos haluat käyttää sen sijaan toista tiliä, poista integraatio ja lisää se uudelleen.",
       "no-home-selected": "Valitse vähintään yksi koti."
     },
@@ -202,6 +209,9 @@
     },
     "devices_not_rebooted": {
       "message": "Seuraavat laitteet eivät vahvistaneet käynnistyvänsä uudelleen: {devices}. Tarkista, että laitteet ovat verkossa, ja yritä myöhemmin uudelleen."
+    },
+    "saved_sign_in_invalid": {
+      "message": "Tallennetut kirjautumistiedot puuttuvat tai ne ovat virheelliset. Kirjaudu uudelleen."
     },
     "sign_in_rejected": {
       "message": "Google ei hyväksynyt kirjautumista ({reason}). Kirjaudu uudelleen."

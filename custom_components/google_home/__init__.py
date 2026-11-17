@@ -11,13 +11,13 @@ import logging
 from typing import cast
 
 from aiohttp import ClientSession
-from glocaltokens.utils.token import is_aas_et
 
 from homeassistant import const as ha_const
 from homeassistant.components import zeroconf
 from homeassistant.config_entries import ConfigEntryState
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.exceptions import ConfigEntryAuthFailed
 from homeassistant.helpers import config_validation as cv, issue_registry as ir
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.device_registry import DeviceEntry
@@ -25,6 +25,7 @@ from homeassistant.helpers.typing import ConfigType
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from . import const
+from .account import master_token_format_error
 from .api import GlocaltokensApiClient
 from .bluetooth import BluetoothScanner, TrackerUpdate, bluetooth_now
 from .bluetooth_coordinator import BluetoothCoordinator
@@ -124,9 +125,16 @@ async def async_migrate_entry(
     """
     if entry.minor_version < 2:
         data = dict(entry.data)
+        saved_token = data.get(CONF_MASTER_TOKEN)
+        master_token = saved_token.strip() if isinstance(saved_token, str) else ""
         # Setup has always saved a master token, and the integration signs in
         # with it from then on, so a saved app password is never used again.
-        if data.get(CONF_PASSWORD) and is_aas_et(data.get(CONF_MASTER_TOKEN) or ""):
+        if (
+            data.get(CONF_PASSWORD)
+            and master_token
+            and master_token_format_error(master_token) is None
+        ):
+            data[CONF_MASTER_TOKEN] = master_token
             data[CONF_PASSWORD] = ""
             _LOGGER.debug("Cleared the app password, which is no longer used")
         hass.config_entries.async_update_entry(entry, data=data, minor_version=2)
@@ -134,12 +142,25 @@ async def async_migrate_entry(
 
 async def async_setup_entry(hass: HomeAssistant, entry: GoogleHomeConfigEntry) -> None:
     """Set up this integration using UI."""
+    username = cast(str | None, entry.data.get(CONF_USERNAME))
+    password = cast(str | None, entry.data.get(CONF_PASSWORD))
+    saved_token = entry.data.get(CONF_MASTER_TOKEN)
+    master_token = saved_token.strip() if isinstance(saved_token, str) else None
+    if saved_token is None or saved_token == "":
+        usable_credentials = bool(username and password)
+    else:
+        usable_credentials = (
+            master_token is not None and master_token_format_error(master_token) is None
+        )
+    if not usable_credentials:
+        raise ConfigEntryAuthFailed(
+            translation_domain=DOMAIN,
+            translation_key="saved_sign_in_invalid",
+        )
+
     history = async_history(hass, entry)
     await history.async_load(bluetooth_now)
-    username = cast(str, entry.data.get(CONF_USERNAME))
-    password = cast(str, entry.data.get(CONF_PASSWORD))
     android_id = cast(str, entry.data.get(CONF_ANDROID_ID))
-    master_token = cast(str, entry.data.get(CONF_MASTER_TOKEN))
     update_interval = configured_interval(entry)
 
     _LOGGER.debug("Coordinator update interval is: %s", update_interval)

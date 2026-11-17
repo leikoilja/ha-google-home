@@ -6,6 +6,7 @@ import ipaddress
 import json
 import logging
 import math
+import re
 from time import monotonic
 from typing import TYPE_CHECKING, Final
 
@@ -13,13 +14,12 @@ from aiohttp import ClientError, ClientResponseError, ClientSession
 from ghome_local_api import GoogleHomeLocalClient, RequestError
 from glocaltokens.client import Device, GLocalAuthenticationTokens
 from glocaltokens.exceptions import AuthenticationError, GLocalTokensError
-from glocaltokens.utils.token import is_aas_et
 
 from homeassistant.core import HomeAssistant
 
 from .const import FETCH_DEVICES_INTERVAL, FETCH_RETRY_DELAYS
 from .device_info import async_get_device_info
-from .exceptions import InvalidMasterToken
+from .exceptions import InvalidMasterToken, InvalidMasterTokenFormat
 from .mdns import FoundDevices
 from .models import GoogleHomeDevice
 
@@ -31,6 +31,23 @@ _LOGGER: logging.Logger = logging.getLogger(__package__)
 # Between fetches of Google's list, known hosts are asked at most this often for a
 # device that has no address
 KNOWN_HOSTS_INTERVAL: Final = 5 * 60  # sec
+
+
+def master_token_format_error(token: str) -> InvalidMasterTokenFormat | None:
+    """Reject malformed tokens without assuming an opaque payload's length.
+
+    The caller strips outer whitespace before checking and using the token.
+    This matches glocaltokens 2.1.1's shape check and gives the form a reason.
+    """
+    if not token.startswith("aas_et/"):
+        return InvalidMasterTokenFormat("master-token-format", token)
+    if token == "aas_et/":
+        return InvalidMasterTokenFormat("master-token-empty", token)
+    if re.fullmatch(r"aas_et/[!-~]+", token) is None:
+        return InvalidMasterTokenFormat("master-token-characters", token)
+    if len(token) < 200:
+        return InvalidMasterTokenFormat("master-token-too-short", token)
+    return None
 
 
 def first_update_after(wait: float) -> str:
@@ -128,8 +145,8 @@ class GoogleAccountClient:
         self._client = GLocalAuthenticationTokens(
             username=username,
             password=password,
-            master_token=master_token,
-            oauth_token=oauth_token,
+            master_token=master_token.strip() if master_token is not None else None,
+            oauth_token=oauth_token.strip() if oauth_token is not None else None,
             android_id=android_id,
             session=session,
         )
@@ -205,11 +222,15 @@ class GoogleAccountClient:
     async def async_get_master_token(self) -> str:
         """Get master API token."""
         try:
-            master_token = await self._client.async_get_master_token()
+            master_token = (await self._client.async_get_master_token()).strip()
         except AuthenticationError as error:
             raise InvalidMasterToken(str(error)) from error
-        if not is_aas_et(master_token):
-            raise InvalidMasterToken("Google gave a master token in an unknown format")
+        if format_error := master_token_format_error(master_token):
+            self._client.master_token = None
+            raise format_error
+        # Older glocaltokens caches the reply before normalization. Its OAuth
+        # request reads that cache, so keep it in sync with the value HA saves.
+        self._client.master_token = master_token
         return master_token
 
     async def async_get_access_token(self) -> str:

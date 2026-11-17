@@ -14,6 +14,25 @@ class InvalidMasterToken(Exception):
     """
 
 
+class InvalidMasterTokenFormat(InvalidMasterToken):
+    """A local format failure with only safe facts for the form and log."""
+
+    def __init__(self, reason: str, token: str) -> None:
+        """Keep the reason, length and a recognized public prefix, never the token."""
+        prefix = token.partition("/")[0] if "/" in token else ""
+        self.reason = reason
+        self.placeholders = {
+            "token_length": str(len(token)),
+            # Unknown prefixes could themselves contain credentials.
+            "token_prefix": prefix if prefix in {"aas_et", "oauth2_4"} else "-",
+        }
+        super().__init__(
+            f"Invalid master token format: {reason} "
+            f"(length={self.placeholders['token_length']}, "
+            f"recognized prefix={self.placeholders['token_prefix']})"
+        )
+
+
 class AlarmsAndTimersNotFetched(HomeAssistantError):
     """Error to indicate an action couldn't get a device's current alarms and timers."""
 
