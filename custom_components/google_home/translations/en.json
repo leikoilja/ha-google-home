@@ -64,7 +64,7 @@
       "google-unreachable": "Couldn't reach Google. Check that Home Assistant is connected to the internet, then try again.",
       "google-busy": "Google is busy or is limiting sign-ins. Wait a few minutes, then sign in again.",
       "oauth-token-format": "This isn't the oauth_token cookie. Its value starts with oauth2_4/.",
-      "master-token-format": "The master token does not start with aas_et/. Check the value you pasted and try signing in again. Length: {token_length} characters; recognized prefix: {token_prefix}.",
+      "master-token-format": "The master token must start with aas_et/. Copy the whole token and paste it here.",
       "master-token-empty": "The master token has no value after aas_et/. Check the value you pasted and try signing in again. Length: {token_length} characters; recognized prefix: {token_prefix}.",
       "master-token-characters": "The master token contains spaces, line breaks or unsupported characters. Check the value you pasted and try signing in again. Length: {token_length} characters; recognized prefix: {token_prefix}.",
       "master-token-too-short": "The master token must be at least 200 characters long. Copy the whole token. Length: {token_length} characters.",

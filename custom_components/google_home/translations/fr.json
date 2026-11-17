@@ -64,7 +64,7 @@
       "google-unreachable": "Impossible de joindre Google. Vérifiez que Home Assistant est connecté à Internet, puis réessayez.",
       "google-busy": "Google est occupé ou limite les connexions. Patientez quelques minutes, puis reconnectez-vous.",
       "oauth-token-format": "Ce n'est pas le cookie oauth_token. Sa valeur commence par oauth2_4/.",
-      "master-token-format": "Le jeton maître ne commence pas par aas_et/. Vérifiez la valeur que vous avez collée et réessayez de vous connecter. Longueur : {token_length} caractères ; préfixe reconnu : {token_prefix}.",
+      "master-token-format": "Le jeton maître doit commencer par aas_et/. Copiez le jeton entier et collez-le ici.",
       "master-token-empty": "Le jeton maître ne contient aucune valeur après aas_et/. Vérifiez la valeur que vous avez collée et réessayez de vous connecter. Longueur : {token_length} caractères ; préfixe reconnu : {token_prefix}.",
       "master-token-characters": "Le jeton maître contient des espaces, des sauts de ligne ou des caractères non pris en charge. Vérifiez la valeur que vous avez collée et réessayez de vous connecter. Longueur : {token_length} caractères ; préfixe reconnu : {token_prefix}.",
       "master-token-too-short": "Le jeton maître doit contenir au moins 200 caractères. Copiez le jeton en entier. Longueur : {token_length} caractères.",

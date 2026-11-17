@@ -64,7 +64,7 @@
       "google-unreachable": "No s'ha pogut connectar amb Google. Comprova que Home Assistant estigui connectat a Internet i torna-ho a provar.",
       "google-busy": "Google està ocupat o està limitant els inicis de sessió. Espera uns minuts i torna a iniciar la sessió.",
       "oauth-token-format": "Aquesta no és la galeta oauth_token. El seu valor comença per oauth2_4/.",
-      "master-token-format": "El testimoni mestre no comença per aas_et/. Comprova el valor que has enganxat i torna a provar d'iniciar la sessió. Longitud: {token_length} caràcters; prefix reconegut: {token_prefix}.",
+      "master-token-format": "El testimoni mestre ha de començar per aas_et/. Copia el testimoni sencer i enganxa'l aquí.",
       "master-token-empty": "El testimoni mestre no té cap valor després de aas_et/. Comprova el valor que has enganxat i torna a provar d'iniciar la sessió. Longitud: {token_length} caràcters; prefix reconegut: {token_prefix}.",
       "master-token-characters": "El testimoni mestre conté espais, salts de línia o caràcters no admesos. Comprova el valor que has enganxat i torna a provar d'iniciar la sessió. Longitud: {token_length} caràcters; prefix reconegut: {token_prefix}.",
       "master-token-too-short": "El testimoni mestre ha de tenir com a mínim 200 caràcters. Copia el testimoni sencer. Longitud: {token_length} caràcters.",

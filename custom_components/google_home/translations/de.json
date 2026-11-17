@@ -64,7 +64,7 @@
       "google-unreachable": "Google konnte nicht erreicht werden. Prüfe, ob Home Assistant mit dem Internet verbunden ist, und versuche es dann erneut.",
       "google-busy": "Google ist ausgelastet oder begrenzt Anmeldungen. Warte ein paar Minuten und melde dich dann erneut an.",
       "oauth-token-format": "Das ist nicht das Cookie oauth_token. Sein Wert beginnt mit oauth2_4/.",
-      "master-token-format": "Das Master-Token beginnt nicht mit aas_et/. Prüfe den eingefügten Wert und versuche erneut, dich anzumelden. Länge: {token_length} Zeichen; erkanntes Präfix: {token_prefix}.",
+      "master-token-format": "Das Master-Token muss mit aas_et/ beginnen. Kopiere das vollständige Token und füge es hier ein.",
       "master-token-empty": "Das Master-Token enthält keinen Wert nach aas_et/. Prüfe den eingefügten Wert und versuche erneut, dich anzumelden. Länge: {token_length} Zeichen; erkanntes Präfix: {token_prefix}.",
       "master-token-characters": "Das Master-Token enthält Leerzeichen, Zeilenumbrüche oder nicht unterstützte Zeichen. Prüfe den eingefügten Wert und versuche erneut, dich anzumelden. Länge: {token_length} Zeichen; erkanntes Präfix: {token_prefix}.",
       "master-token-too-short": "Das Master-Token muss mindestens 200 Zeichen lang sein. Kopiere das vollständige Token. Länge: {token_length} Zeichen.",

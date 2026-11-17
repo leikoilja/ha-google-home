@@ -64,7 +64,7 @@
       "google-unreachable": "Nem sikerült elérni a Google-t. Ellenőrizze, hogy a Home Assistant csatlakozik-e az internethez, majd próbálja újra.",
       "google-busy": "A Google túlterhelt, vagy korlátozza a bejelentkezéseket. Várjon néhány percet, majd jelentkezzen be újra.",
       "oauth-token-format": "Ez nem az oauth_token cookie. Annak értéke oauth2_4/ kezdetű.",
-      "master-token-format": "A mestertoken nem aas_et/ kezdetű. Ellenőrizze a beillesztett értéket, és próbáljon újra bejelentkezni. Hossz: {token_length} karakter; felismert előtag: {token_prefix}.",
+      "master-token-format": "A mestertokennek aas_et/ kezdetűnek kell lennie. Másolja ki a teljes tokent, és illessze be ide.",
       "master-token-empty": "A mestertokenben nincs érték az aas_et/ után. Ellenőrizze a beillesztett értéket, és próbáljon újra bejelentkezni. Hossz: {token_length} karakter; felismert előtag: {token_prefix}.",
       "master-token-characters": "A mestertoken szóközöket, sortöréseket vagy nem támogatott karaktereket tartalmaz. Ellenőrizze a beillesztett értéket, és próbáljon újra bejelentkezni. Hossz: {token_length} karakter; felismert előtag: {token_prefix}.",
       "master-token-too-short": "A mestertokennek legalább 200 karakterből kell állnia. Másolja ki a teljes tokent. Hossz: {token_length} karakter.",

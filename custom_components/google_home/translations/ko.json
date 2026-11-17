@@ -64,7 +64,7 @@
       "google-unreachable": "Google에 연결하지 못했습니다. Home Assistant가 인터넷에 연결되어 있는지 확인한 후 다시 시도하세요.",
       "google-busy": "Google이 혼잡하거나 로그인을 제한하고 있습니다. 몇 분 기다린 후 다시 로그인하세요.",
       "oauth-token-format": "oauth_token 쿠키가 아닙니다. 이 쿠키의 값은 oauth2_4/로 시작합니다.",
-      "master-token-format": "마스터 토큰이 aas_et/로 시작하지 않습니다. 붙여넣은 값을 확인하고 다시 로그인해 보세요. 길이: {token_length}자; 인식된 접두사: {token_prefix}.",
+      "master-token-format": "마스터 토큰은 aas_et/로 시작해야 합니다. 토큰 전체를 복사해 여기에 붙여넣으세요.",
       "master-token-empty": "마스터 토큰의 aas_et/ 뒤에 값이 없습니다. 붙여넣은 값을 확인하고 다시 로그인해 보세요. 길이: {token_length}자; 인식된 접두사: {token_prefix}.",
       "master-token-characters": "마스터 토큰에 공백, 줄 바꿈 또는 지원되지 않는 문자가 포함되어 있습니다. 붙여넣은 값을 확인하고 다시 로그인해 보세요. 길이: {token_length}자; 인식된 접두사: {token_prefix}.",
       "master-token-too-short": "마스터 토큰은 200자 이상이어야 합니다. 토큰 전체를 복사하세요. 길이: {token_length}자.",

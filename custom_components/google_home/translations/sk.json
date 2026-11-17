@@ -64,7 +64,7 @@
       "google-unreachable": "Nepodarilo sa pripojiť ku Googlu. Skontrolujte, či je Home Assistant pripojený k internetu, a skúste to znova.",
       "google-busy": "Google je preťažený alebo obmedzuje prihlasovanie. Počkajte niekoľko minút a potom sa znova prihláste.",
       "oauth-token-format": "Toto nie je súbor cookie oauth_token. Jeho hodnota sa začína oauth2_4/.",
-      "master-token-format": "Hlavný token sa nezačína aas_et/. Skontrolujte vloženú hodnotu a skúste sa znova prihlásiť. Dĺžka: {token_length} znakov; rozpoznaná predpona: {token_prefix}.",
+      "master-token-format": "Hlavný token sa musí začínať reťazcom aas_et/. Skopírujte celý token a vložte ho sem.",
       "master-token-empty": "Hlavný token za aas_et/ neobsahuje žiadnu hodnotu. Skontrolujte vloženú hodnotu a skúste sa znova prihlásiť. Dĺžka: {token_length} znakov; rozpoznaná predpona: {token_prefix}.",
       "master-token-characters": "Hlavný token obsahuje medzery, zalomenia riadkov alebo nepodporované znaky. Skontrolujte vloženú hodnotu a skúste sa znova prihlásiť. Dĺžka: {token_length} znakov; rozpoznaná predpona: {token_prefix}.",
       "master-token-too-short": "Hlavný token musí mať aspoň 200 znakov. Skopírujte celý token. Počet znakov: {token_length}.",

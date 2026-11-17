@@ -64,7 +64,7 @@
       "google-unreachable": "Klarte ikkje å nå Google. Kontroller at Home Assistant er kopla til internett, og prøv deretter igjen.",
       "google-busy": "Google har stor pågang eller avgrensar påloggingar. Vent nokre minutt, og logg deretter på igjen.",
       "oauth-token-format": "Dette er ikkje informasjonskapselen oauth_token. Verdien byrjar med oauth2_4/.",
-      "master-token-format": "Master-tokenet byrjar ikkje med aas_et/. Kontroller verdien du limte inn, og prøv å logge på igjen. Lengd: {token_length} teikn; attkjent prefiks: {token_prefix}.",
+      "master-token-format": "Master-tokenet må byrje med aas_et/. Kopier heile tokenet og lim det inn her.",
       "master-token-empty": "Master-tokenet har ingen verdi etter aas_et/. Kontroller verdien du limte inn, og prøv å logge på igjen. Lengd: {token_length} teikn; attkjent prefiks: {token_prefix}.",
       "master-token-characters": "Master-tokenet inneheld mellomrom, linjeskift eller teikn som ikkje er støtta. Kontroller verdien du limte inn, og prøv å logge på igjen. Lengd: {token_length} teikn; attkjent prefiks: {token_prefix}.",
       "master-token-too-short": "Master-tokenet må vere minst 200 teikn langt. Kopier heile tokenet. Lengd: {token_length} teikn.",

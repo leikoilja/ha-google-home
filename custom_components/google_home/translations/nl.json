@@ -64,7 +64,7 @@
       "google-unreachable": "Google kon niet worden bereikt. Controleer of Home Assistant met internet is verbonden en probeer het daarna opnieuw.",
       "google-busy": "Google is overbelast of beperkt het aantal inlogpogingen. Wacht een paar minuten en log daarna opnieuw in.",
       "oauth-token-format": "Dit is niet de cookie oauth_token. De waarde begint met oauth2_4/.",
-      "master-token-format": "Het mastertoken begint niet met aas_et/. Controleer de waarde die je hebt geplakt en probeer opnieuw in te loggen. Lengte: {token_length} tekens; herkend voorvoegsel: {token_prefix}.",
+      "master-token-format": "Het mastertoken moet beginnen met aas_et/. Kopieer het volledige token en plak het hier.",
       "master-token-empty": "Het mastertoken bevat geen waarde na aas_et/. Controleer de waarde die je hebt geplakt en probeer opnieuw in te loggen. Lengte: {token_length} tekens; herkend voorvoegsel: {token_prefix}.",
       "master-token-characters": "Het mastertoken bevat spaties, regeleinden of niet-ondersteunde tekens. Controleer de waarde die je hebt geplakt en probeer opnieuw in te loggen. Lengte: {token_length} tekens; herkend voorvoegsel: {token_prefix}.",
       "master-token-too-short": "Het mastertoken moet minstens 200 tekens lang zijn. Kopieer het hele token. Lengte: {token_length} tekens.",

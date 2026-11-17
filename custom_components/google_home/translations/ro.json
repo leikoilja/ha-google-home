@@ -64,7 +64,7 @@
       "google-unreachable": "Nu s-a putut contacta Google. Verifică dacă Home Assistant este conectat la internet, apoi încearcă din nou.",
       "google-busy": "Google este ocupat sau limitează numărul de conectări. Așteaptă câteva minute, apoi conectează-te din nou.",
       "oauth-token-format": "Acesta nu este cookie-ul oauth_token. Valoarea lui începe cu oauth2_4/.",
-      "master-token-format": "Tokenul principal nu începe cu aas_et/. Verifică valoarea pe care ai lipit-o și încearcă să te conectezi din nou. Lungime: {token_length} caractere; prefix recunoscut: {token_prefix}.",
+      "master-token-format": "Tokenul principal trebuie să înceapă cu aas_et/. Copiază tokenul complet și lipește-l aici.",
       "master-token-empty": "Tokenul principal nu conține nicio valoare după aas_et/. Verifică valoarea pe care ai lipit-o și încearcă să te conectezi din nou. Lungime: {token_length} caractere; prefix recunoscut: {token_prefix}.",
       "master-token-characters": "Tokenul principal conține spații, întreruperi de rând sau caractere neacceptate. Verifică valoarea pe care ai lipit-o și încearcă să te conectezi din nou. Lungime: {token_length} caractere; prefix recunoscut: {token_prefix}.",
       "master-token-too-short": "Tokenul principal trebuie să conțină cel puțin 200 de caractere. Copiază întregul token. Număr de caractere: {token_length}.",

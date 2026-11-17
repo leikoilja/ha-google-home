@@ -64,7 +64,7 @@
       "google-unreachable": "Googleen ei saatu yhteyttä. Tarkista, että Home Assistant on yhteydessä internetiin, ja yritä sitten uudelleen.",
       "google-busy": "Google on ruuhkautunut tai rajoittaa kirjautumisia. Odota muutama minuutti ja kirjaudu sitten uudelleen.",
       "oauth-token-format": "Tämä ei ole oauth_token-eväste. Sen arvo alkaa merkkijonolla oauth2_4/.",
-      "master-token-format": "Päätunniste ei ala merkkijonolla aas_et/. Tarkista liittämäsi arvo ja yritä kirjautua uudelleen. Pituus: {token_length} merkkiä; tunnistettu etuliite: {token_prefix}.",
+      "master-token-format": "Päätunnisteen on alettava merkkijonolla aas_et/. Kopioi koko tunniste ja liitä se tähän.",
       "master-token-empty": "Päätunnisteessa ei ole arvoa merkkijonon aas_et/ jälkeen. Tarkista liittämäsi arvo ja yritä kirjautua uudelleen. Pituus: {token_length} merkkiä; tunnistettu etuliite: {token_prefix}.",
       "master-token-characters": "Päätunniste sisältää välilyöntejä, rivinvaihtoja tai merkkejä, joita ei tueta. Tarkista liittämäsi arvo ja yritä kirjautua uudelleen. Pituus: {token_length} merkkiä; tunnistettu etuliite: {token_prefix}.",
       "master-token-too-short": "Päätunnisteessa on oltava vähintään 200 merkkiä. Kopioi koko tunniste. Pituus: {token_length} merkkiä.",

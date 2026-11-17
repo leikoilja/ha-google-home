@@ -1347,10 +1347,12 @@ async def test_long_master_token_can_still_be_rejected(
 @pytest.mark.parametrize(
     ("token", "error_key", "prefix"),
     [
-        pytest.param("wrong/" + "x" * 217, "master-token-format", "-", id="prefix"),
+        pytest.param(
+            "wrong/private" + "x" * 210, "master-token-format", "-", id="prefix"
+        ),
         pytest.param("aas_et/", "master-token-empty", "aas_et", id="empty-payload"),
         pytest.param(
-            "aas_et/" + "x" * 192,
+            "aas_et/private" + "x" * 185,
             "master-token-too-short",
             "aas_et",
             id="199-characters",
@@ -1405,7 +1407,10 @@ async def test_malformed_master_token_is_not_used_or_exposed(
         else {"oauth_token": "oauth2_4/private-cookie"}
     )
     caplog.set_level(logging.DEBUG, logger="custom_components.google_home")
-    entry = request.getfixturevalue("config_entry") if reauth else None
+    entry: MockConfigEntry | None = (
+        request.getfixturevalue("config_entry") if reauth else None
+    )
+    saved_data = dict(entry.data) if entry is not None else None
 
     form = await choose(hass, method, entry)
     # glocaltokens 2.1.1 rejects malformed exchange replies before returning them.
@@ -1436,7 +1441,6 @@ async def test_malformed_master_token_is_not_used_or_exposed(
         placeholders
     )
     reasons = {
-        "master-token-format": "The master token does not start with aas_et/.",
         "master-token-empty": "The master token has no value after aas_et/.",
         "master-token-characters": "The master token contains spaces, line breaks or unsupported characters.",
     }
@@ -1448,6 +1452,11 @@ async def test_malformed_master_token_is_not_used_or_exposed(
         )
         if error_key != "master-token-too-short":
             assert f"recognized prefix: {prefix}." in message
+    elif error_key == "master-token-format":
+        assert message == (
+            "The master token must start with aas_et/. "
+            "Copy the whole token and paste it here."
+        )
     elif error_key == "master-token-too-short":
         assert message == (
             "The master token must be at least 200 characters long. "
@@ -1460,7 +1469,11 @@ async def test_malformed_master_token_is_not_used_or_exposed(
         )
     sign_in.perform_oauth.assert_not_called()
     sign_in.exchange_token.assert_not_called()
-    assert saved_master_tokens(hass) == ([MASTER_TOKEN] if reauth else [])
+    assert hass.config_entries.async_entries(DOMAIN) == (
+        [entry] if entry is not None else []
+    )
+    if entry is not None:
+        assert entry.data == saved_data
     if method == "browser":
         assert_logged_without_traceback(
             caplog,
