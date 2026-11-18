@@ -15,7 +15,7 @@ from ghome_foyer_api.api_pb2 import HomeGraph  # pylint: disable=no-name-in-modu
 from glocaltokens.client import Device
 from glocaltokens.exceptions import AuthenticationError, HomegraphError
 import gpsoauth
-import grpc  # type: ignore[import-untyped]
+import grpc
 import pytest
 from yarl import URL
 

@@ -12,7 +12,7 @@ from unittest.mock import MagicMock, Mock, patch
 
 from ghome_foyer_api.api_pb2 import HomeGraph  # pylint: disable=no-name-in-module
 from glocaltokens.exceptions import HomegraphError
-import grpc  # type: ignore[import-untyped]
+import grpc
 import pytest
 from pytest_homeassistant.common import MockConfigEntry
 from pytest_homeassistant.components.diagnostics import get_diagnostics_for_config_entry

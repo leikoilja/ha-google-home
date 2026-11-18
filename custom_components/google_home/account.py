@@ -19,7 +19,7 @@ from glocaltokens.exceptions import (
     GLocalTokensError,
     HomegraphError,
 )
-from grpc import StatusCode  # type: ignore[import-untyped]
+from grpc import StatusCode
 
 from homeassistant.core import HomeAssistant
 

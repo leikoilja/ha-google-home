@@ -8,7 +8,7 @@ from unittest.mock import Mock
 
 from aiohttp import ClientConnectionError
 from glocaltokens.exceptions import HomegraphError
-import grpc  # type: ignore[import-untyped]
+import grpc
 import pytest
 
 from custom_components.google_home.const import FETCH_DEVICES_INTERVAL
