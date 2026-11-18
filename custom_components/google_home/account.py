@@ -13,7 +13,13 @@ from typing import TYPE_CHECKING, Final
 from aiohttp import ClientError, ClientResponseError, ClientSession
 from ghome_local_api import GoogleHomeLocalClient, RequestError
 from glocaltokens.client import Device, GLocalAuthenticationTokens
-from glocaltokens.exceptions import AuthenticationError, GLocalTokensError
+from glocaltokens.const import GOOGLE_HOME_FOYER_API
+from glocaltokens.exceptions import (
+    AuthenticationError,
+    GLocalTokensError,
+    HomegraphError,
+)
+from grpc import StatusCode  # type: ignore[import-untyped]
 
 from homeassistant.core import HomeAssistant
 
@@ -423,6 +429,13 @@ class GoogleAccountClient:
         ):
             _LOGGER.debug("Failed to fetch Google's device list: %s", reason)
             return
+        if isinstance(error, HomegraphError) and error.code == StatusCode.UNAVAILABLE:
+            reason += (
+                ". If Home Assistant's DNS filter or firewall blocks "
+                f"{GOOGLE_HOME_FOYER_API.removesuffix(':443')}, allow it. "
+                "Google may also be temporarily unavailable. For reachability results, "
+                "open Settings > System > Repairs > ⋮ > System information > Google Home"
+            )
         _LOGGER.error(
             "Failed to fetch Google's device list (%s): %s",
             self._when_fetched_again(error, due),

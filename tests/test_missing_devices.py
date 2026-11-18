@@ -70,11 +70,11 @@ def answered(status: HTTPStatus) -> ClientResponseError:
 
 # What glocaltokens raises when Google doesn't give the list, other than when its
 # sign-in can't be reached
+HOMEGRAPH_UNAVAILABLE = HomegraphError(
+    grpc.StatusCode.UNAVAILABLE, "The service is unavailable."
+)
 FETCH_ERRORS = [
-    pytest.param(
-        HomegraphError(grpc.StatusCode.UNAVAILABLE, "The service is unavailable."),
-        id="no-home-graph",
-    ),
+    pytest.param(HOMEGRAPH_UNAVAILABLE, id="no-home-graph"),
     pytest.param(
         AuthenticationError("Google gave no access token", "BadAuthentication"),
         id="token-rejected",
@@ -98,13 +98,28 @@ def rejected() -> AuthenticationError:
 REJECTED = "Google gave no access token: BadAuthentication"
 
 
+def failure_reason(error: object) -> str:
+    """Return the expected reason on the first error log for a test reply."""
+    if error is HOMEGRAPH_UNAVAILABLE:
+        return (
+            f"{error}. If Home Assistant's DNS filter or firewall blocks "
+            "googlehomefoyer-pa.googleapis.com, allow it. Google may also be temporarily "
+            "unavailable. For reachability results, open Settings > System > Repairs > "
+            "⋮ > System information > Google Home"
+        )
+    return str(error)
+
+
 def failure_logged(error: object, minutes: int) -> tuple[str, str]:
     """Return the error logged when a fetch first fails this way, with the minutes to the next try."""
     later = (
         f"next try at the first update after {minutes} min; "
         "further failures are logged at debug level until a fetch works"
     )
-    return "ERROR", f"Failed to fetch Google's device list ({later}): {error}"
+    return (
+        "ERROR",
+        f"Failed to fetch Google's device list ({later}): {failure_reason(error)}",
+    )
 
 
 def logged(caplog: pytest.LogCaptureFixture) -> list[tuple[str, str]]:

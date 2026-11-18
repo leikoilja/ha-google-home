@@ -119,10 +119,11 @@ To see what Google lists for the account, [collect debug logs](#collect-debug-lo
 
 If a skipped device is a speaker or display that you expected, that's why it's missing: [get help](#still-stuck) with the debug logs.
 
-If Google didn't give the integration your devices when it started, for example because Google was busy, the integration starts without devices, and the log shows `Failed to fetch Google's device list` with the reason the attempt failed at the end. The integration keeps asking Google by itself: after a wait of up to 20 minutes, it asks again at the next [update](configuration.md#change-the-update-interval), so a long update interval makes the wait longer. The error says when it asks next, or to [sign in again](#sign-in-again). While [polling is turned off](configuration.md#turn-off-polling), it doesn't ask again by itself, so the error says to reload it instead, as described below. Only the first failure is logged; later ones show in [debug logs](#collect-debug-logs) until one works.
+If Google didn't give the integration your devices when it started, for example because Google was busy, the integration starts without devices, and the log shows `Failed to fetch Google's device list` with the reason the attempt failed. The integration keeps asking Google by itself: after a wait of up to 20 minutes, it asks again at the next [update](configuration.md#change-the-update-interval), so a long update interval makes the wait longer. The error says when it asks next, or to [sign in again](#sign-in-again). While [polling is turned off](configuration.md#turn-off-polling), it doesn't ask again by itself, so the error says to reload it instead, as described below. Only the first failure is logged; later ones show in [debug logs](#collect-debug-logs) until one works.
 
-- If the reason is 429, a 5xx code such as 503, `RESOURCE_EXHAUSTED` or `UNAVAILABLE`, Google is busy, has a temporary problem or is limiting requests: wait.
-- If the reason is `DEADLINE_EXCEEDED`, or if `UNAVAILABLE` doesn't go away, check that Home Assistant can reach Google; see ["Couldn't reach Google"](#couldnt-reach-google).
+- If the reason is `UNAVAILABLE`, check the **Google Home** section of [System information](#check-system-information) for the results for both Google servers. If Home Assistant's DNS filter or firewall blocks the device list server, `googlehomefoyer-pa.googleapis.com`, allow it. Google may also be temporarily unavailable.
+- If the reason is 429, a 5xx code such as 503 or `RESOURCE_EXHAUSTED`, wait for Google to stop limiting requests or recover from a temporary problem.
+- If the reason is `DEADLINE_EXCEEDED`, check that Home Assistant can reach Google. See ["Couldn't reach Google"](#couldnt-reach-google).
 
 Once the cause is fixed, you can reload the integration to ask Google straight away.
 
@@ -193,10 +194,11 @@ If a device's alarms, timers and settings stop changing in Home Assistant while 
 
 A device's token can change, for example when the device restarts. The integration then gets the new token from Google straight away. If Google can't give it, the device's entities keep the values they had, and the integration keeps asking Google by itself. While [polling is turned off](configuration.md#turn-off-polling), it asks only at an update you ask for: run [Refresh devices](actions.md#refresh-devices) after the time that [System information](#check-system-information) shows under **Retry not before**.
 
-If Home Assistant asks you to [sign in again](#sign-in-again), do that first. Otherwise, to find out why Google didn't give the token, open the [log](https://my.home-assistant.io/redirect/logs/) and find the error that starts with `Failed to fetch Google's device list`. The reason the attempt failed is at the end of the error:
+If Home Assistant asks you to [sign in again](#sign-in-again), do that first. Otherwise, open the [log](https://my.home-assistant.io/redirect/logs/) and find the error that starts with `Failed to fetch Google's device list`. Use the reason in that error to decide what to check.
 
-- If the reason is 429, a 5xx code such as 503, `RESOURCE_EXHAUSTED` or `UNAVAILABLE`, Google is busy, has a temporary problem or is limiting requests: wait, as the integration keeps asking by itself.
-- If the reason is `Cannot connect to host ...`, `TimeoutError` or `DEADLINE_EXCEEDED`, or if `UNAVAILABLE` doesn't go away, check that Home Assistant can reach Google; see ["Couldn't reach Google"](#couldnt-reach-google).
+- If the reason is `UNAVAILABLE`, check whether Home Assistant can reach the device list server. See [No devices appear](#no-devices-appear).
+- If the reason is 429, a 5xx code such as 503 or `RESOURCE_EXHAUSTED`, wait for Google to stop limiting requests or recover from a temporary problem.
+- If the reason is `Cannot connect to host ...`, `TimeoutError` or `DEADLINE_EXCEEDED`, check that Home Assistant can reach Google. See ["Couldn't reach Google"](#couldnt-reach-google).
 
 If the log instead has an error such as `Kitchen rejected the token that Google gave it. Google is asked for a new one at the first update after 2 min; further rejections are logged at debug level until it accepts one`, Google answered, but with a token that the device rejects too. Right after a device restarts, Google can give its old token for a short while, so the integration asks Google again a minute later, and logs this error only if the device rejects that token as well.
 
@@ -243,11 +245,11 @@ Open **Settings** > **Devices & services** > **Google Home** to see why it isn't
 
 Home Assistant's System information has a **Google Home** section. It shows whether Home Assistant can reach Google, whether the integration has your devices from Google, and how many of them don't answer. Unlike [diagnostics](#download-diagnostics), it's there once you've added the integration, even if it then fails to set up. It isn't there while you add the integration for the first time, so it can't help when [adding the integration shows an error](#setup-fails). It isn't there either if your integration version is 1.16.0 or earlier.
 
-To open it, go to **Settings** > **System** > **Repairs**, open the **⋮** menu and select **System information**.
+In your instance, go to **Settings** > **System** > **Repairs**, open the **⋮** menu, select **System information** and find **Google Home**. You can also [open System information directly](https://my.home-assistant.io/redirect/system_health/).
 
 The section shows:
 
-- **Reach Google sign-in server** and **Reach Google device list server**: each shows `ok` if its host, `android.clients.google.com` or `googlehomefoyer-pa.googleapis.com`, answered a plain web request. Otherwise it shows `unreachable` or `timeout`, with a **more info** link to ["Couldn't reach Google"](#couldnt-reach-google). Any answer counts as `ok`, so `ok` doesn't show that Google accepts the sign-in or gives your devices.
+- **Reach Google sign-in server** (`android.clients.google.com`) and **Reach Google device list server** (`googlehomefoyer-pa.googleapis.com`) each show `ok` if their host answered an HTTP request. An HTTP response confirms basic host reachability only. Sign-in and the gRPC request for the device list can still fail. If a check fails, it shows `unreachable` or `timeout` with a **more info** link to ["Couldn't reach Google"](#couldnt-reach-google).
 - **Google's device list**:
     - `fetched`: the integration's devices come from a time when Google gave the list. It doesn't say when that was.
     - `not fetched`: Google hasn't given the list since the integration started, or a device's token changed and the list is to be fetched again.

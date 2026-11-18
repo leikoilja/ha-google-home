@@ -26,6 +26,7 @@ from .test_missing_devices import (
     RETRY_MINUTES,
     answered,
     failure_logged,
+    failure_reason,
     found,
     logged,
     make_client,
@@ -100,7 +101,10 @@ def test_setup_without_polling_says_to_reload(
 
     later = "polling is off, so reload the integration to fetch it"
     assert [line for line in logged(caplog) if line[0] != "DEBUG"] == [
-        ("ERROR", f"Failed to fetch Google's device list ({later}): {error}")
+        (
+            "ERROR",
+            f"Failed to fetch Google's device list ({later}): {failure_reason(error)}",
+        )
     ]
 
 
@@ -258,7 +262,16 @@ def test_log_sign_in_rejected_at_scheduled_fetch_during_setup(
     assert lines.count(failed) == 1
 
 
-@pytest.mark.parametrize("error", FETCH_ERRORS)
+@pytest.mark.parametrize(
+    "error",
+    [
+        *FETCH_ERRORS,
+        pytest.param(
+            HomegraphError(grpc.StatusCode.DEADLINE_EXCEEDED, "UNAVAILABLE"),
+            id="deadline-with-unavailable-in-details",
+        ),
+    ],
+)
 def test_log_failed_fetches_once_until_one_works(
     clock: Mock, caplog: pytest.LogCaptureFixture, error: Exception
 ) -> None:
