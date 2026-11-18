@@ -30,7 +30,7 @@
     "glocaltokens==2.1.1"
   ],
   "single_config_entry": true,
-  "version": "1.17.0",
+  "version": "1.18.0",
   "zeroconf": [
     "_googlecast._tcp.local."
   ]
