@@ -26,7 +26,7 @@ from ghome_foyer_api.api_pb2 import HomeGraph  # pylint: disable=no-name-in-modu
 from glocaltokens.const import ACCESS_TOKEN_SERVICE
 from glocaltokens.exceptions import AuthenticationError, HomegraphError
 import gpsoauth
-import grpc  # type: ignore[import-untyped]
+import grpc
 import probatio
 import pytest
 from pytest_homeassistant.common import MockConfigEntry

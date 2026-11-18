@@ -38,7 +38,7 @@ from .test_coordinators import (
     runtime,
     update_account,
 )
-from .test_missing_devices import answered, found, rejected
+from .test_missing_devices import HOMEGRAPH_UNAVAILABLE, answered, found, rejected
 from .test_polling_off import set_up_without_polling
 from .test_setup import set_up, state
 from .test_unsupported_devices import SPEAKER, SUPPORTED, Reply
@@ -493,8 +493,8 @@ async def test_home_assistant_shows_section(
     replies: Replies,
     clock: Mock,
 ) -> None:
-    """Show the section as Home Assistant puts it together, with its words for a failed check and the time in ISO format."""
-    google.side_effect = answered(HTTPStatus.SERVICE_UNAVAILABLE)
+    """Show both host checks after setup loads without devices because the list is unavailable."""
+    google.side_effect = HOMEGRAPH_UNAVAILABLE
     await set_up(hass, config_entry)
     clock.return_value = FIRST_RETRY_DELAY - 30
 

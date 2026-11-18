@@ -14,7 +14,7 @@ from aiohttp import ClientConnectionError
 from freezegun.api import FrozenDateTimeFactory
 from ghome_foyer_api.api_pb2 import HomeGraph  # pylint: disable=no-name-in-module
 from glocaltokens.exceptions import HomegraphError
-import grpc  # type: ignore[import-untyped]
+import grpc
 import pytest
 from pytest_homeassistant.common import MockConfigEntry, async_fire_time_changed
 
