@@ -267,7 +267,7 @@ The tests and the quality scale check use the Home Assistant version that `pypro
 
 ### Publish a release
 
-Maintainers publish the draft release that Release Drafter keeps up to date: run the **Publish new release** workflow on GitHub, leaving the tag empty. The workflow:
+To publish the draft that Release Drafter keeps up to date, run the **Publish new release** workflow on GitHub. The workflow:
 
 1. Commits the release's version in `manifest.json` and the minimum Home Assistant version in `hacs.json` to `master`, as **Release v1.2.3**. The minimum is the `homeassistant` version that `pyproject.toml` pins, so pin a stable release before you publish. This commit also sets `zip_release` and `filename` in `hacs.json`. A second commit removes them again, so installs of `master` keep using the source code.
 2. Builds `google_home.zip` from the release commit, with the integration's files at its root, and attaches it to the draft.
@@ -280,10 +280,7 @@ The Marketplace installs a release from its `google_home.zip`, and GitHub counts
 
 If the workflow stops, fix the cause and run it again. If nothing has been merged since, it reuses the release commit; otherwise it commits the release again, on top of what was merged. If the release's tag already exists on another commit, the workflow stops before changing the draft, because GitHub would publish the release on that commit. Delete the tag if it's wrong, then run the workflow again.
 
-If a published release's zip is missing or wrong, run the workflow with the release's tag, such as `v1.17.0`. It rebuilds the zip from that tag, replaces the release's `google_home.zip` and changes nothing else. It deletes the old zip first, so:
-
-- The old zip's download count is lost. If you need it, note it first, for example with `gh release view v1.17.0 --json assets`.
-- The release can't be installed until the new zip is uploaded. If the upload fails, run the workflow with the tag again.
+If a published release's zip is missing or wrong, publish a new patch version with the corrected package. GitHub locks the assets of an immutable release at publication.
 
 ### Fix the released docs without a release
 
