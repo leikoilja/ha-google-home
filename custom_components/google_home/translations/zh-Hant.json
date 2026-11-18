@@ -68,10 +68,6 @@
       "master-token-empty": "你只輸入了 aas_et/。請複製完整的 master token 並貼到這裡。",
       "master-token-characters": "Master token 包含空格、換行或不支援的字元。請重新複製完整的 master token，並以單行貼到這裡。",
       "master-token-too-short": "Master token 至少須有 200 個字元。請複製完整的 master token。長度：{token_length} 個字元。",
-      "browser-master-token-format": "Google 傳回的 master token 並非以 aas_et/ 開頭。請取得新的 Cookie 並再試一次。長度：{token_length} 個字元；已識別的前綴：{token_prefix}。",
-      "browser-master-token-empty": "Google 傳回的 master token 在 aas_et/ 後沒有值。請取得新的 Cookie 並再試一次。長度：{token_length} 個字元；已識別的前綴：{token_prefix}。",
-      "browser-master-token-characters": "Google 傳回的 master token 包含空格、換行或不支援的字元。請取得新的 Cookie 並再試一次。長度：{token_length} 個字元；已識別的前綴：{token_prefix}。",
-      "browser-master-token-too-short": "Google 傳回的 master token 不到 200 個字元。請取得新的 Cookie 並再試一次。長度：{token_length} 個字元。",
       "other-account": "你登入的是其他 Google 帳號，因此未進行任何變更。請使用此整合所用的帳號登入。如要改用剛才登入的帳號，請刪除整合後再重新新增。",
       "no-home-selected": "請至少選擇一個住家。"
     },

@@ -68,10 +68,6 @@
       "master-token-empty": "Zadali ste iba aas_et/. Skopírujte celý hlavný token a vložte ho sem.",
       "master-token-characters": "Hlavný token obsahuje medzery, zalomenia riadkov alebo nepodporované znaky. Znova skopírujte celý token a vložte ho sem v jednom riadku.",
       "master-token-too-short": "Hlavný token musí mať aspoň 200 znakov. Skopírujte celý token. Počet znakov: {token_length}.",
-      "browser-master-token-format": "Hlavný token vrátený Googlom sa nezačína na aas_et/. Získajte nový súbor cookie a skúste to znova. Počet znakov: {token_length}; rozpoznaná predpona: {token_prefix}.",
-      "browser-master-token-empty": "Hlavný token vrátený Googlom za aas_et/ neobsahuje žiadnu hodnotu. Získajte nový súbor cookie a skúste to znova. Dĺžka: {token_length} znakov; rozpoznaná predpona: {token_prefix}.",
-      "browser-master-token-characters": "Hlavný token vrátený Googlom obsahuje medzery, zalomenia riadkov alebo nepodporované znaky. Získajte nový súbor cookie a skúste to znova. Dĺžka: {token_length} znakov; rozpoznaná predpona: {token_prefix}.",
-      "browser-master-token-too-short": "Hlavný token vrátený Googlom má menej ako 200 znakov. Získajte nový súbor cookie a skúste to znova. Počet znakov: {token_length}.",
       "other-account": "Prihlásili ste sa do iného účtu Google, preto sa nič nezmenilo. Prihláste sa do účtu, ktorý táto integrácia používa. Ak chcete namiesto toho používať ten druhý účet, integráciu odstráňte a pridajte ju znova.",
       "no-home-selected": "Vyberte aspoň jednu domácnosť."
     },

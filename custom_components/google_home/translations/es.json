@@ -68,10 +68,6 @@
       "master-token-empty": "Solo has introducido aas_et/. Copia el token maestro completo y pégalo aquí.",
       "master-token-characters": "El token maestro contiene espacios, saltos de línea o caracteres no admitidos. Vuelve a copiar el token completo y pégalo aquí en una sola línea.",
       "master-token-too-short": "El token maestro debe tener al menos 200 caracteres. Copia el token completo. Longitud: {token_length} caracteres.",
-      "browser-master-token-format": "El token maestro que ha devuelto Google no empieza por aas_et/. Consigue una cookie nueva y vuelve a intentarlo. Número de caracteres: {token_length}; prefijo reconocido: {token_prefix}.",
-      "browser-master-token-empty": "El token maestro que ha devuelto Google no tiene ningún valor después de aas_et/. Consigue una cookie nueva y vuelve a intentarlo. Longitud: {token_length} caracteres; prefijo reconocido: {token_prefix}.",
-      "browser-master-token-characters": "El token maestro que ha devuelto Google contiene espacios, saltos de línea o caracteres no admitidos. Consigue una cookie nueva y vuelve a intentarlo. Longitud: {token_length} caracteres; prefijo reconocido: {token_prefix}.",
-      "browser-master-token-too-short": "El token maestro que ha devuelto Google tiene menos de 200 caracteres. Consigue una cookie nueva y vuelve a intentarlo. Longitud: {token_length} caracteres.",
       "other-account": "Has iniciado sesión en otra cuenta de Google, por lo que no se ha cambiado nada. Inicia sesión con la cuenta que usa esta integración. Para usar esa otra cuenta, elimina la integración y vuelve a añadirla.",
       "no-home-selected": "Elige al menos una casa."
     },

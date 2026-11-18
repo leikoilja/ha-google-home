@@ -68,10 +68,6 @@
       "master-token-empty": "Je hebt alleen aas_et/ ingevoerd. Kopieer het volledige mastertoken en plak het hier.",
       "master-token-characters": "Het mastertoken bevat spaties, regeleinden of niet-ondersteunde tekens. Kopieer het volledige token opnieuw en plak het hier op één regel.",
       "master-token-too-short": "Het mastertoken moet minstens 200 tekens lang zijn. Kopieer het hele token. Lengte: {token_length} tekens.",
-      "browser-master-token-format": "Het mastertoken dat Google heeft teruggestuurd, begint niet met aas_et/. Haal een nieuwe cookie op en probeer het opnieuw. Aantal tekens: {token_length}; herkend voorvoegsel: {token_prefix}.",
-      "browser-master-token-empty": "Het mastertoken dat Google heeft teruggestuurd, bevat geen waarde na aas_et/. Haal een nieuwe cookie op en probeer het opnieuw. Lengte: {token_length} tekens; herkend voorvoegsel: {token_prefix}.",
-      "browser-master-token-characters": "Het mastertoken dat Google heeft teruggestuurd, bevat spaties, regeleinden of niet-ondersteunde tekens. Haal een nieuwe cookie op en probeer het opnieuw. Lengte: {token_length} tekens; herkend voorvoegsel: {token_prefix}.",
-      "browser-master-token-too-short": "Het mastertoken dat Google heeft teruggestuurd, is korter dan 200 tekens. Haal een nieuwe cookie op en probeer het opnieuw. Lengte: {token_length} tekens.",
       "other-account": "Je bent ingelogd met een ander Google-account, dus er is niets gewijzigd. Log in met het account dat deze integratie gebruikt. Om in plaats daarvan dat andere account te gebruiken, verwijder je de integratie en voeg je deze opnieuw toe.",
       "no-home-selected": "Kies ten minste één huis."
     },

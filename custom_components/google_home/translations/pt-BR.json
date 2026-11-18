@@ -68,10 +68,6 @@
       "master-token-empty": "Você inseriu apenas aas_et/. Copie o token mestre inteiro e cole aqui.",
       "master-token-characters": "O token mestre contém espaços, quebras de linha ou caracteres não compatíveis. Copie o token inteiro novamente e cole aqui em uma única linha.",
       "master-token-too-short": "O token mestre deve ter pelo menos 200 caracteres. Copie o token inteiro. Comprimento: {token_length} caracteres.",
-      "browser-master-token-format": "O token mestre retornado pelo Google não começa com aas_et/. Obtenha um novo cookie e tente novamente. Número de caracteres: {token_length}; prefixo reconhecido: {token_prefix}.",
-      "browser-master-token-empty": "O token mestre retornado pelo Google não contém nenhum valor após aas_et/. Obtenha um novo cookie e tente novamente. Comprimento: {token_length} caracteres; prefixo reconhecido: {token_prefix}.",
-      "browser-master-token-characters": "O token mestre retornado pelo Google contém espaços, quebras de linha ou caracteres não compatíveis. Obtenha um novo cookie e tente novamente. Comprimento: {token_length} caracteres; prefixo reconhecido: {token_prefix}.",
-      "browser-master-token-too-short": "O token mestre retornado pelo Google tem menos de 200 caracteres. Obtenha um novo cookie e tente novamente. Comprimento: {token_length} caracteres.",
       "other-account": "Você fez login em outra conta do Google, então nada foi alterado. Faça login com a conta que esta integração usa. Para usar essa outra conta, exclua a integração e adicione-a novamente.",
       "no-home-selected": "Escolha pelo menos uma casa."
     },

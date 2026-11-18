@@ -68,10 +68,6 @@
       "master-token-empty": "คุณป้อนเพียง aas_et/ ให้คัดลอก Master token ทั้งหมดแล้ววางที่นี่",
       "master-token-characters": "Master token มีช่องว่าง การขึ้นบรรทัดใหม่ หรืออักขระที่ไม่รองรับ ให้คัดลอกโทเค็นทั้งหมดอีกครั้งแล้ววางที่นี่ในบรรทัดเดียว",
       "master-token-too-short": "Master token ต้องมีความยาวอย่างน้อย 200 อักขระ ให้คัดลอกโทเค็นให้ครบทั้งหมด ความยาว: {token_length} อักขระ",
-      "browser-master-token-format": "Master token ที่ Google ส่งกลับมาไม่ได้ขึ้นต้นด้วย aas_et/ ให้รับคุกกี้ใหม่แล้วลองอีกครั้ง ความยาว: {token_length} อักขระ; คำนำหน้าที่ตรวจพบ: {token_prefix}",
-      "browser-master-token-empty": "Master token ที่ Google ส่งกลับมาไม่มีค่าหลัง aas_et/ ให้รับคุกกี้ใหม่แล้วลองอีกครั้ง ความยาว: {token_length} อักขระ; คำนำหน้าที่ตรวจพบ: {token_prefix}",
-      "browser-master-token-characters": "Master token ที่ Google ส่งกลับมามีช่องว่าง การขึ้นบรรทัดใหม่ หรืออักขระที่ไม่รองรับ ให้รับคุกกี้ใหม่แล้วลองอีกครั้ง ความยาว: {token_length} อักขระ; คำนำหน้าที่ตรวจพบ: {token_prefix}",
-      "browser-master-token-too-short": "Master token ที่ Google ส่งกลับมามีความยาวน้อยกว่า 200 อักขระ ให้รับคุกกี้ใหม่แล้วลองอีกครั้ง ความยาว: {token_length} อักขระ",
       "other-account": "คุณลงชื่อเข้าใช้บัญชี Google อื่น จึงไม่มีการเปลี่ยนแปลงใดๆ ลงชื่อเข้าใช้ด้วยบัญชีที่ Integration นี้ใช้อยู่ หากต้องการใช้บัญชีอื่นนั้นแทน ให้ลบ Integration แล้วเพิ่มอีกครั้ง",
       "no-home-selected": "เลือกบ้านอย่างน้อย 1 หลัง"
     },

@@ -68,10 +68,6 @@
       "master-token-empty": "Anda hanya memasukkan aas_et/. Salin seluruh token master dan tempelkan di sini.",
       "master-token-characters": "Token master mengandung spasi, jeda baris, atau karakter yang tidak didukung. Salin ulang seluruh token dan tempelkan di sini dalam satu baris.",
       "master-token-too-short": "Token master harus terdiri dari setidaknya 200 karakter. Salin seluruh token. Panjang: {token_length} karakter.",
-      "browser-master-token-format": "Token master yang dikembalikan oleh Google tidak diawali dengan aas_et/. Dapatkan cookie baru dan coba lagi. Panjang: {token_length} karakter; awalan yang dikenali: {token_prefix}.",
-      "browser-master-token-empty": "Token master yang dikembalikan oleh Google tidak memiliki nilai setelah aas_et/. Dapatkan cookie baru dan coba lagi. Panjang: {token_length} karakter; awalan yang dikenali: {token_prefix}.",
-      "browser-master-token-characters": "Token master yang dikembalikan oleh Google mengandung spasi, jeda baris, atau karakter yang tidak didukung. Dapatkan cookie baru dan coba lagi. Panjang: {token_length} karakter; awalan yang dikenali: {token_prefix}.",
-      "browser-master-token-too-short": "Token master yang dikembalikan oleh Google panjangnya kurang dari 200 karakter. Dapatkan cookie baru dan coba lagi. Panjang: {token_length} karakter.",
       "other-account": "Anda login ke akun Google yang berbeda, sehingga tidak ada yang diubah. Login dengan akun yang digunakan integrasi ini. Untuk menggunakan akun lain tersebut, hapus integrasi lalu tambahkan kembali.",
       "no-home-selected": "Pilih minimal satu rumah."
     },

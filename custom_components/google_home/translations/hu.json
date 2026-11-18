@@ -68,10 +68,6 @@
       "master-token-empty": "Csak az aas_et/ előtagot adta meg. Másolja ki a teljes mestertokent, és illessze be ide.",
       "master-token-characters": "A mestertoken szóközöket, sortöréseket vagy nem támogatott karaktereket tartalmaz. Másolja ki újra a teljes tokent, és illessze be ide egyetlen sorban.",
       "master-token-too-short": "A mestertokennek legalább 200 karakterből kell állnia. Másolja ki a teljes tokent. Hossz: {token_length} karakter.",
-      "browser-master-token-format": "A Google által visszaadott mestertoken nem aas_et/ kezdetű. Szerezzen be egy új cookie-t, és próbálja újra. Hossz: {token_length} karakter; felismert előtag: {token_prefix}.",
-      "browser-master-token-empty": "A Google által visszaadott mestertoken nem tartalmaz értéket az aas_et/ után. Szerezzen be egy új cookie-t, és próbálja újra. Hossz: {token_length} karakter; felismert előtag: {token_prefix}.",
-      "browser-master-token-characters": "A Google által visszaadott mestertoken szóközöket, sortöréseket vagy nem támogatott karaktereket tartalmaz. Szerezzen be egy új cookie-t, és próbálja újra. Hossz: {token_length} karakter; felismert előtag: {token_prefix}.",
-      "browser-master-token-too-short": "A Google által visszaadott mestertoken 200 karakternél rövidebb. Szerezzen be egy új cookie-t, és próbálja újra. Hossz: {token_length} karakter.",
       "other-account": "Egy másik Google-fiókba jelentkezett be, ezért semmi sem változott. Jelentkezzen be az integráció által használt fiókkal. Ha inkább azt a másik fiókot szeretné használni, törölje az integrációt, és adja hozzá újra.",
       "no-home-selected": "Válasszon ki legalább egy otthont."
     },

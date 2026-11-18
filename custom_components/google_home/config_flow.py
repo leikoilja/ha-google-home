@@ -58,7 +58,7 @@ from .const import (
     NO_DEVICES_DOCS_URL,
     SUBENTRY_BLUETOOTH_DEVICE,
 )
-from .exceptions import InvalidMasterToken, InvalidMasterTokenFormat
+from .exceptions import InvalidMasterToken
 from .types import GoogleHomeConfigEntry, OptionsFlowDict
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
@@ -374,10 +374,6 @@ class GoogleHomeFlowHandler(ConfigFlow, domain=DOMAIN):
             # The form shows the error, so a traceback would only look like a bug.
             # A timeout has no message of its own.
             _LOGGER.warning("Failed to sign in: %s", str(error) or type(error).__name__)
-            if isinstance(error, InvalidMasterTokenFormat):
-                self._token_diagnostics = error.placeholders
-                # Only the browser flow can receive a different master token.
-                return f"browser-{error.reason}"
             return _sign_in_error(error, rejected)
         return None
 

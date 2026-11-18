@@ -68,10 +68,6 @@
       "master-token-empty": "Wprowadzono tylko aas_et/. Skopiuj cały token główny i wklej go tutaj.",
       "master-token-characters": "Token główny zawiera spacje, znaki nowego wiersza lub nieobsługiwane znaki. Skopiuj cały token ponownie i wklej go tutaj w jednym wierszu.",
       "master-token-too-short": "Token główny musi mieć co najmniej 200 znaków. Skopiuj cały token. Liczba znaków: {token_length}.",
-      "browser-master-token-format": "Token główny zwrócony przez Google nie zaczyna się od aas_et/. Pobierz nowy plik cookie i spróbuj ponownie. Liczba znaków: {token_length}; rozpoznany prefiks: {token_prefix}.",
-      "browser-master-token-empty": "Token główny zwrócony przez Google nie zawiera żadnej wartości po aas_et/. Pobierz nowy plik cookie i spróbuj ponownie. Liczba znaków: {token_length}; rozpoznany prefiks: {token_prefix}.",
-      "browser-master-token-characters": "Token główny zwrócony przez Google zawiera spacje, znaki nowego wiersza lub nieobsługiwane znaki. Pobierz nowy plik cookie i spróbuj ponownie. Liczba znaków: {token_length}; rozpoznany prefiks: {token_prefix}.",
-      "browser-master-token-too-short": "Token główny zwrócony przez Google ma mniej niż 200 znaków. Pobierz nowy plik cookie i spróbuj ponownie. Liczba znaków: {token_length}.",
       "other-account": "Zalogowano się na inne konto Google, więc nic nie zostało zmienione. Zaloguj się na konto używane przez tę integrację. Aby zamiast tego używać tamtego konta, usuń integrację i dodaj ją ponownie.",
       "no-home-selected": "Wybierz co najmniej jeden dom."
     },

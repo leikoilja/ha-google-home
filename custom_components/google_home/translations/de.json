@@ -68,10 +68,6 @@
       "master-token-empty": "Du hast nur aas_et/ eingegeben. Kopiere das vollständige Master-Token und füge es hier ein.",
       "master-token-characters": "Das Master-Token enthält Leerzeichen, Zeilenumbrüche oder nicht unterstützte Zeichen. Kopiere das vollständige Token erneut und füge es hier in einer Zeile ein.",
       "master-token-too-short": "Das Master-Token muss mindestens 200 Zeichen lang sein. Kopiere das vollständige Token. Länge: {token_length} Zeichen.",
-      "browser-master-token-format": "Das von Google zurückgegebene Master-Token beginnt nicht mit aas_et/. Hol dir ein neues Cookie und versuche es erneut. Länge: {token_length} Zeichen; erkanntes Präfix: {token_prefix}.",
-      "browser-master-token-empty": "Das von Google zurückgegebene Master-Token enthält keinen Wert nach aas_et/. Hol dir ein neues Cookie und versuche es erneut. Länge: {token_length} Zeichen; erkanntes Präfix: {token_prefix}.",
-      "browser-master-token-characters": "Das von Google zurückgegebene Master-Token enthält Leerzeichen, Zeilenumbrüche oder nicht unterstützte Zeichen. Hol dir ein neues Cookie und versuche es erneut. Länge: {token_length} Zeichen; erkanntes Präfix: {token_prefix}.",
-      "browser-master-token-too-short": "Das von Google zurückgegebene Master-Token ist kürzer als 200 Zeichen. Hol dir ein neues Cookie und versuche es erneut. Länge: {token_length} Zeichen.",
       "other-account": "Du hast dich bei einem anderen Google-Konto angemeldet, daher wurde nichts geändert. Melde dich mit dem Konto an, das diese Integration verwendet. Um stattdessen das andere Konto zu verwenden, lösche die Integration und füge sie erneut hinzu.",
       "no-home-selected": "Wähle mindestens ein Zuhause aus."
     },

@@ -68,10 +68,6 @@
       "master-token-empty": "Du skreiv berre inn aas_et/. Kopier heile master-tokenet og lim det inn her.",
       "master-token-characters": "Master-tokenet inneheld mellomrom, linjeskift eller teikn som ikkje er støtta. Kopier heile tokenet på nytt og lim det inn her på éi linje.",
       "master-token-too-short": "Master-tokenet må vere minst 200 teikn langt. Kopier heile tokenet. Lengd: {token_length} teikn.",
-      "browser-master-token-format": "Master-tokenet som Google returnerte, byrjar ikkje med aas_et/. Hent ein ny informasjonskapsel og prøv igjen. Lengd: {token_length} teikn; attkjent prefiks: {token_prefix}.",
-      "browser-master-token-empty": "Master-tokenet som Google returnerte, har ingen verdi etter aas_et/. Hent ein ny informasjonskapsel og prøv igjen. Lengd: {token_length} teikn; attkjent prefiks: {token_prefix}.",
-      "browser-master-token-characters": "Master-tokenet som Google returnerte, inneheld mellomrom, linjeskift eller teikn som ikkje er støtta. Hent ein ny informasjonskapsel og prøv igjen. Lengd: {token_length} teikn; attkjent prefiks: {token_prefix}.",
-      "browser-master-token-too-short": "Master-tokenet som Google returnerte, er kortare enn 200 teikn. Hent ein ny informasjonskapsel og prøv igjen. Lengd: {token_length} teikn.",
       "other-account": "Du logga på ein annan Google-konto, så ingenting vart endra. Logg på med kontoen som denne integrasjonen brukar. For å bruke den andre kontoen i staden, slett integrasjonen og legg han til på nytt.",
       "no-home-selected": "Vel minst éin heim."
     },

@@ -68,10 +68,6 @@
       "master-token-empty": "Only aas_et/ was entered. Copy the whole master token and paste it here.",
       "master-token-characters": "The master token contains spaces, line breaks or unsupported characters. Copy the whole token again and paste it here on one line.",
       "master-token-too-short": "The master token must be at least 200 characters long. Copy the whole token. Length: {token_length} characters.",
-      "browser-master-token-format": "The master token Google returned does not start with aas_et/. Get a new cookie and try again. Length: {token_length} characters; recognized prefix: {token_prefix}.",
-      "browser-master-token-empty": "The master token Google returned has no value after aas_et/. Get a new cookie and try again. Length: {token_length} characters; recognized prefix: {token_prefix}.",
-      "browser-master-token-characters": "The master token Google returned contains spaces, line breaks or unsupported characters. Get a new cookie and try again. Length: {token_length} characters; recognized prefix: {token_prefix}.",
-      "browser-master-token-too-short": "The master token Google returned is shorter than 200 characters. Get a new cookie and try again. Length: {token_length} characters.",
       "other-account": "You signed in to a different Google account, so nothing was changed. Sign in with the account this integration uses. To use the other account instead, delete the integration and add it again.",
       "no-home-selected": "Choose at least one home."
     },
