@@ -315,17 +315,15 @@ def fixture_fetched(monkeypatch: pytest.MonkeyPatch) -> list[str]:
         publish_release, "update_manifests", lambda repo, version: "release"
     )
     monkeypatch.setenv("GITHUB_TOKEN", "token")
-    monkeypatch.delenv("TAG", raising=False)
     return refs
 
 
 def run_main(
     monkeypatch: pytest.MonkeyPatch,
     release: FakeRelease,
-    draft: FakeRelease | None = None,
     tagged: str | None = None,
 ) -> int:
-    """Run the script against a repository with this release, and this draft.
+    """Run the script against a repository with this latest release.
 
     The release's tag points at the commit tagged, or doesn't exist yet.
     """
@@ -337,8 +335,7 @@ def run_main(
         return SimpleNamespace(object=SimpleNamespace(sha=tagged))
 
     repository = SimpleNamespace(
-        get_releases=lambda: [draft or release],
-        get_release=lambda tag: release if tag == release.tag_name else None,
+        get_releases=lambda: [release],
         get_git_ref=get_git_ref,
     )
     monkeypatch.setattr(
@@ -355,11 +352,15 @@ def test_publishes_after_attaching_zip(
 ) -> None:
     """The draft is published on the release commit, with the zip attached."""
     release = FakeRelease(head_tag())
+    if tagged is not None:
+        release.assets.append(FakeAsset(release, "google_home.zip", b"old"))
 
     assert run_main(monkeypatch, release, tagged=tagged) == 0
 
     assert fetched == ["release"]
     assert [asset.name for asset in release.assets] == ["google_home.zip"]
+    with ZipFile(io.BytesIO(release.assets[0].content)) as archive:
+        assert archive.read("manifest.json") == git("show", f"HEAD:{MANIFEST}").encode()
     assert release.published == {
         "name": head_tag(),
         "message": "Release notes",
@@ -431,29 +432,22 @@ def test_does_not_publish_on_tag_of_another_commit(
     assert release.published is None
 
 
-def test_tag_replaces_zip_of_published_release(
-    monkeypatch: pytest.MonkeyPatch, fetched: list[str], tmp_path: Path
+def test_stops_if_latest_release_is_published(
+    monkeypatch: pytest.MonkeyPatch, fetched: list[str]
 ) -> None:
-    """With TAG set, only the zip of that release changes."""
+    """A run after publication leaves the release alone."""
     release = FakeRelease(head_tag())
     release.draft = False
-    release.assets.append(FakeAsset(release, "google_home.zip", b"old"))
-    monkeypatch.setenv("TAG", head_tag())
+    old = FakeAsset(release, "google_home.zip", b"old")
+    release.assets.append(old)
     monkeypatch.setattr(
         publish_release,
         "update_manifests",
         lambda repo, version: pytest.fail("master changed"),
     )
 
-    draft = FakeRelease("v9.9.9")
+    assert run_main(monkeypatch, release) == 1
 
-    assert run_main(monkeypatch, release, draft) == 0
-
-    assert fetched == [f"refs/tags/{head_tag()}"]
-    assert not draft.assets
-    assert draft.published is None
-    assert [asset.name for asset in release.assets] == ["google_home.zip"]
-    path = tmp_path / "google_home.zip"
-    release.assets[0].download_asset(str(path))
-    publish_release.check_zip(path, head_tag())
+    assert not fetched
+    assert release.assets == [old]
     assert release.published is None

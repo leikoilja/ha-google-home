@@ -2,11 +2,6 @@ name: Publish new release
 
 on:
   workflow_dispatch:
-    inputs:
-      tag:
-        description: "Tag of a published release to rebuild google_home.zip for, such as v1.17.0. Leave empty to publish the draft."
-        required: false
-        type: string
 
 # Writes go through a GitHub App installation token, which can bypass branch protection.
 permissions:
@@ -50,4 +45,3 @@ jobs:
           uv run python script/publish_release.py
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-          TAG: ${{ inputs.tag }}

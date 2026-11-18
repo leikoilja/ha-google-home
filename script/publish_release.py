@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
-"""Update manifest.json, attach google_home.zip and publish the Github Release.
-
-With TAG set, rebuild google_home.zip for that published release instead.
-"""
+"""Update manifest.json, attach google_home.zip and publish the draft release."""
 
 from importlib.metadata import version as package_version
 import json
@@ -36,10 +33,6 @@ def main() -> int:
     assert github_token is not None, "GITHUB_TOKEN is not set"
     github = Github(auth=Auth.Token(github_token))
     repo = github.get_repo("leikoilja/ha-google-home")
-    if tag := os.environ.get("TAG"):
-        print(f"Attaching {ZIP_NAME} to {tag}...")
-        attach_zip(repo.get_release(tag), fetch(f"refs/tags/{tag}"))
-        return 0
     print("Fetching draft release...")
     release = repo.get_releases()[0]
     if not release.draft:
@@ -150,7 +143,7 @@ def check_tag(repo: Repository, tag: str, release_sha: str) -> None:
 
 
 def fetch(ref: str) -> str:
-    """Fetch a commit or tag from GitHub, and return the name to read it with."""
+    """Fetch the release commit from GitHub and return the name to read it with."""
     subprocess.run(["git", "fetch", "--no-tags", "origin", ref], check=True)
     return "FETCH_HEAD"
 
