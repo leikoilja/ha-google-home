@@ -29,7 +29,7 @@ dev = [
     # requiring that exact version: bump both together.
     "pytest-homeassistant==2026.11.0",
     "ruff>=0.17.3",
-    "types-grpcio~=1.83.0",
+    "types-grpcio>=1.83,<1.86",
     "types-requests>=2.33.0.20261006",
 ]
 docs = [
